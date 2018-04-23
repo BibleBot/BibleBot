@@ -108,4 +108,4 @@ venv.bak/
 # End of https://www.gitignore.io/api/git,python
 
 # ignore config file
-config.cfg
+config.ini
