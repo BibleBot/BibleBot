@@ -38,7 +38,7 @@ def setVersion(user, version):
         results = central.db.search(idealUser.id == user.id)
 
         if len(results) > 0:
-            central.db.update({"id": user.id}, idealUser.version == version)
+            central.db.update({"version": version}, idealUser.id == user.id)
         else:
             central.db.insert({"id": user.id, "version": version})
 
@@ -52,7 +52,8 @@ def getVersion(user):
     results = central.db.search(idealUser.id == user.id)
 
     if len(results) > 0:
-        return results[0].version
+        if "version" in results[0]:
+            return results[0]["version"]
     else:
         return None
 

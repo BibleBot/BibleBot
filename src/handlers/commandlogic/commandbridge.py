@@ -18,7 +18,6 @@
 
 import sys
 import os
-import numbers
 import math
 
 import discord
@@ -93,10 +92,12 @@ def runCommand(command, args, lang, user):
             "* ", "")
 
         embed.add_field(name=lang["commandlistName"],
-                        value=response + "\n\n**" + lang["usage"] + "**")
-        embed.add_field(name=u"\u200B", value=u"\u200B")
+                        value=response + "\n\n**" + lang["usage"] + "**",
+                        inline=False)
+        embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
         embed.add_field(name=lang["links"], value=lang["patreon"] +
-                        "\n" + lang["joinserver"] + "\n" + lang["copyright"])
+                        "\n" + lang["joinserver"] + "\n" + lang["copyright"],
+                        inline=False)
 
         return {
             "level": "info",
@@ -109,16 +110,16 @@ def runCommand(command, args, lang, user):
         query = ""
 
         if version is None or version is "HWP":
-            version = lang.defaultVersion
+            version = "NRSV"
 
-        if isinstance(availableVersions.index(args[0]), numbers.Number):
+        if args[0] in availableVersions:
             version = args[0]
 
             for i in args:
                 if i != 0:
                     query += args[i] + " "
         else:
-            for i in args:
+            for i in range(0, len(args)):
                 query += args[i] + " "
 
         if version != "REV":
@@ -137,30 +138,37 @@ def runCommand(command, args, lang, user):
                 for i in range(0, totalPages):
                     embed = discord.Embed()
 
-                    embed.title(lang.searchResults + " \"" +
-                                query[0:-1] + "\"")
-                    embed.description(
-                        lang.page + " " + (len(pages) + 1) +
-                        " " + lang.of + " " + totalPages)
+                    embed.title = lang["searchResults"] + " \"" + \
+                        query[0:-1] + "\""
+                    embed.description = lang["pageOf"].replace(
+                        "<num>", str(i + 1)).replace(
+                            "<total>", str(totalPages))
                     embed.color = 303102
-                    embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                                     icon_url="https://cdn.discordapp.com/avatars/" +
+                    embed.set_footer(text="BibleBot v" +
+                                     central.config["meta"]["version"],
+                                     icon_url="https://cdn.discordapp" +
+                                     ".com/avatars/" +
                                      "361033318273384449/" +
                                      "5aad77425546f9baa5e4b5112696e10a.png")
 
                     if len(results.keys()) > 0:
                         count = 0
 
-                        for key in results.keys():
+                        for key in list(results.keys()):
                             if (count < maxResultsPerPage):
+                                title = results[key]["title"]
+                                text = results[key]["text"]
+
                                 embed.add_field(
-                                    results[key]["title"],
-                                    results[key]["text"], True)
+                                    name=title, value=text, inline=False)
+
                                 del results[key]
                                 count += 1
                     else:
-                        embed.title(lang.nothingFound.replace(
-                            "<query>", query[0:-1]))
+                        embed.title = lang["nothingFound"].replace(
+                            "<query>", query[0:-1])
+
+                        embed.description = ""
 
                     pages.append(embed)
 
@@ -178,29 +186,30 @@ def runCommand(command, args, lang, user):
         else:
             return {
                 "level": "err",
-                "message": lang.searchNotSupported.replace(
-                    "<search>", lang["commands"].search)
+                "message": lang["searchNotSupported"].replace(
+                    "<search>", lang["commands"]["search"])
             }
     elif command == "setversion":
         if versions.setVersion(user, args[0]):
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
                              icon_url="https://cdn.discordapp.com/avatars/" +
                              "361033318273384449/" +
                              "5aad77425546f9baa5e4b5112696e10a.png")
 
-            embed.add_field("+" + lang["commands"].setversion,
-                            lang.setversionsuccess)
+            embed.add_field(name="+" + lang["commands"]["setversion"],
+                            value=lang["setversionsuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = "#ff2e2e"
-            embed.add_field("+" + lang["commands"].setversion,
-                            lang.setversionfail.replace(
-                                "<versions>", lang["commands"].versions))
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setversion"],
+                            value=lang["setversionfail"].replace(
+                                "<versions>", lang["commands"]["versions"]))
 
             return {
                 "level": "err",
@@ -217,36 +226,39 @@ def runCommand(command, args, lang, user):
 
         if version is not None:
             if version == "HWP":
-                version = lang.defaultVersion
+                version = "NRSV"
 
-            response = lang.versionused
+            response = lang["versionused"]
 
             response = response.replace(
                 "<version>", version)
             response = response.replace(
-                "<setversion>", lang["commands"].setversion)
+                "<setversion>", lang["commands"]["setversion"])
 
-            embed.add_field("+" + lang["commands"].version, response)
+            embed.add_field(name="+" + lang["commands"]["version"],
+                            value=response)
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            response = lang.noversionused
+            response = lang["noversionused"]
 
             response = response.replace(
-                "<setversion>", lang["commands"].setversion)
+                "<setversion>", lang["commands"]["setversion"])
 
-            embed.color = "#ff2e2e"
-            embed.add_field("+" + lang["commands"].version, response)
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["version"],
+                            value=response)
 
             return {
                 "level": "err",
                 "message": embed
             }
     elif command == "versions":
-        availableVersions = versions.getVersions
+        pages = []
+        availableVersions = versions.getVersions()
         maxResultsPerPage = 25
 
         totalPages = math.ceil(len(availableVersions) / maxResultsPerPage)
@@ -258,7 +270,8 @@ def runCommand(command, args, lang, user):
             embed = discord.Embed()
 
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
                              icon_url="https://cdn.discordapp.com/avatars/" +
                              "361033318273384449/" +
                              "5aad77425546f9baa5e4b5112696e10a.png")
@@ -267,15 +280,22 @@ def runCommand(command, args, lang, user):
                 count = 0
                 versionList = ""
 
-                for index in availableVersions:
+                availableVersionsCopy = availableVersions[:]
+                for item in availableVersionsCopy:
                     if count < maxResultsPerPage:
-                        versionList += availableVersions[index] + "\n"
-                        del availableVersions[index]
+                        versionList += item + "\n"
                         count += 1
 
-                embed.add_field("+" + lang["commands"].versions + " - " +
-                                lang.page + " " + (len(pages) + 1) + " " +
-                                lang.of + " " + totalPages, versionList)
+                        availableVersions.remove(item)
+                    else:
+                        break
+
+                embed.add_field(name="+" + lang["commands"]["versions"] +
+                                " - " +
+                                lang["pageOf"].replace(
+                                    "<num>", str(len(pages) + 1)).replace(
+                                        "<total>", str(totalPages)),
+                                value=versionList)
 
                 pages.append(embed)
 
@@ -286,50 +306,52 @@ def runCommand(command, args, lang, user):
         }
     elif command == "versioninfo":
         idealVersion = tinydb.Query()
-        results = central.versionDB.search(idealVersion.abbv == args[0])
+        results = central.versionDB.search(idealVersion["abbv"] == args[0])
 
         if len(results) > 0:
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
                              icon_url="https://cdn.discordapp.com/avatars/" +
                              "361033318273384449/" +
                              "5aad77425546f9baa5e4b5112696e10a.png")
 
-            response = lang.versioninfo
+            response = lang["versioninfo"]
 
-            response = response.replace("<versionname>", results[0].name)
+            response = response.replace("<versionname>", results[0]["name"])
 
-            if results[0].hasOT:
+            if results[0]["hasOT"]:
                 response = response.replace(
-                    "<hasOT>", lang.arguments.yes)
+                    "<hasOT>", lang["arguments"]["yes"])
             else:
                 response = response.replace(
-                    "<hasOT>", lang.arguments.no)
+                    "<hasOT>", lang["arguments"]["no"])
 
-            if results[0].hasNT:
+            if results[0]["hasNT"]:
                 response = response.replace(
-                    "<hasNT>", lang.arguments.yes)
+                    "<hasNT>", lang["arguments"]["yes"])
             else:
                 response = response.replace(
-                    "<hasNT>", lang.arguments.no)
+                    "<hasNT>", lang["arguments"]["no"])
 
-            if results[0].hasDEU:
+            if results[0]["hasDEU"]:
                 response = response.replace(
-                    "<hasDEU>", lang.arguments.yes)
+                    "<hasDEU>", lang["arguments"]["yes"])
             else:
                 response = response.replace(
-                    "<hasDEU>", lang.arguments.no)
+                    "<hasDEU>", lang["arguments"]["no"])
 
-            embed.add_field("+" + lang["commands"].versioninfo, response)
+            embed.add_field(name="+" + lang["commands"]["versioninfo"],
+                            value=response)
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = "#ff2e2e"
-            embed.add_field("+" + lang["commands"].versioninfo,
-                            lang.versioninfofailed)
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["versioninfo"],
+                            value=lang["versioninfofailed"])
 
             return {
                 "level": "err",
@@ -338,23 +360,24 @@ def runCommand(command, args, lang, user):
     elif command == "setlanguage":
         if languages.setLanguage(user, args[0]):
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
                              icon_url="https://cdn.discordapp.com/avatars/" +
                              "361033318273384449/" +
                              "5aad77425546f9baa5e4b5112696e10a.png")
 
-            embed.add_field("+" + lang["commands"].setlanguage,
-                            lang.setlanguagesuccess)
+            embed.add_field(name="+" + lang["commands"]["setlanguage"],
+                            value=lang["setlanguagesuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = "#ff2e2e"
-            embed.add_field("+" + lang["commands"].setlanguage,
-                            lang.setlanguagefail.replace(
-                                "<languages>", lang["commands"].languages))
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setlanguage"],
+                            value=lang["setlanguagefail"].replace(
+                                "<languages>", lang["commands"]["languages"]))
 
             return {
                 "level": "err",
@@ -367,16 +390,19 @@ def runCommand(command, args, lang, user):
                          "361033318273384449/" +
                          "5aad77425546f9baa5e4b5112696e10a.png")
 
-        response = lang.languageused
+        response = lang["languageused"]
 
         response = response.replace(
-            "<setlanguage>", lang["commands"].setlanguage)
+            "<setlanguage>", lang["commands"]["setlanguage"])
+
+        embed.add_field(name="+" + lang["commands"]["language"],
+                        value=response)
 
         return {
             "level": "info",
             "message": embed
         }
-    elif "languages":
+    elif command == "languages":
         availableLanguages = languages.getLanguages()
 
         embed.color = 303102
@@ -387,11 +413,11 @@ def runCommand(command, args, lang, user):
 
         string = ""
 
-        for index in availableLanguages:
-            string += availableLanguages[i].name + \
-                " [`" + availableLanguages[i].objectName + "`]\n"
+        for item in availableLanguages:
+            string += item["name"] + \
+                " [`" + item["objectName"] + "`]\n"
 
-        embed.add_field("+" + lang["commands"].languages, string)
+        embed.add_field(name="+" + lang["commands"]["languages"], value=string)
 
         return {
             "level": "info",
@@ -403,37 +429,36 @@ def runCommand(command, args, lang, user):
         verseNumbers = formatting.getVerseNumbers(user)
 
         if version is None or version is "HWP":
-            version = lang.defaultVersion
+            version = "NRSV"
 
         if version != "REV":
             verse = bibleutils.getVOTD()
             result = biblegateway.getResult(
                 verse, version, headings, verseNumbers)
 
-            content = "```Dust\n" + result.title + \
-                "\n\n" + result.text + "```"
+            content = "```Dust\n" + result["title"] + \
+                "\n\n" + result["text"] + "```"
 
-            responseString = "**" + result.passage + \
-                " - " + result.version + "**\n\n" + content
+            responseString = "**" + result["passage"] + \
+                " - " + result["version"] + "**\n\n" + content
 
             if len(responseString) < 2000:
                 return {
                     "level": "info",
-                    "twoMessages": False,
                     "reference": verse,
                     "message": responseString
                 }
             elif len(responseString) > 2000:
                 if len(responseString) < 3500:
                     splitText = central.splitter(
-                        result.text)
+                        result["text"])
 
                     content1 = "```Dust\n" + \
-                        result.title + "\n\n" + \
+                        result["title"] + "\n\n" + \
                         splitText["first"] + "```"
                     responseString1 = "**" + \
-                        result.passage + " - " + \
-                        result.version + "**\n\n" + \
+                        result["passage"] + " - " + \
+                        result["version"] + "**\n\n" + \
                         content1
                     content2 = "```Dust\n " + \
                         splitText["second"] + "```"
@@ -448,39 +473,37 @@ def runCommand(command, args, lang, user):
                 else:
                     return {
                         "level": "err",
-                        "twoMessages": False,
                         "reference": verse,
-                        "message": lang.passagetoolong
+                        "message": lang["passagetoolong"]
                     }
         else:
             verse = bibleutils.getVOTD()
             result = rev.getResult(
                 verse, version, headings, verseNumbers)
 
-            content = "```Dust\n" + result.title + \
-                "\n\n" + result.text + "```"
+            content = "```Dust\n" + result["title"] + \
+                "\n\n" + result["text"] + "```"
 
-            responseString = "**" + result.passage + \
-                " - " + result.version + "**\n\n" + content
+            responseString = "**" + result["passage"] + \
+                " - " + result["version"] + "**\n\n" + content
 
             if len(responseString) < 2000:
                 return {
                     "level": "info",
-                    "twoMessages": False,
                     "reference": verse,
                     "message": responseString
                 }
             elif len(responseString) > 2000:
                 if len(responseString) < 3500:
                     splitText = central.splitter(
-                        result.text)
+                        result["text"])
 
                     content1 = "```Dust\n" + \
-                        result.title + "\n\n" + \
+                        result["title"] + "\n\n" + \
                         splitText["first"] + "```"
                     responseString1 = "**" + \
-                        result.passage + " - " + \
-                        result.version + "**\n\n" + \
+                        result["passage"] + " - " + \
+                        result["version"] + "**\n\n" + \
                         content1
                     content2 = "```Dust\n " + \
                         splitText["second"] + "```"
@@ -495,9 +518,8 @@ def runCommand(command, args, lang, user):
                 else:
                     return {
                         "level": "err",
-                        "twoMessages": False,
                         "reference": verse,
-                        "message": lang.passagetoolong
+                        "message": lang["passagetoolong"]
                     }
     elif command == "random":
         version = versions.getVersion(user)
@@ -505,37 +527,36 @@ def runCommand(command, args, lang, user):
         verseNumbers = formatting.getVerseNumbers(user)
 
         if version is None or version is "HWP":
-            version = lang.defaultVersion
+            version = "NRSV"
 
         if version != "REV":
             verse = bibleutils.getRandomVerse()
             result = biblegateway.getResult(
                 verse, version, headings, verseNumbers)
 
-            content = "```Dust\n" + result.title + \
-                "\n\n" + result.text + "```"
+            content = "```Dust\n" + result["title"] + \
+                "\n\n" + result["text"] + "```"
 
-            responseString = "**" + result.passage + \
-                " - " + result.version + "**\n\n" + content
+            responseString = "**" + result["passage"] + \
+                " - " + result["version"] + "**\n\n" + content
 
             if len(responseString) < 2000:
                 return {
                     "level": "info",
-                    "twoMessages": False,
                     "reference": verse,
                     "message": responseString
                 }
             elif len(responseString) > 2000:
                 if len(responseString) < 3500:
                     splitText = central.splitter(
-                        result.text)
+                        result["text"])
 
                     content1 = "```Dust\n" + \
-                        result.title + "\n\n" + \
+                        result["title"] + "\n\n" + \
                         splitText["first"] + "```"
                     responseString1 = "**" + \
-                        result.passage + " - " + \
-                        result.version + "**\n\n" + \
+                        result["passage"] + " - " + \
+                        result["version"] + "**\n\n" + \
                         content1
                     content2 = "```Dust\n " + \
                         splitText["second"] + "```"
@@ -550,39 +571,37 @@ def runCommand(command, args, lang, user):
                 else:
                     return {
                         "level": "err",
-                        "twoMessages": False,
                         "reference": verse,
-                        "message": lang.passagetoolong
+                        "message": lang["passagetoolong"]
                     }
         else:
             verse = bibleutils.getRandomVerse()
             result = rev.getResult(
                 verse, version, headings, verseNumbers)
 
-            content = "```Dust\n" + result.title + \
-                "\n\n" + result.text + "```"
+            content = "```Dust\n" + result["title"] + \
+                "\n\n" + result["text"] + "```"
 
-            responseString = "**" + result.passage + \
-                " - " + result.version + "**\n\n" + content
+            responseString = "**" + result["passage"] + \
+                " - " + result["version"] + "**\n\n" + content
 
             if len(responseString) < 2000:
                 return {
                     "level": "info",
-                    "twoMessages": False,
                     "reference": verse,
                     "message": responseString
                 }
             elif len(responseString) > 2000:
                 if len(responseString) < 3500:
                     splitText = central.splitter(
-                        result.text)
+                        result["text"])
 
                     content1 = "```Dust\n" + \
-                        result.title + "\n\n" + \
+                        result["title"] + "\n\n" + \
                         splitText["first"] + "```"
                     responseString1 = "**" + \
-                        result.passage + " - " + \
-                        result.version + "**\n\n" + \
+                        result["passage"] + " - " + \
+                        result["version"] + "**\n\n" + \
                         content1
                     content2 = "```Dust\n " + \
                         splitText["second"] + "```"
@@ -597,35 +616,36 @@ def runCommand(command, args, lang, user):
                 else:
                     return {
                         "level": "err",
-                        "twoMessages": False,
                         "reference": verse,
-                        "message": lang.passagetoolong
+                        "message": lang["passagetoolong"]
                     }
     elif command == "headings":
         if len(args) == 1:
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
                              icon_url="https://cdn.discordapp.com/avatars/" +
                              "361033318273384449/" +
                              "5aad77425546f9baa5e4b5112696e10a.png")
 
             if formatting.setHeadings(user, args[0]):
-                embed.add_field("+" + lang["commands"].headings,
-                                lang.headingssuccess)
+                embed.add_field(name="+" + lang["commands"]["headings"],
+                                value=lang["headingssuccess"])
 
                 return {
                     "level": "info",
                     "message": embed
                 }
             else:
-                embed.color = "#ff2e2e"
+                embed.color = 16723502
 
-                response = lang.headingsfail.replace(
-                    "<headings>", lang["commands"].headings).replace(
-                        "<enable>", lang.arguments.enable).replace(
-                            "<disable>", lang.arguments.disable)
+                response = lang["headingsfail"].replace(
+                    "<headings>", lang["commands"]["headings"]).replace(
+                        "<enable>", lang["arguments"]["enable"]).replace(
+                            "<disable>", lang["arguments"]["disable"])
 
-                embed.add_field("+" + lang["commands"].headings, response)
+                embed.add_field(name="+" + lang["commands"]["headings"],
+                                value=response)
 
                 return {
                     "level": "err",
@@ -635,24 +655,27 @@ def runCommand(command, args, lang, user):
             headings = formatting.getHeadings(user)
 
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
                              icon_url="https://cdn.discordapp.com/avatars/" +
                              "361033318273384449/" +
                              "5aad77425546f9baa5e4b5112696e10a.png")
 
             if headings == "enable":
-                response = lang.headings.replace(
-                    "<enabled/disabled>", lang.enabled)
-                embed.add_field("+" + lang["commands"].headings, response)
+                response = lang["headings"].replace(
+                    "<enabled/disabled>", lang["enabled"])
+                embed.add_field(name="+" + lang["commands"]["headings"],
+                                value=response)
 
                 return {
                     "level": "info",
                     "message": embed
                 }
             else:
-                response = lang.headings.replace(
-                    "<enabled/disabled>", lang.disabled)
-                embed.add_field("+" + lang["commands"].headings, response)
+                response = lang["headings"].replace(
+                    "<enabled/disabled>", lang["disabled"])
+                embed.add_field(name="+" + lang["commands"]["headings"],
+                                value=response)
 
                 return {
                     "level": "info",
@@ -661,28 +684,31 @@ def runCommand(command, args, lang, user):
     elif command == "versenumbers":
         if len(args) == 1:
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
                              icon_url="https://cdn.discordapp.com/avatars/" +
                              "361033318273384449/" +
                              "5aad77425546f9baa5e4b5112696e10a.png")
 
             if formatting.setVerseNumbers(user, args[0]):
-                embed.add_field("+" + lang["commands"].versenumbers,
-                                lang.versenumberssuccess)
+                embed.add_field(name="+" + lang["commands"]["versenumbers"],
+                                value=lang["versenumberssuccess"])
 
                 return {
                     "level": "info",
                     "message": embed
                 }
             else:
-                embed.color = "#ff2e2e"
+                embed.color = 16723502
 
-                response = lang.versenumbersfail.replace(
-                    "<headings>", lang["commands"].versenumbers).replace(
-                        "<enable>", lang.arguments.enable).replace(
-                            "<disable>", lang.arguments.disable)
+                response = lang["versenumbersfail"].replace(
+                    "<versenumbers>", lang["commands"]
+                    ["versenumbers"]).replace(
+                        "<enable>", lang["arguments"]["enable"]).replace(
+                            "<disable>", lang["arguments"]["disable"])
 
-                embed.add_field("+" + lang["commands"].versenumbers, response)
+                embed.add_field(name="+" + lang["commands"]["versenumbers"],
+                                value=response)
 
                 return {
                     "level": "err",
@@ -692,24 +718,27 @@ def runCommand(command, args, lang, user):
             verseNumbers = formatting.getVerseNumbers(user)
 
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
                              icon_url="https://cdn.discordapp.com/avatars/" +
                              "361033318273384449/" +
                              "5aad77425546f9baa5e4b5112696e10a.png")
 
             if verseNumbers == "enable":
-                response = lang.versenumbers.replace(
-                    "<enabled/disabled>", lang.enabled)
-                embed.add_field("+" + lang["commands"].versenumbers, response)
+                response = lang["versenumbers"].replace(
+                    "<enabled/disabled>", lang["enabled"])
+                embed.add_field(name="+" + lang["commands"]["versenumbers"],
+                                value=response)
 
                 return {
                     "level": "info",
                     "message": embed
                 }
             else:
-                response = lang.versenumbers.replace(
-                    "<enabled/disabled>", lang.disabled)
-                embed.add_field("+" + lang["commands"].versenumbers, response)
+                response = lang["versenumbers"].replace(
+                    "<enabled/disabled>", lang["disabled"])
+                embed.add_field(name="+" + lang["commands"]["versenumbers"],
+                                value=response)
 
                 return {
                     "level": "info",
@@ -724,8 +753,8 @@ def runCommand(command, args, lang, user):
 
         processed = len(args[0].users)
 
-        embed.add_field("+" + lang["commands"].users,
-                        lang.users + ": " + str(processed))
+        embed.add_field(name="+" + lang["commands"]["users"],
+                        value=lang["users"] + ": " + str(processed))
 
         return {
             "level": "info",
@@ -740,8 +769,9 @@ def runCommand(command, args, lang, user):
 
         processed = len(args[0].guilds)
 
-        embed.add_field("+" + lang["commands"].servers,
-                        lang.servers.replace("<count>", str(processed)))
+        embed.add_field(name="+" + lang["commands"]["servers"],
+                        value=lang["servers"].replace(
+                            "<count>", str(processed)))
 
         return {
             "level": "info",
@@ -753,7 +783,7 @@ def runCommand(command, args, lang, user):
         verseNumbers = formatting.getVerseNumbers(user)
 
         if version is None or version is "HWP":
-            version = lang.defaultVersion
+            version = "NRSV"
 
         verse = "Mark 9:23-24"
 
@@ -761,16 +791,15 @@ def runCommand(command, args, lang, user):
             result = biblegateway.getResult(
                 verse, version, headings, verseNumbers)
 
-            content = "```Dust\n" + result.title + \
-                "\n\n" + result.text + "```"
+            content = "```Dust\n" + result["title"] + \
+                "\n\n" + result["text"] + "```"
 
-            responseString = "**" + result.passage + \
-                " - " + result.version + "**\n\n" + content
+            responseString = "**" + result["passage"] + \
+                " - " + result["version"] + "**\n\n" + content
 
             if len(responseString) < 2000:
                 return {
                     "level": "info",
-                    "twoMessages": False,
                     "reference": verse,
                     "message": responseString
                 }
@@ -778,24 +807,34 @@ def runCommand(command, args, lang, user):
             result = rev.getResult(
                 verse, version, headings, verseNumbers)
 
-            content = "```Dust\n" + result.title + \
-                "\n\n" + result.text + "```"
+            content = "```Dust\n" + result["title"] + \
+                "\n\n" + result["text"] + "```"
 
-            responseString = "**" + result.passage + \
-                " - " + result.version + "**\n\n" + content
+            responseString = "**" + result["passage"] + \
+                " - " + result["version"] + "**\n\n" + content
 
             if len(responseString) < 2000:
                 return {
                     "level": "info",
-                    "twoMessages": False,
                     "reference": verse,
                     "message": responseString
                 }
     elif command == "joseph":
         return {
             "level": "info",
+            "text": True,
             "message": "Jesus never consecrated peanut butter " +
             "and jelly sandwiches and Coca-Cola!"
+        }
+    elif command == "tiger":
+        return {
+            "level": "info",
+            "text": True,
+            "message": "Our favorite Tiger lives by Ephesians 4:29,31-32, " +
+            "Matthew 12:26, James 4:6, and lastly, his calling from God, " +
+            "1 Peter 5:8. He tells everyone that because of grace in faith " +
+            "(Ephesians 2:8-10) he was saved, and not of works. Christ " +
+            "Jesus has made him a new creation (2 Corinthians 5:17)."
         }
     elif command == "supporters":
         embed.color = 303102
@@ -804,10 +843,11 @@ def runCommand(command, args, lang, user):
                          "361033318273384449/" +
                          "5aad77425546f9baa5e4b5112696e10a.png")
 
-        embed.add_field("+" + lang["commands"].supporters, "**" +
-                        lang.supporters + "**\n\nCHAZER2222\nJepekula" +
-                        "\nJoseph\nSoku\n" + lang.anonymousDonors +
-                        "\n" + lang.donorsNotListed)
+        embed.add_field(name="+" + lang["commands"]["supporters"],
+                        value="**" +
+                        lang["supporters"] + "**\n\n- CHAZER2222\n- Jepekula" +
+                        "\n- Joseph\n- Soku\n- " + lang["anonymousDonors"] +
+                        "\n\n" + lang["donorsNotListed"])
 
         return {
             "level": "info",
@@ -816,6 +856,7 @@ def runCommand(command, args, lang, user):
     elif command == "invite":
         return {
             "level": "info",
+            "text": True,
             "message": "<https://discordapp.com/oauth2/authorize?" +
             "client_id=361033318273384449&scope=bot&permissions=0>"
         }
@@ -827,28 +868,31 @@ def runOwnerCommand(command, args, lang):
     if command == "puppet":
         message = ""
 
-        for index in args:
-            message += args[index] + " "
+        for item in args:
+            message += item + " "
 
         return {
             "level": "info",
+            "text": True,
             "message": message[0:-1]
         }
     elif command == "eval":
         message = ""
 
-        for index in args:
-            message += args[index] + " "
+        for item in args:
+            message += item + " "
 
         try:
             return {
                 "level": "info",
+                "text": True,
                 "message": eval(message)
             }
         except Exception as e:
             return {
                 "level": "err",
-                "message": "[err] " + e
+                "text": True,
+                "message": "[err] " + str(e)
             }
     elif command == "announce":
         embed.color = 303102
@@ -859,10 +903,10 @@ def runOwnerCommand(command, args, lang):
 
         message = ""
 
-        for index in args:
-            message += args[index] + " "
+        for item in args:
+            message += item + " "
 
-        embed.add_field("Announcement", message[0:-1])
+        embed.add_field(name="Announcement", value=message[0:-1])
 
         return {
             "level": "info",
@@ -902,7 +946,8 @@ def runOwnerCommand(command, args, lang):
         central.versionDB.insert(newVersion.toObject())
 
         embed.add_field(
-            "+" + lang["commands"].addversion, lang.addversionsuccess)
+            name="+" + lang["commands"]["addversion"],
+            value=lang["addversionsuccess"])
 
         return {
             "level": "info",

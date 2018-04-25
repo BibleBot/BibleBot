@@ -22,7 +22,7 @@ import os
 import central
 import configparser
 
-from handlers.commandlogic.settings import languages, versions, formatting
+from handlers.commandlogic.settings import languages
 from handlers.verses import VerseHandler
 from handlers.commands import CommandHandler
 
@@ -100,17 +100,18 @@ class BibleBot(discord.AutoShardedClient):
                 bot, command, language, sender, args)
 
             originalCommand = ""
+            self.currentPage = 1
 
-            if res["isError"] is False:
-                if res["announcement"] is False:
-                    if res["twoMessages"]:
-                        channel.send(res.first)
-                        channel.send(res.second)
-                    elif res["paged"] and len(res["pages"]) != 0:
-                        currentPage = 1
-                        totalPages = len(res["pages"])
+            if "isError" not in res:
+                if "announcement" not in res:
+                    if "twoMessages" in res:
+                        await channel.send(res["firstMessage"])
+                        await channel.send(res["secondMessage"])
+                    elif "paged" in res:
+                        self.totalPages = len(res["pages"])
 
-                        msg = channel.send(embed=res["pages"][currentPage - 1])
+                        msg = await channel.send(
+                            embed=res["pages"][0])
                         await msg.add_reaction("⬅")
                         await msg.add_reaction("➡")
 
@@ -118,30 +119,44 @@ class BibleBot(discord.AutoShardedClient):
                             if reaction.message.id == msg.id:
                                 if str(reaction.emoji) == "⬅":
                                     if user.id != bot.user.id:
-                                        if currentPage == 1:
-                                            return
-                                        else:
-                                            currentPage -= 1
-                                            msg.edit(
-                                                res.pages[currentPage - 1])
+                                        if self.currentPage != 1:
+                                            self.currentPage -= 1
+                                            return True
                                 elif str(reaction.emoji) == "➡":
                                     if user.id != bot.user.id:
-                                        if currentPage == totalPages:
-                                            return
-                                        else:
-                                            currentPage += 1
-                                            msg.edit(
-                                                res.pages[currentPage - 1])
+                                        if self.currentPage != self.totalPages:
+                                            self.currentPage += 1
+                                            return True
+
+                        continuePaging = True
+                        reaction = None
+                        user = None
 
                         try:
-                            reaction, user = await bot.wait_for('reaction_add', timeout=120.0, check=check)  # noqa: E501
-                        except asyncio.TimeoutError:
-                            await msg.clear_reactions()
-                    else:
-                        channel.send(res.message)
+                            while continuePaging:
+                                reaction, user = await bot.wait_for(
+                                    'reaction_add', timeout=120.0, check=check)
+                                await reaction.message.edit(
+                                    embed=res["pages"][self.currentPage - 1])
+                                reaction, user = await bot.wait_for(
+                                    'reaction_remove', timeout=120.0,
+                                    check=check)
+                                await reaction.message.edit(
+                                    embed=res["pages"][self.currentPage - 1])
 
-                    for originalCommandName in rawLanguage.commands.keys():
-                        if rawLanguage.commands[originalCommandName] == command:  # noqa: E501
+                        except asyncio.TimeoutError:
+                            continuePaging = False
+                    else:
+                        if "reference" not in res and "text" not in res:
+                            await channel.send(embed=res["message"])
+                        else:
+                            if res["message"] is not None:
+                                await channel.send(res["message"])
+                            else:
+                                await channel.send("Done.")
+
+                    for originalCommandName in rawLanguage["commands"].keys():
+                        if rawLanguage["commands"][originalCommandName] == command:  # noqa: E501
                             originalCommand = originalCommandName
                         elif command == "eval":
                             originalCommand = "eval"
@@ -149,29 +164,19 @@ class BibleBot(discord.AutoShardedClient):
                             originalCommand = "jepekula"
                         elif command == "joseph":
                             originalCommand = "joseph"
+                        elif command == "tiger":
+                            originalCommand = "tiger"
                 else:
-                    for originalCommandName in rawLanguage.commands.keys():
-                        if rawLanguage.commands[originalCommandName] == command:  # noqa: E501
+                    for originalCommandName in rawLanguage["commands"].keys():
+                        if rawLanguage["commands"][originalCommandName] == command:  # noqa: E501
                             originalCommand = originalCommandName
 
                     for guild in bot.guilds:
-                        embed = discord.Embed()
-
-                        embed.color = 303102
-                        embed.set_footer("BibleBot v" + central.config["meta"]["version"],  # noqa: E501
-                                         "https://cdn.discordapp.com/avatars/" +  # noqa: E501
-                                         "361033318273384449/" +
-                                         "5aad77425546f9baa5e4b5112696e10a.png")  # noqa: E501
-
-                        embed.add_field("Announcement", res.message)
-
                         if "Discord Bot" in guild.name:
                             return
 
-                        if guild.id != "362503610006765568":
+                        if str(guild.id) != "362503610006765568":
                             sent = False
-                            ch = [i for i, x in enumerate(
-                                guild.channels) if isinstance(i, discord.TextChannel)]  # noqa: E501
 
                             preferred = ["misc", "bots", "meta", "hangout",
                                          "fellowship", "lounge",
@@ -180,23 +185,22 @@ class BibleBot(discord.AutoShardedClient):
 
                             for i in range(0, len(preferred)):
                                 if sent is False:
-                                    receiver = [
-                                        j for j, x in ch if x.name == preferred[i]]  # noqa: E501
-
-                                    if receiver:
-                                        receiver.send(embed=embed)
-                                        sent = True
+                                    for ch in guild.text_channels:
+                                        if ch.name == preferred[i]:
+                                            await ch.send(embed=res["message"])
+                                            sent = True
                         else:
-                            ch = [i for i, x in enumerate(
-                                guild.channels) if isinstance(i, discord.TextChannel)]  # noqa: E501
+                            for ch in guild.text_channels:
+                                if ch.name == "announcements":
+                                    await ch.send(embed=res["message"])
 
-                            receiver = [j for j, x in ch if x.name == "announcements"]  # noqa: E501
+                    await channel.send("Done.")
 
-                            if receiver:
-                                receiver.send(embed=embed)
-                                sent = True
-
-                cleanArgs = str(args).replace(",", " ")
+                cleanArgs = str(args).replace(
+                    ",", " ").replace("[", "").replace(
+                        "]", "").replace("\"", "").replace(
+                            "'", "").replace(
+                                "  ", " ")
 
                 if originalCommand == "puppet":
                     cleanArgs = ""
@@ -205,27 +209,33 @@ class BibleBot(discord.AutoShardedClient):
                 elif originalCommand == "announce":
                     cleanArgs = ""
 
-                central.logMessage(res.level, shard, identifier,
+                central.logMessage(res["level"], shard, identifier,
                                    source, "+" + originalCommand +
                                    " " + cleanArgs)
             else:
-                channel.send(res["return"])
+                await channel.send(embed=res["return"])
         else:
             verseHandler = VerseHandler()
 
             result = verseHandler.processRawMessage(
                 shard, raw, sender, language)
 
-            if result.invalid is False:
-                if result.twoMessages:
-                    channel.send(result.firstMessage)
-                    channel.send(result.secondMessage)
-                else:
-                    channel.send(result.message)
+            if result is not None:
+                if "invalid" not in result and "spam" not in result:
+                    for item in result:
+                        if "twoMessages" in item:
+                            await channel.send(item["firstMessage"])
+                            await channel.send(item["secondMessage"])
+                        else:
+                            await channel.send(item["message"])
 
-                if result.reference:
-                    central.logMessage(result.level, shard,
-                                       identifier, source, result.reference)
+                        if "reference" in item:
+                            central.logMessage(item["level"], shard,
+                                               identifier, source,
+                                               item["reference"])
+                else:
+                    if "spam" in result:
+                        await channel.send(result["spam"])
 
 
 bot = BibleBot()

@@ -84,14 +84,17 @@ def getDifference(a, b):
     result = ""
 
     while j < len(b):
-        if a[i] != b[j] or i == len(a):
+        try:
+            if a[i] != b[j] or i == len(a):
+                result += b[j]
+            else:
+                i += 1
+        except Exception:
             result += b[j]
-        else:
-            i += 1
 
         j += 1
 
-    return result
+    return result.strip()
 
 
 def parseSpacedBookName(item, array, index):
@@ -146,6 +149,7 @@ def parseSpacedBookName(item, array, index):
 
 def createVerseObject(array, bookIndex, availableVersions):
     verse = []
+    bookIndex = int(bookIndex)
 
     if isinstance(array[bookIndex + 1], numbers.Number):
         return "invalid - NaN"
@@ -157,19 +161,25 @@ def createVerseObject(array, bookIndex, availableVersions):
     #    return "invalid - found bracket at beginning"
 
     bracketIndexes = []
-    for i in array:
-        if i < bookIndex:
-            if isinstance(array[i].index(central.dividers["first"]),
-                          numbers.Number):
-                bracketIndexes.append(i)
+    for i in range(0, len(array)):
+        if i <= bookIndex:
+            if central.dividers["first"] in array[i]:
+                isInstance = isinstance(array[i].index(
+                    central.dividers["first"]), numbers.Number)
+
+                if isInstance:
+                    bracketIndexes.append(i)
 
         if i > bookIndex:
-            if isinstance(array[i].index(central.dividers["second"]),
-                          numbers.Number):
-                bracketIndexes.append(i)
+            if central.dividers["second"] in array[i]:
+                isInstance = isinstance(array[i].index(
+                    central.dividers["second"]), numbers.Number)
+
+                if isInstance:
+                    bracketIndexes.append(i)
 
     if len(bracketIndexes) == 2:
-        if bracketIndexes[0] < bookIndex and bracketIndexes[1] > bookIndex:
+        if bracketIndexes[0] <= bookIndex and bracketIndexes[1] > bookIndex:
             return "invalid - brackets surrounding"
 
     book = purgeBrackets(array[bookIndex])
@@ -180,14 +190,13 @@ def createVerseObject(array, bookIndex, availableVersions):
     verse.append(chapter)
     verse.append(startingVerse)
 
-    if len(array) > bookIndex + 2:
-        if isinstance(array[bookIndex + 3].index(central.dividers["second"]),
-                      numbers.Number):
+    if len(array) > bookIndex + 3:
+        if central.dividers["second"] in array[bookIndex + 3]:
             return "invalid - ending bracket found"
 
         array[bookIndex + 3] = purgeBrackets(array[bookIndex + 3])
 
-        if isinstance(array[bookIndex + 3], numbers.Number) is False:
+        try:
             if isinstance(int(array[bookIndex + 3]), numbers.Number):
                 if isinstance(int(array[bookIndex + 2]), numbers.Number):
                     if int(array[bookIndex + 3]) > int(array[bookIndex + 2]):
@@ -196,25 +205,24 @@ def createVerseObject(array, bookIndex, availableVersions):
                         endingVerse = endingVerse.replace(
                             central.dividers["second"], "")
                         verse.append(purgeBrackets(endingVerse))
-        else:
-            if isinstance(availableVersions.index(array[bookIndex + 3]),
-                          numbers.Number):
+        except Exception:
+            if array[bookIndex + 3] in availableVersions:
                 array[bookIndex + 3] = array[bookIndex + 3].upper()
                 version = array[bookIndex + 3].replace(
                     central.dividers["first"], "")
                 version = version.replace(central.dividers["second"], "")
                 verse.append("v - " + version)
+            else:
+                verse.append(re.sub(
+                    r"[a-zA-Z]", "", array[bookIndex + 3]))
 
-    if len(array) > bookIndex + 3:
-        if isinstance(array[bookIndex + 4].index(central.dividers["second"]),
-                      numbers.Number):
+    if len(array) > bookIndex + 4:
+        if central.dividers["second"] in array[bookIndex + 4]:
             return "invalid - ending bracket found"
 
         array[bookIndex + 4] = purgeBrackets(array[bookIndex + 4])
-        array[bookIndex + 4] = array[bookIndex + 4].upper()
 
-        if isinstance(availableVersions.index(array[bookIndex + 4]),
-                      numbers.Number):
+        if array[bookIndex + 4] in availableVersions:
             array[bookIndex + 4] = array[bookIndex + 4].upper()
             version = array[bookIndex + 4].replace(
                 central.dividers["first"], "")
@@ -237,29 +245,31 @@ def createReferenceString(verse):
     if isinstance(int(verse[2]), numbers.Number) is False:
         return
 
-    if len(verse) > 4:
-        if isinstance(int(verse[3]), numbers.Number) is False:
-            return
+    if len(verse) == 4:
+        try:
+            if isinstance(int(verse[3]), numbers.Number) is False:
+                return
+        except Exception:
+            verse = verse
 
     if len(verse) <= 3:
         reference = verse[0] + " " + verse[1] + ":" + verse[2]
-    else:
-        if isinstance(verse[3], str):
-            if verse[3].startswith("v"):
-                reference = verse[0] + " " + verse[1] + \
-                    ":" + verse[2] + " | v: " + verse[3][1:]
 
-        if isinstance(verse[4], str):
+    if len(verse) >= 4:
+        if verse[3].startswith("v"):
+            reference = verse[0] + " " + verse[1] + \
+                ":" + verse[2] + " | v: " + verse[3][1:]
+        elif len(verse) == 5:
             if verse[4].startswith("v"):
                 reference = verse[0] + " " + verse[1] + ":" + \
                     verse[2] + "-" + verse[3] + " | v: " + verse[4][1:]
+        else:
+            if verse[3].startswith("v"):
+                reference = verse[0] + " " + verse[1] + \
+                    ":" + verse[2] + " | v: " + verse[3][1:]
             else:
-                if verse[3].startswith("v"):
-                    reference = verse[0] + " " + verse[1] + \
-                        ":" + verse[2] + " | v: " + verse[3][1:]
-                else:
-                    reference = verse[0] + " " + verse[1] + \
-                        ":" + verse[2] + "-" + verse[3]
+                reference = verse[0] + " " + verse[1] + \
+                    ":" + verse[2] + "-" + verse[3]
 
         if isinstance(reference, str) is False:
             reference = verse[0] + " " + verse[1] + \

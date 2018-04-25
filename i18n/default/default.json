@@ -42,7 +42,7 @@
     "passagetoolong": "The passage is too long for me to grab, sorry.",
     "votdcantprocess": "Today's VOTD can't be processed, see <https://www.biblegateway.com/> for the VOTD.",
 
-    "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasAPO>",
+    "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
     "versioninfofailed": "I couldn't find that version, are you sure you used the right acronym?",
 
     "users": "The number of users spanning across all servers that BibleBot is on (without duplicates)",

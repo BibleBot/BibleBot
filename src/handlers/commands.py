@@ -48,6 +48,7 @@ commandMap = {
 
     "jepekula": 0,
     "joseph": 0,
+    "tiger": 0,
     "supporters": 0,
 
     "addversion": 5
@@ -75,6 +76,11 @@ def isCommand(command, lang):
         result = {
             "ok": True,
             "orig": "joseph"
+        }
+    elif command == "tiger":
+        result = {
+            "ok": True,
+            "orig": "tiger"
         }
     else:
         for originalCommandName in commands.keys():
@@ -110,9 +116,9 @@ class CommandHandler(Handler):
         commands = rawLanguage["commands"]
 
         properCommand = isCommand(command, rawLanguage)
-        origCmd = properCommand["orig"]
 
         if properCommand["ok"]:
+            origCmd = properCommand["orig"]
             if isOwnerCommand(origCmd, rawLanguage) is False:
                 if origCmd != commands["search"]:
                     if origCmd != commands["headings"] and origCmd != commands["versenumbers"]:  # noqa: E501
@@ -125,17 +131,24 @@ class CommandHandler(Handler):
                             if len(args) != requiredArguments:
                                 embed = discord.Embed()
 
-                                embed.color = "#ff2e2e"
-                                embed.set_footer("BibleBot v" + central.config["meta"]["version"],  # noqa: E501
-                                                 "https://cdn.discordapp.com/avatars/" +  # noqa: E501
+                                embed.color = 16723502
+                                embed.set_footer(text="BibleBot v" +
+                                                 central.config["meta"]
+                                                 ["version"],
+                                                 icon_url="https://cdn."
+                                                 + "discordapp" +
+                                                 ".com/avatars/" +
                                                  "361033318273384449/" +
-                                                 "5aad77425546f9baa5e4b5112696e10a.png")  # noqa: E501
+                                                 "5aad77425546f9baa5e" +
+                                                 "4b5112696e10a.png")
 
-                                response = rawLanguage.argumentCountError.replace(  # noqa: E501
+                                response = rawLanguage["argumentCountError"]
+                                response = response.replace(
                                     "<command>", command).replace(
-                                        "<count>", requiredArguments)
+                                    "<count>", str(requiredArguments))
 
-                                embed.add_field(rawLanguage.error, response)
+                                embed.add_field(
+                                    name=rawLanguage["error"], value=response)
 
                                 return {
                                     "isError": True,
@@ -146,7 +159,7 @@ class CommandHandler(Handler):
                                                             rawLanguage,
                                                             sender)
                         else:
-                            requiredArguments = commandMap[properCommand]
+                            requiredArguments = commandMap[origCmd]
 
                             if args is None:
                                 args = []
@@ -154,17 +167,24 @@ class CommandHandler(Handler):
                             if len(args) != requiredArguments:
                                 embed = discord.Embed()
 
-                                embed.color = "#ff2e2e"
-                                embed.set_footer("BibleBot v" + central.config["meta"]["version"],  # noqa: E501
-                                                 "https://cdn.discordapp.com/avatars/" +  # noqa: E501
+                                embed.color = 16723502
+                                embed.set_footer(text="BibleBot v" +
+                                                 central.config["meta"]
+                                                 ["version"],
+                                                 icon_url="https://cdn." +
+                                                 "discordapp." +
+                                                 "com/avatars/" +
                                                  "361033318273384449/" +
-                                                 "5aad77425546f9baa5e4b5112696e10a.png")  # noqa: E501
+                                                 "5aad77425546f9baa5e" +
+                                                 "4b5112696e10a.png")
 
-                                response = rawLanguage.argumentCountError.replace(  # noqa: E501
+                                response = rawLanguage["argumentCountError"]
+                                response = response.replace(
                                     "<command>", command).replace(
-                                        "<count>", requiredArguments)
+                                        "<count>", str(requiredArguments))
 
-                                embed.add_field(rawLanguage.error, response)
+                                embed.add_field(name=rawLanguage["error"],
+                                                value=response)
 
                                 return {
                                     "isError": True,
@@ -179,19 +199,27 @@ class CommandHandler(Handler):
                             args = []
 
                         if len(args) == 0 or len(args) == 1:
-                            return commandBridge.runCommand(origCmd, args, rawLanguage, sender)  # noqa: E501
+                            return commandBridge.runCommand(origCmd, args,
+                                                            rawLanguage,
+                                                            sender)
                         else:
-                            embed.color = "#ff2e2e"
-                            embed.set_footer("BibleBot v" + central.config["meta"]["version"],  # noqa: E501
-                                                 "https://cdn.discordapp.com/avatars/" +  # noqa: E501
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e4b5112696e10a.png")  # noqa: E501
+                            embed = discord.Embed()
+                            embed.color = 16723502
+                            embed.set_footer(text="BibleBot v" +
+                                             central.config["meta"]["version"],
+                                             icon_url="https://cdn.discor" +
+                                             "dapp.com/avatars/" +
+                                             "361033318273384449/" +
+                                             "5aad77425546f9baa5e4b5112696" +
+                                             "e10a.png")
 
-                            response = rawLanguage.argumentCountError.replace(  # noqa: E501
+                            response = rawLanguage["argumentCountError"]
+                            response = response.replace(
                                 "<command>", command).replace(
-                                    "<count>", rawLanguage.zeroOrOne)
+                                    "<count>", rawLanguage["zeroOrOne"])
 
-                            embed.add_field(rawLanguage.error, response)
+                            embed.add_field(name=rawLanguage["error"],
+                                            value=response)
 
                             return {
                                 "isError": True,
@@ -202,14 +230,18 @@ class CommandHandler(Handler):
                         args = []
 
                     if len(args) == 1 and len(args[0]) < 4:
-                        embed.color = "#ff2e2e"
-                        embed.set_footer("BibleBot v" + central.config["meta"]["version"],  # noqa: E501
-                                                 "https://cdn.discordapp.com/avatars/" +  # noqa: E501
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e4b5112696e10a.png")  # noqa: E501
+                        embed = discord.Embed()
+                        embed.color = 16723502
+                        embed.set_footer(text="BibleBot v" +
+                                         central.config["meta"]["version"],
+                                         icon_url="https://cdn.discordapp." +
+                                         "com/avatars/" +
+                                         "361033318273384449/" +
+                                         "5aad77425546f9baa5e" +
+                                         "4b5112696e10a.png")
 
-                        embed.add_field(rawLanguage.error,
-                                        rawLanguage.queryTooShort)
+                        embed.add_field(name=rawLanguage["error"],
+                                        value=rawLanguage["queryTooShort"])
 
                         return {
                             "isError": True,
@@ -217,16 +249,21 @@ class CommandHandler(Handler):
                         }
 
                     if len(args) == 0:
-                        embed.color = "#ff2e2e"
-                        embed.set_footer("BibleBot v" + central.config["meta"]["version"],  # noqa: E501
-                                                 "https://cdn.discordapp.com/avatars/" +  # noqa: E501
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e4b5112696e10a.png")  # noqa: E501
+                        embed = discord.Embed()
+                        embed.color = 16723502
+                        embed.set_footer(text="BibleBot v" +
+                                         central.config["meta"]["version"],
+                                         icon_url="https://cdn.discordapp."
+                                         + "com/avatars/" +
+                                         "361033318273384449/" +
+                                         "5aad77425546f9baa5e" +
+                                         "4b5112696e10a.png")
 
-                        response = rawLanguage.argumentCountErrorAL.replace(
-                            "<command>", command).replace("<count>", 1)
+                        response = rawLanguage["argumentCountErrorAL"].replace(
+                            "<command>", command).replace("<count>", "1")
 
-                        embed.add_field(rawLanguage.error, response)
+                        embed.add_field(
+                            name=rawLanguage["error"], value=response)
 
                         return {
                             "isError": True,
@@ -237,36 +274,41 @@ class CommandHandler(Handler):
                                                         rawLanguage, sender)
             else:
                 try:
-                    if sender.id == central.config["BibleBot"]["owner"]:
+                    if str(sender.id) == central.config["BibleBot"]["owner"]:
                         return commandBridge.runOwnerCommand(command, args,
                                                              rawLanguage)
                 except Exception:
-                    embed.color = "#ff2e2e"
-                    embed.set_footer("BibleBot v" + central.config["meta"]["version"],  # noqa: E501
-                                                 "https://cdn.discordapp.com/avatars/" +  # noqa: E501
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e4b5112696e10a.png")  # noqa: E501
+                    embed = discord.Embed()
+                    embed.color = 16723502
+                    embed.set_footer(text="BibleBot v" +
+                                     central.config["meta"]["version"],
+                                     icon_url="https://cdn.discordapp." +
+                                     "com/avatars/" +
+                                     "361033318273384449/" +
+                                     "5aad77425546f9baa5e4b5112696e10a.png")
 
-                    response = rawLanguage.commandNotFoundError.replace(
+                    response = rawLanguage["commandNotFoundError"].replace(
                         "<command>", command)
 
-                    embed.add_field(rawLanguage.error, response)
+                    embed.add_field(name=rawLanguage["error"], value=response)
 
                     return {
                         "isError": True,
                         "return": embed
                     }
         else:
-            embed.color = "#ff2e2e"
-            embed.set_footer("BibleBot v" + central.config["meta"]["version"],  # noqa: E501
-                                                 "https://cdn.discordapp.com/avatars/" +  # noqa: E501
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e4b5112696e10a.png")  # noqa: E501
+            embed = discord.Embed()
+            embed.color = 16723502
+            embed.set_footer(text="BibleBot v" +
+                             central.config["meta"]["version"],
+                             icon_url="https://cdn.discordapp.com/avatars/" +
+                             "361033318273384449/" +
+                             "5aad77425546f9baa5e4b5112696e10a.png")
 
-            response = rawLanguage.commandNotFoundError.replace(
+            response = rawLanguage["commandNotFoundError"].replace(
                 "<command>", command)
 
-            embed.add_field(rawLanguage.error, response)
+            embed.add_field(name=rawLanguage["error"], value=response)
 
             return {
                 "isError": True,

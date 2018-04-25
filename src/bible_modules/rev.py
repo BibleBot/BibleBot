@@ -19,6 +19,13 @@ import requests
 from bs4 import BeautifulSoup
 import bible_modules.bibleutils as bibleutils
 import re
+import logging
+from http.client import HTTPConnection
+HTTPConnection.debuglevel = 0
+
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 
 def getResult(query, version, verseNumbers):

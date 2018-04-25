@@ -57,19 +57,19 @@ class VerseHandler(Handler):
                 book = utils.purgeBrackets(split[i])
                 difference = utils.getDifference(book, split[i])
 
-                if isinstance(books.ot[book.lower()], str):
+                if book.lower() in books.ot:
                     bookNames.append(books.ot[book.lower()])
                     split[i] = difference + books.ot[book.lower()]
                     bookIndexes.append(i)
 
-                if isinstance(books.nt[book.lower()], str):
+                if book.lower() in books.nt:
                     bookNames.append(books.nt[book.lower()])
                     split[i] = difference + books.nt[book.lower()]
                     bookIndexes.append(i)
 
-                if isinstance(books.apo[book.lower()], str):
-                    bookNames.append(books.apo[book.lower()])
-                    split[i] = difference + books.apo[book.lower()]
+                if book.lower() in books.deu:
+                    bookNames.append(books.deu[book.lower()])
+                    split[i] = difference + books.deu[book.lower()]
                     bookIndexes.append(i)
 
             for index in bookIndexes:
@@ -90,48 +90,57 @@ class VerseHandler(Handler):
 
                 if verseCount > 6:
                     responses = ["spamming me, really?", "no spam pls",
-                                 "no spam, am good bot", "be nice to me",
+                                 "be nice to me", "such verses, many spam",
+                                 "＼(º □ º l|l)/ SO MANY VERSES",
                                  "don't spam me, i'm a good bot",
-                                 "hey buddy, get your own " + "bot to spam"]
+                                 "hey buddy, get your own bot to spam"]
 
-                    randomIndex = math.floor(random.random() * 4)
-                    return responses[randomIndex]
+                    randomIndex = math.floor(random.random() * len(responses))
+                    return {"spam": responses[randomIndex]}
 
-                for i in range(0, len(verses.keys())):
-                    verse = verses[i]
-                    reference = utils.createReferenceString(verse)
+            references = []
 
-                    version = settings.versions.getVersion(sender)
+            for i in range(0, len(verses.keys())):
+                verse = verses[i]
+                reference = utils.createReferenceString(verse)
 
-                    if version is None or version is "HWP":
-                        version = lang.defaultVersion
+                references.append(reference)
 
-                    headings = settings.formatting.getHeadings(sender)
-                    verseNumbers = settings.formatting.getVerseNumbers(sender)
+            returnList = []
 
-                    refSplit = reference.split(" | v: ")
+            for reference in references:
+                version = settings.versions.getVersion(sender)
 
-                    if len(refSplit) == 2:
-                        reference = refSplit[0]
-                        version = refSplit[1]
+                if version is None or version is "HWP":
+                    version = eval("central.languages." +
+                                   lang).defaultVersion
 
-                    idealVersion = tinydb.Query()
-                    results = central.versionDB.search(
-                        idealVersion.abbv == version)
+                headings = settings.formatting.getHeadings(sender)
+                verseNumbers = settings.formatting.getVerseNumbers(sender)
 
-                    if len(results) > 0:
-                        continueProcessing = True
+                refSplit = reference.split(" | v: ")
 
-                        for name in bookNames:
-                            isOT = False
-                            isNT = False
-                            isDEU = False
+                if len(refSplit) == 2:
+                    reference = refSplit[0]
+                    version = refSplit[1]
 
-                            for index in books.ot:
-                                if books.ot[index] == name:
-                                    isOT = True
+                idealVersion = tinydb.Query()
+                results = central.versionDB.search(
+                    idealVersion.abbv == version)
 
-                            if results[0].hasOT is False and isOT:
+                if len(results) > 0:
+                    continueProcessing = True
+
+                    for name in bookNames:
+                        isOT = False
+                        isNT = False
+                        isDEU = False
+
+                        for index in books.ot:
+                            if books.ot[index] == name:
+                                isOT = True
+
+                            if results[0]["hasOT"] is False and isOT:
                                 response = lang.otnotsupported
                                 response = response.replace(
                                     "<version>", results[0].name)
@@ -150,11 +159,11 @@ class VerseHandler(Handler):
                                     "secondMessage": response2
                                 }
 
-                            for index in books.nt:
-                                if books.nt[index] == name:
-                                    isNT = True
+                        for index in books.nt:
+                            if books.nt[index] == name:
+                                isNT = True
 
-                            if results[0].hasNT is False and isNT:
+                            if results[0]["hasNT"] is False and isNT:
                                 response = lang.ntnotsupported
                                 response = response.replace(
                                     "<version>", results[0].name)
@@ -173,11 +182,11 @@ class VerseHandler(Handler):
                                     "secondMessage": response2
                                 }
 
-                            for index in books.deu:
-                                if books.deu[index] == name:
-                                    isDEU = True
+                        for index in books.deu:
+                            if books.deu[index] == name:
+                                isDEU = True
 
-                            if results[0].hasDEU is False and isDEU:
+                            if results[0]["hasDEU"] is False and isDEU:
                                 response = lang.deunotsupported
                                 response = response.replace(
                                     "<version>", results[0].name)
@@ -196,96 +205,96 @@ class VerseHandler(Handler):
                                     "secondMessage": response2
                                 }
 
-                        if continueProcessing:
-                            if version != "REV":
-                                result = biblegateway.getResult(
-                                    reference, version, headings, verseNumbers)
+                    if continueProcessing:
+                        if version != "REV":
+                            result = biblegateway.getResult(
+                                reference, version, headings, verseNumbers)
 
-                                content = "```Dust\n" + result.title + \
-                                    "\n\n" + result.text + "```"
+                            content = "```Dust\n" + result["title"] + \
+                                "\n\n" + result["text"] + "```"
 
-                                responseString = "**" + result.passage + \
-                                    " - " + result.version + "**\n\n" + content
+                            responseString = "**" + result["passage"] + \
+                                " - " + result["version"] + \
+                                "**\n\n" + content
 
-                                if len(responseString) < 2000:
-                                    return {
+                            if len(responseString) < 2000:
+                                returnList.append({
+                                    "level": "info",
+                                    "reference": reference,
+                                    "message": responseString
+                                })
+                            elif len(responseString) > 2000:
+                                if len(responseString) < 3500:
+                                    splitText = central.splitter(
+                                        result["text"])
+
+                                    content1 = "```Dust\n" + \
+                                        result["title"] + "\n\n" + \
+                                        splitText["first"] + "```"
+                                    responseString1 = "**" + \
+                                        result["passage"] + " - " + \
+                                        result["version"] + "**\n\n" + \
+                                        content1
+                                    content2 = "```Dust\n " + \
+                                        splitText["second"] + "```"
+
+                                    returnList.append({
                                         "level": "info",
-                                        "twoMessages": "false",
+                                        "twoMessages": True,
                                         "reference": reference,
-                                        "message": responseString
-                                    }
-                                elif len(responseString) > 2000:
-                                    if len(responseString) < 3500:
-                                        splitText = central.splitter(
-                                            result.text)
+                                        "firstMessage": responseString1,
+                                        "secondMessage": content2
+                                    })
+                                else:
+                                    returnList.append({
+                                        "level": "err",
+                                        "twoMessages": False,
+                                        "reference": reference,
+                                        "message": lang["passagetoolong"]
+                                    })
+                        else:
+                            result = rev.getResult(
+                                reference, version, headings, verseNumbers)
 
-                                        content1 = "```Dust\n" + \
-                                            result.title + "\n\n" + \
-                                            splitText["first"] + "```"
-                                        responseString1 = "**" + \
-                                            result.passage + " - " + \
-                                            result.version + "**\n\n" + \
-                                            content1
-                                        content2 = "```Dust\n " + \
-                                            splitText["second"] + "```"
+                            content = "```Dust\n" + result["title"] + \
+                                "\n\n" + result["text"] + "```"
 
-                                        return {
-                                            "level": "info",
-                                            "twoMessages": True,
-                                            "reference": reference,
-                                            "firstMessage": responseString1,
-                                            "secondMessage": content2
-                                        }
-                                    else:
-                                        return {
-                                            "level": "err",
-                                            "twoMessages": False,
-                                            "reference": reference,
-                                            "message": lang.passagetoolong
-                                        }
-                            else:
-                                result = rev.getResult(
-                                    reference, version, headings, verseNumbers)
+                            responseString = "**" + result["passage"] + \
+                                " - " + result["version"] + \
+                                "**\n\n" + content
 
-                                content = "```Dust\n" + result.title + \
-                                    "\n\n" + result.text + "```"
+                            if len(responseString) < 2000:
+                                returnList.append({
+                                    "level": "info",
+                                    "reference": reference,
+                                    "message": responseString
+                                })
+                            elif len(responseString) > 2000:
+                                if len(responseString) < 3500:
+                                    splitText = central.splitter(
+                                        result["text"])
 
-                                responseString = "**" + result.passage + \
-                                    " - " + result.version + "**\n\n" + content
+                                    content1 = "```Dust\n" + \
+                                        result["title"] + "\n\n" + \
+                                        splitText["first"] + "```"
+                                    responseString1 = "**" + \
+                                        result["passage"] + " - " + \
+                                        result["version"] + "**\n\n" + \
+                                        content1
+                                    content2 = "```Dust\n " + \
+                                        splitText["second"] + "```"
 
-                                if len(responseString) < 2000:
-                                    return {
+                                    returnList.append({
                                         "level": "info",
-                                        "twoMessages": "false",
+                                        "twoMessages": True,
                                         "reference": reference,
-                                        "message": responseString
-                                    }
-                                elif len(responseString) > 2000:
-                                    if len(responseString) < 3500:
-                                        splitText = central.splitter(
-                                            result.text)
-
-                                        content1 = "```Dust\n" + \
-                                            result.title + "\n\n" + \
-                                            splitText["first"] + "```"
-                                        responseString1 = "**" + \
-                                            result.passage + " - " + \
-                                            result.version + "**\n\n" + \
-                                            content1
-                                        content2 = "```Dust\n " + \
-                                            splitText["second"] + "```"
-
-                                        return {
-                                            "level": "info",
-                                            "twoMessages": True,
-                                            "reference": reference,
-                                            "firstMessage": responseString1,
-                                            "secondMessage": content2
-                                        }
-                                    else:
-                                        return {
-                                            "level": "err",
-                                            "twoMessages": False,
-                                            "reference": reference,
-                                            "message": lang.passagetoolong
-                                        }
+                                        "firstMessage": responseString1,
+                                        "secondMessage": content2
+                                    })
+                                else:
+                                    returnList.append({
+                                        "level": "err",
+                                        "reference": reference,
+                                        "message": lang["passagetoolong"]
+                                    })
+            return returnList

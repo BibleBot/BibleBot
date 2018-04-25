@@ -49,8 +49,8 @@ def getHeadings(user):
     results = central.db.search(idealUser.id == user.id)
 
     if len(results) > 0:
-        if results[0].headings is not None:
-            return results[0].headings
+        if "headings" in results[0]:
+            return results[0]["headings"]
         else:
             return "enable"
     else:
@@ -80,8 +80,8 @@ def getVerseNumbers(user):
     results = central.db.search(idealUser.id == user.id)
 
     if len(results) > 0:
-        if results[0].verseNumbers is not None:
-            return results[0].verseNumbers
+        if "verseNumbers" in results[0]:
+            return results[0]["verseNumbers"]
         else:
             return "enable"
     else:

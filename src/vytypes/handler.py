@@ -27,4 +27,4 @@ class Events(Enum):
 
 class Handler:
     def __init__(self):
-        print("")
+        self = self

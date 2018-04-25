@@ -28,17 +28,19 @@ import central  # noqa: E402
 
 
 def setLanguage(user, language):
-    if getattr(central.languages, language) is not None:
-        idealUser = tinydb.Query()
-        userResult = central.db.search(idealUser.id == user.id)
+    try:
+        if getattr(central.languages, language) is not None:
+            idealUser = tinydb.Query()
+            userResult = central.db.search(idealUser.id == user.id)
 
-        if len(userResult) > 0:
-            central.db.update({"id": user.id}, idealUser.language == language)
-        else:
-            central.db.insert({"id": user.id, "language": language})
+            if len(userResult) > 0:
+                central.db.update(
+                    {"id": user.id}, idealUser.language == language)
+            else:
+                central.db.insert({"id": user.id, "language": language})
 
-        return True
-    else:
+            return True
+    except Exception:
         return False
 
 
@@ -47,7 +49,8 @@ def getLanguage(user):
     results = central.db.search(idealUser.id == user.id)
 
     if len(results) > 0:
-        return results[0].language
+        if "language" in results[0]:
+            return results[0]["language"]
     else:
         return central.languages.default.objectName
 

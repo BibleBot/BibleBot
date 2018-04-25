@@ -21,13 +21,20 @@ from bs4 import BeautifulSoup
 import re
 import cgi
 import bible_modules.bibleutils as bibleutils
+import logging
+from http.client import HTTPConnection
+HTTPConnection.debuglevel = 0
+
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 
 def removeBibleTitleInSearch(string):
     return re.sub(r"<[^>]*>", "", string)
 
 
-def search(query, version):
+def search(version, query):
     query = cgi.escape(query)
 
     url = "https://www.biblegateway.com/quicksearch/?search=" + \
@@ -42,7 +49,7 @@ def search(query, version):
     if resp is not None:
         soup = BeautifulSoup(resp.text, "html.parser")
 
-        for row in soup.findAll("article", {"class": "row"}):
+        for row in soup.findAll(True, {"class": "row"}):
             result = {}
 
             for extra in row.findAll(True, {"class": "bible-item-extras"}):
@@ -53,22 +60,14 @@ def search(query, version):
 
             result["text"] = row.find(True, {"class": "bible-item-text"})
 
-            if result["title"] is None:
-                if result["title"].split(" ").length > 2:
-                    return
+            if result["title"] is not None:
+                if result["text"] is not None:
+                    result["title"] = result["title"].getText()
+                    result["text"] = removeBibleTitleInSearch(
+                        bibleutils.purifyText(result["text"].getText()[0:-1]))
 
-                return
-
-            if result["text"] is None:
-                return
-
-            result["title"] = result["title"].getText()
-            result["text"] = removeBibleTitleInSearch(
-                bibleutils.purifyText(result["text"].getText()[0:-1]))
-
-            length += 1
-            searchResults["result" + str(length)] = result
-
+                    length += 1
+                    searchResults["result" + str(length)] = result
     return searchResults
 
 

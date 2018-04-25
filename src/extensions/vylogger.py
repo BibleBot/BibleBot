@@ -40,7 +40,7 @@ Format = {
     "WARNING": "warn",
     "INFO": "info",
     "DEBUG": "dbug",
-    "ERROR": "crit"
+    "ERROR": "erro"
 }
 
 
@@ -55,7 +55,7 @@ class VyFormatter(logging.Formatter):
         if self.use_color:
             levelname_color = None
 
-            if Levels[levelname]:
+            if levelname in Levels:
                 levelname_color = Levels[levelname] + "[" + \
                     Format[levelname] + "] " + Colors["DEFAULT"]
 
