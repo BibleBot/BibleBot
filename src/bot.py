@@ -84,7 +84,7 @@ class BibleBot(discord.AutoShardedClient):
         else:
             source = "unknown (direct messages?)"
 
-        if message[0] == "+":
+        if message.startswith("+"):
             command = message[1:].split(" ")[0]
             args = message.split(" ")
 
