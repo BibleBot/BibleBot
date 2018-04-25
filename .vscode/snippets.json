@@ -1,0 +1,16 @@
+{
+    "embed settings": {
+        "prefix": "embedset",
+        "body": [
+            "embed.color = 303102",
+            "embed.set_footer(\"BibleBot v\" + central.config[\"meta\"][\"version\"],",
+            "\t\t\"https://cdn.discordapp.com/avatars/\" +",
+            "\t\t\"361033318273384449/\" +",
+            "\t\t\"5aad77425546f9baa5e4b5112696e10a.png\")"
+        ]
+    },
+    "language import": {
+        "prefix": "langimp",
+        "body": "__$0 = open(__dir_path + \"/../../i18n/$0/$0.json\")"
+    }
+}
