@@ -239,18 +239,18 @@ def createReferenceString(verse):
         if isinstance(verse[k], str):
             verse[k] = re.sub(r"[^a-zA-Z0-9]", "", verse[k])
 
-    if isinstance(int(verse[1]), numbers.Number) is False:
-        return
+    try:
+        if isinstance(int(verse[1]), numbers.Number) is False:
+            return
 
-    if isinstance(int(verse[2]), numbers.Number) is False:
-        return
+        if isinstance(int(verse[2]), numbers.Number) is False:
+            return
 
-    if len(verse) == 4:
-        try:
+        if len(verse) == 4:
             if isinstance(int(verse[3]), numbers.Number) is False:
                 return
-        except Exception:
-            verse = verse
+    except Exception:
+        verse = verse
 
     if len(verse) <= 3:
         reference = verse[0] + " " + verse[1] + ":" + verse[2]
