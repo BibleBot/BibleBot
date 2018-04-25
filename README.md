@@ -14,6 +14,7 @@ Installation:
 
 ```bash
 git clone https://git.vypr.space/BibleBot/BibleBot.git
+python3 -m venv venv
 source venv/bin/activate
 cp src/config.example.ini src/config.ini
 $EDITOR src/config.ini
