@@ -9,7 +9,7 @@ cffi==1.11.5
 chardet==3.0.4
 colorama==0.3.9
 configparser==3.5.0
-discord.py==1.0.0a0
+https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord.py[voice]
 flake8==3.5.0
 idna==2.6
 isort==4.3.4
