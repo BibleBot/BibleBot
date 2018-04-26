@@ -91,7 +91,7 @@ class BibleBot(discord.AutoShardedClient):
 
         perms = channel.permissions_for(guild.me)
 
-        if perms.send_messages is False:
+        if perms.send_messages is False or perms.embed_links is False:
             return
 
         if message.startswith(config["BibleBot"]["commandPrefix"]):
