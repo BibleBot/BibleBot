@@ -210,48 +210,51 @@ class VerseHandler(Handler):
                             result = biblegateway.getResult(
                                 reference, version, headings, verseNumbers)
 
-                            content = "```Dust\n" + result["title"] + \
-                                "\n\n" + result["text"] + "```"
+                            if result is not None:
+                                content = "```Dust\n" + result["title"] + \
+                                    "\n\n" + result["text"] + "```"
 
-                            responseString = "**" + result["passage"] + \
-                                " - " + result["version"] + \
-                                "**\n\n" + content
+                                responseString = "**" + result["passage"] + \
+                                    " - " + result["version"] + \
+                                    "**\n\n" + content
 
-                            if len(responseString) < 2000:
-                                returnList.append({
-                                    "level": "info",
-                                    "reference": reference,
-                                    "message": responseString
-                                })
-                            elif len(responseString) > 2000:
-                                if len(responseString) < 3500:
-                                    splitText = central.splitter(
-                                        result["text"])
-
-                                    content1 = "```Dust\n" + \
-                                        result["title"] + "\n\n" + \
-                                        splitText["first"] + "```"
-                                    responseString1 = "**" + \
-                                        result["passage"] + " - " + \
-                                        result["version"] + "**\n\n" + \
-                                        content1
-                                    content2 = "```Dust\n " + \
-                                        splitText["second"] + "```"
-
+                                if len(responseString) < 2000:
                                     returnList.append({
                                         "level": "info",
-                                        "twoMessages": True,
                                         "reference": reference,
-                                        "firstMessage": responseString1,
-                                        "secondMessage": content2
+                                        "message": responseString
                                     })
-                                else:
-                                    returnList.append({
-                                        "level": "err",
-                                        "twoMessages": False,
-                                        "reference": reference,
-                                        "message": lang["passagetoolong"]
-                                    })
+                                elif len(responseString) > 2000:
+                                    if len(responseString) < 3500:
+                                        splitText = central.splitter(
+                                            result["text"])
+
+                                        print(splitText)
+
+                                        content1 = "```Dust\n" + \
+                                            result["title"] + "\n\n" + \
+                                            splitText["first"] + "```"
+                                        responseString1 = "**" + \
+                                            result["passage"] + " - " + \
+                                            result["version"] + "**\n\n" + \
+                                            content1
+                                        content2 = "```Dust\n " + \
+                                            splitText["second"] + "```"
+
+                                        returnList.append({
+                                            "level": "info",
+                                            "twoMessages": True,
+                                            "reference": reference,
+                                            "firstMessage": responseString1,
+                                            "secondMessage": content2
+                                        })
+                                    else:
+                                        returnList.append({
+                                            "level": "err",
+                                            "twoMessages": False,
+                                            "reference": reference,
+                                            "message": lang["passagetoolong"]
+                                        })
                         else:
                             result = rev.getResult(
                                 reference, version, headings, verseNumbers)

@@ -151,11 +151,14 @@ def createVerseObject(array, bookIndex, availableVersions):
     verse = []
     bookIndex = int(bookIndex)
 
-    if isinstance(array[bookIndex + 1], numbers.Number):
-        return "invalid - NaN"
+    try:
+        if isinstance(array[bookIndex + 1], numbers.Number):
+            return "invalid - NaN"
 
-    if isinstance(purgeBrackets(array[bookIndex + 2]), numbers.Number):
-        return "invalid - NaN"
+        if isinstance(purgeBrackets(array[bookIndex + 2]), numbers.Number):
+            return "invalid - NaN"
+    except Exception:
+        return "invalid"
 
     # if array[bookIndex].index(central.dividers["first"]):
     #    return "invalid - found bracket at beginning"

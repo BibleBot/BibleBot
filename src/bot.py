@@ -72,8 +72,8 @@ class BibleBot(discord.AutoShardedClient):
 
         language = languages.getLanguage(sender)
 
-        if isinstance(channel.guild.name, str):
-            if isinstance(channel.name, str):
+        if "guild" in channel:
+            if "name" in channel.guild:
                 source = channel.guild.name + "#" + channel.name
             else:
                 source = "unknown (direct messages?)"
@@ -91,7 +91,7 @@ class BibleBot(discord.AutoShardedClient):
             if isinstance(args.pop(0), str) is False:
                 args = None
 
-            rawLanguage = eval("central.languages." + language)
+            rawLanguage = eval("central.languages." + str(language))
             rawLanguage = rawLanguage.rawObject
 
             cmdHandler = CommandHandler()

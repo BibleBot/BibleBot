@@ -51,7 +51,7 @@ def splitter(s):
     before = s.rfind(" ", middle)
     after = s.index(" ", middle + 1)
 
-    if before == -1 or (after != -1 and middle - before >= after - middle):
+    if (middle - before) < (after - middle):
         middle = after
     else:
         middle = before
