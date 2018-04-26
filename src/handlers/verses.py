@@ -36,6 +36,7 @@ import central  # noqa: E402
 
 class VerseHandler(Handler):
     def processRawMessage(self, shard, rawMessage, sender, lang):
+        lang = eval("central.languages." + str(lang)).rawObject
         availableVersions = settings.versions.getVersionsByAcronym()
         msg = rawMessage.content
 
@@ -112,8 +113,7 @@ class VerseHandler(Handler):
                 version = settings.versions.getVersion(sender)
 
                 if version is None or version is "HWP":
-                    version = eval("central.languages." +
-                                   lang).defaultVersion
+                    version = "NRSV"
 
                 headings = settings.formatting.getHeadings(sender)
                 verseNumbers = settings.formatting.getVerseNumbers(sender)
@@ -141,13 +141,14 @@ class VerseHandler(Handler):
                                 isOT = True
 
                             if results[0]["hasOT"] is False and isOT:
-                                response = lang.otnotsupported
+                                response = lang["otnotsupported"]
                                 response = response.replace(
-                                    "<version>", results[0].name)
+                                    "<version>", results[0]["name"])
 
-                                response2 = lang.otnotsupported2
+                                response2 = lang["otnotsupported2"]
                                 response2 = response2.replace(
-                                    "<setversion>", lang.commands.setversion)
+                                    "<setversion>",
+                                    lang["commands"]["setversion"])
 
                                 continueProcessing = False
 
@@ -164,13 +165,14 @@ class VerseHandler(Handler):
                                 isNT = True
 
                             if results[0]["hasNT"] is False and isNT:
-                                response = lang.ntnotsupported
+                                response = lang["ntnotsupported"]
                                 response = response.replace(
-                                    "<version>", results[0].name)
+                                    "<version>", results[0]["name"])
 
-                                response2 = lang.ntnotsupported2
+                                response2 = lang.rawObject["ntnotsupported2"]
                                 response2 = response2.replace(
-                                    "<setversion>", lang.commands.setversion)
+                                    "<setversion>",
+                                    lang["commands"]["setversion"])
 
                                 continueProcessing = False
 
@@ -187,13 +189,14 @@ class VerseHandler(Handler):
                                 isDEU = True
 
                             if results[0]["hasDEU"] is False and isDEU:
-                                response = lang.deunotsupported
+                                response = lang["deunotsupported"]
                                 response = response.replace(
-                                    "<version>", results[0].name)
+                                    "<version>", results[0]["name"])
 
-                                response2 = lang.deunotsupported2
+                                response2 = lang["deunotsupported2"]
                                 response2 = response2.replace(
-                                    "<setversion>", lang.commands.setversion)
+                                    "<setversion>",
+                                    lang["commands"]["setversion"])
 
                                 continueProcessing = False
 
