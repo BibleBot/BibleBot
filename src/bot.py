@@ -256,5 +256,5 @@ bot = BibleBot()
 central.logMessage("info", 0,
                    "global", "global", "BibleBot v" +
                    config["meta"]["version"] +
-                   " by Elliott Pardee (vypr)")
+                   " by Seraphim Pardee")
 bot.run(config["BibleBot"]["token"])
