@@ -214,7 +214,7 @@ def createVerseObject(array, bookIndex, availableVersions):
                 version = array[bookIndex + 3].replace(
                     central.dividers["first"], "")
                 version = version.replace(central.dividers["second"], "")
-                verse.append("v - " + version)
+                verse.append("v - " + version.upper())
             else:
                 verse.append(re.sub(
                     r"[a-zA-Z]", "", array[bookIndex + 3]))
@@ -230,7 +230,7 @@ def createVerseObject(array, bookIndex, availableVersions):
             version = array[bookIndex + 4].replace(
                 central.dividers["first"], "")
             version = version.replace(central.dividers["second"], "")
-            verse.append("v - " + version)
+            verse.append("v - " + version.upper())
 
     return verse
 
