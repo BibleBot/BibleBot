@@ -90,6 +90,8 @@ def runCommand(command, args, lang, user):
             "<supporters>", lang["commands"]["supporters"])
         response = response.replace(
             "* ", "")
+        response = response.replace(
+            "+", central.config["BibleBot"]["commandPrefix"])
 
         embed.add_field(name=lang["commandlistName"],
                         value=response + "\n\n**" + lang["usage"] + "**",
