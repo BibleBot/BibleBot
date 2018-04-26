@@ -108,7 +108,7 @@ class BibleBot(discord.AutoShardedClient):
             if res is None:
                 return
 
-            perms = channel.guild.permissions_for(channel.guild.me)
+            perms = channel.permissions_for(channel.guild.me)
 
             if perms.send_messages is False:
                 return
