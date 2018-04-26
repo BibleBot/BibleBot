@@ -871,6 +871,9 @@ def runOwnerCommand(command, args, lang):
         for item in args:
             message += item + " "
 
+        if message == " " or message == "":
+            return
+
         return {
             "level": "info",
             "text": True,
