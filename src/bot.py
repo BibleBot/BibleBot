@@ -62,6 +62,7 @@ class BibleBot(discord.AutoShardedClient):
         identifier = sender.name + "#" + sender.discriminator
         channel = raw.channel
         message = raw.content
+        guild = None
 
         if (config["BibleBot"]["devMode"] == "True"):
             if str(sender.id) != config["BibleBot"]["owner"]:
@@ -76,6 +77,7 @@ class BibleBot(discord.AutoShardedClient):
             language = "english_us"
 
         if hasattr(channel, "guild"):
+            guild = channel.guild
             if hasattr(channel.guild, "name"):
                 source = channel.guild.name + "#" + channel.name
             else:
@@ -86,6 +88,11 @@ class BibleBot(discord.AutoShardedClient):
                     return
         else:
             source = "unknown (direct messages?)"
+
+        perms = channel.permissions_for(guild.me)
+
+        if perms.send_messages is False:
+            return
 
         if message.startswith(config["BibleBot"]["commandPrefix"]):
             command = message[1:].split(" ")[0]
@@ -106,11 +113,6 @@ class BibleBot(discord.AutoShardedClient):
             self.currentPage = 1
 
             if res is None:
-                return
-
-            perms = channel.permissions_for(channel.guild.me)
-
-            if perms.send_messages is False:
                 return
 
             if "isError" not in res:
@@ -182,11 +184,11 @@ class BibleBot(discord.AutoShardedClient):
                         if rawLanguage["commands"][originalCommandName] == command:  # noqa: E501
                             originalCommand = originalCommandName
 
-                    for guild in bot.guilds:
-                        if "Discord Bot" in guild.name:
+                    for item in bot.guilds:
+                        if "Discord Bot" in item.name:
                             return
 
-                        if str(guild.id) != "362503610006765568":
+                        if str(item.id) != "362503610006765568":
                             sent = False
 
                             preferred = ["misc", "bots", "meta", "hangout",
@@ -196,12 +198,12 @@ class BibleBot(discord.AutoShardedClient):
 
                             for i in range(0, len(preferred)):
                                 if sent is False:
-                                    for ch in guild.text_channels:
+                                    for ch in item.text_channels:
                                         if ch.name == preferred[i]:
                                             await ch.send(embed=res["message"])
                                             sent = True
                         else:
-                            for ch in guild.text_channels:
+                            for ch in item.text_channels:
                                 if ch.name == "announcements":
                                     await ch.send(embed=res["message"])
 
