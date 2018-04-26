@@ -230,7 +230,7 @@ deu = {
     "4mac": "4 Maccabees",
     "letterofjeremiah": "Letter of Jeremiah",
     "songofthethreeholychildren": "Prayer of Azariah",
-    "songof thethreeyoungmen": "Prayer of Azariah",
+    "songofthethreeyoungmen": "Prayer of Azariah",
     "songofthethreeholyyouths": "Prayer of Azariah",
     "prayerofazariah": "Prayer of Azariah",
     "greekesther": "Greek Esther",
@@ -250,6 +250,5 @@ deu = {
     "storyofsusanna": "Susanna",
     "susanna": "Susanna",
     "sus": "Susanna",
-    "belandthedragon": "Bel and the Dragon",
-    "bel": "Bel and the Dragon"
+    "belandthedragon": "Bel and the Dragon"
 }
