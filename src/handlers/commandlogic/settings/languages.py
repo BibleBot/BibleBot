@@ -49,7 +49,6 @@ def getLanguage(user):
     results = central.db.search(idealUser.id == user.id)
 
     if len(results) > 0:
-        print(results)
         if "language" in results[0]:
             if results[0]["language"] is None:
                 return central.languages.english_us.objectName
