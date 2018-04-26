@@ -136,7 +136,7 @@ def parseSpacedBookName(item, array, index):
     elif item in ["John", "Jn"]:
         num = 0
         try:
-            if array[index - 1] is not None:
+            if array[index - 1] is not None and index != 0:
                 num = int(array[index - 1])
 
                 if num > 0 and num < 4:
