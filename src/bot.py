@@ -72,8 +72,8 @@ class BibleBot(discord.AutoShardedClient):
 
         language = languages.getLanguage(sender)
 
-        if "guild" in channel:
-            if "name" in channel.guild:
+        if hasattr(channel, "guild"):
+            if hasattr(channel.guild, "name"):
                 source = channel.guild.name + "#" + channel.name
             else:
                 source = "unknown (direct messages?)"
