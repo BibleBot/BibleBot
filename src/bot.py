@@ -105,6 +105,14 @@ class BibleBot(discord.AutoShardedClient):
             originalCommand = ""
             self.currentPage = 1
 
+            if res is None:
+                return
+
+            perms = bot.user.permissions_in(channel)
+
+            if perms.send_messages is False:
+                return
+
             if "isError" not in res:
                 if "announcement" not in res:
                     if "twoMessages" in res:

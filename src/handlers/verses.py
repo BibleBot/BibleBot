@@ -229,8 +229,6 @@ class VerseHandler(Handler):
                                         splitText = central.splitter(
                                             result["text"])
 
-                                        print(splitText)
-
                                         content1 = "```Dust\n" + \
                                             result["title"] + "\n\n" + \
                                             splitText["first"] + "```"
