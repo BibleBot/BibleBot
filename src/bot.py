@@ -45,7 +45,7 @@ class BibleBot(discord.AutoShardedClient):
         else:
             shard = self.shard_id
 
-        totalShards = self.shard_count
+        totalShards = self.shard_count - 1
 
         central.logMessage("info", self.shard_id,
                            "global", "global", "connected")
