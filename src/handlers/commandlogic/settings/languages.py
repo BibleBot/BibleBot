@@ -50,9 +50,12 @@ def getLanguage(user):
 
     if len(results) > 0:
         if "language" in results[0]:
+            if results[0]["language"] is None:
+                return central.languages.english_us.objectName
+
             return results[0]["language"]
     else:
-        return central.languages.default.objectName
+        return central.languages.english_us.objectName
 
 
 def getLanguages():
