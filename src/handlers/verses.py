@@ -252,7 +252,6 @@ class VerseHandler(Handler):
                                     else:
                                         returnList.append({
                                             "level": "err",
-                                            "twoMessages": False,
                                             "reference": reference,
                                             "message": lang["passagetoolong"]
                                         })
