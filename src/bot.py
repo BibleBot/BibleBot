@@ -89,10 +89,11 @@ class BibleBot(discord.AutoShardedClient):
         else:
             source = "unknown (direct messages?)"
 
-        perms = channel.permissions_for(guild.me)
+        if guild is not None:
+            perms = channel.permissions_for(guild.me)
 
-        if perms.send_messages is False or perms.embed_links is False:
-            return
+            if perms.send_messages is False or perms.embed_links is False:
+                return
 
         if message.startswith(config["BibleBot"]["commandPrefix"]):
             command = message[1:].split(" ")[0]
