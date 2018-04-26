@@ -62,7 +62,12 @@ def isCommand(command, lang):
         "ok": False
     }
 
-    if command == "eval":
+    if command == "setlanguage":
+        result = {
+            "ok": True,
+            "orig": "setlanguage",
+        }
+    elif command == "eval":
         result = {
             "ok": True,
             "orig": "eval"

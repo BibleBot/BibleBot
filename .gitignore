@@ -104,6 +104,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# ignore db
+databases/db
+
 # ignore config file
 src/config.ini
 config.ini
