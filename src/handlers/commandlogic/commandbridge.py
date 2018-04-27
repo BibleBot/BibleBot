@@ -834,7 +834,7 @@ def runCommand(command, args, lang, user):
             "level": "info",
             "text": True,
             "message": "Our favorite Tiger lives by Ephesians 4:29,31-32, " +
-            "Matthew 12:26, James 4:6, and lastly, his calling from God, " +
+            "Matthew 16:26, James 4:6, and lastly, his calling from God, " +
             "1 Peter 5:8. He tells everyone that because of grace in faith " +
             "(Ephesians 2:8-10) he was saved, and not of works. Christ " +
             "Jesus has made him a new creation (2 Corinthians 5:17)."
