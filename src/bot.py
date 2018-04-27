@@ -198,18 +198,22 @@ class BibleBot(discord.AutoShardedClient):
                                          "taffer", "family_text", "staff"]
 
                             for i in range(0, len(preferred)):
-                                if sent is False:
-                                    for ch in item.text_channels:
-                                        if ch.name == preferred[i]:
-                                            perm = ch.permissions_for(item.me)
+                                try:
+                                    if sent is False:
+                                        for ch in item.text_channels:
+                                            if ch.name == preferred[i]:
+                                                perm = ch.permissions_for(
+                                                    item.me)
 
-                                            if perm.send_messages:
-                                                if perm.embed_links:
-                                                    await ch.send(
-                                                        embed=res["message"])
-                                                else:
-                                                    await ch.send(res["message"].fields[0].value)  # noqa: E501
-                                            sent = True
+                                                if perm.send_messages:
+                                                    if perm.embed_links:
+                                                        await ch.send(
+                                                            embed=res["message"])
+                                                    else:
+                                                        await ch.send(res["message"].fields[0].value)  # noqa: E501
+                                                sent = True
+                                except Exception:
+                                    sent = False
                         else:
                             for ch in item.text_channels:
                                 if ch.name == "announcements":
