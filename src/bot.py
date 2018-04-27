@@ -157,7 +157,7 @@ class BibleBot(discord.AutoShardedClient):
                     for item in bot.guilds:
                         if str(item.id) == res["leave"]:
                             await item.leave()
-
+                            await channel.send("Left " + str(item.name))
                 return
 
             if "isError" not in res:
