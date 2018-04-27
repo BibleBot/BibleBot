@@ -201,7 +201,7 @@ class BibleBot(discord.AutoShardedClient):
                                 try:
                                     if sent is False:
                                         for ch in item.text_channels:
-                                            if ch.name == preferred[i]:
+                                            if ch.name == preferred[i] and sent is False:
                                                 perm = ch.permissions_for(
                                                     item.me)
 
