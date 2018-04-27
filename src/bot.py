@@ -116,7 +116,7 @@ class BibleBot(discord.AutoShardedClient):
                                        "owner may appeal by contacting " +
                                        "Seraphim#4035.")
                     central.logMessage(
-                        "err", shard, identifier, source, "is banned")
+                        "err", shard, identifier, source, "Server is banned.")
                     return
 
             if central.isBanned(str(sender.id)):
@@ -126,7 +126,7 @@ class BibleBot(discord.AutoShardedClient):
                 await channel.send("You may appeal by " +
                                    "contacting Seraphim#4035.")
                 central.logMessage("err", shard, identifier,
-                                   source, "is banned")
+                                   source, "User is banned.")
                 return
 
             command = message[1:].split(" ")[0]
@@ -304,7 +304,7 @@ class BibleBot(discord.AutoShardedClient):
                                            "owner may appeal by contacting " +
                                            "Seraphim#4035.")
                         central.logMessage(
-                            "err", shard, identifier, source, "is banned")
+                            "err", shard, identifier, source, "Server is banned.")
                         return
 
                 if central.isBanned(str(sender.id)):
@@ -314,7 +314,7 @@ class BibleBot(discord.AutoShardedClient):
                     await channel.send("You may appeal by " +
                                        "contacting Seraphim#4035.")
                     central.logMessage(
-                        "err", shard, identifier, source, "is banned")
+                        "err", shard, identifier, source, "User is banned.")
                     return
 
                 if "invalid" not in result and "spam" not in result:
