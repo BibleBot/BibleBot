@@ -66,15 +66,15 @@
         "versenumbers": "versenumbers",
         "headings": "επικεφαλίδες",
         "puppet": "puppet",
-        "leave": "leave",
+        "leave": "άφησε",
         "setlanguage": "setlanguage",
         "language": "γλώσσα",
         "languages": "γλώσσες",
         "users": "χρήστες",
-        "servers": "servers",
-        "announce": "announce",
-        "invite": "invite",
-        "supporters": "supporters"
+        "servers": "σέρβερς",
+        "announce": "ανακοίνωσε",
+        "invite": "πρόσκληση",
+        "supporters": "υποστηρικτές"
     },
     "arguments": {
         "yes": "Ναι",
