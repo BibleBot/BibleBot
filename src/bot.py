@@ -210,7 +210,7 @@ class BibleBot(discord.AutoShardedClient):
 
                                                 if perm.send_messages:
                                                     await channel.send(str(count) +
-                                                                       "/" + total + " - " +
+                                                                       "/" + str(total) + " - " +
                                                                        item.name + " :white_check_mark:")
                                                     if perm.embed_links:
                                                         await ch.send(
@@ -219,7 +219,7 @@ class BibleBot(discord.AutoShardedClient):
                                                         await ch.send(res["message"].fields[0].value)  # noqa: E501
                                                 else:
                                                     await channel.send(str(count) +
-                                                                       "/" + total + " - " +
+                                                                       "/" + str(total) + " - " +
                                                                        item.name + " :regional_indicator_x:")
                                                 sent = True
                                 except Exception:
