@@ -93,7 +93,7 @@ class BibleBot(discord.AutoShardedClient):
             embedOrReactionNotAllowed = False
             perms = channel.permissions_for(guild.me)
 
-            if not perms.send_messages:
+            if not perms.send_messages or not perms.read_messages:
                 return
 
             if not perms.embed_links:
@@ -102,12 +102,12 @@ class BibleBot(discord.AutoShardedClient):
             if not perms.add_reactions:
                 embedOrReactionNotAllowed = True
 
+        if message.startswith(config["BibleBot"]["commandPrefix"]):
             if embedOrReactionNotAllowed:
                 await channel.send("I need 'Embed Links'" +
                                    " and 'Add Reactions' permissions!")
                 return
 
-        if message.startswith(config["BibleBot"]["commandPrefix"]):
             if guild is not None:
                 if central.isBanned(str(guild.id)):
                     await channel.send("This server has been banned from " +
@@ -296,6 +296,11 @@ class BibleBot(discord.AutoShardedClient):
                 shard, raw, sender, language)
 
             if result is not None:
+                if embedOrReactionNotAllowed:
+                    await channel.send("I need 'Embed Links'" +
+                                       " and 'Add Reactions' permissions!")
+                    return
+
                 if guild is not None:
                     if central.isBanned(str(guild.id)):
                         await channel.send("This server has been banned " +
