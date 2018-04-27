@@ -158,6 +158,8 @@ class BibleBot(discord.AutoShardedClient):
                         if str(item.id) == res["leave"]:
                             await item.leave()
                             await channel.send("Left " + str(item.name))
+
+                central.logMessage("info", shard, identifier, source, "+leave")
                 return
 
             if "isError" not in res:
