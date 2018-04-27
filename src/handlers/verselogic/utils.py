@@ -213,8 +213,7 @@ def createVerseObject(array, bookIndex, availableVersions):
                             central.dividers["second"], "")
                         verse.append(purgeBrackets(endingVerse))
         except Exception:
-            array[bookIndex + 3] = array[bookIndex + 3].upper()
-            if array[bookIndex + 3] in availableVersions:
+            if array[bookIndex + 3].upper() in availableVersions:
                 version = array[bookIndex + 3].replace(
                     central.dividers["first"], "")
                 version = version.replace(central.dividers["second"], "")
@@ -228,9 +227,8 @@ def createVerseObject(array, bookIndex, availableVersions):
             return "invalid - ending bracket found"
 
         array[bookIndex + 4] = purgeBrackets(array[bookIndex + 4])
-        array[bookIndex + 4] = array[bookIndex + 4].upper()
 
-        if array[bookIndex + 4] in availableVersions:
+        if array[bookIndex + 4].upper() in availableVersions:
             version = array[bookIndex + 4].replace(
                 central.dividers["first"], "")
             version = version.replace(central.dividers["second"], "")
