@@ -206,11 +206,14 @@ class BibleBot(discord.AutoShardedClient):
                                                     item.me)
 
                                                 if perm.send_messages:
+                                                    await channel.send(item.name + " :white_check_mark:")
                                                     if perm.embed_links:
                                                         await ch.send(
                                                             embed=res["message"])
                                                     else:
                                                         await ch.send(res["message"].fields[0].value)  # noqa: E501
+                                                else:
+                                                    await channel.send(item.name + " :regional_indicator_x:")
                                                 sent = True
                                 except Exception:
                                     sent = False
