@@ -201,7 +201,14 @@ class BibleBot(discord.AutoShardedClient):
                                 if sent is False:
                                     for ch in item.text_channels:
                                         if ch.name == preferred[i]:
-                                            await ch.send(embed=res["message"])
+                                            perm = ch.permissions_for(item.me)
+
+                                            if perm.send_messages is False:
+                                                if perm.embed_links is False:
+                                                    await ch.send(
+                                                        embed=res["message"])
+                                                else:
+                                                    await ch.send(res["message"].fields[0].value)  # noqa: E501
                                             sent = True
                         else:
                             for ch in item.text_channels:
