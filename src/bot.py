@@ -203,8 +203,8 @@ class BibleBot(discord.AutoShardedClient):
                                         if ch.name == preferred[i]:
                                             perm = ch.permissions_for(item.me)
 
-                                            if perm.send_messages is False:
-                                                if perm.embed_links is False:
+                                            if perm.send_messages:
+                                                if perm.embed_links:
                                                     await ch.send(
                                                         embed=res["message"])
                                                 else:
