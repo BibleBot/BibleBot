@@ -85,7 +85,7 @@ class VerseHandler(Handler):
                         invalid = True
                         return {"invalid": invalid}
 
-                if invalid is False:
+                if not invalid:
                     verses[verseCount] = verse
                     verseCount += 1
 
@@ -140,7 +140,7 @@ class VerseHandler(Handler):
                             if books.ot[index] == name:
                                 isOT = True
 
-                            if results[0]["hasOT"] is False and isOT:
+                            if not results[0]["hasOT"] and isOT:
                                 response = lang["otnotsupported"]
                                 response = response.replace(
                                     "<version>", results[0]["name"])
@@ -164,7 +164,7 @@ class VerseHandler(Handler):
                             if books.nt[index] == name:
                                 isNT = True
 
-                            if results[0]["hasNT"] is False and isNT:
+                            if not results[0]["hasNT"] and isNT:
                                 response = lang["ntnotsupported"]
                                 response = response.replace(
                                     "<version>", results[0]["name"])
@@ -188,7 +188,7 @@ class VerseHandler(Handler):
                             if books.deu[index] == name:
                                 isDEU = True
 
-                            if results[0]["hasDEU"] is False and isDEU:
+                            if not results[0]["hasDEU"] and isDEU:
                                 response = lang["deunotsupported"]
                                 response = response.replace(
                                     "<version>", results[0]["name"])

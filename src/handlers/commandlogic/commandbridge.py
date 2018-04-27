@@ -39,7 +39,8 @@ def runCommand(command, args, lang, user):
 
     if command == "biblebot":
         embed.title = lang["biblebot"].replace(
-            "<biblebotversion>", central.config["meta"]["version"])
+            "<biblebotversion>", central.config["meta"]["version"]).replace(
+                "Elliott Pardee (vypr)", "Seraphim Pardee (Seraphim#4035)")
         embed.description = lang["code"]
         embed.color = 303102
         embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
@@ -131,7 +132,7 @@ def runCommand(command, args, lang, user):
                 query.replace("\"", "")
 
                 pages = []
-                maxResultsPerPage = 6
+                maxResultsPerPage = 5
                 totalPages = math.ceil(len(results.keys()) / maxResultsPerPage)
 
                 if totalPages == 0:
@@ -864,7 +865,7 @@ def runCommand(command, args, lang, user):
         }
 
 
-def runOwnerCommand(command, args, lang):
+def runOwnerCommand(bot, command, args, lang):
     embed = discord.Embed()
 
     if command == "puppet":
@@ -958,3 +959,29 @@ def runOwnerCommand(command, args, lang):
             "level": "info",
             "message": embed
         }
+    elif command == "ban":
+        if central.addBan(args[0]):
+            return {
+                "level": "info",
+                "text": True,
+                "message": "Banned " + args[0] + "."
+            }
+        else:
+            return {
+                "level": "err",
+                "text": True,
+                "message": args[0] + " is already banned."
+            }
+    elif command == "unban":
+        if central.removeBan(args[0]):
+            return {
+                "level": "info",
+                "text": True,
+                "message": "Unbanned " + args[0] + "."
+            }
+        else:
+            return {
+                "level": "err",
+                "text": True,
+                "message": args[0] + " is not banned."
+            }

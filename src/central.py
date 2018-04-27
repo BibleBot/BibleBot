@@ -33,6 +33,7 @@ logger = VyLogger("default")
 
 db = tinydb.TinyDB(dir_path + "/../databases/db")
 versionDB = tinydb.TinyDB(dir_path + "/../databases/versiondb")
+banDB = tinydb.TinyDB(dir_path + "/../databases/bandb")
 
 languages = languages
 
@@ -77,6 +78,38 @@ def logMessage(level, shard, sender, source, msg):
         logger.info(message)
     elif level == "debug":
         logger.debug(message)
+
+
+def addBan(entryid):
+    idealEntry = tinydb.Query()
+    result = banDB.search(idealEntry.id == entryid)
+
+    if len(result) > 0:
+        return False
+    else:
+        banDB.insert({"id": entryid})
+        return True
+
+
+def removeBan(entryid):
+    idealEntry = tinydb.Query()
+    result = banDB.search(idealEntry.id == entryid)
+
+    if len(result) > 0:
+        banDB.remove(idealEntry.id == entryid)
+        return True
+    else:
+        return False
+
+
+def isBanned(entryid):
+    idealEntry = tinydb.Query()
+    result = banDB.search(idealEntry.id == entryid)
+
+    if len(result) > 0:
+        return True
+    else:
+        return False
 
 
 def sleep(milliseconds):

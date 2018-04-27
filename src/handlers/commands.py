@@ -67,6 +67,16 @@ def isCommand(command, lang):
             "ok": True,
             "orig": "setlanguage",
         }
+    elif command == "ban":
+        result = {
+            "ok": True,
+            "orig": "ban"
+        }
+    elif command == "unban":
+        result = {
+            "ok": True,
+            "orig": "unban"
+        }
     elif command == "eval":
         result = {
             "ok": True,
@@ -109,6 +119,10 @@ def isOwnerCommand(command, lang):
         return True
     elif command == commands["addversion"]:
         return True
+    elif command == "ban":
+        return True
+    elif command == "unban":
+        return True
     elif command == "eval":
         return True
     else:
@@ -124,7 +138,7 @@ class CommandHandler(Handler):
 
         if properCommand["ok"]:
             origCmd = properCommand["orig"]
-            if isOwnerCommand(origCmd, rawLanguage) is False:
+            if not isOwnerCommand(origCmd, rawLanguage):
                 if origCmd != commands["search"]:
                     if origCmd != commands["headings"] and origCmd != commands["versenumbers"]:  # noqa: E501
                         if origCmd != commands["servers"] and origCmd != commands["users"]:  # noqa: E501
@@ -280,7 +294,8 @@ class CommandHandler(Handler):
             else:
                 try:
                     if str(sender.id) == central.config["BibleBot"]["owner"]:
-                        return commandBridge.runOwnerCommand(command, args,
+                        return commandBridge.runOwnerCommand(bot,
+                                                             command, args,
                                                              rawLanguage)
                 except Exception:
                     embed = discord.Embed()

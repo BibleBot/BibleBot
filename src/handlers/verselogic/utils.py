@@ -30,8 +30,12 @@ import central  # noqa: E402
 def tokenize(msg):
     array = []
 
-    if "-" in msg:
-        for item in msg.split("-"):
+    dashes = ["-", "—", "–"]
+    dashInMessage = any(dash in msg for dash in dashes)
+    dashUsed = [dash for dash in dashes if dash in msg]
+
+    if dashInMessage:
+        for item in msg.split(dashUsed[0]):
             split = item.split(":")
 
             for item in split:
@@ -243,14 +247,14 @@ def createReferenceString(verse):
             verse[k] = re.sub(r"[^a-zA-Z0-9]", "", verse[k])
 
     try:
-        if isinstance(int(verse[1]), numbers.Number) is False:
+        if not isinstance(int(verse[1]), numbers.Number):
             return
 
-        if isinstance(int(verse[2]), numbers.Number) is False:
+        if not isinstance(int(verse[2]), numbers.Number):
             return
 
         if len(verse) == 4:
-            if isinstance(int(verse[3]), numbers.Number) is False:
+            if not isinstance(int(verse[3]), numbers.Number):
                 return
     except Exception:
         verse = verse
@@ -274,7 +278,7 @@ def createReferenceString(verse):
                 reference = verse[0] + " " + verse[1] + \
                     ":" + verse[2] + "-" + verse[3]
 
-        if isinstance(reference, str) is False:
+        if not isinstance(reference, str):
             reference = verse[0] + " " + verse[1] + \
                 ":" + verse[2] + "-" + verse[3]
 

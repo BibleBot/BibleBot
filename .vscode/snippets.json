@@ -11,6 +11,13 @@
     },
     "language import": {
         "prefix": "langimp",
-        "body": "__$0 = open(__dir_path + \"/../../i18n/$0/$0.json\")"
+        "body": [
+            "__$0 = open(__dir_path + \"/../../i18n/$0/$0.json\")",
+            "__$0 = __json.loads(__$0.read())"
+        ]
+    },
+    "language object": {
+        "prefix": "langobj",
+        "body": "$0 = __Language(\"$1\", \"$0\", \"__$0\", \"$2\")"
     }
 }
