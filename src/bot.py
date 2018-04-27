@@ -304,7 +304,8 @@ class BibleBot(discord.AutoShardedClient):
                                            "owner may appeal by contacting " +
                                            "Seraphim#4035.")
                         central.logMessage(
-                            "err", shard, identifier, source, "Server is banned.")
+                            "err", shard, identifier,
+                            source, "Server is banned.")
                         return
 
                 if central.isBanned(str(sender.id)):
