@@ -221,7 +221,7 @@ def createVerseObject(array, bookIndex, availableVersions):
                 verse.append("v - " + version.upper())
             else:
                 verse.append(re.sub(
-                    r"[a-zA-Z]", "", array[bookIndex + 3]))
+                    r"[a-zA-Z]", "-", array[bookIndex + 3]))
 
     if len(array) > bookIndex + 4:
         if central.dividers["second"] in array[bookIndex + 4]:
@@ -244,7 +244,7 @@ def createReferenceString(verse):
 
     for k in range(0, len(verse)):
         if isinstance(verse[k], str):
-            verse[k] = re.sub(r"[^a-zA-Z0-9]", "", verse[k])
+            verse[k] = re.sub(r"[^a-zA-Z0-9\-]", "", verse[k])
 
     try:
         if not isinstance(int(verse[1]), numbers.Number):
@@ -274,6 +274,12 @@ def createReferenceString(verse):
             if verse[3].startswith("v"):
                 reference = verse[0] + " " + verse[1] + \
                     ":" + verse[2] + " | v: " + verse[3][1:]
+            elif "-" in verse[3]:
+                reference = verse[0] + " " + verse[1] + \
+                    ":" + verse[2]
+            elif verse[3] == "":
+                reference = verse[0] + " " + verse[1] + \
+                    ":" + verse[2] + "-"
             else:
                 reference = verse[0] + " " + verse[1] + \
                     ":" + verse[2] + "-" + verse[3]

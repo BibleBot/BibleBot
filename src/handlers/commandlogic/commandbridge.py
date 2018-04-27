@@ -989,7 +989,7 @@ def runOwnerCommand(bot, command, args, lang):
         if len(args) > 0:
             exists = False
             serverID = None
-            serverName = [arg.name + " " for arg in args][0:-1]
+            serverName = [arg + " " for arg in args][0:-1]
 
             for item in bot.guilds:
                 if item.name == serverName:
@@ -999,7 +999,7 @@ def runOwnerCommand(bot, command, args, lang):
             if exists:
                 return {
                     "level": "info",
-                    "leave": serverID
+                    "leave": str(serverID)
                 }
             else:
                 return {
