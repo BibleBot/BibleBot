@@ -149,6 +149,17 @@ class BibleBot(discord.AutoShardedClient):
             if res is None:
                 return
 
+            if "leave" in res:
+                if res["leave"] == "this":
+                    if guild is not None:
+                        await guild.leave()
+                else:
+                    for item in bot.guilds:
+                        if str(item.id) == res["leave"]:
+                            await item.leave()
+
+                return
+
             if "isError" not in res:
                 if "announcement" not in res:
                     if "twoMessages" in res:

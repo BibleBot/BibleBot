@@ -985,3 +985,30 @@ def runOwnerCommand(bot, command, args, lang):
                 "text": True,
                 "message": args[0] + " is not banned."
             }
+    elif command == "leave":
+        if len(args) > 0:
+            exists = False
+            serverID = None
+            serverName = [arg.name + " " for arg in args][0:-1]
+
+            for item in bot.guilds:
+                if item.name == serverName:
+                    exists = True
+                    serverID = item.id
+
+            if exists:
+                return {
+                    "level": "info",
+                    "leave": serverID
+                }
+            else:
+                return {
+                    "level": "err",
+                    "text": True,
+                    "message": "Server does not exist!"
+                }
+        else:
+            return {
+                "level": "info",
+                "leave": "this"
+            }
