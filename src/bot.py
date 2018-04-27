@@ -221,6 +221,7 @@ class BibleBot(discord.AutoShardedClient):
                                                     await channel.send(str(count) +
                                                                        "/" + str(total) + " - " +
                                                                        item.name + " :regional_indicator_x:")
+                                                count += 1
                                                 sent = True
                                 except Exception:
                                     sent = False
