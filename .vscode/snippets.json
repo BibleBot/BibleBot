@@ -18,6 +18,6 @@
     },
     "language object": {
         "prefix": "langobj",
-        "body": "$0 = __Language(\"$1\", \"$0\", \"__$0\", \"$2\")"
+        "body": "$0 = __Language(\"$1\", \"$0\", __$0, \"$2\")"
     }
 }
