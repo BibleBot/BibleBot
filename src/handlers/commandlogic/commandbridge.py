@@ -892,7 +892,7 @@ def runOwnerCommand(bot, command, args, lang):
             return {
                 "level": "info",
                 "text": True,
-                "message": eval(message)
+                "message": exec(message)
             }
         except Exception as e:
             return {
