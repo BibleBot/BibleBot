@@ -197,10 +197,10 @@ class BibleBot(discord.AutoShardedClient):
                                          "congregation", "general",
                                          "taffer", "family_text", "staff"]
 
-                            for i in range(0, len(preferred)):
+                            for ch in item.text_channels:
                                 try:
                                     if sent is False:
-                                        for ch in item.text_channels:
+                                        for i in range(0, len(preferred)):
                                             if ch.name == preferred[i] and sent is False:
                                                 perm = ch.permissions_for(
                                                     item.me)
