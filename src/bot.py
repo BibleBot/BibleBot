@@ -110,7 +110,7 @@ class BibleBot(discord.AutoShardedClient):
         if message.startswith(config["BibleBot"]["commandPrefix"]):
             if guild is not None:
                 if central.isBanned(str(guild.id)):
-                    await channel.send("This server has been banned from" +
+                    await channel.send("This server has been banned from " +
                                        "using BibleBot.")
                     await channel.send("If this is invalid, the server " +
                                        "owner may appeal by contacting " +
@@ -298,7 +298,7 @@ class BibleBot(discord.AutoShardedClient):
             if result is not None:
                 if guild is not None:
                     if central.isBanned(str(guild.id)):
-                        await channel.send("This server has been banned" +
+                        await channel.send("This server has been banned " +
                                            "from using BibleBot.")
                         await channel.send("If this is invalid, the server " +
                                            "owner may appeal by contacting " +
