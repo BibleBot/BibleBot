@@ -343,7 +343,7 @@ class BibleBot(discord.AutoShardedClient):
                         if "twoMessages" in item:
                             await channel.send(item["firstMessage"])
                             await channel.send(item["secondMessage"])
-                        else:
+                        elif "message" in item:
                             await channel.send(item["message"])
 
                         if "reference" in item:
