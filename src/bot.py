@@ -108,27 +108,6 @@ class BibleBot(discord.AutoShardedClient):
                                    " and 'Add Reactions' permissions!")
                 return
 
-            if guild is not None:
-                if central.isBanned(str(guild.id)):
-                    await channel.send("This server has been banned from " +
-                                       "using BibleBot.")
-                    await channel.send("If this is invalid, the server " +
-                                       "owner may appeal by contacting " +
-                                       "Seraphim#4035.")
-                    central.logMessage(
-                        "err", shard, identifier, source, "Server is banned.")
-                    return
-
-            if central.isBanned(str(sender.id)):
-                await channel.send(sender.mention +
-                                   " You have been banned from " +
-                                   "using BibleBot.")
-                await channel.send("You may appeal by " +
-                                   "contacting Seraphim#4035.")
-                central.logMessage("err", shard, identifier,
-                                   source, "User is banned.")
-                return
-
             command = message[1:].split(" ")[0]
             args = message.split(" ")
 
@@ -147,6 +126,29 @@ class BibleBot(discord.AutoShardedClient):
             self.currentPage = 1
 
             if res is None:
+                return
+
+            if res is not None:
+                if guild is not None:
+                    if central.isBanned(str(guild.id)):
+                        await channel.send("This server has been banned" +
+                                           " from using BibleBot.")
+                        await channel.send("If this is invalid, the server " +
+                                           "owner may appeal by contacting " +
+                                           "Seraphim#4035.")
+                        central.logMessage(
+                            "err", shard, identifier, source, "Server is " +
+                            "banned.")
+                        return
+
+            if central.isBanned(str(sender.id)):
+                await channel.send(sender.mention +
+                                   " You have been banned from " +
+                                   "using BibleBot.")
+                await channel.send("You may appeal by " +
+                                   "contacting Seraphim#4035.")
+                central.logMessage("err", shard, identifier,
+                                   source, "User is banned.")
                 return
 
             if "leave" in res:
