@@ -23,7 +23,7 @@
     "headingsfail": "Χρησιμοποίησε `+<headings><enable>` ή `+<headings><disable>`.",
     "setlanguagesuccess": "Η γλώσσα ορίστηκε επιτυχώς.",
     "setlanguagefail": "Αποτυχία ορισμού γλώσσας, δες `+<languages>`.",
-    "languageused": "Χρησιμοποιείς γλώσσα, Γράψε `+<setlanguage>` για να ορίσεις μία διαφορετική γλώσσα.",
+    "languageused": "Χρησιμοποιείς Ελληνικά, Γράψε `+<setlanguage>` για να ορίσεις μία διαφορετική γλώσσα.",
     "nolanguageused": "Δεν μπόρεσα να βρω το όνομά σου στη βάση δεδομένων μου, έχεις χρησιμοποιήσει `+<setlanguage>` ακόμα;",
     "languages": "Υποστηρίζω",
     "otnotsupported": "Η έκδοση <version> δεν υποστηρίζει την Παλαιά Διαθήκη.",
