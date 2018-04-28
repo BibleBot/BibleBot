@@ -21,6 +21,7 @@ import discord
 import os
 import central
 import configparser
+import ast
 
 from handlers.commandlogic.settings import languages
 from handlers.verses import VerseHandler
@@ -114,7 +115,8 @@ class BibleBot(discord.AutoShardedClient):
             if not isinstance(args.pop(0), str):
                 args = None
 
-            rawLanguage = eval("central.languages." + str(language))
+            rawLanguage = ast.literal_eval(
+                "central.languages." + str(language))
             rawLanguage = rawLanguage.rawObject
 
             cmdHandler = CommandHandler()
@@ -191,8 +193,6 @@ class BibleBot(discord.AutoShardedClient):
                                             return True
 
                         continuePaging = True
-                        reaction = None
-                        user = None
 
                         try:
                             while continuePaging:
@@ -255,8 +255,8 @@ class BibleBot(discord.AutoShardedClient):
                                 for ch in item.text_channels:
                                     try:
                                         if not sent:
-                                            for i in range(0, len(preferred)):
-                                                if ch.name == preferred[i]:
+                                            for name in preferred:
+                                                if ch.name == name:
                                                     if not sent:
                                                         perm = ch.permissions_for(  # noqa: E501
                                                             item.me)

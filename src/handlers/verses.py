@@ -19,6 +19,7 @@
 import os
 import sys
 import math
+import ast
 import random
 import tinydb
 from handlers.verselogic import utils
@@ -35,8 +36,9 @@ import central  # noqa: E402
 
 
 class VerseHandler(Handler):
+    @classmethod
     def processRawMessage(self, shard, rawMessage, sender, lang):
-        lang = eval("central.languages." + str(lang)).rawObject
+        lang = ast.literal_eval("central.languages." + str(lang)).rawObject
         availableVersions = settings.versions.getVersionsByAcronym()
         msg = rawMessage.content
 
@@ -47,30 +49,30 @@ class VerseHandler(Handler):
             verses = {}
             verseCount = 0
 
-            for i in range(0, len(split)):
+            for i, j in enumerate(split):
                 try:
-                    split[i] = utils.purify(split[i])
+                    j = utils.purify(j)
                 except Exception:
-                    split[i] = split[i]
+                    j = j
 
-                split[i] = utils.parseSpacedBookName(split[i], split, i)
+                j = utils.parseSpacedBookName(j, split, i)
 
-                book = utils.purgeBrackets(split[i])
-                difference = utils.getDifference(book, split[i])
+                book = utils.purgeBrackets(j)
+                difference = utils.getDifference(book, j)
 
                 if book.lower() in books.ot:
                     bookNames.append(books.ot[book.lower()])
-                    split[i] = difference + books.ot[book.lower()]
+                    j = difference + books.ot[book.lower()]
                     bookIndexes.append(i)
 
                 if book.lower() in books.nt:
                     bookNames.append(books.nt[book.lower()])
-                    split[i] = difference + books.nt[book.lower()]
+                    j = difference + books.nt[book.lower()]
                     bookIndexes.append(i)
 
                 if book.lower() in books.deu:
                     bookNames.append(books.deu[book.lower()])
-                    split[i] = difference + books.deu[book.lower()]
+                    j = difference + books.deu[book.lower()]
                     bookIndexes.append(i)
 
             for index in bookIndexes:
@@ -257,7 +259,7 @@ class VerseHandler(Handler):
                                         })
                         else:
                             result = rev.getResult(
-                                reference, version, headings, verseNumbers)
+                                reference, version, verseNumbers)
 
                             content = "```Dust\n" + result["title"] + \
                                 "\n\n" + result["text"] + "```"

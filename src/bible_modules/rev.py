@@ -88,7 +88,7 @@ def getResult(query, version, verseNumbers):
                               0, re.MULTILINE)[1:-1]
 
             if verseNumbers == "disable":
-                text = re.sub(r".?\[[0-9]\]", "")
+                text = re.sub(r".?\[[0-9]\]", "", text)
 
             verseObject = {
                 "passage": query,

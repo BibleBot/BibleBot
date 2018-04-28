@@ -122,11 +122,11 @@ def runCommand(command, args, lang, user):
                 if i != 0:
                     query += args[i] + " "
         else:
-            for i in range(0, len(args)):
-                query += args[i] + " "
+            for arg in args:
+                query += arg + " "
 
         if version != "REV":
-            results = biblegateway.search(version, query)
+            results = biblegateway.search(version, query[0:-1])
 
             if results is not None:
                 query.replace("\"", "")
@@ -482,7 +482,7 @@ def runCommand(command, args, lang, user):
         else:
             verse = bibleutils.getVOTD()
             result = rev.getResult(
-                verse, version, headings, verseNumbers)
+                verse, version, verseNumbers)
 
             content = "```Dust\n" + result["title"] + \
                 "\n\n" + result["text"] + "```"
@@ -580,7 +580,7 @@ def runCommand(command, args, lang, user):
         else:
             verse = bibleutils.getRandomVerse()
             result = rev.getResult(
-                verse, version, headings, verseNumbers)
+                verse, version, verseNumbers)
 
             content = "```Dust\n" + result["title"] + \
                 "\n\n" + result["text"] + "```"
@@ -808,7 +808,7 @@ def runCommand(command, args, lang, user):
                 }
         else:
             result = rev.getResult(
-                verse, version, headings, verseNumbers)
+                verse, version, verseNumbers)
 
             content = "```Dust\n" + result["title"] + \
                 "\n\n" + result["text"] + "```"

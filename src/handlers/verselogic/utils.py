@@ -168,18 +168,18 @@ def createVerseObject(array, bookIndex, availableVersions):
     #    return "invalid - found bracket at beginning"
 
     bracketIndexes = []
-    for i in range(0, len(array)):
+    for i, j in enumerate(array):
         if i <= bookIndex:
-            if central.dividers["first"] in array[i]:
-                isInstance = isinstance(array[i].index(
+            if central.dividers["first"] in j:
+                isInstance = isinstance(j.index(
                     central.dividers["first"]), numbers.Number)
 
                 if isInstance:
                     bracketIndexes.append(i)
 
         if i > bookIndex:
-            if central.dividers["second"] in array[i]:
-                isInstance = isinstance(array[i].index(
+            if central.dividers["second"] in j:
+                isInstance = isinstance(j.index(
                     central.dividers["second"]), numbers.Number)
 
                 if isInstance:
@@ -240,9 +240,9 @@ def createVerseObject(array, bookIndex, availableVersions):
 def createReferenceString(verse):
     reference = None
 
-    for k in range(0, len(verse)):
-        if isinstance(verse[k], str):
-            verse[k] = re.sub(r"[^a-zA-Z0-9\-]", "", verse[k])
+    for i, j in enumerate(verse):
+        if isinstance(j, str):
+            j = re.sub(r"[^a-zA-Z0-9\-]", "", j)
 
     try:
         if not isinstance(int(verse[1]), numbers.Number):

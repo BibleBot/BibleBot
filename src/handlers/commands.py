@@ -18,6 +18,7 @@
 
 import sys
 import os
+import ast
 import discord
 from handlers.commandlogic import commandbridge as commandBridge
 
@@ -130,8 +131,9 @@ def isOwnerCommand(command, lang):
 
 
 class CommandHandler(Handler):
+    @classmethod
     def processCommand(self, bot, command, lang, sender, args=None):
-        rawLanguage = eval("central.languages." + lang).rawObject
+        rawLanguage = ast.literal_eval("central.languages." + lang).rawObject
         commands = rawLanguage["commands"]
 
         properCommand = isCommand(command, rawLanguage)
