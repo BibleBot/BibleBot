@@ -240,9 +240,9 @@ def createVerseObject(array, bookIndex, availableVersions):
 def createReferenceString(verse):
     reference = None
 
-    for i, j in enumerate(verse):
-        if isinstance(j, str):
-            j = re.sub(r"[^a-zA-Z0-9\-]", "", j)
+    for v in verse:
+        if isinstance(v, str):
+            v = re.sub(r"[^a-zA-Z0-9\-]", "", v)
 
     try:
         if not isinstance(int(verse[1]), numbers.Number):

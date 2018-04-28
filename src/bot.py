@@ -196,11 +196,11 @@ class BibleBot(discord.AutoShardedClient):
 
                         try:
                             while continuePaging:
-                                reaction, user = await bot.wait_for(
+                                reaction = await bot.wait_for(
                                     'reaction_add', timeout=120.0, check=check)
                                 await reaction.message.edit(
                                     embed=res["pages"][self.currentPage - 1])
-                                reaction, user = await bot.wait_for(
+                                reaction = await bot.wait_for(
                                     'reaction_remove', timeout=120.0,
                                     check=check)
                                 await reaction.message.edit(
