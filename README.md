@@ -46,7 +46,10 @@ Bot Owner Commands:
 
 * `+addversion versionname abbv hasOT hasNT hasAPO` - add a version (`+av`)
 * `+puppet message` - say something as the bot
-* `+eval javascript` - execute javascript code
+* `+eval python` - execute python code (it's a ast.literal_eval wrapper)
+* `+ban id` - ban an id from using the bot
+* `+unban id` - unban an id from using the bot
+* `+leave (name)` leave the current or (name) server (argument optional)
 
 Invite BibleBot to your server! https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=19520
 
@@ -71,4 +74,4 @@ and the dotfiles do not need to have the version number updated.
 
 ### Special Thanks
 
-**adfizz, apocz, audiovideodisco, Banská Bystrica, Blubb, BonaventureSissokovitch, Buggyrcobra, Coal, DeadPixels, jznsamuel, Koockies, Mark Nunberg, Manelic, Raven Melodie, omeratagun, Sezess, sunray.steemit, SwedishMeatball, Tuonela, TySpeedy, Viva98, xnkmevaou, Zyxl** and many more for their hard work on helping BibleBot reach the world by translating languages :heart:
+**adfizz, apocz, audiovideodisco, Banská Bystrica, Blubb, BonaventureSissokovitch, Buggyrcobra, Coal, DeadPixels, jznsamuel, Koockies, Mark Nunberg, Manelic, Raven Melodie, omeratagun, Sezess, sunray.steemit, SwedishMeatball, Tuonela, TySpeedy, Viva98, xnkmevaou, Zyxl and many more** for their hard work on helping BibleBot reach the world by translating languages :heart:
