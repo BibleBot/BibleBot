@@ -50,8 +50,8 @@
     "anonymousDonors": "Anonymous Donors",
     "donorsNotListed": "And those not listed!",
     "zeroOrOne": "0 ou 1",
-    "enabled": "ativo",
-    "disabled": "desactivado",
+    "enabled": "ativada",
+    "disabled": "desactivada",
     "commands": {
         "search": "pesquisar",
         "setversion": "defversao",
