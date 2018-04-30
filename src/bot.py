@@ -1,5 +1,5 @@
 '''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+    Copyright (c) 2018 BibleBot <vypr [at] vypr [dot] space>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ import discord
 import os
 import central
 import configparser
-import ast
 
 from handlers.commandlogic.settings import languages
 from handlers.verses import VerseHandler
@@ -115,7 +114,7 @@ class BibleBot(discord.AutoShardedClient):
             if not isinstance(args.pop(0), str):
                 args = None
 
-            rawLanguage = ast.literal_eval(
+            rawLanguage = eval(
                 "central.languages." + str(language))
             rawLanguage = rawLanguage.rawObject
 

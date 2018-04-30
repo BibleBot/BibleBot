@@ -1,5 +1,5 @@
 '''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+    Copyright (c) 2018 BibleBot <vypr [at] vypr [dot] space>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 import sys
 import os
-import ast
 import discord
 from handlers.commandlogic import commandbridge as commandBridge
 
@@ -133,7 +132,7 @@ def isOwnerCommand(command, lang):
 class CommandHandler(Handler):
     @classmethod
     def processCommand(self, bot, command, lang, sender, args=None):
-        rawLanguage = ast.literal_eval("central.languages." + lang).rawObject
+        rawLanguage = eval("central.languages." + lang).rawObject
         commands = rawLanguage["commands"]
 
         properCommand = isCommand(command, rawLanguage)

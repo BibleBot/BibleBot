@@ -1,5 +1,5 @@
 '''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+    Copyright (c) 2018 BibleBot <vypr [at] vypr [dot] space>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 import os
 import sys
 import math
-import ast
 import random
 import tinydb
 from handlers.verselogic import utils
@@ -38,7 +37,7 @@ import central  # noqa: E402
 class VerseHandler(Handler):
     @classmethod
     def processRawMessage(self, shard, rawMessage, sender, lang):
-        lang = ast.literal_eval("central.languages." + str(lang)).rawObject
+        lang = eval("central.languages." + str(lang)).rawObject
         availableVersions = settings.versions.getVersionsByAcronym()
         msg = rawMessage.content
 

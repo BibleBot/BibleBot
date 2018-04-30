@@ -1,5 +1,5 @@
 '''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+    Copyright (c) 2018 BibleBot <vypr [at] vypr [dot] space>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -39,8 +39,7 @@ def runCommand(command, args, lang, user):
 
     if command == "biblebot":
         embed.title = lang["biblebot"].replace(
-            "<biblebotversion>", central.config["meta"]["version"]).replace(
-                "Elliott Pardee (vypr)", "Seraphim Pardee (Seraphim#4035)")
+            "<biblebotversion>", central.config["meta"]["version"])
         embed.description = lang["code"]
         embed.color = 303102
         embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
@@ -98,8 +97,7 @@ def runCommand(command, args, lang, user):
                         value=response + "\n\n**" + lang["usage"] + "**",
                         inline=False)
         embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
-        embed.add_field(name=lang["links"], value=lang["patreon"] +
-                        "\n" + lang["joinserver"] + "\n" + lang["copyright"],
+        embed.add_field(name=lang["links"], value=lang["joinserver"],
                         inline=False)
 
         return {
