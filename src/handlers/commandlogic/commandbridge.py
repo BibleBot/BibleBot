@@ -40,7 +40,10 @@ def runCommand(command, args, lang, user):
     if command == "biblebot":
         embed.title = lang["biblebot"].replace(
             "<biblebotversion>", central.config["meta"]["version"])
-        embed.description = lang["code"]
+        embed.description = lang["code"].replace("https://git.vypr.space/" +
+                                                 "BibleBot/BibleBot",
+                                                 "https://github.com/" +
+                                                 "BibleBot/BibleBot")
         embed.color = 303102
         embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
                          icon_url="https://cdn.discordapp.com/avatars/" +
