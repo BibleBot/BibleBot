@@ -1,5 +1,5 @@
 '''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+    Copyright (c) 2018 BibleBot <vypr [at] vypr [dot] space>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -137,7 +137,7 @@ class BibleBot(discord.AutoShardedClient):
                                            " from using BibleBot.")
                         await channel.send("If this is invalid, the server " +
                                            "owner may appeal by contacting " +
-                                           "Seraphim#4035.")
+                                           "null#3464.")
                         central.logMessage(
                             "err", shard, identifier, source, "Server is " +
                             "banned.")
@@ -322,7 +322,7 @@ class BibleBot(discord.AutoShardedClient):
                                            "from using BibleBot.")
                         await channel.send("If this is invalid, the server " +
                                            "owner may appeal by contacting " +
-                                           "Seraphim#4035.")
+                                           "null#3464.")
                         central.logMessage(
                             "err", shard, identifier,
                             source, "Server is banned.")
@@ -333,7 +333,7 @@ class BibleBot(discord.AutoShardedClient):
                                        " You have been banned from " +
                                        "using BibleBot.")
                     await channel.send("You may appeal by " +
-                                       "contacting Seraphim#4035.")
+                                       "contacting null#3464.")
                     central.logMessage(
                         "err", shard, identifier, source, "User is banned.")
                     return
@@ -358,6 +358,5 @@ class BibleBot(discord.AutoShardedClient):
 bot = BibleBot()
 central.logMessage("info", 0,
                    "global", "global", "BibleBot v" +
-                   config["meta"]["version"] +
-                   " by Seraphim Pardee")
+                   config["meta"]["version"])
 bot.run(config["BibleBot"]["token"])

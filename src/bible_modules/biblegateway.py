@@ -1,5 +1,5 @@
 '''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+    Copyright (c) 2018 BibleBot <vypr [at] vypr [dot] space>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
