@@ -133,7 +133,7 @@ def runCommand(command, args, lang, user):
                 query.replace("\"", "")
 
                 pages = []
-                maxResultsPerPage = 4
+                maxResultsPerPage = 6
                 totalPages = math.ceil(len(results.keys()) / maxResultsPerPage)
 
                 if totalPages == 0:
@@ -159,15 +159,16 @@ def runCommand(command, args, lang, user):
                         count = 0
 
                         for key in list(results.keys()):
-                            if (count < maxResultsPerPage):
-                                title = results[key]["title"]
-                                text = results[key]["text"]
+                            if len(results[key]["text"]) < 700:
+                                if count < maxResultsPerPage:
+                                    title = results[key]["title"]
+                                    text = results[key]["text"]
 
-                                embed.add_field(
-                                    name=title, value=text, inline=False)
+                                    embed.add_field(
+                                        name=title, value=text, inline=False)
 
-                                del results[key]
-                                count += 1
+                                    del results[key]
+                                    count += 1
                     else:
                         embed.title = lang["nothingFound"].replace(
                             "<query>", query[0:-1])
