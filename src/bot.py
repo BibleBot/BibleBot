@@ -358,6 +358,5 @@ class BibleBot(discord.AutoShardedClient):
 bot = BibleBot()
 central.logMessage("info", 0,
                    "global", "global", "BibleBot v" +
-                   config["meta"]["version"] +
-                   " by Seraphim Pardee")
+                   config["meta"]["version"])
 bot.run(config["BibleBot"]["token"])
