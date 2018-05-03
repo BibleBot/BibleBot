@@ -89,8 +89,9 @@ class BibleBot(discord.AutoShardedClient):
         else:
             source = "unknown (direct messages?)"
 
+        embedOrReactionNotAllowed = False
+
         if guild is not None:
-            embedOrReactionNotAllowed = False
             perms = channel.permissions_for(guild.me)
 
             if not perms.send_messages or not perms.read_messages:
@@ -195,11 +196,11 @@ class BibleBot(discord.AutoShardedClient):
 
                         try:
                             while continuePaging:
-                                reaction = await bot.wait_for(
+                                reaction, user = await bot.wait_for(
                                     'reaction_add', timeout=120.0, check=check)
                                 await reaction.message.edit(
                                     embed=res["pages"][self.currentPage - 1])
-                                reaction = await bot.wait_for(
+                                reaction, user = await bot.wait_for(
                                     'reaction_remove', timeout=120.0,
                                     check=check)
                                 await reaction.message.edit(
