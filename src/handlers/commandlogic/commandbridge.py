@@ -133,7 +133,7 @@ def runCommand(command, args, lang, user):
                 query.replace("\"", "")
 
                 pages = []
-                maxResultsPerPage = 5
+                maxResultsPerPage = 4
                 totalPages = math.ceil(len(results.keys()) / maxResultsPerPage)
 
                 if totalPages == 0:
