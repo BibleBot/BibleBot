@@ -137,7 +137,7 @@ class BibleBot(discord.AutoShardedClient):
                                            " from using BibleBot.")
                         await channel.send("If this is invalid, the server " +
                                            "owner may appeal by contacting " +
-                                           "Seraphim#4035.")
+                                           "null#3464.")
                         central.logMessage(
                             "err", shard, identifier, source, "Server is " +
                             "banned.")
@@ -148,7 +148,7 @@ class BibleBot(discord.AutoShardedClient):
                                    " You have been banned from " +
                                    "using BibleBot.")
                 await channel.send("You may appeal by " +
-                                   "contacting Seraphim#4035.")
+                                   "contacting null#3464.")
                 central.logMessage("err", shard, identifier,
                                    source, "User is banned.")
                 return
@@ -322,7 +322,7 @@ class BibleBot(discord.AutoShardedClient):
                                            "from using BibleBot.")
                         await channel.send("If this is invalid, the server " +
                                            "owner may appeal by contacting " +
-                                           "Seraphim#4035.")
+                                           "null#3464.")
                         central.logMessage(
                             "err", shard, identifier,
                             source, "Server is banned.")
@@ -333,7 +333,7 @@ class BibleBot(discord.AutoShardedClient):
                                        " You have been banned from " +
                                        "using BibleBot.")
                     await channel.send("You may appeal by " +
-                                       "contacting Seraphim#4035.")
+                                       "contacting null#3464.")
                     central.logMessage(
                         "err", shard, identifier, source, "User is banned.")
                     return
