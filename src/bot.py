@@ -340,11 +340,14 @@ class BibleBot(discord.AutoShardedClient):
 
                 if "invalid" not in result and "spam" not in result:
                     for item in result:
-                        if "twoMessages" in item:
-                            await channel.send(item["firstMessage"])
-                            await channel.send(item["secondMessage"])
-                        elif "message" in item:
-                            await channel.send(item["message"])
+                        try:
+                            if "twoMessages" in item:
+                                await channel.send(item["firstMessage"])
+                                await channel.send(item["secondMessage"])
+                            elif "message" in item:
+                                await channel.send(item["message"])
+                        except Exception:
+                            item = item
 
                         if "reference" in item:
                             central.logMessage(item["level"], shard,

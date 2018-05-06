@@ -263,15 +263,15 @@ def createReferenceString(verse):
     if len(verse) >= 4:
         if verse[3].startswith("v"):
             reference = verse[0] + " " + verse[1] + \
-                ":" + verse[2] + " | v: " + verse[3][1:]
+                ":" + verse[2] + " | v: " + verse[3][4:]
         elif len(verse) == 5:
             if verse[4].startswith("v"):
                 reference = verse[0] + " " + verse[1] + ":" + \
-                    verse[2] + "-" + verse[3] + " | v: " + verse[4][1:]
+                    verse[2] + "-" + verse[3] + " | v: " + verse[4][4:]
         else:
             if verse[3].startswith("v"):
                 reference = verse[0] + " " + verse[1] + \
-                    ":" + verse[2] + " | v: " + verse[3][1:]
+                    ":" + verse[2] + " | v: " + verse[3][4:]
             elif "-" in verse[3]:
                 reference = verse[0] + " " + verse[1] + \
                     ":" + verse[2]

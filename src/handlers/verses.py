@@ -156,7 +156,7 @@ class VerseHandler(Handler):
                                 return {
                                     "level": "err",
                                     "twoMessages": True,
-                                    "reference": reference,
+                                    "reference": reference + " " + version,
                                     "firstMessage": response,
                                     "secondMessage": response2
                                 }
@@ -180,7 +180,7 @@ class VerseHandler(Handler):
                                 return {
                                     "level": "err",
                                     "twoMessages": True,
-                                    "reference": reference,
+                                    "reference": reference + " " + version,
                                     "firstMessage": response,
                                     "secondMessage": response2
                                 }
@@ -204,7 +204,7 @@ class VerseHandler(Handler):
                                 return {
                                     "level": "err",
                                     "twoMessages": True,
-                                    "reference": reference,
+                                    "reference": reference + " " + version,
                                     "firstMessage": response,
                                     "secondMessage": response2
                                 }
@@ -225,7 +225,7 @@ class VerseHandler(Handler):
                                 if len(responseString) < 2000:
                                     returnList.append({
                                         "level": "info",
-                                        "reference": reference,
+                                        "reference": reference + " " + version,
                                         "message": responseString
                                     })
                                 elif len(responseString) > 2000:
@@ -246,14 +246,16 @@ class VerseHandler(Handler):
                                         returnList.append({
                                             "level": "info",
                                             "twoMessages": True,
-                                            "reference": reference,
+                                            "reference": reference +
+                                            " " + version,
                                             "firstMessage": responseString1,
                                             "secondMessage": content2
                                         })
                                     else:
                                         returnList.append({
                                             "level": "err",
-                                            "reference": reference,
+                                            "reference": reference +
+                                            " " + version,
                                             "message": lang["passagetoolong"]
                                         })
                         else:
@@ -270,7 +272,7 @@ class VerseHandler(Handler):
                             if len(responseString) < 2000:
                                 returnList.append({
                                     "level": "info",
-                                    "reference": reference,
+                                    "reference": reference + " " + version,
                                     "message": responseString
                                 })
                             elif len(responseString) > 2000:
@@ -291,14 +293,14 @@ class VerseHandler(Handler):
                                     returnList.append({
                                         "level": "info",
                                         "twoMessages": True,
-                                        "reference": reference,
+                                        "reference": reference + " " + version,
                                         "firstMessage": responseString1,
                                         "secondMessage": content2
                                     })
                                 else:
                                     returnList.append({
                                         "level": "err",
-                                        "reference": reference,
+                                        "reference": reference + " " + version,
                                         "message": lang["passagetoolong"]
                                     })
             return returnList
