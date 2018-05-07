@@ -31,6 +31,9 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 config = configparser.ConfigParser()
 config.read(dir_path + "/config.ini")
 
+configVersion = configparser.ConfigParser()
+configVersion.read(dir_path + "/config.example.ini")
+
 shard = None
 totalShards = 1
 
@@ -53,7 +56,7 @@ class BibleBot(discord.AutoShardedClient):
         await self.change_presence(status=discord.Status.online,
                                    activity=discord.Game(
                                        config["meta"]["name"] + " v" +
-                                       config["meta"]["version"] +
+                                       configVersion["meta"]["version"] +
                                        " | Shard: " + str(shard) + " / " +
                                        str(totalShards)))
 
@@ -137,7 +140,7 @@ class BibleBot(discord.AutoShardedClient):
                                            " from using BibleBot.")
                         await channel.send("If this is invalid, the server " +
                                            "owner may appeal by contacting " +
-                                           "null#3464.")
+                                           "vypr#9944.")
                         central.logMessage(
                             "err", shard, identifier, source, "Server is " +
                             "banned.")
@@ -148,7 +151,7 @@ class BibleBot(discord.AutoShardedClient):
                                    " You have been banned from " +
                                    "using BibleBot.")
                 await channel.send("You may appeal by " +
-                                   "contacting null#3464.")
+                                   "contacting vypr#9944.")
                 central.logMessage("err", shard, identifier,
                                    source, "User is banned.")
                 return
@@ -322,7 +325,7 @@ class BibleBot(discord.AutoShardedClient):
                                            "from using BibleBot.")
                         await channel.send("If this is invalid, the server " +
                                            "owner may appeal by contacting " +
-                                           "null#3464.")
+                                           "vypr#9944.")
                         central.logMessage(
                             "err", shard, identifier,
                             source, "Server is banned.")
@@ -333,7 +336,7 @@ class BibleBot(discord.AutoShardedClient):
                                        " You have been banned from " +
                                        "using BibleBot.")
                     await channel.send("You may appeal by " +
-                                       "contacting null#3464.")
+                                       "contacting vypr#9944.")
                     central.logMessage(
                         "err", shard, identifier, source, "User is banned.")
                     return
@@ -361,5 +364,6 @@ class BibleBot(discord.AutoShardedClient):
 bot = BibleBot()
 central.logMessage("info", 0,
                    "global", "global", "BibleBot v" +
-                   config["meta"]["version"])
+                   configVersion["meta"]["version"] +
+                   " by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])

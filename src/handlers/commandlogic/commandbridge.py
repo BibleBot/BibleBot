@@ -39,20 +39,18 @@ def runCommand(command, args, lang, user):
 
     if command == "biblebot":
         embed.title = lang["biblebot"].replace(
-            "<biblebotversion>", central.config["meta"]["version"])
+            "<biblebotversion>", central.version)
         embed.description = lang["code"].replace("https://git.vypr.space/" +
                                                  "BibleBot/BibleBot",
                                                  "https://github.com/" +
                                                  "BibleBot/BibleBot")
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         response = lang["commandlist"]
         response = response.replace(
-            "<biblebotversion>", central.config["meta"]["version"])
+            "<biblebotversion>", central.version)
         response = response.replace(
             "<search>", lang["commands"]["search"])
         response = response.replace(
@@ -100,7 +98,8 @@ def runCommand(command, args, lang, user):
                         value=response + "\n\n**" + lang["usage"] + "**",
                         inline=False)
         embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
-        embed.add_field(name=lang["links"], value=lang["joinserver"],
+        embed.add_field(name=lang["links"], value=lang["website"] +
+                        "\n" + lang["joinserver"],
                         inline=False)
 
         return {
@@ -149,11 +148,8 @@ def runCommand(command, args, lang, user):
                             "<total>", str(totalPages))
                     embed.color = 303102
                     embed.set_footer(text="BibleBot v" +
-                                     central.config["meta"]["version"],
-                                     icon_url="https://cdn.discordapp" +
-                                     ".com/avatars/" +
-                                     "361033318273384449/" +
-                                     "5aad77425546f9baa5e4b5112696e10a.png")
+                                     central.version,
+                                     icon_url=central.icon)
 
                     if len(results.keys()) > 0:
                         count = 0
@@ -198,10 +194,8 @@ def runCommand(command, args, lang, user):
         if versions.setVersion(user, args[0]):
             embed.color = 303102
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             embed.add_field(name="+" + lang["commands"]["setversion"],
                             value=lang["setversionsuccess"])
@@ -224,10 +218,8 @@ def runCommand(command, args, lang, user):
         version = versions.getVersion(user)
 
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         if version is not None:
             if version == "HWP":
@@ -276,10 +268,8 @@ def runCommand(command, args, lang, user):
 
             embed.color = 303102
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             if len(availableVersions) > 0:
                 count = 0
@@ -316,10 +306,8 @@ def runCommand(command, args, lang, user):
         if len(results) > 0:
             embed.color = 303102
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             response = lang["versioninfo"]
 
@@ -366,10 +354,8 @@ def runCommand(command, args, lang, user):
         if languages.setLanguage(user, args[0]):
             embed.color = 303102
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             embed.add_field(name="+" + lang["commands"]["setlanguage"],
                             value=lang["setlanguagesuccess"])
@@ -390,10 +376,8 @@ def runCommand(command, args, lang, user):
             }
     elif command == "language":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         response = lang["languageused"]
 
@@ -411,10 +395,8 @@ def runCommand(command, args, lang, user):
         availableLanguages = languages.getLanguages()
 
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         string = ""
 
@@ -628,10 +610,8 @@ def runCommand(command, args, lang, user):
         if len(args) == 1:
             embed.color = 303102
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             if formatting.setHeadings(user, args[0]):
                 embed.add_field(name="+" + lang["commands"]["headings"],
@@ -661,10 +641,8 @@ def runCommand(command, args, lang, user):
 
             embed.color = 303102
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             if headings == "enable":
                 response = lang["headings"].replace(
@@ -690,10 +668,8 @@ def runCommand(command, args, lang, user):
         if len(args) == 1:
             embed.color = 303102
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             if formatting.setVerseNumbers(user, args[0]):
                 embed.add_field(name="+" + lang["commands"]["versenumbers"],
@@ -724,10 +700,8 @@ def runCommand(command, args, lang, user):
 
             embed.color = 303102
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             if verseNumbers == "enable":
                 response = lang["versenumbers"].replace(
@@ -751,10 +725,8 @@ def runCommand(command, args, lang, user):
                 }
     elif command == "users":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         processed = len(args[0].users)
 
@@ -767,10 +739,8 @@ def runCommand(command, args, lang, user):
         }
     elif command == "servers":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         processed = len(args[0].guilds)
 
@@ -843,10 +813,8 @@ def runCommand(command, args, lang, user):
         }
     elif command == "supporters":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         embed.add_field(name="+" + lang["commands"]["supporters"],
                         value="**" +
@@ -904,10 +872,8 @@ def runOwnerCommand(bot, command, args, lang):
             }
     elif command == "announce":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         message = ""
 
@@ -923,10 +889,8 @@ def runOwnerCommand(bot, command, args, lang):
         }
     elif command == "addversion":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.config["meta"]["version"],
-                         icon_url="https://cdn.discordapp.com/avatars/" +
-                         "361033318273384449/" +
-                         "5aad77425546f9baa5e4b5112696e10a.png")
+        embed.set_footer(text="BibleBot v" + central.version,
+                         icon_url=central.icon)
 
         argc = len(args)
         name = ""

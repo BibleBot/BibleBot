@@ -155,12 +155,7 @@ class CommandHandler(Handler):
                                 embed.set_footer(text="BibleBot v" +
                                                  central.config["meta"]
                                                  ["version"],
-                                                 icon_url="https://cdn."
-                                                 + "discordapp" +
-                                                 ".com/avatars/" +
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e" +
-                                                 "4b5112696e10a.png")
+                                                 icon_url=central.icon)
 
                                 response = rawLanguage["argumentCountError"]
                                 response = response.replace(
@@ -191,12 +186,7 @@ class CommandHandler(Handler):
                                 embed.set_footer(text="BibleBot v" +
                                                  central.config["meta"]
                                                  ["version"],
-                                                 icon_url="https://cdn." +
-                                                 "discordapp." +
-                                                 "com/avatars/" +
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e" +
-                                                 "4b5112696e10a.png")
+                                                 icon_url=central.icon)
 
                                 response = rawLanguage["argumentCountError"]
                                 response = response.replace(
@@ -226,12 +216,8 @@ class CommandHandler(Handler):
                             embed = discord.Embed()
                             embed.color = 16723502
                             embed.set_footer(text="BibleBot v" +
-                                             central.config["meta"]["version"],
-                                             icon_url="https://cdn.discor" +
-                                             "dapp.com/avatars/" +
-                                             "361033318273384449/" +
-                                             "5aad77425546f9baa5e4b5112696" +
-                                             "e10a.png")
+                                             central.version,
+                                             icon_url=central.icon)
 
                             response = rawLanguage["argumentCountError"]
                             response = response.replace(
@@ -253,12 +239,8 @@ class CommandHandler(Handler):
                         embed = discord.Embed()
                         embed.color = 16723502
                         embed.set_footer(text="BibleBot v" +
-                                         central.config["meta"]["version"],
-                                         icon_url="https://cdn.discordapp." +
-                                         "com/avatars/" +
-                                         "361033318273384449/" +
-                                         "5aad77425546f9baa5e" +
-                                         "4b5112696e10a.png")
+                                         central.version,
+                                         icon_url=central.icon)
 
                         embed.add_field(name=rawLanguage["error"],
                                         value=rawLanguage["queryTooShort"])
@@ -272,12 +254,8 @@ class CommandHandler(Handler):
                         embed = discord.Embed()
                         embed.color = 16723502
                         embed.set_footer(text="BibleBot v" +
-                                         central.config["meta"]["version"],
-                                         icon_url="https://cdn.discordapp."
-                                         + "com/avatars/" +
-                                         "361033318273384449/" +
-                                         "5aad77425546f9baa5e" +
-                                         "4b5112696e10a.png")
+                                         central.version,
+                                         icon_url=central.icon)
 
                         response = rawLanguage["argumentCountErrorAL"].replace(
                             "<command>", command).replace("<count>", "1")
@@ -302,11 +280,8 @@ class CommandHandler(Handler):
                     embed = discord.Embed()
                     embed.color = 16723502
                     embed.set_footer(text="BibleBot v" +
-                                     central.config["meta"]["version"],
-                                     icon_url="https://cdn.discordapp." +
-                                     "com/avatars/" +
-                                     "361033318273384449/" +
-                                     "5aad77425546f9baa5e4b5112696e10a.png")
+                                     central.version,
+                                     icon_url=central.icon)
 
                     response = rawLanguage["commandNotFoundError"].replace(
                         "<command>", command)
@@ -321,10 +296,8 @@ class CommandHandler(Handler):
             embed = discord.Embed()
             embed.color = 16723502
             embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+                             central.version,
+                             icon_url=central.icon)
 
             response = rawLanguage["commandNotFoundError"].replace(
                 "<command>", command)
