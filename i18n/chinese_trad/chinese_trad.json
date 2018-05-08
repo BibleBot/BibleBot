@@ -6,6 +6,7 @@
     "commandlistName": "命令",
     "links": "鏈接",
     "error": "錯誤",
+    "website": "Website: <https://biblebot.xyz>",
     "joinserver": "官方伺服器: <https://discord.gg/Ssn8KNv>",
     "versions": "I support",
     "setversionsuccess": "已成功設置版本。",
