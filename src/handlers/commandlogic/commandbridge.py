@@ -40,8 +40,7 @@ def runCommand(command, args, lang, user):
     if command == "biblebot":
         embed.title = lang["biblebot"].replace(
             "<biblebotversion>", central.version)
-        embed.description = lang["code"].replace("https://git.vypr.space/" +
-                                                 "BibleBot/BibleBot",
+        embed.description = lang["code"].replace("repositoryLink",
                                                  "https://github.com/" +
                                                  "BibleBot/BibleBot")
         embed.color = 303102
@@ -98,9 +97,11 @@ def runCommand(command, args, lang, user):
                         value=response + "\n\n**" + lang["usage"] + "**",
                         inline=False)
         embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
-        embed.add_field(name=lang["links"], value=lang["website"] +
-                        "\n" + lang["joinserver"],
-                        inline=False)
+        embed.add_field(name=lang["links"], value=lang["website"].replace(
+            "websiteLink", "http://biblebot.xyz") +
+            "\n" + lang["joinserver"].replace(
+            "inviteLink", "https://discord.gg/seKEJUn"),
+            inline=False)
 
         return {
             "level": "info",
