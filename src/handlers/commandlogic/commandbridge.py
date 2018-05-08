@@ -98,7 +98,7 @@ def runCommand(command, args, lang, user):
                         inline=False)
         embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
         embed.add_field(name=lang["links"], value=lang["website"].replace(
-            "websiteLink", "http://biblebot.xyz") +
+            "websiteLink", "https://biblebot.xyz") +
             "\n" + lang["joinserver"].replace(
             "inviteLink", "https://discord.gg/seKEJUn"),
             inline=False)
