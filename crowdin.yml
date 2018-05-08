@@ -1,8 +1,8 @@
 files:
   - source: /i18n/default/default.json
-    translation: /i18n/%language%/%language%.json
+    translation: /i18n/%two_letters_code%/%two_letters_code%.json
     languages_mapping:
-      language:
+      two_letters_code:
         af: afrikaans
         sq: albanian
         am: amharic
@@ -66,4 +66,3 @@ files:
         ur-PK: urdu_pk
         vi: vietnamese
         cy: welsh
-
