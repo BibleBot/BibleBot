@@ -61,6 +61,7 @@ class VerseHandler(Handler):
             bookNames = []
             verses = {}
             verseCount = 0
+            checkedIndexes = []
 
             for i, j in enumerate(split):
                 try:
@@ -68,25 +69,32 @@ class VerseHandler(Handler):
                 except Exception:
                     j = j
 
-                j = utils.parseSpacedBookName(j, split, i)
+                j = utils.getBook(split, i)
 
-                book = utils.purgeBrackets(j)
-                difference = utils.getDifference(book, j)
+                # i would love to document how this works
+                # but to be honest, i'm not sure how
+                if j is not None:
+                    checkedIndexes.append(i)
 
-                if book.lower() in books.ot:
-                    bookNames.append(books.ot[book.lower()])
-                    j = difference + books.ot[book.lower()]
-                    bookIndexes.append(i)
+                    if (i - 1) not in checkedIndexes and (i + 1) not in checkedIndexes:  # noqa: E501
+                        book = utils.purgeBrackets(j)
+                        difference = utils.getDifference(book, j)
+                        print(book)
 
-                if book.lower() in books.nt:
-                    bookNames.append(books.nt[book.lower()])
-                    j = difference + books.nt[book.lower()]
-                    bookIndexes.append(i)
+                        if book in itemToBook["ot"]:
+                            bookNames.append(book)
+                            j = difference + book
+                            bookIndexes.append(i)
 
-                if book.lower() in books.deu:
-                    bookNames.append(books.deu[book.lower()])
-                    j = difference + books.deu[book.lower()]
-                    bookIndexes.append(i)
+                        if book in itemToBook["nt"]:
+                            bookNames.append(book)
+                            j = difference + book
+                            bookIndexes.append(i)
+
+                        if book in itemToBook["deu"]:
+                            bookNames.append(book)
+                            j = difference + book
+                            bookIndexes.append(i)
 
             for index in bookIndexes:
                 verse = []
@@ -94,6 +102,8 @@ class VerseHandler(Handler):
 
                 verse = utils.createVerseObject(
                     split, index, availableVersions)
+
+                print(verse)
 
                 if isinstance(verse, str):
                     if verse.startswith("invalid"):
@@ -151,8 +161,8 @@ class VerseHandler(Handler):
                         isNT = False
                         isDEU = False
 
-                        for index in books.ot:
-                            if books.ot[index] == name:
+                        for index in itemToBook["ot"]:
+                            if itemToBook["ot"][index] == name:
                                 isOT = True
 
                             if not results[0]["hasOT"] and isOT:
@@ -175,8 +185,8 @@ class VerseHandler(Handler):
                                     "secondMessage": response2
                                 }
 
-                        for index in books.nt:
-                            if books.nt[index] == name:
+                        for index in itemToBook["nt"]:
+                            if itemToBook["nt"][index] == name:
                                 isNT = True
 
                             if not results[0]["hasNT"] and isNT:
@@ -199,8 +209,8 @@ class VerseHandler(Handler):
                                     "secondMessage": response2
                                 }
 
-                        for index in books.deu:
-                            if books.deu[index] == name:
+                        for index in itemToBook["deu"]:
+                            if itemToBook["deu"][index] == name:
                                 isDEU = True
 
                             if not results[0]["hasDEU"] and isDEU:

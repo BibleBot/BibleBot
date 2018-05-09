@@ -17,6 +17,7 @@
 '''
 
 import os
+import json
 import sys
 import re
 import numbers
@@ -24,7 +25,18 @@ import numbers
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(__dir_path + "/../..")
 
+import data.BGBookNames.start as BGBookNames  # noqa: E402
 import central  # noqa: E402
+
+books = None
+
+try:
+    books = open(__dir_path + "/../../data/BGBookNames/books.json")
+    books = json.loads(books.read())
+except FileNotFoundError:
+    BGBookNames.getBooks()
+    books = open(__dir_path + "/../../data/BGBookNames/books.json")
+    books = json.loads(books.read())
 
 
 def tokenize(msg):
@@ -101,6 +113,30 @@ def getDifference(a, b):
     return result.strip()
 
 
+def getBook(array, index):
+    for key in books:
+        for value in books[key]:
+            if array[index] in value:
+                try:
+                    item = array[index] + " " + array[index + 1]
+
+                    if item in value:
+                        return key
+                    elif array[index] == value:
+                        return key
+                except Exception:
+                    try:
+                        item = array[index - 1] + " " + array[index]
+
+                        if item in value:
+                            return key
+                        elif array[index] == value:
+                            return key
+                    except Exception:
+                        if array[index] == value:
+                            return key
+
+
 def parseSpacedBookName(item, array, index):
     singleSpacedBooks = ["Sam", "Sm", "Shmuel", "Kgs", "Melachim", "Chron",
                          "Chr", "Cor", "Thess", "Thes", "Tim", "Tm", "Pet",
@@ -152,6 +188,10 @@ def parseSpacedBookName(item, array, index):
 
 
 def createVerseObject(array, bookIndex, availableVersions):
+    # TODO: See what's up with array length.
+    # Compare it to bookIndex and see if there's more values
+    # that could compose a verse?
+    # This function might need a rewrite.
     verse = []
     bookIndex = int(bookIndex)
 
@@ -206,7 +246,7 @@ def createVerseObject(array, bookIndex, availableVersions):
         try:
             if isinstance(int(array[bookIndex + 3]), numbers.Number):
                 if isinstance(int(array[bookIndex + 2]), numbers.Number):
-                    if int(array[bookIndex + 3]) > int(array[bookIndex + 2]):
+                    if int(array[bookIndex + 3]) >= int(array[bookIndex + 2]):
                         endingVerse = array[bookIndex + 3].replace(
                             central.dividers["first"], "")
                         endingVerse = endingVerse.replace(

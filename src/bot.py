@@ -52,17 +52,14 @@ class BibleBot(discord.AutoShardedClient):
 
         totalShards = self.shard_count - 1
 
-        if not os.path.isfile(dir_path + "/data/BGBookNames/books.json"):
+        modTime = os.path.getmtime(
+            dir_path + "/data/BGBookNames/books.json")
+
+        now = time.time()
+        oneWeekAgo = now - 60*60*24*7  # Number of seconds in two days
+
+        if modTime < oneWeekAgo:
             BGBookNames.getBooks()
-        else:
-            modTime = os.path.getmtime(
-                dir_path + "/data/BGBookNames/books.json")
-
-            now = time.time()
-            oneWeekAgo = now - 60*60*24*7  # Number of seconds in two days
-
-            if modTime < oneWeekAgo:
-                BGBookNames.getBooks()
 
         central.logMessage("info", self.shard_id,
                            "global", "global", "connected")
