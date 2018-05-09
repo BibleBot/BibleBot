@@ -21,6 +21,7 @@ import sys
 import math
 import random
 import tinydb
+import json
 from handlers.verselogic import utils
 
 __dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -30,8 +31,21 @@ from vytypes.handler import Handler  # noqa: E402
 import handlers.commandlogic.settings as settings  # noqa: E402
 from bible_modules import biblegateway as biblegateway  # noqa: E402
 from bible_modules import rev as rev  # noqa: E402
-from data import books  # noqa: E402
+from data.BGBookNames.books import itemToBook  # noqa: E402
 import central  # noqa: E402
+
+books = open(__dir_path + "/../data/BGBookNames/books.json")
+books = json.loads(books.read())
+
+'''
+TODO: I'm expecting the formula to go something like this:
+1. Check book name.
+2. Iterate through each key in books to see if book name is in there.
+3. If so, grab the value in books[key].
+4. Do the thing with parseSpacedBooks.
+5. ???
+6. Profit?
+'''
 
 
 class VerseHandler(Handler):

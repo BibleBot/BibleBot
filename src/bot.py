@@ -19,12 +19,14 @@
 import asyncio
 import discord
 import os
+import time
 import central
 import configparser
 
 from handlers.commandlogic.settings import languages
 from handlers.verses import VerseHandler
 from handlers.commands import CommandHandler
+from data.BGBookNames import start as BGBookNames
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -49,6 +51,18 @@ class BibleBot(discord.AutoShardedClient):
             shard = self.shard_id
 
         totalShards = self.shard_count - 1
+
+        if not os.path.isfile(dir_path + "/data/BGBookNames/books.json"):
+            BGBookNames.getBooks()
+        else:
+            modTime = os.path.getmtime(
+                dir_path + "/data/BGBookNames/books.json")
+
+            now = time.time()
+            oneWeekAgo = now - 60*60*24*7  # Number of seconds in two days
+
+            if modTime < oneWeekAgo:
+                BGBookNames.getBooks()
 
         central.logMessage("info", self.shard_id,
                            "global", "global", "connected")
