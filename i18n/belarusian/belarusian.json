@@ -27,7 +27,7 @@
     "languages": "Я падтрымліваю",
     "otnotsupported": "Версія <version> не падтрымлівае Стары Запавет.",
     "ntnotsupported": "Версія <version> не падтрымлівае Новы Запавет.",
-    "deunotsupported": "The version <version> doesn't support the Apocrypha/Deuterocanon.",
+    "deunotsupported": "Версія <version> не падтрымлівае Апокрыф/Другі канон.",
     "otnotsupported2": "Калі вы хочаце выкарыстоўваць Стары Запавет, `+<setversion>` да версіі, якая мае яго.",
     "ntnotsupported2": "Калі вы хочаце выкарыстоўваць Новы Запавет, `+<setversion>` да версіі, якая мае яго.",
     "deunotsupported2": "If you want to use the Apocrypha/Deuterocanon, `+<setversion>` to a version that has it.",
