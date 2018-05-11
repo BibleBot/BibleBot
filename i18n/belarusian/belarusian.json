@@ -30,7 +30,7 @@
     "deunotsupported": "Версія <version> не падтрымлівае Апокрыф/Другі канон.",
     "otnotsupported2": "Калі вы хочаце выкарыстоўваць Стары Запавет, `+<setversion>` да версіі, якая мае яго.",
     "ntnotsupported2": "Калі вы хочаце выкарыстоўваць Новы Запавет, `+<setversion>` да версіі, якая мае яго.",
-    "deunotsupported2": "If you want to use the Apocrypha/Deuterocanon, `+<setversion>` to a version that has it.",
+    "deunotsupported2": "Калі вы хочаце выкарыстоўваць Апокрыф/Другі канон, перайдзіце да версіі `+<setversion>`, якая мае яго.",
     "passagetoolong": "Праходжанне занадта доўгае для мяне, каб захапіць, прабачце.",
     "votdcantprocess": "Сённяшні верш на дзень не можа быць апрацаваны, глядзі <https://www.biblegateway.com/> для верша дня.",
     "versioninfo": "\n**<versionname>**\n\nЗмяшчае Стары Запавет: <hasOT>\nЗмяшчае Новы Запавет: <hasNT>\nЗмяшчае Апокрыф/Другі канон: <hasDEU>",
