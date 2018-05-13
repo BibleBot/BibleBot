@@ -31,19 +31,17 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 
-def getResult(query, version, verseNumbers):
+def get_result(query, verse_numbers):
     split = query.split(":")
     book = split[0].split(" ")[0]
     chapter = split[0].split(" ")[1]
-    startingVerse = split[1].split("-")[0]
-    endingVerse = 0
+    starting_verse = split[1].split("-")[0]
+    ending_verse = 0
 
     if len(split[1].split("-")) > 1:
-        endingVerse = split[1].split("-")[1]
+        ending_verse = split[1].split("-")[1]
 
-    url = "https://www.revisedenglishversion.com/" + \
-        book + "/" + chapter + "/"
-
+    url = "https://www.revisedenglishversion.com/" + book + "/" + chapter + "/"
     resp = requests.get(url)
 
     # i could've decided to modify the html,
@@ -52,51 +50,40 @@ def getResult(query, version, verseNumbers):
     if resp is not None:
         soup = BeautifulSoup(resp.text, "html.parser")
 
-        for container in soup.findAll(True, {"class": "col1container"}):
+        for container in soup.find_all(True, {"class": "col1container"}):
             text = ""
 
-            for num in container.findAll(True, {"class": ["versenum",
-                                                          "versenumcomm"]}):
-                num.replaceWith("[" + num.getText() + "] ")
+            for num in container.find_all(True, {"class": ["versenum", "versenumcomm"]}):
+                num.replace_with("[" + num.get_text() + "] ")
 
-            for meta in container.findAll(True, {"class": "fnmark"}):
+            for meta in container.find_all(True, {"class": "fnmark"}):
                 meta.decompose()
 
-            if startingVerse > endingVerse:
-                for heading in container.findAll(True,
-                                                 {"class": ["heading",
-                                                            "headingfirst"]}):
-                    heading.string.replaceWith("")
+            if starting_verse > ending_verse:
+                for heading in container.find_all(True, {"class": ["heading", "headingfirst"]}):
+                    heading.string.replace_with("")
 
-                text = " [" + startingVerse + "]" + \
-                    container.getText().split(
-                        "[" + str(int(startingVerse) + 1) +
-                        "]")[0].split("[" + startingVerse + "]")[1]
+                text = " [" + starting_verse + "]" + container.get_text().split(
+                    "[" + str(int(starting_verse) + 1) + "]")[0].split("[" + starting_verse + "]")[1]
 
-                text = re.sub(r"(\r\n|\n|\r)", " ", text,
-                              0, re.MULTILINE)[1:-1]
+                text = re.sub(r"(\r\n|\n|\r)", " ", text, 0, re.MULTILINE)[1:-1]
             else:
 
-                for heading in container.findAll(True,
-                                                 {"class": ["heading",
-                                                            "headingfirst"]}):
-                    heading.string.replaceWith("")
+                for heading in container.find_all(True, {"class": ["heading", "headingfirst"]}):
+                    heading.string.replace_with("")
 
-                text = " [" + startingVerse + "]" + \
-                    container.getText().split(
-                        "[" + str(int(endingVerse) + 1) +
-                        "]")[0].split("[" + startingVerse + "]")[1]
+                text = " [" + starting_verse + "]" + container.get_text().split(
+                    "[" + str(int(ending_verse) + 1) + "]")[0].split("[" + starting_verse + "]")[1]
 
-                text = re.sub(r"(\r\n|\n|\r)", " ", text,
-                              0, re.MULTILINE)[1:-1]
+                text = re.sub(r"(\r\n|\n|\r)", " ", text, 0, re.MULTILINE)[1:-1]
 
-            if verseNumbers == "disable":
+            if verse_numbers == "disable":
                 text = re.sub(r".?\[[0-9]\]", "", text)
 
-            verseObject = {
+            verse_object = {
                 "passage": query,
                 "version": "Revised English Version (REV)",
-                "text": bibleutils.purifyText(text)
+                "text": bibleutils.purify_text(text)
             }
 
-            return verseObject
+            return verse_object

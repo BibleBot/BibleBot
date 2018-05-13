@@ -53,7 +53,7 @@ class VerseHandler:
     @classmethod
     def process_raw_message(cls, raw_message, sender, lang):
         lang = eval("central.languages." + str(lang)).rawObject
-        available_versions = settings.versions.getVersionsByAcronym()
+        available_versions = settings.versions.get_versions_by_acronym()
         msg = raw_message.content
 
         if ":" in msg and " " in msg:
@@ -86,8 +86,7 @@ class VerseHandler:
                     else:
                         split[i] = temp_book
 
-                verse = utils.createVerseObject(
-                    split, adjust_index, available_versions)
+                verse = utils.createVerseObject(split, adjust_index, available_versions)
 
                 if verse != "invalid":
                     if verse not in verses:
@@ -118,13 +117,13 @@ class VerseHandler:
             return_list = []
 
             for reference in references:
-                version = settings.versions.getVersion(sender)
+                version = settings.versions.get_version(sender)
 
                 if version is None or version is "HWP":
                     version = "NRSV"
 
-                headings = settings.formatting.getHeadings(sender)
-                verse_numbers = settings.formatting.getVerseNumbers(sender)
+                headings = settings.formatting.get_headings(sender)
+                verse_numbers = settings.formatting.get_verse_numbers(sender)
 
                 ref_split = reference.split(" | v: ")
 
@@ -133,8 +132,7 @@ class VerseHandler:
                     version = ref_split[1]
 
                 ideal_version = tinydb.Query()
-                results = central.versionDB.search(
-                    ideal_version.abbv == version)
+                results = central.versionDB.search(ideal_version.abbv == version)
 
                 if len(results) > 0:
                     for verse in verses:
@@ -148,13 +146,10 @@ class VerseHandler:
 
                             if not results[0]["hasOT"] and is_ot:
                                 response = lang["otnotsupported"]
-                                response = response.replace(
-                                    "<version>", results[0]["name"])
+                                response = response.replace("<version>", results[0]["name"])
 
                                 response2 = lang["otnotsupported2"]
-                                response2 = response2.replace(
-                                    "<setversion>",
-                                    lang["commands"]["setversion"])
+                                response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
                                 return {
                                     "level": "err",
@@ -170,13 +165,10 @@ class VerseHandler:
 
                             if not results[0]["hasNT"] and is_nt:
                                 response = lang["ntnotsupported"]
-                                response = response.replace(
-                                    "<version>", results[0]["name"])
+                                response = response.replace("<version>", results[0]["name"])
 
                                 response2 = lang.rawObject["ntnotsupported2"]
-                                response2 = response2.replace(
-                                    "<setversion>",
-                                    lang["commands"]["setversion"])
+                                response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
                                 return {
                                     "level": "err",
@@ -192,13 +184,10 @@ class VerseHandler:
 
                             if not results[0]["hasDEU"] and is_deu:
                                 response = lang["deunotsupported"]
-                                response = response.replace(
-                                    "<version>", results[0]["name"])
+                                response = response.replace("<version>", results[0]["name"])
 
                                 response2 = lang["deunotsupported2"]
-                                response2 = response2.replace(
-                                    "<setversion>",
-                                    lang["commands"]["setversion"])
+                                response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
                                 return {
                                     "level": "err",
@@ -209,16 +198,11 @@ class VerseHandler:
                                 }
 
                     if version != "REV":
-                        result = biblegateway.getResult(
-                            reference, version, headings, verse_numbers)
+                        result = biblegateway.get_result(reference, version, headings, verse_numbers)
 
                         if result is not None:
-                            content = "```Dust\n" + result["title"] + \
-                                      "\n\n" + result["text"] + "```"
-
-                            response_string = "**" + result["passage"] + \
-                                              " - " + result["version"] + \
-                                              "**\n\n" + content
+                            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+                            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
                             if len(response_string) < 2000:
                                 return_list.append({
@@ -228,17 +212,13 @@ class VerseHandler:
                                 })
                             elif len(response_string) > 2000:
                                 if len(response_string) < 3500:
-                                    split_text = central.splitter(
-                                        result["text"])
+                                    split_text = central.splitter(result["text"])
 
-                                    content1 = "```Dust\n" + result["title"] + "\n\n" + \
-                                               split_text["first"] + "```"
+                                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
+                                                       "\n\n" + content1
 
-                                    response_string1 = "**" + result["passage"] + " - " + \
-                                                       result["version"] + "**\n\n" + content1
-
-                                    content2 = "```Dust\n " + \
-                                               split_text["second"] + "```"
+                                    content2 = "```Dust\n " + split_text["second"] + "```"
 
                                     return_list.append({
                                         "level": "info",
@@ -254,14 +234,10 @@ class VerseHandler:
                                         "message": lang["passagetoolong"]
                                     })
                     else:
-                        result = rev.getResult(
-                            reference, version, verse_numbers)
+                        result = rev.get_result(reference, verse_numbers)
 
-                        content = "```Dust\n" + result["title"] + \
-                                  "\n\n" + result["text"] + "```"
-
-                        response_string = "**" + result["passage"] + " - " + \
-                                          result["version"] + "**\n\n" + content
+                        content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+                        response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
                         if len(response_string) < 2000:
                             return_list.append({
@@ -274,15 +250,11 @@ class VerseHandler:
                                 split_text = central.splitter(
                                     result["text"])
 
-                                content1 = "```Dust\n" + \
-                                           result["title"] + "\n\n" + \
-                                           split_text["first"] + "```"
-                                response_string1 = "**" + \
-                                                   result["passage"] + " - " + \
-                                                   result["version"] + "**\n\n" + \
-                                                   content1
-                                content2 = "```Dust\n " + \
-                                           split_text["second"] + "```"
+                                content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                                response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
+                                                   "\n\n" + content1
+
+                                content2 = "```Dust\n " + split_text["second"] + "```"
 
                                 return_list.append({
                                     "level": "info",

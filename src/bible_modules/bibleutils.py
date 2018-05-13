@@ -22,7 +22,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def purifyText(text):
+def purify_text(text):
     result = text.replace("“", " \"")
     result = result.replace("[", " <")
     result = result.replace("]", "> ")
@@ -45,21 +45,20 @@ def purifyText(text):
     return re.sub(r"\s+", " ", result)
 
 
-def getRandomVerse():
+def get_random_verse():
     url = "https://dailyverses.net/random-bible-verse"
 
     resp = requests.get(url)
 
     if resp is not None:
         soup = BeautifulSoup(resp.text, "html.parser")
-        verse = soup.find("div", {"class": "bibleChapter"}).find("a").getText()
+        verse = soup.find("div", {"class": "bibleChapter"}).find("a").get_text()
 
         return verse
 
 
-def getVOTD():
-    url = \
-        "https://www.biblegateway.com/reading-plans/verse-of-the-day/next"
+def get_votd():
+    url = "https://www.biblegateway.com/reading-plans/verse-of-the-day/next"
 
     resp = requests.get(url)
 

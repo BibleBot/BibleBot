@@ -27,15 +27,14 @@ sys.path.append(dir_path + "/../../..")
 import central  # noqa: E402
 
 
-def setLanguage(user, language):
+def set_language(user, language):
     try:
         if getattr(central.languages, language) is not None:
-            idealUser = tinydb.Query()
-            userResult = central.db.search(idealUser.id == user.id)
+            ideal_user = tinydb.Query()
+            results = central.db.search(ideal_user.id == user.id)
 
-            if len(userResult) > 0:
-                central.db.update(
-                    {"language": language}, idealUser.id == user.id)
+            if len(results) > 0:
+                central.db.update({"language": language}, ideal_user.id == user.id)
             else:
                 central.db.insert({"id": user.id, "language": language})
 
@@ -44,9 +43,9 @@ def setLanguage(user, language):
         return False
 
 
-def getLanguage(user):
-    idealUser = tinydb.Query()
-    results = central.db.search(idealUser.id == user.id)
+def get_language(user):
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
 
     if len(results) > 0:
         if "language" in results[0]:
@@ -58,13 +57,13 @@ def getLanguage(user):
         return central.languages.english_us.objectName
 
 
-def getLanguages():
+def get_languages():
     languages = []
 
     for lang in [a for a in dir(central.languages) if not a.startswith('__')]:
         name = getattr(central.languages, lang).name
-        objectName = getattr(central.languages, lang).objectName
+        object_name = getattr(central.languages, lang).objectName
 
-        languages.append({"name": name, "objectName": objectName})
+        languages.append({"name": name, "objectName": object_name})
 
     return languages

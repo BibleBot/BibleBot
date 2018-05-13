@@ -27,18 +27,18 @@ sys.path.append(dir_path + "/../../..")
 import central  # noqa: E402
 
 
-def setVersion(user, version):
+def set_version(user, version):
     version = version.upper()
 
-    idealVersion = tinydb.Query()
-    versionResults = central.versionDB.search(idealVersion.abbv == version)
+    ideal_version = tinydb.Query()
+    version_results = central.versionDB.search(ideal_version.abbv == version)
 
-    if len(versionResults) > 0:
-        idealUser = tinydb.Query()
-        results = central.db.search(idealUser.id == user.id)
+    if len(version_results) > 0:
+        ideal_user = tinydb.Query()
+        results = central.db.search(ideal_user.id == user.id)
 
         if len(results) > 0:
-            central.db.update({"version": version}, idealUser.id == user.id)
+            central.db.update({"version": version}, ideal_user.id == user.id)
         else:
             central.db.insert({"id": user.id, "version": version})
 
@@ -47,9 +47,9 @@ def setVersion(user, version):
         return False
 
 
-def getVersion(user):
-    idealUser = tinydb.Query()
-    results = central.db.search(idealUser.id == user.id)
+def get_version(user):
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
 
     if len(results) > 0:
         if "version" in results[0]:
@@ -58,7 +58,7 @@ def getVersion(user):
         return None
 
 
-def getVersions():
+def get_versions():
     results = central.versionDB.all()
     versions = []
 
@@ -68,7 +68,7 @@ def getVersions():
     return sorted(versions)
 
 
-def getVersionsByAcronym():
+def get_versions_by_acronym():
     results = central.versionDB.all()
     versions = []
 

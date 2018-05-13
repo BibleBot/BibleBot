@@ -34,7 +34,7 @@ config.read(dir_path + "/config.ini")
 configVersion = configparser.ConfigParser()
 configVersion.read(dir_path + "/config.example.ini")
 
-version = configVersion["meta"]["version"]
+version = config["meta"]["name"] + "v " + configVersion["meta"]["version"]
 icon = "https://cdn.discordapp.com/avatars/361033318273384449/cc2758488d104770c9630e4c21ad1e4a.png"  # noqa: E501
 
 logger = VyLogger("default")
@@ -51,7 +51,7 @@ dividers = {
 }
 
 
-def capitalizeFirstLetter(string):
+def capitalize_first_letter(string):
     return string[0].upper() + string[1:]
 
 
@@ -71,7 +71,7 @@ def splitter(s):
     }
 
 
-def logMessage(level, shard, sender, source, msg):
+def log_message(level, shard, sender, source, msg):
     if shard is None:
         shard = 1
 
@@ -88,9 +88,9 @@ def logMessage(level, shard, sender, source, msg):
         logger.debug(message)
 
 
-def addBan(entryid):
-    idealEntry = tinydb.Query()
-    result = banDB.search(idealEntry.id == entryid)
+def add_ban(entryid):
+    ideal_entry = tinydb.Query()
+    result = banDB.search(ideal_entry.id == entryid)
 
     if len(result) > 0:
         return False
@@ -99,20 +99,20 @@ def addBan(entryid):
         return True
 
 
-def removeBan(entryid):
-    idealEntry = tinydb.Query()
-    result = banDB.search(idealEntry.id == entryid)
+def remove_ban(entryid):
+    ideal_entry = tinydb.Query()
+    result = banDB.search(ideal_entry.id == entryid)
 
     if len(result) > 0:
-        banDB.remove(idealEntry.id == entryid)
+        banDB.remove(ideal_entry.id == entryid)
         return True
     else:
         return False
 
 
-def isBanned(entryid):
-    idealEntry = tinydb.Query()
-    result = banDB.search(idealEntry.id == entryid)
+def is_banned(entryid):
+    ideal_entry = tinydb.Query()
+    result = banDB.search(ideal_entry.id == entryid)
 
     if len(result) > 0:
         return True

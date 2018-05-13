@@ -79,7 +79,7 @@ def purify(msg):
     msg = msg.replace("<", " < ")
     msg = msg.replace(">", " > ")
     msg = re.sub(r"[^a-zA-Z0-9 \(\)\[\]{} <>: -]", "", msg)
-    return central.capitalizeFirstLetter(msg)
+    return central.capitalize_first_letter(msg)
 
 
 def purgeBrackets(msg):

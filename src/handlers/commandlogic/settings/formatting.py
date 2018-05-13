@@ -27,26 +27,26 @@ sys.path.append(dir_path + "/../../..")
 import central  # noqa: E402
 
 
-def setHeadings(user, headings):
+def set_headings(user, headings):
     headings = headings.lower()
 
     if headings != "enable" and headings != "disable":
         return False
 
-    idealUser = tinydb.Query()
-    results = central.db.search(idealUser.id == user.id)
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
 
     if len(results) > 0:
-        central.db.update({"headings": headings}, idealUser.id == user.id)
+        central.db.update({"headings": headings}, ideal_user.id == user.id)
     else:
         central.db.insert({"id": user.id, "headings": headings})
 
     return True
 
 
-def getHeadings(user):
-    idealUser = tinydb.Query()
-    results = central.db.search(idealUser.id == user.id)
+def get_headings(user):
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
 
     if len(results) > 0:
         if "headings" in results[0]:
@@ -57,27 +57,26 @@ def getHeadings(user):
         return "enable"
 
 
-def setVerseNumbers(user, verseNumbers):
-    verseNumbers = verseNumbers.lower()
+def set_verse_numbers(user, verse_numbers):
+    verse_numbers = verse_numbers.lower()
 
-    if verseNumbers != "enable" and verseNumbers != "disable":
+    if verse_numbers != "enable" and verse_numbers != "disable":
         return False
 
-    idealUser = tinydb.Query()
-    results = central.db.search(idealUser.id == user.id)
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
 
     if len(results) > 0:
-        central.db.update({"verseNumbers": verseNumbers},
-                          idealUser.id == user.id)
+        central.db.update({"verseNumbers": verse_numbers}, ideal_user.id == user.id)
     else:
-        central.db.insert({"id": user.id, "verseNumbers": verseNumbers})
+        central.db.insert({"id": user.id, "verseNumbers": verse_numbers})
 
     return True
 
 
-def getVerseNumbers(user):
-    idealUser = tinydb.Query()
-    results = central.db.search(idealUser.id == user.id)
+def get_verse_numbers(user):
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
 
     if len(results) > 0:
         if "verseNumbers" in results[0]:
