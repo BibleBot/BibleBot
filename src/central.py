@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,15 +14,17 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
-from extensions.vylogger import VyLogger
-from data import languages
 import configparser
-import os
-import tinydb
 import math
+import os
 import time
+
+import tinydb
+
+from data import languages
+from extensions.vylogger import VyLogger
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 

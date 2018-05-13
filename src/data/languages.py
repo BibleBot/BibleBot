@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,16 +14,16 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
+import json as __json
 import os as __os
 import sys as __sys
-import json as __json
 
 __dir_path = __os.path.dirname(__os.path.realpath(__file__))
-__sys.path.append(__dir_path + "/../vytypes")
+__sys.path.append(__dir_path + "/..")
 
-from language import Language as __Language  # noqa: E402
+from vytypes.language import Language as __Language  # noqa: E402
 
 # __defaultLang = open(__dir_path + "/../../i18n/default/default.json")
 # __defaultLang = __json.loads(__defaultLang.read())

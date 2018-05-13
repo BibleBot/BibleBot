@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,13 +14,16 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
+import logging
+import re
+from http.client import HTTPConnection
+
 import requests
 from bs4 import BeautifulSoup
+
 import bible_modules.bibleutils as bibleutils
-import re
-import logging
-from http.client import HTTPConnection
+
 HTTPConnection.debuglevel = 0
 
 logging.getLogger("requests").setLevel(logging.WARNING)

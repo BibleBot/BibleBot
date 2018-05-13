@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,19 +14,20 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import asyncio
-import discord
+import configparser
 import os
 import time
-import central
-import configparser
 
+import discord
+
+import central
+from data.BGBookNames import start as bg_book_names
 from handlers.commandlogic.settings import languages
-from handlers.verses import VerseHandler
 from handlers.commands import CommandHandler
-from data.BGBookNames import start as BGBookNames
+from handlers.verses import VerseHandler
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -36,30 +37,30 @@ config.read(dir_path + "/config.ini")
 configVersion = configparser.ConfigParser()
 configVersion.read(dir_path + "/config.example.ini")
 
-shard = None
-totalShards = 1
-
-currentPage = None
-totalPages = None
-
 
 class BibleBot(discord.AutoShardedClient):
+    def __init__(self, *args, loop=None, **kwargs):
+        super().__init__(self, *args, loop, **kwargs)
+
+        self.shard = None
+        self.total_shards = self.shard_count - 1
+        self.current_page = None
+        self.total_pages = None
+
     async def on_ready(self):
         if self.shard_id is None:
-            shard = 1
+            self.shard = 1
         else:
-            shard = self.shard_id
+            self.shard = self.shard_id
 
-        totalShards = self.shard_count - 1
-
-        modTime = os.path.getmtime(
+        mod_time = os.path.getmtime(
             dir_path + "/data/BGBookNames/books.json")
 
         now = time.time()
-        oneWeekAgo = now - 60*60*24*7  # Number of seconds in two days
+        one_week_ago = now - 60 * 60 * 24 * 7  # Number of seconds in two days
 
-        if modTime < oneWeekAgo:
-            BGBookNames.getBooks()
+        if mod_time < one_week_ago:
+            bg_book_names.getBooks()
 
         central.logMessage("info", self.shard_id,
                            "global", "global", "connected")
@@ -68,8 +69,8 @@ class BibleBot(discord.AutoShardedClient):
                                    activity=discord.Game(
                                        config["meta"]["name"] + " v" +
                                        configVersion["meta"]["version"] +
-                                       " | Shard: " + str(shard) + " / " +
-                                       str(totalShards)))
+                                       " | Shard: " + str(self.shard) + " / " +
+                                       str(self.total_shards)))
 
     async def on_message(self, raw):
         sender = raw.author
@@ -78,7 +79,7 @@ class BibleBot(discord.AutoShardedClient):
         message = raw.content
         guild = None
 
-        if (config["BibleBot"]["devMode"] == "True"):
+        if config["BibleBot"]["devMode"] == "True":
             if str(sender.id) != config["BibleBot"]["owner"]:
                 return
 
@@ -103,22 +104,23 @@ class BibleBot(discord.AutoShardedClient):
         else:
             source = "unknown (direct messages?)"
 
-        embedOrReactionNotAllowed = False
+        embed_or_reaction_not_allowed = False
 
         if guild is not None:
             perms = channel.permissions_for(guild.me)
 
-            if not perms.send_messages or not perms.read_messages:
-                return
+            if perms is not None:
+                if not perms.send_messages or not perms.read_messages:
+                    return
 
-            if not perms.embed_links:
-                embedOrReactionNotAllowed = True
+                if not perms.embed_links:
+                    embed_or_reaction_not_allowed = True
 
-            if not perms.add_reactions:
-                embedOrReactionNotAllowed = True
+                if not perms.add_reactions:
+                    embed_or_reaction_not_allowed = True
 
         if message.startswith(config["BibleBot"]["commandPrefix"]):
-            if embedOrReactionNotAllowed:
+            if embed_or_reaction_not_allowed:
                 await channel.send("I need 'Embed Links'" +
                                    " and 'Add Reactions' permissions!")
                 return
@@ -129,17 +131,17 @@ class BibleBot(discord.AutoShardedClient):
             if not isinstance(args.pop(0), str):
                 args = None
 
-            rawLanguage = eval(
+            raw_language = eval(
                 "central.languages." + str(language))
-            rawLanguage = rawLanguage.rawObject
+            raw_language = raw_language.rawObject
 
-            cmdHandler = CommandHandler()
+            cmd_handler = CommandHandler()
 
-            res = cmdHandler.processCommand(
+            res = cmd_handler.processCommand(
                 bot, command, language, sender, args)
 
-            originalCommand = ""
-            self.currentPage = 1
+            original_command = ""
+            self.current_page = 1
 
             if res is None:
                 return
@@ -153,7 +155,7 @@ class BibleBot(discord.AutoShardedClient):
                                            "owner may appeal by contacting " +
                                            "vypr#9944.")
                         central.logMessage(
-                            "err", shard, identifier, source, "Server is " +
+                            "err", self.shard, identifier, source, "Server is " +
                             "banned.")
                         return
 
@@ -163,7 +165,7 @@ class BibleBot(discord.AutoShardedClient):
                                    "using BibleBot.")
                 await channel.send("You may appeal by " +
                                    "contacting vypr#9944.")
-                central.logMessage("err", shard, identifier,
+                central.logMessage("err", self.shard, identifier,
                                    source, "User is banned.")
                 return
 
@@ -177,7 +179,7 @@ class BibleBot(discord.AutoShardedClient):
                             await item.leave()
                             await channel.send("Left " + str(item.name))
 
-                central.logMessage("info", shard, identifier, source, "+leave")
+                central.logMessage("info", self.shard, identifier, source, "+leave")
                 return
 
             if "isError" not in res:
@@ -186,42 +188,42 @@ class BibleBot(discord.AutoShardedClient):
                         await channel.send(res["firstMessage"])
                         await channel.send(res["secondMessage"])
                     elif "paged" in res:
-                        self.totalPages = len(res["pages"])
+                        self.total_pages = len(res["pages"])
 
                         msg = await channel.send(
                             embed=res["pages"][0])
                         await msg.add_reaction("⬅")
                         await msg.add_reaction("➡")
 
-                        def check(reaction, user):
-                            if reaction.message.id == msg.id:
-                                if str(reaction.emoji) == "⬅":
-                                    if user.id != bot.user.id:
-                                        if self.currentPage != 1:
-                                            self.currentPage -= 1
+                        def check(r, u):
+                            if r.message.id == msg.id:
+                                if str(r.emoji) == "⬅":
+                                    if u.id != bot.user.id:
+                                        if self.current_page != 1:
+                                            self.current_page -= 1
                                             return True
                                 elif str(reaction.emoji) == "➡":
-                                    if user.id != bot.user.id:
-                                        if self.currentPage != self.totalPages:
-                                            self.currentPage += 1
+                                    if u.id != bot.user.id:
+                                        if self.current_page != self.total_pages:
+                                            self.current_page += 1
                                             return True
 
-                        continuePaging = True
+                        continue_paging = True
 
                         try:
-                            while continuePaging:
+                            while continue_paging:
                                 reaction, user = await bot.wait_for(
                                     'reaction_add', timeout=120.0, check=check)
                                 await reaction.message.edit(
-                                    embed=res["pages"][self.currentPage - 1])
+                                    embed=res["pages"][self.current_page - 1])
                                 reaction, user = await bot.wait_for(
                                     'reaction_remove', timeout=120.0,
                                     check=check)
                                 await reaction.message.edit(
-                                    embed=res["pages"][self.currentPage - 1])
+                                    embed=res["pages"][self.current_page - 1])
 
                         except (asyncio.TimeoutError, IndexError):
-                            continuePaging = False
+                            msg.clear_reactions()
                     else:
                         if "reference" not in res and "text" not in res:
                             await channel.send(embed=res["message"])
@@ -231,27 +233,27 @@ class BibleBot(discord.AutoShardedClient):
                             else:
                                 await channel.send("Done.")
 
-                    for originalCommandName in rawLanguage["commands"].keys():
-                        if rawLanguage["commands"][originalCommandName] == command:  # noqa: E501
-                            originalCommand = originalCommandName
+                    for original_command_name in raw_language["commands"].keys():
+                        if raw_language["commands"][original_command_name] == command:  # noqa: E501
+                            original_command = original_command_name
                         elif command == "setlanguage":
-                            originalCommand = "setlanguage"
+                            original_command = "setlanguage"
                         elif command == "ban":
-                            originalCommand = "ban"
+                            original_command = "ban"
                         elif command == "unban":
-                            originalCommand = "unban"
+                            original_command = "unban"
                         elif command == "eval":
-                            originalCommand = "eval"
+                            original_command = "eval"
                         elif command == "jepekula":
-                            originalCommand = "jepekula"
+                            original_command = "jepekula"
                         elif command == "joseph":
-                            originalCommand = "joseph"
+                            original_command = "joseph"
                         elif command == "tiger":
-                            originalCommand = "tiger"
+                            original_command = "tiger"
                 else:
-                    for originalCommandName in rawLanguage["commands"].keys():
-                        if rawLanguage["commands"][originalCommandName] == command:  # noqa: E501
-                            originalCommand = originalCommandName
+                    for original_command_name in raw_language["commands"].keys():
+                        if raw_language["commands"][original_command_name] == command:  # noqa: E501
+                            original_command = original_command_name
 
                     count = 1
                     total = len(bot.guilds)
@@ -300,36 +302,30 @@ class BibleBot(discord.AutoShardedClient):
 
                     await channel.send("Done.")
 
-                cleanArgs = str(args).replace(
+                clean_args = str(args).replace(
                     ",", " ").replace("[", "").replace(
                         "]", "").replace("\"", "").replace(
                             "'", "").replace(
                                 "  ", " ")
 
-                if originalCommand == "puppet":
-                    cleanArgs = ""
-                elif originalCommand == "eval":
-                    cleanArgs = ""
-                elif originalCommand == "announce":
-                    cleanArgs = ""
+                if original_command == "puppet":
+                    clean_args = ""
+                elif original_command == "eval":
+                    clean_args = ""
+                elif original_command == "announce":
+                    clean_args = ""
 
-                central.logMessage(res["level"], shard, identifier,
-                                   source, "+" + originalCommand +
-                                   " " + cleanArgs)
+                central.logMessage(res["level"], self.shard, identifier,
+                                   source, "+" + original_command +
+                                   " " + clean_args)
             else:
                 await channel.send(embed=res["return"])
         else:
-            verseHandler = VerseHandler()
+            verse_handler = VerseHandler()
 
-            result = verseHandler.processRawMessage(
-                shard, raw, sender, language)
+            result = verse_handler.process_raw_message(raw, sender, language)
 
             if result is not None:
-                if embedOrReactionNotAllowed:
-                    await channel.send("I need 'Embed Links'" +
-                                       " and 'Add Reactions' permissions!")
-                    return
-
                 if guild is not None:
                     if central.isBanned(str(guild.id)):
                         await channel.send("This server has been banned " +
@@ -338,7 +334,7 @@ class BibleBot(discord.AutoShardedClient):
                                            "owner may appeal by contacting " +
                                            "vypr#9944.")
                         central.logMessage(
-                            "err", shard, identifier,
+                            "err", self.shard, identifier,
                             source, "Server is banned.")
                         return
 
@@ -349,10 +345,15 @@ class BibleBot(discord.AutoShardedClient):
                     await channel.send("You may appeal by " +
                                        "contacting vypr#9944.")
                     central.logMessage(
-                        "err", shard, identifier, source, "User is banned.")
+                        "err", self.shard, identifier, source, "User is banned.")
                     return
 
                 if "invalid" not in result and "spam" not in result:
+                    if embed_or_reaction_not_allowed:
+                        await channel.send("I need 'Embed Links'" +
+                                           " and 'Add Reactions' permissions!")
+                        return
+
                     for item in result:
                         try:
                             if "twoMessages" in item:
@@ -360,11 +361,11 @@ class BibleBot(discord.AutoShardedClient):
                                 await channel.send(item["secondMessage"])
                             elif "message" in item:
                                 await channel.send(item["message"])
-                        except Exception:
+                        except KeyError:
                             item = item
 
                         if "reference" in item:
-                            central.logMessage(item["level"], shard,
+                            central.logMessage(item["level"], self.shard,
                                                identifier, source,
                                                item["reference"])
                 else:

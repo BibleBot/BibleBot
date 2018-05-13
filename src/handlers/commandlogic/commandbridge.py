@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,14 +14,15 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
-import sys
-import os
 import math
+import os
+import sys
 
 import discord
 import tinydb
+
 from handlers.commandlogic.settings import languages, versions, formatting
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -138,6 +139,8 @@ def runCommand(command, args, lang, user):
 
                 if totalPages == 0:
                     totalPages += 1
+                elif totalPages > 100:
+                    totalPages = 100
 
                 for i in range(0, totalPages):
                     embed = discord.Embed()

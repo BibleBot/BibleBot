@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,18 +14,19 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
-import sys
 import os
+import sys
+
 import discord
+
 from handlers.commandlogic import commandbridge as commandBridge
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(dir_path + "/..")
 
 import central  # noqa: E402
-from vytypes.handler import Handler  # noqa: E402
 
 commandMap = {
     "biblebot": 0,
@@ -129,7 +130,7 @@ def isOwnerCommand(command, lang):
         return False
 
 
-class CommandHandler(Handler):
+class CommandHandler:
     @classmethod
     def processCommand(self, bot, command, lang, sender, args=None):
         rawLanguage = eval("central.languages." + lang).rawObject

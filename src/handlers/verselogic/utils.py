@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,13 +14,13 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
-import os
 import json
-import sys
-import re
 import numbers
+import os
+import re
+import sys
 
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(__dir_path + "/../..")
@@ -121,20 +121,20 @@ def getBook(array, index):
                     item = array[index] + " " + array[index + 1]
 
                     if item in value:
-                        return key
+                        return (key, "+")
                     elif array[index] == value:
-                        return key
+                        return (key, "none")
                 except Exception:
                     try:
                         item = array[index - 1] + " " + array[index]
 
                         if item in value:
-                            return key
+                            return (key, "-")
                         elif array[index] == value:
-                            return key
+                            return (key, "none")
                     except Exception:
                         if array[index] == value:
-                            return key
+                            return (key, "none")
 
 
 def parseSpacedBookName(item, array, index):
@@ -192,9 +192,9 @@ def createVerseObject(array, bookIndex, availableVersions):
     # Compare it to bookIndex and see if there's more values
     # that could compose a verse?
     # This function might need a rewrite.
-    verse = []
     bookIndex = int(bookIndex)
 
+    # check if there are numbers after the book
     try:
         if isinstance(array[bookIndex + 1], numbers.Number):
             return "invalid - NaN"
@@ -204,9 +204,8 @@ def createVerseObject(array, bookIndex, availableVersions):
     except Exception:
         return "invalid"
 
-    # if array[bookIndex].index(central.dividers["first"]):
-    #    return "invalid - found bracket at beginning"
-
+    # find various indexes for brackets and see
+    # if our verse is being surrounded by them
     bracketIndexes = []
     for i, j in enumerate(array):
         if i <= bookIndex:
@@ -229,50 +228,32 @@ def createVerseObject(array, bookIndex, availableVersions):
         if bracketIndexes[0] <= bookIndex and bracketIndexes[1] > bookIndex:
             return "invalid - brackets surrounding"
 
-    book = purgeBrackets(array[bookIndex])
-    chapter = array[bookIndex + 1]
-    startingVerse = array[bookIndex + 2]
-
-    verse.append(book)
-    verse.append(chapter)
-    verse.append(startingVerse)
+    verse = {
+        "book": purgeBrackets(array[bookIndex]),
+        "chapter": array[bookIndex + 1],
+        "startingVerse": array[bookIndex + 2]
+    }
 
     if len(array) > bookIndex + 3:
-        if central.dividers["second"] in array[bookIndex + 3]:
-            return "invalid - ending bracket found"
-
         array[bookIndex + 3] = purgeBrackets(array[bookIndex + 3])
 
         try:
             if isinstance(int(array[bookIndex + 3]), numbers.Number):
                 if isinstance(int(array[bookIndex + 2]), numbers.Number):
                     if int(array[bookIndex + 3]) >= int(array[bookIndex + 2]):
-                        endingVerse = array[bookIndex + 3].replace(
-                            central.dividers["first"], "")
-                        endingVerse = endingVerse.replace(
-                            central.dividers["second"], "")
-                        verse.append(purgeBrackets(endingVerse))
+                        endingVerse = array[bookIndex + 3]
+                        verse["endingVerse"] = endingVerse
         except Exception:
             if array[bookIndex + 3].upper() in availableVersions:
-                version = array[bookIndex + 3].replace(
-                    central.dividers["first"], "")
-                version = version.replace(central.dividers["second"], "")
-                verse.append("v - " + version.upper())
-            else:
-                verse.append(re.sub(
-                    r"[a-zA-Z]", "-", array[bookIndex + 3]))
+                version = array[bookIndex + 3]
+                verse["version"] = version
 
     if len(array) > bookIndex + 4:
-        if central.dividers["second"] in array[bookIndex + 4]:
-            return "invalid - ending bracket found"
-
         array[bookIndex + 4] = purgeBrackets(array[bookIndex + 4])
 
         if array[bookIndex + 4].upper() in availableVersions:
-            version = array[bookIndex + 4].replace(
-                central.dividers["first"], "")
-            version = version.replace(central.dividers["second"], "")
-            verse.append("v - " + version.upper())
+            version = array[bookIndex + 4]
+            verse["version"] = version
 
     return verse
 
