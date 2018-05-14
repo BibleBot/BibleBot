@@ -20,19 +20,19 @@ import json
 
 
 class Language:
-    def __init__(self, name, objectName, rawObject, defaultVersion):
+    def __init__(self, name, object_name, raw_object, default_version):
         self.name = name
-        self.objectName = objectName
-        self.rawObject = rawObject
-        self.defaultVersion = defaultVersion
+        self.object_name = object_name
+        self.raw_object = raw_object
+        self.default_version = default_version
 
-    def toObject(self):
+    def to_object(self):
         return {
             "name": self.name,
-            "objectName": self.objectName,
-            "rawObject": self.rawObject,
-            "defaultVersion": self.defaultVersion
+            "object_name": self.object_name,
+            "raw_object": self.raw_object,
+            "default_version": self.default_version
         }
 
-    def toString(self):
-        return json.dumps(self.toObject())
+    def to_string(self):
+        return json.dumps(self.to_object())

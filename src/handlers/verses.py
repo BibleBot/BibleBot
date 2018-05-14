@@ -52,7 +52,7 @@ TODO: I'm expecting the formula to go something like this:
 class VerseHandler:
     @classmethod
     def process_raw_message(cls, raw_message, sender, lang):
-        lang = eval("central.languages." + str(lang)).rawObject
+        lang = getattr(central.languages, lang).raw_object
         available_versions = settings.versions.get_versions_by_acronym()
         msg = raw_message.content
 
@@ -70,7 +70,7 @@ class VerseHandler:
                 except TypeError:
                     split[i] = split[i]
 
-                book_value = utils.getBook(split, i)
+                book_value = utils.get_book(split, i)
                 adjust = None
 
                 if book_value is not None:
@@ -86,7 +86,7 @@ class VerseHandler:
                     else:
                         split[i] = temp_book
 
-                verse = utils.createVerseObject(split, adjust_index, available_versions)
+                verse = utils.create_verse_object(split, adjust_index, available_versions)
 
                 if verse != "invalid":
                     if verse not in verses:
@@ -108,7 +108,7 @@ class VerseHandler:
 
             for i in range(len(verses)):
                 verse = verses[i]
-                reference = utils.createReferenceString(verse)
+                reference = utils.create_reference_string(verse)
 
                 print(reference)
 
@@ -247,8 +247,7 @@ class VerseHandler:
                             })
                         elif len(response_string) > 2000:
                             if len(response_string) < 3500:
-                                split_text = central.splitter(
-                                    result["text"])
+                                split_text = central.splitter(result["text"])
 
                                 content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                                 response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \

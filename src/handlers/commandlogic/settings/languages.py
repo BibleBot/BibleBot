@@ -50,11 +50,11 @@ def get_language(user):
     if len(results) > 0:
         if "language" in results[0]:
             if results[0]["language"] is None:
-                return central.languages.english_us.objectName
+                return central.languages.english_us.object_name
 
             return results[0]["language"]
     else:
-        return central.languages.english_us.objectName
+        return central.languages.english_us.object_name
 
 
 def get_languages():
@@ -62,8 +62,8 @@ def get_languages():
 
     for lang in [a for a in dir(central.languages) if not a.startswith('__')]:
         name = getattr(central.languages, lang).name
-        object_name = getattr(central.languages, lang).objectName
+        object_name = getattr(central.languages, lang).object_name
 
-        languages.append({"name": name, "objectName": object_name})
+        languages.append({"name": name, "object_name": object_name})
 
     return languages

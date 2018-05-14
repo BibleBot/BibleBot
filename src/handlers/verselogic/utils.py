@@ -25,7 +25,7 @@ import sys
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(__dir_path + "/../..")
 
-import data.BGBookNames.start as BGBookNames  # noqa: E402
+import data.BGBookNames.start as bgbooknames  # noqa: E402
 import central  # noqa: E402
 
 books = None
@@ -34,7 +34,7 @@ try:
     books = open(__dir_path + "/../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 except FileNotFoundError:
-    BGBookNames.getBooks()
+    bgbooknames.getBooks()
     books = open(__dir_path + "/../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 
@@ -43,28 +43,26 @@ def tokenize(msg):
     array = []
 
     dashes = ["-", "—", "–"]
-    dashInMessage = any(dash in msg for dash in dashes)
-    dashUsed = [dash for dash in dashes if dash in msg]
+    dash_in_message = any(dash in msg for dash in dashes)
+    dash_used = [dash for dash in dashes if dash in msg]
 
-    if dashInMessage:
-        for item in msg.split(dashUsed[0]):
+    if dash_in_message:
+        for item in msg.split(dash_used[0]):
             split = item.split(":")
 
-            for item in split:
-                tmpSplit = item.split(" ")
+            for subitem in split:
+                tmp_split = subitem.split(" ")
 
-                for item in tmpSplit:
-                    item = re.sub(
-                        r"[^a-zA-Z0-9:()\"'<>" +
-                        r"|\[\]\{\}\\/ ; *&^%$  # @!.+_?=]", "", item)
+                for subsubitem in tmp_split:
+                    subsubitem = re.sub(r"[^a-zA-Z0-9:()\"'<>|\[\]{\}\\/ ;*&^%$#@!.+_?=]", "", subsubitem)
 
-                    array.append(item)
+                    array.append(subsubitem)
     else:
         for item in msg.split(":"):
             split = item.split(" ")
 
-            for item in split:
-                array.append(item)
+            for subitem in split:
+                array.append(subitem)
 
     return array
 
@@ -78,11 +76,11 @@ def purify(msg):
     msg = msg.replace("}", " } ")
     msg = msg.replace("<", " < ")
     msg = msg.replace(">", " > ")
-    msg = re.sub(r"[^a-zA-Z0-9 \(\)\[\]{} <>: -]", "", msg)
+    msg = re.sub(r"[^a-zA-Z0-9 ()\[\]{}<>:-]", "", msg)
     return central.capitalize_first_letter(msg)
 
 
-def purgeBrackets(msg):
+def purge_brackets(msg):
     msg = msg.replace("(", "")
     msg = msg.replace(")", "")
     msg = msg.replace("[", "")
@@ -94,7 +92,7 @@ def purgeBrackets(msg):
     return msg.replace(" ", "")
 
 
-def getDifference(a, b):
+def get_difference(a, b):
     i = 0
     j = 0
     result = ""
@@ -113,7 +111,7 @@ def getDifference(a, b):
     return result.strip()
 
 
-def getBook(array, index):
+def get_book(array, index):
     for key in books:
         for value in books[key]:
             if array[index] in value:
@@ -187,83 +185,77 @@ def parseSpacedBookName(item, array, index):
     return array[index]
 
 
-def createVerseObject(array, bookIndex, availableVersions):
+def create_verse_object(array, book_index, available_versions):
     # TODO: See what's up with array length.
     # Compare it to bookIndex and see if there's more values
     # that could compose a verse?
     # This function might need a rewrite.
-    bookIndex = int(bookIndex)
+    book_index = int(book_index)
 
     # check if there are numbers after the book
     try:
-        if isinstance(array[bookIndex + 1], numbers.Number):
+        if isinstance(array[book_index + 1], numbers.Number):
             return "invalid - NaN"
 
-        if isinstance(purgeBrackets(array[bookIndex + 2]), numbers.Number):
+        if isinstance(purge_brackets(array[book_index + 2]), numbers.Number):
             return "invalid - NaN"
     except Exception:
         return "invalid"
 
     # find various indexes for brackets and see
     # if our verse is being surrounded by them
-    bracketIndexes = []
+    bracket_indexes = []
     for i, j in enumerate(array):
-        if i <= bookIndex:
+        if i <= book_index:
             if central.dividers["first"] in j:
-                isInstance = isinstance(j.index(
-                    central.dividers["first"]), numbers.Number)
+                is_instance = isinstance(j.index(central.dividers["first"]), numbers.Number)
 
-                if isInstance:
-                    bracketIndexes.append(i)
+                if is_instance:
+                    bracket_indexes.append(i)
 
-        if i > bookIndex:
+        if i > book_index:
             if central.dividers["second"] in j:
-                isInstance = isinstance(j.index(
-                    central.dividers["second"]), numbers.Number)
+                is_instance = isinstance(j.index(central.dividers["second"]), numbers.Number)
 
-                if isInstance:
-                    bracketIndexes.append(i)
+                if is_instance:
+                    bracket_indexes.append(i)
 
-    if len(bracketIndexes) == 2:
-        if bracketIndexes[0] <= bookIndex and bracketIndexes[1] > bookIndex:
+    if len(bracket_indexes) == 2:
+        if bracket_indexes[0] <= book_index <= bracket_indexes[1]:
             return "invalid - brackets surrounding"
 
     verse = {
-        "book": purgeBrackets(array[bookIndex]),
-        "chapter": array[bookIndex + 1],
-        "startingVerse": array[bookIndex + 2]
+        "book": purge_brackets(array[book_index]),
+        "chapter": array[book_index + 1],
+        "startingVerse": array[book_index + 2]
     }
 
-    if len(array) > bookIndex + 3:
-        array[bookIndex + 3] = purgeBrackets(array[bookIndex + 3])
+    if len(array) > book_index + 3:
+        array[book_index + 3] = purge_brackets(array[book_index + 3])
 
         try:
-            if isinstance(int(array[bookIndex + 3]), numbers.Number):
-                if isinstance(int(array[bookIndex + 2]), numbers.Number):
-                    if int(array[bookIndex + 3]) >= int(array[bookIndex + 2]):
-                        endingVerse = array[bookIndex + 3]
-                        verse["endingVerse"] = endingVerse
+            if isinstance(int(array[book_index + 3]), numbers.Number):
+                if isinstance(int(array[book_index + 2]), numbers.Number):
+                    if int(array[book_index + 3]) >= int(array[book_index + 2]):
+                        ending_verse = array[book_index + 3]
+                        verse["endingVerse"] = ending_verse
         except Exception:
-            if array[bookIndex + 3].upper() in availableVersions:
-                version = array[bookIndex + 3]
+            if array[book_index + 3].upper() in available_versions:
+                version = array[book_index + 3]
                 verse["version"] = version
 
-    if len(array) > bookIndex + 4:
-        array[bookIndex + 4] = purgeBrackets(array[bookIndex + 4])
+    if len(array) > book_index + 4:
+        array[book_index + 4] = purge_brackets(array[book_index + 4])
 
-        if array[bookIndex + 4].upper() in availableVersions:
-            version = array[bookIndex + 4]
+        if array[book_index + 4].upper() in available_versions:
+            version = array[book_index + 4]
             verse["version"] = version
 
     return verse
 
 
-def createReferenceString(verse):
+def create_reference_string(verse):
     reference = None
-
-    for v in verse:
-        if isinstance(v, str):
-            v = re.sub(r"[^a-zA-Z0-9\-]", "", v)
 
     try:
         if not isinstance(int(verse[1]), numbers.Number):

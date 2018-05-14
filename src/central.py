@@ -34,7 +34,7 @@ config.read(dir_path + "/config.ini")
 configVersion = configparser.ConfigParser()
 configVersion.read(dir_path + "/config.example.ini")
 
-version = config["meta"]["name"] + "v " + configVersion["meta"]["version"]
+version = config["meta"]["name"] + " v" + configVersion["meta"]["version"]
 icon = "https://cdn.discordapp.com/avatars/361033318273384449/cc2758488d104770c9630e4c21ad1e4a.png"  # noqa: E501
 
 logger = VyLogger("default")

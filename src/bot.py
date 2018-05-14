@@ -40,10 +40,10 @@ configVersion.read(dir_path + "/config.example.ini")
 
 class BibleBot(discord.AutoShardedClient):
     def __init__(self, *args, loop=None, **kwargs):
-        super().__init__(self, *args, loop, **kwargs)
-
+        # noinspection PyArgumentEqualDefault
+        super().__init__(*args, loop=None, **kwargs)
+        self.total_shards = None
         self.shard = None
-        self.total_shards = self.shard_count - 1
         self.current_page = None
         self.total_pages = None
 
@@ -52,6 +52,8 @@ class BibleBot(discord.AutoShardedClient):
             self.shard = 1
         else:
             self.shard = self.shard_id
+
+        self.total_shards = self.shard_count - 1
 
         mod_time = os.path.getmtime(dir_path + "/data/BGBookNames/books.json")
 
@@ -64,7 +66,6 @@ class BibleBot(discord.AutoShardedClient):
         central.log_message("info", self.shard_id, "global", "global", "connected")
 
         activity = discord.Game(central.version + " | Shard: " + str(self.shard) + " / " + str(self.total_shards))
-
         await self.change_presence(status=discord.Status.online, activity=activity)
 
     async def on_message(self, raw):
@@ -126,7 +127,7 @@ class BibleBot(discord.AutoShardedClient):
                 args = None
 
             raw_language = getattr(central.languages, language)
-            raw_language = raw_language.rawObject
+            raw_language = raw_language.raw_object
 
             cmd_handler = CommandHandler()
 
@@ -200,9 +201,9 @@ class BibleBot(discord.AutoShardedClient):
                             while continue_paging:
                                 reaction, user = await bot.wait_for('reaction_add', timeout=120.0, check=check)
                                 await reaction.message.edit(embed=res["pages"][self.current_page - 1])
+
                                 reaction, user = await bot.wait_for('reaction_remove', timeout=120.0, check=check)
-                                await reaction.message.edit(
-                                    embed=res["pages"][self.current_page - 1])
+                                await reaction.message.edit(embed=res["pages"][self.current_page - 1])
 
                         except (asyncio.TimeoutError, IndexError):
                             msg.clear_reactions()

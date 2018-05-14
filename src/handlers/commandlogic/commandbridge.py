@@ -39,7 +39,7 @@ def run_command(command, args, lang, user):
     embed = discord.Embed()
 
     if command == "biblebot":
-        embed.title = lang["biblebot"].replace("<biblebotversion>", central.version)
+        embed.title = lang["biblebot"].replace("<biblebotversion>", central.version.split("v")[1])
         embed.description = lang["code"].replace("repositoryLink", "https://github.com/BibleBot/BibleBot")
 
         embed.color = 303102
@@ -109,14 +109,14 @@ def run_command(command, args, lang, user):
 
                 pages = []
                 max_results_per_page = 6
-                total_pages = math.ceil(len(results.keys()) / max_results_per_page)
+                total_pages = int(math.ceil(len(results.keys()) / max_results_per_page))
 
                 if total_pages == 0:
                     total_pages += 1
                 elif total_pages > 100:
                     total_pages = 100
 
-                for i in range(0, total_pages):
+                for i in range(total_pages):
                     embed = discord.Embed()
 
                     embed.title = lang["searchResults"] + " \"" + query[0:-1] + "\""
@@ -187,8 +187,7 @@ def run_command(command, args, lang, user):
         version = versions.get_version(user)
 
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.version,
-                         icon_url=central.icon)
+        embed.set_footer(text=central.version, icon_url=central.icon)
 
         if version is not None:
             if version == "HWP":
@@ -231,9 +230,7 @@ def run_command(command, args, lang, user):
             embed = discord.Embed()
 
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" +
-                                  central.version,
-                             icon_url=central.icon)
+            embed.set_footer(text=central.version, icon_url=central.icon)
 
             if len(available_versions) > 0:
                 count = 0
@@ -338,8 +335,7 @@ def run_command(command, args, lang, user):
         available_languages = languages.get_languages()
 
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.version,
-                         icon_url=central.icon)
+        embed.set_footer(text=central.version, icon_url=central.icon)
 
         string = ""
 
@@ -560,9 +556,7 @@ def run_command(command, args, lang, user):
     elif command == "versenumbers":
         if len(args) == 1:
             embed.color = 303102
-            embed.set_footer(text="BibleBot v" +
-                                  central.version,
-                             icon_url=central.icon)
+            embed.set_footer(text=central.version, icon_url=central.icon)
 
             if formatting.set_verse_numbers(user, args[0]):
                 embed.add_field(name="+" + lang["commands"]["versenumbers"], value=lang["versenumberssuccess"])
@@ -620,7 +614,7 @@ def run_command(command, args, lang, user):
         }
     elif command == "servers":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.version, icon_url=central.icon)
+        embed.set_footer(text=central.version, icon_url=central.icon)
 
         processed = len(args[0].guilds)
 
@@ -645,7 +639,6 @@ def run_command(command, args, lang, user):
             result = biblegateway.get_result(verse, version, headings, verse_numbers)
 
             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-
             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
             if len(response_string) < 2000:
@@ -658,7 +651,6 @@ def run_command(command, args, lang, user):
             result = rev.get_result(verse, verse_numbers)
 
             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-
             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
             if len(response_string) < 2000:
@@ -743,8 +735,7 @@ def run_owner_command(bot, command, args, lang):
             }
     elif command == "announce":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.version,
-                         icon_url=central.icon)
+        embed.set_footer(text=central.version, icon_url=central.icon)
 
         message = ""
 
@@ -760,8 +751,7 @@ def run_owner_command(bot, command, args, lang):
         }
     elif command == "addversion":
         embed.color = 303102
-        embed.set_footer(text="BibleBot v" + central.version,
-                         icon_url=central.icon)
+        embed.set_footer(text=central.version, icon_url=central.icon)
 
         argc = len(args)
         name = ""
@@ -786,7 +776,7 @@ def run_owner_command(bot, command, args, lang):
             has_deu = True
 
         new_version = Version(name, abbv, has_ot, has_nt, has_deu)
-        central.versionDB.insert(new_version.toObject())
+        central.versionDB.insert(new_version.to_object())
 
         embed.add_field(name="+" + lang["commands"]["addversion"], value=lang["addversionsuccess"])
 

@@ -133,7 +133,7 @@ def is_owner_command(command, lang):
 class CommandHandler:
     @classmethod
     def process_command(cls, bot, command, lang, sender, args=None):
-        raw_language = getattr("central.languages", lang).rawObject
+        raw_language = getattr(central.languages, lang).raw_object
         commands = raw_language["commands"]
 
         proper_command = is_command(command, raw_language)
@@ -153,12 +153,12 @@ class CommandHandler:
                                 embed = discord.Embed()
 
                                 embed.color = 16723502
-                                embed.set_footer(text=central.version,
-                                                 icon_url=central.icon)
+                                embed.set_footer(text=central.version, icon_url=central.icon)
 
                                 response = raw_language["argumentCountError"]
-                                response = response.replace("<command>", command).replace(
-                                    "<count>", str(required_arguments))
+
+                                response = response.replace("<command>", command)
+                                response = response.replace("<count>", str(required_arguments))
 
                                 embed.add_field(name=raw_language["error"], value=response)
 
@@ -181,8 +181,8 @@ class CommandHandler:
                                 embed.set_footer(text=central.version, icon_url=central.icon)
 
                                 response = raw_language["argumentCountError"]
-                                response = response.replace("<command>", command).replace(
-                                    "<count>", str(required_arguments))
+                                response = response.replace("<command>", command)
+                                response = response.replace("<count>", str(required_arguments))
 
                                 embed.add_field(name=raw_language["error"], value=response)
 
@@ -205,8 +205,9 @@ class CommandHandler:
                             embed.set_footer(text=central.version, icon_url=central.icon)
 
                             response = raw_language["argumentCountError"]
-                            response = response.replace("<command>", command).replace(
-                                "<count>", raw_language["zeroOrOne"])
+
+                            response = response.replace("<command>", command)
+                            response = response.replace("<count>", raw_language["zeroOrOne"])
 
                             embed.add_field(name=raw_language["error"], value=response)
 
@@ -237,19 +238,19 @@ class CommandHandler:
                         embed.color = 16723502
                         embed.set_footer(text=central.version, icon_url=central.icon)
 
-                        response = raw_language["argumentCountErrorAL"].replace(
-                            "<command>", command).replace("<count>", "1")
+                        response = raw_language["argumentCountErrorAL"]
 
-                        embed.add_field(
-                            name=raw_language["error"], value=response)
+                        response = response.replace("<command>", command)
+                        response = response.replace("<count>", "1")
+
+                        embed.add_field(name=raw_language["error"], value=response)
 
                         return {
                             "isError": True,
                             "return": embed
                         }
                     else:
-                        return command_bridge.run_command(orig_cmd, args,
-                                                          raw_language, sender)
+                        return command_bridge.run_command(orig_cmd, args, raw_language, sender)
             else:
                 try:
                     if str(sender.id) == central.config["BibleBot"]["owner"] or str(sender.id) == "367665336239128577":
@@ -260,8 +261,8 @@ class CommandHandler:
                     embed.color = 16723502
                     embed.set_footer(text=central.version, icon_url=central.icon)
 
-                    response = raw_language["commandNotFoundError"].replace(
-                        "<command>", command)
+                    response = raw_language["commandNotFoundError"]
+                    response = response.replace("<command>", command)
 
                     embed.add_field(name=raw_language["error"], value=response)
 
@@ -274,8 +275,8 @@ class CommandHandler:
             embed.color = 16723502
             embed.set_footer(text=central.version, icon_url=central.icon)
 
-            response = raw_language["commandNotFoundError"].replace(
-                "<command>", command)
+            response = raw_language["commandNotFoundError"]
+            response = response.replace("<command>", command)
 
             embed.add_field(name=raw_language["error"], value=response)
 
