@@ -26,6 +26,7 @@ __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(__dir_path + "/../..")
 
 import data.BGBookNames.start as bgbooknames  # noqa: E402
+from data.BGBookNames.books import itemToBook  # noqa: E402
 import central  # noqa: E402
 
 books = None
@@ -38,31 +39,39 @@ except FileNotFoundError:
     books = open(__dir_path + "/../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 
+dashes = ["-", "—", "–"]
+
 
 def tokenize(msg):
     array = []
 
-    dashes = ["-", "—", "–"]
     dash_in_message = any(dash in msg for dash in dashes)
     dash_used = [dash for dash in dashes if dash in msg]
+    append_dash = False
 
     if dash_in_message:
-        for item in msg.split(dash_used[0]):
+        for item in msg.split(" "):
             split = item.split(":")
 
             for subitem in split:
                 tmp_split = subitem.split(" ")
 
                 for subsubitem in tmp_split:
-                    subsubitem = re.sub(r"[^a-zA-Z0-9:()\"'<>|\[\]{\}\\/ ;*&^%$#@!.+_?=]", "", subsubitem)
+                    subsubitem = re.sub(r"[^a-zA-Z0-9:()\"'<>|\[\]{\}\\/ ;\-—–*&^%$#@!.+_?=]", "", subsubitem)
+                    subsubitem = re.sub(r"[\-—–]", "-", subsubitem)
 
-                    array.append(subsubitem)
+                    if subsubitem != "":
+                        array.append(subsubitem)
+
+        if append_dash:
+            array.append("-")
     else:
         for item in msg.split(":"):
             split = item.split(" ")
 
             for subitem in split:
-                array.append(subitem)
+                if subitem != "":
+                    array.append(subitem)
 
     return array
 
@@ -76,7 +85,7 @@ def purify(msg):
     msg = msg.replace("}", " } ")
     msg = msg.replace("<", " < ")
     msg = msg.replace(">", " > ")
-    msg = re.sub(r"[^a-zA-Z0-9 ()\[\]{}<>:-]", "", msg)
+    msg = re.sub(r"[^a-zA-Z0-9 ()\[\]{\}<>:\-]", "", msg)
     return central.capitalize_first_letter(msg)
 
 
@@ -103,7 +112,7 @@ def get_difference(a, b):
                 result += b[j]
             else:
                 i += 1
-        except Exception:
+        except IndexError:
             result += b[j]
 
         j += 1
@@ -111,96 +120,25 @@ def get_difference(a, b):
     return result.strip()
 
 
-def get_book(array, index):
-    for key in books:
-        for value in books[key]:
-            if array[index] in value:
-                try:
-                    item = array[index] + " " + array[index + 1]
+def get_books(msg):
+    results = []
 
-                    if item in value:
-                        return (key, "+")
-                    elif array[index] == value:
-                        return (key, "none")
-                except Exception:
-                    try:
-                        item = array[index - 1] + " " + array[index]
+    for key, value in books.items():
+        for item in value:
+            if item in msg:
+                last_item = item.split(" ")[-1]
+                msg_split = msg.split(" ")
 
-                        if item in value:
-                            return (key, "-")
-                        elif array[index] == value:
-                            return (key, "none")
-                    except Exception:
-                        if array[index] == value:
-                            return (key, "none")
+                if last_item in msg_split:
+                    index = msg_split.index(last_item)
+                    results.append((key, index))
+
+    return results
 
 
-def parseSpacedBookName(item, array, index):
-    singleSpacedBooks = ["Sam", "Sm", "Shmuel", "Kgs", "Melachim", "Chron",
-                         "Chr", "Cor", "Thess", "Thes", "Tim", "Tm", "Pet",
-                         "Pt", "Macc", "Mac", "Esd", "Samuel", "Kings",
-                         "Chronicles", "Esdras", "Maccabees", "Corinthians",
-                         "Thessalonians", "Timothy", "Peter", "151"]
-
-    doubleSpacedBooks = ["Azariah", "Manasses", "Manasseh", "Solomon", "Songs"]
-
-    thatOneSongInTheDeuterocanon = ["Men", "Youths", "Children"]
-
-    if item in singleSpacedBooks:
-        array[index] = array[index - 1] + item
-    elif item == "Esther":
-        if index > 0:
-            if array[index - 1] == "Greek":
-                array[index] = array[index - 1] + item
-            else:
-                array[index] = "Esther"
-        else:
-            array[index] = "Esther"
-    elif item == "Jeremiah":
-        isLetter = ((array[index - 2] + array[index - 1]) == "LetterOf")
-
-        if isLetter:
-            array[index] = array[index - 2] + array[index - 1] + item
-        else:
-            array[index] = "Jeremiah"
-    elif item == "Dragon":
-        array[index] = array[index - 3] + \
-            array[index - 2] + array[index - 1] + item
-    elif item in thatOneSongInTheDeuterocanon:
-        array[index] = array[index - 5] + array[index - 4] + \
-            array[index - 3] + array[index - 2] + array[index - 1] + item
-    elif item in doubleSpacedBooks:
-        array[index] = array[index - 2] + array[index - 1] + item
-    elif item in ["John", "Jn"]:
-        num = 0
-        try:
-            if array[index - 1] is not None and index != 0:
-                num = int(array[index - 1])
-
-                if num > 0 and num < 4:
-                    array[index] = array[index - 1] + item
-        except (ValueError, TypeError):
-            array[index] = array[index]  # this is so the linter shuts up
-
-    return array[index]
-
-
-def create_verse_object(array, book_index, available_versions):
-    # TODO: See what's up with array length.
-    # Compare it to bookIndex and see if there's more values
-    # that could compose a verse?
-    # This function might need a rewrite.
+def create_verse_object(name, book_index, msg, available_versions):
     book_index = int(book_index)
-
-    # check if there are numbers after the book
-    try:
-        if isinstance(array[book_index + 1], numbers.Number):
-            return "invalid - NaN"
-
-        if isinstance(purge_brackets(array[book_index + 2]), numbers.Number):
-            return "invalid - NaN"
-    except Exception:
-        return "invalid"
+    array = msg.split(" ")
 
     # find various indexes for brackets and see
     # if our verse is being surrounded by them
@@ -222,34 +160,49 @@ def create_verse_object(array, book_index, available_versions):
 
     if len(bracket_indexes) == 2:
         if bracket_indexes[0] <= book_index <= bracket_indexes[1]:
-            return "invalid - brackets surrounding"
+            return "invalid"
+
+    number_split = array[book_index + 1].split(":")
+    dash_split = number_split[1].split("-")
+
+    chapter = None
+    starting_verse = None
+    ending_verse = None
+
+    try:
+        if isinstance(int(number_split[0]), numbers.Number):
+            chapter = int(number_split[0])
+
+            if isinstance(int(dash_split[0]), numbers.Number):
+                starting_verse = int(dash_split[0])
+
+                if isinstance(int(dash_split[1]), numbers.Number):
+                    ending_verse = int(dash_split[1])
+
+                    if starting_verse > ending_verse:
+                        return "invalid"
+    except (IndexError, TypeError, ValueError):
+        chapter = chapter
 
     verse = {
-        "book": purge_brackets(array[book_index]),
-        "chapter": array[book_index + 1],
-        "startingVerse": array[book_index + 2]
+        "book": name,
+        "chapter": chapter,
+        "startingVerse": starting_verse,
+        "endingVerse": ending_verse
     }
 
-    if len(array) > book_index + 3:
-        array[book_index + 3] = purge_brackets(array[book_index + 3])
+    try:
+        if re.sub(r"[0-9]", "", dash_split[1]) == dash_split[1]:
+            if dash_split[1] == "":
+                verse["endingVerse"] = "-"
+    except IndexError:
+        verse = verse
 
-        try:
-            if isinstance(int(array[book_index + 3]), numbers.Number):
-                if isinstance(int(array[book_index + 2]), numbers.Number):
-                    if int(array[book_index + 3]) >= int(array[book_index + 2]):
-                        ending_verse = array[book_index + 3]
-                        verse["endingVerse"] = ending_verse
-        except Exception:
-            if array[book_index + 3].upper() in available_versions:
-                version = array[book_index + 3]
-                verse["version"] = version
-
-    if len(array) > book_index + 4:
-        array[book_index + 4] = purge_brackets(array[book_index + 4])
-
-        if array[book_index + 4].upper() in available_versions:
-            version = array[book_index + 4]
-            verse["version"] = version
+    try:
+        if array[book_index + 2].upper() in available_versions:
+            verse["version"] = array[book_index + 2].upper()
+    except IndexError:
+        verse = verse
 
     return verse
 
@@ -258,45 +211,40 @@ def create_reference_string(verse):
     reference = None
 
     try:
-        if not isinstance(int(verse[1]), numbers.Number):
+        if not isinstance(int(verse["chapter"]), numbers.Number):
             return
 
-        if not isinstance(int(verse[2]), numbers.Number):
+        if not isinstance(int(verse["startingVerse"]), numbers.Number):
             return
 
-        if len(verse) == 4:
-            if not isinstance(int(verse[3]), numbers.Number):
+        if "endingVerse" in verse.keys():
+            if not isinstance(int(verse["endingVerse"]), numbers.Number):
                 return
-    except Exception:
+    except (ValueError, TypeError, KeyError):
         verse = verse
 
-    if len(verse) <= 3:
-        reference = verse[0] + " " + verse[1] + ":" + verse[2]
+    if "startingVerse" in verse.keys():
+        if verse["book"] in itemToBook["ot"]:
+            reference = itemToBook["ot"][verse["book"]] + " " + str(verse["chapter"]) + ":" + str(
+                verse["startingVerse"])
+        elif verse["book"] in itemToBook["nt"]:
+            reference = itemToBook["nt"][verse["book"]] + " " + str(verse["chapter"]) + ":" + str(
+                verse["startingVerse"])
+        elif verse["book"] in itemToBook["deu"]:
+            reference = itemToBook["deu"][verse["book"]] + " " + str(verse["chapter"]) + ":" + str(
+                verse["startingVerse"])
 
-    if len(verse) >= 4:
-        if verse[3].startswith("v"):
-            reference = verse[0] + " " + verse[1] + \
-                ":" + verse[2] + " | v: " + verse[3][4:]
-        elif len(verse) == 5:
-            if verse[4].startswith("v"):
-                reference = verse[0] + " " + verse[1] + ":" + \
-                    verse[2] + "-" + verse[3] + " | v: " + verse[4][4:]
-        else:
-            if verse[3].startswith("v"):
-                reference = verse[0] + " " + verse[1] + \
-                    ":" + verse[2] + " | v: " + verse[3][4:]
-            elif "-" in verse[3]:
-                reference = verse[0] + " " + verse[1] + \
-                    ":" + verse[2]
-            elif verse[3] == "":
-                reference = verse[0] + " " + verse[1] + \
-                    ":" + verse[2] + "-"
-            else:
-                reference = verse[0] + " " + verse[1] + \
-                    ":" + verse[2] + "-" + verse[3]
+        if "endingVerse" in verse.keys():
+            try:
+                if verse["endingVerse"] != "-":
+                    if int(verse["startingVerse"]) <= int(verse["endingVerse"]):
+                        reference += "-" + str(verse["endingVerse"])
+                else:
+                    reference += "-"
+            except (ValueError, TypeError, KeyError):
+                reference = reference
 
-        if not isinstance(reference, str):
-            reference = verse[0] + " " + verse[1] + \
-                ":" + verse[2] + "-" + verse[3]
+    if "version" in verse.keys():
+        reference = reference + " | v: " + verse["version"]
 
     return reference

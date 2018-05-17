@@ -57,42 +57,19 @@ class VerseHandler:
         msg = raw_message.content
 
         if ":" in msg and " " in msg:
-            split = utils.tokenize(msg)
             verses = []
             verse_count = 0
 
-            for i in range(len(split)):
-                adjust_index = i
-                temp_book = None
+            results = utils.get_books(msg)
 
-                try:
-                    split[i] = utils.purify(split[i])
-                except TypeError:
-                    split[i] = split[i]
-
-                book_value = utils.get_book(split, i)
-                adjust = None
-
-                if book_value is not None:
-                    temp_book, adjust = book_value
-
-                if temp_book is not None:
-                    if adjust == "+":
-                        adjust_index += 1
-                        split[i + 1] = temp_book
-                    elif adjust == "-":
-                        adjust_index -= 1
-                        split[i - 1] = temp_book
-                    else:
-                        split[i] = temp_book
-
-                verse = utils.create_verse_object(split, adjust_index, available_versions)
+            for book, index in results:
+                verse = utils.create_verse_object(book, index, msg, available_versions)
 
                 if verse != "invalid":
-                    if verse not in verses:
-                        verses.append(verse)
+                    verses.append(verse)
+                    verse_count += 1
 
-            print(verses)
+            verses = list(reversed(verses))  # reverse the list because the detection works reversely
 
             if verse_count > 6:
                 responses = ["spamming me, really?", "no spam pls",
@@ -110,9 +87,8 @@ class VerseHandler:
                 verse = verses[i]
                 reference = utils.create_reference_string(verse)
 
-                print(reference)
-
-                references.append(reference)
+                if reference is not None:
+                    references.append(reference)
 
             return_list = []
 
@@ -141,7 +117,7 @@ class VerseHandler:
                         is_deu = False
 
                         for index in itemToBook["ot"]:
-                            if itemToBook["ot"][index] == verse["name"]:
+                            if itemToBook["ot"][index] == verse["book"]:
                                 is_ot = True
 
                             if not results[0]["hasOT"] and is_ot:
@@ -160,7 +136,7 @@ class VerseHandler:
                                 }
 
                         for index in itemToBook["nt"]:
-                            if itemToBook["nt"][index] == verse["name"]:
+                            if itemToBook["nt"][index] == verse["book"]:
                                 is_nt = True
 
                             if not results[0]["hasNT"] and is_nt:
@@ -179,7 +155,7 @@ class VerseHandler:
                                 }
 
                         for index in itemToBook["deu"]:
-                            if itemToBook["deu"][index] == verse["name"]:
+                            if itemToBook["deu"][index] == verse["book"]:
                                 is_deu = True
 
                             if not results[0]["hasDEU"] and is_deu:
@@ -236,7 +212,7 @@ class VerseHandler:
                     else:
                         result = rev.get_result(reference, verse_numbers)
 
-                        content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+                        content = "```Dust\n" + result["text"] + "```"
                         response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
                         if len(response_string) < 2000:
@@ -249,7 +225,7 @@ class VerseHandler:
                             if len(response_string) < 3500:
                                 split_text = central.splitter(result["text"])
 
-                                content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                                content1 = "```Dust\n" + split_text["first"] + "```"
                                 response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
                                                    "\n\n" + content1
 
