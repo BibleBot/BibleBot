@@ -43,8 +43,28 @@ def set_version(user, version):
             central.db.insert({"id": user.id, "version": version})
 
         return True
-    else:
-        return False
+
+    return False
+
+
+def set_guild_version(guild, version):
+    version = version.upper()
+
+    ideal_version = tinydb.Query()
+    version_results = central.versionDB.search(ideal_version.abbv == version)
+
+    if len(version_results) > 0:
+        ideal_guild = tinydb.Query()
+        results = central.guildDB.search(ideal_guild.id == guild.id)
+
+        if len(results) > 0:
+            central.guildDB.update({"version": version}, ideal_guild.id == guild.id)
+        else:
+            central.guildDB.insert({"id": guild.id, "version": version})
+
+        return True
+
+    return False
 
 
 def get_version(user):
@@ -54,8 +74,19 @@ def get_version(user):
     if len(results) > 0:
         if "version" in results[0]:
             return results[0]["version"]
-    else:
-        return None
+
+    return None
+
+
+def get_guild_version(guild):
+    ideal_guild = tinydb.Query()
+    results = central.guildDB.search(ideal_guild.id == guild.id)
+
+    if len(results) > 0:
+        if "version" in results[0]:
+            return results[0]["version"]
+
+    return None
 
 
 def get_versions():

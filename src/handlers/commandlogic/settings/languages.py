@@ -28,6 +28,7 @@ import central  # noqa: E402
 
 
 def set_language(user, language):
+    # noinspection PyBroadException
     try:
         if getattr(central.languages, language) is not None:
             ideal_user = tinydb.Query()
@@ -43,18 +44,43 @@ def set_language(user, language):
         return False
 
 
+def set_guild_language(guild, language):
+    # noinspection PyBroadException
+    try:
+        if getattr(central.languages, language) is not None:
+            ideal_guild = tinydb.Query()
+            results = central.guildDB.search(ideal_guild.id == guild.id)
+
+            if len(results) > 0:
+                central.guildDB.update({"language": language}, ideal_guild.id == guild.id)
+            else:
+                central.guildDB.insert({"id": guild.id, "language": language})
+
+            return True
+    except Exception:
+        return False
+
+
 def get_language(user):
     ideal_user = tinydb.Query()
     results = central.db.search(ideal_user.id == user.id)
 
     if len(results) > 0:
         if "language" in results[0]:
-            if results[0]["language"] is None:
-                return central.languages.english_us.object_name
-
             return results[0]["language"]
-    else:
-        return central.languages.english_us.object_name
+
+    return None
+
+
+def get_guild_language(guild):
+    ideal_guild = tinydb.Query()
+    results = central.guildDB.search(ideal_guild.id == guild.id)
+
+    if len(results) > 0:
+        if "language" in results[0]:
+            return results[0]["language"]
+
+    return central.languages.english_us.object_name
 
 
 def get_languages():

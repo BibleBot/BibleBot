@@ -23,7 +23,7 @@ import sys
 import discord
 import tinydb
 
-from handlers.commandlogic.settings import languages, versions, formatting
+from handlers.commandlogic.settings import languages, versions, formatting, misc
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(dir_path + "/../..")
@@ -35,7 +35,7 @@ from bible_modules import rev  # noqa: E402
 import central  # noqa: E402
 
 
-def run_command(command, args, lang, user):
+def run_command(command, args, lang, user, guild, channel):
     embed = discord.Embed()
 
     if command == "biblebot":
@@ -46,6 +46,7 @@ def run_command(command, args, lang, user):
         embed.set_footer(text=central.version, icon_url=central.icon)
 
         response = lang["commandlist"]
+        response2 = lang["guildcommandlist"]
 
         response = response.replace("<biblebotversion>", central.version)
         response = response.replace("<search>", lang["commands"]["search"])
@@ -70,11 +71,23 @@ def run_command(command, args, lang, user):
         response = response.replace("* ", "")
         response = response.replace("+", central.config["BibleBot"]["commandPrefix"])
 
-        embed.add_field(name=lang["commandlistName"], value=response + "\n\n**" + lang["usage"] + "**", inline=False)
+        response2 = response2.replace("<setguildversion>", lang["commands"]["setguildversion"])
+        response2 = response2.replace("<guildversion>", lang["commands"]["guildversion"])
+        response2 = response2.replace("<setguildlanguage>", lang["commands"]["setguildlanguage"])
+        response2 = response2.replace("<guildlanguage>", lang["commands"]["guildlanguage"])
+        response2 = response2.replace("<setvotdtime>", lang["commands"]["setvotdtime"])
+        response2 = response2.replace("<clearvotdtime>", lang["commands"]["clearvotdtime"])
+        response2 = response2.replace("<votdtime>", lang["commands"]["votdtime"])
+        response2 = response2.replace("* ", "")
+        response2 = response2.replace("+", central.config["BibleBot"]["commandPrefix"])
+
+        embed.add_field(name=lang["commandlistName"], value=response, inline=False)
+        embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
+        embed.add_field(name=lang["guildcommandlistName"], value=response2, inline=False)
         embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
         links = lang["website"].replace("websiteLink", "https://biblebot.xyz") + "\n" + lang["joinserver"].replace(
-            "inviteLink", "https://discord.gg/seKEJUn")
+            "inviteLink", "https://discord.gg/seKEJUn") + "\n\n**" + lang["usage"] + "**"
 
         embed.add_field(name=lang["links"], value=links)
 
@@ -86,15 +99,18 @@ def run_command(command, args, lang, user):
         available_versions = versions.get_versions_by_acronym()
         version = versions.get_version(user)
 
-        query = ""
+        if version is None:
+            version = versions.get_guild_version(guild)
 
-        if version is None or version is "HWP":
-            version = "NRSV"
+            if version is None:
+                version = "NRSV"
+
+        query = ""
 
         if args[0] in available_versions:
             version = args[0]
 
-            for i in args:
+            for i in range(len(args)):
                 if i != 0:
                     query += args[i] + " "
         else:
@@ -160,8 +176,7 @@ def run_command(command, args, lang, user):
         else:
             return {
                 "level": "err",
-                "message": lang["searchNotSupported"].replace(
-                    "<search>", lang["commands"]["search"])
+                "message": lang["searchNotSupported"].replace("<search>", lang["commands"]["search"])
             }
     elif command == "setversion":
         if versions.set_version(user, args[0]):
@@ -183,6 +198,37 @@ def run_command(command, args, lang, user):
                 "level": "err",
                 "message": embed
             }
+    elif command == "setguildversion":
+        perms = user.guild_permissions
+
+        if not perms.manage_guild:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setguildversion"], value=lang["setguildversionnoperm"])
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+
+        if versions.set_guild_version(guild, args[0]):
+            embed.color = 303102
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.add_field(name="+" + lang["commands"]["setguildversion"], value=lang["setguildversionsuccess"])
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setguildversion"], value=lang["setguildversionfail"].replace(
+                "<versions>", lang["commands"]["versions"]))
+
+            return {
+                "level": "err",
+                "message": embed
+            }
     elif command == "version":
         version = versions.get_version(user)
 
@@ -190,9 +236,6 @@ def run_command(command, args, lang, user):
         embed.set_footer(text=central.version, icon_url=central.icon)
 
         if version is not None:
-            if version == "HWP":
-                version = "NRSV"
-
             response = lang["versionused"]
 
             response = response.replace("<version>", version)
@@ -211,6 +254,36 @@ def run_command(command, args, lang, user):
 
             embed.color = 16723502
             embed.add_field(name="+" + lang["commands"]["version"], value=response)
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+    elif command == "guildversion":
+        version = versions.get_guild_version(guild)
+
+        embed.color = 303102
+        embed.set_footer(text=central.version, icon_url=central.icon)
+
+        if version is not None:
+            response = lang["guildversionused"]
+
+            response = response.replace("<version>", version)
+            response = response.replace("<setguildversion>", lang["commands"]["setguildversion"])
+
+            embed.add_field(name="+" + lang["commands"]["guildversion"], value=response)
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            response = lang["noguildversionused"]
+
+            response = response.replace("<setguildversion>", lang["commands"]["setguildversion"])
+
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["guildversion"], value=response)
 
             return {
                 "level": "err",
@@ -317,6 +390,37 @@ def run_command(command, args, lang, user):
                 "level": "err",
                 "message": embed
             }
+    elif command == "setguildlanguage":
+        perms = user.guild_permissions
+
+        if not perms.manage_guild:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setguildlanguage"], value=lang["setguildlanguagenoperm"])
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+
+        if languages.set_guild_language(guild, args[0]):
+            embed.color = 303102
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.add_field(name="+" + lang["commands"]["setguildlanguage"], value=lang["setguildlanguagesuccess"])
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setguildlanguage"], value=lang["setguildlanguagefail"].replace(
+                "<languages>", lang["commands"]["languages"]))
+
+            return {
+                "level": "err",
+                "message": embed
+            }
     elif command == "language":
         embed.color = 303102
         embed.set_footer(text=central.version, icon_url=central.icon)
@@ -326,6 +430,23 @@ def run_command(command, args, lang, user):
         response = response.replace("<setlanguage>", lang["commands"]["setlanguage"])
 
         embed.add_field(name="+" + lang["commands"]["language"], value=response)
+
+        return {
+            "level": "info",
+            "message": embed
+        }
+    elif command == "guildlanguage":
+        glang = languages.get_guild_language(guild)
+        glang = getattr(central.languages, glang).raw_object
+
+        embed.color = 303102
+        embed.set_footer(text=central.version, icon_url=central.icon)
+
+        response = glang["guildlanguageused"]
+
+        response = response.replace("<setguildlanguage>", glang["commands"]["setguildlanguage"])
+
+        embed.add_field(name="+" + glang["commands"]["guildlanguage"], value=response)
 
         return {
             "level": "info",
@@ -348,13 +469,150 @@ def run_command(command, args, lang, user):
             "level": "info",
             "message": embed
         }
+    elif command == "setguildbrackets":
+        perms = user.guild_permissions
+
+        if not perms.manage_guild:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setguildbrackets"], value=lang["setguildbracketsnoperm"])
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+
+        if formatting.set_guild_brackets(guild, args[0]):
+            embed.color = 303102
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.add_field(name="+" + lang["commands"]["setguildbrackets"], value=lang["setguildbracketssuccess"])
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setguildbrackets"], value=lang["setguildbracketsfail"])
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+    elif command == "guildbrackets":
+        brackets_dict = formatting.get_guild_brackets(guild)
+        brackets = brackets_dict["first"] + brackets_dict["second"]
+
+        embed.color = 303102
+        embed.set_footer(text=central.version, icon_url=central.icon)
+
+        response = lang["guildbracketsused"]
+
+        response = response.replace("<brackets>", brackets)
+        response = response.replace("<setguildbrackets>", lang["commands"]["setguildbrackets"])
+
+        embed.add_field(name="+" + lang["commands"]["guildbrackets"], value=response)
+
+        return {
+            "level": "info",
+            "message": embed
+        }
+    elif command == "setvotdtime":
+        perms = user.guild_permissions
+
+        if not perms.manage_guild:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setvotdtime"], value=lang["setvotdtimenoperm"])
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+
+        if misc.set_guild_votd_time(guild, channel, args[0]):
+            embed.color = 303102
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.add_field(name="+" + lang["commands"]["setvotdtime"], value=lang["setvotdtimesuccess"])
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["setvotdtime"], value=lang["setvotdtimefail"])
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+    elif command == "clearvotdtime":
+        perms = user.guild_permissions
+
+        if not perms.manage_guild:
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["clearvotdtime"], value=lang["clearvotdtimenoperm"])
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+
+        if misc.set_guild_votd_time(guild, channel, "clear"):
+            embed.color = 303102
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.add_field(name="+" + lang["commands"]["clearvotdtime"], value=lang["clearvotdtimesuccess"])
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+    elif command == "votdtime":
+        time_tuple = misc.get_guild_votd_time(guild)
+
+        if time_tuple is not None:
+            channel, time = time_tuple
+
+            embed.color = 303102
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            response = lang["votdtimeused"]
+
+            response = response.replace("<time>", time + " UTC")
+            response = response.replace("<channel>", channel)
+            response = response.replace("<setvotdtime>", lang["commands"]["setvotdtime"])
+            response = response.replace("<clearvotdtime>", lang["commands"]["clearvotdtime"])
+
+            embed.add_field(name="+" + lang["commands"]["votdtime"], value=response)
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            response = lang["novotdtimeused"]
+
+            response = response.replace("<setvotdtime>", lang["commands"]["setvotdtime"])
+
+            embed.color = 16723502
+            embed.add_field(name="+" + lang["commands"]["votdtime"], value=response)
+
+            return {
+                "level": "err",
+                "message": embed
+            }
     elif command == "votd" or command == "verseoftheday":
         version = versions.get_version(user)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        if version is None or version is "HWP":
-            version = "NRSV"
+        if version is None:
+            version = versions.get_guild_version(guild)
+
+            if version is None:
+                version = "NRSV"
 
         if version != "REV":
             verse = bibleutils.get_votd()
@@ -432,8 +690,11 @@ def run_command(command, args, lang, user):
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        if version is None or version is "HWP":
-            version = "NRSV"
+        if version is None:
+            version = versions.get_guild_version(guild)
+
+            if version is None:
+                version = "NRSV"
 
         if version != "REV":
             verse = bibleutils.get_random_verse()
@@ -630,8 +891,11 @@ def run_command(command, args, lang, user):
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        if version is None or version is "HWP":
-            version = "NRSV"
+        if version is None:
+            version = versions.get_guild_version(guild)
+
+            if version is None:
+                version = "NRSV"
 
         verse = "Mark 9:23-24"
 
@@ -725,7 +989,7 @@ def run_owner_command(bot, command, args, lang):
             return {
                 "level": "info",
                 "text": True,
-                "message": exec(message)
+                "message": exec(message[0:-1])
             }
         except Exception as e:
             return {

@@ -33,7 +33,9 @@ command_map = {
     "search": 1,
     "versions": 0,
     "setversion": 1,
+    "setguildversion": 1,
     "version": 0,
+    "guildversion": 0,
     "versioninfo": 1,
     "random": 0,
     "verseoftheday": 0,
@@ -42,7 +44,14 @@ command_map = {
     "versenumbers": 1,
     "languages": 0,
     "setlanguage": 1,
+    "setguildlanguage": 1,
     "language": 0,
+    "guildlanguage": 0,
+    "setguildbrackets": 1,
+    "guildbrackets": 0,
+    "setvotdtime": 1,
+    "clearvotdtime": 0,
+    "votdtime": 0,
     "users": 0,
     "servers": 0,
     "invite": 0,
@@ -132,7 +141,7 @@ def is_owner_command(command, lang):
 
 class CommandHandler:
     @classmethod
-    def process_command(cls, bot, command, lang, sender, args=None):
+    def process_command(cls, bot, command, lang, sender, guild, channel, args=None):
         raw_language = getattr(central.languages, lang).raw_object
         commands = raw_language["commands"]
 
@@ -167,7 +176,7 @@ class CommandHandler:
                                     "return": embed
                                 }
 
-                            return command_bridge.run_command(orig_cmd, args, raw_language, sender)
+                            return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
                         else:
                             required_arguments = command_map[orig_cmd]
 
@@ -191,13 +200,13 @@ class CommandHandler:
                                     "return": embed
                                 }
 
-                            return command_bridge.run_command(orig_cmd, [bot], raw_language, sender)
+                            return command_bridge.run_command(orig_cmd, [bot], raw_language, sender, guild, channel)
                     else:
                         if args is None:
                             args = []
 
                         if len(args) == 0 or len(args) == 1:
-                            return command_bridge.run_command(orig_cmd, args, raw_language, sender)
+                            return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
                         else:
                             embed = discord.Embed()
 
@@ -250,8 +259,9 @@ class CommandHandler:
                             "return": embed
                         }
                     else:
-                        return command_bridge.run_command(orig_cmd, args, raw_language, sender)
+                        return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
             else:
+                # noinspection PyBroadException
                 try:
                     if str(sender.id) == central.config["BibleBot"]["owner"] or str(sender.id) == "367665336239128577":
                         return command_bridge.run_owner_command(bot, command, args, raw_language)

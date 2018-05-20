@@ -18,14 +18,17 @@
 
 import asyncio
 import configparser
+import datetime
 import os
 import time
 
 import discord
 
 import central
+from bible_modules import biblegateway, rev, bibleutils
 from data.BGBookNames import start as bg_book_names
 from handlers.commandlogic.settings import languages
+from handlers.commandlogic.settings import versions
 from handlers.commands import CommandHandler
 from handlers.verses import VerseHandler
 
@@ -40,9 +43,8 @@ configVersion.read(dir_path + "/config.example.ini")
 
 class BibleBot(discord.AutoShardedClient):
     def __init__(self, *args, loop=None, **kwargs):
-        # noinspection PyArgumentEqualDefault
-        super().__init__(*args, loop=None, **kwargs)
-        self.total_shards = None
+        super().__init__(*args, loop=loop, **kwargs)
+        self.bg_task = self.loop.create_task(self.run_timed_votds())
         self.shard = None
         self.current_page = None
         self.total_pages = None
@@ -52,8 +54,6 @@ class BibleBot(discord.AutoShardedClient):
             self.shard = 1
         else:
             self.shard = self.shard_id
-
-        self.total_shards = self.shard_count - 1
 
         mod_time = os.path.getmtime(dir_path + "/data/BGBookNames/books.json")
 
@@ -65,8 +65,92 @@ class BibleBot(discord.AutoShardedClient):
 
         central.log_message("info", self.shard_id, "global", "global", "connected")
 
-        activity = discord.Game(central.version + " | Shard: " + str(self.shard) + " / " + str(self.total_shards))
+        activity = discord.Game(central.version + " | Shard: " + str(self.shard) + " / " + str(self.shard_count))
         await self.change_presence(status=discord.Status.online, activity=activity)
+
+    async def run_timed_votds(self):
+        await self.wait_until_ready()
+
+        results = [x for x in central.guildDB.all() if "channel" in x and "time" in x]
+
+        while not self.is_closed():
+            # noinspection PyBroadException
+            try:
+                for item in results:
+                    if "channel" in item and "time" in item:
+                        channel = self.get_channel(item["channel"])
+                        votd_time = item["time"]
+
+                        try:
+                            version = versions.get_guild_version(channel.guild)
+                            lang = languages.get_guild_language(channel.guild)
+                        except AttributeError:
+                            version = None
+                            lang = "english_us"
+
+                        lang = getattr(central.languages, lang)
+
+                        if version is None:
+                            version = "NRSV"
+
+                        current_time = datetime.datetime.utcnow().strftime("%H:%M")
+
+                        if votd_time == current_time:
+                            await channel.send("Here is today's verse of the day:")
+                            if version != "REV":
+                                verse = bibleutils.get_votd()
+                                result = biblegateway.get_result(verse, version, "enable", "enable")
+
+                                content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+                                response_string = "**" + result["passage"] + " - " + result["version"] + \
+                                                  "**\n\n" + content
+
+                                if len(response_string) < 2000:
+                                    await channel.send(response_string)
+                                elif len(response_string) > 2000:
+                                    if len(response_string) < 3500:
+                                        split_text = central.splitter(result["text"])
+
+                                        content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                                        response_string1 = "**" + result["passage"] + " - " + \
+                                                           result["version"] + "**\n\n" + content1
+
+                                        content2 = "```Dust\n " + split_text["second"] + "```"
+
+                                        await channel.send(response_string1)
+                                        await channel.send(content2)
+                                    else:
+                                        await channel.send(lang["passagetoolong"])
+                            else:
+                                verse = bibleutils.get_votd()
+                                result = rev.get_result(verse, "enable")
+
+                                content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+                                response_string = "**" + result["passage"] + " - " + result["version"] + \
+                                                  "**\n\n" + content
+
+                                if len(response_string) < 2000:
+                                    await channel.send(response_string)
+                                elif len(response_string) > 2000:
+                                    if len(response_string) < 3500:
+                                        split_text = central.splitter(
+                                            result["text"])
+
+                                        content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                                        response_string1 = "**" + result["passage"] + " - " + \
+                                                           result["version"] + "**\n\n" + content1
+
+                                        content2 = "```Dust\n " + split_text["second"] + "```"
+
+                                        await channel.send(response_string1)
+                                        await channel.send(content2)
+                                    else:
+                                        await channel.send(lang["passagetoolong"])
+            except Exception:
+                results = results
+
+            # central.log_message("info", self.shard, "votd_sched", "global", "Sending VOTDs...")
+            await asyncio.sleep(60)
 
     async def on_message(self, raw):
         sender = raw.author
@@ -84,11 +168,12 @@ class BibleBot(discord.AutoShardedClient):
 
         language = languages.get_language(sender)
 
-        if language is None:
-            language = "english_us"
-
         if hasattr(channel, "guild"):
             guild = channel.guild
+
+            if language is None:
+                language = languages.get_guild_language(guild)
+
             if hasattr(channel.guild, "name"):
                 source = channel.guild.name + "#" + channel.name
             else:
@@ -99,6 +184,9 @@ class BibleBot(discord.AutoShardedClient):
                     return
         else:
             source = "unknown (direct messages?)"
+
+        if language is None:
+            language = "english_us"
 
         embed_or_reaction_not_allowed = False
 
@@ -131,7 +219,7 @@ class BibleBot(discord.AutoShardedClient):
 
             cmd_handler = CommandHandler()
 
-            res = cmd_handler.process_command(bot, command, language, sender, args)
+            res = cmd_handler.process_command(bot, command, language, sender, guild, channel, args)
 
             original_command = ""
             self.current_page = 1
@@ -189,7 +277,7 @@ class BibleBot(discord.AutoShardedClient):
                                         if self.current_page != 1:
                                             self.current_page -= 1
                                             return True
-                                elif str(reaction.emoji) == "➡":
+                                elif str(r.emoji) == "➡":
                                     if u.id != bot.user.id:
                                         if self.current_page != self.total_pages:
                                             self.current_page += 1
@@ -271,7 +359,7 @@ class BibleBot(discord.AutoShardedClient):
 
                                                     count += 1
                                                     sent = True
-                                    except Exception:
+                                    except (AttributeError, IndexError):
                                         sent = False
                             else:
                                 for ch in item.text_channels:
@@ -297,7 +385,7 @@ class BibleBot(discord.AutoShardedClient):
         else:
             verse_handler = VerseHandler()
 
-            result = verse_handler.process_raw_message(raw, sender, language)
+            result = verse_handler.process_raw_message(raw, sender, language, guild)
 
             if result is not None:
                 if guild is not None:
@@ -339,6 +427,5 @@ class BibleBot(discord.AutoShardedClient):
 
 
 bot = BibleBot()
-central.log_message("info", 0, "global", "global",
-                    "BibleBot v" + configVersion["meta"]["version"] + " by Elliott Pardee (vypr)")
+central.log_message("info", 0, "global", "global", central.version + " by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])

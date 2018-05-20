@@ -25,8 +25,8 @@ __sys.path.append(__dir_path + "/..")
 
 from vytypes.language import Language as __Language  # noqa: E402
 
-# __defaultLang = open(__dir_path + "/../../i18n/default/default.json")
-# __defaultLang = __json.loads(__defaultLang.read())
+__defaultLang = open(__dir_path + "/../../i18n/default/default.json")
+__defaultLang = __json.loads(__defaultLang.read())
 
 __english_us = open(__dir_path + "/../../i18n/english_us/english_us.json")
 __english_us = __json.loads(__english_us.read())
@@ -49,7 +49,7 @@ __greek = __json.loads(__greek.read())
 __welsh = open(__dir_path + "/../../i18n/welsh/welsh.json")
 __welsh = __json.loads(__welsh.read())
 
-# default = __Language("Default", "default", __defaultLang, "NRSV")
+default = __Language("Default", "default", __defaultLang, "NRSV")
 english_us = __Language("English (US)", "english_us", __english_us, "NRSV")
 english_uk = __Language("English (UK)", "english_uk", __english_uk, "NRSVA")
 esperanto = __Language("Esperanto", "esperanto", __esperanto, "NRSV")

@@ -33,6 +33,7 @@ def purify_text(text):
     result = result.replace(".", ". ")
     result = result.replace(". \"", ".\"")
     result = result.replace(". '", ".'")
+    result = result.replace(" .", ".")
     result = result.replace(", \"", ",\"")
     result = result.replace(", '", ",'")
     result = result.replace("!", "! ")

@@ -72,6 +72,41 @@ def search(version, query):
 
 
 def get_result(query, version, headings, verse_numbers):
+    if ":" in query:
+        split = query.split(":")
+
+        book = split[0].split(" ")[0]
+        chapter = split[0].split(" ")[1]
+        starting_verse = split[1].split("-")[0]
+
+        if len(split[1].split("-")) > 1:
+            ending_verse = split[1].split("-")[1]
+        else:
+            ending_verse = starting_verse
+
+    else:
+        book = query.split(" ")[0]
+        chapter = query.split(" ")[1]
+        starting_verse = "1"
+        ending_verse = "5"
+
+    unversed_books = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"]
+    is_unversed = False
+
+    query = book + " " + chapter
+
+    for i in unversed_books:
+        if i in query:
+            is_unversed = True
+
+    if not is_unversed:
+        query += ":" + starting_verse
+
+        if ending_verse != starting_verse:
+            query += "-" + ending_verse
+    else:
+        query += ":" + starting_verse
+
     url = "https://www.biblegateway.com/passage/?search=" + query + \
         "&version=" + version + "&interface=print"
 

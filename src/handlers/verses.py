@@ -51,27 +51,27 @@ TODO: I'm expecting the formula to go something like this:
 
 class VerseHandler:
     @classmethod
-    def process_raw_message(cls, raw_message, sender, lang):
+    def process_raw_message(cls, raw_message, sender, lang, guild):
         lang = getattr(central.languages, lang).raw_object
         available_versions = settings.versions.get_versions_by_acronym()
+        brackets = settings.formatting.get_guild_brackets(guild)
         msg = raw_message.content
 
-        if ":" in msg and " " in msg:
+        if " " in msg:
             verses = []
-            verse_count = 0
+
+            msg = utils.purify(msg)
 
             results = utils.get_books(msg)
+            results.sort(key=lambda item: item[1])  # sort the results based on the index that they were found
 
             for book, index in results:
-                verse = utils.create_verse_object(book, index, msg, available_versions)
+                verse = utils.create_verse_object(book, index, msg, available_versions, brackets)
 
                 if verse != "invalid":
                     verses.append(verse)
-                    verse_count += 1
 
-            verses = list(reversed(verses))  # reverse the list because the detection works reversely
-
-            if verse_count > 6:
+            if len(verses) > 6:
                 responses = ["spamming me, really?", "no spam pls",
                              "be nice to me", "such verses, many spam",
                              "＼(º □ º l|l)/ SO MANY VERSES",
@@ -79,7 +79,7 @@ class VerseHandler:
                              "hey buddy, get your own bot to spam"]
 
                 random_index = int(math.floor(random.random() * len(responses)))
-                return {"spam": responses[random_index]}
+                return [{"spam": responses[random_index]}]
 
             references = []
 
@@ -95,8 +95,11 @@ class VerseHandler:
             for reference in references:
                 version = settings.versions.get_version(sender)
 
-                if version is None or version is "HWP":
-                    version = "NRSV"
+                if version is None:
+                    version = settings.versions.get_guild_version(guild)
+
+                    if version is None:
+                        version = "NRSV"
 
                 headings = settings.formatting.get_headings(sender)
                 verse_numbers = settings.formatting.get_verse_numbers(sender)
@@ -117,7 +120,7 @@ class VerseHandler:
                         is_deu = False
 
                         for index in itemToBook["ot"]:
-                            if itemToBook["ot"][index] == verse["book"]:
+                            if index == verse["book"]:
                                 is_ot = True
 
                             if not results[0]["hasOT"] and is_ot:
@@ -127,16 +130,16 @@ class VerseHandler:
                                 response2 = lang["otnotsupported2"]
                                 response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
-                                return {
+                                return [{
                                     "level": "err",
                                     "twoMessages": True,
                                     "reference": reference + " " + version,
                                     "firstMessage": response,
                                     "secondMessage": response2
-                                }
+                                }]
 
                         for index in itemToBook["nt"]:
-                            if itemToBook["nt"][index] == verse["book"]:
+                            if index == verse["book"]:
                                 is_nt = True
 
                             if not results[0]["hasNT"] and is_nt:
@@ -146,16 +149,16 @@ class VerseHandler:
                                 response2 = lang.rawObject["ntnotsupported2"]
                                 response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
-                                return {
+                                return [{
                                     "level": "err",
                                     "twoMessages": True,
                                     "reference": reference + " " + version,
                                     "firstMessage": response,
                                     "secondMessage": response2
-                                }
+                                }]
 
                         for index in itemToBook["deu"]:
-                            if itemToBook["deu"][index] == verse["book"]:
+                            if index == verse["book"]:
                                 is_deu = True
 
                             if not results[0]["hasDEU"] and is_deu:
@@ -165,18 +168,21 @@ class VerseHandler:
                                 response2 = lang["deunotsupported2"]
                                 response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
-                                return {
+                                return [{
                                     "level": "err",
                                     "twoMessages": True,
                                     "reference": reference + " " + version,
                                     "firstMessage": response,
                                     "secondMessage": response2
-                                }
+                                }]
 
                     if version != "REV":
                         result = biblegateway.get_result(reference, version, headings, verse_numbers)
 
                         if result is not None:
+                            if result["text"][0] != " ":
+                                result["text"] = " " + result["text"]
+
                             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
                             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
@@ -194,7 +200,7 @@ class VerseHandler:
                                     response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
                                                        "\n\n" + content1
 
-                                    content2 = "```Dust\n " + split_text["second"] + "```"
+                                    content2 = "```Dust\n" + split_text["second"] + "```"
 
                                     return_list.append({
                                         "level": "info",
@@ -211,6 +217,9 @@ class VerseHandler:
                                     })
                     else:
                         result = rev.get_result(reference, verse_numbers)
+
+                        if result["text"][0] != " ":
+                            result["text"] = " " + result["text"]
 
                         content = "```Dust\n" + result["text"] + "```"
                         response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
@@ -229,7 +238,7 @@ class VerseHandler:
                                 response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
                                                    "\n\n" + content1
 
-                                content2 = "```Dust\n " + split_text["second"] + "```"
+                                content2 = "```Dust\n" + split_text["second"] + "```"
 
                                 return_list.append({
                                     "level": "info",

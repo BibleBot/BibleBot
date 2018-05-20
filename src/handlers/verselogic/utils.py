@@ -46,7 +46,6 @@ def tokenize(msg):
     array = []
 
     dash_in_message = any(dash in msg for dash in dashes)
-    dash_used = [dash for dash in dashes if dash in msg]
     append_dash = False
 
     if dash_in_message:
@@ -129,14 +128,15 @@ def get_books(msg):
                 last_item = item.split(" ")[-1]
                 msg_split = msg.split(" ")
 
-                if last_item in msg_split:
-                    index = msg_split.index(last_item)
+                indices = [i for i, x in enumerate(msg_split) if x == last_item]
+
+                for index in indices:
                     results.append((key, index))
 
     return results
 
 
-def create_verse_object(name, book_index, msg, available_versions):
+def create_verse_object(name, book_index, msg, available_versions, brackets):
     book_index = int(book_index)
     array = msg.split(" ")
 
@@ -145,15 +145,15 @@ def create_verse_object(name, book_index, msg, available_versions):
     bracket_indexes = []
     for i, j in enumerate(array):
         if i <= book_index:
-            if central.dividers["first"] in j:
-                is_instance = isinstance(j.index(central.dividers["first"]), numbers.Number)
+            if brackets["first"] in j:
+                is_instance = isinstance(j.index(brackets["first"]), numbers.Number)
 
                 if is_instance:
                     bracket_indexes.append(i)
 
         if i > book_index:
-            if central.dividers["second"] in j:
-                is_instance = isinstance(j.index(central.dividers["second"]), numbers.Number)
+            if brackets["second"] in j:
+                is_instance = isinstance(j.index(brackets["second"]), numbers.Number)
 
                 if is_instance:
                     bracket_indexes.append(i)
@@ -163,39 +163,39 @@ def create_verse_object(name, book_index, msg, available_versions):
             return "invalid"
 
     number_split = array[book_index + 1].split(":")
-    dash_split = number_split[1].split("-")
+    dash_split = None
 
-    chapter = None
-    starting_verse = None
-    ending_verse = None
-
-    try:
-        if isinstance(int(number_split[0]), numbers.Number):
-            chapter = int(number_split[0])
-
-            if isinstance(int(dash_split[0]), numbers.Number):
-                starting_verse = int(dash_split[0])
-
-                if isinstance(int(dash_split[1]), numbers.Number):
-                    ending_verse = int(dash_split[1])
-
-                    if starting_verse > ending_verse:
-                        return "invalid"
-    except (IndexError, TypeError, ValueError):
-        chapter = chapter
+    if len(number_split) > 1:
+        dash_split = number_split[1].split("-")
 
     verse = {
         "book": name,
-        "chapter": chapter,
-        "startingVerse": starting_verse,
-        "endingVerse": ending_verse
+        "chapter": None,
+        "startingVerse": None,
+        "endingVerse": None
     }
+
+    try:
+        if isinstance(int(number_split[0]), numbers.Number):
+            verse["chapter"] = int(number_split[0])
+
+            if dash_split is not None:
+                if isinstance(int(dash_split[0]), numbers.Number):
+                    verse["startingVerse"] = int(dash_split[0])
+
+                    if isinstance(int(dash_split[1]), numbers.Number):
+                        verse["endingVerse"] = int(dash_split[1])
+
+                        if verse["startingVerse"] > verse["endingVerse"]:
+                            return "invalid"
+    except (IndexError, TypeError, ValueError):
+        verse = verse
 
     try:
         if re.sub(r"[0-9]", "", dash_split[1]) == dash_split[1]:
             if dash_split[1] == "":
                 verse["endingVerse"] = "-"
-    except IndexError:
+    except (IndexError, TypeError):
         verse = verse
 
     try:
@@ -213,36 +213,38 @@ def create_reference_string(verse):
     try:
         if not isinstance(int(verse["chapter"]), numbers.Number):
             return
-
-        if not isinstance(int(verse["startingVerse"]), numbers.Number):
-            return
-
-        if "endingVerse" in verse.keys():
-            if not isinstance(int(verse["endingVerse"]), numbers.Number):
-                return
     except (ValueError, TypeError, KeyError):
         verse = verse
 
     if "startingVerse" in verse.keys():
-        if verse["book"] in itemToBook["ot"]:
-            reference = itemToBook["ot"][verse["book"]] + " " + str(verse["chapter"]) + ":" + str(
-                verse["startingVerse"])
-        elif verse["book"] in itemToBook["nt"]:
-            reference = itemToBook["nt"][verse["book"]] + " " + str(verse["chapter"]) + ":" + str(
-                verse["startingVerse"])
-        elif verse["book"] in itemToBook["deu"]:
-            reference = itemToBook["deu"][verse["book"]] + " " + str(verse["chapter"]) + ":" + str(
-                verse["startingVerse"])
+        if verse["startingVerse"] is not None:
+            if verse["book"] in itemToBook["ot"]:
+                reference = itemToBook["ot"][verse["book"]] + " " + \
+                            str(verse["chapter"]) + ":" + str(verse["startingVerse"])
+            elif verse["book"] in itemToBook["nt"]:
+                reference = itemToBook["nt"][verse["book"]] + " " + \
+                            str(verse["chapter"]) + ":" + str(verse["startingVerse"])
+            elif verse["book"] in itemToBook["deu"]:
+                reference = itemToBook["deu"][verse["book"]] + " " + \
+                            str(verse["chapter"]) + ":" + str(verse["startingVerse"])
+        else:
+            if verse["book"] in itemToBook["ot"]:
+                reference = itemToBook["ot"][verse["book"]] + " " + str(verse["chapter"])
+            elif verse["book"] in itemToBook["nt"]:
+                reference = itemToBook["nt"][verse["book"]] + " " + str(verse["chapter"])
+            elif verse["book"] in itemToBook["deu"]:
+                reference = itemToBook["deu"][verse["book"]] + " " + str(verse["chapter"])
 
         if "endingVerse" in verse.keys():
-            try:
-                if verse["endingVerse"] != "-":
-                    if int(verse["startingVerse"]) <= int(verse["endingVerse"]):
-                        reference += "-" + str(verse["endingVerse"])
-                else:
-                    reference += "-"
-            except (ValueError, TypeError, KeyError):
-                reference = reference
+            if verse["endingVerse"] is not None:
+                try:
+                    if verse["endingVerse"] != "-":
+                        if int(verse["startingVerse"]) <= int(verse["endingVerse"]):
+                            reference += "-" + str(verse["endingVerse"])
+                    else:
+                        reference += "-"
+                except (ValueError, TypeError, KeyError):
+                    reference = reference
 
     if "version" in verse.keys():
         reference = reference + " | v: " + verse["version"]

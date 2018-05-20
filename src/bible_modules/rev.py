@@ -32,14 +32,40 @@ logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 
 def get_result(query, verse_numbers):
-    split = query.split(":")
-    book = split[0].split(" ")[0]
-    chapter = split[0].split(" ")[1]
-    starting_verse = split[1].split("-")[0]
-    ending_verse = 0
+    if ":" in query:
+        split = query.split(":")
 
-    if len(split[1].split("-")) > 1:
-        ending_verse = split[1].split("-")[1]
+        book = split[0].split(" ")[0]
+        chapter = split[0].split(" ")[1]
+        starting_verse = split[1].split("-")[0]
+
+        if len(split[1].split("-")) > 1:
+            ending_verse = split[1].split("-")[1]
+        else:
+            ending_verse = starting_verse
+
+    else:
+        book = query.split(" ")[0]
+        chapter = query.split(" ")[1]
+        starting_verse = "1"
+        ending_verse = "5"
+
+    unversed_books = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"]
+    is_unversed = False
+
+    for i in unversed_books:
+        if i in query:
+            is_unversed = True
+
+    if is_unversed:
+        starting_verse = chapter
+        chapter = "1"
+        ending_verse = starting_verse
+
+    if ending_verse != starting_verse:
+        query = book + " " + chapter + ":" + starting_verse + "-" + ending_verse
+    else:
+        query = book + " " + chapter + ":" + starting_verse
 
     url = "https://www.revisedenglishversion.com/" + book + "/" + chapter + "/"
     resp = requests.get(url)
@@ -51,8 +77,6 @@ def get_result(query, verse_numbers):
         soup = BeautifulSoup(resp.text, "html.parser")
 
         for container in soup.find_all(True, {"class": "col1container"}):
-            text = ""
-
             for num in container.find_all(True, {"class": ["versenum", "versenumcomm"]}):
                 num.replace_with("[" + num.get_text() + "] ")
 
@@ -68,7 +92,6 @@ def get_result(query, verse_numbers):
 
                 text = re.sub(r"(\r\n|\n|\r)", " ", text, 0, re.MULTILINE)[1:-1]
             else:
-
                 for heading in container.find_all(True, {"class": ["heading", "headingfirst"]}):
                     heading.string.replace_with("")
 

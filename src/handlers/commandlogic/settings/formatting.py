@@ -85,3 +85,37 @@ def get_verse_numbers(user):
             return "enable"
     else:
         return "enable"
+
+
+def set_guild_brackets(guild, brackets):
+    if len(brackets) != 2:
+        return False
+
+    if brackets not in ["<>", "()", "{}", "[]"]:
+        return False
+
+    ideal_guild = tinydb.Query()
+    results = central.guildDB.search(ideal_guild.id == guild.id)
+
+    item = {
+        "first": brackets[0],
+        "second": brackets[1]
+    }
+
+    if len(results) > 0:
+        central.guildDB.update({"brackets": item}, ideal_guild.id == guild.id)
+    else:
+        central.guildDB.insert({"id": guild.id, "brackets": item})
+
+    return True
+
+
+def get_guild_brackets(guild):
+    ideal_guild = tinydb.Query()
+    results = central.guildDB.search(ideal_guild.id == guild.id)
+
+    if len(results) > 0:
+        if "brackets" in results[0]:
+            return results[0]["brackets"]
+
+    return central.brackets
