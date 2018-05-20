@@ -110,9 +110,9 @@ def run_command(command, args, lang, user, guild, channel):
         if args[0] in available_versions:
             version = args[0]
 
-            for i in range(len(args)):
+            for i, arg in enumerate(args):
                 if i != 0:
-                    query += args[i] + " "
+                    query += arg + " "
         else:
             for arg in args:
                 query += arg + " "

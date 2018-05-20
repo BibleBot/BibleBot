@@ -83,8 +83,7 @@ class VerseHandler:
 
             references = []
 
-            for i in range(len(verses)):
-                verse = verses[i]
+            for i, verse in enumerate(verses):
                 reference = utils.create_reference_string(verse)
 
                 if reference is not None:
