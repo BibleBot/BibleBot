@@ -65,9 +65,13 @@ def get_language(user):
     ideal_user = tinydb.Query()
     results = central.db.search(ideal_user.id == user.id)
 
+    languages = get_languages()
+
     if len(results) > 0:
         if "language" in results[0]:
-            return results[0]["language"]
+            for item in languages:
+                if item["object_name"] == results[0]["language"]:
+                    return results[0]["language"]
 
     return None
 
