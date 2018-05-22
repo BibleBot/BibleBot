@@ -429,6 +429,6 @@ class BibleBot(discord.AutoShardedClient):
                         await channel.send(result["spam"])
 
 
-bot = BibleBot(shard_count=2)
+bot = BibleBot(shard_count=config["BibleBot"]["shards"])
 central.log_message("info", 0, "global", "global", central.version + " by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])
