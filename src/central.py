@@ -72,7 +72,7 @@ def splitter(s):
     }
 
 
-def log_message(level, shard, sender, source, msg):
+def log_message(level, sender, source, msg):
     message = "<" + sender + "@" + source + "> " + msg
 
     if level == "warn":
