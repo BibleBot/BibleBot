@@ -56,6 +56,12 @@ command_map = {
     "servers": 0,
     "invite": 0,
 
+    "creeds": 0,
+    "apostles": 0,
+    "nicene": 0,
+    "chalcedonian": 0,
+    "athanasian": 0,
+
     "jepekula": 0,
     "joseph": 0,
     "tiger": 0,

@@ -58,7 +58,7 @@ class BibleBot(discord.AutoShardedClient):
         mod_time = os.path.getmtime(dir_path + "/data/BGBookNames/books.json")
 
         now = time.time()
-        one_week_ago = now - 60 * 60 * 24 * 7  # Number of seconds in seven days
+        one_week_ago = now - 60 * 60 * 24 * 7  # seven days to seconds
 
         if mod_time < one_week_ago:
             bg_book_names.getBooks()
@@ -133,8 +133,7 @@ class BibleBot(discord.AutoShardedClient):
                                     await channel.send(response_string)
                                 elif len(response_string) > 2000:
                                     if len(response_string) < 3500:
-                                        split_text = central.splitter(
-                                            result["text"])
+                                        split_text = central.splitter(result["text"])
 
                                         content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                                         response_string1 = "**" + result["passage"] + " - " + \
@@ -204,18 +203,13 @@ class BibleBot(discord.AutoShardedClient):
                     embed_or_reaction_not_allowed = True
 
         if message.startswith(config["BibleBot"]["commandPrefix"]):
-            if embed_or_reaction_not_allowed:
-                await channel.send("I need 'Embed Links' and 'Add Reactions' permissions!")
-                return
-
             command = message[1:].split(" ")[0]
             args = message.split(" ")
 
             if not isinstance(args.pop(0), str):
                 args = None
 
-            raw_language = getattr(central.languages, language)
-            raw_language = raw_language.raw_object
+            raw_language = getattr(central.languages, language).raw_object
 
             cmd_handler = CommandHandler()
 
@@ -237,151 +231,155 @@ class BibleBot(discord.AutoShardedClient):
                         central.log_message("err", self.shard, identifier, source, "Server is banned.")
                         return
 
-            if central.is_banned(str(sender.id)):
-                await channel.send(sender.mention + " You have been banned from using BibleBot.")
-                await channel.send("You may appeal by contacting vypr#9944.")
+                if central.is_banned(str(sender.id)):
+                    await channel.send(sender.mention + " You have been banned from using BibleBot.")
+                    await channel.send("You may appeal by contacting vypr#9944.")
 
-                central.log_message("err", self.shard, identifier, source, "User is banned.")
-                return
+                    central.log_message("err", self.shard, identifier, source, "User is banned.")
+                    return
 
-            if "leave" in res:
-                if res["leave"] == "this":
-                    if guild is not None:
-                        await guild.leave()
-                else:
-                    for item in bot.guilds:
-                        if str(item.id) == res["leave"]:
-                            await item.leave()
-                            await channel.send("Left " + str(item.name))
+                if embed_or_reaction_not_allowed:
+                    await channel.send("I need 'Embed Links' and 'Add Reactions' permissions!")
+                    return
 
-                central.log_message("info", self.shard, identifier, source, "+leave")
-                return
-
-            if "isError" not in res:
-                if "announcement" not in res:
-                    if "twoMessages" in res:
-                        await channel.send(res["firstMessage"])
-                        await channel.send(res["secondMessage"])
-                    elif "paged" in res:
-                        self.total_pages = len(res["pages"])
-
-                        msg = await channel.send(embed=res["pages"][0])
-
-                        await msg.add_reaction("⬅")
-                        await msg.add_reaction("➡")
-
-                        def check(r, u):
-                            if r.message.id == msg.id:
-                                if str(r.emoji) == "⬅":
-                                    if u.id != bot.user.id:
-                                        if self.current_page != 1:
-                                            self.current_page -= 1
-                                            return True
-                                elif str(r.emoji) == "➡":
-                                    if u.id != bot.user.id:
-                                        if self.current_page != self.total_pages:
-                                            self.current_page += 1
-                                            return True
-
-                        continue_paging = True
-
-                        try:
-                            while continue_paging:
-                                reaction, user = await bot.wait_for('reaction_add', timeout=120.0, check=check)
-                                await reaction.message.edit(embed=res["pages"][self.current_page - 1])
-
-                                reaction, user = await bot.wait_for('reaction_remove', timeout=120.0, check=check)
-                                await reaction.message.edit(embed=res["pages"][self.current_page - 1])
-
-                        except (asyncio.TimeoutError, IndexError):
-                            msg.clear_reactions()
+                if "leave" in res:
+                    if res["leave"] == "this":
+                        if guild is not None:
+                            await guild.leave()
                     else:
-                        if "reference" not in res and "text" not in res:
-                            await channel.send(embed=res["message"])
+                        for item in bot.guilds:
+                            if str(item.id) == res["leave"]:
+                                await item.leave()
+                                await channel.send("Left " + str(item.name))
+
+                    central.log_message("info", self.shard, identifier, source, "+leave")
+                    return
+
+                if "isError" not in res:
+                    if "announcement" not in res:
+                        if "twoMessages" in res:
+                            await channel.send(res["firstMessage"])
+                            await channel.send(res["secondMessage"])
+                        elif "paged" in res:
+                            self.total_pages = len(res["pages"])
+
+                            msg = await channel.send(embed=res["pages"][0])
+
+                            await msg.add_reaction("⬅")
+                            await msg.add_reaction("➡")
+
+                            def check(r, u):
+                                if r.message.id == msg.id:
+                                    if str(r.emoji) == "⬅":
+                                        if u.id != bot.user.id:
+                                            if self.current_page != 1:
+                                                self.current_page -= 1
+                                                return True
+                                    elif str(r.emoji) == "➡":
+                                        if u.id != bot.user.id:
+                                            if self.current_page != self.total_pages:
+                                                self.current_page += 1
+                                                return True
+
+                            continue_paging = True
+
+                            try:
+                                while continue_paging:
+                                    reaction, user = await bot.wait_for('reaction_add', timeout=120.0, check=check)
+                                    await reaction.message.edit(embed=res["pages"][self.current_page - 1])
+
+                                    reaction, user = await bot.wait_for('reaction_remove', timeout=120.0, check=check)
+                                    await reaction.message.edit(embed=res["pages"][self.current_page - 1])
+
+                            except (asyncio.TimeoutError, IndexError):
+                                msg.clear_reactions()
                         else:
-                            if res["message"] is not None:
-                                await channel.send(res["message"])
+                            if "reference" not in res and "text" not in res:
+                                await channel.send(embed=res["message"])
                             else:
-                                await channel.send("Done.")
+                                if res["message"] is not None:
+                                    await channel.send(res["message"])
+                                else:
+                                    await channel.send("Done.")
 
-                    for original_command_name in raw_language["commands"].keys():
-                        if raw_language["commands"][original_command_name] == command:  # noqa: E501
-                            original_command = original_command_name
-                        elif command == "setlanguage":
-                            original_command = "setlanguage"
-                        elif command == "ban":
-                            original_command = "ban"
-                        elif command == "unban":
-                            original_command = "unban"
-                        elif command == "eval":
-                            original_command = "eval"
-                        elif command == "jepekula":
-                            original_command = "jepekula"
-                        elif command == "joseph":
-                            original_command = "joseph"
-                        elif command == "tiger":
-                            original_command = "tiger"
-                else:
-                    for original_command_name in raw_language["commands"].keys():
-                        if raw_language["commands"][original_command_name] == command:  # noqa: E501
-                            original_command = original_command_name
+                        for original_command_name in raw_language["commands"].keys():
+                            if raw_language["commands"][original_command_name] == command:
+                                original_command = original_command_name
+                            elif command == "setlanguage":
+                                original_command = "setlanguage"
+                            elif command == "ban":
+                                original_command = "ban"
+                            elif command == "unban":
+                                original_command = "unban"
+                            elif command == "eval":
+                                original_command = "eval"
+                            elif command == "jepekula":
+                                original_command = "jepekula"
+                            elif command == "joseph":
+                                original_command = "joseph"
+                            elif command == "tiger":
+                                original_command = "tiger"
+                    else:
+                        for original_command_name in raw_language["commands"].keys():
+                            if raw_language["commands"][original_command_name] == command:
+                                original_command = original_command_name
 
-                    count = 1
-                    total = len(bot.guilds)
+                        count = 1
+                        total = len(bot.guilds)
 
-                    for item in bot.guilds:
-                        if "Discord Bot" not in item.name:
-                            if str(item.id) != "362503610006765568":
-                                sent = False
+                        for item in bot.guilds:
+                            if "Discord Bot" not in item.name:
+                                if str(item.id) != "362503610006765568":
+                                    sent = False
 
-                                preferred = ["misc", "bots", "meta", "hangout", "fellowship", "lounge",
-                                             "congregation", "general", "taffer", "family_text", "staff"]
+                                    preferred = ["misc", "bots", "meta", "hangout", "fellowship", "lounge",
+                                                 "congregation", "general", "bot-spam", "staff"]
 
-                                for ch in item.text_channels:
-                                    try:
-                                        if not sent:
-                                            for name in preferred:
-                                                if ch.name == name and not sent:
-                                                    perm = ch.permissions_for(item.me)
+                                    for ch in item.text_channels:
+                                        try:
+                                            if not sent:
+                                                for name in preferred:
+                                                    if ch.name == name:
+                                                        perm = ch.permissions_for(item.me)
 
-                                                    if perm.read_messages and perm.send_messages:
-                                                        await channel.send(str(count) + "/" + str(total) +
-                                                                           " - " + item.name +
-                                                                           " :white_check_mark:")
-                                                        if perm.embed_links:
-                                                            await ch.send(embed=res["message"])
+                                                        if perm.read_messages and perm.send_messages:
+                                                            await channel.send(str(count) + "/" + str(total) +
+                                                                               " - " + item.name +
+                                                                               " :white_check_mark:")
+                                                            if perm.embed_links:
+                                                                await ch.send(embed=res["message"])
+                                                            else:
+                                                                await ch.send(res["message"].fields[0].value)
                                                         else:
-                                                            await ch.send(res["message"].fields[0].value)
-                                                    else:
-                                                        await channel.send(str(count) + "/" + str(total) +
-                                                                           " - " + item.name +
-                                                                           " :regional_indicator_x:")
+                                                            await channel.send(str(count) + "/" + str(total) +
+                                                                               " - " + item.name +
+                                                                               " :regional_indicator_x:")
 
-                                                    count += 1
-                                                    sent = True
-                                    except (AttributeError, IndexError):
-                                        sent = False
-                            else:
-                                for ch in item.text_channels:
-                                    if ch.name == "announcements":
-                                        await ch.send(embed=res["message"])
+                                                        count += 1
+                                                        sent = True
+                                        except (AttributeError, IndexError):
+                                            sent = False
+                                else:
+                                    for ch in item.text_channels:
+                                        if ch.name == "announcements":
+                                            await ch.send(embed=res["message"])
 
-                    await channel.send("Done.")
+                        await channel.send("Done.")
 
-                clean_args = str(args).replace(",", " ").replace("[", "").replace("]", "")
-                clean_args = clean_args.replace("\"", "").replace("'", "").replace("  ", " ")
+                    clean_args = str(args).replace(",", " ").replace("[", "").replace("]", "")
+                    clean_args = clean_args.replace("\"", "").replace("'", "").replace("  ", " ")
 
-                if original_command == "puppet":
-                    clean_args = ""
-                elif original_command == "eval":
-                    clean_args = ""
-                elif original_command == "announce":
-                    clean_args = ""
+                    if original_command == "puppet":
+                        clean_args = ""
+                    elif original_command == "eval":
+                        clean_args = ""
+                    elif original_command == "announce":
+                        clean_args = ""
 
-                central.log_message(res["level"], self.shard, identifier, source,
-                                    "+" + original_command + " " + clean_args)
-            else:
-                await channel.send(embed=res["return"])
+                    central.log_message(res["level"], self.shard, identifier, source,
+                                        "+" + original_command + " " + clean_args)
+                else:
+                    await channel.send(embed=res["return"])
         else:
             verse_handler = VerseHandler()
 
