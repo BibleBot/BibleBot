@@ -423,5 +423,5 @@ class BibleBot(discord.AutoShardedClient):
 
 
 bot = BibleBot()
-central.log_message("info", 0, "global", "global", central.version + " by Elliott Pardee (vypr)")
+central.log_message("info", "global", "global", central.version + " by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])

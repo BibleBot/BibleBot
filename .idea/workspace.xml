@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/src/central.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/central.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
       <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
@@ -16,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="bot.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="116">
-              <caret line="221" column="48" selection-start-line="221" selection-start-column="48" selection-end-line="221" selection-end-column="48" />
+            <state relative-caret-position="114">
+              <caret line="425" column="27" selection-start-line="425" selection-start-column="27" selection-end-line="425" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -109,11 +109,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="central.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="central.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/central.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="23">
-              <caret line="74" column="21" selection-start-line="74" selection-start-column="21" selection-end-line="74" selection-end-column="21" />
+            <state relative-caret-position="115">
+              <caret line="78" column="31" lean-forward="true" selection-start-line="78" selection-start-column="31" selection-end-line="78" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -210,8 +210,8 @@
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
         <option value="$PROJECT_DIR$/src/handlers/verses.py" />
         <option value="$PROJECT_DIR$/src/handlers/verselogic/utils.py" />
-        <option value="$PROJECT_DIR$/src/bot.py" />
         <option value="$PROJECT_DIR$/src/central.py" />
+        <option value="$PROJECT_DIR$/src/bot.py" />
       </list>
     </option>
   </component>
@@ -827,13 +827,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="221" column="48" selection-start-line="221" selection-start-column="48" selection-end-line="221" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="781">
@@ -846,8 +839,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/central.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="74" column="21" selection-start-line="74" selection-start-column="21" selection-end-line="74" selection-end-column="21" />
+        <state relative-caret-position="115">
+          <caret line="78" column="31" lean-forward="true" selection-start-line="78" selection-start-column="31" selection-end-line="78" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="425" column="27" selection-start-line="425" selection-start-column="27" selection-end-line="425" selection-end-column="27" />
         </state>
       </provider>
     </entry>
