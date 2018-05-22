@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
       <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
@@ -17,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="bot.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-274">
-              <caret line="59" column="25" lean-forward="true" selection-start-line="59" selection-start-column="25" selection-end-line="59" selection-end-column="25" />
+            <state relative-caret-position="232">
+              <caret line="145" column="67" selection-start-line="145" selection-start-column="67" selection-end-line="145" selection-end-column="67" />
             </state>
           </provider>
         </entry>
@@ -29,8 +30,8 @@
       <file leaf-file-name="commandbridge.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="138">
-              <caret line="735" column="24" lean-forward="true" selection-start-line="735" selection-start-column="24" selection-end-line="735" selection-end-column="24" />
+            <state relative-caret-position="5911">
+              <caret line="755" column="33" lean-forward="true" selection-start-line="755" selection-start-column="33" selection-end-line="755" selection-end-column="33" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -95,7 +96,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="236">
@@ -152,6 +153,7 @@
       <find>needs</find>
       <find>range(</find>
       <find>range</find>
+      <find>self.shard,</find>
     </findStrings>
     <replaceStrings>
       <replace>\&quot;\&quot;\&quot;\n    Copyright \(c\) 2018 Elliott Pardee \&lt;me \[at\] vypr \[dot\] xyz\&gt;\n    This file is part of BibleBot\.\n\n    BibleBot is free software\: you can redistribute it and\/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation\, either version 3 of the License\, or\n    \(at your option\) any later version\.\n\n    BibleBot is distributed in the hope that it will be useful\,\n    but WITHOUT ANY WARRANTY\; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\.  See the\n    GNU General Public License for more details\.\n\n    You should have received a copy of the GNU General Public License\n    along with BibleBot\.  If not\, see \&lt;http\:\/\/www\.gnu\.org\/licenses\/\&gt;\.\n\'\'\'</replace>
@@ -199,13 +201,13 @@
         <option value="$PROJECT_DIR$/src/handlers/commands.py" />
         <option value="$PROJECT_DIR$/i18n/default/default.json" />
         <option value="$PROJECT_DIR$/src/data/languages.py" />
-        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/formatting.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/versions.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py" />
-        <option value="$PROJECT_DIR$/src/bot.py" />
         <option value="$PROJECT_DIR$/src/handlers/verselogic/utils.py" />
+        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
+        <option value="$PROJECT_DIR$/src/bot.py" />
       </list>
     </option>
   </component>
@@ -403,10 +405,11 @@
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3289256" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5007452" side_tool="true" weight="0.37521222" />
-      <window_info anchor="bottom" id="Version Control" order="7" visible="true" weight="0.33106962" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3289256" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.33106962" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.3289256" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925485" weight="0.37521222" />
       <window_info id="Structure" order="1" sideWeight="0.5081522" side_tool="true" weight="0.2503726" />
@@ -420,7 +423,6 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3289256" />
     </layout>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -773,16 +775,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="735" column="24" lean-forward="true" selection-start-line="735" selection-start-column="24" selection-end-line="735" selection-end-column="24" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1242">
@@ -800,20 +792,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/formatting.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-90">
-          <caret line="91" column="20" lean-forward="true" selection-start-line="91" selection-start-column="20" selection-end-line="91" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/versions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-424">
-          <caret line="81" column="25" selection-start-line="81" selection-start-column="25" selection-end-line="81" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="115">
@@ -828,13 +806,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-274">
-          <caret line="59" column="25" lean-forward="true" selection-start-line="59" selection-start-column="25" selection-end-line="59" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="236">
@@ -842,6 +813,37 @@
           <folding>
             <element signature="e#748#759#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/formatting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-90">
+          <caret line="91" column="20" lean-forward="true" selection-start-line="91" selection-start-column="20" selection-end-line="91" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/versions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-424">
+          <caret line="81" column="25" selection-start-line="81" selection-start-column="25" selection-end-line="81" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5911">
+          <caret line="755" column="33" lean-forward="true" selection-start-line="755" selection-start-column="33" selection-end-line="755" selection-end-column="33" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="145" column="67" selection-start-line="145" selection-start-column="67" selection-end-line="145" selection-end-column="67" />
         </state>
       </provider>
     </entry>

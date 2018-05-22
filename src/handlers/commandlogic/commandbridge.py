@@ -740,6 +740,9 @@ def run_command(command, args, lang, user, guild, channel):
                 result = biblegateway.get_result(verse, version, headings, verse_numbers)
                 counter += 1
 
+            if counter == 10 and result is None:
+                return
+
             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
