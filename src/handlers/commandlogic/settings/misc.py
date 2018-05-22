@@ -50,11 +50,12 @@ def set_guild_votd_time(guild, channel, time):
 
 
 def get_guild_votd_time(guild):
-    ideal_guild = tinydb.Query()
-    results = central.guildDB.search(ideal_guild.id == guild.id)
+    if guild is not None:
+        ideal_guild = tinydb.Query()
+        results = central.guildDB.search(ideal_guild.id == guild.id)
 
-    if len(results) > 0:
-        if "channel_name" in results[0] and "time" in results[0]:
-            return results[0]["channel_name"], results[0]["time"]
+        if len(results) > 0:
+            if "channel_name" in results[0] and "time" in results[0]:
+                return results[0]["channel_name"], results[0]["time"]
 
-    return None
+        return None

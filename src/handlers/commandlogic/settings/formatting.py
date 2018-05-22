@@ -111,11 +111,12 @@ def set_guild_brackets(guild, brackets):
 
 
 def get_guild_brackets(guild):
-    ideal_guild = tinydb.Query()
-    results = central.guildDB.search(ideal_guild.id == guild.id)
+    if guild is not None:
+        ideal_guild = tinydb.Query()
+        results = central.guildDB.search(ideal_guild.id == guild.id)
 
-    if len(results) > 0:
-        if "brackets" in results[0]:
-            return results[0]["brackets"]
+        if len(results) > 0:
+            if "brackets" in results[0]:
+                return results[0]["brackets"]
 
-    return central.brackets
+        return central.brackets

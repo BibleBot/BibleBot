@@ -79,14 +79,15 @@ def get_version(user):
 
 
 def get_guild_version(guild):
-    ideal_guild = tinydb.Query()
-    results = central.guildDB.search(ideal_guild.id == guild.id)
+    if guild is not None:
+        ideal_guild = tinydb.Query()
+        results = central.guildDB.search(ideal_guild.id == guild.id)
 
-    if len(results) > 0:
-        if "version" in results[0]:
-            return results[0]["version"]
+        if len(results) > 0:
+            if "version" in results[0]:
+                return results[0]["version"]
 
-    return None
+        return None
 
 
 def get_versions():

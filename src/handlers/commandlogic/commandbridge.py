@@ -733,10 +733,12 @@ def run_command(command, args, lang, user, guild, channel):
         if version != "REV":
             verse = bibleutils.get_random_verse()
             result = biblegateway.get_result(verse, version, headings, verse_numbers)
+            counter = 10
 
-            while result is None:
+            while result is None and counter != 10:
                 verse = bibleutils.get_random_verse()
                 result = biblegateway.get_result(verse, version, headings, verse_numbers)
+                counter += 1
 
             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
