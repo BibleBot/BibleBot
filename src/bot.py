@@ -392,23 +392,23 @@ class BibleBot(discord.AutoShardedClient):
 
             if result is not None:
                 if "invalid" not in result and "spam" not in result:
-                    if guild is not None:
-                        if central.is_banned(str(guild.id)):
-                            await channel.send("This server has been banned from using BibleBot.")
-                            await channel.send("If this is invalid, the server owner may appeal by contacting " +
-                                               "vypr#9944.")
+                    for item in result:
+                        if guild is not None:
+                            if central.is_banned(str(guild.id)):
+                                await channel.send("This server has been banned from using BibleBot.")
+                                await channel.send("If this is invalid, the server owner may appeal by contacting " +
+                                                   "vypr#9944.")
 
-                            central.log_message("err", shard, identifier, source, "Server is banned.")
+                                central.log_message("err", shard, identifier, source, "Server is banned.")
+                                return
+
+                        if central.is_banned(str(sender.id)):
+                            await channel.send(sender.mention + " You have been banned from using BibleBot.")
+                            await channel.send("You may appeal by contacting vypr#9944.")
+
+                            central.log_message("err", shard, identifier, source, "User is banned.")
                             return
 
-                    if central.is_banned(str(sender.id)):
-                        await channel.send(sender.mention + " You have been banned from using BibleBot.")
-                        await channel.send("You may appeal by contacting vypr#9944.")
-
-                        central.log_message("err", shard, identifier, source, "User is banned.")
-                        return
-
-                    for item in result:
                         if embed_or_reaction_not_allowed:
                             await channel.send("I need 'Embed Links' and 'Add Reactions' permissions!")
                             return
