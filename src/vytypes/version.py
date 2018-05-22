@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,37 +14,37 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import json
 
 
 class Version:
-    def __init__(self, name, abbv, hasOT, hasNT, hasDEU):
+    def __init__(self, name, abbv, has_ot, has_nt, has_deu):
         self.name = name
         self.abbv = abbv
 
-        self.hasOT = False
-        self.hasNT = False
-        self.hasDEU = False
+        self.has_ot = False
+        self.has_nt = False
+        self.has_deu = False
 
-        if hasOT == "yes":
-            self.hasOT = True
+        if has_ot == "yes":
+            self.has_ot = True
 
-        if hasNT == "yes":
-            self.hasNT = True
+        if has_nt == "yes":
+            self.has_nt = True
 
-        if hasDEU == "yes":
-            self.hasDEU = True
+        if has_deu == "yes":
+            self.has_deu = True
 
-    def toObject(self):
+    def to_object(self):
         return {
             "name": self.name,
             "abbv": self.abbv,
-            "hasOT": self.hasOT,
-            "hasNT": self.hasNT,
-            "hasDEU": self.hasDEU
+            "hasOT": self.has_ot,
+            "hasNT": self.has_nt,
+            "hasDEU": self.has_deu
         }
 
-    def toString(self):
-        return json.dumps(self.toObject())
+    def to_string(self):
+        return json.dumps(self.to_object())

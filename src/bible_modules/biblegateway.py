@@ -1,4 +1,4 @@
-'''
+"""
     Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
@@ -14,15 +14,18 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
+
+import html
+import logging
+import re
+from http.client import HTTPConnection
 
 import requests
 from bs4 import BeautifulSoup
-import re
-import cgi
+
 import bible_modules.bibleutils as bibleutils
-import logging
-from http.client import HTTPConnection
+
 HTTPConnection.debuglevel = 0
 
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -30,18 +33,17 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 
-def removeBibleTitleInSearch(string):
+def remove_bible_title_in_search(string):
     return re.sub(r"<[^>]*>", "", string)
 
 
 def search(version, query):
-    query = cgi.escape(query)
+    query = html.escape(query)
 
-    url = "https://www.biblegateway.com/quicksearch/?search=" + \
-        query + "&version=" + \
-        version + "&searchtype=all&limit=50000&interface=print"
+    url = "https://www.biblegateway.com/quicksearch/?search=" + query + \
+          "&version=" + version + "&searchtype=all&limit=50000&interface=print"
 
-    searchResults = {}
+    search_results = {}
     length = 0
 
     resp = requests.get(url)
@@ -49,29 +51,62 @@ def search(version, query):
     if resp is not None:
         soup = BeautifulSoup(resp.text, "html.parser")
 
-        for row in soup.findAll(True, {"class": "row"}):
+        for row in soup.find_all(True, {"class": "row"}):
             result = {}
 
-            for extra in row.findAll(True, {"class": "bible-item-extras"}):
+            for extra in row.find_all(True, {"class": "bible-item-extras"}):
                 extra.decompose()
 
-            result["title"] = row.find(
-                True, {"class": "bible-item-title"})
-
+            result["title"] = row.find(True, {"class": "bible-item-title"})
             result["text"] = row.find(True, {"class": "bible-item-text"})
 
             if result["title"] is not None:
                 if result["text"] is not None:
                     result["title"] = result["title"].getText()
-                    result["text"] = removeBibleTitleInSearch(
-                        bibleutils.purifyText(result["text"].getText()[0:-1]))
+                    result["text"] = remove_bible_title_in_search(
+                        bibleutils.purify_text(result["text"].get_text()[0:-1]))
 
                     length += 1
-                    searchResults["result" + str(length)] = result
-    return searchResults
+                    search_results["result" + str(length)] = result
+    return search_results
 
 
-def getResult(query, version, headings, verseNumbers):
+def get_result(query, version, headings, verse_numbers):
+    if ":" in query:
+        split = query.split(":")
+
+        book = split[0].split(" ")[0]
+        chapter = split[0].split(" ")[1]
+        starting_verse = split[1].split("-")[0]
+
+        if len(split[1].split("-")) > 1:
+            ending_verse = split[1].split("-")[1]
+        else:
+            ending_verse = starting_verse
+
+    else:
+        book = query.split(" ")[0]
+        chapter = query.split(" ")[1]
+        starting_verse = "1"
+        ending_verse = "5"
+
+    unversed_books = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"]
+    is_unversed = False
+
+    query = book + " " + chapter
+
+    for i in unversed_books:
+        if i in query:
+            is_unversed = True
+
+    if not is_unversed:
+        query += ":" + starting_verse
+
+        if ending_verse != starting_verse:
+            query += "-" + ending_verse
+    else:
+        query += ":" + starting_verse
+
     url = "https://www.biblegateway.com/passage/?search=" + query + \
         "&version=" + version + "&interface=print"
 
@@ -80,43 +115,38 @@ def getResult(query, version, headings, verseNumbers):
     if resp is not None:
         soup = BeautifulSoup(resp.text, "html.parser")
 
-        for div in soup.findAll("div", {"class": "result-text-style-normal"}):
+        for div in soup.find_all("div", {"class": "result-text-style-normal"}):
+            text = ""
             title = ""
 
             if headings == "disable":
-                for heading in div.findAll("h3"):
+                for heading in div.find_all("h3"):
                     heading.decompose()
 
-                for heading in div.findAll(True, {"class": "inline-h3"}):
+                for heading in div.find_all(True, {"class": "inline-h3"}):
                     heading.decompose()
             else:
-                for heading in div.findAll("h3"):
-                    title += heading.getText() + " / "
+                for heading in div.find_all("h3"):
+                    title += heading.get_text() + " / "
 
-            if verseNumbers == "disable":
-                for num in div.findAll(True, {"class": ["chapternum",
-                                                        "versenum"]}):
-                    num.string.replaceWith(" ")
+            if verse_numbers == "disable":
+                for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
+                    num.string.replace_text(" ")
             else:
-                for num in div.findAll(True, {"class": ["chapternum",
-                                                        "versenum"]}):
-                    num.string.replaceWith("<" + num.string[0:-1] + "> ")
+                for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
+                    num.string.replace_with("<" + num.string[0:-1] + "> ")
 
-            for meta in div.findAll(True, {"class": ["crossreference",
-                                                     "footnote"]}):
+            for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):
                 meta.decompose()
 
-            text = ""
-            for paragraph in div.findAll("p"):
-                text += paragraph.getText()
+            for paragraph in div.find_all("p"):
+                text += paragraph.get_text()
 
-            verseObject = {
-                "passage": div.find(True, {"class":
-                                           "passage-display-bcv"}).string,
-                "version": div.find(True, {"class":
-                                           "passage-display-version"}).string,
+            verse_object = {
+                "passage": div.find(True, {"class": "passage-display-bcv"}).string,
+                "version": div.find(True, {"class": "passage-display-version"}).string,
                 "title": title[0:-3],
-                "text": bibleutils.purifyText(text)
+                "text": bibleutils.purify_text(text)
             }
 
-            return verseObject
+            return verse_object
