@@ -63,9 +63,6 @@ class BibleBot(discord.AutoShardedClient):
     async def run_timed_votds(self):
         await self.wait_until_ready()
 
-        activity = discord.Game(central.version + " | Shard: " + str(self.shard_id + 1) + " / " + str(self.shard_count))
-        await self.change_presence(status=discord.Status.online, activity=activity)
-
         results = [x for x in central.guildDB.all() if "channel" in x and "time" in x]
 
         while not self.is_closed():

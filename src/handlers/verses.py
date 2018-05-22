@@ -57,6 +57,9 @@ class VerseHandler:
         brackets = settings.formatting.get_guild_brackets(guild)
         msg = raw_message.content
 
+        if brackets is None:
+            brackets = central.config["BibleBot"]["dividingBrackets"]
+
         if " " in msg:
             verses = []
 

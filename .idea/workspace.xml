@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/verses.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verses.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
       <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
@@ -17,11 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="bot.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="94">
-              <caret line="60" column="83" selection-start-line="60" selection-start-column="83" selection-end-line="60" selection-end-column="83" />
+              <caret line="63" column="37" selection-start-line="63" selection-start-column="37" selection-end-line="63" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -98,8 +98,8 @@
       <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="236">
-              <caret line="169" column="14" selection-start-line="169" selection-start-column="14" selection-end-line="169" selection-end-column="14" />
+            <state relative-caret-position="197">
+              <caret line="143" column="12" selection-start-line="143" selection-start-column="12" selection-end-line="143" selection-end-column="12" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -107,11 +107,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="verses.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="verses.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1357">
-              <caret line="67" column="20" selection-start-line="67" selection-start-column="20" selection-end-line="67" selection-end-column="20" />
+            <state relative-caret-position="184">
+              <caret line="60" column="69" selection-start-line="60" selection-start-column="69" selection-end-line="60" selection-end-column="69" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -154,6 +154,7 @@
       <find>range</find>
       <find>self.shard,</find>
       <find>self.shard_id,</find>
+      <find>brackets[</find>
     </findStrings>
     <replaceStrings>
       <replace>\&quot;\&quot;\&quot;\n    Copyright \(c\) 2018 Elliott Pardee \&lt;me \[at\] vypr \[dot\] xyz\&gt;\n    This file is part of BibleBot\.\n\n    BibleBot is free software\: you can redistribute it and\/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation\, either version 3 of the License\, or\n    \(at your option\) any later version\.\n\n    BibleBot is distributed in the hope that it will be useful\,\n    but WITHOUT ANY WARRANTY\; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\.  See the\n    GNU General Public License for more details\.\n\n    You should have received a copy of the GNU General Public License\n    along with BibleBot\.  If not\, see \&lt;http\:\/\/www\.gnu\.org\/licenses\/\&gt;\.\n\'\'\'</replace>
@@ -195,7 +196,6 @@
         <option value="$PROJECT_DIR$/src/bible_modules/bibleutils.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/rev.py" />
         <option value="$PROJECT_DIR$/src/central.py" />
-        <option value="$PROJECT_DIR$/src/handlers/verses.py" />
         <option value="$PROJECT_DIR$/QA.md" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/handlers/commands.py" />
@@ -208,6 +208,7 @@
         <option value="$PROJECT_DIR$/src/handlers/verselogic/utils.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
         <option value="$PROJECT_DIR$/src/bot.py" />
+        <option value="$PROJECT_DIR$/src/handlers/verses.py" />
       </list>
     </option>
   </component>
@@ -405,11 +406,11 @@
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3289256" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5007452" side_tool="true" weight="0.37521222" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289256" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.33106962" />
+      <window_info anchor="bottom" id="Version Control" order="7" visible="true" weight="0.33106962" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.3289256" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925485" weight="0.37521222" />
       <window_info id="Structure" order="1" sideWeight="0.5081522" side_tool="true" weight="0.2503726" />
@@ -758,16 +759,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1357">
-          <caret line="67" column="20" selection-start-line="67" selection-start-column="20" selection-end-line="67" selection-end-column="20" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="230">
@@ -806,16 +797,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="169" column="14" selection-start-line="169" selection-start-column="14" selection-end-line="169" selection-end-column="14" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/formatting.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-90">
@@ -843,7 +824,27 @@
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="94">
-          <caret line="60" column="83" selection-start-line="60" selection-start-column="83" selection-end-line="60" selection-end-column="83" />
+          <caret line="63" column="37" selection-start-line="63" selection-start-column="37" selection-end-line="63" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="143" column="12" selection-start-line="143" selection-start-column="12" selection-end-line="143" selection-end-column="12" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="60" column="69" selection-start-line="60" selection-start-column="69" selection-end-line="60" selection-end-column="69" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
