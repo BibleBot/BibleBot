@@ -57,10 +57,14 @@ class BibleBot(discord.AutoShardedClient):
         if mod_time < one_week_ago:
             bg_book_names.getBooks()
 
-        central.log_message("info", "global", "global", "connected")
+        activity = discord.Game(central.version + " | Shard: 1 / 2")
+        await self.change_presence(status=discord.Status.online, activity=activity, shard_id=0)
 
-        activity = discord.Game(central.version)
-        await self.change_presence(status=discord.Status.online, activity=activity)
+        activity = discord.Game(central.version + " | Shard: 2 / 2")
+        await self.change_presence(status=discord.Status.online, activity=activity, shard_id=1)
+
+    async def on_shard_ready(self, shard_id):
+        central.log_message("info", shard_id + 1, "global", "global", "connected")
 
     async def run_timed_votds(self):
         await self.wait_until_ready()
@@ -142,7 +146,7 @@ class BibleBot(discord.AutoShardedClient):
             except Exception:
                 results = results
 
-            # central.log_message("info", "votd_sched", "global", "Sending VOTDs...")
+            # central.log_message("info", shard, "votd_sched", "global", "Sending VOTDs...")
             await asyncio.sleep(60)
 
     async def on_message(self, raw):
@@ -177,6 +181,11 @@ class BibleBot(discord.AutoShardedClient):
                     return
         else:
             source = "unknown (direct messages?)"
+
+        if guild is None:
+            shard = 1
+        else:
+            shard = guild.shard_id + 1
 
         if language is None:
             language = "english_us"
@@ -222,14 +231,14 @@ class BibleBot(discord.AutoShardedClient):
                         await channel.send("If this is invalid, the server owner may appeal by contacting " +
                                            "vypr#9944.")
 
-                        central.log_message("err", identifier, source, "Server is banned.")
+                        central.log_message("err", shard, identifier, source, "Server is banned.")
                         return
 
                 if central.is_banned(str(sender.id)):
                     await channel.send(sender.mention + " You have been banned from using BibleBot.")
                     await channel.send("You may appeal by contacting vypr#9944.")
 
-                    central.log_message("err", identifier, source, "User is banned.")
+                    central.log_message("err", shard, identifier, source, "User is banned.")
                     return
 
                 if embed_or_reaction_not_allowed:
@@ -246,7 +255,7 @@ class BibleBot(discord.AutoShardedClient):
                                 await item.leave()
                                 await channel.send("Left " + str(item.name))
 
-                    central.log_message("info", identifier, source, "+leave")
+                    central.log_message("info", shard, identifier, source, "+leave")
                     return
 
                 if "isError" not in res:
@@ -374,7 +383,7 @@ class BibleBot(discord.AutoShardedClient):
                     elif original_command == "announce":
                         clean_args = ""
 
-                    central.log_message(res["level"], identifier, source,
+                    central.log_message(res["level"], shard, identifier, source,
                                         "+" + original_command + " " + clean_args)
                 else:
                     await channel.send(embed=res["return"])
@@ -390,14 +399,14 @@ class BibleBot(discord.AutoShardedClient):
                         await channel.send("If this is invalid, the server owner may appeal by contacting " +
                                            "vypr#9944.")
 
-                        central.log_message("err", identifier, source, "Server is banned.")
+                        central.log_message("err", shard, identifier, source, "Server is banned.")
                         return
 
                 if central.is_banned(str(sender.id)):
                     await channel.send(sender.mention + " You have been banned from using BibleBot.")
                     await channel.send("You may appeal by contacting vypr#9944.")
 
-                    central.log_message("err", identifier, source, "User is banned.")
+                    central.log_message("err", shard, identifier, source, "User is banned.")
                     return
 
                 if "invalid" not in result and "spam" not in result:
@@ -416,12 +425,12 @@ class BibleBot(discord.AutoShardedClient):
                             item = item
 
                         if "reference" in item:
-                            central.log_message(item["level"], identifier, source, item["reference"])
+                            central.log_message(item["level"], shard, identifier, source, item["reference"])
                 else:
                     if "spam" in result:
                         await channel.send(result["spam"])
 
 
-bot = BibleBot()
-central.log_message("info", "global", "global", central.version + " by Elliott Pardee (vypr)")
+bot = BibleBot(shard_ids=[0, 1], shard_count=2)
+central.log_message("info", 0, "global", "global", central.version + " by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])
