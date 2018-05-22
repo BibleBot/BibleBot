@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/QA.md" beforeDir="false" afterPath="$PROJECT_DIR$/QA.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/i18n/default/default.json" beforeDir="false" afterPath="$PROJECT_DIR$/i18n/default/default.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
       <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
@@ -28,11 +25,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="commandbridge.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="commandbridge.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="90" column="97" lean-forward="true" selection-start-line="90" selection-start-column="97" selection-end-line="90" selection-end-column="97" />
+            <state relative-caret-position="99">
+              <caret line="337" column="32" selection-start-line="337" selection-start-column="32" selection-end-line="337" selection-end-column="32" />
+              <folding>
+                <element signature="e#748#759#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -55,7 +55,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="default.json" pinned="false" current-in-tab="true">
+      <file leaf-file-name="default.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="230">
@@ -173,8 +173,8 @@
         <option value="$PROJECT_DIR$/src/handlers/commands.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py" />
         <option value="$PROJECT_DIR$/src/bot.py" />
-        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
         <option value="$PROJECT_DIR$/i18n/default/default.json" />
+        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
       </list>
     </option>
   </component>
@@ -787,10 +787,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
+    <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="90" column="97" lean-forward="true" selection-start-line="90" selection-start-column="97" selection-end-line="90" selection-end-column="97" />
+        <state relative-caret-position="230">
+          <caret line="10" column="60" selection-start-line="10" selection-start-column="60" selection-end-line="10" selection-end-column="60" />
         </state>
       </provider>
     </entry>
@@ -801,10 +801,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="10" column="60" selection-start-line="10" selection-start-column="60" selection-end-line="10" selection-end-column="60" />
+        <state relative-caret-position="99">
+          <caret line="337" column="32" selection-start-line="337" selection-start-column="32" selection-end-line="337" selection-end-column="32" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

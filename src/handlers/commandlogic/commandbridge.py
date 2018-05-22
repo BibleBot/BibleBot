@@ -335,7 +335,7 @@ def run_command(command, args, lang, user, guild, channel):
 
                 page_counter = lang["pageOf"].replace("<num>", str(i + 1)).replace("<total>", str(total_pages))
                 embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versions"] +
-                                     " - " + page_counter, value=version_list)
+                                " - " + page_counter, value=version_list)
 
                 pages.append(embed)
 
@@ -817,9 +817,9 @@ def run_command(command, args, lang, user, guild, channel):
             else:
                 embed.color = 16723502
 
-                response = lang["headingsfail"] \
- \
-                        response = response.replace("<headings>", lang["commands"]["headings"])
+                response = lang["headingsfail"]
+
+                response = response.replace("<headings>", lang["commands"]["headings"])
                 response = response.replace("<enable>", lang["arguments"]["enable"])
                 response = response.replace("<disable>", lang["arguments"]["disable"])
 
