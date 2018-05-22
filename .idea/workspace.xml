@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/languages.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/languages.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
       <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
@@ -25,11 +27,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="commandbridge.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="commandbridge.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="99">
-              <caret line="337" column="32" selection-start-line="337" selection-start-column="32" selection-end-line="337" selection-end-column="32" />
+            <state relative-caret-position="214">
+              <caret line="342" column="28" lean-forward="true" selection-start-line="342" selection-start-column="28" selection-end-line="342" selection-end-column="28" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -46,11 +48,32 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="languages.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="69">
+              <caret line="73" column="49" selection-start-line="73" selection-start-column="49" selection-end-line="73" selection-end-column="49" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="languages.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/data/languages.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1">
+              <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="commands.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="160">
               <caret line="59" column="4" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="4" />
+              <folding>
+                <element signature="e#748#757#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -161,8 +184,6 @@
         <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/bibleutils.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/rev.py" />
-        <option value="$PROJECT_DIR$/src/data/languages.py" />
-        <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/versions.py" />
         <option value="$PROJECT_DIR$/src/central.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/formatting.py" />
@@ -175,6 +196,8 @@
         <option value="$PROJECT_DIR$/src/bot.py" />
         <option value="$PROJECT_DIR$/i18n/default/default.json" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
+        <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py" />
+        <option value="$PROJECT_DIR$/src/data/languages.py" />
       </list>
     </option>
   </component>
@@ -437,7 +460,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="5" />
+      <option name="time" value="6" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -693,24 +716,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/languages.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="51" column="38" selection-start-line="51" selection-start-column="33" selection-end-line="51" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/vytypes/language.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="473">
           <caret line="33" column="28" selection-start-line="33" selection-start-column="28" selection-end-line="33" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="95" selection-start-line="95" selection-end-line="95" />
         </state>
       </provider>
     </entry>
@@ -763,13 +772,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
-          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="138">
@@ -794,20 +796,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="342" column="28" lean-forward="true" selection-start-line="342" selection-start-column="28" selection-end-line="342" selection-end-column="28" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
           <caret line="59" column="4" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="4" />
+          <folding>
+            <element signature="e#748#757#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
+    <entry file="file://$PROJECT_DIR$/src/data/languages.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="99">
-          <caret line="337" column="32" selection-start-line="337" selection-start-column="32" selection-end-line="337" selection-end-column="32" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-1">
+          <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="118">
+          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="69">
+          <caret line="73" column="49" selection-start-line="73" selection-start-column="49" selection-end-line="73" selection-end-column="49" />
         </state>
       </provider>
     </entry>
