@@ -483,7 +483,7 @@ def run_command(command, args, lang, user, guild, channel):
         string = ""
 
         for item in available_languages:
-            string += item["name"] + " [`" + item["objectName"] + "`]\n"
+            string += item["name"] + " [`" + item["object_name"] + "`]\n"
 
         embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["languages"],
                         value=string)
