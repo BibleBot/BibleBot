@@ -41,6 +41,20 @@ except FileNotFoundError:
 
 dashes = ["-", "—", "–"]
 
+def list_duplicates_of(seq, item):
+    start_at = -1
+    locs = []
+
+    while True:
+        try:
+            loc = seq.index(item, start_at + 1)
+        except ValueError:
+            break
+        else:
+            locs.append(loc)
+            start_at = loc
+
+    return locs
 
 def tokenize(msg):
     array = []
@@ -120,6 +134,7 @@ def get_difference(a, b):
 
 def get_books(msg):
     results = []
+    existing_indices = []
 
     for key, value in books.items():
         for item in value:
@@ -131,6 +146,18 @@ def get_books(msg):
 
                 for index in indices:
                     results.append((key, index))
+
+                    if index not in existing_indices:
+                        existing_indices.append(index)
+
+    indices = [j for i, j in results]
+
+    for index in existing_indices:
+        dupes = list_duplicates_of(indices, index)
+
+        for i, j in enumerate(dupes):
+            if i < len(dupes) - 1:
+                results.pop(i)
 
     return results
 

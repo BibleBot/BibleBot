@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
       <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
@@ -16,11 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="bot.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="239" column="33" selection-start-line="239" selection-start-column="33" selection-end-line="239" selection-end-column="33" />
+            <state relative-caret-position="164">
+              <caret line="330" column="31" selection-start-line="330" selection-start-column="31" selection-end-line="330" selection-end-column="31" />
               <folding>
                 <element signature="e#748#762#0" expanded="true" />
               </folding>
@@ -37,11 +38,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="config.ini" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/config.ini">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="69">
+              <caret line="3" column="10" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="utils.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1662">
-              <caret line="223" selection-start-line="223" selection-end-line="223" />
+            <state relative-caret-position="206">
+              <caret line="160" lean-forward="true" selection-start-line="160" selection-end-line="160" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -52,20 +62,11 @@
       <file leaf-file-name="verses.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
+            <state relative-caret-position="1356">
               <caret line="103" column="40" lean-forward="true" selection-start-line="103" selection-start-column="40" selection-end-line="103" selection-end-column="40" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="books.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="69" column="27" selection-start-line="69" selection-start-column="26" selection-end-line="69" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -171,7 +172,6 @@
         <option value="$PROJECT_DIR$/src/vytypes/language.py" />
         <option value="$PROJECT_DIR$/src/vytypes/version.py" />
         <option value="$PROJECT_DIR$/TODO.md" />
-        <option value="$PROJECT_DIR$/src/config.ini" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/bibleutils.py" />
@@ -184,7 +184,6 @@
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/versions.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
-        <option value="$PROJECT_DIR$/src/handlers/verselogic/utils.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py" />
         <option value="$PROJECT_DIR$/src/central.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
@@ -193,6 +192,8 @@
         <option value="$PROJECT_DIR$/src/handlers/verses.py" />
         <option value="$PROJECT_DIR$/src/data/BGBookNames/books.json" />
         <option value="$PROJECT_DIR$/src/bot.py" />
+        <option value="$PROJECT_DIR$/src/config.ini" />
+        <option value="$PROJECT_DIR$/src/handlers/verselogic/utils.py" />
       </list>
     </option>
   </component>
@@ -400,11 +401,11 @@
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3289256" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5007452" side_tool="true" weight="0.37521222" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925485" weight="0.37521222" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49925485" visible="true" weight="0.37521222" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.33106962" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.3289256" />
       <window_info id="Structure" order="1" sideWeight="0.5081522" side_tool="true" weight="0.2503726" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.3293718" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.3293718" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -763,20 +764,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/config.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="5" column="17" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/config.example.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="3" column="10" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="27">
@@ -798,33 +785,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="103" column="40" lean-forward="true" selection-start-line="103" selection-start-column="40" selection-end-line="103" selection-end-column="40" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="69" column="27" selection-start-line="69" selection-start-column="26" selection-end-line="69" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1662">
-          <caret line="223" selection-start-line="223" selection-end-line="223" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="505">
@@ -834,10 +794,51 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="239" column="33" selection-start-line="239" selection-start-column="33" selection-end-line="239" selection-end-column="33" />
+        <state relative-caret-position="164">
+          <caret line="330" column="31" selection-start-line="330" selection-start-column="31" selection-end-line="330" selection-end-column="31" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="782">
+          <caret line="69" column="27" selection-start-line="69" selection-start-column="26" selection-end-line="69" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config.example.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="69">
+          <caret line="3" column="10" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="69">
+          <caret line="3" column="10" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1356">
+          <caret line="103" column="40" lean-forward="true" selection-start-line="103" selection-start-column="40" selection-end-line="103" selection-end-column="40" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="206">
+          <caret line="160" lean-forward="true" selection-start-line="160" selection-end-line="160" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
           </folding>
         </state>
       </provider>
