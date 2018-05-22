@@ -161,7 +161,14 @@ def create_verse_object(name, book_index, msg, available_versions, brackets):
         if bracket_indexes[0] <= book_index <= bracket_indexes[1]:
             return "invalid"
 
-    number_split = array[book_index + 1].split(":")
+    try:
+        number_split = array[book_index + 1].split(":")
+    except IndexError:
+        number_split = None
+
+    if number_split is None:
+        return
+
     dash_split = None
 
     if len(number_split) > 1:

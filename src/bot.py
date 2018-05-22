@@ -63,7 +63,7 @@ class BibleBot(discord.AutoShardedClient):
         if mod_time < one_week_ago:
             bg_book_names.getBooks()
 
-        central.log_message("info", self.shard_id, "global", "global", "connected")
+        central.log_message("info", self.shard, "global", "global", "connected")
 
         activity = discord.Game(central.version + " | Shard: " + str(self.shard) + " / " + str(self.shard_count))
         await self.change_presence(status=discord.Status.online, activity=activity)
@@ -328,41 +328,45 @@ class BibleBot(discord.AutoShardedClient):
                         total = len(bot.guilds)
 
                         for item in bot.guilds:
-                            if "Discord Bot" not in item.name:
-                                if str(item.id) != "362503610006765568":
-                                    sent = False
+                            # noinspection PyBroadException
+                            try:
+                                if "Discord Bot" not in item.name:
+                                    if str(item.id) != "362503610006765568":
+                                        sent = False
 
-                                    preferred = ["misc", "bots", "meta", "hangout", "fellowship", "lounge",
-                                                 "congregation", "general", "bot-spam", "staff"]
+                                        preferred = ["misc", "bots", "meta", "hangout", "fellowship", "lounge",
+                                                     "congregation", "general", "bot-spam", "staff"]
 
-                                    for ch in item.text_channels:
-                                        try:
-                                            if not sent:
-                                                for name in preferred:
-                                                    if ch.name == name:
-                                                        perm = ch.permissions_for(item.me)
+                                        for ch in item.text_channels:
+                                            try:
+                                                if not sent:
+                                                    for name in preferred:
+                                                        if ch.name == name:
+                                                            perm = ch.permissions_for(item.me)
 
-                                                        if perm.read_messages and perm.send_messages:
-                                                            await channel.send(str(count) + "/" + str(total) +
-                                                                               " - " + item.name +
-                                                                               " :white_check_mark:")
-                                                            if perm.embed_links:
-                                                                await ch.send(embed=res["message"])
+                                                            if perm.read_messages and perm.send_messages:
+                                                                await channel.send(str(count) + "/" + str(total) +
+                                                                                   " - " + item.name +
+                                                                                   " :white_check_mark:")
+                                                                if perm.embed_links:
+                                                                    await ch.send(embed=res["message"])
+                                                                else:
+                                                                    await ch.send(res["message"].fields[0].value)
                                                             else:
-                                                                await ch.send(res["message"].fields[0].value)
-                                                        else:
-                                                            await channel.send(str(count) + "/" + str(total) +
-                                                                               " - " + item.name +
-                                                                               " :regional_indicator_x:")
+                                                                await channel.send(str(count) + "/" + str(total) +
+                                                                                   " - " + item.name +
+                                                                                   " :regional_indicator_x:")
 
-                                                        count += 1
-                                                        sent = True
-                                        except (AttributeError, IndexError):
-                                            sent = False
-                                else:
-                                    for ch in item.text_channels:
-                                        if ch.name == "announcements":
-                                            await ch.send(embed=res["message"])
+                                                            count += 1
+                                                            sent = True
+                                            except (AttributeError, IndexError):
+                                                sent = False
+                                    else:
+                                        for ch in item.text_channels:
+                                            if ch.name == "announcements":
+                                                await ch.send(embed=res["message"])
+                            except Exception:
+                                total = total
 
                         await channel.send("Done.")
 
