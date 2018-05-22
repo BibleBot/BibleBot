@@ -222,6 +222,9 @@ def create_reference_string(verse):
     except (ValueError, TypeError, KeyError):
         verse = verse
 
+    if verse is None:
+        return
+
     if "startingVerse" in verse.keys():
         if verse["startingVerse"] is not None:
             if verse["book"] in itemToBook["ot"]:

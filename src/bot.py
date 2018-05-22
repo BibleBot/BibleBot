@@ -46,6 +46,7 @@ class BibleBot(discord.AutoShardedClient):
         super().__init__(*args, loop=loop, **kwargs)
         self.bg_task = self.loop.create_task(self.run_timed_votds())
         self.shard_count = 2
+        self.shard_ids = [1, 2]
         self.current_page = None
         self.total_pages = None
 
@@ -59,6 +60,12 @@ class BibleBot(discord.AutoShardedClient):
             bg_book_names.getBooks()
 
         central.log_message("info", self.shard_id, "global", "global", "connected")
+
+        activity = discord.Game(central.version + " | Shard: 1 / 2")
+        await self.change_presence(status=discord.Status.online, activity=activity, shard_id=1)
+
+        activity = discord.Game(central.version + " | Shard: 2 / 2")
+        await self.change_presence(status=discord.Status.online, activity=activity, shard_id=2)
 
     async def run_timed_votds(self):
         await self.wait_until_ready()
