@@ -41,6 +41,10 @@ Commands:
 * `+servers` - list all servers BibleBot is in
 * `+invite` - get the invite link for BibleBot
 
+Extra-Biblical Commands:
+
+* `+creeds` - the ecumenical creeds (contains further commands)
+
 Guild Commands:
 
 * `+setguildversion ABBV` - set the guild's default version to ABBV

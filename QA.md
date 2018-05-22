@@ -17,6 +17,12 @@
 - [x] +servers - list all servers BibleBot is in
 - [x] +invite - get the invite link for BibleBot
 
+- [x] +creeds - the ecumenical creeds
+- [x] +apostles - the Apostles' Creed
+- [x] +nicene - the Nicene-Constantinopolitan Creed
+- [x] +chalcedonian - the Chalcedonian Creed
+- [x] +athanasian - the Pseudo-Athanasian Creed
+
 - [x] +setguildversion ABBV - set the guild's default version to ABBV
 - [x] +guildversion - see the default version for this guild
 - [x] +setguildlanguage LANG - set the guild's default language to LANG

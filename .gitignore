@@ -107,6 +107,7 @@ venv.bak/
 # ignore dbs
 databases/db
 databases/bandb
+databases/guilddb
 
 # ignore config file
 src/config.ini
