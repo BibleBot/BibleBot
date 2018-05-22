@@ -142,7 +142,7 @@ class BibleBot(discord.AutoShardedClient):
                                     else:
                                         await channel.send(lang["passagetoolong"])
             except Exception:
-                results = results
+                pass
 
             # central.log_message("info", shard, "votd_sched", "global", "Sending VOTDs...")
             await asyncio.sleep(60)
@@ -361,13 +361,13 @@ class BibleBot(discord.AutoShardedClient):
                                                             count += 1
                                                             sent = True
                                             except (AttributeError, IndexError):
-                                                sent = False
+                                                sent = True
                                     else:
                                         for ch in item.text_channels:
                                             if ch.name == "announcements":
                                                 await ch.send(embed=res["message"])
                             except Exception:
-                                total = total
+                                pass
 
                         await channel.send("Done.")
 
@@ -384,7 +384,11 @@ class BibleBot(discord.AutoShardedClient):
                     central.log_message(res["level"], shard, identifier, source,
                                         "+" + original_command + " " + clean_args)
                 else:
-                    await channel.send(embed=res["return"])
+                    # noinspection PyBroadException
+                    try:
+                        await channel.send(embed=res["return"])
+                    except Exception:
+                        pass
         else:
             verse_handler = VerseHandler()
 
@@ -422,7 +426,7 @@ class BibleBot(discord.AutoShardedClient):
                             elif "message" in item:
                                 await channel.send(item["message"])
                         except KeyError:
-                            item = item
+                            pass
 
                         if "reference" in item:
                             central.log_message(item["level"], shard, identifier, source, item["reference"])
