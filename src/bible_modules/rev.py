@@ -32,40 +32,25 @@ logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 
 def get_result(query, verse_numbers):
-    if ":" in query:
-        split = query.split(":")
-
-        book = split[0].split(" ")[0]
-        chapter = split[0].split(" ")[1]
-        starting_verse = split[1].split("-")[0]
-
-        if len(split[1].split("-")) > 1:
-            ending_verse = split[1].split("-")[1]
-        else:
-            ending_verse = starting_verse
-
-    else:
+    if ":" not in query:
         book = query.split(" ")[0]
         chapter = query.split(" ")[1]
         starting_verse = "1"
         ending_verse = "5"
 
-    unversed_books = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"]
-    is_unversed = False
+        unversed_books = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"]
+        is_unversed = False
 
-    for i in unversed_books:
-        if i in query:
-            is_unversed = True
+        query = book + " " + chapter
 
-    if is_unversed:
-        starting_verse = chapter
-        chapter = "1"
-        ending_verse = starting_verse
+        for i in unversed_books:
+            if i in query:
+                is_unversed = True
 
-    if ending_verse != starting_verse:
-        query = book + " " + chapter + ":" + starting_verse + "-" + ending_verse
-    else:
-        query = book + " " + chapter + ":" + starting_verse
+        if is_unversed:
+            query += ":" + starting_verse
+        else:
+            query += ":" + starting_verse + "-" + ending_verse
 
     url = "https://www.revisedenglishversion.com/" + book + "/" + chapter + "/"
     resp = requests.get(url)

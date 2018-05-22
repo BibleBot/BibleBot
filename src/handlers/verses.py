@@ -100,7 +100,7 @@ class VerseHandler:
                 if version is None:
                     version = settings.versions.get_guild_version(guild)
 
-                    if version is None:
+                    if version is None or version == "REV":
                         version = "NRSV"
 
                 headings = settings.formatting.get_headings(sender)

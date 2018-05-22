@@ -58,7 +58,8 @@ class BibleBot(discord.AutoShardedClient):
             bg_book_names.getBooks()
 
     async def on_shard_ready(self, shard_id):
-        activity = discord.Game(central.version + " | Shard: " + str(shard_id + 1) + "/ 2")
+        activity = discord.Game(central.version + " | Shard: " + str(shard_id + 1) + " / " +
+                                str(config["BibleBot"]["shards"]))
         await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
 
         central.log_message("info", shard_id + 1, "global", "global", "connected")
@@ -407,11 +408,11 @@ class BibleBot(discord.AutoShardedClient):
                     return
 
                 if "invalid" not in result and "spam" not in result:
-                    if embed_or_reaction_not_allowed:
-                        await channel.send("I need 'Embed Links' and 'Add Reactions' permissions!")
-                        return
-
                     for item in result:
+                        if embed_or_reaction_not_allowed:
+                            await channel.send("I need 'Embed Links' and 'Add Reactions' permissions!")
+                            return
+
                         try:
                             if "twoMessages" in item:
                                 await channel.send(item["firstMessage"])
