@@ -734,6 +734,10 @@ def run_command(command, args, lang, user, guild, channel):
             verse = bibleutils.get_random_verse()
             result = biblegateway.get_result(verse, version, headings, verse_numbers)
 
+            while result is None:
+                verse = bibleutils.get_random_verse()
+                result = biblegateway.get_result(verse, version, headings, verse_numbers)
+
             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
