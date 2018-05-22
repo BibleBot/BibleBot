@@ -73,11 +73,7 @@ def splitter(s):
 
 
 def log_message(level, shard, sender, source, msg):
-    if shard is None:
-        shard = 1
-
-    message = "[shard " + str(shard) + "] <" + \
-        sender + "@" + source + "> " + msg
+    message = "<" + sender + "@" + source + "> " + msg
 
     if level == "warn":
         logger.warning(message)
