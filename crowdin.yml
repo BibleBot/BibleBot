@@ -1,8 +1,8 @@
 files:
   - source: /i18n/default/default.json
-    translation: /i18n/%language%/%language%.json
+    translation: /i18n/%locale%/%locale%.json
     languages_mapping:
-      language:
+      locale:
         af: afrikaans
         sq: albanian
         am: amharic

@@ -1,5 +1,5 @@
-'''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+"""
+    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -14,10 +14,11 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
+
+import logging
 
 from colorama import Fore
-import logging
 
 Colors = {
     "GREEN": Fore.LIGHTGREEN_EX,

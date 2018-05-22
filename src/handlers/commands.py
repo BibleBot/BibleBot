@@ -1,5 +1,5 @@
-'''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+"""
+    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -14,25 +14,28 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
-import sys
 import os
+import sys
+
 import discord
-from handlers.commandlogic import commandbridge as commandBridge
+
+from handlers.commandlogic import commandbridge as command_bridge
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(dir_path + "/..")
 
 import central  # noqa: E402
-from vytypes.handler import Handler  # noqa: E402
 
-commandMap = {
+command_map = {
     "biblebot": 0,
     "search": 1,
     "versions": 0,
     "setversion": 1,
+    "setguildversion": 1,
     "version": 0,
+    "guildversion": 0,
     "versioninfo": 1,
     "random": 0,
     "verseoftheday": 0,
@@ -41,10 +44,23 @@ commandMap = {
     "versenumbers": 1,
     "languages": 0,
     "setlanguage": 1,
+    "setguildlanguage": 1,
     "language": 0,
+    "guildlanguage": 0,
+    "setguildbrackets": 1,
+    "guildbrackets": 0,
+    "setvotdtime": 1,
+    "clearvotdtime": 0,
+    "votdtime": 0,
     "users": 0,
     "servers": 0,
     "invite": 0,
+
+    "creeds": 0,
+    "apostles": 0,
+    "nicene": 0,
+    "chalcedonian": 0,
+    "athanasian": 0,
 
     "jepekula": 0,
     "joseph": 0,
@@ -55,14 +71,29 @@ commandMap = {
 }
 
 
-def isCommand(command, lang):
+def is_command(command, lang):
     commands = lang["commands"]
 
     result = {
         "ok": False
     }
 
-    if command == "eval":
+    if command == "setlanguage":
+        result = {
+            "ok": True,
+            "orig": "setlanguage",
+        }
+    elif command == "ban":
+        result = {
+            "ok": True,
+            "orig": "ban"
+        }
+    elif command == "unban":
+        result = {
+            "ok": True,
+            "orig": "unban"
+        }
+    elif command == "eval":
         result = {
             "ok": True,
             "orig": "eval"
@@ -83,17 +114,17 @@ def isCommand(command, lang):
             "orig": "tiger"
         }
     else:
-        for originalCommandName in commands.keys():
-            if commands[originalCommandName] == command:
+        for original_command_name in commands.keys():
+            if commands[original_command_name] == command:
                 result = {
                     "ok": True,
-                    "orig": originalCommandName
+                    "orig": original_command_name
                 }
 
     return result
 
 
-def isOwnerCommand(command, lang):
+def is_owner_command(command, lang):
     commands = lang["commands"]
 
     if command == commands["leave"]:
@@ -104,122 +135,96 @@ def isOwnerCommand(command, lang):
         return True
     elif command == commands["addversion"]:
         return True
+    elif command == "ban":
+        return True
+    elif command == "unban":
+        return True
     elif command == "eval":
         return True
     else:
         return False
 
 
-class CommandHandler(Handler):
-    def processCommand(self, bot, command, lang, sender, args=None):
-        rawLanguage = eval("central.languages." + lang).rawObject
-        commands = rawLanguage["commands"]
+class CommandHandler:
+    @classmethod
+    def process_command(cls, bot, command, lang, sender, guild, channel, args=None):
+        raw_language = getattr(central.languages, lang).raw_object
+        commands = raw_language["commands"]
 
-        properCommand = isCommand(command, rawLanguage)
+        proper_command = is_command(command, raw_language)
 
-        if properCommand["ok"]:
-            origCmd = properCommand["orig"]
-            if isOwnerCommand(origCmd, rawLanguage) is False:
-                if origCmd != commands["search"]:
-                    if origCmd != commands["headings"] and origCmd != commands["versenumbers"]:  # noqa: E501
-                        if origCmd != commands["servers"] and origCmd != commands["users"]:  # noqa: E501
-                            requiredArguments = commandMap[origCmd]
+        if proper_command["ok"]:
+            orig_cmd = proper_command["orig"]
+            if not is_owner_command(orig_cmd, raw_language):
+                if orig_cmd != commands["search"]:
+                    if orig_cmd != commands["headings"] and orig_cmd != commands["versenumbers"]:
+                        if orig_cmd != commands["servers"] and orig_cmd != commands["users"]:
+                            required_arguments = command_map[orig_cmd]
 
                             if args is None:
                                 args = []
 
-                            if len(args) != requiredArguments:
+                            if len(args) != required_arguments:
                                 embed = discord.Embed()
 
                                 embed.color = 16723502
-                                embed.set_footer(text="BibleBot v" +
-                                                 central.config["meta"]
-                                                 ["version"],
-                                                 icon_url="https://cdn."
-                                                 + "discordapp" +
-                                                 ".com/avatars/" +
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e" +
-                                                 "4b5112696e10a.png")
+                                embed.set_footer(text=central.version, icon_url=central.icon)
 
-                                response = rawLanguage["argumentCountError"]
-                                response = response.replace(
-                                    "<command>", command).replace(
-                                    "<count>", str(requiredArguments))
+                                response = raw_language["argumentCountError"]
 
-                                embed.add_field(
-                                    name=rawLanguage["error"], value=response)
+                                response = response.replace("<command>", command)
+                                response = response.replace("<count>", str(required_arguments))
+
+                                embed.add_field(name=raw_language["error"], value=response)
 
                                 return {
                                     "isError": True,
                                     "return": embed
                                 }
 
-                            return commandBridge.runCommand(origCmd, args,
-                                                            rawLanguage,
-                                                            sender)
+                            return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
                         else:
-                            requiredArguments = commandMap[origCmd]
+                            required_arguments = command_map[orig_cmd]
 
                             if args is None:
                                 args = []
 
-                            if len(args) != requiredArguments:
+                            if len(args) != required_arguments:
                                 embed = discord.Embed()
 
                                 embed.color = 16723502
-                                embed.set_footer(text="BibleBot v" +
-                                                 central.config["meta"]
-                                                 ["version"],
-                                                 icon_url="https://cdn." +
-                                                 "discordapp." +
-                                                 "com/avatars/" +
-                                                 "361033318273384449/" +
-                                                 "5aad77425546f9baa5e" +
-                                                 "4b5112696e10a.png")
+                                embed.set_footer(text=central.version, icon_url=central.icon)
 
-                                response = rawLanguage["argumentCountError"]
-                                response = response.replace(
-                                    "<command>", command).replace(
-                                        "<count>", str(requiredArguments))
+                                response = raw_language["argumentCountError"]
+                                response = response.replace("<command>", command)
+                                response = response.replace("<count>", str(required_arguments))
 
-                                embed.add_field(name=rawLanguage["error"],
-                                                value=response)
+                                embed.add_field(name=raw_language["error"], value=response)
 
                                 return {
                                     "isError": True,
                                     "return": embed
                                 }
 
-                            return commandBridge.runCommand(origCmd, [bot],
-                                                            rawLanguage,
-                                                            sender)
+                            return command_bridge.run_command(orig_cmd, [bot], raw_language, sender, guild, channel)
                     else:
                         if args is None:
                             args = []
 
                         if len(args) == 0 or len(args) == 1:
-                            return commandBridge.runCommand(origCmd, args,
-                                                            rawLanguage,
-                                                            sender)
+                            return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
                         else:
                             embed = discord.Embed()
+
                             embed.color = 16723502
-                            embed.set_footer(text="BibleBot v" +
-                                             central.config["meta"]["version"],
-                                             icon_url="https://cdn.discor" +
-                                             "dapp.com/avatars/" +
-                                             "361033318273384449/" +
-                                             "5aad77425546f9baa5e4b5112696" +
-                                             "e10a.png")
+                            embed.set_footer(text=central.version, icon_url=central.icon)
 
-                            response = rawLanguage["argumentCountError"]
-                            response = response.replace(
-                                "<command>", command).replace(
-                                    "<count>", rawLanguage["zeroOrOne"])
+                            response = raw_language["argumentCountError"]
 
-                            embed.add_field(name=rawLanguage["error"],
-                                            value=response)
+                            response = response.replace("<command>", command)
+                            response = response.replace("<count>", raw_language["zeroOrOne"])
+
+                            embed.add_field(name=raw_language["error"], value=response)
 
                             return {
                                 "isError": True,
@@ -231,17 +236,11 @@ class CommandHandler(Handler):
 
                     if len(args) == 1 and len(args[0]) < 4:
                         embed = discord.Embed()
-                        embed.color = 16723502
-                        embed.set_footer(text="BibleBot v" +
-                                         central.config["meta"]["version"],
-                                         icon_url="https://cdn.discordapp." +
-                                         "com/avatars/" +
-                                         "361033318273384449/" +
-                                         "5aad77425546f9baa5e" +
-                                         "4b5112696e10a.png")
 
-                        embed.add_field(name=rawLanguage["error"],
-                                        value=rawLanguage["queryTooShort"])
+                        embed.color = 16723502
+                        embed.set_footer(text=central.version, icon_url=central.icon)
+
+                        embed.add_field(name=raw_language["error"], value=raw_language["queryTooShort"])
 
                         return {
                             "isError": True,
@@ -250,47 +249,38 @@ class CommandHandler(Handler):
 
                     if len(args) == 0:
                         embed = discord.Embed()
+
                         embed.color = 16723502
-                        embed.set_footer(text="BibleBot v" +
-                                         central.config["meta"]["version"],
-                                         icon_url="https://cdn.discordapp."
-                                         + "com/avatars/" +
-                                         "361033318273384449/" +
-                                         "5aad77425546f9baa5e" +
-                                         "4b5112696e10a.png")
+                        embed.set_footer(text=central.version, icon_url=central.icon)
 
-                        response = rawLanguage["argumentCountErrorAL"].replace(
-                            "<command>", command).replace("<count>", "1")
+                        response = raw_language["argumentCountErrorAL"]
 
-                        embed.add_field(
-                            name=rawLanguage["error"], value=response)
+                        response = response.replace("<command>", command)
+                        response = response.replace("<count>", "1")
+
+                        embed.add_field(name=raw_language["error"], value=response)
 
                         return {
                             "isError": True,
                             "return": embed
                         }
                     else:
-                        return commandBridge.runCommand(origCmd, args,
-                                                        rawLanguage, sender)
+                        return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
             else:
+                # noinspection PyBroadException
                 try:
-                    if str(sender.id) == central.config["BibleBot"]["owner"]:
-                        return commandBridge.runOwnerCommand(command, args,
-                                                             rawLanguage)
+                    if str(sender.id) == central.config["BibleBot"]["owner"] or str(sender.id) == "367665336239128577":
+                        return command_bridge.run_owner_command(bot, command, args, raw_language)
                 except Exception:
                     embed = discord.Embed()
+
                     embed.color = 16723502
-                    embed.set_footer(text="BibleBot v" +
-                                     central.config["meta"]["version"],
-                                     icon_url="https://cdn.discordapp." +
-                                     "com/avatars/" +
-                                     "361033318273384449/" +
-                                     "5aad77425546f9baa5e4b5112696e10a.png")
+                    embed.set_footer(text=central.version, icon_url=central.icon)
 
-                    response = rawLanguage["commandNotFoundError"].replace(
-                        "<command>", command)
+                    response = raw_language["commandNotFoundError"]
+                    response = response.replace("<command>", command)
 
-                    embed.add_field(name=rawLanguage["error"], value=response)
+                    embed.add_field(name=raw_language["error"], value=response)
 
                     return {
                         "isError": True,
@@ -299,16 +289,12 @@ class CommandHandler(Handler):
         else:
             embed = discord.Embed()
             embed.color = 16723502
-            embed.set_footer(text="BibleBot v" +
-                             central.config["meta"]["version"],
-                             icon_url="https://cdn.discordapp.com/avatars/" +
-                             "361033318273384449/" +
-                             "5aad77425546f9baa5e4b5112696e10a.png")
+            embed.set_footer(text=central.version, icon_url=central.icon)
 
-            response = rawLanguage["commandNotFoundError"].replace(
-                "<command>", command)
+            response = raw_language["commandNotFoundError"]
+            response = response.replace("<command>", command)
 
-            embed.add_field(name=rawLanguage["error"], value=response)
+            embed.add_field(name=raw_language["error"], value=response)
 
             return {
                 "isError": True,

@@ -1,9 +1,6 @@
 # BibleBot
-[![Help Translate on Crowdin](https://d322cqt584bo4o.cloudfront.net/biblebot/localized.svg)](https://crowdin.com/project/biblebot) [![Join us on Discord](https://img.shields.io/discord/362503610006765568.svg)](https://discord.gg/Ssn8KNv) [![Discord Bots](https://discordbots.org/api/widget/lib/361033318273384449.png)](https://discordbots.org)
+[![Help Translate on Crowdin](https://d322cqt584bo4o.cloudfront.net/biblebot/localized.svg)](https://crowdin.com/project/biblebot) [![Join us on Discord](https://img.shields.io/discord/362503610006765568.svg)](https://discord.gg/seKEJUn) [![Discord Bots](https://discordbots.org/api/widget/lib/361033318273384449.png)](https://discordbots.org/bot/361033318273384449)
 
-[![Become a Patron on Patreon](https://biblebot.vypr.space/public/patreonbutton.svg)](https://patreon.com/biblebot)
-
-[![Feature Requests](https://feathub.com/BibleBot/BibleBot?format=svg)](https://feathub.com/BibleBot/BibleBot)   
 A Discord bot for Bible verses.
 
 To use it, just say a Bible verse.
@@ -14,6 +11,8 @@ Installation:
 
 ```bash
 git clone https://git.vypr.space/BibleBot/BibleBot.git
+cd BibleBot
+git submodule update --init
 python3 -m venv venv
 source venv/bin/activate
 cp src/config.example.ini src/config.ini
@@ -42,13 +41,30 @@ Commands:
 * `+servers` - list all servers BibleBot is in
 * `+invite` - get the invite link for BibleBot
 
+Extra-Biblical Commands:
+
+* `+creeds` - the ecumenical creeds (contains further commands)
+
+Guild Commands:
+
+* `+setguildversion ABBV` - set the guild's default version to ABBV
+* `+guildversion` - see the default version for this guild
+* `+setguildlanguage LANG` - set the guild's default language to LANG
+* `+guildlanguage` - see the guild's default language, if one is set (default: english)
+* `+setvotdtime TIME` - set the VOTD scheduler time to TIME (TIME must be 24h format and in UTC)
+* `+clearvotdtime` - clear the VOTD scheduler time
+* `+votdtime` - see the VOTD scheduler time and channel
+
 Bot Owner Commands:
 
-* `+addversion versionname abbv hasOT hasNT hasAPO` - add a version (`+av`)
-* `+puppet message` - say something as the bot
-* `+eval javascript` - execute javascript code
+* `+addversion versionname abbv hasOT hasNT hasAPO` (`+av`) - add a version
+* `+puppet message` - say something as the bot (requires 'Manage Messages' perms in order to fully function)
+* `+eval python` - execute python code (it's an exec() wrapper)
+* `+ban id` - ban an id from using the bot (works for both users and guilds)
+* `+unban id` - unban an id from using the bot (works for both users and guilds)
+* `+leave NAME` - leave the current or NAME server (argument optional)
 
-Invite BibleBot to your server! https://discordapp.com/api/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=0
+Invite BibleBot to your server! https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=19520
 
 ---
 
@@ -71,4 +87,4 @@ and the dotfiles do not need to have the version number updated.
 
 ### Special Thanks
 
-**adfizz, apocz, audiovideodisco, Banská Bystrica, Blubb, BonaventureSissokovitch, Buggyrcobra, Coal, DeadPixels, jznsamuel, Koockies, Mark Nunberg, Manelic, Raven Melodie, omeratagun, Sezess, sunray.steemit, SwedishMeatball, Tuonela, TySpeedy, Viva98, xnkmevaou, Zyxl** and many more for their hard work on helping BibleBot reach the world by translating languages :heart:
+**adfizz, apocz, audiovideodisco, Blubb, BonaventureSissokovitch, Buggyrcobra, Coal, DeadPixels, jznsamuel, Koockies, Mark Nunberg, Manelic, Raven Melodie, omeratagun, Sezess, sunray.steemit, SwedishMeatball, Tuonela, TySpeedy, Viva98, xnkmevaou, Zyxl and many more** for their hard work on helping BibleBot reach the world by translating languages :heart:

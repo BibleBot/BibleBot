@@ -1,5 +1,5 @@
-'''
-    Copyright (c) 2018 Elliott Pardee <vypr [at] vypr [dot] space>
+"""
+    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -14,10 +14,10 @@
 
     You should have received a copy of the GNU General Public License
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
-import sys
 import os
+import sys
 
 import tinydb
 
@@ -27,15 +27,15 @@ sys.path.append(dir_path + "/../../..")
 import central  # noqa: E402
 
 
-def setLanguage(user, language):
+def set_language(user, language):
+    # noinspection PyBroadException
     try:
         if getattr(central.languages, language) is not None:
-            idealUser = tinydb.Query()
-            userResult = central.db.search(idealUser.id == user.id)
+            ideal_user = tinydb.Query()
+            results = central.db.search(ideal_user.id == user.id)
 
-            if len(userResult) > 0:
-                central.db.update(
-                    {"id": user.id}, idealUser.language == language)
+            if len(results) > 0:
+                central.db.update({"language": language}, ideal_user.id == user.id)
             else:
                 central.db.insert({"id": user.id, "language": language})
 
@@ -44,27 +44,56 @@ def setLanguage(user, language):
         return False
 
 
-def getLanguage(user):
-    idealUser = tinydb.Query()
-    results = central.db.search(idealUser.id == user.id)
+def set_guild_language(guild, language):
+    # noinspection PyBroadException
+    try:
+        if getattr(central.languages, language) is not None:
+            ideal_guild = tinydb.Query()
+            results = central.guildDB.search(ideal_guild.id == guild.id)
+
+            if len(results) > 0:
+                central.guildDB.update({"language": language}, ideal_guild.id == guild.id)
+            else:
+                central.guildDB.insert({"id": guild.id, "language": language})
+
+            return True
+    except Exception:
+        return False
+
+
+def get_language(user):
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
+
+    languages = get_languages()
 
     if len(results) > 0:
         if "language" in results[0]:
-            if results[0]["language"] is None:
-                return central.languages.english_us.objectName
+            for item in languages:
+                if item["object_name"] == results[0]["language"]:
+                    return results[0]["language"]
 
+    return None
+
+
+def get_guild_language(guild):
+    ideal_guild = tinydb.Query()
+    results = central.guildDB.search(ideal_guild.id == guild.id)
+
+    if len(results) > 0:
+        if "language" in results[0]:
             return results[0]["language"]
-    else:
-        return central.languages.english_us.objectName
+
+    return central.languages.english_us.object_name
 
 
-def getLanguages():
+def get_languages():
     languages = []
 
     for lang in [a for a in dir(central.languages) if not a.startswith('__')]:
         name = getattr(central.languages, lang).name
-        objectName = getattr(central.languages, lang).objectName
+        object_name = getattr(central.languages, lang).object_name
 
-        languages.append({"name": name, "objectName": objectName})
+        languages.append({"name": name, "object_name": object_name})
 
     return languages
