@@ -303,10 +303,11 @@ class BibleBot(discord.AutoShardedClient):
                                     await channel.send(res["message"])
                             else:
                                 if res["message"] is not None:
+                                    # noinspection PyBroadException
                                     try:
                                         await channel.send(embed=res["message"])
-                                    except discord.errors.Forbidden:
-                                        pass
+                                    except Exception:
+                                        await channel.send(res["message"])
                                 else:
                                     await channel.send("Done.")
 
