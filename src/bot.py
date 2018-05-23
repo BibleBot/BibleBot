@@ -296,10 +296,11 @@ class BibleBot(discord.AutoShardedClient):
                                 msg.clear_reactions()
                         else:
                             if "reference" not in res and "text" not in res:
+                                # noinspection PyBroadException
                                 try:
                                     await channel.send(embed=res["message"])
-                                except discord.errors.Forbidden:
-                                    pass
+                                except Exception:
+                                    await channel.send(res["message"])
                             else:
                                 if res["message"] is not None:
                                     try:

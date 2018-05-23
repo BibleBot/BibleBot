@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
-      <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
-    </list>
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
       <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
+    </list>
+    <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
+      <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,8 +19,8 @@
       <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
-              <caret line="197" column="17" selection-start-line="197" selection-start-column="17" selection-end-line="197" selection-end-column="17" />
+            <state relative-caret-position="128">
+              <caret line="298" column="63" selection-start-line="298" selection-start-column="63" selection-end-line="298" selection-end-column="63" />
               <folding>
                 <element signature="e#748#762#0" expanded="true" />
               </folding>
@@ -831,8 +831,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="197" column="17" selection-start-line="197" selection-start-column="17" selection-end-line="197" selection-end-column="17" />
+        <state relative-caret-position="128">
+          <caret line="298" column="63" selection-start-line="298" selection-start-column="63" selection-end-line="298" selection-end-column="63" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
           </folding>
