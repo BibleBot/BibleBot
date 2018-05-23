@@ -94,7 +94,8 @@ def run_command(command, args, lang, user, guild, channel):
         embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
         links = lang["website"].replace("websiteLink", "https://biblebot.xyz") + "\n" + lang["joinserver"].replace(
-            "inviteLink", "https://discord.gg/seKEJUn") + "\n\n**" + lang["usage"] + "**"
+            "inviteLink", "https://discord.gg/seKEJUn") + "\n" + \
+            lang["terms"].replace("termsLink", "https://biblebot.xyz/terms") + "\n\n**" + lang["usage"] + "**"
 
         embed.add_field(name=lang["links"], value=links)
 

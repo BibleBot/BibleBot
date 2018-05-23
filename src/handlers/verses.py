@@ -71,7 +71,7 @@ class VerseHandler:
             for book, index in results:
                 verse = utils.create_verse_object(book, index, msg, available_versions, brackets)
 
-                if verse != "invalid":
+                if verse != "invalid" and verse is not None:
                     verses.append(verse)
 
             if len(verses) > 6:
