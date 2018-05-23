@@ -300,6 +300,7 @@ class BibleBot(discord.AutoShardedClient):
                                 try:
                                     await channel.send(embed=res["message"])
                                 except Exception:
+                                    print(res)
                                     await channel.send(res["message"])
                             else:
                                 if res["message"] is not None:
@@ -307,6 +308,7 @@ class BibleBot(discord.AutoShardedClient):
                                     try:
                                         await channel.send(embed=res["message"])
                                     except Exception:
+                                        print(res)
                                         await channel.send(res["message"])
                                 else:
                                     await channel.send("Done.")

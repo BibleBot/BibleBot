@@ -19,8 +19,8 @@
       <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="381">
-              <caret line="309" column="74" selection-start-line="309" selection-start-column="74" selection-end-line="309" selection-end-column="74" />
+            <state relative-caret-position="220">
+              <caret line="302" column="46" selection-start-line="302" selection-start-column="46" selection-end-line="302" selection-end-column="46" />
               <folding>
                 <element signature="e#748#762#0" expanded="true" />
               </folding>
@@ -831,8 +831,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="309" column="74" selection-start-line="309" selection-start-column="74" selection-end-line="309" selection-end-column="74" />
+        <state relative-caret-position="220">
+          <caret line="302" column="46" selection-start-line="302" selection-start-column="46" selection-end-line="302" selection-end-column="46" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
           </folding>
