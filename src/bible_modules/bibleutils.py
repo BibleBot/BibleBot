@@ -43,6 +43,7 @@ def purify_text(text):
     result = result.replace("? \"", "?\"")
     result = result.replace("? '", "?'")
     result = result.replace(":", ": ")
+    result = result.replace(";", "; ")
     return re.sub(r"\s+", " ", result)
 
 
