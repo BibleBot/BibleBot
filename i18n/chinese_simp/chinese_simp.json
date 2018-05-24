@@ -77,7 +77,6 @@
     "servers": "BibleBot 在 <count> 服务器中。",
     "argumentCountError": "+<command> 需要 <count> 参数",
     "argumentCountErrorAL": "+<command> 需要至少 <count> 参数",
-    "commandNotFoundError": "+<command> 不是有效的命令",
     "queryTooShort": "您的搜索查询必须长于3个字符",
     "searchResults": "搜索结果",
     "nothingFound": "\"<query>\"没有搜索结果",
