@@ -77,7 +77,6 @@
     "servers": "Tha BibleBot ann an <count> servers.",
     "argumentCountError": "+<command> feumach <count> argamaidean.",
     "argumentCountErrorAL": "+<command> feumach co-dhiù <count> argamaidean.",
-    "commandNotFoundError": "+<command> chan e comharra dhligheach a th 'ann.",
     "queryTooShort": "Feumaidh an ceist rannsachaidh a bhith nas fhaide na 3 caractaran.",
     "searchResults": "Toraidhean rannsachaidh airson",
     "nothingFound": "Chan eil dad ri fhaighinn \"<query>\"",
