@@ -77,7 +77,6 @@
     "servers": "Biblebot <count> sunucuya ekli.",
     "argumentCountError": "+<command> requires <count> arguments.",
     "argumentCountErrorAL": "+<command> requires at least <count> arguments.",
-    "commandNotFoundError": "+<command> is not a valid command.",
     "queryTooShort": "Your search query must be longer than 3 characters.",
     "searchResults": "Search results for",
     "nothingFound": "Nothing found for \"<query>\"",

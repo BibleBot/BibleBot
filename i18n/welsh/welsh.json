@@ -77,7 +77,6 @@
     "servers": "Mae BibleBot mewn <count> servers.",
     "argumentCountError": "+<command> ei gwneud yn ofynnol <count> dadleuon.",
     "argumentCountErrorAL": "+<command> ei gwneud yn ofynnol leiaf <count> dadleuon.",
-    "commandNotFoundError": "+<command> nid yw gorchymyn dilys.",
     "queryTooShort": "Rhaid eich ymholiad chwilio fod yn hwy na 3 cymeriadau.",
     "searchResults": "Chwilio canlyniadau ar",
     "nothingFound": "Dim dechrau ar gyfer \"<query>\"",

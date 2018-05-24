@@ -77,7 +77,6 @@
     "servers": "Το BibleBot ειναι σε <count> σέρβερς.",
     "argumentCountError": "+<command> απαιτεί <count> επιχειρήματα.",
     "argumentCountErrorAL": "+<command> απαιτεί τουλάχιστον <count> επιχειρήματα.",
-    "commandNotFoundError": "+<command> δεν είναι έγκυρη εντολή.",
     "queryTooShort": "Το ερώτημα αναζήτησης πρέπει να είναι μεγαλύτερο απο 3 χαρακτήρες.",
     "searchResults": "Αποτελέσματα αναζήτησης για",
     "nothingFound": "Δεν βρέθηκε τίποτα για \"<query>\"",

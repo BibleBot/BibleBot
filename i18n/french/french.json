@@ -77,7 +77,6 @@
     "servers": "BibleBot est dans <count> serveurs.",
     "argumentCountError": "+<command> requiert <count> arguments.",
     "argumentCountErrorAL": "+<command> requiert au moins <count> arguments.",
-    "commandNotFoundError": "+<command> n'est pas une commande valide.",
     "queryTooShort": "Votre requête de recherche doit avoir une longueur supérieure à 3 caractères.",
     "searchResults": "Résultats de la recherche pour",
     "nothingFound": "Rien n'a été trouvé pour \"<query>\"",

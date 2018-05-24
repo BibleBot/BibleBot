@@ -77,7 +77,6 @@
     "servers": "バイブルボットは <count> のサーバーに入っています。",
     "argumentCountError": "+<command> は引き数を <count> 必要とします。",
     "argumentCountErrorAL": "+<command> は <count> 以上の引き数が必要です。",
-    "commandNotFoundError": "+<command> は有効なコマンドではありません。",
     "queryTooShort": "検索クエリーは３字以上で入力してください。",
     "searchResults": "検索結果：",
     "nothingFound": "\"<query>\" に関する結果はありませんでした",

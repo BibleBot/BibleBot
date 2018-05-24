@@ -77,7 +77,6 @@
     "servers": "BibliRoboto estas en <count> serviloj.",
     "argumentCountError": "+<command> bezonas <count> operandojn.",
     "argumentCountErrorAL": "+<command> almenaŭ bezonas <count> operandojn.",
-    "commandNotFoundError": "+<command> ne estas valida ordono.",
     "queryTooShort": "Via serĉmendo devas esti pli longa ol 3 literoj.",
     "searchResults": "Serĉrezultoj por",
     "nothingFound": "Mi trovis nenion por \"<query>\"",

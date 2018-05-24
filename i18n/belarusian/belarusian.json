@@ -77,7 +77,6 @@
     "servers": "BibleBot ёсць на <count> серверах.",
     "argumentCountError": "+<command> патрабуе аргументаў: <count>.",
     "argumentCountErrorAL": "+<command> патрабуе, па меншай меры, аргументаў: <count>.",
-    "commandNotFoundError": "+<command> не з'яўляецца дапушчальнай камандай.",
     "queryTooShort": "Ваш пошукавы запыт павінен быць даўжэй 3 знакаў.",
     "searchResults": "Вынікі пошуку для",
     "nothingFound": "Нічога не знойдзена для \"<query>\"",
