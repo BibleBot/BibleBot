@@ -269,34 +269,7 @@ class CommandHandler:
             else:
                 # noinspection PyBroadException
                 try:
-                    if str(sender.id) == central.config["BibleBot"]["owner"] or str(sender.id) == "367665336239128577":
+                    if str(sender.id) == central.config["BibleBot"]["owner"]:
                         return command_bridge.run_owner_command(bot, command, args, raw_language)
                 except Exception:
-                    embed = discord.Embed()
-
-                    embed.color = 16723502
-                    embed.set_footer(text=central.version, icon_url=central.icon)
-
-                    response = raw_language["commandNotFoundError"]
-                    response = response.replace("<command>", command)
-
-                    embed.add_field(name=raw_language["error"], value=response)
-
-                    return {
-                        "isError": True,
-                        "return": embed
-                    }
-        else:
-            embed = discord.Embed()
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            response = raw_language["commandNotFoundError"]
-            response = response.replace("<command>", command)
-
-            embed.add_field(name=raw_language["error"], value=response)
-
-            return {
-                "isError": True,
-                "return": embed
-            }
+                    pass
