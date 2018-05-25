@@ -48,7 +48,7 @@
     "deunotsupported": "Versio <version> ei tue Apokryfi/Deuterokanonisia kirjoja.",
     "otnotsupported2": "Jos haluat käyttää Vanhaa Testamenttia, `+<setversion>`käännökseen, joka tukee sitä.",
     "ntnotsupported2": "Jos haluat käyttää Uutta Testamenttia, `+<setversion>` käännökseen, joka tukee sitä.",
-    "deunotsupported2": "If you want to use the Apocrypha/Deuterocanon, `+<setversion>` to a version that has it.",
+    "deunotsupported2": "Jos haluat käyttää Apokryfi/Deuterokanonisia kirjoja, `+<setversion>` versioon jolla on se.",
     "setguildversionsuccess": "Set guild version successfully.",
     "setguildversionnoperm": "You must have the 'Manage Server' permission to modify a guild's version!",
     "setguildversionfail": "Failed to set guild version, see `+<versions>`.",
