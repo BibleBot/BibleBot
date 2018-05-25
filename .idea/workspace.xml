@@ -103,8 +103,8 @@
       <file leaf-file-name="verses.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="68" column="74" selection-start-line="68" selection-start-column="74" selection-end-line="68" selection-end-column="74" />
+            <state relative-caret-position="23">
+              <caret line="60" column="39" selection-start-line="60" selection-start-column="39" selection-end-line="60" selection-end-column="39" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -420,7 +420,7 @@
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3289256" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5007452" side_tool="true" weight="0.37521222" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289256" />
@@ -428,7 +428,7 @@
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.3289256" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925485" weight="0.37521222" />
       <window_info id="Structure" order="1" sideWeight="0.5081522" side_tool="true" weight="0.2503726" />
-      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.33106962" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.33106962" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -807,13 +807,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/central.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="49" column="53" lean-forward="true" selection-start-line="49" selection-start-column="53" selection-end-line="49" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/config.example.ini">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="69">
@@ -855,10 +848,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/central.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="49" column="53" lean-forward="true" selection-start-line="49" selection-start-column="53" selection-end-line="49" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="68" column="74" selection-start-line="68" selection-start-column="74" selection-end-line="68" selection-end-column="74" />
+        <state relative-caret-position="23">
+          <caret line="60" column="39" selection-start-line="60" selection-start-column="39" selection-end-line="60" selection-end-column="39" />
           <folding>
             <element signature="e#748#759#0" expanded="true" />
           </folding>

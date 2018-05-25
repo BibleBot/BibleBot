@@ -58,16 +58,7 @@ class VerseHandler:
         msg = raw_message.content
 
         if brackets is None:
-            brackets = central.config["BibleBot"]["dividingBrackets"]
-
-        try:
-            brackets["first"] = brackets["first"]
-            brackets["second"] = brackets["second"]
-        except TypeError:
-            brackets = {
-                "first": central.config["BibleBot"]["dividingBrackets"][0],
-                "second": central.config["BibleBot"]["dividingBrackets"][1]
-            }
+            brackets = central.brackets
 
         if " " in msg:
             verses = []
