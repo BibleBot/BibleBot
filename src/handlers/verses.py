@@ -72,7 +72,14 @@ class VerseHandler:
                 verse = utils.create_verse_object(book, index, msg, available_versions, brackets)
 
                 if verse != "invalid" and verse is not None:
-                    verses.append(verse)
+                    skip = False
+
+                    for key, val in verse.items():
+                        if val is None or val == "None":
+                            skip = True
+
+                    if not skip:
+                        verses.append(verse)
 
             if len(verses) > 6:
                 responses = ["spamming me, really?", "no spam pls",

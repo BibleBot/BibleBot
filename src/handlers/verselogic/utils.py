@@ -41,6 +41,7 @@ except FileNotFoundError:
 
 dashes = ["-", "—", "–"]
 
+
 def list_duplicates_of(seq, item):
     start_at = -1
     locs = []
@@ -55,6 +56,7 @@ def list_duplicates_of(seq, item):
             start_at = loc
 
     return locs
+
 
 def tokenize(msg):
     array = []
@@ -191,10 +193,7 @@ def create_verse_object(name, book_index, msg, available_versions, brackets):
     try:
         number_split = array[book_index + 1].split(":")
     except IndexError:
-        number_split = None
-
-    if number_split is None:
-        return
+        return "invalid"
 
     dash_split = None
 

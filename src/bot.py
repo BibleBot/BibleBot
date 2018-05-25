@@ -57,6 +57,12 @@ class BibleBot(discord.AutoShardedClient):
         if mod_time < one_week_ago:
             bg_book_names.getBooks()
 
+        if config["BibleBot"]["shards"] == "1":
+            activity = discord.Game(central.version + " | Shard: 1 / 1")
+            await self.change_presence(status=discord.Status.online, activity=activity)
+
+            central.log_message("info", 1, "global", "global", "connected")
+
     async def on_shard_ready(self, shard_id):
         activity = discord.Game(central.version + " | Shard: " + str(shard_id + 1) + " / " +
                                 str(config["BibleBot"]["shards"]))
@@ -148,6 +154,8 @@ class BibleBot(discord.AutoShardedClient):
             await asyncio.sleep(60)
 
     async def on_message(self, raw):
+        self.wait_until_ready()
+
         sender = raw.author
         identifier = sender.name + "#" + sender.discriminator
         channel = raw.channel
