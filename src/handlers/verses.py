@@ -75,8 +75,9 @@ class VerseHandler:
                     skip = False
 
                     for key, val in verse.items():
-                        if val is None or val == "None":
-                            skip = True
+                        if key is "book" or key is "chapter":
+                            if val is None or val == "None":
+                                skip = True
 
                     if not skip:
                         verses.append(verse)
