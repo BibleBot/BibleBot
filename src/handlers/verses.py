@@ -65,8 +65,8 @@ class VerseHandler:
             brackets["second"] = brackets["second"]
         except TypeError:
             brackets = {
-                "first": central.config["BibleBot"]["dividingBrackets"]["first"],
-                "second": central.config["BibleBot"]["dividingBrackets"]["second"]
+                "first": central.config["BibleBot"]["dividingBrackets"][0],
+                "second": central.config["BibleBot"]["dividingBrackets"][1]
             }
 
         if " " in msg:
