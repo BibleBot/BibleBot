@@ -116,7 +116,7 @@
         "clearvotdtime": "clearvotdtime",
         "votdtime": "votdtime",
         "nicene": "nicene",
-        "apostles": "apostles",
+        "apostles": "apostolit",
         "athanasian": "athanasian",
         "chalcedonian": "chalcedonian",
         "creeds": "creeds",
@@ -124,7 +124,7 @@
         "servers": "palvelimet",
         "announce": "ilmoitus",
         "invite": "kutsu",
-        "supporters": "supporters"
+        "supporters": "tukijat"
     },
     "arguments": {
         "yes": "Kyllä",
