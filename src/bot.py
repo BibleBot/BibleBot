@@ -29,6 +29,7 @@ from bible_modules import biblegateway, rev, bibleutils
 from data.BGBookNames import start as bg_book_names
 from handlers.commandlogic.settings import languages
 from handlers.commandlogic.settings import versions
+from handlers.commandlogic.settings import misc
 from handlers.commands import CommandHandler
 from handlers.verses import VerseHandler
 
@@ -341,14 +342,39 @@ class BibleBot(discord.AutoShardedClient):
                         total = len(bot.guilds)
 
                         for item in bot.guilds:
+                            announce_tuple = misc.get_guild_announcements(item, False)
+
                             # noinspection PyBroadException
                             try:
                                 if "Discord Bot" not in item.name:
-                                    if str(item.id) != "362503610006765568":
-                                        sent = False
+                                    if announce_tuple is not None:
+                                        chan, setting = announce_tuple
+                                    else:
+                                        chan = "preferred"
+                                        setting = True
 
-                                        preferred = ["misc", "bots", "meta", "hangout", "fellowship", "lounge",
-                                                     "congregation", "general", "bot-spam", "staff"]
+                                    preferred = ["misc", "bots", "meta", "hangout", "fellowship", "lounge",
+                                                 "congregation", "general", "bot-spam", "staff"]
+
+                                    if chan != "preferred" and setting:
+                                        ch = self.get_channel(chan)
+                                        perm = ch.permissions_for(item.me)
+
+                                        if perm.read_messages and perm.send_messages:
+                                            await channel.send(str(count) + "/" + str(total) + " - " + item.name +
+                                                               " :white_check_mark:")
+
+                                            if perm.embed_links:
+                                                await ch.send(embed=res["message"])
+                                            else:
+                                                await ch.send(res["message"].fields[0].value)
+                                        else:
+                                            await channel.send(str(count) + "/" + str(total) + " - " + item.name +
+                                                               " :regional_indicator_x:")
+
+                                        count += 1
+                                    elif chan == "preferred" and setting:
+                                        sent = False
 
                                         for ch in item.text_channels:
                                             try:
@@ -375,9 +401,10 @@ class BibleBot(discord.AutoShardedClient):
                                             except (AttributeError, IndexError):
                                                 sent = True
                                     else:
-                                        for ch in item.text_channels:
-                                            if ch.name == "announcements":
-                                                await ch.send(embed=res["message"])
+                                        await channel.send(str(count) + "/" + str(total) + " - " + item.name +
+                                                           " :regional_indicator_x:")
+
+                                        count += 1
                             except Exception:
                                 pass
 

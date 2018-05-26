@@ -47,7 +47,7 @@ banDB = tinydb.TinyDB(dir_path + "/../databases/bandb")
 languages = languages
 
 brackets = {
-    "first":     config["BibleBot"]["dividingBrackets"][0],
+    "first": config["BibleBot"]["dividingBrackets"][0],
     "second": config["BibleBot"]["dividingBrackets"][1]
 }
 

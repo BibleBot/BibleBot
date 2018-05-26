@@ -40,8 +40,10 @@ command_map = {
     "random": 0,
     "verseoftheday": 0,
     "votd": 0,
-    "headings": 1,
-    "versenumbers": 1,
+    "setheadings": 1,
+    "headings": 0,
+    "setversenumbers": 1,
+    "versenumbers": 0,
     "languages": 0,
     "setlanguage": 1,
     "setguildlanguage": 1,
@@ -52,6 +54,8 @@ command_map = {
     "setvotdtime": 1,
     "clearvotdtime": 0,
     "votdtime": 0,
+    "setannouncements": 1,
+    "announcements": 0,
     "users": 0,
     "servers": 0,
     "invite": 0,
@@ -157,63 +161,13 @@ class CommandHandler:
             orig_cmd = proper_command["orig"]
             if not is_owner_command(orig_cmd, raw_language):
                 if orig_cmd != commands["search"]:
-                    if orig_cmd != commands["headings"] and orig_cmd != commands["versenumbers"]:
-                        if orig_cmd != commands["servers"] and orig_cmd != commands["users"]:
-                            required_arguments = command_map[orig_cmd]
+                    if orig_cmd != commands["servers"] and orig_cmd != commands["users"]:
+                        required_arguments = command_map[orig_cmd]
 
-                            if args is None:
-                                args = []
-
-                            if len(args) != required_arguments:
-                                embed = discord.Embed()
-
-                                embed.color = 16723502
-                                embed.set_footer(text=central.version, icon_url=central.icon)
-
-                                response = raw_language["argumentCountError"]
-
-                                response = response.replace("<command>", command)
-                                response = response.replace("<count>", str(required_arguments))
-
-                                embed.add_field(name=raw_language["error"], value=response)
-
-                                return {
-                                    "isError": True,
-                                    "return": embed
-                                }
-
-                            return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
-                        else:
-                            required_arguments = command_map[orig_cmd]
-
-                            if args is None:
-                                args = []
-
-                            if len(args) != required_arguments:
-                                embed = discord.Embed()
-
-                                embed.color = 16723502
-                                embed.set_footer(text=central.version, icon_url=central.icon)
-
-                                response = raw_language["argumentCountError"]
-                                response = response.replace("<command>", command)
-                                response = response.replace("<count>", str(required_arguments))
-
-                                embed.add_field(name=raw_language["error"], value=response)
-
-                                return {
-                                    "isError": True,
-                                    "return": embed
-                                }
-
-                            return command_bridge.run_command(orig_cmd, [bot], raw_language, sender, guild, channel)
-                    else:
                         if args is None:
                             args = []
 
-                        if len(args) == 0 or len(args) == 1:
-                            return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
-                        else:
+                        if len(args) != required_arguments:
                             embed = discord.Embed()
 
                             embed.color = 16723502
@@ -222,7 +176,7 @@ class CommandHandler:
                             response = raw_language["argumentCountError"]
 
                             response = response.replace("<command>", command)
-                            response = response.replace("<count>", raw_language["zeroOrOne"])
+                            response = response.replace("<count>", str(required_arguments))
 
                             embed.add_field(name=raw_language["error"], value=response)
 
@@ -230,6 +184,32 @@ class CommandHandler:
                                 "isError": True,
                                 "return": embed
                             }
+
+                        return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
+                    else:
+                        required_arguments = command_map[orig_cmd]
+
+                        if args is None:
+                            args = []
+
+                        if len(args) != required_arguments:
+                            embed = discord.Embed()
+
+                            embed.color = 16723502
+                            embed.set_footer(text=central.version, icon_url=central.icon)
+
+                            response = raw_language["argumentCountError"]
+                            response = response.replace("<command>", command)
+                            response = response.replace("<count>", str(required_arguments))
+
+                            embed.add_field(name=raw_language["error"], value=response)
+
+                            return {
+                                "isError": True,
+                                "return": embed
+                            }
+
+                        return command_bridge.run_command(orig_cmd, [bot], raw_language, sender, guild, channel)
                 else:
                     if args is None:
                         args = []

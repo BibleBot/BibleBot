@@ -116,10 +116,10 @@ def get_result(query, version, headings, verse_numbers):
 
             if verse_numbers == "disable":
                 for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
-                    num.string.replace_text(" ")
+                    num.string = " "
             else:
                 for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
-                    num.string.replace_with("<" + num.string[0:-1] + "> ")
+                    num.string = "<" + num.string[0:-1] + "> "
 
             for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):
                 meta.decompose()

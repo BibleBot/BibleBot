@@ -108,7 +108,7 @@ class VerseHandler:
                 if version is None:
                     version = settings.versions.get_guild_version(guild)
 
-                    if version is None or version == "REV":
+                    if version is None:
                         version = "NRSV"
 
                 headings = settings.formatting.get_headings(sender)
@@ -119,6 +119,15 @@ class VerseHandler:
                 if len(ref_split) == 2:
                     reference = ref_split[0]
                     version = ref_split[1]
+
+                if version == "REV":
+                    version = settings.versions.get_version(sender)
+
+                    if version is None:
+                        version = settings.versions.get_guild_version(guild)
+
+                        if version is None:
+                            version = "NRSV"
 
                 ideal_version = tinydb.Query()
                 results = central.versionDB.search(ideal_version.abbv == version)
