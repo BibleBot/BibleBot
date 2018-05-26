@@ -61,7 +61,7 @@
     "setguildbracketssuccess": "Kiltasulkeet asetettiin onnistuneesti.",
     "setguildbracketsnoperm": "Sinulla täytyy olla 'Manage Server' -oikeudet muokataksesi kiltasulkeita!",
     "setguildbracketsfail": "Kiltasulkeiden asettaminen epäonnistui, tuetut suljevaihtoehdot ovat `<>`, `[]`, `()`, `{}`.",
-    "guildbracketsused": "The brackets for this guild are `<brackets>`.\n\nHave someone with the 'Manage Server' permission use `+<setguildbrackets>` to set different brackets.",
+    "guildbracketsused": "Sulkeet tälle killalle ovat `<brackets>`.\n\nOnko joku, jolla on 'Manage Server' -oikeudet käyttänyt komentoa `+<setguildbrackets>` asettaakseen erilaiset sulkeet.",
     "setvotdtimesuccess": "PJ-aika asetettu onnistuneesti.",
     "setvotdtimenoperm": "Sinulla pitää olla 'Manage Server' -lupa muokataksesi killan PJ-aikaa!",
     "setvotdtimefail": "PJ-ajan asettaminen epäonnistui, kellonajan on oltava 24 tunnin kellon mukainen, esimerkiksi '01:00' tai '13:00'.",
