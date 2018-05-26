@@ -929,7 +929,7 @@ def run_command(command, args, lang, user, guild, channel):
         perms = user.guild_permissions
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
-            if not perms.manage_guild or str(user.id) != central.config["BibleBot"]["owner"]:
+            if not perms.manage_guild:
                 embed.color = 16723502
                 embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"],
                                 value=lang["setannouncementsnoperm"])
