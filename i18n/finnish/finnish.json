@@ -53,7 +53,7 @@
     "setguildversionnoperm": "Sinulla täytyy olla 'Manage Server' -oikeudet muokataksesi killan käännöstä!",
     "setguildversionfail": "Kiltakäännöksen asettaminen epäonnistui, katso `+<versions>`.",
     "guildversionused": "Tämä kilta käyttää käännöstä <version>. Onko joku, jolla on 'Manage Server' -oikeudet käyttänyt komentoa `+<setguildversion>` asettaakseen eri käännöksen.",
-    "noguildversionused": "En löytänyt tätä kiltaa tietokannastani, onko joku, jolla on 'Manage Server' -oikeudet käyttänyt `+<setguildversion>` vielä?",
+    "noguildversionused": "En löytänyt tätä kiltaa tietokannastani, onko joku, jolla on 'Manage Server' -oikeudet käyttänyt vielä komentoa`+<setguildversion>`?",
     "setguildlanguagesuccess": "Kiltakieli asetettu onnistuneesti.",
     "setguildlanguagenoperm": "Sinulla täytyy olla 'Manage Server' -oikeudet muokataksesi killan kieltä!",
     "setguildlanguagefail": "Kiltakielen asettaminen epäonnistui, katso `+<languages>`.",
