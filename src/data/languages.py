@@ -37,6 +37,9 @@ __english_uk = __json.loads(__english_uk.read())
 # __esperanto = open(__dir_path + "/../../i18n/esperanto/esperanto.json")
 # __esperanto = __json.loads(__esperanto.read())
 
+__finnish = open(__dir_path + "/../../i18n/finnish/finnish.json")
+__finnish = __json.loads(__finnish.read())
+
 # __french = open(__dir_path + "/../../i18n/french/french.json")
 # __french = __json.loads(__french.read())
 
@@ -53,6 +56,7 @@ __english_uk = __json.loads(__english_uk.read())
 english_us = __Language("English (US)", "english_us", __english_us, "NRSV")
 english_uk = __Language("English (UK)", "english_uk", __english_uk, "NRSVA")
 # esperanto = __Language("Esperanto", "esperanto", __esperanto, "NRSV")
+finnish = __Language("Finnish", "finnish", __finnish, "R1933")
 # french = __Language("French", "french", __french, "BDS")
 # french_qc = __Language("French (QC)", "french_qc", __french_qc, "BDS")
 # greek = __Language("Greek", "greek", __greek, "NRSV")

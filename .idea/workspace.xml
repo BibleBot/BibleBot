@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/i18n/default/default.json" beforeDir="false" afterPath="$PROJECT_DIR$/i18n/default/default.json" afterDir="false" />
-    </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
       <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
+    </list>
+    <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/languages.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/languages.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,8 +21,8 @@
       <file leaf-file-name="bot.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4715">
-              <caret line="381" column="60" selection-start-line="381" selection-start-column="60" selection-end-line="381" selection-end-column="60" />
+            <state relative-caret-position="23">
+              <caret line="215" column="20" selection-start-line="215" selection-start-column="20" selection-end-line="215" selection-end-column="20" />
               <folding>
                 <element signature="e#748#762#0" expanded="true" />
               </folding>
@@ -31,7 +33,7 @@
       <file leaf-file-name="misc.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
+            <state relative-caret-position="2116">
               <caret line="96" column="84" selection-start-line="96" selection-start-column="84" selection-end-line="96" selection-end-column="84" />
             </state>
           </provider>
@@ -40,8 +42,8 @@
       <file leaf-file-name="commandbridge.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-24">
-              <caret line="930" column="35" selection-start-line="930" selection-start-column="35" selection-end-line="930" selection-end-column="35" />
+            <state relative-caret-position="115">
+              <caret line="979" column="35" lean-forward="true" selection-start-line="979" selection-start-column="35" selection-end-line="979" selection-end-column="35" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -49,20 +51,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="default.json" pinned="false" current-in-tab="true">
+      <file leaf-file-name="default.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="99">
+            <state relative-caret-position="23">
               <caret line="100" column="43" selection-start-line="100" selection-start-column="43" selection-end-line="100" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="languages.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="languages.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/data/languages.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="54" column="2" selection-start-line="54" selection-start-column="2" selection-end-line="54" selection-end-column="2" />
+            <state relative-caret-position="116">
+              <caret line="57" column="16" lean-forward="true" selection-start-line="57" selection-start-column="16" selection-end-line="57" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -162,10 +164,10 @@
         <option value="$PROJECT_DIR$/src/handlers/verses.py" />
         <option value="$PROJECT_DIR$/src/central.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py" />
-        <option value="$PROJECT_DIR$/src/bot.py" />
-        <option value="$PROJECT_DIR$/src/data/languages.py" />
-        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
         <option value="$PROJECT_DIR$/i18n/default/default.json" />
+        <option value="$PROJECT_DIR$/src/bot.py" />
+        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
+        <option value="$PROJECT_DIR$/src/data/languages.py" />
       </list>
     </option>
   </component>
@@ -183,7 +185,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -252,6 +253,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -363,15 +365,14 @@
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4918478" visible="true" weight="0.2503726" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32767403" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5007452" side_tool="true" weight="0.37521222" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3289256" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925485" weight="0.37521222" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.33106962" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.3289256" />
       <window_info id="Structure" order="1" sideWeight="0.5081522" side_tool="true" weight="0.2503726" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.3293718" />
+      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.3327674" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -381,6 +382,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3289256" />
     </layout>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -457,9 +459,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="27" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -509,9 +508,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="27" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -720,9 +716,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="194" column="22" selection-start-line="194" selection-start-column="22" selection-end-line="194" selection-end-column="22" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -737,9 +730,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="57" column="23" selection-start-line="57" selection-start-column="23" selection-end-line="57" selection-end-column="23" />
-          <folding>
-            <element signature="e#748#757#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -752,7 +742,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
+        <state relative-caret-position="2116">
           <caret line="96" column="84" selection-start-line="96" selection-start-column="84" selection-end-line="96" selection-end-column="84" />
         </state>
       </provider>
@@ -768,23 +758,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1">
           <caret line="124" lean-forward="true" selection-start-line="124" selection-end-line="124" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/languages.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="54" column="2" selection-start-line="54" selection-start-column="2" selection-end-line="54" selection-end-column="2" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4715">
-          <caret line="381" column="60" selection-start-line="381" selection-start-column="60" selection-end-line="381" selection-end-column="60" />
+        <state relative-caret-position="23">
+          <caret line="215" column="20" selection-start-line="215" selection-start-column="20" selection-end-line="215" selection-end-column="20" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
           </folding>
@@ -793,8 +773,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-24">
-          <caret line="930" column="35" selection-start-line="930" selection-start-column="35" selection-end-line="930" selection-end-column="35" />
+        <state relative-caret-position="115">
+          <caret line="979" column="35" lean-forward="true" selection-start-line="979" selection-start-column="35" selection-end-line="979" selection-end-column="35" />
           <folding>
             <element signature="e#748#759#0" expanded="true" />
           </folding>
@@ -803,8 +783,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="99">
+        <state relative-caret-position="23">
           <caret line="100" column="43" selection-start-line="100" selection-start-column="43" selection-end-line="100" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/languages.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="116">
+          <caret line="57" column="16" lean-forward="true" selection-start-line="57" selection-start-column="16" selection-end-line="57" selection-end-column="16" />
         </state>
       </provider>
     </entry>

@@ -200,17 +200,20 @@ class BibleBot(discord.AutoShardedClient):
         embed_or_reaction_not_allowed = False
 
         if guild is not None:
-            perms = channel.permissions_for(guild.me)
+            try:
+                perms = channel.permissions_for(guild.me)
 
-            if perms is not None:
-                if not perms.send_messages or not perms.read_messages:
-                    return
+                if perms is not None:
+                    if not perms.send_messages or not perms.read_messages:
+                        return
 
-                if not perms.embed_links:
-                    embed_or_reaction_not_allowed = True
+                    if not perms.embed_links:
+                        embed_or_reaction_not_allowed = True
 
-                if not perms.add_reactions:
-                    embed_or_reaction_not_allowed = True
+                    if not perms.add_reactions:
+                        embed_or_reaction_not_allowed = True
+            except AttributeError:
+                pass
 
         if message.startswith(config["BibleBot"]["commandPrefix"]):
             command = message[1:].split(" ")[0]
