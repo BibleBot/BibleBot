@@ -57,7 +57,7 @@
     "setguildlanguagesuccess": "Set guild language successfully.",
     "setguildlanguagenoperm": "You must have the 'Manage Server' permission to modify a guild's language!",
     "setguildlanguagefail": "Failed to set guild language, see `+<languages>`.",
-    "guildlanguageused": "This guild is using Replace_With_Language_Name. Have someone with the 'Manage Server' permission use `+<setguildlanguage>` to set a different language.",
+    "guildlanguageused": "This guild is using English (UK). Have someone with the 'Manage Server' permission use `+<setguildlanguage>` to set a different language.",
     "setguildbracketssuccess": "Set guild brackets successfully.",
     "setguildbracketsnoperm": "You must have the 'Manage Server' permission to modify a guild's brackets!",
     "setguildbracketsfail": "Failed to set guild brackets, the supported bracket options are `<>`, `[]`, `()`, `{}`.",
