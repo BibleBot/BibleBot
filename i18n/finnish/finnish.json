@@ -6,7 +6,7 @@
     "guildcommandlist": "* `+<setguildversion> ABBV` - aseta killan oletusversio ABBV: lle\n* `+<guildversion>` - näytä oletuskäännös tälle killalle\n* `+<setguildlanguage> LANG` - aseta killan oletuskieli\n* `+<guildlanguage>` - näytä killan oletuskieli, jos sellainen on asetettu (oletus: englanti)\n* `+<setvotdtime> TIME` - aseta PJ-ajastin tiettyyn kellonaikaan (kellonajan on oltava 24-tuntisen kellon mukainen ja UTC-ajassa)\n* `+<clearvotdtime>` - tyhjennä PJ-ajastimen aika\n* `+<votdtime>` - näytä PJ-ajastimen aika ja kanava",
     "usage": "Käyttääksesi sitä, sano vain Raamatun jae. Minä hoidan loput.",
     "commandlistName": "Komennot",
-    "extrabiblicalcommandlistName": "Extra-Biblical Commands",
+    "extrabiblicalcommandlistName": "Raamatun ulkopuolisten lähteiden kommentit",
     "guildcommandlistName": "Kiltakomennot",
     "links": "Linkit",
     "website": "Verkkosivu: <websiteLink>",
