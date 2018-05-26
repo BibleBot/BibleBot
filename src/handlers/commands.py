@@ -87,6 +87,11 @@ def is_command(command, lang):
             "ok": True,
             "orig": "setlanguage",
         }
+    elif command == "userid":
+        result = {
+            "ok": True,
+            "orig": "userid"
+        }
     elif command == "ban":
         result = {
             "ok": True,
@@ -138,6 +143,8 @@ def is_owner_command(command, lang):
     elif command == commands["announce"]:
         return True
     elif command == commands["addversion"]:
+        return True
+    elif command == "userid":
         return True
     elif command == "ban":
         return True

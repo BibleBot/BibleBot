@@ -1252,6 +1252,27 @@ def run_owner_command(bot, command, args, lang):
             "level": "info",
             "message": embed
         }
+    elif command == "userid":
+        split = args[0].split("#")
+        results = "IDs matching: "
+
+        if len(split) == 2:
+            users = [x for x in bot.users if x.name == split[0] and x.discriminator == split[1]]
+
+            for item in users:
+                results += str(item.id) + ", "
+
+            results = results[0:-2]
+        else:
+            results += "None"
+
+        print(results)
+
+        return {
+            "level": "info",
+            "text": True,
+            "message": results
+        }
     elif command == "ban":
         if central.add_ban(args[0]):
             return {

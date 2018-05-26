@@ -324,6 +324,8 @@ class BibleBot(discord.AutoShardedClient):
                                 original_command = original_command_name
                             elif command == "setlanguage":
                                 original_command = "setlanguage"
+                            elif command == "userid":
+                                original_command = "userid"
                             elif command == "ban":
                                 original_command = "ban"
                             elif command == "unban":
