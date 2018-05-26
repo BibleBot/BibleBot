@@ -41,7 +41,7 @@
     "headingsfail": "Käytä `+<setheadings> <enable>` tai `+ <setheadings> <disable>`.",
     "setlanguagesuccess": "Kieli valittu onnistuneesti.",
     "setlanguagefail": "Kielen asettaminen epäonnistui, katso `+<languages>`.",
-    "languageused": "Käytät kieltä suomi. Käytä `+<setlanguage>` asettaaksesi eri kielen.",
+    "languageused": "Käytät kieltä suomi. Käytä `+<setlanguage>` asettaaksesi eri kieli.",
     "languages": "Tuen",
     "otnotsupported": "Käännös <version> ei tue Vanhaa Testamenttia.",
     "ntnotsupported": "Käännös <version> ei tue Uutta Testamenttia.",
@@ -93,7 +93,7 @@
     "donorsNotListed": "Ja noita ei ole luetteloitu!",
     "zeroOrOne": "0 tai 1",
     "enabled": "päällä",
-    "disabled": "pois",
+    "disabled": "pois päältä",
     "commands": {
         "search": "hae",
         "setversion": "asetakäännös",
