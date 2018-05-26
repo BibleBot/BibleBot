@@ -25,7 +25,7 @@
     "pseudoathanasiancreed": "Athanasioksen uskontunnustus",
     "pseudoathanasiantext1": "Uskontunnustus on liian pitkä Discordiin, tässä on linkki sen sijaan: ",
     "creeds": "Uskontunnustukset",
-    "creedstext": "Nämä ovat uskontunnustuksia, jotka ovat käytettävissä BibleBotissa:\n\n`+<apostles>` - Apostolinen uskontunnustus\n`+<nicene>` - Nikaian-Konstantinopolin uskontunnustus\n`+<chalcedonian>` - Khalkedonin\nuskontunnustus\n`+<athanasian>` - Athanasioksen uskontunnustus",
+    "creedstext": "Nämä ovat uskontunnustuksia, jotka ovat käytettävissä BibleBotissa:\n\n`+<apostles>` - Apostolinen uskontunnustus\n`+<nicene>` - Nikaian-Konstantinopolin uskontunnustus\n`+<chalcedonian>` - Khalkedonin uskontunnustus\n`+<athanasian>` - Athanasioksen uskontunnustus",
     "error": "Virhe",
     "versions": "Tuen",
     "setversionsuccess": "Versio asetettu onnistuneesti.",
