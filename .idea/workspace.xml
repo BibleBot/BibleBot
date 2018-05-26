@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/i18n/default/default.json" beforeDir="false" afterPath="$PROJECT_DIR$/i18n/default/default.json" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="">
       <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
@@ -20,7 +20,7 @@
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="4715">
-              <caret line="381" column="60" lean-forward="true" selection-start-line="381" selection-start-column="60" selection-end-line="381" selection-end-column="60" />
+              <caret line="381" column="60" selection-start-line="381" selection-start-column="60" selection-end-line="381" selection-end-column="60" />
               <folding>
                 <element signature="e#748#762#0" expanded="true" />
               </folding>
@@ -37,11 +37,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="commandbridge.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="commandbridge.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="935" column="4" lean-forward="true" selection-start-line="935" selection-start-column="4" selection-end-line="935" selection-end-column="4" />
+            <state relative-caret-position="-24">
+              <caret line="930" column="35" selection-start-line="930" selection-start-column="35" selection-end-line="930" selection-end-column="35" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -49,11 +49,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="default.json" pinned="false" current-in-tab="false">
+      <file leaf-file-name="default.json" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="99">
-              <caret line="100" column="72" lean-forward="true" selection-start-line="100" selection-start-column="72" selection-end-line="100" selection-end-column="72" />
+              <caret line="100" column="43" selection-start-line="100" selection-start-column="43" selection-end-line="100" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -162,10 +162,10 @@
         <option value="$PROJECT_DIR$/src/handlers/verses.py" />
         <option value="$PROJECT_DIR$/src/central.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py" />
-        <option value="$PROJECT_DIR$/i18n/default/default.json" />
         <option value="$PROJECT_DIR$/src/bot.py" />
         <option value="$PROJECT_DIR$/src/data/languages.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
+        <option value="$PROJECT_DIR$/i18n/default/default.json" />
       </list>
     </option>
   </component>
@@ -750,13 +750,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="99">
-          <caret line="100" column="72" lean-forward="true" selection-start-line="100" selection-start-column="72" selection-end-line="100" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/misc.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
@@ -791,7 +784,7 @@
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4715">
-          <caret line="381" column="60" lean-forward="true" selection-start-line="381" selection-start-column="60" selection-end-line="381" selection-end-column="60" />
+          <caret line="381" column="60" selection-start-line="381" selection-start-column="60" selection-end-line="381" selection-end-column="60" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
           </folding>
@@ -800,11 +793,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="935" column="4" lean-forward="true" selection-start-line="935" selection-start-column="4" selection-end-line="935" selection-end-column="4" />
+        <state relative-caret-position="-24">
+          <caret line="930" column="35" selection-start-line="930" selection-start-column="35" selection-end-line="930" selection-end-column="35" />
           <folding>
             <element signature="e#748#759#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="99">
+          <caret line="100" column="43" selection-start-line="100" selection-start-column="43" selection-end-line="100" selection-end-column="43" />
         </state>
       </provider>
     </entry>
