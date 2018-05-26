@@ -1,5 +1,5 @@
 {
-    "biblebot": "BibleBot v<biblebotversion>, tehnyt Elliott Pardee (vypr)",
+    "biblebot": "BibleBot v<biblebotversion>, luonut Elliott Pardee (vypr)",
     "code": "Koodi: <repositoryLink>",
     "commandlist": "* `+<search> query` - hae avainsanoilla (vain Bible Gateway käännökset)\n* `+<setversion> ABBV` - aseta haluamasi versio ABBV:lle\n* `+<version>` - näytä, minkä käännöksen olet asettanut\n* `+<versions>` - näytä tuetut käännökset\n* `+<versioninfo> lue tietoja käännöksestä, käyttämällä lyhennettä\n* `+<random>` - saa satunnainen Raamatun jae\n* `+<verseoftheday>` (`+<votd>`) - anna päivän jae\n* `+<setheadings> <enable>/<disable>` - ota aihe/kappeleotsikot käyttöön tai poista ne käytöstä\n* `+<headings>` - näytä valinnat aihe/kappaleotsikoille\n* `+<setversenumbers> <enable>/<disable>` - ota jaenumerot käyttöön tai poista ne käytöstä\n* `+<versenumbers>` - näytä jaenumerovalintasi\n* `+<setlanguage> LANG` - aseta haluamasi kieli\n* `+<language>` - näytä nykyinen kielesi, jos sellainen on asetettu (oletus: englanti)\n* `+<languages>` - näytä tuetut kielet\n* `+<users>` - luettelo kaikista käyttäjistä kaikilla palvelimilla (ei lasketa kaksoiskappaleita tai botteja)\n* `+<servers>` - näytä kuinka monella palvelimella BibleBot on\n* `+<invite>` - hanki kutsulinkki BibleBotille\n* `+<supporters>` - BibleBotin tukijat",
     "commandlist2": "* `+<creeds>` - ekumeeniset uskontunnustukset (sisältää lisää komentoja)",
@@ -88,7 +88,7 @@
     "nothingFound": "Mitään ei löytynyt haulla \"<query>\"",
     "pageOf": "Sivu <num>/<total>",
     "searchNotSupported": "+<search> tukee vain Bible Gateway -käännöksiä",
-    "supporters": "Erityiskiitokset seuraaville avustajille:",
+    "supporters": "Erityinen kiitos seuraaville avustajille:",
     "anonymousDonors": "Anonyymit lahjoittajat",
     "donorsNotListed": "Ja noita ei ole luetteloitu!",
     "zeroOrOne": "0 tai 1",
