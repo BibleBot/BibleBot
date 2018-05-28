@@ -77,7 +77,7 @@
     "setannouncementsnoperm": "Vous devez avoir la permission \"Gérer le serveur\" pour modifier une préférence d'annonce d'une guilde !",
     "setannouncementsfail": "Utilisez `+<setannouncements> <enable>` ou `+<setannouncements> <disable>`.",
     "announcementsenabled": "Announcements for this guild are **enabled** and will be published in `#<channel>`.\n\nHave someone with the 'Manage Server' permission use `+<setannouncements>` to set a different preference.",
-    "announcementsdisabled": "Announcements for this guild are **disabled**.\n\nHave someone with the 'Manage Server' permission use `+<setannouncements>` to set a different preference.",
+    "announcementsdisabled": "Les annonces pour cette guilde sont **désactivées**.\n\nDemandez à quelqu'un qui a la permission \"Gérer le serveur\" d'utiliser `+<setannouncements>` pour choisir une préférence différente.",
     "noannouncements": "Je n'ai pas pu trouver cette guilde dans ma base de données, quelqu'un avec la permission \"Gérer le serveur\" a-t-il déjà utilisé `+<setannouncements>` ?",
     "users": "Le nombre d'utilisateurs sur tous les serveurs sur lesquels BibleBot est activé (sans doublons)",
     "servers": "BibleBot est dans <count> serveurs.",
