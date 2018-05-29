@@ -41,7 +41,7 @@
     "headingsfail": "Utilisez `+<setheadings> <enable>` ou `+<setheadings> <disable>`.",
     "setlanguagesuccess": "Langue paramétrée avec succès.",
     "setlanguagefail": "Impossible de définir la langue, voir `+<languages>`.",
-    "languageused": "Vous utilisez le français. Utilisez `+<setlanguage>` pour définir une langue différente.",
+    "languageused": "Vous utilisez le français (QC). Utilisez `+<setlanguage>` pour définir une langue différente.",
     "languages": "Je supporte",
     "otnotsupported": "La version <version> ne comprend pas l'Ancien Testament.",
     "ntnotsupported": "La version <version> ne comprend pas le Nouveau Testament.",
