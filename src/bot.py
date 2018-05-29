@@ -417,6 +417,7 @@ class BibleBot(discord.AutoShardedClient):
 
                     clean_args = str(args).replace(",", " ").replace("[", "").replace("]", "")
                     clean_args = clean_args.replace("\"", "").replace("'", "").replace("  ", " ")
+                    clean_args = clean_args.replace("\n", "").strip()
 
                     if original_command == "puppet":
                         clean_args = ""
