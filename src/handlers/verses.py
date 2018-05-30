@@ -56,6 +56,7 @@ class VerseHandler:
         available_versions = settings.versions.get_versions_by_acronym()
         brackets = settings.formatting.get_guild_brackets(guild)
         msg = raw_message.content
+        msg = " ".join(msg.splitlines())
 
         if brackets is None:
             brackets = central.brackets

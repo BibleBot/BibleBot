@@ -57,40 +57,6 @@ def list_duplicates_of(seq, item):
 
     return locs
 
-
-def tokenize(msg):
-    array = []
-
-    dash_in_message = any(dash in msg for dash in dashes)
-    append_dash = False
-
-    if dash_in_message:
-        for item in msg.split(" "):
-            split = item.split(":")
-
-            for subitem in split:
-                tmp_split = subitem.split(" ")
-
-                for subsubitem in tmp_split:
-                    subsubitem = re.sub(r"[^a-zA-Z0-9:()\"'<>|\[\]{\}\\/ ;\-—–*&^%$#@!.+_?=]", "", subsubitem)
-                    subsubitem = re.sub(r"[\-—–]", "-", subsubitem)
-
-                    if subsubitem != "":
-                        array.append(subsubitem)
-
-        if append_dash:
-            array.append("-")
-    else:
-        for item in msg.split(":"):
-            split = item.split(" ")
-
-            for subitem in split:
-                if subitem != "":
-                    array.append(subitem)
-
-    return array
-
-
 def purify(msg):
     msg = msg.replace("(", " ( ")
     msg = msg.replace(")", " ) ")
