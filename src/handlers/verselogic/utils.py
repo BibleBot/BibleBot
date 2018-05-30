@@ -152,7 +152,15 @@ def get_books(msg):
                     if index not in existing_indices:
                         existing_indices.append(index)
 
+    names = [i for i, j in results]
     indices = [j for i, j in results]
+
+    if "1john" in names:
+        name_index = names.index("1john")
+
+        for key, value in enumerate(indices):
+            if name_index == value and names[key] != "1john":
+                results.pop(key)
 
     for index in existing_indices:
         dupes = list_duplicates_of(indices, index)
