@@ -157,9 +157,10 @@ def get_books(msg):
     for index in existing_indices:
         dupes = list_duplicates_of(indices, index)
 
-        for i, j in enumerate(dupes):
-            if i < len(results) - 1:
-                results.pop(i)
+        if len(dupes) > 1:
+            for i, j in enumerate(dupes):
+                if i < len(results) - 1:
+                    results.pop(i)
 
     return results
 
