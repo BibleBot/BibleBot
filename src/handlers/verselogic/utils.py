@@ -157,9 +157,10 @@ def get_books(msg):
 
     if "1john" in names:
         name_index = names.index("1john")
+        indices_index = indices[name_index]
 
         for key, value in enumerate(indices):
-            if name_index == value and names[key] != "1john":
+            if indices_index == value and names[key] != "1john":
                 results.pop(key)
 
     for index in existing_indices:
