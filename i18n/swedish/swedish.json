@@ -71,7 +71,7 @@
     "clearvotdtimenoperm": "You must have the 'Manage Server' permission to clear a guild's VOTD time!",
     "passagetoolong": "Passagen är för lång för mig att hämta, beklagar.",
     "votdcantprocess": "Dagens vers kunde inte hämtas, se <https://www.biblegateway.com/> för dagens vers.",
-    "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
+    "versioninfo": "\n**<versionname>**\n\nInnehåller Gamla Testamentet: <hasOT>\nInnehåller Nya Testamentet: <hasNT>\nInnehåller Apokryfiska/Deuterokanoniska böcker: <hasDEU>",
     "versioninfofailed": "Jag kunde inte hitta den versionen, är du säker på att du använt rätt förkortning?",
     "setannouncementssuccess": "Set guild announcements successfully.",
     "setannouncementsnoperm": "You must have the 'Manage Server' permission to modify a guild's announcement preference!",
