@@ -75,7 +75,7 @@
     "versioninfofailed": "Jag kunde inte hitta den versionen, är du säker på att du använt rätt förkortning?",
     "setannouncementssuccess": "Set guild announcements successfully.",
     "setannouncementsnoperm": "You must have the 'Manage Server' permission to modify a guild's announcement preference!",
-    "setannouncementsfail": "Use `+<setannouncements> <enable>` or `+<setannouncements> <disable>`.",
+    "setannouncementsfail": "Använd `+<setannouncements> <enable>` eller `+<setannouncements> <disable>`.",
     "announcementsenabled": "Announcements for this guild are **enabled** and will be published in `#<channel>`.\n\nHave someone with the 'Manage Server' permission use `+<setannouncements>` to set a different preference.",
     "announcementsdisabled": "Announcements for this guild are **disabled**.\n\nHave someone with the 'Manage Server' permission use `+<setannouncements>` to set a different preference.",
     "noannouncements": "I couldn't find this guild in my database, has someone with the 'Manage Server' permission used `+<setannouncements>` yet?",
@@ -132,7 +132,7 @@
         "announcements": "announcements",
         "users": "användare",
         "servers": "servrar",
-        "announce": "announce",
+        "announce": "meddela",
         "invite": "inbjudan",
         "supporters": "supporters"
     },
