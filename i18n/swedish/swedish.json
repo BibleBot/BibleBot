@@ -30,7 +30,7 @@
     "versions": "Jag stödjer",
     "setversionsuccess": "Inställning av version lyckades.",
     "setversionfail": "Failed to set version, see `+<versions>`.",
-    "versionused": "You are using <version>. Use `+<setversion>` to set a different version.",
+    "versionused": "Du använder <version>. Använd `+<setversion>` för att välja en annan version.",
     "noversionused": "Jag kunde inte hitta ditt namn i min databas, har du använt `+<setversion>` ännu?",
     "addversionsuccess": "Lade framgångsrikt till version.",
     "versenumbers": "You have verse numbers <enabled/disabled>. Use `+<setversenumbers>` to change it.",
