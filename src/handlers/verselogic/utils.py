@@ -66,6 +66,7 @@ def purify(msg):
     msg = msg.replace("}", " } ")
     msg = msg.replace("<", " < ")
     msg = msg.replace(">", " > ")
+    msg = re.sub(r"[.,;'\"_=$#*&^%@!]", "", msg)
     return central.capitalize_first_letter(msg)
 
 
