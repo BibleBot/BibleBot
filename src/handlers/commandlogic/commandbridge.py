@@ -216,15 +216,16 @@ def run_command(command, args, lang, user, guild, channel):
     elif command == "setguildversion":
         perms = user.guild_permissions
 
-        if not perms.manage_guild:
-            embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"],
-                            value=lang["setguildversionnoperm"])
+        if str(user.id) != central.config["BibleBot"]["owner"]:
+            if not perms.manage_guild:
+                embed.color = 16723502
+                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"],
+                                value=lang["setguildversionnoperm"])
 
-            return {
-                "level": "err",
-                "message": embed
-            }
+                return {
+                    "level": "err",
+                    "message": embed
+                }
 
         if versions.set_guild_version(guild, args[0]):
             embed.color = 303102
@@ -418,15 +419,16 @@ def run_command(command, args, lang, user, guild, channel):
     elif command == "setguildlanguage":
         perms = user.guild_permissions
 
-        if not perms.manage_guild:
-            embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"],
-                            value=lang["setguildlanguagenoperm"])
+        if str(user.id) != central.config["BibleBot"]["owner"]:
+            if not perms.manage_guild:
+                embed.color = 16723502
+                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"],
+                                value=lang["setguildlanguagenoperm"])
 
-            return {
-                "level": "err",
-                "message": embed
-            }
+                return {
+                    "level": "err",
+                    "message": embed
+                }
 
         if languages.set_guild_language(guild, args[0]):
             embed.color = 303102
@@ -502,15 +504,16 @@ def run_command(command, args, lang, user, guild, channel):
     elif command == "setguildbrackets":
         perms = user.guild_permissions
 
-        if not perms.manage_guild:
-            embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"],
-                            value=lang["setguildbracketsnoperm"])
+        if str(user.id) != central.config["BibleBot"]["owner"]:
+            if not perms.manage_guild:
+                embed.color = 16723502
+                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"],
+                                value=lang["setguildbracketsnoperm"])
 
-            return {
-                "level": "err",
-                "message": embed
-            }
+                return {
+                    "level": "err",
+                    "message": embed
+                }
 
         if formatting.set_guild_brackets(guild, args[0]):
             embed.color = 303102
@@ -554,15 +557,16 @@ def run_command(command, args, lang, user, guild, channel):
     elif command == "setvotdtime":
         perms = user.guild_permissions
 
-        if not perms.manage_guild:
-            embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"],
-                            value=lang["setvotdtimenoperm"])
+        if str(user.id) != central.config["BibleBot"]["owner"]:
+            if not perms.manage_guild:
+                embed.color = 16723502
+                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"],
+                                value=lang["setvotdtimenoperm"])
 
-            return {
-                "level": "err",
-                "message": embed
-            }
+                return {
+                    "level": "err",
+                    "message": embed
+                }
 
         if misc.set_guild_votd_time(guild, channel, args[0]):
             embed.color = 303102
@@ -587,15 +591,16 @@ def run_command(command, args, lang, user, guild, channel):
     elif command == "clearvotdtime":
         perms = user.guild_permissions
 
-        if not perms.manage_guild:
-            embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["clearvotdtime"],
-                            value=lang["clearvotdtimenoperm"])
+        if str(user.id) != central.config["BibleBot"]["owner"]:
+            if not perms.manage_guild:
+                embed.color = 16723502
+                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["clearvotdtime"],
+                                value=lang["clearvotdtimenoperm"])
 
-            return {
-                "level": "err",
-                "message": embed
-            }
+                return {
+                    "level": "err",
+                    "message": embed
+                }
 
         if misc.set_guild_votd_time(guild, channel, "clear"):
             embed.color = 303102
