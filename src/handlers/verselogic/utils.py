@@ -57,6 +57,7 @@ def list_duplicates_of(seq, item):
 
     return locs
 
+
 def purify(msg):
     msg = msg.replace("(", " ( ")
     msg = msg.replace(")", " ) ")
@@ -122,13 +123,16 @@ def get_books(msg):
     names = [i for i, j in results]
     indices = [j for i, j in results]
 
-    if "1john" in names:
-        name_index = names.index("1john")
-        indices_index = indices[name_index]
+    numbered_johns = ["1john", "2john", "3john"]
 
-        for key, value in enumerate(indices):
-            if indices_index == value and names[key] != "1john":
-                results.pop(key)
+    for john in numbered_johns:
+        if john in names:
+            name_index = names.index(john)
+            indices_index = indices[name_index]
+
+            for key, value in enumerate(indices):
+                if indices_index == value and names[key] != john:
+                    results.pop(key)
 
     for index in existing_indices:
         dupes = list_duplicates_of(indices, index)
@@ -231,21 +235,21 @@ def create_reference_string(verse):
     if "startingVerse" in verse.keys():
         if verse["startingVerse"] is not None:
             if verse["book"] in itemToBook["ot"]:
-                reference = itemToBook["ot"][verse["book"]] + " " + \
+                reference = itemToBook["ot"][verse["book"]] + "|" + \
                             str(verse["chapter"]) + ":" + str(verse["startingVerse"])
             elif verse["book"] in itemToBook["nt"]:
-                reference = itemToBook["nt"][verse["book"]] + " " + \
+                reference = itemToBook["nt"][verse["book"]] + "|" + \
                             str(verse["chapter"]) + ":" + str(verse["startingVerse"])
             elif verse["book"] in itemToBook["deu"]:
-                reference = itemToBook["deu"][verse["book"]] + " " + \
+                reference = itemToBook["deu"][verse["book"]] + "|" + \
                             str(verse["chapter"]) + ":" + str(verse["startingVerse"])
         else:
             if verse["book"] in itemToBook["ot"]:
-                reference = itemToBook["ot"][verse["book"]] + " " + str(verse["chapter"])
+                reference = itemToBook["ot"][verse["book"]] + "|" + str(verse["chapter"])
             elif verse["book"] in itemToBook["nt"]:
-                reference = itemToBook["nt"][verse["book"]] + " " + str(verse["chapter"])
+                reference = itemToBook["nt"][verse["book"]] + "|" + str(verse["chapter"])
             elif verse["book"] in itemToBook["deu"]:
-                reference = itemToBook["deu"][verse["book"]] + " " + str(verse["chapter"])
+                reference = itemToBook["deu"][verse["book"]] + "|" + str(verse["chapter"])
 
         if "endingVerse" in verse.keys():
             if verse["endingVerse"] is not None:

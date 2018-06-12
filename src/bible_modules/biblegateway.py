@@ -73,8 +73,8 @@ def search(version, query):
 
 def get_result(query, version, headings, verse_numbers):
     if ":" not in query:
-        book = query.split(" ")[0]
-        chapter = query.split(" ")[1]
+        book = query.split("|")[0]
+        chapter = query.split("|")[1]
         starting_verse = "1"
         ending_verse = "5"
 

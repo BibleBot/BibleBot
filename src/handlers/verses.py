@@ -150,6 +150,8 @@ class VerseHandler:
                                 response2 = lang["otnotsupported2"]
                                 response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
+                                reference = reference.replace("|", " ")
+
                                 return [{
                                     "level": "err",
                                     "twoMessages": True,
@@ -168,6 +170,8 @@ class VerseHandler:
 
                                 response2 = lang.rawObject["ntnotsupported2"]
                                 response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
+
+                                reference = reference.replace("|", " ")
 
                                 return [{
                                     "level": "err",
@@ -188,6 +192,8 @@ class VerseHandler:
                                 response2 = lang["deunotsupported2"]
                                 response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
+                                reference = reference.replace("|", " ")
+
                                 return [{
                                     "level": "err",
                                     "twoMessages": True,
@@ -205,6 +211,8 @@ class VerseHandler:
 
                             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
                             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+
+                            reference = reference.replace("|", " ")
 
                             if len(response_string) < 2000:
                                 return_list.append({
@@ -243,6 +251,8 @@ class VerseHandler:
 
                         content = "```Dust\n" + result["text"] + "```"
                         response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+
+                        reference = reference.replace("|", " ")
 
                         if len(response_string) < 2000:
                             return_list.append({
