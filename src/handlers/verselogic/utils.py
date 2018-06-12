@@ -125,14 +125,17 @@ def get_books(msg):
 
     numbered_johns = ["1john", "2john", "3john"]
 
-    for john in numbered_johns:
-        if john in names:
-            name_index = names.index(john)
-            indices_index = indices[name_index]
+    try:
+        for john in numbered_johns:
+            if john in names:
+                name_index = names.index(john)
+                indices_index = indices[name_index]
 
-            for key, value in enumerate(indices):
-                if indices_index == value and names[key] != john:
-                    results.pop(key)
+                for key, value in enumerate(indices):
+                    if indices_index == value and names[key] != john:
+                        results.pop(key)
+    except IndexError:
+        pass
 
     for index in existing_indices:
         dupes = list_duplicates_of(indices, index)
