@@ -10,14 +10,15 @@ To use it, just say a Bible verse.
 Installation:
 
 ```bash
-git clone https://git.vypr.space/BibleBot/BibleBot.git
+git clone https://github.com/BibleBot/BibleBot.git
 cd BibleBot
 git submodule update --init
 python3 -m venv venv
 source venv/bin/activate
 cp src/config.example.ini src/config.ini
 $EDITOR src/config.ini
-pip install -r requirements.txt
+pip install -U "https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord.py[voice]"
+pip install -U tinydb colorama requests bs4
 python src/bot.py
 ```
 

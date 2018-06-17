@@ -58,7 +58,7 @@ class BibleBot(discord.AutoShardedClient):
         if mod_time < one_week_ago:
             bg_book_names.getBooks()
 
-        if config["BibleBot"]["shards"] == "1":
+        if int(config["BibleBot"]["shards"]) < 2:
             activity = discord.Game(central.version + " | Shard: 1 / 1")
             await self.change_presence(status=discord.Status.online, activity=activity)
 
@@ -74,14 +74,15 @@ class BibleBot(discord.AutoShardedClient):
     async def run_timed_votds(self):
         await self.wait_until_ready()
 
-        results = [x for x in central.guildDB.all() if "channel" in x and "time" in x]
-
         while not self.is_closed():
             # noinspection PyBroadException
             try:
+                # a nice list comprehension for getting all the servers with votd stuff set
+                results = [x for x in central.guildDB.all() if "channel" in x and "time" in x]
+
                 for item in results:
                     if "channel" in item and "time" in item:
-                        channel = self.get_channel(item["channel"])
+                        channel = self.get_channel(int(item["channel"]))
                         votd_time = item["time"]
 
                         try:
@@ -97,6 +98,9 @@ class BibleBot(discord.AutoShardedClient):
                             version = "NRSV"
 
                         current_time = datetime.datetime.utcnow().strftime("%H:%M")
+
+                        print(votd_time)
+                        print(current_time)
 
                         if votd_time == current_time:
                             await channel.send("Here is today's verse of the day:")
