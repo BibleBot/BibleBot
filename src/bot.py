@@ -498,6 +498,10 @@ class BibleBot(discord.AutoShardedClient):
                         await channel.send(result["spam"])
 
 
-bot = BibleBot(shard_count=int(config["BibleBot"]["shards"]))
+if int(config["BibleBot"]["shards"]) > 1:
+    bot = BibleBot(shard_count=int(config["BibleBot"]["shards"]))
+else:
+    bot = BibleBot()
+
 central.log_message("info", 0, "global", "global", central.version + " by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])
