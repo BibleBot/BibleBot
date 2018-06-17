@@ -99,9 +99,6 @@ class BibleBot(discord.AutoShardedClient):
 
                         current_time = datetime.datetime.utcnow().strftime("%H:%M")
 
-                        print(votd_time)
-                        print(current_time)
-
                         if votd_time == current_time:
                             await channel.send("Here is today's verse of the day:")
                             if version != "REV":
