@@ -7,7 +7,7 @@
     "usage": "Att använda den, säg bara en bibelvers. Jag tar hand om resten.",
     "commandlistName": "Kommandon",
     "extrabiblicalcommandlistName": "Extra-Biblical Commands",
-    "guildcommandlistName": "Guild Commands",
+    "guildcommandlistName": "Skrå kommandon",
     "links": "Länkar",
     "website": "Webbplats: <websiteLink>",
     "joinserver": "Officiel Discord-server: <inviteLink>",
@@ -116,7 +116,7 @@
         "setlanguage": "angespråk",
         "setguildlanguage": "setguildlanguage",
         "language": "språk",
-        "guildlanguage": "guildlanguage",
+        "guildlanguage": "skråspråk",
         "languages": "språken",
         "setguildbrackets": "setguildbrackets",
         "guildbrackets": "guildbrackets",
@@ -134,7 +134,7 @@
         "servers": "servrar",
         "announce": "meddela",
         "invite": "inbjudan",
-        "supporters": "supporters"
+        "supporters": "supportrar"
     },
     "arguments": {
         "yes": "Ja",
