@@ -1271,38 +1271,50 @@ def run_owner_command(bot, command, args, lang):
         else:
             results += "None"
 
-        print(results)
-
         return {
             "level": "info",
             "text": True,
             "message": results
         }
     elif command == "ban":
-        if central.add_ban(args[0]):
-            return {
-                "level": "info",
-                "text": True,
-                "message": "Banned " + args[0] + "."
-            }
+        if central.is_snowflake(args[0]):
+            if central.add_ban(args[0]):
+                return {
+                    "level": "info",
+                    "text": True,
+                    "message": "Banned " + args[0] + "."
+                }
+            else:
+                return {
+                    "level": "err",
+                    "text": True,
+                    "message": args[0] + " is already banned."
+                }
         else:
             return {
                 "level": "err",
                 "text": True,
-                "message": args[0] + " is already banned."
+                "message": "This is not an ID."
             }
     elif command == "unban":
-        if central.remove_ban(args[0]):
-            return {
-                "level": "info",
-                "text": True,
-                "message": "Unbanned " + args[0] + "."
-            }
+        if central.is_snowflake(args[0]):
+            if central.remove_ban(args[0]):
+                return {
+                    "level": "info",
+                    "text": True,
+                    "message": "Unbanned " + args[0] + "."
+                }
+            else:
+                return {
+                    "level": "err",
+                    "text": True,
+                    "message": args[0] + " is not banned."
+                }
         else:
             return {
                 "level": "err",
                 "text": True,
-                "message": args[0] + " is not banned."
+                "message": "This is not an ID."
             }
     elif command == "leave":
         if len(args) > 0:

@@ -20,6 +20,7 @@ import configparser
 import math
 import os
 import time
+import numbers
 
 import tinydb
 
@@ -115,6 +116,15 @@ def is_banned(entryid):
     if len(result) > 0:
         return True
     else:
+        return False
+
+
+def is_snowflake(snowflake):
+    try:
+        if isinstance(int(snowflake), numbers.Number):
+            if int(snowflake) > 1.4200704e+16:
+                return True
+    except ValueError:
         return False
 
 
