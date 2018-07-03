@@ -98,7 +98,7 @@ def get_result(query, version, headings, verse_numbers):
     resp = requests.get(url)
 
     if resp is not None:
-        soup = BeautifulSoup(resp.text, "html.parser")
+        soup = BeautifulSoup(resp.text, "lxml")
 
         for div in soup.find_all("div", {"class": "result-text-style-normal"}):
             text = ""

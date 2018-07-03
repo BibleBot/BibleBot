@@ -59,7 +59,7 @@ def get_result(query, verse_numbers):
     # but for the sake of not having to make another
     # variable, i decided not to
     if resp is not None:
-        soup = BeautifulSoup(resp.text, "html.parser")
+        soup = BeautifulSoup(resp.text, "lxml")
 
         for container in soup.find_all(True, {"class": "col1container"}):
             for num in container.find_all(True, {"class": ["versenum", "versenumcomm"]}):

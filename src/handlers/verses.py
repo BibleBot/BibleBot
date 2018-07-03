@@ -30,23 +30,12 @@ __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(__dir_path + "/..")
 
 import handlers.commandlogic.settings as settings  # noqa: E402
-from bible_modules import biblegateway as biblegateway  # noqa: E402
-from bible_modules import rev as rev  # noqa: E402
+from bible_modules import biblesorg, bibleserver, biblehub, biblegateway, rev  # noqa: E402
 from data.BGBookNames.books import itemToBook  # noqa: E402
 import central  # noqa: E402
 
 books = open(__dir_path + "/../data/BGBookNames/books.json")
 books = json.loads(books.read())
-
-'''
-TODO: I'm expecting the formula to go something like this:
-1. Check book name.
-2. Iterate through each key in books to see if book name is in there.
-3. If so, grab the value in books[key].
-4. Do the thing with parseSpacedBooks.
-5. ???
-6. Profit?
-'''
 
 
 class VerseHandler:
@@ -202,7 +191,14 @@ class VerseHandler:
                                     "secondMessage": response2
                                 }]
 
-                    if version != "REV":
+                    biblehub_versions = ["BSB", "NHEB", "WBT"]
+                    bibleserver_versions = ["LUT", "LXX", "SLT"]
+                    biblesorg_versions = ["KJVA", "ESP"]
+                    non_bible_gateway = ["REV"] + biblehub_versions + biblesorg_versions + bibleserver_versions
+
+                    is_bible_gateway = (version not in non_bible_gateway)
+
+                    if is_bible_gateway:
                         result = biblegateway.get_result(reference, version, headings, verse_numbers)
 
                         if result is not None:
@@ -243,7 +239,7 @@ class VerseHandler:
                                         "reference": reference + " " + version,
                                         "message": lang["passagetoolong"]
                                     })
-                    else:
+                    elif version == "REV":
                         result = rev.get_result(reference, verse_numbers)
 
                         if result["text"][0] != " ":
@@ -283,4 +279,127 @@ class VerseHandler:
                                     "reference": reference + " " + version,
                                     "message": lang["passagetoolong"]
                                 })
+                    elif version in biblesorg_versions:
+                        result = biblesorg.get_result(reference, version, headings, verse_numbers)
+
+                        if result is not None:
+                            if result["text"][0] != " ":
+                                result["text"] = " " + result["text"]
+
+                            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+                            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+
+                            reference = reference.replace("|", " ")
+
+                            if len(response_string) < 2000:
+                                return_list.append({
+                                    "level": "info",
+                                    "reference": reference + " " + version,
+                                    "message": response_string
+                                })
+                            elif len(response_string) > 2000:
+                                if len(response_string) < 3500:
+                                    split_text = central.splitter(result["text"])
+
+                                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
+                                                       "\n\n" + content1
+
+                                    content2 = "```Dust\n" + split_text["second"] + "```"
+
+                                    return_list.append({
+                                        "level": "info",
+                                        "twoMessages": True,
+                                        "reference": reference + " " + version,
+                                        "firstMessage": response_string1,
+                                        "secondMessage": content2
+                                    })
+                                else:
+                                    return_list.append({
+                                        "level": "err",
+                                        "reference": reference + " " + version,
+                                        "message": lang["passagetoolong"]
+                                    })
+                    elif version in biblehub_versions:
+                        result = biblehub.get_result(reference, version, verse_numbers)
+
+                        if result is not None:
+                            if result["text"][0] != " ":
+                                result["text"] = " " + result["text"]
+
+                            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+                            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+
+                            reference = reference.replace("|", " ")
+
+                            if len(response_string) < 2000:
+                                return_list.append({
+                                    "level": "info",
+                                    "reference": reference + " " + version,
+                                    "message": response_string
+                                })
+                            elif len(response_string) > 2000:
+                                if len(response_string) < 3500:
+                                    split_text = central.splitter(result["text"])
+
+                                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
+                                                       "\n\n" + content1
+
+                                    content2 = "```Dust\n" + split_text["second"] + "```"
+
+                                    return_list.append({
+                                        "level": "info",
+                                        "twoMessages": True,
+                                        "reference": reference + " " + version,
+                                        "firstMessage": response_string1,
+                                        "secondMessage": content2
+                                    })
+                                else:
+                                    return_list.append({
+                                        "level": "err",
+                                        "reference": reference + " " + version,
+                                        "message": lang["passagetoolong"]
+                                    })
+                    elif version in bibleserver_versions:
+                        result = bibleserver.get_result(reference, version, verse_numbers)
+
+                        if result is not None:
+                            if result["text"][0] != " ":
+                                result["text"] = " " + result["text"]
+
+                            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+                            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+
+                            reference = reference.replace("|", " ")
+
+                            if len(response_string) < 2000:
+                                return_list.append({
+                                    "level": "info",
+                                    "reference": reference + " " + version,
+                                    "message": response_string
+                                })
+                            elif len(response_string) > 2000:
+                                if len(response_string) < 3500:
+                                    split_text = central.splitter(result["text"])
+
+                                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
+                                                       "\n\n" + content1
+
+                                    content2 = "```Dust\n" + split_text["second"] + "```"
+
+                                    return_list.append({
+                                        "level": "info",
+                                        "twoMessages": True,
+                                        "reference": reference + " " + version,
+                                        "firstMessage": response_string1,
+                                        "secondMessage": content2
+                                    })
+                                else:
+                                    return_list.append({
+                                        "level": "err",
+                                        "reference": reference + " " + version,
+                                        "message": lang["passagetoolong"]
+                                    })
             return return_list
