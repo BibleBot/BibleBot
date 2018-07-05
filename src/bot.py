@@ -171,6 +171,10 @@ class BibleBot(discord.AutoShardedClient):
         if sender == self.user:
             return
 
+        # temp opt out list
+        if sender.id in [135054145458667520, 354290580651638795]:
+            return
+
         language = languages.get_language(sender)
 
         if hasattr(channel, "guild"):
