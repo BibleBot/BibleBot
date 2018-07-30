@@ -53,7 +53,7 @@ class VerseHandler:
         if " " in msg:
             verses = []
 
-            msg = utils.purify(msg)
+            msg = utils.purify(msg.title())
 
             results = utils.get_books(msg)
             results.sort(key=lambda item: item[1])  # sort the results based on the index that they were found

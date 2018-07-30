@@ -108,6 +108,7 @@ venv.bak/
 databases/db
 databases/bandb
 databases/guilddb
+databases/optoutdb
 
 # ignore config file
 src/config.ini

@@ -123,16 +123,16 @@ def get_books(msg):
     names = [i for i, j in results]
     indices = [j for i, j in results]
 
-    numbered_johns = ["1john", "2john", "3john"]
+    numbered_overlap = ["1john", "2john", "3john", "1esdras", "2esdras"]
 
     try:
-        for john in numbered_johns:
-            if john in names:
-                name_index = names.index(john)
+        for overlap in numbered_overlap:
+            if overlap in names:
+                name_index = names.index(overlap)
                 indices_index = indices[name_index]
 
                 for key, value in enumerate(indices):
-                    if indices_index == value and names[key] != john:
+                    if indices_index == value and names[key] != overlap:
                         results.pop(key)
     except IndexError:
         pass

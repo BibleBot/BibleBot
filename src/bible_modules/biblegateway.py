@@ -114,11 +114,24 @@ def get_result(query, version, headings, verse_numbers):
                 for heading in div.find_all("h3"):
                     title += heading.get_text() + " / "
 
+            for note in div.find_all(True, {"class": "first-line-none"}):
+                note.decompose()
+
+            for inline in div.find_all(True, {"class": "inline-h3"}):
+                inline.decompose()
+
+            for footnote in div.find_all(True, {"class": "footnotes"}):
+                footnote.decompose()
+
             if verse_numbers == "disable":
                 for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
                     num.string = " "
             else:
-                for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
+                # turn all chapter numbers into "1" otherwise the verse numbers look strange
+                for num in div.find_all(True, {"class": "chapternum"}):
+                    num.string = "<1> "
+
+                for num in div.find_all(True, {"class": "versenum"}):
                     num.string = "<" + num.string[0:-1] + "> "
 
             for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):

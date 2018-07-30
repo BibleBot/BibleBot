@@ -23,10 +23,10 @@ from bs4 import BeautifulSoup
 
 
 def purify_text(text):
-    result = text.replace("“", " \"")
+    result = text.replace("“", "\"")
     result = result.replace("[", " <")
     result = result.replace("]", "> ")
-    result = result.replace("”", "\" ")
+    result = result.replace("”", "\"")
     result = result.replace("‘", "'")
     result = result.replace("’", "'")
     result = result.replace(",", ", ")

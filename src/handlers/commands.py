@@ -102,6 +102,21 @@ def is_command(command, lang):
             "ok": True,
             "orig": "unban"
         }
+    elif command == "reason":
+        result = {
+            "ok": True,
+            "orig": "reason",
+        }
+    elif command == "optout":
+        result = {
+            "ok": True,
+            "orig": "optout",
+        }
+    elif command == "unoptout":
+        result = {
+            "ok": True,
+            "orig": "unoptout",
+        }
     elif command == "eval":
         result = {
             "ok": True,
@@ -149,6 +164,12 @@ def is_owner_command(command, lang):
     elif command == "ban":
         return True
     elif command == "unban":
+        return True
+    elif command == "reason":
+        return True
+    elif command == "optout":
+        return True
+    elif command == "unoptout":
         return True
     elif command == "eval":
         return True

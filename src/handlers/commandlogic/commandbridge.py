@@ -1277,12 +1277,18 @@ def run_owner_command(bot, command, args, lang):
             "message": results
         }
     elif command == "ban":
+        ban_reason = ""
+
+        for index in range(0, len(args)):
+            if index != 0:
+                ban_reason += args[index] + " "
+
         if central.is_snowflake(args[0]):
-            if central.add_ban(args[0]):
+            if central.add_ban(args[0], ban_reason[0:-1]):
                 return {
                     "level": "info",
                     "text": True,
-                    "message": "Banned " + args[0] + "."
+                    "message": "Banned " + args[0] + " for " + ban_reason[0:-1] + "."
                 }
             else:
                 return {
@@ -1309,6 +1315,74 @@ def run_owner_command(bot, command, args, lang):
                     "level": "err",
                     "text": True,
                     "message": args[0] + " is not banned."
+                }
+        else:
+            return {
+                "level": "err",
+                "text": True,
+                "message": "This is not an ID."
+            }
+    elif command == "reason":
+        if central.is_snowflake(args[0]):
+            is_banned, reason = central.is_banned(args[0])
+            if is_banned:
+                if reason is not None:
+                    return {
+                        "level": "info",
+                        "text": True,
+                        "message": args[0] + " is banned for `" + reason + "`."
+                    }
+                else:
+                    return {
+                        "level": "info",
+                        "text": True,
+                        "message": args[0] + " is banned for an unknown reason."
+                    }
+            else:
+                return {
+                    "level": "err",
+                    "text": True,
+                    "message": args[0] + " is not banned."
+                }
+        else:
+            return {
+                "level": "err",
+                "text": True,
+                "message": "This is not an ID."
+            }
+    elif command == "optout":
+        if central.is_snowflake(args[0]):
+            if central.add_optout(args[0]):
+                return {
+                    "level": "info",
+                    "text": True,
+                    "message": "Opt out " + args[0] + "."
+                }
+            else:
+                return {
+                    "level": "err",
+                    "text": True,
+                    "message": args[0] + " is already opt out."
+                }
+        else:
+            return {
+                "level": "err",
+                "text": True,
+                "message": "This is not an ID."
+            }
+    elif command == "unoptout":
+        if central.is_snowflake(args[0]):
+            if central.remove_optout(args[0]):
+                return {
+                    "level": "info",
+                    "text": True,
+                    "message": "Unoptout " + args[0] + "."
+                }
+            else:
+                return {
+                    "level": "err",
+                    "text": True,
+                    "message": args[0] + " is not opt out."
                 }
         else:
             return {
