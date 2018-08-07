@@ -61,7 +61,7 @@
     "setguildbracketssuccess": "Parentesi della gilda impostate correttamente.",
     "setguildbracketsnoperm": "È necessario disporre dei permessi di 'Gestione Server' per modificare le parentesi di una gilda!",
     "setguildbracketsfail": "Impossibile impostare le parentesi di gilda, le parentesi supportate sono `<>`, `[]`, `()`, `{}`.",
-    "guildbracketsused": "Le parentesi per questa gilda sono `<brackets>`.\nChiedere a qualcuno con il permesso di 'Gestione server' di usare `+<setguildbrackets>` per impostare altre parentesi.",
+    "guildbracketsused": "Le parentesi per questa gilda sono `<brackets>`.\nChiedere a qualcuno con i permessi di 'Gestione server' di usare `+<setguildbrackets>` per impostare altre parentesi.",
     "setvotdtimesuccess": "Orario per il VDG impostato correttamente.",
     "setvotdtimenoperm": "È necessario disporre dei permessi di 'Gestione Server' per modificare l'orario del VDG di una gilda!",
     "setvotdtimefail": "Impossibile impostare l'orario del VDG, l'ora deve essere nel formato 24-ore, come `01:00` o `13:00`.",
