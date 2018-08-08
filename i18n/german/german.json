@@ -27,7 +27,7 @@
     "creeds": "Creeds",
     "creedstext": "These are the creeds available in BibleBot:\n\n`+<apostles>` - The Apostles' Creed\n`+<nicene>` - The Nicene-Constantinopolitan Creed\n`+<chalcedonian>` - The Chalcedonian Creed\n`+<athanasian>` - The Pseudo-Athanasian Creed",
     "error": "Error",
-    "versions": "I support",
+    "versions": "Ich unterstütze",
     "setversionsuccess": "Version erfolgreich eingestellt.",
     "setversionfail": "Failed to set version, see `+<versions>`.",
     "versionused": "You are using <version>. Use `+<setversion>` to set a different version.",
