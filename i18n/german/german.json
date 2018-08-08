@@ -1,5 +1,5 @@
 {
-    "biblebot": "BibleBot v<biblebotversion> by Elliott Pardee (vypr)",
+    "biblebot": "BibleBot v<biblebotversion> von Elliott Pardee (vypr)",
     "code": "Code: <repositoryLink>",
     "commandlist": "* `+<search> query` - search using keywords (only in Bible Gateway versions)\n* `+<setversion> ABBV` - set preferred version to ABBV\n* `+<version>` - see what version you've set\n* `+<versions>` - see the supported versions\n* `+<versioninfo> VER` - read information about a version, using the acronym\n* `+<random>` - get a random Bible verse\n* `+<verseoftheday>` (`+<votd>`) - get the verse of the day\n* `+<setheadings> <enable>/<disable>` - enable or disable topic/chapter headings\n* `+<headings>` - see your topic/chapter headings preference\n* `+<setversenumbers> <enable>/<disable>` - enable or disable verse numbers\n* `+<versenumbers>` - see your verse numbers preference\n* `+<setlanguage> LANG` - set preferred language to LANG\n* `+<language>` - see your current language, if one is set (default: english)\n* `+<languages>` - see the supported languages\n* `+<users>` - list all users throughout all servers (not counting duplicates or bots)\n* `+<servers>` - show how many servers BibleBot is in\n* `+<invite>` - get the invite link for BibleBot\n* `+<supporters>` - the supporters of BibleBot",
     "commandlist2": "* `+<creeds>` - the ecumenical creeds (contains further commands)",
@@ -129,16 +129,16 @@
         "chalcedonian": "chalcedonian",
         "creeds": "creeds",
         "setannouncements": "setannouncements",
-        "announcements": "announcements",
-        "users": "users",
-        "servers": "servers",
-        "announce": "announce",
-        "invite": "invite",
-        "supporters": "supporters"
+        "announcements": "Ankündingungen",
+        "users": "Nutzer",
+        "servers": "Server",
+        "announce": "ankündigen",
+        "invite": "einladen",
+        "supporters": "Unterstützer"
     },
     "arguments": {
-        "yes": "Yes",
-        "no": "No",
+        "yes": "Ja",
+        "no": "Nein",
         "enable": "aktivieren",
         "disable": "deaktivieren"
     }
