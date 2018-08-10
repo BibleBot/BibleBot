@@ -29,7 +29,7 @@
     "error": "Errore",
     "versions": "Io supporto",
     "setversionsuccess": "Versione impostata correttamente.",
-    "setversionfail": "Impossibile impostare la versione, vedere '+<versions>`.",
+    "setversionfail": "Impossibile impostare la versione, vedere `+<versions>`.",
     "versionused": "Stai utilizzando <version>. Usa '+<setversion>' per impostare una versione differente.",
     "noversionused": "Non sono riuscito a trovare il tuo nome nel mio database, hai già usato '+<setversion>'?",
     "addversionsuccess": "Versione aggiunta correttamente.",
