@@ -42,7 +42,7 @@
     "setlanguagesuccess": "Sprache erfolgreich eingestellt.",
     "setlanguagefail": "Sprache konnte nicht festgelegt werden, siehe `+<languages>`.",
     "languageused": "Sie verwenden Deutsch. Verwenden Sie `+<setlanguage>`, um eine andere Sprache festzulegen.",
-    "languages": "I support",
+    "languages": "Ich unterstütze",
     "otnotsupported": "Die Version <version> unterstützt das Alte Testament nicht.",
     "ntnotsupported": "Die Version <version> unterstützt das Neue Testament nicht.",
     "deunotsupported": "The version <version> doesn't support the Apocrypha/Deuterocanon.",
