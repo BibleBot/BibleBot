@@ -76,6 +76,11 @@ version_names = {
 
 
 def get_result(query, version, verse_numbers):
+    book = query.split("|")[0]
+    chapter = query.split("|")[1].split(":")[0]
+    starting_verse = query.split("|")[1].split(":")[1]
+    ending_verse = starting_verse
+
     if "-" in starting_verse:
         temp = starting_verse.split("-")
 
