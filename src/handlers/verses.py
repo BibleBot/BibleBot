@@ -31,7 +31,7 @@ sys.path.append(__dir_path + "/..")
 
 import handlers.commandlogic.settings as settings  # noqa: E402
 from bible_modules import biblesorg, bibleserver, biblehub, biblegateway, rev  # noqa: E402
-from data.BGBookNames.books import itemToBook  # noqa: E402
+from data.BGBookNames.books import item_to_book  # noqa: E402
 import central  # noqa: E402
 
 books = open(__dir_path + "/../data/BGBookNames/books.json")
@@ -128,7 +128,7 @@ class VerseHandler:
                         is_nt = False
                         is_deu = False
 
-                        for index in itemToBook["ot"]:
+                        for index in item_to_book["ot"]:
                             if index == verse["book"]:
                                 is_ot = True
 
@@ -149,7 +149,7 @@ class VerseHandler:
                                     "secondMessage": response2
                                 }]
 
-                        for index in itemToBook["nt"]:
+                        for index in item_to_book["nt"]:
                             if index == verse["book"]:
                                 is_nt = True
 
@@ -170,7 +170,7 @@ class VerseHandler:
                                     "secondMessage": response2
                                 }]
 
-                        for index in itemToBook["deu"]:
+                        for index in item_to_book["deu"]:
                             if index == verse["book"]:
                                 is_deu = True
 

@@ -56,7 +56,7 @@ class BibleBot(discord.AutoShardedClient):
         one_week_ago = now - 60 * 60 * 24 * 7  # seven days to seconds
 
         if mod_time < one_week_ago:
-            bg_book_names.getBooks()
+            bg_book_names.get_books()
 
         if int(config["BibleBot"]["shards"]) < 2:
             activity = discord.Game(central.version + " | Shard: 1 / 1")

@@ -26,7 +26,7 @@ __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(__dir_path + "/../..")
 
 import data.BGBookNames.start as bgbooknames  # noqa: E402
-from data.BGBookNames.books import itemToBook  # noqa: E402
+from data.BGBookNames.books import item_to_book  # noqa: E402
 import central  # noqa: E402
 
 books = None
@@ -35,7 +35,7 @@ try:
     books = open(__dir_path + "/../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 except FileNotFoundError:
-    bgbooknames.getBooks()
+    bgbooknames.get_books()
     books = open(__dir_path + "/../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 
@@ -240,22 +240,22 @@ def create_reference_string(verse):
 
     if "startingVerse" in verse.keys():
         if verse["startingVerse"] is not None:
-            if verse["book"] in itemToBook["ot"]:
-                reference = itemToBook["ot"][verse["book"]] + "|" + \
+            if verse["book"] in item_to_book["ot"]:
+                reference = item_to_book["ot"][verse["book"]] + "|" + \
                             str(verse["chapter"]) + ":" + str(verse["startingVerse"])
-            elif verse["book"] in itemToBook["nt"]:
-                reference = itemToBook["nt"][verse["book"]] + "|" + \
+            elif verse["book"] in item_to_book["nt"]:
+                reference = item_to_book["nt"][verse["book"]] + "|" + \
                             str(verse["chapter"]) + ":" + str(verse["startingVerse"])
-            elif verse["book"] in itemToBook["deu"]:
-                reference = itemToBook["deu"][verse["book"]] + "|" + \
+            elif verse["book"] in item_to_book["deu"]:
+                reference = item_to_book["deu"][verse["book"]] + "|" + \
                             str(verse["chapter"]) + ":" + str(verse["startingVerse"])
         else:
-            if verse["book"] in itemToBook["ot"]:
-                reference = itemToBook["ot"][verse["book"]] + "|" + str(verse["chapter"])
-            elif verse["book"] in itemToBook["nt"]:
-                reference = itemToBook["nt"][verse["book"]] + "|" + str(verse["chapter"])
-            elif verse["book"] in itemToBook["deu"]:
-                reference = itemToBook["deu"][verse["book"]] + "|" + str(verse["chapter"])
+            if verse["book"] in item_to_book["ot"]:
+                reference = item_to_book["ot"][verse["book"]] + "|" + str(verse["chapter"])
+            elif verse["book"] in item_to_book["nt"]:
+                reference = item_to_book["nt"][verse["book"]] + "|" + str(verse["chapter"])
+            elif verse["book"] in item_to_book["deu"]:
+                reference = item_to_book["deu"][verse["book"]] + "|" + str(verse["chapter"])
 
         if "endingVerse" in verse.keys():
             if verse["endingVerse"] is not None:
