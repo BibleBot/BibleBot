@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/BGBookNames" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/BGBookNames" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/verses.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verses.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,14 +18,14 @@
           <entry key="gitignore" value="31" />
           <entry key="ini" value="7" />
           <entry key="md" value="391" />
-          <entry key="py" value="2938" />
+          <entry key="py" value="2979" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="391" />
           <entry key="PLAIN_TEXT" value="38" />
-          <entry key="Python" value="2938" />
+          <entry key="Python" value="2979" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -65,8 +61,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="284">
-              <caret line="1301" column="28" selection-start-line="1301" selection-start-column="28" selection-end-line="1301" selection-end-column="28" />
+            <state relative-caret-position="139">
+              <caret line="40" column="29" lean-forward="true" selection-start-line="40" selection-start-column="29" selection-end-line="40" selection-end-column="29" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -98,8 +94,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="58" column="37" selection-start-line="58" selection-start-column="37" selection-end-line="58" selection-end-column="37" />
+            <state relative-caret-position="209">
+              <caret line="408" lean-forward="true" selection-start-line="408" selection-end-line="408" />
               <folding>
                 <element signature="e#748#762#0" expanded="true" />
               </folding>
@@ -119,7 +115,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3450">
+            <state relative-caret-position="3010">
               <caret line="155" selection-start-line="155" selection-end-line="155" />
             </state>
           </provider>
@@ -128,7 +124,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
+            <state relative-caret-position="-3499">
               <caret line="33" selection-start-line="33" selection-end-line="33" />
             </state>
           </provider>
@@ -172,7 +168,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Done.</find>
       <find>version = settings</find>
       <find>version = versions</find>
       <find>get_language</find>
@@ -202,6 +197,7 @@
       <find>in args</find>
       <find>`</find>
       <find>version</find>
+      <find>itemToBook</find>
     </findStrings>
     <replaceStrings>
       <replace>\&quot;\&quot;\&quot;\n    Copyright \(c\) 2018 Elliott Pardee \&lt;me \[at\] vypr \[dot\] xyz\&gt;\n    This file is part of BibleBot\.\n\n    BibleBot is free software\: you can redistribute it and\/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation\, either version 3 of the License\, or\n    \(at your option\) any later version\.\n\n    BibleBot is distributed in the hope that it will be useful\,\n    but WITHOUT ANY WARRANTY\; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\.  See the\n    GNU General Public License for more details\.\n\n    You should have received a copy of the GNU General Public License\n    along with BibleBot\.  If not\, see \&lt;http\:\/\/www\.gnu\.org\/licenses\/\&gt;\.\n\'\'\'</replace>
@@ -299,6 +295,12 @@
               <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
               <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="bible_modules" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -477,18 +479,18 @@
     <frame x="54" y="27" width="1312" height="741" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.54285717" visible="true" weight="0.24980605" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.54285717" visible="true" weight="0.24980605" />
       <window_info id="Structure" order="1" sideWeight="0.45714286" side_tool="true" weight="0.2503726" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32767403" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925485" visible="true" weight="0.33887044" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49925485" visible="true" weight="0.33887044" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32767403" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.33106962" />
-      <window_info anchor="bottom" id="Python Console" order="8" weight="0.32767403" />
+      <window_info anchor="bottom" id="Python Console" order="8" weight="0.32724252" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49925485" weight="0.2807309" />
       <window_info active="true" anchor="bottom" id="Messages" order="10" visible="true" weight="0.3290938" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5007452" side_tool="true" weight="0.16808149" />
@@ -766,13 +768,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3450">
-          <caret line="155" selection-start-line="155" selection-end-line="155" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
@@ -810,13 +805,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="33" selection-start-line="33" selection-end-line="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/start.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="230">
@@ -831,20 +819,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3010">
+          <caret line="155" selection-start-line="155" selection-end-line="155" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="1301" column="28" selection-start-line="1301" selection-start-column="28" selection-end-line="1301" selection-end-column="28" />
+        <state relative-caret-position="139">
+          <caret line="40" column="29" lean-forward="true" selection-start-line="40" selection-start-column="29" selection-end-line="40" selection-end-column="29" />
           <folding>
             <element signature="e#748#759#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3499">
+          <caret line="33" selection-start-line="33" selection-end-line="33" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="58" column="37" selection-start-line="58" selection-start-column="37" selection-end-line="58" selection-end-column="37" />
+        <state relative-caret-position="209">
+          <caret line="408" lean-forward="true" selection-start-line="408" selection-end-line="408" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
           </folding>

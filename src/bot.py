@@ -375,8 +375,6 @@ class BibleBot(discord.AutoShardedClient):
                                         else:
                                             await channel.send(str(count) + "/" + str(total) + " - " + item.name +
                                                                " :regional_indicator_x:")
-
-                                        count += 1
                                     elif chan == "preferred" and setting:
                                         sent = False
 
@@ -400,17 +398,16 @@ class BibleBot(discord.AutoShardedClient):
                                                                                    " - " + item.name +
                                                                                    " :regional_indicator_x:")
 
-                                                            count += 1
                                                             sent = True
                                             except (AttributeError, IndexError):
                                                 sent = True
                                     else:
                                         await channel.send(str(count) + "/" + str(total) + " - " + item.name +
                                                            " :regional_indicator_x:")
-
-                                        count += 1
                             except Exception:
                                 pass
+
+                            count += 1
 
                         await channel.send("Done.")
 
