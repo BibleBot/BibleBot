@@ -193,7 +193,7 @@ class VerseHandler:
 
                     biblehub_versions = ["BSB", "NHEB", "WBT"]
                     bibleserver_versions = ["LUT", "LXX", "SLT"]
-                    biblesorg_versions = ["KJVA", "ESP"]
+                    biblesorg_versions = ["KJVA", "ESP", "TGVD", "NTV", "GVNT", "BYZ1904", "NTPT"]
                     non_bible_gateway = ["REV"] + biblehub_versions + biblesorg_versions + bibleserver_versions
 
                     is_bible_gateway = (version not in non_bible_gateway)
