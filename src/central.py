@@ -117,6 +117,8 @@ def is_banned(entryid):
     if len(result) > 0:
         if "reason" in result[0].keys():
             return True, result[0]["reason"]
+        else:
+            return True, "Unspecified"
     else:
         return False, None
 

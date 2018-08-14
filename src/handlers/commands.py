@@ -77,65 +77,18 @@ command_map = {
 
 def is_command(command, lang):
     commands = lang["commands"]
+    untranslated_commands = ["setlanguage", "userid", "ban", "unban", "reason",
+                             "optout", "unoptout", "eval", "jepekula", "joseph",
+                             "tiger"]
 
     result = {
         "ok": False
     }
 
-    if command == "setlanguage":
+    if command in untranslated_commands:
         result = {
             "ok": True,
-            "orig": "setlanguage",
-        }
-    elif command == "userid":
-        result = {
-            "ok": True,
-            "orig": "userid"
-        }
-    elif command == "ban":
-        result = {
-            "ok": True,
-            "orig": "ban"
-        }
-    elif command == "unban":
-        result = {
-            "ok": True,
-            "orig": "unban"
-        }
-    elif command == "reason":
-        result = {
-            "ok": True,
-            "orig": "reason",
-        }
-    elif command == "optout":
-        result = {
-            "ok": True,
-            "orig": "optout",
-        }
-    elif command == "unoptout":
-        result = {
-            "ok": True,
-            "orig": "unoptout",
-        }
-    elif command == "eval":
-        result = {
-            "ok": True,
-            "orig": "eval"
-        }
-    elif command == "jepekula":
-        result = {
-            "ok": True,
-            "orig": "jepekula"
-        }
-    elif command == "joseph":
-        result = {
-            "ok": True,
-            "orig": "joseph"
-        }
-    elif command == "tiger":
-        result = {
-            "ok": True,
-            "orig": "tiger"
+            "orig": command,
         }
     else:
         for original_command_name in commands.keys():
@@ -150,28 +103,11 @@ def is_command(command, lang):
 
 def is_owner_command(command, lang):
     commands = lang["commands"]
+    owner_commands = [commands["leave"], commands["puppet"], commands["announce"],
+                      commands["addversion"], "userid", "ban", "unban", "reason",
+                      "optout", "unoptout", "eval"]
 
-    if command == commands["leave"]:
-        return True
-    elif command == commands["puppet"]:
-        return True
-    elif command == commands["announce"]:
-        return True
-    elif command == commands["addversion"]:
-        return True
-    elif command == "userid":
-        return True
-    elif command == "ban":
-        return True
-    elif command == "unban":
-        return True
-    elif command == "reason":
-        return True
-    elif command == "optout":
-        return True
-    elif command == "unoptout":
-        return True
-    elif command == "eval":
+    if command in owner_commands:
         return True
     else:
         return False

@@ -2,20 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/BibleBot.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BibleBot.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QA.md" beforeDir="false" afterPath="$PROJECT_DIR$/QA.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bible_modules/biblegateway.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/biblegateway.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bible_modules/bibleutils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/bibleutils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bible_modules/biblehub.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/biblehub.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bible_modules/bibleserver.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/bibleserver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bible_modules/biblesorg.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/biblesorg.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/central.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/central.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commands.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/verses.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verses.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,39 +28,51 @@
         <counts>
           <entry key="gitignore" value="31" />
           <entry key="ini" value="7" />
-          <entry key="md" value="5" />
-          <entry key="py" value="1956" />
+          <entry key="md" value="391" />
+          <entry key="py" value="2619" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Markdown" value="5" />
+          <entry key="Markdown" value="391" />
           <entry key="PLAIN_TEXT" value="38" />
-          <entry key="Python" value="1956" />
+          <entry key="Python" value="2619" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="bandb" value="1" />
+          <entry key="bandb" value="2" />
+          <entry key="guilddb" value="1" />
           <entry key="ini" value="1" />
-          <entry key="py" value="6" />
+          <entry key="md" value="3" />
+          <entry key="optoutdb" value="1" />
+          <entry key="py" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="6" />
+          <entry key="Markdown" value="3" />
+          <entry key="PLAIN_TEXT" value="5" />
+          <entry key="Python" value="15" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="1" />
+          <entry key="project.open.time.18" value="1" />
+          <entry key="project.open.time.47" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="123">
-              <caret line="1326" column="58" selection-start-line="1326" selection-start-column="58" selection-end-line="1326" selection-end-column="58" />
+            <state relative-caret-position="92">
+              <caret line="1265" column="36" selection-start-line="1265" selection-start-column="36" selection-end-line="1265" selection-end-column="36" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -71,79 +81,11 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/central.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="179">
-              <caret line="118" column="34" selection-start-line="118" selection-start-column="34" selection-end-line="118" selection-end-column="34" />
-              <folding>
-                <element signature="e#748#767#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/bot.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="123">
-              <caret line="254" column="36" lean-forward="true" selection-start-line="254" selection-start-column="36" selection-end-line="254" selection-end-column="36" />
-              <folding>
-                <element signature="e#748#762#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/databases/bandb">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-61">
-              <caret line="172" column="19" lean-forward="true" selection-start-line="172" selection-start-column="19" selection-end-line="172" selection-end-column="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="204" column="55" selection-start-line="204" selection-start-column="55" selection-end-line="204" selection-end-column="55" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="59">
-              <caret line="123" column="30" selection-start-line="123" selection-start-column="30" selection-end-line="123" selection-end-column="30" />
-              <folding>
-                <element signature="e#748#759#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/bible_modules/bibleutils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
-              <caret line="25" column="32" lean-forward="true" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.md">
+        <entry file="file://$PROJECT_DIR$/QA.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="FIRST">
-              <first_editor relative-caret-position="115">
-                <caret line="20" column="48" lean-forward="true" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+              <first_editor relative-caret-position="652">
+                <caret line="48" column="42" selection-start-line="48" selection-start-column="42" selection-end-line="48" selection-end-column="42" />
               </first_editor>
               <second_editor />
             </state>
@@ -151,10 +93,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="123">
+                <caret line="58" column="15" selection-start-line="58" selection-start-column="15" selection-end-line="58" selection-end-column="15" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="110" column="18" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
+            <state relative-caret-position="2780">
+              <caret line="198" lean-forward="true" selection-start-line="198" selection-end-line="198" />
             </state>
           </provider>
         </entry>
@@ -170,7 +124,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>print</find>
       <find>[&quot;meta&quot;]</find>
       <find>Done.</find>
       <find>version = settings</find>
@@ -200,6 +153,7 @@
       <find>html</find>
       <find>chapter</find>
       <find>in args</find>
+      <find>`</find>
     </findStrings>
     <replaceStrings>
       <replace>\&quot;\&quot;\&quot;\n    Copyright \(c\) 2018 Elliott Pardee \&lt;me \[at\] vypr \[dot\] xyz\&gt;\n    This file is part of BibleBot\.\n\n    BibleBot is free software\: you can redistribute it and\/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation\, either version 3 of the License\, or\n    \(at your option\) any later version\.\n\n    BibleBot is distributed in the hope that it will be useful\,\n    but WITHOUT ANY WARRANTY\; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\.  See the\n    GNU General Public License for more details\.\n\n    You should have received a copy of the GNU General Public License\n    along with BibleBot\.  If not\, see \&lt;http\:\/\/www\.gnu\.org\/licenses\/\&gt;\.\n\'\'\'</replace>
@@ -242,7 +196,6 @@
         <option value="$PROJECT_DIR$/TODO.md" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
-        <option value="$PROJECT_DIR$/QA.md" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/formatting.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/versions.py" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py" />
@@ -253,22 +206,23 @@
         <option value="$PROJECT_DIR$/src/data/languages.py" />
         <option value="$PROJECT_DIR$/src/config.example.ini" />
         <option value="$PROJECT_DIR$/src/vytypes/version.py" />
-        <option value="$PROJECT_DIR$/src/bible_modules/biblesorg.py" />
-        <option value="$PROJECT_DIR$/src/bible_modules/rev.py" />
-        <option value="$PROJECT_DIR$/src/bible_modules/biblehub.py" />
-        <option value="$PROJECT_DIR$/src/bible_modules/bibleserver.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/config.ini" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/handlers/verses.py" />
-        <option value="$PROJECT_DIR$/src/handlers/verselogic/utils.py" />
-        <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/bibleutils.py" />
+        <option value="$PROJECT_DIR$/databases/bandb" />
         <option value="$PROJECT_DIR$/src/handlers/commands.py" />
+        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/central.py" />
         <option value="$PROJECT_DIR$/src/bot.py" />
+        <option value="$PROJECT_DIR$/src/handlers/verselogic/utils.py" />
+        <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
+        <option value="$PROJECT_DIR$/src/bible_modules/biblehub.py" />
+        <option value="$PROJECT_DIR$/src/bible_modules/bibleserver.py" />
+        <option value="$PROJECT_DIR$/src/bible_modules/biblesorg.py" />
+        <option value="$PROJECT_DIR$/src/bible_modules/rev.py" />
+        <option value="$PROJECT_DIR$/QA.md" />
         <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
-        <option value="$PROJECT_DIR$/databases/bandb" />
       </list>
     </option>
   </component>
@@ -286,7 +240,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -323,10 +276,18 @@
               <item name="handlers" type="462c0819:PsiDirectoryNode" />
               <item name="commandlogic" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="handlers" type="462c0819:PsiDirectoryNode" />
+              <item name="verselogic" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -499,19 +460,19 @@
     <frame x="54" y="27" width="1312" height="741" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.54285717" visible="true" weight="0.24980605" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.54285717" visible="true" weight="0.24980605" />
       <window_info id="Structure" order="1" sideWeight="0.45714286" side_tool="true" weight="0.2503726" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32767403" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925485" weight="0.33887044" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49925485" visible="true" weight="0.33887044" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32767403" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.33106962" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.32767403" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49925485" visible="true" weight="0.4451827" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49925485" weight="0.2807309" />
       <window_info active="true" anchor="bottom" id="Messages" order="10" visible="true" weight="0.3290938" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5007452" side_tool="true" weight="0.16808149" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -654,16 +615,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/QA.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="46">
-            <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/settings/languages.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="115">
@@ -730,45 +681,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblehub.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="77" column="46" selection-start-line="77" selection-start-column="46" selection-end-line="77" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblesorg.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1002">
-          <caret line="125" column="23" selection-start-line="125" selection-start-column="23" selection-end-line="125" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/bibleserver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="36" column="33" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/rev.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="70">
-          <caret line="61" column="45" selection-start-line="61" selection-start-column="45" selection-end-line="61" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-206">
           <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="110" column="18" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
         </state>
       </provider>
     </entry>
@@ -779,84 +695,135 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/bibleutils.py">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="25" column="32" lean-forward="true" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="204" column="55" selection-start-line="204" selection-start-column="55" selection-end-line="204" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="125" column="70" selection-start-line="125" selection-start-column="70" selection-end-line="125" selection-end-column="70" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="59">
-          <caret line="123" column="30" selection-start-line="123" selection-start-column="30" selection-end-line="123" selection-end-column="30" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-61">
-          <caret line="172" column="19" lean-forward="true" selection-start-line="172" selection-start-column="19" selection-end-line="172" selection-end-column="19" />
+        <state relative-caret-position="2530">
+          <caret line="110" column="18" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/databases/bandb">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/databases/guilddb">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/databases/optoutdb">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/rev.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="49" column="23" lean-forward="true" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/bibleutils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-406">
+          <caret line="25" column="32" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="204" column="55" selection-start-line="204" selection-start-column="55" selection-end-line="204" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/central.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="118" column="34" selection-start-line="118" selection-start-column="34" selection-end-line="118" selection-end-column="34" />
+        <state relative-caret-position="148">
+          <caret line="117" column="24" selection-start-line="117" selection-start-column="24" selection-end-line="117" selection-end-column="24" />
           <folding>
             <element signature="e#748#767#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
+    <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123">
-          <caret line="1326" column="58" selection-start-line="1326" selection-start-column="58" selection-end-line="1326" selection-end-column="58" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-912">
+          <caret line="223" column="14" selection-start-line="223" selection-start-column="14" selection-end-line="223" selection-end-column="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="123">
-          <caret line="254" column="36" lean-forward="true" selection-start-line="254" selection-start-column="36" selection-end-line="254" selection-end-column="36" />
+          <caret line="501" column="64" selection-start-line="501" selection-start-column="64" selection-end-line="501" selection-end-column="64" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="73" column="56" selection-start-line="73" selection-start-column="56" selection-end-line="73" selection-end-column="56" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblehub.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="77" column="46" selection-start-line="77" selection-start-column="46" selection-end-line="77" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/bibleserver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-46">
+          <caret line="151" column="33" lean-forward="true" selection-start-line="151" selection-start-column="33" selection-end-line="151" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblesorg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="56">
+          <caret line="87" column="56" selection-start-line="87" selection-start-column="56" selection-end-line="87" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/QA.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="652">
+            <caret line="48" column="42" selection-start-line="48" selection-start-column="42" selection-end-line="48" selection-end-column="42" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
-          <first_editor relative-caret-position="115">
-            <caret line="20" column="48" lean-forward="true" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+          <first_editor relative-caret-position="123">
+            <caret line="58" column="15" selection-start-line="58" selection-start-column="15" selection-end-line="58" selection-end-column="15" />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2780">
+          <caret line="198" lean-forward="true" selection-start-line="198" selection-end-line="198" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="1265" column="36" selection-start-line="1265" selection-start-column="36" selection-end-line="1265" selection-end-column="36" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

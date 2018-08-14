@@ -1258,7 +1258,12 @@ def run_owner_command(bot, command, args, lang):
             "message": embed
         }
     elif command == "userid":
-        split = args[0].split("#")
+        arg = ""
+
+        for item in args:
+            arg += item + " "
+
+        split = arg[0:-1].split("#")
         results = "IDs matching: "
 
         if len(split) == 2:

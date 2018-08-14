@@ -76,31 +76,6 @@ version_names = {
 
 
 def get_result(query, version, verse_numbers):
-    if ":" not in query:
-        book = query.split("|")[0]
-        chapter = query.split("|")[1]
-        starting_verse = "1"
-        ending_verse = "5"
-
-        unversed_books = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"]
-        is_unversed = False
-
-        query = book + " " + chapter
-
-        for i in unversed_books:
-            if i in query:
-                is_unversed = True
-
-        if is_unversed:
-            query += ":" + starting_verse
-        else:
-            query += ":" + starting_verse + "-" + ending_verse
-    else:
-        book = query.split("|")[0]
-        chapter = query.split("|")[1].split(":")[0]
-        starting_verse = query.split("|")[1].split(":")[1]
-        ending_verse = starting_verse
-
     if "-" in starting_verse:
         temp = starting_verse.split("-")
 

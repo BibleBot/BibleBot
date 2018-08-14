@@ -220,6 +220,9 @@ def create_verse_object(name, book_index, msg, available_versions, brackets):
     except IndexError:
         verse = verse
 
+    if verse["startingVerse"] is None:
+        return
+
     return verse
 
 

@@ -255,6 +255,7 @@ class BibleBot(discord.AutoShardedClient):
                 if "isError" not in res:
                     if guild is not None:
                         is_banned, reason = central.is_banned(str(guild.id))
+
                         if is_banned:
                             await channel.send("This server has been banned from using BibleBot. Reason: `" +
                                                reason + "`.")
@@ -470,8 +471,10 @@ class BibleBot(discord.AutoShardedClient):
                                 await channel.send(item["secondMessage"])
                             elif "message" in item:
                                 if guild is not None:
-                                    if central.is_banned(str(guild.id)):
-                                        await channel.send("This server has been banned from using BibleBot.")
+                                    is_banned, reason = central.is_banned(str(guild.id))
+                                    if is_banned:
+                                        await channel.send("This server has been banned from using BibleBot. " +
+                                                           "Reason: `" + reason + "`.")
                                         await channel.send(
                                             "If this is invalid, the server owner may appeal by contacting " +
                                             "vypr#0001.")
@@ -479,8 +482,10 @@ class BibleBot(discord.AutoShardedClient):
                                         central.log_message("err", shard, identifier, source, "Server is banned.")
                                         return
 
-                                if central.is_banned(str(sender.id)):
-                                    await channel.send(sender.mention + " You have been banned from using BibleBot.")
+                                is_banned, reason = central.is_banned(str(sender.id))
+                                if is_banned:
+                                    await channel.send(sender.mention + " You have been banned from using BibleBot. " +
+                                                           "Reason: `" + reason + "`.")
                                     await channel.send("You may appeal by contacting vypr#0001.")
 
                                     central.log_message("err", shard, identifier, source, "User is banned.")
