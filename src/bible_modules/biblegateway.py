@@ -72,33 +72,13 @@ def search(version, query):
 
 
 def get_result(query, version, headings, verse_numbers):
-    if ":" not in query:
-        book = query.split("|")[0]
-        chapter = query.split("|")[1]
-        starting_verse = "1"
-        ending_verse = "5"
-
-        unversed_books = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"]
-        is_unversed = False
-
-        query = book + " " + chapter
-
-        for i in unversed_books:
-            if i in query:
-                is_unversed = True
-
-        if is_unversed:
-            query += ":" + starting_verse
-        else:
-            query += ":" + starting_verse + "-" + ending_verse
-
     url = "https://www.biblegateway.com/passage/?search=" + query + \
         "&version=" + version + "&interface=print"
 
     resp = requests.get(url)
 
     if resp is not None:
-        soup = BeautifulSoup(resp.text, "html.parser")
+        soup = BeautifulSoup(resp.text, "lxml")
 
         for div in soup.find_all("div", {"class": "result-text-style-normal"}):
             text = ""
@@ -114,11 +94,24 @@ def get_result(query, version, headings, verse_numbers):
                 for heading in div.find_all("h3"):
                     title += heading.get_text() + " / "
 
+            for note in div.find_all(True, {"class": "first-line-none"}):
+                note.decompose()
+
+            for inline in div.find_all(True, {"class": "inline-h3"}):
+                inline.decompose()
+
+            for footnote in div.find_all(True, {"class": "footnotes"}):
+                footnote.decompose()
+
             if verse_numbers == "disable":
                 for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
                     num.string = " "
             else:
-                for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
+                # turn all chapter numbers into "1" otherwise the verse numbers look strange
+                for num in div.find_all(True, {"class": "chapternum"}):
+                    num.string = "<1> "
+
+                for num in div.find_all(True, {"class": "versenum"}):
                     num.string = "<" + num.string[0:-1] + "> "
 
             for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):

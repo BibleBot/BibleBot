@@ -24,18 +24,9 @@ class Version:
         self.name = name
         self.abbv = abbv
 
-        self.has_ot = False
-        self.has_nt = False
-        self.has_deu = False
-
-        if has_ot == "yes":
-            self.has_ot = True
-
-        if has_nt == "yes":
-            self.has_nt = True
-
-        if has_deu == "yes":
-            self.has_deu = True
+        self.has_ot = has_ot
+        self.has_nt = has_nt
+        self.has_deu = has_deu
 
     def to_object(self):
         return {

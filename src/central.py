@@ -44,6 +44,7 @@ db = tinydb.TinyDB(dir_path + "/../databases/db")
 guildDB = tinydb.TinyDB(dir_path + "/../databases/guilddb")
 versionDB = tinydb.TinyDB(dir_path + "/../databases/versiondb")
 banDB = tinydb.TinyDB(dir_path + "/../databases/bandb")
+optoutDB = tinydb.TinyDB(dir_path + "/../databases/optoutdb")
 
 languages = languages
 
@@ -87,14 +88,14 @@ def log_message(level, shard, sender, source, msg):
         logger.debug(message)
 
 
-def add_ban(entryid):
+def add_ban(entryid, reason):
     ideal_entry = tinydb.Query()
     result = banDB.search(ideal_entry.id == entryid)
 
     if len(result) > 0:
         return False
     else:
-        banDB.insert({"id": entryid})
+        banDB.insert({"id": entryid, "reason": reason})
         return True
 
 
@@ -112,6 +113,44 @@ def remove_ban(entryid):
 def is_banned(entryid):
     ideal_entry = tinydb.Query()
     result = banDB.search(ideal_entry.id == entryid)
+
+    if len(result) > 0:
+        if "reason" in result[0].keys():
+            return True, result[0]["reason"]
+        else:
+            return True, "Unspecified"
+    else:
+        return False, None
+
+
+def add_optout(entryid):
+    ideal_entry = tinydb.Query()
+    result = optoutDB.search(ideal_entry.id == entryid)
+
+    if len(result) > 0:
+        return False
+    else:
+        db.remove(ideal_entry.id == entryid)
+        guildDB.remove(ideal_entry.id == entryid)
+
+        optoutDB.insert({"id": entryid})
+        return True
+
+
+def remove_optout(entryid):
+    ideal_entry = tinydb.Query()
+    result = optoutDB.search(ideal_entry.id == entryid)
+
+    if len(result) > 0:
+        optoutDB.remove(ideal_entry.id == entryid)
+        return True
+    else:
+        return False
+
+
+def is_optout(entryid):
+    ideal_entry = tinydb.Query()
+    result = optoutDB.search(ideal_entry.id == entryid)
 
     if len(result) > 0:
         return True
