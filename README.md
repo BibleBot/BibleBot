@@ -69,7 +69,7 @@ Bot Owner Commands:
 * `+unoptout id` - unoptout an id from using the bot (works for users)
 * `+leave NAME` - leave the current or NAME server (argument optional)
 
-Invite BibleBot to your server! https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=19520
+Invite BibleBot to your server! https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=93248
 
 ---
 

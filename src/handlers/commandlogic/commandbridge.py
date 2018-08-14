@@ -1167,7 +1167,7 @@ def run_command(command, args, lang, user, guild, channel):
             "level": "info",
             "text": True,
             "message": "<https://discordapp.com/oauth2/authorize?" +
-                       "client_id=361033318273384449&scope=bot&permissions=19520>"
+                       "client_id=361033318273384449&scope=bot&permissions=93248>"
         }
 
 

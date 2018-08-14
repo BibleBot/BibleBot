@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,14 +21,14 @@
           <entry key="gitignore" value="31" />
           <entry key="ini" value="7" />
           <entry key="md" value="391" />
-          <entry key="py" value="2979" />
+          <entry key="py" value="3136" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="391" />
           <entry key="PLAIN_TEXT" value="38" />
-          <entry key="Python" value="2979" />
+          <entry key="Python" value="3136" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -34,14 +37,14 @@
           <entry key="gitignore" value="1" />
           <entry key="guilddb" value="1" />
           <entry key="ini" value="1" />
-          <entry key="md" value="3" />
+          <entry key="md" value="4" />
           <entry key="optoutdb" value="1" />
           <entry key="py" value="23" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Markdown" value="3" />
+          <entry key="Markdown" value="4" />
           <entry key="PLAIN_TEXT" value="6" />
           <entry key="Python" value="23" />
         </counts>
@@ -61,20 +64,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="139">
-              <caret line="40" column="29" lean-forward="true" selection-start-line="40" selection-start-column="29" selection-end-line="40" selection-end-column="29" />
+            <state relative-caret-position="88">
+              <caret line="1163" column="9" lean-forward="true" selection-start-line="1163" selection-start-column="9" selection-end-line="1163" selection-end-column="9" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/config.ini">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="9" selection-start-line="9" selection-end-line="9" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -91,14 +85,26 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="408" lean-forward="true" selection-start-line="408" selection-end-line="408" />
+            <state relative-caret-position="140">
+              <caret line="285" column="48" lean-forward="true" selection-start-line="285" selection-start-column="48" selection-end-line="285" selection-end-column="48" />
               <folding>
                 <element signature="e#748#762#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="23">
+                <caret line="71" column="128" selection-start-line="71" selection-start-column="128" selection-end-line="71" selection-end-column="128" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -168,8 +174,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>version = settings</find>
-      <find>version = versions</find>
       <find>get_language</find>
       <find>dividers</find>
       <find>central.brackets</find>
@@ -198,6 +202,8 @@
       <find>`</find>
       <find>version</find>
       <find>itemToBook</find>
+      <find>discordapp</find>
+      <find>invite</find>
     </findStrings>
     <replaceStrings>
       <replace>\&quot;\&quot;\&quot;\n    Copyright \(c\) 2018 Elliott Pardee \&lt;me \[at\] vypr \[dot\] xyz\&gt;\n    This file is part of BibleBot\.\n\n    BibleBot is free software\: you can redistribute it and\/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation\, either version 3 of the License\, or\n    \(at your option\) any later version\.\n\n    BibleBot is distributed in the hope that it will be useful\,\n    but WITHOUT ANY WARRANTY\; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\.  See the\n    GNU General Public License for more details\.\n\n    You should have received a copy of the GNU General Public License\n    along with BibleBot\.  If not\, see \&lt;http\:\/\/www\.gnu\.org\/licenses\/\&gt;\.\n\'\'\'</replace>
@@ -254,7 +260,6 @@
         <option value="$PROJECT_DIR$/src/bible_modules/bibleutils.py" />
         <option value="$PROJECT_DIR$/databases/bandb" />
         <option value="$PROJECT_DIR$/src/handlers/commands.py" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/central.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/bibleserver.py" />
@@ -263,10 +268,11 @@
         <option value="$PROJECT_DIR$/QA.md" />
         <option value="$PROJECT_DIR$/src/data/languages.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/biblehub.py" />
-        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
         <option value="$PROJECT_DIR$/src/handlers/verses.py" />
         <option value="$PROJECT_DIR$/src/handlers/verselogic/utils.py" />
         <option value="$PROJECT_DIR$/src/bot.py" />
+        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -484,14 +490,14 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32767403" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49925485" visible="true" weight="0.33887044" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925485" weight="0.33887044" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32767403" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.33106962" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.32724252" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49925485" weight="0.2807309" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49925485" visible="true" weight="0.2807309" />
       <window_info active="true" anchor="bottom" id="Messages" order="10" visible="true" weight="0.3290938" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5007452" side_tool="true" weight="0.16808149" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -768,16 +774,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="-498">
-            <caret line="41" column="16" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/QA.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
@@ -826,16 +822,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="40" column="29" lean-forward="true" selection-start-line="40" selection-start-column="29" selection-end-line="40" selection-end-column="29" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3499">
@@ -845,11 +831,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="408" lean-forward="true" selection-start-line="408" selection-end-line="408" />
+        <state relative-caret-position="140">
+          <caret line="285" column="48" lean-forward="true" selection-start-line="285" selection-start-column="48" selection-end-line="285" selection-end-column="48" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="1163" column="9" lean-forward="true" selection-start-line="1163" selection-start-column="9" selection-end-line="1163" selection-end-column="9" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="23">
+            <caret line="71" column="128" selection-start-line="71" selection-start-column="128" selection-end-line="71" selection-end-column="128" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>

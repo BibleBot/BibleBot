@@ -216,6 +216,9 @@ class BibleBot(discord.AutoShardedClient):
 
                     if not perms.add_reactions:
                         embed_or_reaction_not_allowed = True
+
+                    if not perms.manage_messages or not perms.read_message_history:
+                        embed_or_reaction_not_allowed = True
             except AttributeError:
                 pass
 
@@ -275,7 +278,8 @@ class BibleBot(discord.AutoShardedClient):
                         return
 
                     if embed_or_reaction_not_allowed:
-                        await channel.send("I need 'Embed Links' and 'Add Reactions' permissions!")
+                        await channel.send("I need 'Embed Links', 'Read Message History', "
+                                           + "'Manage Messages', and 'Add Reactions' permissions!")
                         return
 
                     if "announcement" not in res:
@@ -462,7 +466,8 @@ class BibleBot(discord.AutoShardedClient):
                                     return
 
                                 if embed_or_reaction_not_allowed:
-                                    await channel.send("I need 'Embed Links' and 'Add Reactions' permissions!")
+                                    await channel.send("I need 'Embed Links', 'Read Message History', "
+                                                       + "'Manage Messages', and 'Add Reactions' permissions!")
                                     return
                                 await channel.send(item["firstMessage"])
                                 await channel.send(item["secondMessage"])
