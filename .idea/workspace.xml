@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
-      <change beforePath="$PROJECT_DIR$/src/bible_modules/biblehub.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/biblehub.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" afterDir="false" />
     </list>
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,14 +19,14 @@
           <entry key="gitignore" value="31" />
           <entry key="ini" value="7" />
           <entry key="md" value="391" />
-          <entry key="py" value="2882" />
+          <entry key="py" value="2920" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="391" />
           <entry key="PLAIN_TEXT" value="38" />
-          <entry key="Python" value="2882" />
+          <entry key="Python" value="2920" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -58,11 +59,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="1210" column="45" selection-start-line="1210" selection-start-column="38" selection-end-line="1210" selection-end-column="45" />
+            <state relative-caret-position="210">
+              <caret line="1288" column="36" selection-start-line="1288" selection-start-column="36" selection-end-line="1288" selection-end-column="36" />
               <folding>
                 <element signature="e#748#759#0" expanded="true" />
               </folding>
@@ -130,7 +131,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bible_modules/biblehub.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="184">
@@ -245,10 +246,10 @@
         <option value="$PROJECT_DIR$/src/bible_modules/biblesorg.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/rev.py" />
         <option value="$PROJECT_DIR$/QA.md" />
-        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
         <option value="$PROJECT_DIR$/src/handlers/verses.py" />
         <option value="$PROJECT_DIR$/src/data/languages.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/biblehub.py" />
+        <option value="$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py" />
       </list>
     </option>
   </component>
@@ -805,16 +806,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="1210" column="45" selection-start-line="1210" selection-start-column="38" selection-end-line="1210" selection-end-column="45" />
-          <folding>
-            <element signature="e#748#759#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/QA.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
@@ -855,6 +846,16 @@
           <caret line="173" column="27" selection-start-line="173" selection-start-column="27" selection-end-line="173" selection-end-column="27" />
           <folding>
             <element signature="e#748#762#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/commandlogic/commandbridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="1288" column="36" selection-start-line="1288" selection-start-column="36" selection-end-line="1288" selection-end-column="36" />
+          <folding>
+            <element signature="e#748#759#0" expanded="true" />
           </folding>
         </state>
       </provider>

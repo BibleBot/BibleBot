@@ -1284,9 +1284,9 @@ def run_owner_command(bot, command, args, lang):
     elif command == "ban":
         ban_reason = ""
 
-        for index in range(0, len(args)):
+        for index, value in enumerate(args):
             if index != 0:
-                ban_reason += args[index] + " "
+                ban_reason += value + " "
 
         if central.is_snowflake(args[0]):
             if central.add_ban(args[0], ban_reason[0:-1]):
