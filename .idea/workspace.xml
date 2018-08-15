@@ -17,13 +17,13 @@
         <counts>
           <entry key="gitignore" value="31" />
           <entry key="ini" value="7" />
-          <entry key="md" value="919" />
+          <entry key="md" value="945" />
           <entry key="py" value="3329" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Markdown" value="919" />
+          <entry key="Markdown" value="945" />
           <entry key="PLAIN_TEXT" value="38" />
           <entry key="Python" value="3329" />
         </counts>
@@ -98,8 +98,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="161">
-                <caret line="85" column="14" lean-forward="true" selection-start-line="85" selection-start-column="14" selection-end-line="85" selection-end-column="14" />
+              <first_editor relative-caret-position="115">
+                <caret line="85" column="14" selection-start-line="85" selection-start-column="14" selection-end-line="85" selection-end-column="14" />
               </first_editor>
               <second_editor />
             </state>
@@ -858,8 +858,8 @@
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="161">
-            <caret line="85" column="14" lean-forward="true" selection-start-line="85" selection-start-column="14" selection-end-line="85" selection-end-column="14" />
+          <first_editor relative-caret-position="115">
+            <caret line="85" column="14" selection-start-line="85" selection-start-column="14" selection-end-line="85" selection-end-column="14" />
           </first_editor>
           <second_editor />
         </state>

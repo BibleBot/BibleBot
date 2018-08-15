@@ -83,7 +83,7 @@ BibleBot requires the following permissions in order to function properly:
   ![](https://i.imgur.com/3XT6Md0.png)
   
 - Add Reactions, Manage Messages (to clear reactions after timeout), Read Message History - To use reactions properly on things like +search and +versions.
-  - Example: 
+  - Example:  
   ![](https://i.imgur.com/DosRFtd.gif)
 
 ---
