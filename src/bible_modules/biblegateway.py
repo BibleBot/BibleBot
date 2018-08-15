@@ -94,9 +94,6 @@ def get_result(query, version, headings, verse_numbers):
                 for heading in div.find_all("h3"):
                     title += heading.get_text() + " / "
 
-            for note in div.find_all(True, {"class": "first-line-none"}):
-                note.decompose()
-
             for inline in div.find_all(True, {"class": "inline-h3"}):
                 inline.decompose()
 
