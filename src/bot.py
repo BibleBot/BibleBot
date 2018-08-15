@@ -494,7 +494,8 @@ class BibleBot(discord.AutoShardedClient):
                                     return
 
                                 if embed_or_reaction_not_allowed:
-                                    await channel.send("I need 'Embed Links' and 'Add Reactions' permissions!")
+                                    await channel.send("I need 'Embed Links', 'Read Message History', "
+                                                       + "'Manage Messages', and 'Add Reactions' permissions!")
                                     return
                                 await channel.send(item["message"])
                         except KeyError:
