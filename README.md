@@ -73,7 +73,17 @@ Invite BibleBot to your server! https://discordapp.com/oauth2/authorize?client_i
 
 ---
 
-Versioning:
+### Permissions
+
+BibleBot requires the following permissions in order to function properly:
+
+- Read Messages, Send Messages - Obviously.
+- Embed Links - This is for BibleBot to use the Discord `embed` object, as BibleBot uses these for everything besides verses. Example: ![](https://i.imgur.com/3XT6Md0.png)
+- Add Reactions, Manage Messages (to clear reactions after timeout), Read Message History - To use reactions properly on things like +search and +versions. Example: ![](https://i.imgur.com/DosRFtd.gif)
+
+---
+
+### Versioning
 
 Every commit, add 1 to the last number of the version, if the result is 10,
 add 1 to the second number of the version. If the result of the second number is 10,
