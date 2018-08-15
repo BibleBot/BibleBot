@@ -202,12 +202,8 @@ class VerseHandler:
                         result = biblegateway.get_result(reference, version, headings, verse_numbers)
 
                         if result is not None:
-                            try:
-                                if result["text"][0] != " ":
-                                    result["text"] = " " + result["text"]
-                            except IndexError:
-                                central.log_message("err", "verses", "global", "indexerror on biblegateway result")
-                                print(result)
+                            if result["text"][0] != " ":
+                                result["text"] = " " + result["text"]
 
                             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
                             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
