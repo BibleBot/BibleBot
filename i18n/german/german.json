@@ -95,7 +95,7 @@
     "enabled": "aktiviert",
     "disabled": "deaktiviert",
     "commands": {
-        "search": "suchen",
+        "search": "search",
         "setversion": "versioneinstellen",
         "setguildversion": "setguildversion",
         "version": "version",
@@ -127,14 +127,14 @@
         "apostles": "apostles",
         "athanasian": "athanasian",
         "chalcedonian": "chalcedonian",
-        "creeds": "glaubensbekenntnisse",
+        "creeds": "creeds",
         "setannouncements": "setannouncements",
-        "announcements": "ankündingungen",
-        "users": "nutzer",
+        "announcements": "announcements",
+        "users": "users",
         "servers": "servers",
-        "announce": "ankündigen",
-        "invite": "einladen",
-        "supporters": "unterstützer"
+        "announce": "announce",
+        "invite": "invite",
+        "supporters": "supporters"
     },
     "arguments": {
         "yes": "Ja",
