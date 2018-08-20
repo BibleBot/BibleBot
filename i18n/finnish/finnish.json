@@ -41,7 +41,7 @@
     "headingsfail": "Käytä `+<setheadings> <enable>` tai `+ <setheadings> <disable>`.",
     "setlanguagesuccess": "Kieli valittu onnistuneesti.",
     "setlanguagefail": "Kielen asettaminen epäonnistui, katso `+<languages>`.",
-    "languageused": "Käytät kieltä suomi. Käytä `+<setlanguage>` asettaaksesi eri kieli.",
+    "languageused": "Käytät kieltä suomi. Käytä `+<setlanguage>` asettaaksesi eri kielen.",
     "languages": "Tuen",
     "otnotsupported": "Käännös <version> ei tue Vanhaa Testamenttia.",
     "ntnotsupported": "Käännös <version> ei tue Uutta Testamenttia.",
