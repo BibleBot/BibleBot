@@ -46,7 +46,7 @@
     "otnotsupported": "Die Version <version> unterstützt das Alte Testament nicht.",
     "ntnotsupported": "Die Version <version> unterstützt das Neue Testament nicht.",
     "deunotsupported": "Die Version <version> unterstützt nicht die Apocryphen/Deuterokanonischen Bücher.",
-    "otnotsupported2": "Um das Alte Testament zu verwenden benutzen Sie `+<setversion>` und stellen Sie eine Version ein die es hat.",
+    "otnotsupported2": "Um das Alte Testament zu verwenden, benutzen Sie `+<setversion>` und stellen Sie eine Version ein, die es hat.",
     "ntnotsupported2": "Wenn Sie das Neue Testament verwenden möchten, stellen Sie mit `+<setversion>`eine Version ein, die es hat.",
     "deunotsupported2": "Wenn Sie die Apokryphen/Deuterokanonischen Bücher verwenden möchten, stellen Sie mit `+<setversion>`eine Version ein, die sie hat.",
     "setguildversionsuccess": "Gildenversion erfolgreich eingestellt.",
@@ -96,7 +96,7 @@
     "disabled": "deaktiviert",
     "commands": {
         "search": "suchen",
-        "setversion": "versioneinstellen",
+        "setversion": "setversion",
         "setguildversion": "gildenversionsetzen",
         "version": "version",
         "guildversion": "gildenversion",
