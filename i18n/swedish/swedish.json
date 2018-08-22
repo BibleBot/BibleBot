@@ -87,7 +87,7 @@
     "searchResults": "Sökresultat för",
     "nothingFound": "Ingenting hittat för \"<query>\"",
     "pageOf": "Sida <num> av <total>",
-    "searchNotSupported": "+<search> only supports Bible Gateway versions",
+    "searchNotSupported": "+<search> stöder bara Bible Gateway -versioner",
     "supporters": "A special thank you to the following contributors:",
     "anonymousDonors": "Anonyma donatorer",
     "donorsNotListed": "And those not listed!",
