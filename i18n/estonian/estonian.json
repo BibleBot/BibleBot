@@ -86,7 +86,7 @@
     "queryTooShort": "Your search query must be longer than 3 characters.",
     "searchResults": "Search results for",
     "nothingFound": "Nothing found for \"<query>\"",
-    "pageOf": "Page <num> of <total>",
+    "pageOf": "Lehekülg <num>/<total>",
     "searchNotSupported": "+<search> only supports Bible Gateway versions",
     "supporters": "A special thank you to the following contributors:",
     "anonymousDonors": "Anonüümsed doonorid",
