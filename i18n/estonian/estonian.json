@@ -81,7 +81,7 @@
     "noannouncements": "I couldn't find this guild in my database, has someone with the 'Manage Server' permission used `+<setannouncements>` yet?",
     "users": "The number of users spanning across all servers that BibleBot is on (without duplicates)",
     "servers": "BibleBot on <count> serveris.",
-    "argumentCountError": "+<command> requires <count> arguments.",
+    "argumentCountError": "+<command> vajab <count> argumendid.",
     "argumentCountErrorAL": "+<command> requires at least <count> arguments.",
     "queryTooShort": "Your search query must be longer than 3 characters.",
     "searchResults": "Search results for",
@@ -139,7 +139,7 @@
     "arguments": {
         "yes": "Jah",
         "no": "Ei",
-        "enable": "enable",
-        "disable": "disable"
+        "enable": "võimaldama",
+        "disable": "keelata"
     }
 }
