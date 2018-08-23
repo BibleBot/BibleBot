@@ -38,7 +38,7 @@
     "versenumbersfail": "Use `+<setversenumbers> <enable>` or `+<setversenumbers> <disable>`.",
     "headings": "You have headings <enabled/disabled>. Use `+<setheadings>` to change it.",
     "headingssuccess": "Set headings successfully.",
-    "headingsfail": "Use `+<setheadings> <enable>` or `+<setheadings> <disable>`.",
+    "headingsfail": "Kasutage `+<setheadings> <enable>` või `+<setheadings> <disable>`.",
     "setlanguagesuccess": "Set language successfully.",
     "setlanguagefail": "Keele määramine ebaõnnestus, vaata `+<languages>`.",
     "languageused": "Sina kasutad eesti. Kasutage `+<setlanguage>`teise keele määramiseks.",
