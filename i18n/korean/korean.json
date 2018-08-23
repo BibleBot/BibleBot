@@ -1,6 +1,6 @@
 {
-    "biblebot": "BibleBot v<biblebotversion>",
-    "code": "코드: <https://git.vypr.space/BibleBot/BibleBot>",
+    "biblebot": "BibleBot v<biblebotversion> 으로 Elliott Pardee (vypr)",
+    "code": "코드: <repositoryLink>",
     "commandlist": "* `+<search> query` - search using keywords (only in Bible Gateway versions)\n* `+<setversion> ABBV` - set preferred version to ABBV\n* `+<version>` - see what version you've set\n* `+<versions>` - see the supported versions\n* `+<versioninfo> VER` - read information about a version, using the acronym\n* `+<random>` - get a random Bible verse\n* `+<verseoftheday>` (`+<votd>`) - get the verse of the day\n* `+<setheadings> <enable>/<disable>` - enable or disable topic/chapter headings\n* `+<headings>` - see your topic/chapter headings preference\n* `+<setversenumbers> <enable>/<disable>` - enable or disable verse numbers\n* `+<versenumbers>` - see your verse numbers preference\n* `+<setlanguage> LANG` - set preferred language to LANG\n* `+<language>` - see your current language, if one is set (default: english)\n* `+<languages>` - see the supported languages\n* `+<users>` - list all users throughout all servers (not counting duplicates or bots)\n* `+<servers>` - show how many servers BibleBot is in\n* `+<invite>` - get the invite link for BibleBot\n* `+<supporters>` - the supporters of BibleBot",
     "commandlist2": "* `+<creeds>` - the ecumenical creeds (contains further commands)",
     "guildcommandlist": "* `+<setguildversion> ABBV` - set the guild's default version to ABBV\n* `+<guildversion>` - see the default version for this guild\n* `+<setguildlanguage> LANG` - set the guild's default language to LANG\n* `+<guildlanguage>` - see the guild's default language, if one is set (default: english)\n* `+<setvotdtime> TIME` - set the VOTD scheduler time to TIME (TIME must be 24h format and in UTC)\n* `+<clearvotdtime>` - clear the VOTD scheduler time\n* `+<votdtime>` - see the VOTD scheduler time and channel\n* `+<setannouncements> <enable>/<disable>` - enable or disable announcements\n* `+<announcements>` - see the guild's announcement preference",
@@ -9,7 +9,7 @@
     "extrabiblicalcommandlistName": "Extra-Biblical Commands",
     "guildcommandlistName": "Guild Commands",
     "links": "링크",
-    "website": "Website: <https://biblebot.xyz>",
+    "website": "Website: <websiteLink>",
     "joinserver": "공식 디스코드 서버: <https://discord.gg/Ssn8KNv>",
     "terms": "Terms and Conditions: <termsLink>",
     "apostlescreed": "The Apostles' Creed",
