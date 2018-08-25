@@ -84,7 +84,7 @@
     "argumentCountError": "+<command> vajab <count> argumendid.",
     "argumentCountErrorAL": "+<command> nõuab vähemalt <count> argumendid.",
     "queryTooShort": "Sinu otsingupäring peab olema pikem kui 3 tähemärki.",
-    "searchResults": "Search results for",
+    "searchResults": "Otsi tulemusi:",
     "nothingFound": "Ei leitud midagi päringu \"<query>\" eest",
     "pageOf": "Lehekülg <num>/<total>",
     "searchNotSupported": "+<search> toetab ainult Bible Gateway versioone",
