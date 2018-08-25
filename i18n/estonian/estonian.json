@@ -28,7 +28,7 @@
     "creedstext": "Need on usutunnistused saadaval BibleBot'is:\n\n`+<apostles>` - Apostellik usutunnistus\n`+<nicene>` - Nikaia usutunnistus\n`+<chalcedonian>` - Kalchedoni usutunnistus\n`+<athanasian>` - Athanasiose usutunnistus",
     "error": "Viga",
     "versions": "Toetan",
-    "setversionsuccess": "Set version successfully.",
+    "setversionsuccess": "Versioon seatud edukalt.",
     "setversionfail": "Versiooni määramine ebaõnnestus, vaatama `+<versions>`.",
     "versionused": "Kasute versioon <version>. Kasutage `+<setversion>` teistsuguse versiooni seadistamiseks.",
     "noversionused": "Ma ei leia sinu nime minu andmebaasis, kas sa kasutasid `+<setversion>`veel?",
