@@ -30,7 +30,7 @@
     "versions": "Toetan",
     "setversionsuccess": "Set version successfully.",
     "setversionfail": "Versiooni määramine ebaõnnestus, vaatama `+<versions>`.",
-    "versionused": "You are using <version>. Use `+<setversion>` to set a different version.",
+    "versionused": "Kasute versioon <version>. Kasutage `+<setversion>` teistsuguse versiooni seadistamiseks.",
     "noversionused": "Ma ei leia sinu nime minu andmebaasis, kas sa kasutasid `+<setversion>`veel?",
     "addversionsuccess": "Versioon lisatud edukalt.",
     "versenumbers": "You have verse numbers <enabled/disabled>. Use `+<setversenumbers>` to change it.",
