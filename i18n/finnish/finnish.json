@@ -69,6 +69,7 @@
     "novotdtimeused": "En löytänyt tätä kiltaa tietokannastani, onko joku 'Manage Server' -oikeudet omistava käyttänyt vielä komentoa `+<setvotdtime>`?",
     "clearvotdtimesuccess": "PJ-aika tyhjennetty onnistuneesti.",
     "clearvotdtimenoperm": "Sinulla täytyy olla 'Manage Server' -oikeudet tyhjentääksesi killan PJ-ajan!",
+    "votd": "Here is today's verse of the day:",
     "passagetoolong": "Otos on liian pitkä minulle, pahoittelen.",
     "votdcantprocess": "Päivän jaetta ei voitu prosessoida, mene osoitteeseen <https://www.biblegateway.com/> lukeaksesi päivän jakeen.",
     "versioninfo": "\n**<versionname>**\n\nSisältää Vanhan Testamentin: <hasOT>\nSisältää Uuden Testamentin: <hasNT>\nSisältää Apokryfikirjat/Deuterokanoniset kirjat: <hasDEU>",
