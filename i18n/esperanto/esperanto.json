@@ -69,6 +69,7 @@
     "novotdtimeused": "Mi ne trovis ĉi tion gildon en mia datumbazo.",
     "clearvotdtimesuccess": "Vi senigas VDLT horon sukcese.",
     "clearvotdtimenoperm": "Vi bezonas la \"Manage Server\" permeson per senigi VDLT horon de gildo!",
+    "votd": "Here is today's verse of the day:",
     "passagetoolong": "La legaĵo estas tro longa ekkapti por mi, mi pardonpetas.",
     "votdcantprocess": "La VDLT ne estas pretigita, vidu <https://www.biblegateway.com/> por la VDLT.",
     "versioninfo": "\n**<versionname>**\n\nEnhavas Malnova Testamento: <hasOT>\nEnhavas Nova Testamento: <hasNT>\nEnhavas Apokrifon/Duakanonon: <hasDEU>",
