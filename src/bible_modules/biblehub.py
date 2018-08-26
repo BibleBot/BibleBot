@@ -110,7 +110,7 @@ def get_result(query, version, verse_numbers):
 
         for sup in div.find_all("span", {"class": "reftext"}):
             if verse_numbers == "enable":
-                sup.replace_with("<" + sup.get_text() + "> ")
+                sup.replace_with(f"<{sup.get_text()}> ")
             else:
                 sup.replace_with(" ")
 

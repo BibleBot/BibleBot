@@ -23,7 +23,7 @@ import re
 import sys
 
 __dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(__dir_path + "/../..")
+sys.path.append(f"{__dir_path}/../..")
 
 import data.BGBookNames.start as bgbooknames  # noqa: E402
 from data.BGBookNames.books import item_to_book  # noqa: E402
@@ -32,11 +32,11 @@ import central  # noqa: E402
 books = None
 
 try:
-    books = open(__dir_path + "/../../data/BGBookNames/books.json")
+    books = open(f"{__dir_path}/../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 except FileNotFoundError:
     bgbooknames.get_books()
-    books = open(__dir_path + "/../../data/BGBookNames/books.json")
+    books = open(f"{__dir_path}/../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 
 dashes = ["-", "—", "–"]
@@ -67,7 +67,7 @@ def purify(msg):
     msg = msg.replace("}", " } ")
     msg = msg.replace("<", " < ")
     msg = msg.replace(">", " > ")
-    msg = re.sub(r"[.,;'\"_=$#*&^%@!]", "", msg)
+    msg = re.sub(r"[.,;'\"_=$#*&^%@!?]", "", msg)
     return central.capitalize_first_letter(msg)
 
 

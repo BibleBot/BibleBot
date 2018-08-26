@@ -69,6 +69,6 @@ def get_votd():
 
     if resp is not None:
         soup = BeautifulSoup(resp.text, "html.parser")
-        verse = soup.find(True, {"class": "rp-passage-display"}).getText()
+        verse = soup.find(True, {"class": "rp-passage-display"}).get_text()
 
         return verse

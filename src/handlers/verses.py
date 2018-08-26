@@ -27,14 +27,14 @@ import tinydb
 from handlers.verselogic import utils
 
 __dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(__dir_path + "/..")
+sys.path.append(f"{__dir_path}/..")
 
 import handlers.commandlogic.settings as settings  # noqa: E402
 from bible_modules import biblesorg, bibleserver, biblehub, biblegateway, rev  # noqa: E402
 from data.BGBookNames.books import item_to_book  # noqa: E402
 import central  # noqa: E402
 
-books = open(__dir_path + "/../data/BGBookNames/books.json")
+books = open(f"{__dir_path}/../data/BGBookNames/books.json")
 books = json.loads(books.read())
 
 
@@ -144,7 +144,7 @@ class VerseHandler:
                                 return [{
                                     "level": "err",
                                     "twoMessages": True,
-                                    "reference": reference + " " + version,
+                                    "reference": f"{reference} {version}",
                                     "firstMessage": response,
                                     "secondMessage": response2
                                 }]
@@ -157,7 +157,7 @@ class VerseHandler:
                                 response = lang["ntnotsupported"]
                                 response = response.replace("<version>", results[0]["name"])
 
-                                response2 = lang.rawObject["ntnotsupported2"]
+                                response2 = lang["ntnotsupported2"]
                                 response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
 
                                 reference = reference.replace("|", " ")
@@ -165,7 +165,7 @@ class VerseHandler:
                                 return [{
                                     "level": "err",
                                     "twoMessages": True,
-                                    "reference": reference + " " + version,
+                                    "reference": f"{reference} {version}",
                                     "firstMessage": response,
                                     "secondMessage": response2
                                 }]
@@ -186,14 +186,14 @@ class VerseHandler:
                                 return [{
                                     "level": "err",
                                     "twoMessages": True,
-                                    "reference": reference + " " + version,
+                                    "reference": f"{reference} {version}",
                                     "firstMessage": response,
                                     "secondMessage": response2
                                 }]
 
                     biblehub_versions = ["BSB", "NHEB", "WBT"]
                     bibleserver_versions = ["LUT", "LXX", "SLT"]
-                    biblesorg_versions = ["KJVA", "ESP", "TGVD", "NTV", "GVNT", "BYZ1904", "NTPT"]
+                    biblesorg_versions = ["KJVA", "ESP", "TGVD", "GVNT", "BYZ1904", "NTPT"]
                     non_bible_gateway = ["REV"] + biblehub_versions + biblesorg_versions + bibleserver_versions
 
                     is_bible_gateway = (version not in non_bible_gateway)
@@ -229,14 +229,14 @@ class VerseHandler:
                                     return_list.append({
                                         "level": "info",
                                         "twoMessages": True,
-                                        "reference": reference + " " + version,
+                                        "reference": f"{reference} {version}",
                                         "firstMessage": response_string1,
                                         "secondMessage": content2
                                     })
                                 else:
                                     return_list.append({
                                         "level": "err",
-                                        "reference": reference + " " + version,
+                                        "reference": f"{reference} {version}",
                                         "message": lang["passagetoolong"]
                                     })
                     elif version == "REV":
@@ -253,7 +253,7 @@ class VerseHandler:
                         if len(response_string) < 2000:
                             return_list.append({
                                 "level": "info",
-                                "reference": reference + " " + version,
+                                "reference": f"{reference} {version}",
                                 "message": response_string
                             })
                         elif len(response_string) > 2000:
@@ -269,14 +269,14 @@ class VerseHandler:
                                 return_list.append({
                                     "level": "info",
                                     "twoMessages": True,
-                                    "reference": reference + " " + version,
+                                    "reference": f"{reference} {version}",
                                     "firstMessage": response_string1,
                                     "secondMessage": content2
                                 })
                             else:
                                 return_list.append({
                                     "level": "err",
-                                    "reference": reference + " " + version,
+                                    "reference": f"{reference} {version}",
                                     "message": lang["passagetoolong"]
                                 })
                     elif version in biblesorg_versions:
@@ -294,7 +294,7 @@ class VerseHandler:
                             if len(response_string) < 2000:
                                 return_list.append({
                                     "level": "info",
-                                    "reference": reference + " " + version,
+                                    "reference": f"{reference} {version}",
                                     "message": response_string
                                 })
                             elif len(response_string) > 2000:
@@ -310,14 +310,14 @@ class VerseHandler:
                                     return_list.append({
                                         "level": "info",
                                         "twoMessages": True,
-                                        "reference": reference + " " + version,
+                                        "reference": f"{reference} {version}",
                                         "firstMessage": response_string1,
                                         "secondMessage": content2
                                     })
                                 else:
                                     return_list.append({
                                         "level": "err",
-                                        "reference": reference + " " + version,
+                                        "reference": f"{reference} {version}",
                                         "message": lang["passagetoolong"]
                                     })
                     elif version in biblehub_versions:
@@ -335,7 +335,7 @@ class VerseHandler:
                             if len(response_string) < 2000:
                                 return_list.append({
                                     "level": "info",
-                                    "reference": reference + " " + version,
+                                    "reference": f"{reference} {version}",
                                     "message": response_string
                                 })
                             elif len(response_string) > 2000:
@@ -351,14 +351,14 @@ class VerseHandler:
                                     return_list.append({
                                         "level": "info",
                                         "twoMessages": True,
-                                        "reference": reference + " " + version,
+                                        "reference": f"{reference} {version}",
                                         "firstMessage": response_string1,
                                         "secondMessage": content2
                                     })
                                 else:
                                     return_list.append({
                                         "level": "err",
-                                        "reference": reference + " " + version,
+                                        "reference": f"{reference} {version}",
                                         "message": lang["passagetoolong"]
                                     })
                     elif version in bibleserver_versions:
@@ -376,7 +376,7 @@ class VerseHandler:
                             if len(response_string) < 2000:
                                 return_list.append({
                                     "level": "info",
-                                    "reference": reference + " " + version,
+                                    "reference": f"{reference} {version}",
                                     "message": response_string
                                 })
                             elif len(response_string) > 2000:
@@ -392,14 +392,14 @@ class VerseHandler:
                                     return_list.append({
                                         "level": "info",
                                         "twoMessages": True,
-                                        "reference": reference + " " + version,
+                                        "reference": f"{reference} {version}",
                                         "firstMessage": response_string1,
                                         "secondMessage": content2
                                     })
                                 else:
                                     return_list.append({
                                         "level": "err",
-                                        "reference": reference + " " + version,
+                                        "reference": f"{reference} {version}",
                                         "message": lang["passagetoolong"]
                                     })
             return return_list

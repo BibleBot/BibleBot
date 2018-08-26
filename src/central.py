@@ -30,21 +30,21 @@ from extensions.vylogger import VyLogger
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 config = configparser.ConfigParser()
-config.read(dir_path + "/config.ini")
+config.read(f"{dir_path}/config.ini")
 
 configVersion = configparser.ConfigParser()
-configVersion.read(dir_path + "/config.example.ini")
+configVersion.read(f"{dir_path}/config.example.ini")
 
 version = "BibleBot v" + configVersion["meta"]["version"]
 icon = "https://cdn.discordapp.com/avatars/361033318273384449/cc2758488d104770c9630e4c21ad1e4a.png"  # noqa: E501
 
 logger = VyLogger("default")
 
-db = tinydb.TinyDB(dir_path + "/../databases/db")
-guildDB = tinydb.TinyDB(dir_path + "/../databases/guilddb")
-versionDB = tinydb.TinyDB(dir_path + "/../databases/versiondb")
-banDB = tinydb.TinyDB(dir_path + "/../databases/bandb")
-optoutDB = tinydb.TinyDB(dir_path + "/../databases/optoutdb")
+db = tinydb.TinyDB(f"{dir_path}/../databases/db")
+guildDB = tinydb.TinyDB(f"{dir_path}/../databases/guilddb")
+versionDB = tinydb.TinyDB(f"{dir_path}/../databases/versiondb")
+banDB = tinydb.TinyDB(f"{dir_path}/../databases/bandb")
+optoutDB = tinydb.TinyDB(f"{dir_path}/../databases/optoutdb")
 
 languages = languages
 
@@ -75,8 +75,7 @@ def splitter(s):
 
 
 def log_message(level, shard, sender, source, msg):
-    message = "[shard " + str(shard) + "] <" + \
-        sender + "@" + source + "> " + msg
+    message = f"[shard {str(shard)}] <{sender}@{source}> {msg}"
 
     if level == "warn":
         logger.warning(message)

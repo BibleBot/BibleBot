@@ -211,9 +211,5 @@ class CommandHandler:
                     else:
                         return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
             else:
-                # noinspection PyBroadException
-                try:
-                    if str(sender.id) == central.config["BibleBot"]["owner"]:
-                        return command_bridge.run_owner_command(bot, command, args, raw_language)
-                except Exception:
-                    pass
+                if str(sender.id) == central.config["BibleBot"]["owner"]:
+                    return command_bridge.run_owner_command(bot, command, args, raw_language)

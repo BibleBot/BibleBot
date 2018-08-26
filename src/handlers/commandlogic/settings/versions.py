@@ -22,7 +22,7 @@ import sys
 import tinydb
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(dir_path + "/../../..")
+sys.path.append(f"{dir_path}/../../..")
 
 import central  # noqa: E402
 

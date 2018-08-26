@@ -28,10 +28,10 @@ from bs4 import BeautifulSoup
 import bible_modules.bibleutils as bibleutils
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(dir_path + "/..")
+sys.path.append(f"{dir_path}/..")
 
 config = configparser.ConfigParser()
-config.read(dir_path + "/../config.ini")
+config.read(f"{dir_path}/../config.ini")
 
 HTTPConnection.debuglevel = 0
 
@@ -40,11 +40,21 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 versions = {
-    "KJVA": "eng-KJVA"
+    "KJVA": "eng-KJVA",
+    "ESP": "epo-ESP",
+    "TGVD": "ell-TGVD",
+    "GVNT": "ell-GVNT",
+    "BYZ1904": "grc-BYZ1904",
+    "NTPT": "grc-NTPT",
 }
 
 version_names = {
-    "KJVA": "King James Version with Apocrypha (KJVA)"
+    "KJVA": "King James Version with Apocrypha (KJVA)",
+    "ESP": "La Sankta Biblio (ESP)",
+    "TGVD": "Η Αγία Γραφή με τα Δευτεροκανονικά (TGVD)",
+    "GVNT": "Η Καινή Διαθήκη κατά νεοελληνικήν απόδοσιν - Βέλλας (GVNT)",
+    "BYZ1904": "Πατριαρχικό Κείμενο (Έκδοση Αντωνιάδη, 1904) (BYZ1904)",
+    "NTPT": "Η ΚΑΙΝΗ ΔΙΑΘΗΚΗ ΕΓΚΡΙΣΕΙ ΤΗΣ ΜΕΓΑΛΗΣ ΤΟΥ ΧΡΙΣΤΟΥ ΕΚΚΛΗΣΙΑΣ (NTPT)"
 }
 
 # def remove_bible_title_in_search(string):
@@ -88,7 +98,7 @@ version_names = {
 def get_result(query, version, headings, verse_numbers):
     query = query.replace("|", " ")
 
-    url = "https://bibles.org/v2/passages.js?q[]=" + query + "&version=" + versions[version]
+    url = f"https://bibles.org/v2/passages.js?q[]={query}&version={versions[version]}"
 
     resp = requests.get(url, auth=(config["apis"]["biblesorg"], "X"))
 
@@ -109,12 +119,12 @@ def get_result(query, version, headings, verse_numbers):
         text = ""
 
         for heading in soup.find_all("h3"):
-            title += heading.get_text() + " / "
+            title += f"{heading.get_text()} / "
             heading.decompose()
 
         for sup in soup.find_all("sup", {"class": "v"}):
             if verse_numbers == "enable":
-                sup.replace_with("<" + sup.get_text() + "> ")
+                sup.replace_with(f"<{sup.get_text()}> ")
             else:
                 sup.replace_with(" ")
 

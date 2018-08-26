@@ -26,7 +26,7 @@ import tinydb
 from handlers.commandlogic.settings import languages, versions, formatting, misc
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(dir_path + "/../..")
+sys.path.append(f"{dir_path}/../..")
 
 from vytypes.version import Version  # noqa: E402
 from bible_modules import bibleutils  # noqa: E402
@@ -930,83 +930,6 @@ def run_command(command, args, lang, user, guild, channel):
                 "level": "info",
                 "message": embed
             }
-    elif command == "setannouncements":
-        perms = user.guild_permissions
-
-        if str(user.id) != central.config["BibleBot"]["owner"]:
-            if not perms.manage_guild:
-                embed.color = 16723502
-                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"],
-                                value=lang["setannouncementsnoperm"])
-
-                return {
-                    "level": "err",
-                    "message": embed
-                }
-
-        if misc.set_guild_announcements(guild, channel, args[0]):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"],
-                            value=lang["setannouncementssuccess"])
-
-            return {
-                "level": "info",
-                "message": embed
-            }
-        else:
-            response = lang["setannouncementsfail"]
-
-            response = response.replace("<setannouncements>", lang["commands"]["setannouncements"])
-            response = response.replace("<enable>", lang["arguments"]["enable"])
-            response = response.replace("<disable>", lang["arguments"]["disable"])
-
-            embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"],
-                            value=response)
-
-            return {
-                "level": "err",
-                "message": embed
-            }
-    elif command == "announcements":
-        announce_tuple = misc.get_guild_announcements(guild, True)
-
-        if announce_tuple is not None:
-            channel, setting = announce_tuple
-
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            if setting:
-                response = lang["announcementsenabled"]
-            else:
-                response = lang["announcementsdisabled"]
-
-            response = response.replace("<channel>", channel)
-            response = response.replace("<setannouncements>", lang["commands"]["setannouncements"])
-
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["announcements"],
-                            value=response)
-
-            return {
-                "level": "info",
-                "message": embed
-            }
-        else:
-            response = lang["noannouncements"]
-
-            response = response.replace("<setannouncements>", lang["commands"]["setannouncements"])
-
-            embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["announcements"],
-                            value=response)
-
-            return {
-                "level": "err",
-                "message": embed
-            }
     elif command == "users":
         embed.color = 303102
         embed.set_footer(text=central.version, icon_url=central.icon)
@@ -1178,7 +1101,7 @@ def run_owner_command(bot, command, args, lang):
         message = ""
 
         for item in args:
-            message += item + " "
+            message += f"{item} "
 
         if message == " " or message == "":
             return
@@ -1192,7 +1115,7 @@ def run_owner_command(bot, command, args, lang):
         message = ""
 
         for item in args:
-            message += item + " "
+            message += f"{item} "
 
         try:
             return {
@@ -1204,7 +1127,7 @@ def run_owner_command(bot, command, args, lang):
             return {
                 "level": "err",
                 "text": True,
-                "message": "[err] " + str(e)
+                "message": f"[err] {str(e)}"
             }
     elif command == "announce":
         embed.color = 303102
@@ -1213,7 +1136,7 @@ def run_owner_command(bot, command, args, lang):
         message = ""
 
         for item in args:
-            message += item + " "
+            message += f"{item} "
 
         embed.add_field(name="Announcement", value=message[0:-1])
 
@@ -1230,7 +1153,7 @@ def run_owner_command(bot, command, args, lang):
         name = ""
 
         for i in range(0, (argc - 4)):
-            name += args[i] + " "
+            name += f"{args[i]} "
 
         name = name[0:-1]
         abbv = args[argc - 4]
@@ -1261,7 +1184,7 @@ def run_owner_command(bot, command, args, lang):
         arg = ""
 
         for item in args:
-            arg += item + " "
+            arg += f"{item} "
 
         split = arg[0:-1].split("#")
         results = "IDs matching: "
@@ -1270,7 +1193,7 @@ def run_owner_command(bot, command, args, lang):
             users = [x for x in bot.users if x.name == split[0] and x.discriminator == split[1]]
 
             for item in users:
-                results += str(item.id) + ", "
+                results += f"{str(item.id)}, "
 
             results = results[0:-2]
         else:
@@ -1286,20 +1209,20 @@ def run_owner_command(bot, command, args, lang):
 
         for index, value in enumerate(args):
             if index != 0:
-                ban_reason += value + " "
+                ban_reason += f"{value} "
 
         if central.is_snowflake(args[0]):
             if central.add_ban(args[0], ban_reason[0:-1]):
                 return {
                     "level": "info",
                     "text": True,
-                    "message": "Banned " + args[0] + " for " + ban_reason[0:-1] + "."
+                    "message": f"Banned {args[0]} for {ban_reason[0:-1]}."
                 }
             else:
                 return {
                     "level": "err",
                     "text": True,
-                    "message": args[0] + " is already banned."
+                    "message": f"{args[0]} is already banned."
                 }
         else:
             return {
@@ -1313,13 +1236,13 @@ def run_owner_command(bot, command, args, lang):
                 return {
                     "level": "info",
                     "text": True,
-                    "message": "Unbanned " + args[0] + "."
+                    "message": f"Unbanned {args[0]}."
                 }
             else:
                 return {
                     "level": "err",
                     "text": True,
-                    "message": args[0] + " is not banned."
+                    "message": f"{args[0]} is not banned."
                 }
         else:
             return {
@@ -1335,19 +1258,19 @@ def run_owner_command(bot, command, args, lang):
                     return {
                         "level": "info",
                         "text": True,
-                        "message": args[0] + " is banned for `" + reason + "`."
+                        "message": f"{args[0]} is banned for `{reason}`."
                     }
                 else:
                     return {
                         "level": "info",
                         "text": True,
-                        "message": args[0] + " is banned for an unknown reason."
+                        "message": f"{args[0]} is banned for an unknown reason."
                     }
             else:
                 return {
                     "level": "err",
                     "text": True,
-                    "message": args[0] + " is not banned."
+                    "message": f"{args[0]} is not banned."
                 }
         else:
             return {
@@ -1361,13 +1284,13 @@ def run_owner_command(bot, command, args, lang):
                 return {
                     "level": "info",
                     "text": True,
-                    "message": "Opt out " + args[0] + "."
+                    "message": f"Opt out {args[0]}."
                 }
             else:
                 return {
                     "level": "err",
                     "text": True,
-                    "message": args[0] + " is already opt out."
+                    "message": f"{args[0]} is already opt out."
                 }
         else:
             return {
@@ -1381,13 +1304,13 @@ def run_owner_command(bot, command, args, lang):
                 return {
                     "level": "info",
                     "text": True,
-                    "message": "Unoptout " + args[0] + "."
+                    "message": f"Unoptout {args[0]}."
                 }
             else:
                 return {
                     "level": "err",
                     "text": True,
-                    "message": args[0] + " is not opt out."
+                    "message": f"{args[0]} is not opt out."
                 }
         else:
             return {

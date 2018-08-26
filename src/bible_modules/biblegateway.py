@@ -40,8 +40,8 @@ def remove_bible_title_in_search(string):
 def search(version, query):
     query = html.escape(query)
 
-    url = "https://www.biblegateway.com/quicksearch/?search=" + query + \
-          "&version=" + version + "&searchtype=all&limit=50000&interface=print"
+    url = f"https://www.biblegateway.com/quicksearch/?search={query}&version={version}" + \
+        "&searchtype=all&limit=50000&interface=print"
 
     search_results = {}
     length = 0
@@ -49,7 +49,7 @@ def search(version, query):
     resp = requests.get(url)
 
     if resp is not None:
-        soup = BeautifulSoup(resp.text, "html.parser")
+        soup = BeautifulSoup(resp.text, "lxml")
 
         for row in soup.find_all(True, {"class": "row"}):
             result = {}
@@ -72,8 +72,7 @@ def search(version, query):
 
 
 def get_result(query, version, headings, verse_numbers):
-    url = "https://www.biblegateway.com/passage/?search=" + query + \
-        "&version=" + version + "&interface=print"
+    url = f"https://www.biblegateway.com/passage/?search={query}&version={version}&interface=print"
 
     resp = requests.get(url)
 
@@ -92,7 +91,7 @@ def get_result(query, version, headings, verse_numbers):
                     heading.decompose()
             else:
                 for heading in div.find_all("h3"):
-                    title += heading.get_text() + " / "
+                    title += f"{heading.get_text()} / "
 
             for inline in div.find_all(True, {"class": "inline-h3"}):
                 inline.decompose()
@@ -109,7 +108,7 @@ def get_result(query, version, headings, verse_numbers):
                     num.string = "<1> "
 
                 for num in div.find_all(True, {"class": "versenum"}):
-                    num.string = "<" + num.string[0:-1] + "> "
+                    num.string = f"<{num.string[0:-1]}> "
 
             for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):
                 meta.decompose()
