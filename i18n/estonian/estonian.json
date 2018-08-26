@@ -69,6 +69,7 @@
     "novotdtimeused": "I couldn't find this guild in my database, has someone with the 'Manage Server' permission used `+<setvotdtime>` yet?",
     "clearvotdtimesuccess": "PS aeg on edukalt puhastatud.",
     "clearvotdtimenoperm": "You must have the 'Manage Server' permission to clear a guild's VOTD time!",
+    "votd": "Here is today's verse of the day:",
     "passagetoolong": "Läbilõige on minu jaoks liiga hõivatud, vabandust.",
     "votdcantprocess": "Tänapäeva VOTD ei saa töödelda, vaatama <https://www.biblegateway.com/>.",
     "versioninfo": "\n**<versionname>**\n\nSisaldab Vana Testament: <hasOT>\nSisaldab Uus Testament: <hasNT>\nSisaldab Apocrypha/Deuterocanon: <hasDEU>",
