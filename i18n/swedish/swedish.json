@@ -69,6 +69,7 @@
     "novotdtimeused": "I couldn't find this guild in my database, has someone with the 'Manage Server' permission used `+<setvotdtime>` yet?",
     "clearvotdtimesuccess": "Cleared VOTD time successfully.",
     "clearvotdtimenoperm": "Du måste ha \"Manage Server\" tillåtelse att tömma gilles DV tid!",
+    "votd": "Here is today's verse of the day:",
     "passagetoolong": "Passagen är för lång för mig att hämta, beklagar.",
     "votdcantprocess": "Dagens vers kunde inte hämtas, se <https://www.biblegateway.com/> för dagens vers.",
     "versioninfo": "\n**<versionname>**\n\nInnehåller Gamla Testamentet: <hasOT>\nInnehåller Nya Testamentet: <hasNT>\nInnehåller Apokryfiska/Deuterokanoniska böcker: <hasDEU>",
