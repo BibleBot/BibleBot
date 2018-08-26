@@ -48,7 +48,7 @@
     "deunotsupported": "Käännös <version> ei tue Apokryfikirjoja/Deuterokanonisia kirjoja.",
     "otnotsupported2": "Jos haluat käyttää Vanhaa Testamenttia, `+<setversion>`käännökseen, joka tukee sitä.",
     "ntnotsupported2": "Jos haluat käyttää Uutta Testamenttia, `+<setversion>` käännökseen, joka tukee sitä.",
-    "deunotsupported2": "Jos haluat käyttää Apokryfikirjoja/Deuterokanoniset kirjoja, `+<setversion>` käännökseen jolla on se.",
+    "deunotsupported2": "Jos haluat käyttää Apokryfikirjoja/Deuterokanonisia kirjoja, `+<setversion>` käännökseen jolla on se.",
     "setguildversionsuccess": "Kiltakäännös asetettu onnistuneesti.",
     "setguildversionnoperm": "Sinulla täytyy olla 'Manage Server' -oikeudet muokataksesi killan käännöstä!",
     "setguildversionfail": "Kiltakäännöksen asettaminen epäonnistui, katso `+<versions>`.",
