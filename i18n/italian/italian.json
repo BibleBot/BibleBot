@@ -69,6 +69,7 @@
     "novotdtimeused": "Non sono riuscito a trovare questa gilda nel mio database, qualcuno con i permessi di 'Gestione Server' ha già usato `+<setvotdtime>`?",
     "clearvotdtimesuccess": "Orario del VDG cancellato correttamente.",
     "clearvotdtimenoperm": "È necessario disporre dei permessi di 'Gestione Server' per cancellare l'orario del VDG di una gilda!",
+    "votd": "Here is today's verse of the day:",
     "passagetoolong": "Il passo è troppo lungo per poterlo citare, mi dispiace.",
     "votdcantprocess": "Il VDG di oggi non può essere elaborato, vedere <https://www.biblegateway.com/> per il VDG.",
     "versioninfo": "\n**<versionname>**\nContiene il Vecchio Testamento: <hasOT>\nContiene il Nuovo Testamento: <hasNT>\nContiene libri apocrifi/deuterocanonici: <hasDEU>",
