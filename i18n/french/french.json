@@ -69,7 +69,7 @@
     "novotdtimeused": "Je n'ai pas pu trouver cette guilde dans ma base de données, quelqu'un avec la permission \"Gérer le serveur\" a-t-il déjà utilisé `+<setvotdtime>` ?",
     "clearvotdtimesuccess": "Heure du VDJ effacée avec succès.",
     "clearvotdtimenoperm": "Vous devez avoir la permission \"Gérer le serveur\" pour effacer l'heure du VDJ d'une guilde !",
-    "votd": "Here is today's verse of the day:",
+    "votd": "Voici le verset du jour :",
     "passagetoolong": "Ce passage est trop long pour que je le cite, désolé.",
     "votdcantprocess": "Aujourd'hui le VDJ ne peut pas être cité, visitez <https://www.biblegateway.com/> pour voir le VDJ.",
     "versioninfo": "\n**<versionname>**\n\nContient l'Ancien Testament : <hasOT>\nContient le Nouveau Testament : <hasNT>\nContient l'Apocryphe / le Deutérocanon : <hasDEU>",
