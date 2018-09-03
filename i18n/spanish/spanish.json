@@ -69,6 +69,7 @@
     "novotdtimeused": "No pude encontrar este gremio en mi base de datos, alguien con el permiso 'Administrar Servidor' ha utilizado `+<setvotdtime>`?",
     "clearvotdtimesuccess": "Hora del VDD limpiada con éxito.",
     "clearvotdtimenoperm": "¡Debe tener el permiso 'Administrar Servidor' para limpiar la hora del VDD de un gremio!",
+    "votd": "Here is today's verse of the day:",
     "passagetoolong": "El pasaje es demasiado largo para poder citarlo, disculpe.",
     "votdcantprocess": "El VDD no puede ser procesado, visite <https://www.biblegateway.com/> para verlo.",
     "versioninfo": "\n**<versionname>**\n\nContiene el Viejo Testamento: <hasOT>\nContiene el Nuevo Testamento: <hasNT>\nContiene Apócrifos/Deuterocanónicos: <hasDEU>",

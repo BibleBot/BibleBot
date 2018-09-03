@@ -69,6 +69,7 @@
     "novotdtimeused": "I couldn't find this guild in my database, has someone with the 'Manage Server' permission used `+<setvotdtime>` yet?",
     "clearvotdtimesuccess": "Cleared VOTD time successfully.",
     "clearvotdtimenoperm": "You must have the 'Manage Server' permission to clear a guild's VOTD time!",
+    "votd": "Here is today's verse of the day:",
     "passagetoolong": "这段经文太长了, 我无法抓住, 对不起。",
     "votdcantprocess": "无法处理今天的 VOTD, 请参阅 <https://www.biblegateway.com/> VOTD。",
     "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
