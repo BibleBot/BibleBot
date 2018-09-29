@@ -58,7 +58,7 @@
     "setguildlanguagenoperm": "U heeft 'Beheer Server' rechten nodig om om een taal aan te passen!",
     "setguildlanguagefail": "Gilde taal instellen mislukt, zie `+<languages>`.",
     "guildlanguageused": "Dit gilde gebruikt Vervang_Met_Naam_Taal. Laat iemand met de 'Beheer Server' rechten `+<setguildlanguage>` gebruiken om een andere taal in te stellen.",
-    "setguildbracketssuccess": "Set guild brackets successfully.",
+    "setguildbracketssuccess": "Gilde hekjes succesvol ingesteld.",
     "setguildbracketsnoperm": "You must have the 'Manage Server' permission to modify a guild's brackets!",
     "setguildbracketsfail": "Failed to set guild brackets, the supported bracket options are `<>`, `[]`, `()`, `{}`.",
     "guildbracketsused": "The brackets for this guild are `<brackets>`.\n\nHave someone with the 'Manage Server' permission use `+<setguildbrackets>` to set different brackets.",
