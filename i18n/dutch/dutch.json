@@ -39,7 +39,7 @@
     "headings": "You have headings <enabled/disabled>. Use `+<setheadings>` to change it.",
     "headingssuccess": "Rubrieken succesvol ingesteld.",
     "headingsfail": "Gebruik `+<setheadings> <enable>` of `+<setheadings> <disable>`.",
-    "setlanguagesuccess": "Set language successfully.",
+    "setlanguagesuccess": "Taal succesvol ingesteld.",
     "setlanguagefail": "Taal instellen mislukt, zie `+<languages>`.",
     "languageused": "U gebruikt Vervang_met_taal_naam. Gebruik `+<setlanguage>` om een andere taal in te stellen.",
     "languages": "Ik ondersteun",
