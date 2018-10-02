@@ -62,7 +62,7 @@
     "setguildbracketsnoperm": "U heeft de 'Beheer Server' rechten nodig om haakjes van een gilde aan te passen!",
     "setguildbracketsfail": "Gilde haakjes instellen mislukt, de ondersteunde haakjes opties zijn `<>`, `[]`, `()`, `{}`.",
     "guildbracketsused": "De haakjes voor dit gilde zijn `<brackets>`.\n\nLaat iemand met 'Beheerserver' rechten `+<setguildbrackets>` gebruiken om andere haakjes in te stellen.",
-    "setvotdtimesuccess": "Set VOTD time successfully.",
+    "setvotdtimesuccess": "VVDD succesvol ingesteld.",
     "setvotdtimenoperm": "You must have the 'Manage Server' permission to modify a guild's VOTD time!",
     "setvotdtimefail": "Failed to set VOTD time, the time must be 24-hour format like `01:00` or `13:00`.",
     "votdtimeused": "The VOTD time for this guild is `<time>` and will be published in `#<channel>`.\n\nHave someone with the 'Manage Server' permission use `+<setvotdtime>` to set a different VOTD time or `+<clearvotdtime>` to clear the VOTD time.",
