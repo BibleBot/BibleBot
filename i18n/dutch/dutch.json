@@ -71,7 +71,7 @@
     "clearvotdtimenoperm": "U heeft 'Beheerserver' rechten nodig om het gilde's VVDD tijd te wissen!",
     "votd": "Hier is de vers van de dag:",
     "passagetoolong": "Deze passage is te lang voor me om te begrijpen, sorry.",
-    "votdcantprocess": "Today's VOTD can't be processed, see <https://www.biblegateway.com/> for the VOTD.",
+    "votdcantprocess": "De VVDD tijd kan niet worden verwerkt, zie <https://www.biblegateway.com/> voor de VVDD.",
     "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
     "versioninfofailed": "I kon die versie niet vinden, bent u er zeker van dat u de juiste afkorting heeft gebruikt?",
     "setannouncementssuccess": "Gilde-aankondigingen succesvol ingesteld.",
