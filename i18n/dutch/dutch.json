@@ -126,21 +126,21 @@
         "votdtime": "vvddtijd",
         "nicene": "niceense",
         "apostles": "apostelen",
-        "athanasian": "athanasian",
-        "chalcedonian": "chalcedonian",
-        "creeds": "creeds",
-        "setannouncements": "setannouncements",
-        "announcements": "announcements",
-        "users": "users",
+        "athanasian": "athanasiaans",
+        "chalcedonian": "chalcedonische",
+        "creeds": "geloofsbelijdenissen",
+        "setannouncements": "stelaankondigingenin",
+        "announcements": "aankondigingen",
+        "users": "gebruikers",
         "servers": "servers",
-        "announce": "announce",
-        "invite": "invite",
-        "supporters": "supporters"
+        "announce": "kondigaan",
+        "invite": "uitnodigen",
+        "supporters": "ondersteuners"
     },
     "arguments": {
-        "yes": "Yes",
-        "no": "No",
-        "enable": "enable",
-        "disable": "disable"
+        "yes": "Ja",
+        "no": "Nee",
+        "enable": "inschakelen",
+        "disable": "uitschakelen"
     }
 }
