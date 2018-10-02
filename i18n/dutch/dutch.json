@@ -46,7 +46,7 @@
     "otnotsupported": "De versie <version> ondersteunt het Oude Testament niet.",
     "ntnotsupported": "De versie <version> ondersteunt het Nieuwe Testament niet.",
     "deunotsupported": "De versie <version> ondersteunt het Apocrypha/Deuterocanon niet.",
-    "otnotsupported2": "Als u het Oude Testament wilt gebruiken, `+<setversion>` naar een versie die het heeft.",
+    "otnotsupported2": "Als u het Oude Testament wilt gebruiken, `+<setversion>` naar een versie die dat bevat.",
     "ntnotsupported2": "Als u het Nieuwe Testament wilt gebruiken,`+<setversion>`naar een versie die dat bevat.",
     "deunotsupported2": "Als u het Apocrypha/Deuterocanon wilt gebruiken, `+<setversion>` naar een versie die dat bevat.",
     "setguildversionsuccess": "Gilde succesvol ingesteld.",
