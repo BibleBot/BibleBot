@@ -28,7 +28,7 @@
     "creedstext": "`+<apostles>` - De Apolistische Geloofsbelijdenis\n`+<nicene>` - De Niceense-Constantinopolitische Geloofsbelijdenis\n`+<chalcedonian>` - De Chalcedonische geloofsbelijdenis\n`+<athanasian>` - De pseudo-Athanasische geloofsbelijdenis",
     "error": "Fout",
     "versions": "Ik ondersteun",
-    "setversionsuccess": "Stel de versie succesvol.",
+    "setversionsuccess": "Stel de versie succesvol in.",
     "setversionfail": "Fout bij het instellen van de versie, zie `+<versions>`.",
     "versionused": "U gebruikt versie <version>. Gebruik `+<setversion>` om een andere versie in te stellen.",
     "noversionused": "Ik kon je naam niet vinden in mijn database, heb je al geprobeerd `+<setversion>` te gebruiken?",
