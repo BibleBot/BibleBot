@@ -78,7 +78,7 @@
     "setannouncementsnoperm": "U heeft 'Beheerserver' rechten nodig om de voorkeuren van een gilde's aankondigingen aan te passen!",
     "setannouncementsfail": "Gebruik `+<setannouncements> <enable>` of `+<setannouncements> <disable>`.",
     "announcementsenabled": "Aankondingen voor dit Gilde zijn **ingeschakeld** en zullen worden gepubliceerd in `#<channel>`.\n\nLaat iemand met 'Beheerserver' rechten `+<setannouncements>` gebruiken om een andere voorkeur in te stellen.",
-    "announcementsdisabled": "Aankondigingen voor dit Gilde zijn **ingeschakeld**.\n\nLaat iemand met 'Beheerserver' rechten `+<setannouncements>` gebruiken om een andere voorkeur in te stellen.",
+    "announcementsdisabled": "Aankondigingen voor dit Gilde zijn **uitgeschakeld**.\n\nLaat iemand met 'Beheerserver' rechten `+<setannouncements>` gebruiken om een andere voorkeur in te stellen.",
     "noannouncements": "Ik kon dit Gilde niet vinden in mijn database, heeft iemand met 'Beheerserver' rechten`+<setannouncements>` al geprobeerd?",
     "users": "Het aantal gebruikers verspreid over alle servers waar BibleBot in gebruik is (zonder duplicaten)",
     "servers": "BibleBot is aanwezig in <count> servers.",
