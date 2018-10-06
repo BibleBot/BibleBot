@@ -1,5 +1,5 @@
 {
-    "biblebot": "BibleBot v<biblebotversion>",
+    "biblebot": "BibleBot v<biblebotversion> door Elliot Pardee (vypr)",
     "code": "Code: <https://git.vypr.space/BibleBot/BibleBot>",
     "commandlist": "* `+ <search> zoekopdracht` - zoeken met behulp van trefwoorden (alleen in Bijbelgateway-versies)\n* `+ <setversion> ABBV` - voorkeursuitvoeringsvorm instellen op ABBV\n* `+ <version>` - zie welke versie je hebt ingesteld\n* `+ <versions>` - bekijk de ondersteunde versies\n* `+ <versioninfo> VER` - lees informatie over een versie, gebruikmakend van het acroniem\n* `+ <random>` - ontvang een willekeurige Bijbelvers\n* `+ <verseoftheday>` `(` + <votd> `) - krijg het vers van de dag\n* `+ <setheadings> <enable> / <disable>` - onderwerp- / hoofdstuktitels in- of uitschakelen\n* `+ <headings>` - zie de voorkeur van uw onderwerp / hoofdstukken\n* `+ <setversenumbers> <enable> / <disable>` - zet versnummers in of uit\n* `+ <versenumbers>` - zie je voorkeuren voor je verse nummers\n* `+ <setlanguage> LANG` - stel de voorkeurstaal in op LANG\n* `+ <language>` - zie uw huidige taal, als er een is ingesteld (standaard: Engels)\n* `+ <languages>` - bekijk de ondersteunde talen\n* `+ <users>` - lijst van alle gebruikers op alle servers (doublures of bots niet meegerekend)\n* `+ <servers>` - toon aan hoeveel servers BijbelBot is toegevoegd\n* `+ <invite>` - ontvang de uitnodigingslink voor BijbelBot\n* `+ <supporters>` - de voorstanders van BijbelBot",
     "commandlist2": "* `+<creeds>` - de oecumenische geloofsbelijdenissen (bevat verdere opdrachten)",
@@ -81,7 +81,7 @@
     "announcementsdisabled": "Aankondigingen voor dit Gilde zijn **uitgeschakeld**.\n\nLaat iemand met 'Beheerserver' rechten `+<setannouncements>` gebruiken om een andere voorkeur in te stellen.",
     "noannouncements": "Ik kon dit Gilde niet vinden in mijn database, heeft iemand met 'Beheerserver' rechten`+<setannouncements>` al geprobeerd?",
     "users": "Het aantal gebruikers verspreid over alle servers waar BijbelBot in gebruik is (zonder duplicaten)",
-    "servers": "BibleBot is aanwezig in <count> servers.",
+    "servers": "BijbelBot is aanwezig in <count> servers.",
     "argumentCountError": "+<command> verreist <count> argumenten.",
     "argumentCountErrorAL": "+<command> verreist ten minste <count> argumenten.",
     "queryTooShort": "Uw zoekopdracht dient langer te zijn dan 3 tekens.",
@@ -134,8 +134,8 @@
         "users": "gebruikers",
         "servers": "servers",
         "announce": "aankondigen",
-        "invite": "uitnodigen",
-        "supporters": "ondersteuners"
+        "invite": "uitnodiging",
+        "supporters": "supporters"
     },
     "arguments": {
         "yes": "Ja",
