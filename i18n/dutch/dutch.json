@@ -58,7 +58,7 @@
     "setguildlanguagenoperm": "U heeft 'Beheerserver' rechten nodig om om een taal aan te passen!",
     "setguildlanguagefail": "Gilde-taal instellen mislukt, zie `+<languages>`.",
     "guildlanguageused": "Dit gilde gebruikt Vervang_Met_Taal_Naam. Laat iemand met de 'Beheerserver' rechten `+<setguildlanguage>` gebruiken om een andere taal in te stellen.",
-    "setguildbracketssuccess": "Gilde succesvol ingesteld.",
+    "setguildbracketssuccess": "Gildehaakjes succesvol ingesteld.",
     "setguildbracketsnoperm": "U heeft de 'Beheerserver' rechten nodig om haakjes van een gilde aan te passen!",
     "setguildbracketsfail": "Gilde-haakjes instellen mislukt, de ondersteunde haakjes opties zijn `<>`, `[]`, `()`, `{}`.",
     "guildbracketsused": "De haakjes voor dit gilde zijn `<brackets>`.\n\nLaat iemand met 'Beheerserver' rechten `+<setguildbrackets>` gebruiken om andere haakjes in te stellen.",
