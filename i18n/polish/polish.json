@@ -57,7 +57,7 @@
     "setguildlanguagesuccess": "Ustaw język stowarzyszenia pomyślnie.",
     "setguildlanguagenoperm": "Musisz mieć uprawnienie \"Zarządzaj serwerem\", aby modyfikować język stowarzyszenia!",
     "setguildlanguagefail": "Nie udało się ustawić języka stowarzyszenia, zobacz `+<languages>`.",
-    "guildlanguageused": "Te stowarzyszenie używa Replace_With_Language_Name. Poproś kogoś o uprawnienie \"Zarządzaj serwerem\" za pomocą `+<setguildlanguage>`, aby ustawić inny język.",
+    "guildlanguageused": "To stowarzyszenie używa Replace_With_Language_Name. Poproś kogoś o uprawnienie \"Zarządzaj serwerem\" za pomocą `+<setguildlanguage>`, aby ustawić inny język.",
     "setguildbracketssuccess": "Ustaw pomyślne nawiasy stowarzyszenia.",
     "setguildbracketsnoperm": "Musisz mieć uprawnienie \"Zarządzaj serwerem\", aby zmodyfikować nawiasy stowarzyszenia!",
     "setguildbracketsfail": "Nie można ustawić nawiasów stowarzyszenia, obsługiwane opcje nawiasów to `<>`, `[]`, `()`, `{}`.",
