@@ -75,7 +75,7 @@
     "versioninfo": "\n**<versionname>**\n\nСадржи Стари Завјет: <hasOT>\nСадржи НовиЗавјет: <hasNT>\nСадржи Апокрифе/Деутероканон: <hasDEU>",
     "versioninfofailed": "Нисам могао да пронађем ту верзију, да ли сте сигурни да сте користили праву скраћеницу?",
     "setannouncementssuccess": "Успешно сте подесили обавештења гилде.",
-    "setannouncementsnoperm": "Морате имати дозволу 'Manage Server' како бисте обавештења гилде!",
+    "setannouncementsnoperm": "Морате имати дозволу 'Manage Server' како бисте могли да мењате обавештења гилде!",
     "setannouncementsfail": "Користите `+<setannouncements> <enable>` или `+<setannouncements> <disable>`.",
     "announcementsenabled": "Обавештења за ову гилду су **омогућена** и биће објављена на `#<channel>`.\n\nИмајте некога са 'Manage Server' доволом и користите `+<setannouncements>` како бисте подесили раличита интересовања.",
     "announcementsdisabled": "Обавештења за ову гилду су **онемогућена**.\n\nИмајте некога са 'Manage Server' доволом и користите `+<setannouncements>` како бисте подесили раличита интересовања.",
