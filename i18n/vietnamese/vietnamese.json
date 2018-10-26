@@ -5,7 +5,7 @@
     "commandlist2": "* `+<creeds>` - the ecumenical creeds (contains further commands)",
     "guildcommandlist": "* `+<setguildversion> ABBV` - set the guild's default version to ABBV\n* `+<guildversion>` - see the default version for this guild\n* `+<setguildlanguage> LANG` - set the guild's default language to LANG\n* `+<guildlanguage>` - see the guild's default language, if one is set (default: english)\n* `+<setvotdtime> TIME` - set the VOTD scheduler time to TIME (TIME must be 24h format and in UTC)\n* `+<clearvotdtime>` - clear the VOTD scheduler time\n* `+<votdtime>` - see the VOTD scheduler time and channel\n* `+<setannouncements> <enable>/<disable>` - enable or disable announcements\n* `+<announcements>` - see the guild's announcement preference",
     "usage": "To use it, just say a Bible verse. I'll handle the rest.",
-    "commandlistName": "Commands",
+    "commandlistName": "Lệnh",
     "extrabiblicalcommandlistName": "Extra-Biblical Commands",
     "guildcommandlistName": "Guild Commands",
     "links": "Links",
