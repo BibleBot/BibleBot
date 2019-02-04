@@ -19,11 +19,13 @@
 import math
 import os
 import sys
+import ast
 
 import discord
 import tinydb
 
-from handlers.commandlogic.settings import languages, versions, formatting, misc
+from settings import languages, versions, formatting, misc
+import utils
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{dir_path}/../..")
@@ -34,80 +36,21 @@ from bible_modules import biblegateway  # noqa: E402
 from bible_modules import rev  # noqa: E402
 import central  # noqa: E402
 
-
-def run_command(command, args, lang, user, guild, channel):
+async def run_command(ctx, command, remainder):
     embed = discord.Embed()
+    lang = ctx["language"]
+    user = ctx["author"]
+    guild = ctx["guild"]
+    channel = ctx["channel"]
+    args = remainder.split(" ")
 
     if command == "biblebot":
-        embed.title = lang["biblebot"].replace("<biblebotversion>", central.version.split("v")[1])
-        embed.description = lang["code"].replace("repositoryLink", "https://github.com/BibleBot/BibleBot")
-
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
-        response = lang["commandlist"]
-        response2 = lang["commandlist2"]
-        response3 = lang["guildcommandlist"]
-
-        response = response.replace("<biblebotversion>", central.version)
-        response = response.replace("<search>", lang["commands"]["search"])
-        response = response.replace("<setversion>", lang["commands"]["setversion"])
-        response = response.replace("<version>", lang["commands"]["version"])
-        response = response.replace("<versions>", lang["commands"]["versions"])
-        response = response.replace("<versioninfo>", lang["commands"]["versioninfo"])
-        response = response.replace("<votd>", lang["commands"]["votd"])
-        response = response.replace("<verseoftheday>", lang["commands"]["verseoftheday"])
-        response = response.replace("<random>", lang["commands"]["random"])
-        response = response.replace("<setversenumbers>", lang["commands"]["setversenumbers"])
-        response = response.replace("<versenumbers>", lang["commands"]["versenumbers"])
-        response = response.replace("<setheadings>", lang["commands"]["setheadings"])
-        response = response.replace("<headings>", lang["commands"]["headings"])
-        response = response.replace("<setlanguage>", lang["commands"]["setlanguage"])
-        response = response.replace("<language>", lang["commands"]["language"])
-        response = response.replace("<languages>", lang["commands"]["languages"])
-        response = response.replace("<enable>", lang["arguments"]["enable"])
-        response = response.replace("<disable>", lang["arguments"]["disable"])
-        response = response.replace("<users>", lang["commands"]["users"])
-        response = response.replace("<servers>", lang["commands"]["servers"])
-        response = response.replace("<invite>", lang["commands"]["invite"])
-        response = response.replace("<supporters>", lang["commands"]["supporters"])
-        response = response.replace("* ", "")
-        response = response.replace("+", central.config["BibleBot"]["commandPrefix"])
-
-        response2 = response2.replace("<creeds>", lang["commands"]["creeds"])
-        response2 = response2.replace("* ", "")
-        response2 = response2.replace("+", central.config["BibleBot"]["commandPrefix"])
-
-        response3 = response3.replace("<setguildversion>", lang["commands"]["setguildversion"])
-        response3 = response3.replace("<guildversion>", lang["commands"]["guildversion"])
-        response3 = response3.replace("<setguildlanguage>", lang["commands"]["setguildlanguage"])
-        response3 = response3.replace("<guildlanguage>", lang["commands"]["guildlanguage"])
-        response3 = response3.replace("<setvotdtime>", lang["commands"]["setvotdtime"])
-        response3 = response3.replace("<clearvotdtime>", lang["commands"]["clearvotdtime"])
-        response3 = response3.replace("<votdtime>", lang["commands"]["votdtime"])
-        response3 = response3.replace("<setannouncements>", lang["commands"]["setannouncements"])
-        response3 = response3.replace("<announcements>", lang["commands"]["announcements"])
-        response3 = response3.replace("<enable>", lang["arguments"]["enable"])
-        response3 = response3.replace("<disable>", lang["arguments"]["disable"])
-        response3 = response3.replace("* ", "")
-        response3 = response3.replace("+", central.config["BibleBot"]["commandPrefix"])
-
-        embed.add_field(name=lang["commandlistName"], value=response, inline=False)
-        embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
-        embed.add_field(name=lang["extrabiblicalcommandlistName"], value=response2, inline=False)
-        embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
-        embed.add_field(name=lang["guildcommandlistName"], value=response3, inline=False)
-        embed.add_field(name=u"\u200B", value=u"\u200B", inline=False)
-
-        links = lang["website"].replace("websiteLink", "https://biblebot.xyz") + "\n" + lang["joinserver"].replace(
-            "inviteLink", "https://discord.gg/seKEJUn") + "\n" + \
-                lang["terms"].replace("termsLink", "https://biblebot.xyz/terms") + "\n\n**" + lang["usage"] + "**"
-
-        embed.add_field(name=lang["links"], value=links)
+        pages = create_biblebot_embeds(lang)
 
         return {
             "level": "info",
-            "message": embed
+            "paged": True,
+            "pages": pages
         }
     elif command == "search":
         available_versions = versions.get_versions_by_acronym()
@@ -117,7 +60,7 @@ def run_command(command, args, lang, user, guild, channel):
             version = versions.get_guild_version(guild)
 
             if version is None:
-                version = "NRSV"
+                version = "RSV"
 
         query = ""
 
@@ -131,7 +74,13 @@ def run_command(command, args, lang, user, guild, channel):
             for arg in args:
                 query += arg + " "
 
-        if version != "REV":
+        biblehub_versions = ["BSB", "NHEB", "WBT"]
+        bibleserver_versions = ["LUT", "LXX", "SLT"]
+        biblesorg_versions = ["KJVA"]
+        other_versions = ["REV"]
+        non_bible_gateway = other_versions + biblehub_versions + biblesorg_versions + bibleserver_versions
+
+        if version not in non_bible_gateway:
             results = biblegateway.search(version, query[0:-1])
 
             if results is not None:
@@ -197,8 +146,8 @@ def run_command(command, args, lang, user, guild, channel):
             embed.color = 303102
             embed.set_footer(text=central.version, icon_url=central.icon)
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversion"],
-                            value=lang["setversionsuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversion"]
+            embed.description = lang["setversionsuccess"]
 
             return {
                 "level": "info",
@@ -206,8 +155,10 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversion"],
-                            value=lang["setversionfail"].replace("<versions>", lang["commands"]["versions"]))
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversion"]
+            embed.description = lang["setversionfail"].replace("<versions>", lang["commands"]["versions"])
 
             return {
                 "level": "err",
@@ -219,8 +170,10 @@ def run_command(command, args, lang, user, guild, channel):
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
                 embed.color = 16723502
-                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"],
-                                value=lang["setguildversionnoperm"])
+                embed.set_footer(text=central.version, icon_url=central.icon)
+
+                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"]
+                embed.description = lang["setguildversionnoperm"]
 
                 return {
                     "level": "err",
@@ -231,8 +184,8 @@ def run_command(command, args, lang, user, guild, channel):
             embed.color = 303102
             embed.set_footer(text=central.version, icon_url=central.icon)
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"],
-                            value=lang["setguildversionsuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"]
+            embed.description = lang["setguildversionsuccess"]
 
             return {
                 "level": "info",
@@ -240,8 +193,10 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"],
-                            value=lang["setguildversionfail"].replace("<versions>", lang["commands"]["versions"]))
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"]
+            embed.description = lang["setguildversionfail"].replace("<versions>", lang["commands"]["versions"])
 
             return {
                 "level": "err",
@@ -259,8 +214,8 @@ def run_command(command, args, lang, user, guild, channel):
             response = response.replace("<version>", version)
             response = response.replace("<setversion>", lang["commands"]["setversion"])
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["version"],
-                            value=response)
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["version"]
+            embed.description = response
 
             return {
                 "level": "info",
@@ -268,12 +223,12 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             response = lang["noversionused"]
-
             response = response.replace("<setversion>", lang["commands"]["setversion"])
 
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["version"],
-                            value=response)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["version"]
+            embed.description = response
 
             return {
                 "level": "err",
@@ -291,8 +246,8 @@ def run_command(command, args, lang, user, guild, channel):
             response = response.replace("<version>", version)
             response = response.replace("<setguildversion>", lang["commands"]["setguildversion"])
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildversion"],
-                            value=response)
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildversion"]
+            embed.description = response
 
             return {
                 "level": "info",
@@ -300,12 +255,12 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             response = lang["noguildversionused"]
-
             response = response.replace("<setguildversion>", lang["commands"]["setguildversion"])
 
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildversion"],
-                            value=response)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildversion"]
+            embed.description = response
 
             return {
                 "level": "err",
@@ -342,8 +297,10 @@ def run_command(command, args, lang, user, guild, channel):
                         break
 
                 page_counter = lang["pageOf"].replace("<num>", str(i + 1)).replace("<total>", str(total_pages))
-                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versions"] +
-                                     " - " + page_counter, value=version_list)
+
+                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versions"] + \
+                              " - " + page_counter
+                embed.description = version_list
 
                 pages.append(embed)
 
@@ -379,8 +336,8 @@ def run_command(command, args, lang, user, guild, channel):
             else:
                 response = response.replace("<hasDEU>", lang["arguments"]["no"])
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versioninfo"],
-                            value=response)
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versioninfo"]
+            embed.description = response
 
             return {
                 "level": "info",
@@ -388,8 +345,10 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versioninfo"],
-                            value=lang["versioninfofailed"])
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versioninfo"]
+            embed.description = lang["versioninfofailed"]
 
             return {
                 "level": "err",
@@ -400,8 +359,8 @@ def run_command(command, args, lang, user, guild, channel):
             embed.color = 303102
             embed.set_footer(text=central.version, icon_url=central.icon)
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setlanguage"],
-                            value=lang["setlanguagesuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setlanguage"]
+            embed.description = lang["setlanguagesuccess"]
 
             return {
                 "level": "info",
@@ -409,8 +368,10 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setlanguage"],
-                            value=lang["setlanguagefail"].replace("<languages>", lang["commands"]["languages"]))
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setlanguage"]
+            embed.description = lang["setlanguagefail"].replace("<languages>", lang["commands"]["languages"])
 
             return {
                 "level": "err",
@@ -422,8 +383,10 @@ def run_command(command, args, lang, user, guild, channel):
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
                 embed.color = 16723502
-                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"],
-                                value=lang["setguildlanguagenoperm"])
+                embed.set_footer(text=central.version, icon_url=central.icon)
+
+                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"]
+                embed.description = lang["setguildlanguagenoperm"]
 
                 return {
                     "level": "err",
@@ -434,8 +397,8 @@ def run_command(command, args, lang, user, guild, channel):
             embed.color = 303102
             embed.set_footer(text=central.version, icon_url=central.icon)
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"],
-                            value=lang["setguildlanguagesuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"]
+            embed.description = lang["setguildlanguagesuccess"]
 
             return {
                 "level": "info",
@@ -443,8 +406,10 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"],
-                            value=lang["setguildlanguagefail"].replace("<languages>", lang["commands"]["languages"]))
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"]
+            embed.description = lang["setguildlanguagefail"].replace("<languages>", lang["commands"]["languages"])
 
             return {
                 "level": "err",
@@ -455,11 +420,10 @@ def run_command(command, args, lang, user, guild, channel):
         embed.set_footer(text=central.version, icon_url=central.icon)
 
         response = lang["languageused"]
-
         response = response.replace("<setlanguage>", lang["commands"]["setlanguage"])
 
-        embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["language"],
-                        value=response)
+        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["language"]
+        embed.description = response
 
         return {
             "level": "info",
@@ -473,11 +437,10 @@ def run_command(command, args, lang, user, guild, channel):
         embed.set_footer(text=central.version, icon_url=central.icon)
 
         response = glang["guildlanguageused"]
-
         response = response.replace("<setguildlanguage>", glang["commands"]["setguildlanguage"])
 
-        embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + glang["commands"]["guildlanguage"],
-                        value=response)
+        embed.title = central.config["BibleBot"]["commandPrefix"] + glang["commands"]["guildlanguage"]
+        embed.description = response
 
         return {
             "level": "info",
@@ -492,10 +455,11 @@ def run_command(command, args, lang, user, guild, channel):
         string = ""
 
         for item in available_languages:
-            string += item["name"] + " [`" + item["object_name"] + "`]\n"
+            if item["object_name"] != "default":
+                string += item["name"] + " [`" + item["object_name"] + "`]\n"
 
-        embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["languages"],
-                        value=string)
+        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["languages"]
+        embed.description = string
 
         return {
             "level": "info",
@@ -507,8 +471,10 @@ def run_command(command, args, lang, user, guild, channel):
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
                 embed.color = 16723502
-                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"],
-                                value=lang["setguildbracketsnoperm"])
+                embed.set_footer(text=central.version, icon_url=central.icon)
+
+                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"]
+                embed.description = lang["setguildbracketsnoperm"]
 
                 return {
                     "level": "err",
@@ -519,8 +485,8 @@ def run_command(command, args, lang, user, guild, channel):
             embed.color = 303102
             embed.set_footer(text=central.version, icon_url=central.icon)
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"],
-                            value=lang["setguildbracketssuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"]
+            embed.description = lang["setguildbracketssuccess"]
 
             return {
                 "level": "info",
@@ -528,8 +494,10 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"],
-                            value=lang["setguildbracketsfail"])
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"]
+            embed.description = lang["setguildbracketsfail"]
 
             return {
                 "level": "err",
@@ -547,8 +515,8 @@ def run_command(command, args, lang, user, guild, channel):
         response = response.replace("<brackets>", brackets)
         response = response.replace("<setguildbrackets>", lang["commands"]["setguildbrackets"])
 
-        embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildbrackets"],
-                        value=response)
+        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildbrackets"]
+        embed.description = response
 
         return {
             "level": "info",
@@ -560,8 +528,10 @@ def run_command(command, args, lang, user, guild, channel):
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
                 embed.color = 16723502
-                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"],
-                                value=lang["setvotdtimenoperm"])
+                embed.set_footer(text=central.version, icon_url=central.icon)
+
+                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"]
+                embed.description = lang["setvotdtimenoperm"]
 
                 return {
                     "level": "err",
@@ -572,8 +542,8 @@ def run_command(command, args, lang, user, guild, channel):
             embed.color = 303102
             embed.set_footer(text=central.version, icon_url=central.icon)
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"],
-                            value=lang["setvotdtimesuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"]
+            embed.description = lang["setvotdtimesuccess"]
 
             return {
                 "level": "info",
@@ -581,8 +551,10 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"],
-                            value=lang["setvotdtimefail"])
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"]
+            embed.description = lang["setvotdtimefail"]
 
             return {
                 "level": "err",
@@ -594,8 +566,10 @@ def run_command(command, args, lang, user, guild, channel):
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
                 embed.color = 16723502
-                embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["clearvotdtime"],
-                                value=lang["clearvotdtimenoperm"])
+                embed.set_footer(text=central.version, icon_url=central.icon)
+
+                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["clearvotdtime"]
+                embed.description = lang["clearvotdtimenoperm"]
 
                 return {
                     "level": "err",
@@ -606,8 +580,8 @@ def run_command(command, args, lang, user, guild, channel):
             embed.color = 303102
             embed.set_footer(text=central.version, icon_url=central.icon)
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["clearvotdtime"],
-                            value=lang["clearvotdtimesuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["clearvotdtime"]
+            embed.description = lang["clearvotdtimesuccess"]
 
             return {
                 "level": "info",
@@ -629,8 +603,8 @@ def run_command(command, args, lang, user, guild, channel):
             response = response.replace("<setvotdtime>", lang["commands"]["setvotdtime"])
             response = response.replace("<clearvotdtime>", lang["commands"]["clearvotdtime"])
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["votdtime"],
-                            value=response)
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["votdtime"]
+            embed.description = response
 
             return {
                 "level": "info",
@@ -638,12 +612,13 @@ def run_command(command, args, lang, user, guild, channel):
             }
         else:
             response = lang["novotdtimeused"]
-
             response = response.replace("<setvotdtime>", lang["commands"]["setvotdtime"])
 
             embed.color = 16723502
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["votdtime"],
-                            value=response)
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["votdtime"]
+            embed.description = response
 
             return {
                 "level": "err",
@@ -658,7 +633,7 @@ def run_command(command, args, lang, user, guild, channel):
             version = versions.get_guild_version(guild)
 
             if version is None:
-                version = "NRSV"
+                version = "RSV"
 
         if version != "REV":
             verse = bibleutils.get_votd()
@@ -740,7 +715,7 @@ def run_command(command, args, lang, user, guild, channel):
             version = versions.get_guild_version(guild)
 
             if version is None:
-                version = "NRSV"
+                version = "RSV"
 
         if version != "REV":
             verse = bibleutils.get_random_verse()
@@ -827,8 +802,8 @@ def run_command(command, args, lang, user, guild, channel):
         embed.set_footer(text=central.version, icon_url=central.icon)
 
         if formatting.set_headings(user, args[0]):
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setheadings"],
-                            value=lang["headingssuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setheadings"]
+            embed.description = lang["headingssuccess"]
 
             return {
                 "level": "info",
@@ -843,8 +818,8 @@ def run_command(command, args, lang, user, guild, channel):
             response = response.replace("<enable>", lang["arguments"]["enable"])
             response = response.replace("<disable>", lang["arguments"]["disable"])
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setheadings"],
-                            value=response)
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setheadings"]
+            embed.description = response
 
             return {
                 "level": "err",
@@ -860,8 +835,8 @@ def run_command(command, args, lang, user, guild, channel):
             response = lang["headings"].replace("<enabled/disabled>", lang["enabled"])
             response = response.replace("<setheadings>", lang["commands"]["setheadings"])
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["headings"],
-                            value=response)
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["headings"]
+            embed.description = response
 
             return {
                 "level": "info",
@@ -871,8 +846,8 @@ def run_command(command, args, lang, user, guild, channel):
             response = lang["headings"].replace("<enabled/disabled>", lang["disabled"])
             response = response.replace("<setheadings>", lang["commands"]["setheadings"])
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["headings"],
-                            value=response)
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["headings"]
+            embed.description = response
 
             return {
                 "level": "info",
@@ -883,8 +858,8 @@ def run_command(command, args, lang, user, guild, channel):
         embed.set_footer(text=central.version, icon_url=central.icon)
 
         if formatting.set_verse_numbers(user, args[0]):
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversenumbers"],
-                            value=lang["versenumberssuccess"])
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversenumbers"]
+            embed.description = lang["versenumberssuccess"]
 
             return {
                 "level": "info",
@@ -897,8 +872,8 @@ def run_command(command, args, lang, user, guild, channel):
             response = response.replace("<enable>", lang["arguments"]["enable"])
             response = response.replace("<disable>", lang["arguments"]["disable"])
 
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversenumbers"],
-                            value=response)
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversenumbers"]
+            embed.description = response
 
             return {
                 "level": "err",
@@ -913,8 +888,9 @@ def run_command(command, args, lang, user, guild, channel):
         if verse_numbers == "enable":
             response = lang["versenumbers"].replace("<enabled/disabled>", lang["enabled"])
             response = response.replace("<setversenumbers>", lang["commands"]["setversenumbers"])
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versenumbers"],
-                            value=response)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versenumbers"]
+            embed.description = response
 
             return {
                 "level": "info",
@@ -923,11 +899,93 @@ def run_command(command, args, lang, user, guild, channel):
         else:
             response = lang["versenumbers"].replace("<enabled/disabled>", lang["disabled"])
             response = response.replace("<setversenumbers>", lang["commands"]["setversenumbers"])
-            embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versenumbers"],
-                            value=response)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versenumbers"]
+            embed.description = response
 
             return {
                 "level": "info",
+                "message": embed
+            }
+    elif command == "setannouncements":
+        perms = user.guild_permissions
+
+        if not perms.manage_guild:
+            embed.color = 16723502
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"]
+            embed.description = lang["setannouncementsnoperm"]
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+
+        if misc.set_guild_announcements(guild, channel, args[0]):
+            embed.color = 303102
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"]
+            embed.description = lang["setannouncementssuccess"]
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            response = lang["setannouncementsfail"]
+
+            response = response.replace("<setannouncements>", lang["commands"]["setannouncements"])
+            response = response.replace("<enable>", lang["arguments"]["enable"])
+            response = response.replace("<disable>", lang["arguments"]["disable"])
+
+            embed.color = 16723502
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"]
+            embed.description = response
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+    elif command == "announcements":
+        announce_tuple = misc.get_guild_announcements(guild, True)
+
+        if announce_tuple is not None:
+            channel, setting = announce_tuple
+
+            embed.color = 303102
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            if setting:
+                response = lang["announcementsenabled"]
+            else:
+                response = lang["announcementsdisabled"]
+
+            response = response.replace("<channel>", channel)
+            response = response.replace("<setannouncements>", lang["commands"]["setannouncements"])
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["announcements"]
+            embed.description = response
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            response = lang["noannouncements"]
+            response = response.replace("<setannouncements>", lang["commands"]["setannouncements"])
+
+            embed.color = 16723502
+            embed.set_footer(text=central.version, icon_url=central.icon)
+
+            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["announcements"]
+            embed.description = response
+
+            return {
+                "level": "err",
                 "message": embed
             }
     elif command == "users":
@@ -936,8 +994,8 @@ def run_command(command, args, lang, user, guild, channel):
 
         processed = len(args[0].users)
 
-        embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["users"],
-                        value=lang["users"] + ": " + str(processed))
+        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["users"]
+        embed.description = lang["users"] + ": " + str(processed)
 
         return {
             "level": "info",
@@ -949,8 +1007,8 @@ def run_command(command, args, lang, user, guild, channel):
 
         processed = len(args[0].guilds)
 
-        embed.add_field(name=central.config["BibleBot"]["commandPrefix"] + lang["commands"]["servers"],
-                        value=lang["servers"].replace("<count>", str(processed)))
+        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["servers"]
+        embed.description = lang["servers"].replace("<count>", str(processed))
 
         return {
             "level": "info",
@@ -965,7 +1023,7 @@ def run_command(command, args, lang, user, guild, channel):
             version = versions.get_guild_version(guild)
 
             if version is None:
-                version = "NRSV"
+                version = "RSV"
 
         verse = "Mark 9:23-24"
 
@@ -1017,7 +1075,8 @@ def run_command(command, args, lang, user, guild, channel):
         supporters = "**" + lang["supporters"] + "**\n\n- CHAZER2222\n- Jepekula" + "\n- Joseph\n- Soku\n- " + \
                      lang["anonymousDonors"] + "\n\n" + lang["donorsNotListed"]
 
-        embed.add_field(name="+" + lang["commands"]["supporters"], value=supporters)
+        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["supporters"]
+        embed.description = supporters
 
         return {
             "level": "info",
@@ -1030,11 +1089,14 @@ def run_command(command, args, lang, user, guild, channel):
         response = lang["creedstext"]
 
         response = response.replace("<apostles>", lang["commands"]["apostles"])
+        response = response.replace("<nicene325>", lang["commands"]["nicene325"])
         response = response.replace("<nicene>", lang["commands"]["nicene"])
-        response = response.replace("<chalcedonian>", lang["commands"]["chalcedonian"])
-        response = response.replace("<athanasian>", lang["commands"]["athanasian"])
+        response = response.replace("<chalcedon>", lang["commands"]["chalcedon"])
 
-        embed.add_field(name=lang["creeds"], value=response)
+        response = response.replace("+", central.config["BibleBot"]["commandPrefix"])
+
+        embed.title = lang["creeds"]
+        embed.description = response
 
         return {
             "level": "info",
@@ -1044,7 +1106,19 @@ def run_command(command, args, lang, user, guild, channel):
         embed.color = 303102
         embed.set_footer(text=central.version, icon_url=central.icon)
 
-        embed.add_field(name=lang["apostlescreed"], value=lang["apostlestext1"])
+        embed.title = lang["apostlescreed"]
+        embed.description = lang["apostlestext"]
+
+        return {
+            "level": "info",
+            "message": embed
+        }
+    elif command == "nicene325":
+        embed.color = 303102
+        embed.set_footer(text=central.version, icon_url=central.icon)
+
+        embed.title = lang["nicene325creed"]
+        embed.description = lang["nicene325text"]
 
         return {
             "level": "info",
@@ -1054,32 +1128,19 @@ def run_command(command, args, lang, user, guild, channel):
         embed.color = 303102
         embed.set_footer(text=central.version, icon_url=central.icon)
 
-        embed.add_field(name=lang["nicenecreed"], value=lang["nicenetext1"])
-        embed.add_field(name=u"\u200B", value=lang["nicenetext2"])
-        embed.add_field(name=u"\u200B", value=lang["nicenetext3"])
-        embed.add_field(name=u"\u200B", value=lang["nicenetext4"])
+        embed.title = lang["nicenecreed"]
+        embed.description = lang["nicenetext"]
 
         return {
             "level": "info",
             "message": embed
         }
-    elif command == "chalcedonian":
+    elif command == "chalcedon":
         embed.color = 303102
         embed.set_footer(text=central.version, icon_url=central.icon)
 
-        embed.add_field(name=lang["chalcedoniancreed"], value=lang["chalcedoniantext1"])
-        embed.add_field(name=u"\u200B", value=lang["chalcedoniantext2"])
-
-        return {
-            "level": "info",
-            "message": embed
-        }
-    elif command == "athanasian":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
-        embed.add_field(name=lang["pseudoathanasiancreed"],
-                        value=lang["pseudoathanasiantext1"] + "https://www.ccel.org/creeds/athanasian.creed.html")
+        embed.title = lang["chalcedoniancreed"]
+        embed.description = lang["chalcedoniantext"]
 
         return {
             "level": "info",
@@ -1094,8 +1155,13 @@ def run_command(command, args, lang, user, guild, channel):
         }
 
 
-def run_owner_command(bot, command, args, lang):
+async def run_owner_command(ctx, command, remainder):
     embed = discord.Embed()
+    lang = ctx["language"]
+    user = ctx["author"]
+    guild = ctx["guild"]
+    channel = ctx["channel"]
+    args = remainder.split(" ")
 
     if command == "puppet":
         message = ""
@@ -1106,29 +1172,44 @@ def run_owner_command(bot, command, args, lang):
         if message == " " or message == "":
             return
 
+        try:
+            await ctx["raw"].delete()
+        except (discord.errors.Forbidden, discord.errors.HTTPException):
+            pass
+
+        channel.send(message[0:-1])
+
+        return {"level": "info"}
+    elif command == "eval":
+        cmd = " ".join(args)
+        fn_name = "_eval_expr"
+        cmd = cmd.strip("` ")
+
+        # add a layer of indentation
+        cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
+
+        # wrap in def body
+        body = f"async def {fn_name}():\n{cmd}"
+        parsed = ast.parse(body)
+        body = parsed.body[0].body
+
+        insert_returns(body)
+
+        env = {
+            'bot': ctx["bot"],
+            'discord': discord,
+            '__import__': __import__,
+            'channel': channel
+        }
+        exec(compile(parsed, filename="<ast>", mode="exec"), env)
+
+        result = (await eval(f"{fn_name}()", env))
+
         return {
             "level": "info",
             "text": True,
-            "message": message[0:-1]
+            "message": result
         }
-    elif command == "eval":
-        message = ""
-
-        for item in args:
-            message += f"{item} "
-
-        try:
-            return {
-                "level": "info",
-                "text": True,
-                "message": exec(message[0:-1])
-            }
-        except Exception as e:
-            return {
-                "level": "err",
-                "text": True,
-                "message": f"[err] {str(e)}"
-            }
     elif command == "announce":
         embed.color = 303102
         embed.set_footer(text=central.version, icon_url=central.icon)
@@ -1138,7 +1219,8 @@ def run_owner_command(bot, command, args, lang):
         for item in args:
             message += f"{item} "
 
-        embed.add_field(name="Announcement", value=message[0:-1])
+        embed.title = "Announcement"
+        embed.description = message[0:-1]
 
         return {
             "level": "info",
@@ -1174,12 +1256,30 @@ def run_owner_command(bot, command, args, lang):
         new_version = Version(name, abbv, has_ot, has_nt, has_deu)
         central.versionDB.insert(new_version.to_object())
 
-        embed.add_field(name="+" + lang["commands"]["addversion"], value=lang["addversionsuccess"])
+        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["addversion"]
+        embed.description = lang["addversionsuccess"]
 
         return {
             "level": "info",
             "message": embed
         }
+    elif command == "rmversion":
+        query = tinydb.Query()
+
+        result = central.versionDB.remove(query.abbv == args[0])
+
+        if result:
+            return {
+                "level": "info",
+                "text": True,
+                "message": f"Removed {result}."
+            }
+        else:
+            return {
+                "level": "err",
+                "text": True,
+                "message": f"No version available to remove."
+            }
     elif command == "userid":
         arg = ""
 
@@ -1190,7 +1290,7 @@ def run_owner_command(bot, command, args, lang):
         results = "IDs matching: "
 
         if len(split) == 2:
-            users = [x for x in bot.users if x.name == split[0] and x.discriminator == split[1]]
+            users = [x for x in ctx["bot"].users if x.name == split[0] and x.discriminator == split[1]]
 
             for item in users:
                 results += f"{str(item.id)}, "
@@ -1320,31 +1420,18 @@ def run_owner_command(bot, command, args, lang):
             }
     elif command == "leave":
         if len(args) > 0:
-            exists = False
-            server_id = None
             server_name = ""
 
             for arg in args:
                 server_name += arg + " "
 
-            for item in bot.guilds:
+            for item in ctx["bot"].guilds:
                 if item.name == server_name[0:-1]:
-                    exists = True
-                    server_id = item.id
+                    await item.leave()
+                    return {"level": "info", "leave": True}
 
-            if exists:
-                return {
-                    "level": "info",
-                    "leave": str(server_id)
-                }
-            else:
-                return {
-                    "level": "err",
-                    "text": True,
-                    "message": "Server does not exist!"
-                }
+            await channel.send("Server does not exist.")
+            return {"level": "err"}
         else:
-            return {
-                "level": "info",
-                "leave": "this"
-            }
+            await guild.leave()
+            return {"level": "info"}

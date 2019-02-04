@@ -35,7 +35,7 @@ config.read(f"{dir_path}/config.ini")
 configVersion = configparser.ConfigParser()
 configVersion.read(f"{dir_path}/config.example.ini")
 
-version = "BibleBot v" + configVersion["meta"]["version"]
+version = "+biblebot v" + configVersion["meta"]["version"]
 icon = "https://cdn.discordapp.com/avatars/361033318273384449/cc2758488d104770c9630e4c21ad1e4a.png"  # noqa: E501
 
 logger = VyLogger("default")
@@ -85,6 +85,10 @@ def log_message(level, shard, sender, source, msg):
         logger.info(message)
     elif level == "debug":
         logger.debug(message)
+
+
+def get_raw_language(obj):
+    return getattr(languages, obj).raw_object
 
 
 def add_ban(entryid, reason):

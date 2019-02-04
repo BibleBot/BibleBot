@@ -59,3 +59,41 @@ def get_guild_votd_time(guild):
                 return results[0]["channel_name"], results[0]["time"]
 
         return None
+
+
+def set_guild_announcements(guild, channel, setting):
+    if setting == "enable":
+        setting = True
+    else:
+        setting = False
+
+    if guild is not None:
+        ideal_guild = tinydb.Query()
+        results = central.guildDB.search(ideal_guild.id == guild.id)
+
+        item = {"announce": setting, "announcechannel": channel.id, "announcechannelname": channel.name}
+
+        if len(results) > 0:
+            central.guildDB.update(item, ideal_guild.id == guild.id)
+        else:
+            item["id"] = guild.id
+            central.guildDB.insert(item)
+
+        return True
+
+    return False
+
+
+def get_guild_announcements(guild, notice):
+    if guild is not None:
+        ideal_guild = tinydb.Query()
+        results = central.guildDB.search(ideal_guild.id == guild.id)
+
+        if len(results) > 0:
+            if "announce" in results[0]:
+                if not notice:
+                    return results[0]["announcechannel"], results[0]["announce"]
+                else:
+                    return results[0]["announcechannelname"], results[0]["announce"]
+
+    return None

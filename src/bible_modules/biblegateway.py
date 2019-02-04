@@ -72,6 +72,8 @@ def search(version, query):
 
 
 def get_result(query, version, headings, verse_numbers):
+    query = query.replace("|", " ")
+
     url = f"https://www.biblegateway.com/passage/?search={query}&version={version}&interface=print"
 
     resp = requests.get(url)

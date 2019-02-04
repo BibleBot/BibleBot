@@ -108,43 +108,54 @@ def get_books(msg):
 
     for key, value in books.items():
         for item in value:
-            if item in msg:
-                last_item = item.split(" ")[-1]
-                msg_split = msg.split(" ")
+            if item.title() in msg:
+                numbered_johns = books["1john"] + books["2john"] + books["3john"]
+                numbered_esdras = books["1esd"] + books["2esd"]
+                psalm_151 = books["ps151"]
 
-                indices = [i for i, x in enumerate(msg_split) if x == last_item]
+                # tl;dr - if we find a "john", but "1/2/3 John" exists, add any non-numbered "john"
+                # etc for esdras and psalms
+                if key == "john" and any([True for x in numbered_johns if f" {x} " in f" {msg} "]):
+                    last_item = item.split(" ")[-1]
+                    msg_split = msg.split(" ")
 
-                for index in indices:
-                    results.append((key, index))
+                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
 
-                    if index not in existing_indices:
-                        existing_indices.append(index)
+                    for index in indices:
+                        if f"{msg_split[index - 1]} {msg_split[index]}" not in numbered_johns:
+                            results.append(("john", index))
+                            existing_indices.append(index)
+                elif key == "ezra" and any([True for x in numbered_esdras if f" {x} " in f" {msg} "]):
+                    last_item = item.split(" ")[-1]
+                    msg_split = msg.split(" ")
 
-    names = [i for i, j in results]
-    indices = [j for i, j in results]
+                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
 
-    numbered_overlap = ["1john", "2john", "3john", "1esdras", "2esdras"]
+                    for index in indices:
+                        if f"{msg_split[index - 1]} {msg_split[index]}" not in numbered_esdras:
+                            results.append(("ezra", index))
+                            existing_indices.append(index)
+                elif key == "ps" and any([True for x in psalm_151 if f" {x} " in f" {msg} "]):
+                    last_item = item.split(" ")[-1]
+                    msg_split = msg.split(" ")
 
-    try:
-        for overlap in numbered_overlap:
-            if overlap in names:
-                name_index = names.index(overlap)
-                indices_index = indices[name_index]
+                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
 
-                for key, value in enumerate(indices):
-                    if indices_index == value and names[key] != overlap:
-                        results.pop(key)
-    except IndexError:
-        pass
+                    for index in indices:
+                        if f"{msg_split[index]} {msg_split[index + 1]}" not in psalm_151:
+                            results.append(("ps", index))
+                            existing_indices.append(index)
+                else:
+                    last_item = item.split(" ")[-1]
+                    msg_split = msg.split(" ")
 
-    for index in existing_indices:
-        dupes = list_duplicates_of(indices, index)
+                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
 
-        if len(dupes) > 1:
-            for i, j in enumerate(dupes):
-                if i < len(results) - 1:
-                    results.pop(i)
-
+                    for index in indices:
+                        if index not in existing_indices:
+                            results.append((key, index))
+                            existing_indices.append(index)
+                            break
     return results
 
 
@@ -183,6 +194,9 @@ def create_verse_object(name, book_index, msg, available_versions, brackets):
 
     if len(number_split) > 1:
         dash_split = number_split[1].split("-")
+    elif name in ["ps151", "obad", "phlm", "2john", "3john" "jude"]:
+        number_split = [1]
+        dash_split = array[book_index + 1].split("-")
 
     verse = {
         "book": name,
@@ -205,20 +219,20 @@ def create_verse_object(name, book_index, msg, available_versions, brackets):
                         if verse["startingVerse"] > verse["endingVerse"]:
                             return "invalid"
     except (IndexError, TypeError, ValueError):
-        verse = verse
+        pass
 
     try:
         if re.sub(r"[0-9]", "", dash_split[1]) == dash_split[1]:
             if dash_split[1] == "":
                 verse["endingVerse"] = "-"
     except (IndexError, TypeError):
-        verse = verse
+        pass
 
     try:
         if array[book_index + 2].upper() in available_versions:
             verse["version"] = array[book_index + 2].upper()
     except IndexError:
-        verse = verse
+        pass
 
     if verse["startingVerse"] is None:
         return
@@ -233,7 +247,7 @@ def create_reference_string(verse):
         if not isinstance(int(verse["chapter"]), numbers.Number):
             return
     except (ValueError, TypeError, KeyError):
-        verse = verse
+        pass
 
     if verse is None:
         return

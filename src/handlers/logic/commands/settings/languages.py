@@ -85,7 +85,7 @@ def get_guild_language(guild):
             if "language" in results[0]:
                 return results[0]["language"]
 
-        return central.languages.english_us.object_name
+        return "english_us"
 
 
 def get_languages():

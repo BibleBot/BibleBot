@@ -22,6 +22,10 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def remove_html(text):
+    return re.sub(r"<[^<]+?>", "", text)
+
+
 def purify_text(text):
     result = text.replace("“", "\"")
     result = result.replace("[", " <")
