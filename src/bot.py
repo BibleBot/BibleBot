@@ -25,7 +25,7 @@ import discord
 
 import central
 from data.BGBookNames import start as bg_book_names
-from handlers.logic.commands import languages
+from handlers.logic.commands.settings import languages
 from handlers.commands import CommandHandler
 from handlers.verses import VerseHandler
 from extensions import bot_extensions
@@ -57,14 +57,14 @@ class BibleBot(discord.AutoShardedClient):
             bg_book_names.get_books()
 
         if int(config["BibleBot"]["shards"]) < 2:
-            activity = discord.Game(f"{central.version} | Shard: 1 / 1")
+            activity = discord.Game(f"+biblebot {central.version} | Shard: 1 / 1")
             await self.change_presence(status=discord.Status.online, activity=activity)
 
             central.log_message("info", 1, "global", "global", "connected")
 
     async def on_shard_ready(self, shard_id):
         shard_count = str(config["BibleBot"]["shards"])
-        activity = discord.Game(f"{central.version} | Shard: {str(shard_id + 1)} / {shard_count}")
+        activity = discord.Game(f"+biblebot {central.version} | Shard: {str(shard_id + 1)} / {shard_count}")
         await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
 
         central.log_message("info", shard_id + 1, "global", "global", "connected")
@@ -274,5 +274,5 @@ if int(config["BibleBot"]["shards"]) > 1:
 else:
     bot = BibleBot()
 
-central.log_message("info", 0, "global", "global", f"{central.version} by Elliott Pardee (vypr)")
+central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])

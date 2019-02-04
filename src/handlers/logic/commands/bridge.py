@@ -24,8 +24,9 @@ import ast
 import discord
 import tinydb
 
-from settings import languages, versions, formatting, misc
-import utils
+from .information import biblebot as bb_util
+from .settings import languages, versions, formatting, misc
+from . import utils
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{dir_path}/../..")
@@ -36,8 +37,10 @@ from bible_modules import biblegateway  # noqa: E402
 from bible_modules import rev  # noqa: E402
 import central  # noqa: E402
 
+
 async def run_command(ctx, command, remainder):
     embed = discord.Embed()
+    
     lang = ctx["language"]
     user = ctx["author"]
     guild = ctx["guild"]
@@ -45,7 +48,7 @@ async def run_command(ctx, command, remainder):
     args = remainder.split(" ")
 
     if command == "biblebot":
-        pages = create_biblebot_embeds(lang)
+        pages = bb_util.create_biblebot_embeds(lang)
 
         return {
             "level": "info",
@@ -143,22 +146,16 @@ async def run_command(ctx, command, remainder):
             }
     elif command == "setversion":
         if versions.set_version(user, args[0]):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversion"]
-            embed.description = lang["setversionsuccess"]
+            embed = utils.create_embed(lang["commands"]["setversion"], lang["setversionsuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversion"]
-            embed.description = lang["setversionfail"].replace("<versions>", lang["commands"]["versions"])
+            embed = utils.create_embed(lang["commands"]["setversion"],
+                                       lang["setversionfail"].replace("<versions>", lang["commands"]["versions"]),
+                                       error=True)
 
             return {
                 "level": "err",
@@ -169,11 +166,8 @@ async def run_command(ctx, command, remainder):
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
-                embed.color = 16723502
-                embed.set_footer(text=central.version, icon_url=central.icon)
-
-                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"]
-                embed.description = lang["setguildversionnoperm"]
+                embed = utils.create_embed(lang["commands"]["setguildversion"], lang["setguildversionnoperm"],
+                                           error=True)
 
                 return {
                     "level": "err",
@@ -181,22 +175,16 @@ async def run_command(ctx, command, remainder):
                 }
 
         if versions.set_guild_version(guild, args[0]):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"]
-            embed.description = lang["setguildversionsuccess"]
+            embed = utils.create_embed(lang["commands"]["setguildversion"], lang["setguildversionsuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildversion"]
-            embed.description = lang["setguildversionfail"].replace("<versions>", lang["commands"]["versions"])
+            embed = utils.create_embed(lang["commands"]["setguildversion"],
+                                       lang["setguildversionfail"].replace("<versions>", lang["commands"]["versions"]),
+                                       error=True)
 
             return {
                 "level": "err",
@@ -205,17 +193,13 @@ async def run_command(ctx, command, remainder):
     elif command == "version":
         version = versions.get_version(user)
 
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         if version is not None:
             response = lang["versionused"]
 
             response = response.replace("<version>", version)
             response = response.replace("<setversion>", lang["commands"]["setversion"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["version"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["version"], response)
 
             return {
                 "level": "info",
@@ -225,10 +209,7 @@ async def run_command(ctx, command, remainder):
             response = lang["noversionused"]
             response = response.replace("<setversion>", lang["commands"]["setversion"])
 
-            embed.color = 16723502
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["version"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["version"], response, error=True)
 
             return {
                 "level": "err",
@@ -237,17 +218,13 @@ async def run_command(ctx, command, remainder):
     elif command == "guildversion":
         version = versions.get_guild_version(guild)
 
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         if version is not None:
             response = lang["guildversionused"]
 
             response = response.replace("<version>", version)
             response = response.replace("<setguildversion>", lang["commands"]["setguildversion"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildversion"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["guildversion"], response)
 
             return {
                 "level": "info",
@@ -257,10 +234,7 @@ async def run_command(ctx, command, remainder):
             response = lang["noguildversionused"]
             response = response.replace("<setguildversion>", lang["commands"]["setguildversion"])
 
-            embed.color = 16723502
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildversion"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["guildversion"], response, error=True)
 
             return {
                 "level": "err",
@@ -299,7 +273,7 @@ async def run_command(ctx, command, remainder):
                 page_counter = lang["pageOf"].replace("<num>", str(i + 1)).replace("<total>", str(total_pages))
 
                 embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versions"] + \
-                              " - " + page_counter
+                    " - " + page_counter
                 embed.description = version_list
 
                 pages.append(embed)
@@ -314,41 +288,28 @@ async def run_command(ctx, command, remainder):
         results = central.versionDB.search(ideal_version["abbv"] == args[0])
 
         if len(results) > 0:
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
             response = lang["versioninfo"]
 
             response = response.replace("<versionname>", results[0]["name"])
 
-            if results[0]["hasOT"]:
-                response = response.replace("<hasOT>", lang["arguments"]["yes"])
-            else:
-                response = response.replace("<hasOT>", lang["arguments"]["no"])
+            def check_validity(section):
+                if results[0]["has" + section]:
+                    return lang["arguments"]["yes"]
+                else:
+                    return lang["arguments"]["no"]
 
-            if results[0]["hasNT"]:
-                response = response.replace("<hasNT>", lang["arguments"]["yes"])
-            else:
-                response = response.replace("<hasNT>", lang["arguments"]["no"])
+            response = response.replace("<hasOT>", check_validity("OT"))
+            response = response.replace("<hasNT>", check_validity("NT"))
+            response = response.replace("<hasDEU>", check_validity("DEU"))
 
-            if results[0]["hasDEU"]:
-                response = response.replace("<hasDEU>", lang["arguments"]["yes"])
-            else:
-                response = response.replace("<hasDEU>", lang["arguments"]["no"])
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versioninfo"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["versioninfo"], response)
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versioninfo"]
-            embed.description = lang["versioninfofailed"]
+            embed = utils.create_embed(lang["commands"]["versioninfo"], lang["versioninfofailed"], error=True)
 
             return {
                 "level": "err",
@@ -356,22 +317,16 @@ async def run_command(ctx, command, remainder):
             }
     elif command == "setlanguage":
         if languages.set_language(user, args[0]):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setlanguage"]
-            embed.description = lang["setlanguagesuccess"]
+            embed = utils.create_embed(lang["commands"]["setlanguage"], lang["setlanguagesuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setlanguage"]
-            embed.description = lang["setlanguagefail"].replace("<languages>", lang["commands"]["languages"])
+            embed = utils.create_embed(lang["commands"]["setlanguage"],
+                                       lang["setlanguagefail"].replace("<languages>", lang["commands"]["languages"]),
+                                       error=True)
 
             return {
                 "level": "err",
@@ -382,11 +337,8 @@ async def run_command(ctx, command, remainder):
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
-                embed.color = 16723502
-                embed.set_footer(text=central.version, icon_url=central.icon)
-
-                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"]
-                embed.description = lang["setguildlanguagenoperm"]
+                embed = utils.create_embed(lang["commands"]["setguildlanguage"], lang["setguildlanguagenoperm"],
+                                           error=True)
 
                 return {
                     "level": "err",
@@ -394,36 +346,26 @@ async def run_command(ctx, command, remainder):
                 }
 
         if languages.set_guild_language(guild, args[0]):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"]
-            embed.description = lang["setguildlanguagesuccess"]
+            embed = utils.create_embed(lang["commands"]["setguildlanguage"], lang["setguildlanguagesuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
+            description = lang["setguildlanguagefail"].replace("<languages>", lang["commands"]["languages"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildlanguage"]
-            embed.description = lang["setguildlanguagefail"].replace("<languages>", lang["commands"]["languages"])
+            embed = utils.create_embed(lang["commands"]["setguildlanguage"], description, error=True)
 
             return {
                 "level": "err",
                 "message": embed
             }
     elif command == "language":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         response = lang["languageused"]
         response = response.replace("<setlanguage>", lang["commands"]["setlanguage"])
 
-        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["language"]
-        embed.description = response
+        embed = utils.create_embed(lang["commands"]["language"], response)
 
         return {
             "level": "info",
@@ -433,14 +375,10 @@ async def run_command(ctx, command, remainder):
         glang = languages.get_guild_language(guild)
         glang = getattr(central.languages, glang).raw_object
 
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         response = glang["guildlanguageused"]
         response = response.replace("<setguildlanguage>", glang["commands"]["setguildlanguage"])
 
-        embed.title = central.config["BibleBot"]["commandPrefix"] + glang["commands"]["guildlanguage"]
-        embed.description = response
+        embed = utils.create_embed(glang["commands"]["guildlanguage"], response)
 
         return {
             "level": "info",
@@ -449,17 +387,13 @@ async def run_command(ctx, command, remainder):
     elif command == "languages":
         available_languages = languages.get_languages()
 
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         string = ""
 
         for item in available_languages:
             if item["object_name"] != "default":
                 string += item["name"] + " [`" + item["object_name"] + "`]\n"
 
-        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["languages"]
-        embed.description = string
+        embed = utils.create_embed(lang["commands"]["languages"], string)
 
         return {
             "level": "info",
@@ -470,11 +404,8 @@ async def run_command(ctx, command, remainder):
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
-                embed.color = 16723502
-                embed.set_footer(text=central.version, icon_url=central.icon)
-
-                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"]
-                embed.description = lang["setguildbracketsnoperm"]
+                embed = utils.create_embed(lang["commands"]["setguildbrackets"], lang["setguildbracketsnoperm"],
+                                           error=True)
 
                 return {
                     "level": "err",
@@ -482,22 +413,14 @@ async def run_command(ctx, command, remainder):
                 }
 
         if formatting.set_guild_brackets(guild, args[0]):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"]
-            embed.description = lang["setguildbracketssuccess"]
+            embed = utils.create_embed(lang["commands"]["setguildbrackets"], lang["setguildbracketssuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setguildbrackets"]
-            embed.description = lang["setguildbracketsfail"]
+            embed = utils.create_embed(lang["commands"]["setguildbrackets"], lang["setguildbracketsfail"], error=True)
 
             return {
                 "level": "err",
@@ -507,16 +430,12 @@ async def run_command(ctx, command, remainder):
         brackets_dict = formatting.get_guild_brackets(guild)
         brackets = brackets_dict["first"] + brackets_dict["second"]
 
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         response = lang["guildbracketsused"]
 
         response = response.replace("<brackets>", brackets)
         response = response.replace("<setguildbrackets>", lang["commands"]["setguildbrackets"])
 
-        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["guildbrackets"]
-        embed.description = response
+        embed = utils.create_embed(lang["commands"]["guildbrackets"], response)
 
         return {
             "level": "info",
@@ -527,11 +446,7 @@ async def run_command(ctx, command, remainder):
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
-                embed.color = 16723502
-                embed.set_footer(text=central.version, icon_url=central.icon)
-
-                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"]
-                embed.description = lang["setvotdtimenoperm"]
+                embed = utils.create_embed(lang["commands"]["setvotdtime"], lang["setvotdtimenoperm"], error=True)
 
                 return {
                     "level": "err",
@@ -539,22 +454,14 @@ async def run_command(ctx, command, remainder):
                 }
 
         if misc.set_guild_votd_time(guild, channel, args[0]):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"]
-            embed.description = lang["setvotdtimesuccess"]
+            embed = utils.create_embed(lang["commands"]["setvotdtime"], lang["setvotdtimesuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setvotdtime"]
-            embed.description = lang["setvotdtimefail"]
+            embed = utils.create_embed(lang["commands"]["setvotdtime"], lang["setvotdtimefail"], error=True)
 
             return {
                 "level": "err",
@@ -565,11 +472,7 @@ async def run_command(ctx, command, remainder):
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
-                embed.color = 16723502
-                embed.set_footer(text=central.version, icon_url=central.icon)
-
-                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["clearvotdtime"]
-                embed.description = lang["clearvotdtimenoperm"]
+                embed = utils.create_embed(lang["commands"]["clearvotdtime"], lang["clearvotdtimenoperm"], error=True)
 
                 return {
                     "level": "err",
@@ -577,11 +480,7 @@ async def run_command(ctx, command, remainder):
                 }
 
         if misc.set_guild_votd_time(guild, channel, "clear"):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["clearvotdtime"]
-            embed.description = lang["clearvotdtimesuccess"]
+            embed = utils.create_embed(lang["commands"]["clearvotdtime"], lang["clearvotdtimesuccess"])
 
             return {
                 "level": "info",
@@ -593,9 +492,6 @@ async def run_command(ctx, command, remainder):
         if time_tuple is not None:
             channel, time = time_tuple
 
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
             response = lang["votdtimeused"]
 
             response = response.replace("<time>", time + " UTC")
@@ -603,8 +499,7 @@ async def run_command(ctx, command, remainder):
             response = response.replace("<setvotdtime>", lang["commands"]["setvotdtime"])
             response = response.replace("<clearvotdtime>", lang["commands"]["clearvotdtime"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["votdtime"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["votdtime"], response)
 
             return {
                 "level": "info",
@@ -614,11 +509,7 @@ async def run_command(ctx, command, remainder):
             response = lang["novotdtimeused"]
             response = response.replace("<setvotdtime>", lang["commands"]["setvotdtime"])
 
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["votdtime"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["votdtime"], response, error=True)
 
             return {
                 "level": "err",
@@ -798,28 +689,21 @@ async def run_command(ctx, command, remainder):
                         "message": lang["passagetoolong"]
                     }
     elif command == "setheadings":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         if formatting.set_headings(user, args[0]):
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setheadings"]
-            embed.description = lang["headingssuccess"]
+            embed = utils.create_embed(lang["commands"]["setheadings"], lang["headingssuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-
             response = lang["headingsfail"]
 
             response = response.replace("<setheadings>", lang["commands"]["setheadings"])
             response = response.replace("<enable>", lang["arguments"]["enable"])
             response = response.replace("<disable>", lang["arguments"]["disable"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setheadings"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["setheadings"], response, error=True)
 
             return {
                 "level": "err",
@@ -828,15 +712,11 @@ async def run_command(ctx, command, remainder):
     elif command == "headings":
         headings = formatting.get_headings(user)
 
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         if headings == "enable":
             response = lang["headings"].replace("<enabled/disabled>", lang["enabled"])
             response = response.replace("<setheadings>", lang["commands"]["setheadings"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["headings"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["headings"], response)
 
             return {
                 "level": "info",
@@ -846,34 +726,26 @@ async def run_command(ctx, command, remainder):
             response = lang["headings"].replace("<enabled/disabled>", lang["disabled"])
             response = response.replace("<setheadings>", lang["commands"]["setheadings"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["headings"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["headings"], response)
 
             return {
                 "level": "info",
                 "message": embed
             }
     elif command == "setversenumbers":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         if formatting.set_verse_numbers(user, args[0]):
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversenumbers"]
-            embed.description = lang["versenumberssuccess"]
+            embed = utils.create_embed(lang["commands"]["setversenumbers"], lang["versenumberssuccess"])
 
             return {
                 "level": "info",
                 "message": embed
             }
         else:
-            embed.color = 16723502
-
             response = lang["versenumbersfail"].replace("<setversenumbers>", lang["commands"]["setversenumbers"])
             response = response.replace("<enable>", lang["arguments"]["enable"])
             response = response.replace("<disable>", lang["arguments"]["disable"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setversenumbers"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["setversenumbers"], response, error=True)
 
             return {
                 "level": "err",
@@ -881,41 +753,24 @@ async def run_command(ctx, command, remainder):
             }
     elif command == "versenumbers":
         verse_numbers = formatting.get_verse_numbers(user)
-
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
+        response = lang["versenumbers"].replace("<setversenumbers>", lang["commands"]["setversenumbers"])
 
         if verse_numbers == "enable":
-            response = lang["versenumbers"].replace("<enabled/disabled>", lang["enabled"])
-            response = response.replace("<setversenumbers>", lang["commands"]["setversenumbers"])
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versenumbers"]
-            embed.description = response
-
-            return {
-                "level": "info",
-                "message": embed
-            }
+            response = response.replace("<enabled/disabled>", lang["enabled"])
         else:
-            response = lang["versenumbers"].replace("<enabled/disabled>", lang["disabled"])
-            response = response.replace("<setversenumbers>", lang["commands"]["setversenumbers"])
+            response = response.replace("<enabled/disabled>", lang["disabled"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versenumbers"]
-            embed.description = response
+        embed = utils.create_embed(lang["commands"]["versenumbers"], response)
 
-            return {
-                "level": "info",
-                "message": embed
-            }
+        return {
+            "level": "info",
+            "message": embed
+        }
     elif command == "setannouncements":
         perms = user.guild_permissions
 
         if not perms.manage_guild:
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"]
-            embed.description = lang["setannouncementsnoperm"]
+            embed = utils.create_embed(lang["commands"]["setannouncements"], lang["setannouncementsnoperm"], error=True)
 
             return {
                 "level": "err",
@@ -923,11 +778,7 @@ async def run_command(ctx, command, remainder):
             }
 
         if misc.set_guild_announcements(guild, channel, args[0]):
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"]
-            embed.description = lang["setannouncementssuccess"]
+            embed = utils.create_embed(lang["commands"]["setannouncements"], lang["setannouncementssuccess"])
 
             return {
                 "level": "info",
@@ -940,11 +791,7 @@ async def run_command(ctx, command, remainder):
             response = response.replace("<enable>", lang["arguments"]["enable"])
             response = response.replace("<disable>", lang["arguments"]["disable"])
 
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["setannouncements"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["setannouncements"], response, error=True)
 
             return {
                 "level": "err",
@@ -956,9 +803,6 @@ async def run_command(ctx, command, remainder):
         if announce_tuple is not None:
             channel, setting = announce_tuple
 
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
             if setting:
                 response = lang["announcementsenabled"]
             else:
@@ -967,8 +811,7 @@ async def run_command(ctx, command, remainder):
             response = response.replace("<channel>", channel)
             response = response.replace("<setannouncements>", lang["commands"]["setannouncements"])
 
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["announcements"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["announcements"], response)
 
             return {
                 "level": "info",
@@ -978,37 +821,25 @@ async def run_command(ctx, command, remainder):
             response = lang["noannouncements"]
             response = response.replace("<setannouncements>", lang["commands"]["setannouncements"])
 
-            embed.color = 16723502
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["announcements"]
-            embed.description = response
+            embed = utils.create_embed(lang["commands"]["announcements"], response, error=True)
 
             return {
                 "level": "err",
                 "message": embed
             }
     elif command == "users":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
+        processed = len(ctx["self"].users)
 
-        processed = len(args[0].users)
-
-        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["users"]
-        embed.description = lang["users"] + ": " + str(processed)
+        embed = utils.create_embed(lang["commands"]["users"], lang["users"] + ": " + str(processed))
 
         return {
             "level": "info",
             "message": embed
         }
     elif command == "servers":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
+        processed = len(ctx["self"].guilds)
 
-        processed = len(args[0].guilds)
-
-        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["servers"]
-        embed.description = lang["servers"].replace("<count>", str(processed))
+        embed = utils.create_embed(lang["commands"]["servers"], lang["servers"].replace("<count>", str(processed)))
 
         return {
             "level": "info",
@@ -1069,23 +900,16 @@ async def run_command(ctx, command, remainder):
                        "Jesus has made him a new creation (2 Corinthians 5:17)."
         }
     elif command == "supporters":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         supporters = "**" + lang["supporters"] + "**\n\n- CHAZER2222\n- Jepekula" + "\n- Joseph\n- Soku\n- " + \
                      lang["anonymousDonors"] + "\n\n" + lang["donorsNotListed"]
 
-        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["supporters"]
-        embed.description = supporters
+        embed = utils.create_embed(lang["commands"]["supporters"], supporters)
 
         return {
             "level": "info",
             "message": embed
         }
     elif command == "creeds":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         response = lang["creedstext"]
 
         response = response.replace("<apostles>", lang["commands"]["apostles"])
@@ -1095,52 +919,35 @@ async def run_command(ctx, command, remainder):
 
         response = response.replace("+", central.config["BibleBot"]["commandPrefix"])
 
-        embed.title = lang["creeds"]
-        embed.description = response
+        embed = utils.create_embed(lang["creeds"], response, custom_title=True)
 
         return {
             "level": "info",
             "message": embed
         }
     elif command == "apostles":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
-        embed.title = lang["apostlescreed"]
-        embed.description = lang["apostlestext"]
+        embed = utils.create_embed(lang["apostlescreed"], lang["apostlestext"], custom_title=True)
 
         return {
             "level": "info",
             "message": embed
         }
     elif command == "nicene325":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
-        embed.title = lang["nicene325creed"]
-        embed.description = lang["nicene325text"]
+        embed = utils.create_embed(lang["nicene325creed"], lang["nicene325text"], custom_title=True)
 
         return {
             "level": "info",
             "message": embed
         }
     elif command == "nicene":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
-        embed.title = lang["nicenecreed"]
-        embed.description = lang["nicenetext"]
+        embed = utils.create_embed(lang["nicenecreed"], lang["nicenetext"], custom_title=True)
 
         return {
             "level": "info",
             "message": embed
         }
     elif command == "chalcedon":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
-        embed.title = lang["chalcedoniancreed"]
-        embed.description = lang["chalcedoniantext"]
+        embed = utils.create_embed(lang["chalcedoniancreed"], lang["chalcedoniantext"], custom_title=True)
 
         return {
             "level": "info",
@@ -1211,16 +1018,12 @@ async def run_owner_command(ctx, command, remainder):
             "message": result
         }
     elif command == "announce":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         message = ""
 
         for item in args:
             message += f"{item} "
 
-        embed.title = "Announcement"
-        embed.description = message[0:-1]
+        embed = utils.create_embed("Announcement", message[0:-1], custom_title=True)
 
         return {
             "level": "info",
@@ -1228,9 +1031,6 @@ async def run_owner_command(ctx, command, remainder):
             "message": embed
         }
     elif command == "addversion":
-        embed.color = 303102
-        embed.set_footer(text=central.version, icon_url=central.icon)
-
         argc = len(args)
         name = ""
 
@@ -1256,8 +1056,7 @@ async def run_owner_command(ctx, command, remainder):
         new_version = Version(name, abbv, has_ot, has_nt, has_deu)
         central.versionDB.insert(new_version.to_object())
 
-        embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["addversion"]
-        embed.description = lang["addversionsuccess"]
+        embed = utils.create_embed(lang["commands"]["addversion"], lang["addversionsuccess"])
 
         return {
             "level": "info",
@@ -1304,80 +1103,6 @@ async def run_owner_command(ctx, command, remainder):
             "text": True,
             "message": results
         }
-    elif command == "ban":
-        ban_reason = ""
-
-        for index, value in enumerate(args):
-            if index != 0:
-                ban_reason += f"{value} "
-
-        if central.is_snowflake(args[0]):
-            if central.add_ban(args[0], ban_reason[0:-1]):
-                return {
-                    "level": "info",
-                    "text": True,
-                    "message": f"Banned {args[0]} for {ban_reason[0:-1]}."
-                }
-            else:
-                return {
-                    "level": "err",
-                    "text": True,
-                    "message": f"{args[0]} is already banned."
-                }
-        else:
-            return {
-                "level": "err",
-                "text": True,
-                "message": "This is not an ID."
-            }
-    elif command == "unban":
-        if central.is_snowflake(args[0]):
-            if central.remove_ban(args[0]):
-                return {
-                    "level": "info",
-                    "text": True,
-                    "message": f"Unbanned {args[0]}."
-                }
-            else:
-                return {
-                    "level": "err",
-                    "text": True,
-                    "message": f"{args[0]} is not banned."
-                }
-        else:
-            return {
-                "level": "err",
-                "text": True,
-                "message": "This is not an ID."
-            }
-    elif command == "reason":
-        if central.is_snowflake(args[0]):
-            is_banned, reason = central.is_banned(args[0])
-            if is_banned:
-                if reason is not None:
-                    return {
-                        "level": "info",
-                        "text": True,
-                        "message": f"{args[0]} is banned for `{reason}`."
-                    }
-                else:
-                    return {
-                        "level": "info",
-                        "text": True,
-                        "message": f"{args[0]} is banned for an unknown reason."
-                    }
-            else:
-                return {
-                    "level": "err",
-                    "text": True,
-                    "message": f"{args[0]} is not banned."
-                }
-        else:
-            return {
-                "level": "err",
-                "text": True,
-                "message": "This is not an ID."
-            }
     elif command == "optout":
         if central.is_snowflake(args[0]):
             if central.add_optout(args[0]):

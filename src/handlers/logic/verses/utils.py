@@ -32,11 +32,11 @@ import central  # noqa: E402
 books = None
 
 try:
-    books = open(f"{__dir_path}/../../data/BGBookNames/books.json")
+    books = open(f"{__dir_path}/../../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 except FileNotFoundError:
     bgbooknames.get_books()
-    books = open(f"{__dir_path}/../../data/BGBookNames/books.json")
+    books = open(f"{__dir_path}/../../../data/BGBookNames/books.json")
     books = json.loads(books.read())
 
 dashes = ["-", "—", "–"]

@@ -19,7 +19,7 @@
 import os
 import sys
 
-from handlers.commandlogic import commandbridge as command_bridge
+from handlers.logic.commands import bridge
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(dir_path + "/..")
@@ -38,7 +38,7 @@ def is_command(command, lang):
         "ok": False
     }
 
-    if command in (untranslated_commands + commands.values()):
+    if command in (untranslated_commands + list(commands.values())):
         result = {
             "ok": True,
             "orig": command
@@ -69,7 +69,7 @@ class CommandHandler:
             orig_cmd = proper_command["orig"]
 
             if not is_owner_command(orig_cmd, ctx["language"]):
-                return await command_bridge.run_command(ctx, orig_cmd, remainder)
+                return await bridge.run_command(ctx, orig_cmd, remainder)
             else:
                 if str(ctx["author"].id) == central.config["BibleBot"]["owner"]:
-                    return await command_bridge.run_owner_command(ctx, command, remainder)
+                    return await bridge.run_owner_command(ctx, command, remainder)

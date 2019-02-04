@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list id="9e688619-23c5-4fce-9848-9fe49a088563" name="Unversioned Files" comment="" />
     <list default="true" id="6652def6-c5a3-418e-8d2a-5e1b03d12ec0" name="Default" comment="Adding creeds and fixing some bugs.">
+<<<<<<< Updated upstream
       <change afterPath="$PROJECT_DIR$/src/extensions/bot_extensions.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/handlers/logic/__init__.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/handlers/logic/commands/__init__.py" afterDir="false" />
@@ -49,6 +50,10 @@
       <change beforePath="$PROJECT_DIR$/src/handlers/verselogic/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/verses/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/verselogic/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/verses/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/verses.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verses.py" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -57,9 +62,12 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+<<<<<<< Updated upstream
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/BibleBot$Run_BibleBotInternal.coverage" NAME="Run BibleBotInternal Coverage Results" MODIFIED="1548834961581" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
+=======
+>>>>>>> Stashed changes
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="bot.py" pinned="false" current-in-tab="false">
@@ -94,8 +102,16 @@
       <file leaf-file-name="bridge.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/bridge.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="121">
               <caret line="24" column="13" lean-forward="true" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+=======
+            <state relative-caret-position="2990">
+              <caret line="138" column="51" selection-start-line="138" selection-start-column="51" selection-end-line="138" selection-end-column="51" />
+              <folding>
+                <element signature="e#748#759#0" expanded="true" />
+              </folding>
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -103,8 +119,13 @@
       <file leaf-file-name="commands.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="242">
               <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+=======
+            <state>
+              <caret column="25179" selection-start-column="25179" selection-end-column="25179" />
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -112,11 +133,16 @@
       <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/utils.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="207">
               <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
+=======
+            <state relative-caret-position="414">
+              <caret line="165" column="22" selection-start-line="165" selection-start-column="22" selection-end-line="165" selection-end-column="22" />
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -124,11 +150,16 @@
       <file leaf-file-name="biblebot.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/information/biblebot.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="69">
               <caret line="3" selection-start-line="3" selection-end-line="3" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
+=======
+            <state relative-caret-position="1495">
+              <caret line="69" column="37" selection-start-line="69" selection-start-column="37" selection-end-line="69" selection-end-column="37" />
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -349,10 +380,14 @@
     <property name="SearchEverywhereHistoryKey" value="default.json&#9;FILE&#9;file:///home/vypr/Code/BibleBot/i18n/default/default.json&#10;utils.&#9;FILE&#9;file:///home/vypr/Code/BibleBot/src/handlers/verselogic/utils.py" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last.edited.regexp" value="" />
+<<<<<<< Updated upstream
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/extensions/background_tasks.py" />
     <property name="restartRequiresConfirmation" value="false" />
+=======
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+>>>>>>> Stashed changes
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -522,6 +557,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
+<<<<<<< Updated upstream
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <editor active="true" />
     <layout>
@@ -537,6 +573,12 @@
       <window_info anchor="right" id="Database" order="4" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info auto_hide="true" id="Structure" order="1" sideWeight="0.20099255" side_tool="true" type="SLIDING" weight="0.24054463" />
+=======
+    <frame x="-8" y="-8" width="1696" height="1036" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.54285717" visible="true" weight="0.24969843" />
+      <window_info id="Structure" order="1" sideWeight="0.45714286" side_tool="true" weight="0.2503726" />
+>>>>>>> Stashed changes
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -597,9 +639,20 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
@@ -748,6 +801,7 @@ Revelatio...'</expression-string>
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.json">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -763,6 +817,17 @@ Revelatio...'</expression-string>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bible_modules/biblesorg.py">
+=======
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/1796200473/builtins.py" />
+    <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.json" />
+    <entry file="file://$PROJECT_DIR$/venv/lib64/python3.6/site-packages/discord/client.py" />
+    <entry file="file://$PROJECT_DIR$/venv/lib64/python3.6/site-packages/requests/api.py" />
+    <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.py" />
+    <entry file="file://$PROJECT_DIR$/src/config.ini" />
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="529">
           <caret line="32" column="28" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
@@ -772,6 +837,7 @@ Revelatio...'</expression-string>
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/../BGBookNames/requirements.txt" />
     <entry file="file://$PROJECT_DIR$/../BGBookNames/vylogger.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -792,6 +858,12 @@ Revelatio...'</expression-string>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/books.py">
+=======
+    <entry file="file://$PROJECT_DIR$/databases/bandb" />
+    <entry file="file://$PROJECT_DIR$/databases/guilddb" />
+    <entry file="file://$PROJECT_DIR$/databases/optoutdb" />
+    <entry file="file://$PROJECT_DIR$/src/data/languages.py">
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="302">
           <caret line="18" selection-start-line="18" selection-end-line="18" />
@@ -828,6 +900,7 @@ Revelatio...'</expression-string>
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/databases/db">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -836,6 +909,10 @@ Revelatio...'</expression-string>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/i18n/english_us/english_us.json">
+=======
+    <entry file="file://$PROJECT_DIR$/src/data/BGBookNames/start.py" />
+    <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="933">
           <caret line="72" column="29" selection-start-line="72" selection-start-column="24" selection-end-line="72" selection-end-column="29" />
@@ -967,6 +1044,7 @@ Revelatio...'</expression-string>
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="242">
@@ -978,6 +1056,12 @@ Revelatio...'</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="207">
           <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+=======
+    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2990">
+          <caret line="138" column="51" selection-start-line="138" selection-start-column="51" selection-end-line="138" selection-end-column="51" />
+>>>>>>> Stashed changes
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
@@ -986,15 +1070,32 @@ Revelatio...'</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/bridge.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="121">
           <caret line="24" column="13" lean-forward="true" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+=======
+        <state>
+          <caret column="25179" selection-start-column="25179" selection-end-column="25179" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/verselogic/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1495">
+          <caret line="69" column="37" selection-start-line="69" selection-start-column="37" selection-end-line="69" selection-end-column="37" />
+>>>>>>> Stashed changes
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="134">
           <caret line="28" column="25" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="25" />
+=======
+        <state relative-caret-position="414">
+          <caret line="165" column="22" selection-start-line="165" selection-start-column="22" selection-end-line="165" selection-end-column="22" />
+>>>>>>> Stashed changes
         </state>
       </provider>
     </entry>

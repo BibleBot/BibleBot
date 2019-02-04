@@ -33,7 +33,7 @@ def create_embed(title, description, custom_title=False, error=False):
     else:
         embed.color = 303102
 
-    embed.set_footer(text=central.version, icon_url=central.icon)
+    embed.set_footer(text="BibleBot " + central.version, icon_url=central.icon)
 
     if custom_title:
         embed.title = title

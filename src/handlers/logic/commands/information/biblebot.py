@@ -1,19 +1,23 @@
 import discord
 import central
 
+import re
+
+from handlers.logic.commands import utils
 
 
 def create_biblebot_embeds(lang):
     pages = [discord.Embed(), discord.Embed()]
 
-    command_list = divide_list(lang["commandlist"].split("* ")[1:], 6)
+    command_list = utils.divide_list(lang["commandlist"].split("* ")[1:], 6)
 
     for page in pages:
         page.title = lang["biblebot"].replace("<biblebotversion>", central.version.split("v")[1])
         page.description = lang["code"].replace("repositoryLink", "https://github.com/BibleBot/BibleBot")
 
         page.color = 303102
-        page.set_footer(text=central.version, icon_url=central.icon)
+        page.set_footer(text=lang["biblebot"].replace("<biblebotversion>", central.version.split("v")[1]),
+                        icon_url=central.icon)
 
     responses = command_list + [lang["commandlist2"], lang["guildcommandlist"]]
 
@@ -45,15 +49,19 @@ def create_biblebot_embeds(lang):
     pages[0].add_field(name=lang["commandlistName"], value="".join(responses[0]), inline=False)
 
     for i in range(1, command_list_count):
-        pages[0].add_field(name=u"\u200B", value="".join(responses[i]), inline=False)
+        if i != command_list_count - 1:
+            pages[0].add_field(name=u"\u200B", value="".join(responses[i]), inline=False)
+        else:
+            pages[0].add_field(name=u"\u200B", value="".join(responses[i]) + "\n" + u"\u200B", inline=False)
 
-    pages[0].add_field(name=u"\u200B", value=u"\u200B", inline=False)
+    # pages[0].add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
     pages[1].add_field(name=lang["extrabiblicalcommandlistName"], value=responses[-2].replace("* ", ""), inline=False)
     pages[1].add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
-    pages[1].add_field(name=lang["guildcommandlistName"], value=responses[-1].replace("* ", ""), inline=False)
-    pages[1].add_field(name=u"\u200B", value=u"\u200B", inline=False)
+    guild_commands = responses[-1].replace("* ", "") + "\n" + u"\u200B"
+    pages[1].add_field(name=lang["guildcommandlistName"], value=guild_commands, inline=False)
+    # pages[1].add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
     website = lang["website"].replace("websiteLink", "https://biblebot.xyz")
     server_invite = lang["joinserver"].replace("inviteLink", "https://discord.gg/H7ZyHqE")

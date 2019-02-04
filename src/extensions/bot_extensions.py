@@ -2,7 +2,7 @@ import central
 import asyncio
 import datetime
 
-from handlers.commandlogic import versions, languages, misc
+from handlers.logic.commands.settings import versions, languages, misc
 from bible_modules import biblegateway, biblehub, bibleserver, biblesorg, bibleutils, rev
 
 

@@ -29,7 +29,7 @@ from handlers.logic.verses import utils
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{__dir_path}/..")
 
-import handlers.commandlogic.settings as settings  # noqa: E402
+from handlers.logic.commands import settings  # noqa: E402
 from bible_modules import biblesorg, bibleserver, biblehub, biblegateway, rev  # noqa: E402
 from data.BGBookNames.books import item_to_book  # noqa: E402
 import central  # noqa: E402
