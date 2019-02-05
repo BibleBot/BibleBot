@@ -40,7 +40,7 @@ import central  # noqa: E402
 
 async def run_command(ctx, command, remainder):
     embed = discord.Embed()
-    
+
     lang = ctx["language"]
     user = ctx["author"]
     guild = ctx["guild"]
