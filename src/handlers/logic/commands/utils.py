@@ -1,6 +1,7 @@
 import discord
 import central
 import ast
+from bible_modules import biblehub, bibleserver, biblesorg, biblegateway, rev
 
 
 def divide_list(dividend, divisor):
@@ -33,7 +34,7 @@ def create_embed(title, description, custom_title=False, error=False):
     else:
         embed.color = 303102
 
-    embed.set_footer(text="BibleBot " + central.version, icon_url=central.icon)
+    embed.set_footer(text=f"BibleBot {central.version}", icon_url=central.icon)
 
     if custom_title:
         embed.title = title
@@ -43,3 +44,96 @@ def create_embed(title, description, custom_title=False, error=False):
     embed.description = description
 
     return embed
+
+
+def get_bible_verse(reference, version, headings, verse_numbers):
+    biblehub_versions = ["BSB", "NHEB", "WBT"]
+    bibleserver_versions = ["LUT", "LXX", "SLT"]
+    biblesorg_versions = ["KJVA"]
+    other_versions = ["REV"]
+
+    non_bg = other_versions + biblehub_versions + biblesorg_versions + bibleserver_versions
+
+    if version not in non_bg:
+        result = biblegateway.get_result(reference, version, headings, verse_numbers)
+
+        if result is not None:
+            if result["text"][0] != " ":
+                result["text"] = " " + result["text"]
+
+            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+            response_string = "**" + result["passage"] + " - " + result[
+                "version"] + "**\n\n" + content
+
+            if len(response_string) < 2000:
+                return {
+                    "level": "info",
+                    "reference": reference,
+                    "message": response_string
+                }
+    elif version == "REV":
+        result = rev.get_result(reference, verse_numbers)
+
+        if result["text"][0] != " ":
+            result["text"] = " " + result["text"]
+
+        content = "```Dust\n" + result["text"] + "```"
+        response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+
+        if len(response_string) < 2000:
+            return {
+                "level": "info",
+                "reference": reference,
+                "message": response_string
+            }
+    elif version in biblesorg_versions:
+        result = biblesorg.get_result(reference, version, headings, verse_numbers)
+
+        if result is not None:
+            if result["text"][0] != " ":
+                result["text"] = " " + result["text"]
+
+            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+            response_string = "**" + result["passage"] + " - " + result[
+                "version"] + "**\n\n" + content
+
+            if len(response_string) < 2000:
+                return {
+                    "level": "info",
+                    "reference": reference,
+                    "message": response_string
+                }
+    elif version in biblehub_versions:
+        result = biblehub.get_result(reference, version, verse_numbers)
+
+        if result is not None:
+            if result["text"][0] != " ":
+                result["text"] = " " + result["text"]
+
+            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+            response_string = "**" + result["passage"] + " - " + result[
+                "version"] + "**\n\n" + content
+
+            if len(response_string) < 2000:
+                return {
+                    "level": "info",
+                    "reference": reference,
+                    "message": response_string
+                }
+    elif version in bibleserver_versions:
+        result = bibleserver.get_result(reference, version, verse_numbers)
+
+        if result is not None:
+            if result["text"][0] != " ":
+                result["text"] = " " + result["text"]
+
+            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+            response_string = "**" + result["passage"] + " - " + result[
+                "version"] + "**\n\n" + content
+
+            if len(response_string) < 2000:
+                return {
+                    "level": "info",
+                    "reference": reference,
+                    "message": response_string
+                }

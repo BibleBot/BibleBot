@@ -24,7 +24,7 @@ import ast
 import discord
 import tinydb
 
-from .information import biblebot as bb_util
+from .information import biblebot, creeds, special, paged_commands
 from .settings import languages, versions, formatting, misc
 from . import utils
 
@@ -39,8 +39,6 @@ import central  # noqa: E402
 
 
 async def run_command(ctx, command, remainder):
-    embed = discord.Embed()
-
     lang = ctx["language"]
     user = ctx["author"]
     guild = ctx["guild"]
@@ -48,7 +46,7 @@ async def run_command(ctx, command, remainder):
     args = remainder.split(" ")
 
     if command == "biblebot":
-        pages = bb_util.create_biblebot_embeds(lang)
+        pages = biblebot.create_biblebot_embeds(lang)
 
         return {
             "level": "info",
@@ -56,7 +54,6 @@ async def run_command(ctx, command, remainder):
             "pages": pages
         }
     elif command == "search":
-        available_versions = versions.get_versions_by_acronym()
         version = versions.get_version(user)
 
         if version is None:
@@ -65,85 +62,9 @@ async def run_command(ctx, command, remainder):
             if version is None:
                 version = "RSV"
 
-        query = ""
-
-        if args[0] in available_versions:
-            version = args[0]
-
-            for i, arg in enumerate(args):
-                if i != 0:
-                    query += arg + " "
-        else:
-            for arg in args:
-                query += arg + " "
-
-        biblehub_versions = ["BSB", "NHEB", "WBT"]
-        bibleserver_versions = ["LUT", "LXX", "SLT"]
-        biblesorg_versions = ["KJVA"]
-        other_versions = ["REV"]
-        non_bible_gateway = other_versions + biblehub_versions + biblesorg_versions + bibleserver_versions
-
-        if version not in non_bible_gateway:
-            results = biblegateway.search(version, query[0:-1])
-
-            if results is not None:
-                query.replace("\"", "")
-
-                pages = []
-                max_results_per_page = 6
-                total_pages = int(math.ceil(len(results.keys()) / max_results_per_page))
-
-                if total_pages == 0:
-                    total_pages += 1
-                elif total_pages > 100:
-                    total_pages = 100
-
-                for i in range(total_pages):
-                    embed = discord.Embed()
-
-                    embed.title = lang["searchResults"] + " \"" + query[0:-1] + "\""
-
-                    page_counter = lang["pageOf"].replace("<num>", str(i + 1)).replace("<total>", str(total_pages))
-                    embed.description = page_counter
-
-                    embed.color = 303102
-                    embed.set_footer(text=central.version, icon_url=central.icon)
-
-                    if len(results.keys()) > 0:
-                        count = 0
-
-                        for key in list(results.keys()):
-                            if len(results[key]["text"]) < 700:
-                                if count < max_results_per_page:
-                                    title = results[key]["title"]
-                                    text = results[key]["text"]
-
-                                    embed.add_field(name=title, value=text, inline=False)
-
-                                    del results[key]
-                                    count += 1
-                    else:
-                        embed.title = lang["nothingFound"].replace("<query>", query[0:-1])
-                        embed.description = ""
-
-                    pages.append(embed)
-
-                if len(pages) > 1:
-                    return {
-                        "level": "info",
-                        "paged": True,
-                        "pages": pages
-                    }
-                else:
-                    return {
-                        "level": "info",
-                        "message": pages[0]
-                    }
-        else:
-            return {
-                "level": "err",
-                "message": lang["searchNotSupported"].replace("<search>", lang["commands"]["search"])
-            }
+        return paged_commands.search(version, remainder, lang)
+    elif command == "versions":
+        return paged_commands.get_versions(lang)
     elif command == "setversion":
         if versions.set_version(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setversion"], lang["setversionsuccess"])
@@ -240,49 +161,6 @@ async def run_command(ctx, command, remainder):
                 "level": "err",
                 "message": embed
             }
-    elif command == "versions":
-        pages = []
-        available_versions = versions.get_versions()
-        max_results_per_page = 25
-
-        total_pages = int(math.ceil(len(available_versions) / max_results_per_page))
-
-        if total_pages == 0:
-            total_pages += 1
-
-        for i in range(total_pages):
-            embed = discord.Embed()
-
-            embed.color = 303102
-            embed.set_footer(text=central.version, icon_url=central.icon)
-
-            if len(available_versions) > 0:
-                count = 0
-                version_list = ""
-
-                available_versions_copy = available_versions[:]
-                for item in available_versions_copy:
-                    if count < max_results_per_page:
-                        version_list += item + "\n"
-                        count += 1
-
-                        available_versions.remove(item)
-                    else:
-                        break
-
-                page_counter = lang["pageOf"].replace("<num>", str(i + 1)).replace("<total>", str(total_pages))
-
-                embed.title = central.config["BibleBot"]["commandPrefix"] + lang["commands"]["versions"] + \
-                    " - " + page_counter
-                embed.description = version_list
-
-                pages.append(embed)
-
-        return {
-            "level": "info",
-            "paged": True,
-            "pages": pages
-        }
     elif command == "versioninfo":
         ideal_version = tinydb.Query()
         results = central.versionDB.search(ideal_version["abbv"] == args[0])
@@ -515,7 +393,8 @@ async def run_command(ctx, command, remainder):
                 "level": "err",
                 "message": embed
             }
-    elif command == "votd" or command == "verseoftheday":
+    elif command in ["votd", "verseoftheday"]:
+        verse = bibleutils.get_votd()
         version = versions.get_version(user)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
@@ -526,78 +405,9 @@ async def run_command(ctx, command, remainder):
             if version is None:
                 version = "RSV"
 
-        if version != "REV":
-            verse = bibleutils.get_votd()
-            result = biblegateway.get_result(verse, version, headings, verse_numbers)
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": verse,
-                    "message": response_string
-                }
-            elif len(response_string) > 2000:
-                if len(response_string) < 3500:
-                    split_text = central.halve_string(result["text"])
-
-                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content1
-
-                    content2 = "```Dust\n " + split_text["second"] + "```"
-
-                    return {
-                        "level": "info",
-                        "twoMessages": True,
-                        "reference": verse,
-                        "firstMessage": response_string1,
-                        "secondMessage": content2
-                    }
-                else:
-                    return {
-                        "level": "err",
-                        "reference": verse,
-                        "message": lang["passagetoolong"]
-                    }
-        else:
-            verse = bibleutils.get_votd()
-            result = rev.get_result(verse, verse_numbers)
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": verse,
-                    "message": response_string
-                }
-            elif len(response_string) > 2000:
-                if len(response_string) < 3500:
-                    split_text = central.halve_string(
-                        result["text"])
-
-                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content1
-
-                    content2 = "```Dust\n " + split_text["second"] + "```"
-
-                    return {
-                        "level": "info",
-                        "twoMessages": True,
-                        "reference": verse,
-                        "firstMessage": response_string1,
-                        "secondMessage": content2
-                    }
-                else:
-                    return {
-                        "level": "err",
-                        "reference": verse,
-                        "message": lang["passagetoolong"]
-                    }
+        return utils.get_bible_verse(verse, version, headings, verse_numbers)
     elif command == "random":
+        verse = bibleutils.get_random_verse()
         version = versions.get_version(user)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
@@ -608,86 +418,7 @@ async def run_command(ctx, command, remainder):
             if version is None:
                 version = "RSV"
 
-        if version != "REV":
-            verse = bibleutils.get_random_verse()
-            result = biblegateway.get_result(verse, version, headings, verse_numbers)
-            counter = 10
-
-            while result is None and counter != 10:
-                verse = bibleutils.get_random_verse()
-                result = biblegateway.get_result(verse, version, headings, verse_numbers)
-                counter += 1
-
-            if counter == 10 and result is None:
-                return
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": verse,
-                    "message": response_string
-                }
-            elif len(response_string) > 2000:
-                if len(response_string) < 3500:
-                    split_text = central.halve_string(result["text"])
-
-                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content1
-
-                    content2 = "```Dust\n " + split_text["second"] + "```"
-
-                    return {
-                        "level": "info",
-                        "twoMessages": True,
-                        "reference": verse,
-                        "firstMessage": response_string1,
-                        "secondMessage": content2
-                    }
-                else:
-                    return {
-                        "level": "err",
-                        "reference": verse,
-                        "message": lang["passagetoolong"]
-                    }
-        else:
-            verse = bibleutils.get_random_verse()
-            result = rev.get_result(verse, verse_numbers)
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-
-            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": verse,
-                    "message": response_string
-                }
-            elif len(response_string) > 2000:
-                if len(response_string) < 3500:
-                    split_text = central.halve_string(result["text"])
-
-                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content1
-
-                    content2 = "```Dust\n " + split_text["second"] + "```"
-
-                    return {
-                        "level": "info",
-                        "twoMessages": True,
-                        "reference": verse,
-                        "firstMessage": response_string1,
-                        "secondMessage": content2
-                    }
-                else:
-                    return {
-                        "level": "err",
-                        "reference": verse,
-                        "message": lang["passagetoolong"]
-                    }
+        return utils.get_bible_verse(verse, version, headings, verse_numbers)
     elif command == "setheadings":
         if formatting.set_headings(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setheadings"], lang["headingssuccess"])
@@ -856,109 +587,22 @@ async def run_command(ctx, command, remainder):
             if version is None:
                 version = "RSV"
 
-        verse = "Mark 9:23-24"
-
-        if version != "REV":
-            result = biblegateway.get_result(verse, version, headings, verse_numbers)
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": verse,
-                    "message": response_string
-                }
-        else:
-            result = rev.get_result(verse, verse_numbers)
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": verse,
-                    "message": response_string
-                }
-    elif command == "joseph":
-        return {
-            "level": "info",
-            "text": True,
-            "message": "Jesus never consecrated peanut butter " +
-                       "and jelly sandwiches and Coca-Cola!"
-        }
-    elif command == "tiger":
-        return {
-            "level": "info",
-            "text": True,
-            "message": "Our favorite Tiger lives by Ephesians 4:29,31-32, " +
-                       "Matthew 16:26, James 4:6, and lastly, his calling from God, " +
-                       "1 Peter 5:8. He tells everyone that because of grace in faith " +
-                       "(Ephesians 2:8-10) he was saved, and not of works. Christ " +
-                       "Jesus has made him a new creation (2 Corinthians 5:17)."
-        }
+        return utils.get_bible_verse("Mark 9:23-24", version, headings, verse_numbers)
+    elif command in special.cm_commands:
+        return special.get_custom_message(command)
     elif command == "supporters":
-        supporters = "**" + lang["supporters"] + "**\n\n- CHAZER2222\n- Jepekula" + "\n- Joseph\n- Soku\n- " + \
-                     lang["anonymousDonors"] + "\n\n" + lang["donorsNotListed"]
-
-        embed = utils.create_embed(lang["commands"]["supporters"], supporters)
-
-        return {
-            "level": "info",
-            "message": embed
-        }
+        return special.get_supporters(lang)
     elif command == "creeds":
-        response = lang["creedstext"]
-
-        response = response.replace("<apostles>", lang["commands"]["apostles"])
-        response = response.replace("<nicene325>", lang["commands"]["nicene325"])
-        response = response.replace("<nicene>", lang["commands"]["nicene"])
-        response = response.replace("<chalcedon>", lang["commands"]["chalcedon"])
-
-        response = response.replace("+", central.config["BibleBot"]["commandPrefix"])
-
-        embed = utils.create_embed(lang["creeds"], response, custom_title=True)
-
-        return {
-            "level": "info",
-            "message": embed
-        }
-    elif command == "apostles":
-        embed = utils.create_embed(lang["apostlescreed"], lang["apostlestext"], custom_title=True)
-
-        return {
-            "level": "info",
-            "message": embed
-        }
-    elif command == "nicene325":
-        embed = utils.create_embed(lang["nicene325creed"], lang["nicene325text"], custom_title=True)
-
-        return {
-            "level": "info",
-            "message": embed
-        }
-    elif command == "nicene":
-        embed = utils.create_embed(lang["nicenecreed"], lang["nicenetext"], custom_title=True)
-
-        return {
-            "level": "info",
-            "message": embed
-        }
-    elif command == "chalcedon":
-        embed = utils.create_embed(lang["chalcedoniancreed"], lang["chalcedoniantext"], custom_title=True)
-
-        return {
-            "level": "info",
-            "message": embed
-        }
+        return creeds.get_creeds(lang)
+    elif command in creeds.creeds:
+        return creeds.get_creed(command, lang)
     elif command == "invite":
+        bot_id = ctx["self"].user.id
+
         return {
             "level": "info",
             "text": True,
-            "message": "<https://discordapp.com/oauth2/authorize?" +
-                       "client_id=361033318273384449&scope=bot&permissions=93248>"
+            "message": f"https://discordapp.com/oauth2/authorize?client_id={bot_id}&scope=bot&permissions=93248"
         }
 
 
