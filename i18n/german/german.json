@@ -69,6 +69,7 @@
     "novotdtimeused": "Leider konnte ich diese Gilde in meiner Datenbank nicht finden, hat jemand mit der Berechtigung 'Server verwalten' `+<setvotdtime>`schon benutzt?",
     "clearvotdtimesuccess": "VdT-Zeit erfolgreich gelöscht.",
     "clearvotdtimenoperm": "Um die VdT-Zeit der Gilde zu löschen, benötigen Sie die Berechtigung 'Server verwalten'!",
+    "votd": "Hier ist der heutige Vers des Tages:",
     "passagetoolong": "Leider ist diese Passage zu lang für mich, tut mir leid.",
     "votdcantprocess": "Der heutige VdT kann nicht verarbeitet werden, siehe <https://www.biblegateway.com/> für den VdT.",
     "versioninfo": "\n**<versionname>**\n\nBeinhaltet das Alte Testament: <hasOT>\nBeinhaltet das Neue Testament: <hasNT>\nBeinhaltet die Apocryphen/Deuterokanonischen Bücher: <hasDEU>",
