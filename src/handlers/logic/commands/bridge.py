@@ -541,7 +541,7 @@ async def run_command(ctx, command, remainder):
                 }
             elif len(response_string) > 2000:
                 if len(response_string) < 3500:
-                    split_text = central.splitter(result["text"])
+                    split_text = central.halve_string(result["text"])
 
                     content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                     response_string1 = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content1
@@ -576,7 +576,7 @@ async def run_command(ctx, command, remainder):
                 }
             elif len(response_string) > 2000:
                 if len(response_string) < 3500:
-                    split_text = central.splitter(
+                    split_text = central.halve_string(
                         result["text"])
 
                     content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
@@ -632,7 +632,7 @@ async def run_command(ctx, command, remainder):
                 }
             elif len(response_string) > 2000:
                 if len(response_string) < 3500:
-                    split_text = central.splitter(result["text"])
+                    split_text = central.halve_string(result["text"])
 
                     content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                     response_string1 = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content1
@@ -668,7 +668,7 @@ async def run_command(ctx, command, remainder):
                 }
             elif len(response_string) > 2000:
                 if len(response_string) < 3500:
-                    split_text = central.splitter(result["text"])
+                    split_text = central.halve_string(result["text"])
 
                     content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                     response_string1 = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content1

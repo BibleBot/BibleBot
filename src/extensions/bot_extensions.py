@@ -55,7 +55,7 @@ async def run_timed_votds(self):
                             if len(response_string) < 2000:
                                 await channel.send(response_string)
                             elif 2000 < len(response_string) < 3500:
-                                split_text = central.splitter(result["text"])
+                                split_text = central.halve_string(result["text"])
 
                                 content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                                 response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
@@ -79,7 +79,7 @@ async def run_timed_votds(self):
                         if len(response_string) < 2000:
                             await channel.send(response_string)
                         elif 2000 < len(response_string) < 3500:
-                            split_text = central.splitter(result["text"])
+                            split_text = central.halve_string(result["text"])
 
                             content1 = "```Dust\n" + split_text["first"] + "```"
                             response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
@@ -106,7 +106,7 @@ async def run_timed_votds(self):
                                 await channel.send(response_string)
                             elif len(response_string) > 2000:
                                 if len(response_string) < 3500:
-                                    split_text = central.splitter(result["text"])
+                                    split_text = central.halve_string(result["text"])
 
                                     content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                                     response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
@@ -133,7 +133,7 @@ async def run_timed_votds(self):
                                 await channel.send(response_string)
                             elif len(response_string) > 2000:
                                 if len(response_string) < 3500:
-                                    split_text = central.splitter(result["text"])
+                                    split_text = central.halve_string(result["text"])
 
                                     content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                                     response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
@@ -160,7 +160,7 @@ async def run_timed_votds(self):
                                 await channel.send(response_string)
                             elif len(response_string) > 2000:
                                 if len(response_string) < 3500:
-                                    split_text = central.splitter(result["text"])
+                                    split_text = central.halve_string(result["text"])
 
                                     content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
                                     response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \

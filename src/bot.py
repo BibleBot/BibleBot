@@ -253,19 +253,20 @@ class BibleBot(discord.AutoShardedClient):
                     return
 
                 if "invalid" not in result and "spam" not in result:
-                    for guild in result:
+                    for item in result:
                         try:
-                            if "twoMessages" in guild:
-                                await ctx["channel"].send(guild["firstMessage"])
-                                await ctx["channel"].send(guild["secondMessage"])
-                            elif "message" in guild:
-                                await ctx["channel"].send(guild["message"])
+                            if "twoMessages" in item:
+                                await ctx["channel"].send(item["firstMessage"])
+                                await ctx["channel"].send(item["secondMessage"])
+                            elif "message" in item:
+                                await ctx["channel"].send(item["message"])
                         except KeyError:
                             pass
 
-                        if "reference" in guild:
-                            central.log_message(guild["level"], shard, ctx["identifier"], source, guild["reference"])
+                        if "reference" in item:
+                            central.log_message(item["level"], shard, ctx["identifier"], source, item["reference"])
                 elif "spam" in result:
+                    central.log_message("warn", shard, ctx["identifier"], source, "Too many verses at once.")
                     await ctx["channel"].send(result["spam"])
 
 
