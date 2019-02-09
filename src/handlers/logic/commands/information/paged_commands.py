@@ -1,8 +1,26 @@
+"""
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
+    This file is part of BibleBot.
+
+    BibleBot is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BibleBot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 import math
 import discord
 import central
-from handlers.logic.commands.settings import versions
-from bible_modules import biblehub, bibleserver, biblesorg, biblegateway, rev
+from handlers.logic.settings import versions
+from bible_modules import biblegateway
 
 
 def search(version, query, lang):

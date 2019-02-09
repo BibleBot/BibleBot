@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import math
 import os
 import sys
 import ast
@@ -25,7 +24,8 @@ import discord
 import tinydb
 
 from .information import biblebot, creeds, special, paged_commands
-from .settings import languages, versions, formatting, misc
+from handlers.logic.settings import versions
+from handlers.logic.settings import languages, misc, formatting
 from . import utils
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -33,8 +33,6 @@ sys.path.append(f"{dir_path}/../..")
 
 from vytypes.version import Version  # noqa: E402
 from bible_modules import bibleutils  # noqa: E402
-from bible_modules import biblegateway  # noqa: E402
-from bible_modules import rev  # noqa: E402
 import central  # noqa: E402
 
 
@@ -54,13 +52,7 @@ async def run_command(ctx, command, remainder):
             "pages": pages
         }
     elif command == "search":
-        version = versions.get_version(user)
-
-        if version is None:
-            version = versions.get_guild_version(guild)
-
-            if version is None:
-                version = "RSV"
+        version = utils.get_version(user, guild)
 
         return paged_commands.search(version, remainder, lang)
     elif command == "versions":
@@ -176,9 +168,8 @@ async def run_command(ctx, command, remainder):
                 else:
                     return lang["arguments"]["no"]
 
-            response = response.replace("<hasOT>", check_validity("OT"))
-            response = response.replace("<hasNT>", check_validity("NT"))
-            response = response.replace("<hasDEU>", check_validity("DEU"))
+            for category in ["OT", "NT", "DEU"]:
+                response = response.replace(f"<has{category}>", check_validity(category))
 
             embed = utils.create_embed(lang["commands"]["versioninfo"], response)
 
@@ -395,28 +386,16 @@ async def run_command(ctx, command, remainder):
             }
     elif command in ["votd", "verseoftheday"]:
         verse = bibleutils.get_votd()
-        version = versions.get_version(user)
+        version = utils.get_version(user, guild)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
-
-        if version is None:
-            version = versions.get_guild_version(guild)
-
-            if version is None:
-                version = "RSV"
 
         return utils.get_bible_verse(verse, version, headings, verse_numbers)
     elif command == "random":
         verse = bibleutils.get_random_verse()
-        version = versions.get_version(user)
+        version = utils.get_version(user, guild)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
-
-        if version is None:
-            version = versions.get_guild_version(guild)
-
-            if version is None:
-                version = "RSV"
 
         return utils.get_bible_verse(verse, version, headings, verse_numbers)
     elif command == "setheadings":
@@ -577,15 +556,9 @@ async def run_command(ctx, command, remainder):
             "message": embed
         }
     elif command == "jepekula":
-        version = versions.get_version(user)
+        version = utils.get_version(user, guild)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
-
-        if version is None:
-            version = versions.get_guild_version(guild)
-
-            if version is None:
-                version = "RSV"
 
         return utils.get_bible_verse("Mark 9:23-24", version, headings, verse_numbers)
     elif command in special.cm_commands:

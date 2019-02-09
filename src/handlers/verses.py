@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -29,7 +29,6 @@ from handlers.logic.verses import utils
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{__dir_path}/..")
 
-from handlers.logic.commands import settings  # noqa: E402
 from bible_modules import biblesorg, bibleserver, biblehub, biblegateway, rev  # noqa: E402
 from data.BGBookNames.books import item_to_book  # noqa: E402
 import central  # noqa: E402
@@ -41,8 +40,8 @@ books = json.loads(books.read())
 class VerseHandler:
     @classmethod
     def process_raw_message(cls, raw_message, sender, lang, guild):
-        available_versions = settings.versions.get_versions_by_acronym()
-        brackets = settings.formatting.get_guild_brackets(guild)
+        available_versions = handlers.logic.settings.versions.get_versions_by_acronym()
+        brackets = handlers.logic.settings.formatting.get_guild_brackets(guild)
         msg = raw_message.content
         msg = " ".join(msg.splitlines())
 
@@ -94,16 +93,16 @@ class VerseHandler:
             return_list = []
 
             for reference in references:
-                version = settings.versions.get_version(sender)
+                version = handlers.logic.settings.versions.get_version(sender)
 
                 if version is None:
-                    version = settings.versions.get_guild_version(guild)
+                    version = handlers.logic.settings.versions.get_guild_version(guild)
 
                     if version is None:
                         version = "RSV"
 
-                headings = settings.formatting.get_headings(sender)
-                verse_numbers = settings.formatting.get_verse_numbers(sender)
+                headings = handlers.logic.settings.formatting.get_headings(sender)
+                verse_numbers = handlers.logic.settings.formatting.get_verse_numbers(sender)
 
                 ref_split = reference.split(" | v: ")
 
@@ -112,10 +111,10 @@ class VerseHandler:
                     version = ref_split[1]
 
                 if version == "REV":
-                    version = settings.versions.get_version(sender)
+                    version = handlers.logic.settings.versions.get_version(sender)
 
                     if version is None:
-                        version = settings.versions.get_guild_version(guild)
+                        version = handlers.logic.settings.versions.get_guild_version(guild)
 
                         if version is None:
                             version = "RSV"

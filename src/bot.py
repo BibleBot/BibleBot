@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ import discord
 
 import central
 from data.BGBookNames import start as bg_book_names
-from handlers.logic.commands.settings import languages
+from handlers.logic.settings import languages
 from handlers.commands import CommandHandler
 from handlers.verses import VerseHandler
 from extensions import bot_extensions
