@@ -25,11 +25,12 @@ import sys
 import tinydb
 
 from handlers.logic.verses import utils
+from handlers.logic.settings import versions, formatting
 
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{__dir_path}/..")
 
-from bible_modules import biblesorg, bibleserver, biblehub, biblegateway, rev  # noqa: E402
+from bible_modules import apibible, bibleserver, biblehub, biblegateway, rev  # noqa: E402
 from data.BGBookNames.books import item_to_book  # noqa: E402
 import central  # noqa: E402
 
@@ -40,8 +41,8 @@ books = json.loads(books.read())
 class VerseHandler:
     @classmethod
     def process_raw_message(cls, raw_message, sender, lang, guild):
-        available_versions = handlers.logic.settings.versions.get_versions_by_acronym()
-        brackets = handlers.logic.settings.formatting.get_guild_brackets(guild)
+        available_versions = versions.get_versions_by_acronym()
+        brackets = formatting.get_guild_brackets(guild)
         msg = raw_message.content
         msg = " ".join(msg.splitlines())
 
@@ -93,16 +94,16 @@ class VerseHandler:
             return_list = []
 
             for reference in references:
-                version = handlers.logic.settings.versions.get_version(sender)
+                version = versions.get_version(sender)
 
                 if version is None:
-                    version = handlers.logic.settings.versions.get_guild_version(guild)
+                    version = versions.get_guild_version(guild)
 
                     if version is None:
                         version = "RSV"
 
-                headings = handlers.logic.settings.formatting.get_headings(sender)
-                verse_numbers = handlers.logic.settings.formatting.get_verse_numbers(sender)
+                headings = formatting.get_headings(sender)
+                verse_numbers = formatting.get_verse_numbers(sender)
 
                 ref_split = reference.split(" | v: ")
 
@@ -111,10 +112,10 @@ class VerseHandler:
                     version = ref_split[1]
 
                 if version == "REV":
-                    version = handlers.logic.settings.versions.get_version(sender)
+                    version = versions.get_version(sender)
 
                     if version is None:
-                        version = handlers.logic.settings.versions.get_guild_version(guild)
+                        version = versions.get_guild_version(guild)
 
                         if version is None:
                             version = "RSV"
@@ -186,9 +187,9 @@ class VerseHandler:
 
                     biblehub_versions = ["BSB", "NHEB", "WBT"]
                     bibleserver_versions = ["LUT", "LXX", "SLT"]
-                    biblesorg_versions = ["KJVA"]
+                    apibible_versions = ["KJVA"]
                     other_versions = ["REV"]
-                    non_bible_gateway = other_versions + biblehub_versions + biblesorg_versions + bibleserver_versions
+                    non_bible_gateway = other_versions + biblehub_versions + apibible_versions + bibleserver_versions
 
                     if version not in non_bible_gateway:
                         result = biblegateway.get_result(reference, version, headings, verse_numbers)
@@ -269,13 +270,10 @@ class VerseHandler:
                                 "reference": f"{reference} {version}",
                                 "message": lang["passagetoolong"]
                             })
-                    elif version in biblesorg_versions:
-                        result = biblesorg.get_result(reference, version, headings, verse_numbers)
+                    elif version in apibible_versions:
+                        result = apibible.get_result(reference, version, headings, verse_numbers)
 
                         if result is not None:
-                            if result["text"][0] != " ":
-                                result["text"] = " " + result["text"]
-
                             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
                             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
     
@@ -314,9 +312,6 @@ class VerseHandler:
                         result = biblehub.get_result(reference, version, verse_numbers)
 
                         if result is not None:
-                            if result["text"][0] != " ":
-                                result["text"] = " " + result["text"]
-
                             content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
                             response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 

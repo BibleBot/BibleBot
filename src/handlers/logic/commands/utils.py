@@ -19,7 +19,7 @@
 import discord
 import central
 import ast
-from bible_modules import biblehub, bibleserver, biblesorg, biblegateway, rev
+from bible_modules import biblehub, bibleserver, apibible, biblegateway, rev
 
 
 def divide_list(dividend, divisor):
@@ -79,10 +79,10 @@ def get_version(user, guild):
 def get_bible_verse(reference, version, headings, verse_numbers):
     biblehub_versions = ["BSB", "NHEB", "WBT"]
     bibleserver_versions = ["LUT", "LXX", "SLT"]
-    biblesorg_versions = ["KJVA"]
+    apibible_versions = ["KJVA"]
     other_versions = ["REV"]
 
-    non_bg = other_versions + biblehub_versions + biblesorg_versions + bibleserver_versions
+    non_bg = other_versions + biblehub_versions + apibible_versions + bibleserver_versions
 
     if version not in non_bg:
         result = biblegateway.get_result(reference, version, headings, verse_numbers)
@@ -117,7 +117,7 @@ def get_bible_verse(reference, version, headings, verse_numbers):
                 "message": response_string
             }
     elif version in biblesorg_versions:
-        result = biblesorg.get_result(reference, version, headings, verse_numbers)
+        result = apibible.get_result(reference, version, headings, verse_numbers)
 
         if result is not None:
             if result["text"][0] != " ":

@@ -53,7 +53,6 @@ async def run_command(ctx, command, remainder):
         }
     elif command == "search":
         version = utils.get_version(user, guild)
-
         return paged_commands.search(version, remainder, lang)
     elif command == "versions":
         return paged_commands.get_versions(lang)
@@ -547,8 +546,9 @@ async def run_command(ctx, command, remainder):
             "message": embed
         }
     elif command == "servers":
-        processed = len(ctx["self"].guilds)
+        await bot_extensions.send_server_count(ctx["self"])
 
+        processed = len(ctx["self"].guilds)
         embed = utils.create_embed(lang["commands"]["servers"], lang["servers"].replace("<count>", str(processed)))
 
         return {

@@ -62,12 +62,20 @@ class BibleBot(discord.AutoShardedClient):
 
             central.log_message("info", 1, "global", "global", "connected")
 
+        await bot_extensions.send_server_count(self)
+
     async def on_shard_ready(self, shard_id):
         shard_count = str(config["BibleBot"]["shards"])
         activity = discord.Game(f"+biblebot {central.version} | Shard: {str(shard_id + 1)} / {shard_count}")
         await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
 
         central.log_message("info", shard_id + 1, "global", "global", "connected")
+
+    async def on_guild_join(self):
+        await bot_extensions.send_server_count(self)
+
+    async def on_guild_remove(self):
+        await bot_extensions.send_server_count(self)
 
     async def on_message(self, raw):
         owner_id = config["BibleBot"]["owner"]

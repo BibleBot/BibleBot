@@ -42,7 +42,7 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 versions = {
-    "KJVA": "eng-KJVA",
+    "KJVA": "de4e12af7f28f599-01",
 }
 
 version_names = {
@@ -90,21 +90,23 @@ version_names = {
 def get_result(query, version, headings, verse_numbers):
     query = query.replace("|", " ")
 
-    url = f"https://bibles.org/v2/passages.js?q[]={query}&version={versions[version]}"
+    url = f"https://api.scripture.api.bible/v1/bibles/{versions[version]}/search"
+    headers = {"api-key": config["apis"]["apibible"]}
+    params = {"query": query, "limit": "1"}
 
-    resp = requests.get(url, auth=(config["apis"]["biblesorg"], "X"))
+    resp = requests.get(url, headers=headers, params=params)
 
     if resp is not None:
         data = resp.json()
-        data = data["response"]["search"]["result"]["passages"]
+        data = data["data"]["passages"]
         text = None
 
-        if data[0]["version"] != versions[version]:
+        if data[0]["bibleId"] != versions[version]:
             central.log_message("err", "biblesorg", "global", f"{version} is no longer able to be used.")
             return
 
         if len(data) > 0:
-            text = data[0]["text"]
+            text = data[0]["content"]
 
         if text is None:
             return
@@ -118,25 +120,27 @@ def get_result(query, version, headings, verse_numbers):
             title += f"{heading.get_text()} / "
             heading.decompose()
 
-        for sup in soup.find_all("sup", {"class": "v"}):
+        for span in soup.find_all("span", {"class": "v"}):
             if verse_numbers == "enable":
-                sup.replace_with(f"<{sup.get_text()}> ")
+                span.replace_with(f"<{span.get_text()}> ")
             else:
-                sup.replace_with(" ")
+                span.replace_with(" ")
 
-            sup.decompose()
+            span.decompose()
 
-        for p in soup.find_all("p", {"class": "q"}):
+        for p in soup.find_all("p", {"class": "p"}):
             text += p.get_text()
 
         if headings == "disable":
             title = ""
 
+        text = f" {bibleutils.purify_text(text).rstrip()}"
+
         verse_object = {
             "passage": query,
             "version": version_names[version],
             "title": title[0:-3],
-            "text": bibleutils.purify_text(text)
+            "text": text
         }
 
         return verse_object

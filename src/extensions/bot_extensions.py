@@ -18,11 +18,12 @@
 
 import central
 import asyncio
+import aiohttp
 import datetime
 
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc
-from bible_modules import biblegateway, biblehub, bibleserver, biblesorg, bibleutils, rev
+from bible_modules import biblegateway, biblehub, bibleserver, apibible, bibleutils, rev
 
 
 async def run_timed_votds(self):
@@ -111,7 +112,7 @@ async def run_timed_votds(self):
                         else:
                             await channel.send(lang["votdcantprocess"])
                     elif version in biblesorg_versions:
-                        result = biblesorg.get_result(reference, version, "enable", "enable")
+                        result = apibible.get_result(reference, version, "enable", "enable")
 
                         if result is not None:
                             if result["text"][0] != " ":
@@ -194,6 +195,20 @@ async def run_timed_votds(self):
 
         # central.log_message("info", 0, "votd_sched", "global", "Sending VOTDs...")
         await asyncio.sleep(60)
+
+
+async def send_server_count(bot):
+    dbl_token = central.config["apis"]["discordbots"]
+
+    if dbl_token:
+        headers = {"Authorization": dbl_token}
+        data = {"server_count": len(bot.guilds)}
+        url = f"https://discordbots.org/api/bots/{bot.user.id}/stats"
+
+        async with aiohttp.ClientSession() as session:
+            await session.post(url, data=data, headers=headers)
+
+        central.log_message("info", "global", "global", "Server count sent to Discordbots.org.")
 
 
 async def send_announcement(ctx, res):

@@ -48,6 +48,7 @@ def purify_text(text):
     result = result.replace("? '", "?'")
     result = result.replace(":", ": ")
     result = result.replace(";", "; ")
+    result = result.replace("¶ ", "")
     result = result.replace("â", "\"")  # biblehub beginning smart quote
     result = result.replace(" â", "\"")  # biblehub ending smart quote
     result = result.replace("â", "-")  # biblehub dash unicode
