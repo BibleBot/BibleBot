@@ -5,9 +5,9 @@
 [![Discord Bots](https://discordbots.org/api/widget/lib/361033318273384449.png)](https://discordbots.org/bot/361033318273384449)
 
 
-The premier Discord bot for Bible verses.
+The premier Discord bot for Bible verses and Christian resources.
 
-To use it, just say a Bible verse.
+To use it, just say a Bible verse or use the `+biblebot` help command.
 
 ## Self-Host Installation
 
@@ -15,25 +15,21 @@ To use it, just say a Bible verse.
 ```bash
 git clone https://github.com/BibleBot/BibleBot.git
 cd BibleBot
-git submodule update --init
-git submodule foreach git pull origin master
 python3 -m venv venv
 source venv/bin/activate
 cp src/config.example.ini src/config.ini
 $EDITOR src/config.ini
 pip install -U "https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord.py[voice]"
-pip install -U bs4 colorama lxml requests tinydb
+pip install -U bs4 colorama lxml requests tinydb name_scraper zlib
 python src/bot.py
 ```
 
-### Windows (requires the GitHub client)
+### Windows (requires Git Bash)
 
 #### Step 1. Git Bash
 ```
 git clone https://github.com/BibleBot/BibleBot.git
 cd BibleBot
-git submodule update --init
-git submodule foreach git pull origin master
 ```
 
 #### Step 2. Command Prompt
@@ -43,7 +39,7 @@ python -m venv venv
 copy src\config.example.ini src\config.ini
 notepad src\config.ini
 pip install -U "https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord.py[voice]"
-pip install -U bs4 colorama lxml requests tinydb
+pip install -U bs4 colorama lxml requests tinydb name_scraper zlib
 python src/bot.py
 ```
 

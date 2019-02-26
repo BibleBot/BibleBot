@@ -19,7 +19,8 @@
 import os
 import sys
 
-from handlers.logic.commands import bridge
+from handlers.logic.commands import bridge as command_bridge
+from handlers.logic.extrabiblical import bridge as catechisms_bridge
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(dir_path + "/..")
@@ -32,7 +33,7 @@ def is_command(command, lang):
     untranslated_commands = ["biblebot", "setlanguage", "userid",
                              "ban", "unban", "reason",
                              "optout", "unoptout", "eval",
-                             "jepekula", "joseph", "tiger"]
+                             "jepekula", "joseph", "tiger", "lsc"]
 
     result = {
         "ok": False
@@ -54,10 +55,14 @@ def is_owner_command(command, lang):
                       "userid", "ban", "unban", "reason",
                       "optout", "unoptout", "eval"]
 
-    if command in owner_commands:
-        return True
-    else:
-        return False
+    return command in owner_commands
+
+
+def is_catechism_command(command, lang):
+    commands = lang["commands"]
+    catechism_commands = ["lsc"]
+
+    return command in catechism_commands
 
 
 class CommandHandler:
@@ -69,7 +74,10 @@ class CommandHandler:
             orig_cmd = proper_command["orig"]
 
             if not is_owner_command(orig_cmd, ctx["language"]):
-                return await bridge.run_command(ctx, orig_cmd, remainder)
+                if not is_catechism_command(orig_cmd, ctx["language"]):
+                    return await command_bridge.run_command(ctx, orig_cmd, remainder)
+                else:
+                    return await catechisms_bridge.run_command(ctx, orig_cmd, remainder)
             else:
                 if str(ctx["author"].id) == central.config["BibleBot"]["owner"]:
-                    return await bridge.run_owner_command(ctx, command, remainder)
+                    return await command_bridge.run_owner_command(ctx, command, remainder)

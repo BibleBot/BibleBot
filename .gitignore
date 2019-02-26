@@ -104,12 +104,13 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# ignore dbs
+# ignore all dbs but version
 databases/db
-databases/bandb
 databases/guilddb
 databases/optoutdb
 
 # ignore config file
-src/config.ini
 config.ini
+
+# ignore plaintext resources
+*.raw.json

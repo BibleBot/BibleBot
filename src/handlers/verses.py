@@ -26,16 +26,17 @@ import tinydb
 
 from handlers.logic.verses import utils
 from handlers.logic.settings import versions, formatting
+from name_scraper import client
+from name_scraper.books import item_to_book
 
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{__dir_path}/..")
 
 from bible_modules import apibible, bibleserver, biblehub, biblegateway, rev  # noqa: E402
-from data.BGBookNames.books import item_to_book  # noqa: E402
+
 import central  # noqa: E402
 
-books = open(f"{__dir_path}/../data/BGBookNames/books.json")
-books = json.loads(books.read())
+books = client.get_books()
 
 
 class VerseHandler:

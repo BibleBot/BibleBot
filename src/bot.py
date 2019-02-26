@@ -24,7 +24,7 @@ import time
 import discord
 
 import central
-from data.BGBookNames import start as bg_book_names
+from name_scraper import client as name_scraper
 from handlers.logic.settings import languages
 from handlers.commands import CommandHandler
 from handlers.verses import VerseHandler
@@ -48,14 +48,6 @@ class BibleBot(discord.AutoShardedClient):
         self.total_pages = None
 
     async def on_ready(self):
-        mod_time = os.path.getmtime(f"{dir_path}/data/BGBookNames/books.json")
-
-        now = time.time()
-        one_week_ago = now - 60 * 60 * 24 * 7  # seven days to seconds
-
-        if mod_time < one_week_ago:
-            bg_book_names.get_books()
-
         if int(config["BibleBot"]["shards"]) < 2:
             activity = discord.Game(f"+biblebot {central.version} | Shard: 1 / 1")
             await self.change_presence(status=discord.Status.online, activity=activity)
@@ -109,7 +101,7 @@ class BibleBot(discord.AutoShardedClient):
                 source = "unknown (direct messages?)"
 
             if "Discord Bot" in ctx["channel"].guild.name:
-                if ctx["author"].id != config["BibleBot"]["owner"]:
+                if str(ctx["author"].id) != owner_id:
                     return
         else:
             source = "unknown (direct messages?)"
@@ -213,7 +205,7 @@ class BibleBot(discord.AutoShardedClient):
                         except (asyncio.TimeoutError, IndexError):
                             try:
                                 await msg.clear_reactions()
-                            except (discord.Forbidden, discord.errors.NotFound):
+                            except (discord.errors.Forbidden, discord.errors.NotFound):
                                 pass
                     else:
                         if "reference" not in res and "text" not in res:
@@ -228,7 +220,7 @@ class BibleBot(discord.AutoShardedClient):
                     for original_command_name in lang["commands"].keys():
                         untranslated = ["setlanguage", "userid", "ban", "unban", "reason",
                                         "optout", "unoptout", "eval", "jepekula", "joseph",
-                                        "tiger"]
+                                        "tiger", "lsc"]
 
                         if lang["commands"][original_command_name] == command:
                             original_command = original_command_name
@@ -282,6 +274,8 @@ if int(config["BibleBot"]["shards"]) > 1:
     bot = BibleBot(shard_count=int(config["BibleBot"]["shards"]))
 else:
     bot = BibleBot()
+
+#name_scraper.update_books(config["apis"]["apibible"])
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])

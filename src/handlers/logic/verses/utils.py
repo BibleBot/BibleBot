@@ -22,22 +22,15 @@ import os
 import re
 import sys
 
+from name_scraper.books import item_to_book
+from name_scraper import client
+
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{__dir_path}/../..")
 
-import data.BGBookNames.start as bgbooknames  # noqa: E402
-from data.BGBookNames.books import item_to_book  # noqa: E402
 import central  # noqa: E402
 
-books = None
-
-try:
-    books = open(f"{__dir_path}/../../../data/BGBookNames/books.json")
-    books = json.loads(books.read())
-except FileNotFoundError:
-    bgbooknames.get_books()
-    books = open(f"{__dir_path}/../../../data/BGBookNames/books.json")
-    books = json.loads(books.read())
+books = client.get_books()
 
 dashes = ["-", "—", "–"]
 
@@ -108,54 +101,58 @@ def get_books(msg):
 
     for key, value in books.items():
         for item in value:
-            if item.title() in msg:
-                numbered_johns = books["1john"] + books["2john"] + books["3john"]
-                numbered_esdras = books["1esd"] + books["2esd"]
-                psalm_151 = books["ps151"]
+            valx = [item.title(), item.upper(), item.lower(), item]
 
-                # tl;dr - if we find a "john", but "1/2/3 John" exists, add any non-numbered "john"
-                # etc for esdras and psalms
-                if key == "john" and any([True for x in numbered_johns if f" {x} " in f" {msg} "]):
-                    last_item = item.split(" ")[-1]
-                    msg_split = msg.split(" ")
+            for val in valx:
+                if val in msg:
+                    numbered_johns = books["1john"] + books["2john"] + books["3john"]
+                    numbered_esdras = books["1esd"] + books["2esd"]
+                    psalm_151 = books["ps151"]
 
-                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
+                    # tl;dr - if we find a "john", but "1/2/3 John" exists, add any non-numbered "john"
+                    # etc for esdras and psalms
+                    if key == "john" and any([True for x in numbered_johns if f" {x} " in f" {msg} "]):
+                        last_item = item.split(" ")[-1]
+                        msg_split = msg.split(" ")
 
-                    for index in indices:
-                        if f"{msg_split[index - 1]} {msg_split[index]}" not in numbered_johns:
-                            results.append(("john", index))
-                            existing_indices.append(index)
-                elif key == "ezra" and any([True for x in numbered_esdras if f" {x} " in f" {msg} "]):
-                    last_item = item.split(" ")[-1]
-                    msg_split = msg.split(" ")
+                        indices = [i for i, x in enumerate(msg_split) if x == last_item]
 
-                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
+                        for index in indices:
+                            if f"{msg_split[index - 1]} {msg_split[index]}" not in numbered_johns:
+                                results.append(("john", index))
+                                existing_indices.append(index)
+                    elif key == "ezra" and any([True for x in numbered_esdras if f" {x} " in f" {msg} "]):
+                        last_item = item.split(" ")[-1]
+                        msg_split = msg.split(" ")
 
-                    for index in indices:
-                        if f"{msg_split[index - 1]} {msg_split[index]}" not in numbered_esdras:
-                            results.append(("ezra", index))
-                            existing_indices.append(index)
-                elif key == "ps" and any([True for x in psalm_151 if f" {x} " in f" {msg} "]):
-                    last_item = item.split(" ")[-1]
-                    msg_split = msg.split(" ")
+                        indices = [i for i, x in enumerate(msg_split) if x == last_item]
 
-                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
+                        for index in indices:
+                            if f"{msg_split[index - 1]} {msg_split[index]}" not in numbered_esdras:
+                                results.append(("ezra", index))
+                                existing_indices.append(index)
+                    elif key == "ps" and any([True for x in psalm_151 if f" {x} " in f" {msg} "]):
+                        last_item = item.split(" ")[-1]
+                        msg_split = msg.split(" ")
 
-                    for index in indices:
-                        if f"{msg_split[index]} {msg_split[index + 1]}" not in psalm_151:
-                            results.append(("ps", index))
-                            existing_indices.append(index)
-                else:
-                    last_item = item.split(" ")[-1]
-                    msg_split = msg.split(" ")
+                        indices = [i for i, x in enumerate(msg_split) if x == last_item]
 
-                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
+                        for index in indices:
+                            if f"{msg_split[index]} {msg_split[index + 1]}" not in psalm_151:
+                                results.append(("ps", index))
+                                existing_indices.append(index)
+                    else:
+                        last_item = item.split(" ")[-1]
+                        msg_split = msg.split(" ")
 
-                    for index in indices:
-                        if index not in existing_indices:
-                            results.append((key, index))
-                            existing_indices.append(index)
-                            break
+                        indices = [i for i, x in enumerate(msg_split) if x == last_item]
+
+                        for index in indices:
+                            if index not in existing_indices:
+                                results.append((key, index))
+                                existing_indices.append(index)
+                                break
+
     return results
 
 

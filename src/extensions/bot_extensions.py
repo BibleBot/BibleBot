@@ -208,7 +208,7 @@ async def send_server_count(bot):
         async with aiohttp.ClientSession() as session:
             await session.post(url, data=data, headers=headers)
 
-        central.log_message("info", "global", "global", "Server count sent to Discordbots.org.")
+        central.log_message("info", 0, "global", "global", "Server count sent to Discordbots.org.")
 
 
 async def send_announcement(ctx, res):
@@ -286,7 +286,7 @@ async def send_announcement(ctx, res):
                         sent = True
             else:
                 await ctx["channel"].send(
-                    f"`{str(count)} / {str(total)} - {guild.name} - {msg.id}` " +
+                    f"`{str(count)} / {str(total)} - {guild.name}` " +
                     ":regional_indicator_x:")
 
                 count += 1

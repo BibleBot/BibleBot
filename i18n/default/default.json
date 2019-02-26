@@ -31,6 +31,18 @@
     "creeds": "Creeds",
     "creeds_text": "These are the creeds available in BibleBot:\n\n",
 
+    "catechisms": "Catechisms",
+    "catechisms_text": "These are the catechisms available in BibleBot:\n\n",
+
+    "protestant": "Protestant",
+    "lutheran": "Lutheran",
+    "reformed": "Reformed",
+    "baptist": "Baptist",
+
+    "catholic": "Catholic",
+    "eastern_orthodox": "Eastern Orthodox",
+    "oriental_orthodox": "Oriental Orthodox",
+
     "error": "Error",
 
     "versions": "I support",
@@ -118,6 +130,12 @@
     "zeroOrOne": "0 or 1",
     "enabled": "enabled",
     "disabled": "disabled",
+
+    "author": "by <author>\n\n",
+    "pages": "<num> pages",
+    "category": "**Category**:\n",
+    "section": "**Section**:\n",
+    "sections": "**Sections**:\n",
 
     "commands": {
         "search": "search",

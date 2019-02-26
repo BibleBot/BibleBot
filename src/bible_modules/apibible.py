@@ -102,7 +102,7 @@ def get_result(query, version, headings, verse_numbers):
         text = None
 
         if data[0]["bibleId"] != versions[version]:
-            central.log_message("err", "biblesorg", "global", f"{version} is no longer able to be used.")
+            central.log_message("err", 0, "apibible", "global", f"{version} is no longer able to be used.")
             return
 
         if len(data) > 0:
