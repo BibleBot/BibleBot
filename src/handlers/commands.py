@@ -33,7 +33,7 @@ def is_command(command, lang):
     untranslated_commands = ["biblebot", "setlanguage", "userid",
                              "ban", "unban", "reason",
                              "optout", "unoptout", "eval",
-                             "jepekula", "joseph", "tiger", "lsc"]
+                             "jepekula", "joseph", "tiger", "lsc", "heidelberg"]
 
     result = {
         "ok": False
@@ -60,7 +60,7 @@ def is_owner_command(command, lang):
 
 def is_catechism_command(command, lang):
     commands = lang["commands"]
-    catechism_commands = ["lsc"]
+    catechism_commands = ["lsc", "heidelberg"]
 
     return command in catechism_commands
 

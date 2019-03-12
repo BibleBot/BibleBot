@@ -30,7 +30,7 @@ sys.path.append(f"{dir_path}/../..")
 
 import central  # noqa: E402
 
-catechisms = ["lsc"]
+catechisms = ["lsc", "heidelberg"]
 
 
 async def run_command(ctx, command, remainder):

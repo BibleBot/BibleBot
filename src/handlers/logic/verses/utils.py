@@ -283,3 +283,73 @@ def create_reference_string(verse):
         reference = reference + " | v: " + verse["version"]
 
     return reference
+
+
+def check_section_support(version, verse, reference, section, lang):
+    for index in item_to_book[section]:
+        has_section = (index == verse["book"])
+
+        if not version[f"has{section.upper()}"] and has_section:
+            response = lang[f"{section}notsupported"]
+            response = response.replace("<version>", version["name"])
+
+            response2 = lang[f"{section}notsupported2"]
+            response2 = response2.replace("<setversion>", lang["commands"]["setversion"])
+
+            reference = reference.replace("|", " ")
+
+            return {
+                "level": "err",
+                "twoMessages": True,
+                "reference": f"{reference} " + version["abbv"],
+                "firstMessage": response,
+                "secondMessage": response2
+            }
+
+    return {
+        "ok": True
+    }
+
+
+def process_result(result, reference, version, lang):
+    return_list = []
+
+    if result is not None:
+        if result["text"][0] != " ":
+            result["text"] = " " + result["text"]
+
+        content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+        response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+
+        reference = reference.replace("|", " ")
+
+        if len(response_string) < 2000:
+            return_list.append({
+                "level": "info",
+                "reference": reference + " " + version,
+                "message": response_string
+            })
+        elif 2000 < len(response_string) < 3500:
+            split_text = central.halve_string(result["text"])
+
+            content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+            response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
+                               "\n\n" + content1
+
+            content2 = "```Dust\n" + split_text["second"] + "```"
+
+            return_list.append({
+                "level": "info",
+                "twoMessages": True,
+                "reference": f"{reference} {version}",
+                "firstMessage": response_string1,
+                "secondMessage": content2
+            })
+        else:
+            return_list.append({
+                "level": "err",
+                "reference": f"{reference} {version}",
+                "message": lang["passagetoolong"]
+            })
+
+        return return_list

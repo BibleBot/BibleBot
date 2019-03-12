@@ -26,11 +26,9 @@ python src/bot.py
 
 ### Windows (requires Git Bash)
 
-#### Step 1. Git Bash
-```
-git clone https://github.com/BibleBot/BibleBot.git
-cd BibleBot
-```
+#### Step 1. Git
+1. Clone or download the repository.
+2. Open a command prompt in that folder.
 
 #### Step 2. Command Prompt
 ```

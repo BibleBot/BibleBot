@@ -34,7 +34,8 @@ def open_data_file(path):
 
 
 resources = {
-    "lsc": open_data_file(f"catechisms/luthers_small_catechism.bin")
+    "lsc": open_data_file(f"catechisms/luthers_small_catechism.bin"),
+    "heidelberg": open_data_file(f"catechisms/heidelberg_catechism.bin")
 }
 
 

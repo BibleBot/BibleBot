@@ -119,8 +119,8 @@ class BibleBot(discord.AutoShardedClient):
             # so we do this to avoid having to deal with missing values
             language = "default"
 
-            if str(ctx["author"].id) != owner_id:
-                return
+            #if str(ctx["author"].id) != owner_id:
+            #    return
 
         embed_or_reaction_not_allowed = False
 
@@ -220,7 +220,7 @@ class BibleBot(discord.AutoShardedClient):
                     for original_command_name in lang["commands"].keys():
                         untranslated = ["setlanguage", "userid", "ban", "unban", "reason",
                                         "optout", "unoptout", "eval", "jepekula", "joseph",
-                                        "tiger", "lsc"]
+                                        "tiger", "lsc", "heidelberg"]
 
                         if lang["commands"][original_command_name] == command:
                             original_command = original_command_name
@@ -275,7 +275,7 @@ if int(config["BibleBot"]["shards"]) > 1:
 else:
     bot = BibleBot()
 
-#name_scraper.update_books(config["apis"]["apibible"])
+name_scraper.update_books(config["apis"]["apibible"])
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])
