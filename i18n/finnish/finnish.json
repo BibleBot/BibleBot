@@ -39,7 +39,7 @@
     "headings": "Sinulla on otsikot <enabled/disabled>. Käytä `+<setheadings>` muuttaaksesi sitä.",
     "headingssuccess": "Otsikot asetettu onnistuneesti.",
     "headingsfail": "Käytä `+<setheadings> <enable>` tai `+ <setheadings> <disable>`.",
-    "setlanguagesuccess": "Kieli valittu onnistuneesti.",
+    "setlanguagesuccess": "Kieli asetettu onnistuneesti.",
     "setlanguagefail": "Kielen asettaminen epäonnistui, katso `+<languages>`.",
     "languageused": "Käytät kieltä suomi. Käytä `+<setlanguage>` asettaaksesi eri kielen.",
     "languages": "Tuen",
