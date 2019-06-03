@@ -28,7 +28,7 @@ from name_scraper import client as name_scraper
 from handlers.logic.settings import languages
 from handlers.commands import CommandHandler
 from handlers.verses import VerseHandler
-from extensions import bot_extensions
+from extensions import bot_extensions, compile_extrabiblical
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -61,7 +61,7 @@ class BibleBot(discord.AutoShardedClient):
         activity = discord.Game(f"+biblebot {central.version} | Shard: {str(shard_id + 1)} / {shard_count}")
         await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
 
-        central.log_message("info", shard_id + 1, "global", "global", "connected")
+        central.log_message("info", shard_id + 1, "global", "global", "shard connected")
 
     async def on_guild_join(self):
         await bot_extensions.send_server_count(self)
@@ -119,8 +119,8 @@ class BibleBot(discord.AutoShardedClient):
             # so we do this to avoid having to deal with missing values
             language = "default"
 
-            #if str(ctx["author"].id) != owner_id:
-            #    return
+            if str(ctx["author"].id) != owner_id:
+                return
 
         embed_or_reaction_not_allowed = False
 
@@ -275,7 +275,10 @@ if int(config["BibleBot"]["shards"]) > 1:
 else:
     bot = BibleBot()
 
-name_scraper.update_books(config["apis"]["apibible"])
+#name_scraper.update_books(config["apis"]["apibible"])
+
+if config["BibleBot"]["devMode"] == "True":
+    compile_extrabiblical.compile_resources()
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])

@@ -23,6 +23,8 @@ import sys
 import json
 import zlib
 
+from extensions import compile_extrabiblical
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{dir_path}/../..")
 
@@ -30,7 +32,12 @@ data_path = f"{dir_path}/../../../data"
 
 
 def open_data_file(path):
-    return json.loads(zlib.decompress(open(f"{data_path}/extrabiblical/{path}", "rb").read()))
+    try:
+        return json.loads(zlib.decompress(open(f"{data_path}/extrabiblical/{path}", "rb").read()))
+    except json.JSONDecodeError:
+        compile_extrabiblical.compile_resources()
+        return json.loads(zlib.decompress(open(f"{data_path}/extrabiblical/{path}", "rb").read()))
+
 
 
 resources = {
@@ -51,7 +58,7 @@ def create_embed(title, description, image=None, _copyright=None, custom_title=F
         embed.set_thumbnail(url=f"https://i.imgur.com/{image}.png")
 
     if _copyright:
-        embed.set_footer(text=f"{_copyright} // BibleBot {central.version}", icon_url=central.icon)
+        embed.set_footer(text=f"{_copyright[1:]} // BibleBot {central.version}", icon_url=central.icon)
     else:
         embed.set_footer(text=f"Public Domain // BibleBot {central.version}", icon_url=central.icon)
 
@@ -92,13 +99,13 @@ def create_embeds(lang, resource, section=None, page=None):
             image = None
 
         if not section:
-            title_page = create_title_page(lang, title, author, _copyright[1:], category, sections=sections,
+            title_page = create_title_page(lang, title, author, _copyright, category, sections=sections,
                                            image=image)
             pages = [title_page]
 
             for item in sections:
                 for i in range(0, len(item["pages"])):
-                    pages.append(create_section_page(lang, title, item, i, _copyright[1:]))
+                    pages.append(create_section_page(lang, title, item, i, _copyright))
 
             return {
                 "level": "info",
@@ -116,14 +123,14 @@ def create_embeds(lang, resource, section=None, page=None):
                 else:
                     section_obj = None
 
-            title_page = create_title_page(lang, title, author, _copyright[1:], category, section=section_obj,
+            title_page = create_title_page(lang, title, author, _copyright, category, section=section_obj,
                                            image=image)
 
             if section_obj:
                 pages = [title_page]
 
                 for i in range(0, len(section_obj["pages"])):
-                    pages.append(create_section_page(lang, title, section_obj, i, _copyright[1:]))
+                    pages.append(create_section_page(lang, title, section_obj, i, _copyright))
 
                 return {
                     "level": "info",
@@ -131,13 +138,13 @@ def create_embeds(lang, resource, section=None, page=None):
                     "pages": pages
                 }
             else:
-                title_page = create_title_page(lang, title, author, _copyright[1:], category, sections=sections,
+                title_page = create_title_page(lang, title, author, _copyright, category, sections=sections,
                                                image=image)
                 pages = [title_page]
 
                 for item in sections:
                     for i in range(0, len(item["pages"])):
-                        pages.append(create_section_page(lang, title, item, i, _copyright[1:]))
+                        pages.append(create_section_page(lang, title, item, i, _copyright))
 
                 return {
                     "level": "info",
@@ -155,21 +162,19 @@ def create_embeds(lang, resource, section=None, page=None):
                 else:
                     section_obj = None
 
-            page -= 1
-
             if section_obj:
                 return {
                     "level": "info",
-                    "message": create_section_page(lang, title, section_obj, page, _copyright[1:])
+                    "message": create_section_page(lang, title, section_obj, page - 1, _copyright)
                 }
             else:
-                title_page = create_title_page(lang, title, author, _copyright[1:], category, sections=sections,
+                title_page = create_title_page(lang, title, author, _copyright, category, sections=sections,
                                                image=image)
                 pages = [title_page]
 
                 for item in sections:
                     for i in range(0, len(item["pages"])):
-                        pages.append(create_section_page(lang, title, item, i, _copyright[1:]))
+                        pages.append(create_section_page(lang, title, item, i, _copyright))
 
                 return {
                     "level": "info",
@@ -193,8 +198,10 @@ def create_title_page(lang, title, author, _copyright, category, sections=None, 
             i_title = section["title"]
             slugs = section["slugs"]
 
-            # TODO: Take into account sections with one page
-            page_count = lang["pages"].replace("<num>", str(len(section["pages"])))
+            if len(section["pages"]) > 1:
+                page_count = lang["pages"].replace("<num>", str(len(section["pages"])))
+            else:
+                page_count = lang["singlePage"]  # "1 page"
 
             description += f"{slugs[0]}. {i_title} - {page_count} `{slugs}`\n"
     else:
@@ -203,11 +210,15 @@ def create_title_page(lang, title, author, _copyright, category, sections=None, 
         for item in sections:
             i_title = item["title"]
             slugs = item["slugs"]
-            page_count = lang["pages"].replace("<num>", str(len(item["pages"])))
+
+            if len(item["pages"]) > 1:
+                page_count = lang["pages"].replace("<num>", str(len(item["pages"])))
+            else:
+                page_count = lang["singlePage"]  # "1 page"
 
             description += f"{slugs[0]}. {i_title} ({page_count}) `{slugs}`\n"
 
-    return create_embed(title, description, image=image, _copyright=_copyright[1:], custom_title=True)
+    return create_embed(title, description, image=image, _copyright=_copyright, custom_title=True)
 
 
 def create_section_page(lang, title, section, page_num, _copyright):

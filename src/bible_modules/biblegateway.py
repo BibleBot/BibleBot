@@ -80,6 +80,7 @@ def get_result(query, version, headings, verse_numbers):
 
     if resp is not None:
         soup = BeautifulSoup(resp.text, "lxml")
+        soup.prettify(formatter=lambda s: s.replace(u'\xa0', ' '))
 
         for div in soup.find_all("div", {"class": "result-text-style-normal"}):
             text = ""
@@ -103,14 +104,14 @@ def get_result(query, version, headings, verse_numbers):
 
             if verse_numbers == "disable":
                 for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
-                    num.string = " "
+                    num.replace_with(" ")
             else:
                 # turn all chapter numbers into "1" otherwise the verse numbers look strange
                 for num in div.find_all(True, {"class": "chapternum"}):
-                    num.string = "<1> "
+                    num.replace_with("<1> ")
 
                 for num in div.find_all(True, {"class": "versenum"}):
-                    num.string = f"<{num.string[0:-1]}> "
+                    num.replace_with(f"<{num.text[0:-1]}> ")
 
             for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):
                 meta.decompose()

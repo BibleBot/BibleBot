@@ -18,35 +18,33 @@
 
 import zlib
 import os
+import central
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 extrabiblical_path = f"{dir_path}/../data/extrabiblical/"
 
+paths = [
+    "catechisms/luthers_small_catechism.raw.json",
+    "catechisms/heidelberg_catechism.raw.json"
+]
 
-def main():
-    done = False
 
-    while not done:
-        file_location = input("Your current directory is src/data/extrabiblical/, what is the file you're compiling? ")
-
-        if not file_location.endswith(".raw.json"):
-            print("Your file must end with .raw.json.")
-            exit(1)
-
+def compile_resources():
+    for file_location in paths:
         temp_file = open(f"{extrabiblical_path}{file_location}").read()
-        output = f"{extrabiblical_path}" + file_location.replace(f".raw.json", ".bin")
+        output = f"{extrabiblical_path}" + file_location.replace(".raw.json", ".bin")
 
         with open(f"{output}", "wb") as fl:
             temp_out = zlib.compress(bytearray(temp_file, 'utf-8'))
             fl.write(temp_out)
 
-        print("If there are no errors, consider it done.")
+            name = file_location.replace(".raw.json", "")
 
-        done_input = input("More? [y/n] ")
+            if "/" in name:
+                name = name.split("/")[-1]
 
-        if done_input.lower() == "y":
-            done = True
+            central.log_message("info", 0, "compile_extrabiblical", "global", f"compiled '{name}'")
 
 
 if __name__ == '__main__':
-    main()
+    compile_resources()
