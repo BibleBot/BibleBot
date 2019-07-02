@@ -16,8 +16,8 @@
     "apostlestext1": "Tôi tin vào Thiên Chúa, Đức Cha toàn năng, người tạo ra trời và đất. Tôi tin vào Chúa Jesus Christ, Con trai duy nhất của Đức Chúa Trời, đức Chúa của chúng ta, người được Chúa Thánh Thần sinh ra, được sinh ra bởi Đức Trinh Nữ Maria, đã phải chịu đau khổ dưới thời Pontius Pilate, đã bị đóng đinh, đã chết và đã bị chôn vùi; ngài đã tự chọn lấy cái chết. Vào ngày thứ ba Ngài đã sống lại; Ngài đã lên thiên đàng, Ngài ngồi bên phải Đức Chúa Trời, và Ngài sẽ trở lại để phán xét những kẻ sống và kẻ chết. Tôi tin vào Đức Chúa Thánh Thần, Giáo hội công giáo thánh thiện, sự hiệp thông của các thánh, sự tha thứ tội lỗi, sự sống lại của thân xác và sự sống bất diệt. Amen.",
     "nicenecreed": "Kinh Tin kính Nicene-Constantinopolitan",
     "nicenetext1": "Tôi tin vào một Thiên Chúa, Đức Cha toàn năng, Người tạo ra Trời và đất, và tạo ra tất cả mọi thứ hữu hình và vô hình.",
-    "nicenetext2": "And in one Lord Jesus Christ, the Son of God, the Only-begotten, begotten of the Father before all ages; Light of Light: true God of true God; begotten, not made; of one essence with the Father, by Whom all things were made; Who for us men, and for our salvation, came down from the heavens, and was incarnate of the Holy Spirit and the Virgin Mary, and became man; And was crucified for us under Pontius Pilate, and suffered, and was buried; And arose again on the third day according to the Scriptures; And ascended into the heavens, and sitteth at the right hand of the Father; And shall come again, with glory, to judge both the living and the dead; Whose kingdom shall have no end.",
-    "nicenetext3": "And in the Holy Spirit, the Lord, the Giver of Life; Who proceedeth from the Father*; Who with the Father and the Son together is worshipped and glorified; Who spake by the prophets.",
+    "nicenetext2": "Và ở Chúa Jesus Christ, Con của Đức Chúa Trời, Người duy nhất, được sinh ra của Đức Chúa Cha trước mọi thời đại; Ánh sáng của ánh sáng: Thiên Chúa đích thực của Thiên Chúa thực sự; được sinh ra, không phải được dựng lên; một sự hiện hữu cùng với Đức Chúa Cha, nhờ Ngài mà tất cả mọi thứ đã được tạo nên; Ai vì loài người chúng ta, và vì sự cứu rỗi của chúng ta, đã từ thiên đường xuống, và được nhập thể bởi Đức Chúa Thánh Thần và Đức Trinh Nữ Mary, và trở thành con người; Và đã bị đóng đinh vì chúng ta dưới thời Pontius Pilate, và đã chịu đựng, và đã bị chôn vùi; Và đã tái sinh lại vào ngày thứ ba theo Kinh thánh; Và đã lên thiên đường, và ngồi bên phải của Đức Chúa Cha; Và sẽ trở lại, với vinh quang, để phán xét cả người sống và người chết; hạ giới của Ngài sẽ không có sự tận diệt.",
+    "nicenetext3": "Và ở Đức Chúa Thánh Thần, Đức Chúa, Đấng ban Sự sống; Ngài tiến hành từ Đức Chúa Cha*; Ngài cùng với Đức Chúa Cha và Đức Chúa Con cùng được tôn thờ và tôn vinh; Ngài đã được tiên đoán bởi các nhà tiên tri.",
     "nicenetext4": "In One, Holy, Catholic, and Apostolic Church. I confess one baptism for the remission of sins. I look for the resurrection of the dead, And the life of the age to come. Amen.\n\n* - some churches may include 'and the Son.'",
     "chalcedoniancreed": "The Chalcedonian Creed",
     "chalcedoniantext1": "We, then, following the holy Fathers, all with one consent, teach men to confess one and the same Son, our Lord Jesus Christ, the same perfect in Godhead and also perfect in manhood; truly God and truly man, of a reasonable soul and body; consubstantial with the Father according to the Godhead, and consubstantial with us according to the Manhood; in all things like unto us, without sin; begotten before all ages of the Father according to the Godhead, and in these latter days, for us and for our salvation, born of the Virgin Mary, the Mother of God, according to the Manhood;",
@@ -128,19 +128,19 @@
         "apostles": "apostles",
         "athanasian": "athanasian",
         "chalcedonian": "chalcedonian",
-        "creeds": "creeds",
-        "setannouncements": "setannouncements",
-        "announcements": "announcements",
-        "users": "users",
-        "servers": "servers",
-        "announce": "announce",
-        "invite": "invite",
-        "supporters": "supporters"
+        "creeds": "các tín ngưỡng",
+        "setannouncements": "đưa ra những thông báo",
+        "announcements": "những thông báo",
+        "users": "người dùng",
+        "servers": "các máy chủ",
+        "announce": "Thông báo",
+        "invite": "mời",
+        "supporters": "những người hỗ trợ"
     },
     "arguments": {
-        "yes": "Yes",
-        "no": "No",
-        "enable": "enable",
-        "disable": "disable"
+        "yes": "Có",
+        "no": "Không",
+        "enable": "bật",
+        "disable": "tắt"
     }
 }
