@@ -60,7 +60,7 @@
     "guildlanguageused": "Hội này đang sử dụng Replace_With_Language_Name. Có ai đó có sự cho phép về quyền 'Quản lý máy chủ' sử dụng `+<setguildlanguage>` để đặt một ngôn ngữ khác.",
     "setguildbracketssuccess": "Đặt các hội nhóm thành công.",
     "setguildbracketsnoperm": "Bạn phải có sự cho phép về quyền 'Quản lý máy chủ' để điều chỉnh các nhóm của hội!",
-    "setguildbracketsfail": "Failed to set guild brackets, the supported bracket options are `<>`, `[]`, `()`, `{}`.",
+    "setguildbracketsfail": "Không thể sắp đặt các hội nhóm, các tùy chọn hỗ trợ nhóm là `<>`, `[]`, `()`, `{}`.",
     "guildbracketsused": "The brackets for this guild are `<brackets>`.\n\nHave someone with the 'Manage Server' permission use `+<setguildbrackets>` to set different brackets.",
     "setvotdtimesuccess": "Đặt thời gian VOTD thành công.",
     "setvotdtimenoperm": "Bạn phải có sự cho phép quyền 'Quản lý máy chủ' để điều chỉnh thời gian VOTD của hội!",
