@@ -131,8 +131,8 @@
         "creeds": "trosbekendelsen",
         "setannouncements": "setannouncements",
         "announcements": "announcements",
-        "users": "users",
-        "servers": "servers",
+        "users": "brugere",
+        "servers": "servere",
         "announce": "announce",
         "invite": "invitere",
         "supporters": "tilhængere"
