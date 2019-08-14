@@ -41,7 +41,7 @@
     "headingsfail": "Kasute `+<setheadings> <enable>` või `+<setheadings> <disable>`.",
     "setlanguagesuccess": "Keel seatud edukalt.",
     "setlanguagefail": "Keele määramine ebaõnnestus, vaatama `+<languages>`.",
-    "languageused": "Sina kasutad eesti keel. Kasuta `+<setlanguage>`teise keele määramiseks.",
+    "languageused": "Te kasutate eesti keel. Kasuta `+<setlanguage>`teise keele määramiseks.",
     "languages": "Toetan",
     "otnotsupported": "Versioon <version> ei toeta Vana Testament.",
     "ntnotsupported": "Versioon <version> ei toeta Uus Testament.",
