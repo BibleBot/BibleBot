@@ -119,7 +119,7 @@
         "language": "lingua",
         "guildlanguage": "guildlanguage",
         "languages": "linguas",
-        "setguildbrackets": "setguildbrackets",
+        "setguildbrackets": "configurarparêntesesdaguilda",
         "guildbrackets": "guildbrackets",
         "setvotdtime": "setvotdtime",
         "clearvotdtime": "clearvotdtime",
