@@ -94,7 +94,7 @@
     "donorsNotListed": "E os que não estão listados!",
     "zeroOrOne": "0 ou 1",
     "enabled": "ativada",
-    "disabled": "desactivada",
+    "disabled": "ativada",
     "commands": {
         "search": "pesquisar",
         "setversion": "defversao",
