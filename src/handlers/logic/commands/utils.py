@@ -19,7 +19,10 @@
 import discord
 import central
 import ast
+
 from bible_modules import biblehub, bibleserver, apibible, biblegateway, rev
+from handlers.logic.settings import versions
+from handlers.logic.verses import utils as verseutils
 
 
 def divide_list(dividend, divisor):
@@ -87,83 +90,20 @@ def get_bible_verse(reference, version, headings, verse_numbers):
     if version not in non_bg:
         result = biblegateway.get_result(reference, version, headings, verse_numbers)
 
-        if result is not None:
-            if result["text"][0] != " ":
-                result["text"] = " " + result["text"]
+        print(verseutils)
+        processed_results = verseutils.process_result(result, reference, version, None)
+        print(processed_results)
 
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result[
-                "version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": reference,
-                    "message": response_string
-                }
+        return utils.process_result(result, reference, version, None)[0]
     elif version == "REV":
         result = rev.get_result(reference, verse_numbers)
-
-        if result["text"][0] != " ":
-            result["text"] = " " + result["text"]
-
-        content = "```Dust\n" + result["text"] + "```"
-        response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
-
-        if len(response_string) < 2000:
-            return {
-                "level": "info",
-                "reference": reference,
-                "message": response_string
-            }
+        return utils.process_result(result, reference, version, None)[0]
     elif version in biblesorg_versions:
         result = apibible.get_result(reference, version, headings, verse_numbers)
-
-        if result is not None:
-            if result["text"][0] != " ":
-                result["text"] = " " + result["text"]
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result[
-                "version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": reference,
-                    "message": response_string
-                }
+        return utils.process_result(result, reference, version, None)[0]
     elif version in biblehub_versions:
         result = biblehub.get_result(reference, version, verse_numbers)
-
-        if result is not None:
-            if result["text"][0] != " ":
-                result["text"] = " " + result["text"]
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result[
-                "version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": reference,
-                    "message": response_string
-                }
+        return utils.process_result(result, reference, version, None)[0]
     elif version in bibleserver_versions:
         result = bibleserver.get_result(reference, version, verse_numbers)
-
-        if result is not None:
-            if result["text"][0] != " ":
-                result["text"] = " " + result["text"]
-
-            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-            response_string = "**" + result["passage"] + " - " + result[
-                "version"] + "**\n\n" + content
-
-            if len(response_string) < 2000:
-                return {
-                    "level": "info",
-                    "reference": reference,
-                    "message": response_string
-                }
+        return utils.process_result(result, reference, version, None)[0]

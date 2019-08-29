@@ -33,7 +33,7 @@ def is_command(command, lang):
     untranslated_commands = ["biblebot", "setlanguage", "userid",
                              "ban", "unban", "reason",
                              "optout", "unoptout", "eval",
-                             "jepekula", "joseph", "tiger", "lsc", "heidelberg"]
+                             "jepekula", "joseph", "tiger", "lsc", "heidelberg", "ccc"]
 
     result = {
         "ok": False
@@ -58,9 +58,8 @@ def is_owner_command(command, lang):
     return command in owner_commands
 
 
-def is_catechism_command(command, lang):
-    commands = lang["commands"]
-    catechism_commands = ["lsc", "heidelberg"]
+def is_catechism_command(command):
+    catechism_commands = ["lsc", "heidelberg", "ccc"]
 
     return command in catechism_commands
 
@@ -74,7 +73,7 @@ class CommandHandler:
             orig_cmd = proper_command["orig"]
 
             if not is_owner_command(orig_cmd, ctx["language"]):
-                if not is_catechism_command(orig_cmd, ctx["language"]):
+                if not is_catechism_command(orig_cmd):
                     return await command_bridge.run_command(ctx, orig_cmd, remainder)
                 else:
                     return await catechisms_bridge.run_command(ctx, orig_cmd, remainder)

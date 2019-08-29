@@ -18,14 +18,20 @@
 
 import zlib
 import os
-import central
+
+try:
+    import central
+except ModuleNotFoundError:
+    central = None
+
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 extrabiblical_path = f"{dir_path}/../data/extrabiblical/"
 
 paths = [
     "catechisms/luthers_small_catechism.raw.json",
-    "catechisms/heidelberg_catechism.raw.json"
+    "catechisms/heidelberg_catechism.raw.json",
+    "catechisms/catechism_of_the_catholic_church.raw.json"
 ]
 
 
@@ -43,7 +49,10 @@ def compile_resources():
             if "/" in name:
                 name = name.split("/")[-1]
 
-            central.log_message("info", 0, "compile_extrabiblical", "global", f"compiled '{name}'")
+            if central:
+                central.log_message("info", 0, "compile_extrabiblical", "global", f"compiled '{name}'")
+            else:
+                print(f"[info] compiled '{name}'")
 
 
 if __name__ == '__main__':

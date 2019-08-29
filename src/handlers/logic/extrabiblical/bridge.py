@@ -30,7 +30,7 @@ sys.path.append(f"{dir_path}/../..")
 
 import central  # noqa: E402
 
-catechisms = ["lsc", "heidelberg"]
+catechisms = ["lsc", "heidelberg", "ccc"]
 
 
 async def run_command(ctx, command, remainder):
@@ -39,10 +39,10 @@ async def run_command(ctx, command, remainder):
 
     if command in catechisms:
         if len(args) == 2:
-            return utils.create_embeds(lang, command, section=args[0], page=args[1])
+            return utils.create_embeds(lang, command, section=args[0], page=args[1], guild=ctx["guild"])
         elif len(args) == 1:
             if args[0] == "":
-                return utils.create_embeds(lang, command)
+                return utils.create_embeds(lang, command, guild=ctx["guild"])
 
-            return utils.create_embeds(lang, command, section=args[0])
+            return utils.create_embeds(lang, command, section=args[0], guild=ctx["guild"])
 

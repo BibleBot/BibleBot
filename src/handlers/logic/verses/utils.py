@@ -346,10 +346,11 @@ def process_result(result, reference, version, lang):
                 "secondMessage": content2
             })
         else:
-            return_list.append({
-                "level": "err",
-                "reference": f"{reference} {version}",
-                "message": lang["passagetoolong"]
-            })
+            if lang:
+                return_list.append({
+                    "level": "err",
+                    "reference": f"{reference} {version}",
+                    "message": lang["passagetoolong"]
+                })
 
         return return_list

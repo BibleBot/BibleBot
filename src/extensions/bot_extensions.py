@@ -23,14 +23,13 @@ import datetime
 
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc
-from bible_modules import biblegateway, biblehub, bibleserver, apibible, bibleutils, rev
+from bible_modules import biblegateway, biblehub, bibleserver, apibible, bibleutils, rev  # noqa: E501
 
 
 async def run_timed_votds(self):
     await self.wait_until_ready()
 
     while not self.is_closed():
-        # a nice list comprehension for getting all the servers with votd stuff set
         results = [x for x in central.guildDB.all() if "channel" in x]
 
         for item in results:
@@ -59,10 +58,12 @@ async def run_timed_votds(self):
                     biblesorg_versions = ["KJVA"]
                     other_versions = ["REV"]
 
-                    non_bg = other_versions + biblehub_versions + biblesorg_versions + bibleserver_versions
+                    non_bg = other_versions + biblehub_versions + \
+                        biblesorg_versions + bibleserver_versions
 
                     if version not in non_bg:
-                        result = biblegateway.get_result(reference, version, "enable", "enable")
+                        result = biblegateway.get_result(
+                            reference, version, "enable", "enable")
 
                         if result is not None:
                             if result["text"][0] != " ":

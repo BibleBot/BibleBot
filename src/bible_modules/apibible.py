@@ -57,7 +57,8 @@ version_names = {
 #     query = html.escape(query)
 #
 #     url = "https://www.biblegateway.com/quicksearch/?search=" + query + \
-#           "&version=" + version + "&searchtype=all&limit=50000&interface=print"
+#           "&version=" + version + \
+#           "&searchtype=all&limit=50000&interface=print"
 #
 #     search_results = {}
 #     length = 0
@@ -87,10 +88,10 @@ version_names = {
 #     return search_results
 
 
-def get_result(query, version, headings, verse_numbers):
+def get_result(query, ver, headings, verse_numbers):
     query = query.replace("|", " ")
 
-    url = f"https://api.scripture.api.bible/v1/bibles/{versions[version]}/search"
+    url = f"https://api.scripture.api.bible/v1/bibles/{versions[ver]}/search"
     headers = {"api-key": config["apis"]["apibible"]}
     params = {"query": query, "limit": "1"}
 
@@ -102,7 +103,8 @@ def get_result(query, version, headings, verse_numbers):
         text = None
 
         if data[0]["bibleId"] != versions[version]:
-            central.log_message("err", 0, "apibible", "global", f"{version} is no longer able to be used.")
+            central.log_message("err", 0, "apibible", "global",
+                                f"{version} is no longer able to be used.")
             return
 
         if len(data) > 0:
@@ -138,7 +140,7 @@ def get_result(query, version, headings, verse_numbers):
 
         verse_object = {
             "passage": query,
-            "version": version_names[version],
+            "version": version_names[ver],
             "title": title[0:-3],
             "text": text
         }

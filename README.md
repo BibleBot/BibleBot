@@ -36,8 +36,7 @@ python -m venv venv
 .\venv\Scripts\activate
 copy src\config.example.ini src\config.ini
 notepad src\config.ini
-pip install -U "https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord.py[voice]"
-pip install -U bs4 colorama lxml requests tinydb name_scraper zlib
+pip install -U discord.py[voice] bs4 colorama lxml requests tinydb name_scraper
 python src/bot.py
 ```
 

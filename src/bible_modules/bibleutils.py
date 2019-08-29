@@ -62,7 +62,8 @@ def get_random_verse():
 
     if resp is not None:
         soup = BeautifulSoup(resp.text, "html.parser")
-        verse = soup.find("div", {"class": "bibleChapter"}).find("a").get_text()
+        verse = soup.find(
+            "div", {"class": "bibleChapter"}).find("a").get_text()
 
         return verse
 

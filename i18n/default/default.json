@@ -1,5 +1,5 @@
 {
-    "biblebot": "BibleBot v<biblebotversion> by Elliott Pardee (vypr)",
+    "biblebot": "BibleBot <version> by Elliott Pardee (vypr)",
     "code": "Code: <repositoryLink>",
 
     "commandlist": "* `+<search> query` - search using keywords (only in Bible Gateway versions)\n* `+<setversion> ABBV` - set preferred version to ABBV\n* `+<version>` - see what version you've set\n* `+<versions>` - see the supported versions\n* `+<versioninfo> VER` - read information about a version, using the acronym\n* `+<random>` - get a random Bible verse\n* `+<verseoftheday>` (`+<votd>`) - get the verse of the day\n* `+<setheadings> <enable>/<disable>` - enable or disable topic/chapter headings\n* `+<headings>` - see your topic/chapter headings preference\n* `+<setversenumbers> <enable>/<disable>` - enable or disable verse numbers\n* `+<versenumbers>` - see your verse numbers preference\n* `+<setlanguage> LANG` - set preferred language to LANG\n* `+<language>` - see your current language, if one is set (default: english)\n* `+<languages>` - see the supported languages\n* `+<users>` - list all users throughout all servers (not counting duplicates or bots)\n* `+<servers>` - show how many servers BibleBot is in\n* `+<invite>` - get the invite link for BibleBot\n* `+<supporters>` - the supporters of BibleBot",
@@ -42,6 +42,10 @@
     "catholic": "Catholic",
     "eastern_orthodox": "Eastern Orthodox",
     "oriental_orthodox": "Oriental Orthodox",
+
+    "pubdomain": "Public Domain",
+
+    "rangeError": "This range is invalid, make sure that the first number is lesser than the second. The range cannot span over 15 paragraphs.",
 
     "error": "Error",
 
@@ -96,10 +100,10 @@
     "clearvotdtimesuccess": "Cleared VOTD time successfully.",
     "clearvotdtimenoperm": "You must have the 'Manage Server' permission to clear a guild's VOTD time!",
 
-    "votd": "Here is today's verse of the day:",
+    "votd": "Here is the verse of the day:",
 
     "passagetoolong": "The passage is too long for me to grab, sorry.",
-    "votdcantprocess": "Today's VOTD can't be processed, see <https://www.biblegateway.com/> for the VOTD.",
+    "votdcantprocess": "The VOTD can't be processed, see <https://www.biblegateway.com/> for the VOTD.",
 
     "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
     "versioninfofailed": "I couldn't find that version, are you sure you used the right acronym?",

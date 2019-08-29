@@ -39,14 +39,14 @@ def open_data_file(path):
         return json.loads(zlib.decompress(open(f"{data_path}/extrabiblical/{path}", "rb").read()))
 
 
-
 resources = {
     "lsc": open_data_file(f"catechisms/luthers_small_catechism.bin"),
-    "heidelberg": open_data_file(f"catechisms/heidelberg_catechism.bin")
+    "heidelberg": open_data_file(f"catechisms/heidelberg_catechism.bin"),
+    "ccc": open_data_file(f"catechisms/catechism_of_the_catholic_church.bin")
 }
 
 
-def create_embed(title, description, image=None, _copyright=None, custom_title=False, error=False):
+def create_embed(lang, title, description, image=None, _copyright=None, error=False):
     embed = discord.Embed()
 
     if error:
@@ -59,21 +59,26 @@ def create_embed(title, description, image=None, _copyright=None, custom_title=F
 
     if _copyright:
         embed.set_footer(text=f"{_copyright[1:]} // BibleBot {central.version}", icon_url=central.icon)
+    elif error:
+        embed.set_footer(text=f"BibleBot {central.version}", icon_url=central.icon)
     else:
-        embed.set_footer(text=f"Public Domain // BibleBot {central.version}", icon_url=central.icon)
+        embed.set_footer(text=lang["pubdomain"] + f" // BibleBot {central.version}", icon_url=central.icon)
 
-    if custom_title:
-        embed.title = title
-    else:
-        embed.title = central.config["BibleBot"]["commandPrefix"] + title
-
+    embed.title = title
     embed.description = description
 
     return embed
 
 
-def create_embeds(lang, resource, section=None, page=None):
+def create_embeds(lang, resource, section=None, page=None, guild=None):
     if resource in resources.keys():
+        if resource == "ccc":
+            if guild is not None:
+                if guild.id != "238001909716353025":
+                    return create_numbered_embed(lang, resource, paragraph=section)
+        else:
+            return create_numbered_embed(lang, resource, paragraph=section)
+
         catechism_obj = resources[resource]
         title = catechism_obj["title"]
         author = catechism_obj["author"]
@@ -114,7 +119,10 @@ def create_embeds(lang, resource, section=None, page=None):
             }
         elif not page:
             if section_is_index:
-                section_obj = sections[int(section) - 1]
+                try:
+                    section_obj = sections[int(section) - 1]
+                except IndexError:
+                    return
             else:
                 section_objs = [x for x in sections if section in x["slugs"]]
 
@@ -137,23 +145,12 @@ def create_embeds(lang, resource, section=None, page=None):
                     "paged": True,
                     "pages": pages
                 }
-            else:
-                title_page = create_title_page(lang, title, author, _copyright, category, sections=sections,
-                                               image=image)
-                pages = [title_page]
-
-                for item in sections:
-                    for i in range(0, len(item["pages"])):
-                        pages.append(create_section_page(lang, title, item, i, _copyright))
-
-                return {
-                    "level": "info",
-                    "paged": True,
-                    "pages": pages
-                }
         else:
             if section_is_index:
-                section_obj = sections[int(section) - 1]
+                try:
+                    section_obj = sections[int(section) - 1]
+                except IndexError:
+                    return
             else:
                 section_objs = [sectionx for sectionx in sections if section in sectionx["slugs"]]
 
@@ -163,10 +160,13 @@ def create_embeds(lang, resource, section=None, page=None):
                     section_obj = None
 
             if section_obj:
-                return {
-                    "level": "info",
-                    "message": create_section_page(lang, title, section_obj, page - 1, _copyright)
-                }
+                message = create_section_page(lang, title, section_obj, page - 1, _copyright)
+
+                if message is not None:
+                    return {
+                        "level": "info",
+                        "message": create_section_page(lang, title, section_obj, page - 1, _copyright)
+                    }
             else:
                 title_page = create_title_page(lang, title, author, _copyright, category, sections=sections,
                                                image=image)
@@ -218,7 +218,7 @@ def create_title_page(lang, title, author, _copyright, category, sections=None, 
 
             description += f"{slugs[0]}. {i_title} ({page_count}) `{slugs}`\n"
 
-    return create_embed(title, description, image=image, _copyright=_copyright, custom_title=True)
+    return create_embed(lang, title, description, image=image, _copyright=_copyright)
 
 
 def create_section_page(lang, title, section, page_num, _copyright):
@@ -228,9 +228,13 @@ def create_section_page(lang, title, section, page_num, _copyright):
     page_counter = lang["pageOf"].replace("<num>", str(page_num + 1)).replace("<total>", str(page_count))
 
     title = f"{section_title} ({page_counter}) // {title}"
-    description = section_pages[page_num]
 
-    return create_embed(title, description, _copyright=_copyright, custom_title=True)
+    try:
+        description = section_pages[page_num]
+    except IndexError:
+        return
+
+    return create_embed(lang, title, description, _copyright=_copyright)
 
 
 def parse_category(lang, category):
@@ -245,6 +249,90 @@ def parse_category(lang, category):
 
         return_str = return_str[0:-3]
     else:
-        return_str = lang["category"]
+        return_str = lang[category]
 
     return return_str
+
+
+def create_numbered_embed(lang, resource, paragraph=None):
+    catechism_obj = resources[resource]
+    title = catechism_obj["title"]
+    author = catechism_obj["author"]
+    image = catechism_obj["image"]
+    _copyright = catechism_obj["copyright"]
+    category = parse_category(lang, catechism_obj["category"])
+
+    if paragraph is None:
+        return {
+            "level": "info",
+            "message": create_title_page(lang, title, author, _copyright, category, image=image)
+        }
+    else:
+        paragraphs = []
+
+        if "-" not in paragraph:
+            try:
+                if isinstance(int(paragraph), int):
+                    paragraphs.append(int(paragraph))
+            except (ValueError, TypeError):
+                pass
+        else:
+            sep_paragraphs = paragraph.split("-")
+
+            for paragraph in sep_paragraphs:
+                try:
+                    if isinstance(int(paragraph), int):
+                        paragraphs.append(int(paragraph))
+                except (ValueError, TypeError):
+                    pass
+
+            if len(sep_paragraphs) > 2:
+                return {
+                    "level": "err",
+                    "message": create_embed(lang, f"{title}", lang["rangeError"], error=True)
+                }
+
+            for index, paragraph in enumerate(paragraphs):
+                if 0 < index < len(paragraphs):
+                    if paragraphs[index - 1] > paragraph:
+                        return {
+                            "level": "err",
+                            "message": create_embed(lang, f"{title}", lang["rangeError"], error=True)
+                        }
+
+        pages = []
+        highest_num = 0
+
+        if len(paragraphs) > 1:
+            for i in paragraphs:
+                if 0 < i < len(catechism_obj["paragraphs"]):
+                    if i > highest_num:
+                        highest_num = i
+
+            if (highest_num - paragraphs[0]) > 14:
+                return {
+                    "level": "err",
+                    "message": create_embed(lang, f"{title}", lang["rangeError"], error=True)
+                }
+
+            for i in range(paragraphs[0], highest_num + 1):
+                pages.append(create_embed(lang, f"{title} - Paragraph {i}",
+                                          catechism_obj["paragraphs"][i - 1]["text"],
+                                          _copyright=_copyright))
+        else:
+            if 0 < paragraphs[0] < len(catechism_obj["paragraphs"]):
+                pages.append(create_embed(lang, f"{title} - Paragraph {paragraphs[0]}",
+                                          catechism_obj["paragraphs"][paragraphs[0] - 1]["text"],
+                                          _copyright=_copyright))
+
+        if len(pages) > 1:
+            return {
+                "level": "info",
+                "paged": True,
+                "pages": pages
+            }
+        elif len(pages) > 0:
+            return {
+                "level": "info",
+                "message": pages[0]
+            }

@@ -36,7 +36,7 @@ configVersion = configparser.ConfigParser()
 configVersion.read(f"{dir_path}/config.example.ini")
 
 version = configVersion["meta"]["version"]
-icon = "https://cdn.discordapp.com/avatars/361033318273384449/cc2758488d104770c9630e4c21ad1e4a.png"  # noqa: E501
+icon = "https://cdn.discordapp.com/avatars/367665336239128577/b8ab407073f4a3be980d8fa6a03e9586.png"  # noqa: E501
 cmd_prefix = config["BibleBot"]["commandPrefix"]
 
 logger = VyLogger("default")
