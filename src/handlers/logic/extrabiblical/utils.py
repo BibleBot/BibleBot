@@ -76,7 +76,7 @@ def create_embeds(lang, resource, section=None, page=None, guild=None):
             if guild is not None:
                 if guild.id != "238001909716353025":
                     return create_numbered_embed(lang, resource, paragraph=section)
-        else:
+        elif resource in ["heidelberg"]:
             return create_numbered_embed(lang, resource, paragraph=section)
 
         catechism_obj = resources[resource]
@@ -169,17 +169,17 @@ def create_title_page(lang, title, author, _copyright, category, sections=None, 
 
     if not sections:
         if section:
-            description += f"{section_translated}{create_section_description(section)}"
+            description += f"{section_translated}{create_section_description(lang, section)}"
     else:
         description += f"{sections_translated}"
 
         for item in sections:
-            description += create_section_description(item)
+            description += create_section_description(lang, item)
 
     return create_embed(lang, title, description, image=image, _copyright=_copyright)
 
 
-def create_section_description(item):
+def create_section_description(lang, item):
     i_title = item["title"]
     slugs = item["slugs"]
 

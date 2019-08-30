@@ -23,7 +23,7 @@ import ast
 import discord
 import tinydb
 
-from .information import biblebot, creeds, special, paged_commands
+from .information import biblebot, creeds, catechisms, special, paged_commands
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc, formatting
 from . import utils
@@ -569,6 +569,8 @@ async def run_command(ctx, command, remainder):
         return creeds.get_creeds(lang)
     elif command in creeds.creeds:
         return creeds.get_creed(command, lang)
+    elif command == "catechisms":
+        return catechisms.get_catechisms(lang)
     elif command == "invite":
         bot_id = ctx["self"].user.id
 
