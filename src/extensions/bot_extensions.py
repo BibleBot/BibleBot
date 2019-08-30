@@ -23,7 +23,8 @@ import datetime
 
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc
-from bible_modules import biblegateway, biblehub, bibleserver, apibible, bibleutils, rev  # noqa: E501
+from handlers.logic.commands import utils
+from bible_modules import biblegateway, biblehub, bibleserver, apibible, bibleutils  # noqa: E501
 
 
 async def run_timed_votds(self):
@@ -42,9 +43,9 @@ async def run_timed_votds(self):
                     lang = languages.get_guild_language(channel.guild)
                 except AttributeError:
                     version = "RSV"
-                    lang = "english_us"
+                    lang = "default"
 
-                lang = getattr(central.languages, lang).raw_object
+                lang = central.get_raw_language(lang)
 
                 current_time = datetime.datetime.utcnow().strftime("%H:%M")
 
@@ -53,146 +54,12 @@ async def run_timed_votds(self):
 
                     reference = bibleutils.get_votd()
 
-                    biblehub_versions = ["BSB", "NHEB", "WBT"]
-                    bibleserver_versions = ["LUT", "LXX", "SLT"]
-                    biblesorg_versions = ["KJVA"]
-                    other_versions = ["REV"]
-
-                    non_bg = other_versions + biblehub_versions + \
-                        biblesorg_versions + bibleserver_versions
-
-                    if version not in non_bg:
-                        result = biblegateway.get_result(
-                            reference, version, "enable", "enable")
-
-                        if result is not None:
-                            if result["text"][0] != " ":
-                                result["text"] = " " + result["text"]
-
-                            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-                            response_string = "**" + result["passage"] + " - " + result[
-                                "version"] + "**\n\n" + content
-
-                            if len(response_string) < 2000:
-                                await channel.send(response_string)
-                            elif 2000 < len(response_string) < 3500:
-                                split_text = central.halve_string(result["text"])
-
-                                content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-                                response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
-                                                   "\n\n" + content1
-
-                                content2 = "```Dust\n" + split_text["second"] + "```"
-
-                                await channel.send(response_string1)
-                                await channel.send(content2)
-                            else:
-                                await channel.send(lang["votdcantprocess"])
-                    elif version == "REV":
-                        result = rev.get_result(reference, "enable")
-
-                        if result["text"][0] != " ":
-                            result["text"] = " " + result["text"]
-
-                        content = "```Dust\n" + result["text"] + "```"
-                        response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
-
-                        if len(response_string) < 2000:
-                            await channel.send(response_string)
-                        elif 2000 < len(response_string) < 3500:
-                            split_text = central.halve_string(result["text"])
-
-                            content1 = "```Dust\n" + split_text["first"] + "```"
-                            response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
-                                               "\n\n" + content1
-
-                            content2 = "```Dust\n" + split_text["second"] + "```"
-
-                            await channel.send(response_string1)
-                            await channel.send(content2)
-                        else:
-                            await channel.send(lang["votdcantprocess"])
-                    elif version in biblesorg_versions:
-                        result = apibible.get_result(reference, version, "enable", "enable")
-
-                        if result is not None:
-                            if result["text"][0] != " ":
-                                result["text"] = " " + result["text"]
-
-                            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-                            response_string = "**" + result["passage"] + " - " + result[
-                                "version"] + "**\n\n" + content
-
-                            if len(response_string) < 2000:
-                                await channel.send(response_string)
-                            elif len(response_string) > 2000:
-                                if len(response_string) < 3500:
-                                    split_text = central.halve_string(result["text"])
-
-                                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-                                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
-                                                       "\n\n" + content1
-
-                                    content2 = "```Dust\n" + split_text["second"] + "```"
-
-                                    await channel.send(response_string1)
-                                    await channel.send(content2)
-                                else:
-                                    await channel.send(lang["votdcantprocess"])
-                    elif version in biblehub_versions:
-                        result = biblehub.get_result(reference, version, "enable")
-
-                        if result is not None:
-                            if result["text"][0] != " ":
-                                result["text"] = " " + result["text"]
-
-                            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-                            response_string = "**" + result["passage"] + " - " + result[
-                                "version"] + "**\n\n" + content
-
-                            if len(response_string) < 2000:
-                                await channel.send(response_string)
-                            elif len(response_string) > 2000:
-                                if len(response_string) < 3500:
-                                    split_text = central.halve_string(result["text"])
-
-                                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-                                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
-                                                       "\n\n" + content1
-
-                                    content2 = "```Dust\n" + split_text["second"] + "```"
-
-                                    await channel.send(response_string1)
-                                    await channel.send(content2)
-                                else:
-                                    await channel.send(lang["votdcantprocess"])
-                    elif version in bibleserver_versions:
-                        result = bibleserver.get_result(reference, version, "enable")
-
-                        if result is not None:
-                            if result["text"][0] != " ":
-                                result["text"] = " " + result["text"]
-
-                            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-                            response_string = "**" + result["passage"] + " - " + result[
-                                "version"] + "**\n\n" + content
-
-                            if len(response_string) < 2000:
-                                await channel.send(response_string)
-                            elif len(response_string) > 2000:
-                                if len(response_string) < 3500:
-                                    split_text = central.halve_string(result["text"])
-
-                                    content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-                                    response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
-                                                       "\n\n" + content1
-
-                                    content2 = "```Dust\n" + split_text["second"] + "```"
-
-                                    await channel.send(response_string1)
-                                    await channel.send(content2)
-                                else:
-                                    await channel.send(lang["votdcantprocess"])
+                    # noinspection PyBroadException
+                    try:
+                        result = utils.get_bible_verse(reference, version, "enable", "enable")
+                        await channel.send(result["message"])
+                    except Exception:
+                        pass
 
         # central.log_message("info", 0, "votd_sched", "global", "Sending VOTDs...")
         await asyncio.sleep(60)

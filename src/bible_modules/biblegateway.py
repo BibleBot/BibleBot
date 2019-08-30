@@ -41,7 +41,7 @@ def search(version, query):
     query = html.escape(query)
 
     url = f"https://www.biblegateway.com/quicksearch/?search={query}" + \
-        "&version={version}&searchtype=all&limit=50000&interface=print"
+        f"&version={version}&searchtype=all&limit=50000&interface=print"
 
     search_results = {}
     length = 0
@@ -76,7 +76,7 @@ def get_result(query, version, headings, verse_numbers):
     query = query.replace("|", " ")
 
     url = f"https://www.biblegateway.com/passage/" + \
-        "?search={query}&version={version}&interface=print"
+        f"?search={query}&version={version}&interface=print"
 
     resp = requests.get(url)
 
@@ -105,7 +105,7 @@ def get_result(query, version, headings, verse_numbers):
                 footnote.decompose()
 
             if verse_numbers == "disable":
-                for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):  # noqa: E501
+                for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
                     num.replace_with(" ")
             else:
                 # turn chapter numbers into "1" otherwise the verse numbers
@@ -116,15 +116,15 @@ def get_result(query, version, headings, verse_numbers):
                 for num in div.find_all(True, {"class": "versenum"}):
                     num.replace_with(f"<{num.text[0:-1]}> ")
 
-            for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):  # noqa: E501
+            for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):
                 meta.decompose()
 
             for paragraph in div.find_all("p"):
                 text += paragraph.get_text()
 
             verse_object = {
-                "passage": div.find(True, {"class": "passage-display-bcv"}).string,  # noqa: E501
-                "version": div.find(True, {"class": "passage-display-version"}).string,  # noqa: E501
+                "passage": div.find(True, {"class": "passage-display-bcv"}).string,
+                "version": div.find(True, {"class": "passage-display-version"}).string,
                 "title": title[0:-3],
                 "text": bibleutils.purify_text(text)
             }

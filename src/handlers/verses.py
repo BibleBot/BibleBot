@@ -16,7 +16,6 @@
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import json
 import math
 import os
 import random
@@ -27,12 +26,11 @@ import tinydb
 from handlers.logic.verses import utils
 from handlers.logic.settings import versions, formatting
 from name_scraper import client
-from name_scraper.books import item_to_book
 
 __dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{__dir_path}/..")
 
-from bible_modules import apibible, bibleserver, biblehub, biblegateway, rev  # noqa: E402
+from bible_modules import apibible, bibleserver, biblehub, biblegateway  # noqa: E402
 
 import central  # noqa: E402
 
@@ -140,15 +138,15 @@ class VerseHandler:
 
                     if version not in non_bible_gateway:
                         result = biblegateway.get_result(reference, version, headings, verse_numbers)
-                        return_list += utils.process_result(result, reference, version, lang)
+                        return_list.append(utils.process_result(result, reference, version, lang))
                     elif version in apibible_versions:
                         result = apibible.get_result(reference, version, headings, verse_numbers)
-                        return_list += utils.process_result(result, reference, version, lang)
+                        return_list.append(utils.process_result(result, reference, version, lang))
                     elif version in biblehub_versions:
                         result = biblehub.get_result(reference, version, verse_numbers)
-                        return_list += utils.process_result(result, reference, version, lang)
+                        return_list.append(utils.process_result(result, reference, version, lang))
                     elif version in bibleserver_versions:
                         result = bibleserver.get_result(reference, version, verse_numbers)
-                        return_list += utils.process_result(result, reference, version, lang)
+                        return_list.append(utils.process_result(result, reference, version, lang))
 
             return return_list

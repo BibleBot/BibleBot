@@ -16,7 +16,6 @@
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import json
 import numbers
 import os
 import re
@@ -312,8 +311,6 @@ def check_section_support(version, verse, reference, section, lang):
 
 
 def process_result(result, reference, version, lang):
-    return_list = []
-
     if result is not None:
         if result["text"][0] != " ":
             result["text"] = " " + result["text"]
@@ -324,11 +321,11 @@ def process_result(result, reference, version, lang):
         reference = reference.replace("|", " ")
 
         if len(response_string) < 2000:
-            return_list.append({
+            return {
                 "level": "info",
                 "reference": reference + " " + version,
                 "message": response_string
-            })
+            }
         elif 2000 < len(response_string) < 3500:
             split_text = central.halve_string(result["text"])
 
@@ -338,19 +335,17 @@ def process_result(result, reference, version, lang):
 
             content2 = "```Dust\n" + split_text["second"] + "```"
 
-            return_list.append({
+            return {
                 "level": "info",
                 "twoMessages": True,
                 "reference": f"{reference} {version}",
                 "firstMessage": response_string1,
                 "secondMessage": content2
-            })
+            }
         else:
             if lang:
-                return_list.append({
+                return {
                     "level": "err",
                     "reference": f"{reference} {version}",
                     "message": lang["passagetoolong"]
-                })
-
-        return return_list
+                }

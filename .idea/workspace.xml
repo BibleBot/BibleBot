@@ -2,31 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1db95e2a-4454-4f08-b3cf-02a978cd3358" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/BibleBot.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BibleBot.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/i18n/default/default.json" beforeDir="false" afterPath="$PROJECT_DIR$/i18n/default/default.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/i18n/english_uk/english_uk.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/i18n/english_us/english_us.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/i18n/esperanto/esperanto.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bible_modules/apibible.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/apibible.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/databases/versiondb" beforeDir="false" afterPath="$PROJECT_DIR$/databases/versiondb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bible_modules/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bible_modules/biblegateway.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/biblegateway.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bible_modules/biblehub.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/biblehub.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bible_modules/bibleserver.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/bibleserver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bible_modules/bibleutils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/bibleutils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bible_modules/rev.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/central.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/central.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/extrabiblical/catechisms/heidelberg_catechism.bin" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/extrabiblical/catechisms/heidelberg_catechism.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/languages.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/languages.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/extensions/bot_extensions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/bot_extensions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/extensions/compile_extrabiblical.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/compile_extrabiblical.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/commands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/logic/commands/information/biblebot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/commands/information/biblebot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/logic/commands/information/special.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/commands/information/special.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/logic/commands/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/commands/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/logic/verses/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/verses/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/verses.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/verses.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,24 +23,50 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/BibleBot$Compile_Extrabiblical.coverage" NAME="Compile Extrabiblical Coverage Results" MODIFIED="1567094868625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/extensions" />
-    <SUITE FILE_PATH="coverage/BibleBot$Run_BibleBotInternal.coverage" NAME="Run BibleBotInternal Coverage Results" MODIFIED="1567093458217" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/BibleBot$Run_BibleBotInternal.coverage" NAME="Run BibleBotInternal Coverage Results" MODIFIED="1567176218567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="46" column="90" selection-start-line="46" selection-start-column="90" selection-end-line="46" selection-end-column="90" />
+            <state relative-caret-position="366">
+              <caret line="99" column="74" selection-start-line="99" selection-start-column="74" selection-end-line="99" selection-end-column="74" />
+              <folding>
+                <element signature="e#753#767#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py">
+        <entry file="file://$PROJECT_DIR$/src/handlers/logic/verses/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3935">
-              <caret line="64" column="11" lean-forward="true" selection-start-line="64" selection-start-column="11" selection-end-line="64" selection-end-column="11" />
+            <state relative-caret-position="219">
+              <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/bot.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="205">
+              <caret line="292" lean-forward="true" selection-start-line="292" selection-end-line="292" />
               <folding>
                 <element signature="e#753#767#0" expanded="true" />
               </folding>
@@ -65,73 +78,7 @@
         <entry file="file://$PROJECT_DIR$/src/data/extrabiblical/catechisms/heidelberg_catechism.raw.json">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="122">
-              <caret line="57" column="10" lean-forward="true" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="54" column="57" lean-forward="true" selection-start-line="54" selection-start-column="57" selection-end-line="54" selection-end-column="57" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/bridge.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="600" column="68" selection-start-line="600" selection-start-column="68" selection-end-line="600" selection-end-column="68" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/information/special.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="36" column="5" lean-forward="true" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/data/languages.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="28" column="50" lean-forward="true" selection-start-line="28" selection-start-column="50" selection-end-line="28" selection-end-column="50" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/data/extrabiblical/catechisms/catechism_of_the_catholic_church.raw.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="92">
-              <caret line="4" column="53" lean-forward="true" selection-start-line="4" selection-start-column="53" selection-end-line="4" selection-end-column="53" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/logic/verses/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="23">
-              <caret line="314" column="20" selection-start-line="314" selection-start-column="20" selection-end-line="314" selection-end-column="20" />
-              <folding>
-                <element signature="e#753#764#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="481">
-              <caret line="105" column="27" selection-start-line="105" selection-start-column="27" selection-end-line="105" selection-end-column="27" />
+              <caret line="57" column="10" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -166,9 +113,13 @@
       <find>section_pages</find>
       <find>\\&quot;</find>
       <find />
-      <find />
       <find>create_embeds</find>
       <find>tiger</find>
+      <find>item_to</find>
+      <find>rev</find>
+      <find>getattr</find>
+      <find>numbers</find>
+      <find>json</find>
     </findStrings>
     <replaceStrings>
       <replace>\</replace>
@@ -183,7 +134,13 @@
     </dirStrings>
   </component>
   <component name="Git.Settings">
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="5a00a6a01684ddb8a42c9afba788c916053311c8" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -195,26 +152,27 @@
         <option value="$PROJECT_DIR$/src/data/extrabiblical/catechisms/luthers_small_catechism.json" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/databases/db" />
-        <option value="$PROJECT_DIR$/src/handlers/verses.py" />
         <option value="$PROJECT_DIR$/src/data/extrabiblical/catechisms/luthers_small_catechism.raw.json" />
         <option value="$PROJECT_DIR$/src/bible_modules/bibleutils.py" />
-        <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/config.ini" />
         <option value="$PROJECT_DIR$/src/extensions/compile_extrabiblical.py" />
-        <option value="$PROJECT_DIR$/src/central.py" />
-        <option value="$PROJECT_DIR$/src/extensions/bot_extensions.py" />
         <option value="$PROJECT_DIR$/src/handlers/commands.py" />
-        <option value="$PROJECT_DIR$/src/handlers/logic/verses/utils.py" />
-        <option value="$PROJECT_DIR$/src/handlers/logic/commands/utils.py" />
         <option value="$PROJECT_DIR$/src/bot.py" />
-        <option value="$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py" />
         <option value="$PROJECT_DIR$/src/data/extrabiblical/catechisms/catechism_of_the_catholic_church.raw.json" />
         <option value="$PROJECT_DIR$/src/data/extrabiblical/catechisms/heidelberg_catechism.raw.json" />
         <option value="$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py" />
         <option value="$PROJECT_DIR$/src/handlers/logic/commands/information/special.py" />
-        <option value="$PROJECT_DIR$/src/data/languages.py" />
         <option value="$PROJECT_DIR$/i18n/default/default.json" />
+        <option value="$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py" />
+        <option value="$PROJECT_DIR$/src/data/languages.py" />
+        <option value="$PROJECT_DIR$/src/bible_modules/__init__.py" />
+        <option value="$PROJECT_DIR$/src/handlers/logic/commands/utils.py" />
+        <option value="$PROJECT_DIR$/src/extensions/bot_extensions.py" />
+        <option value="$PROJECT_DIR$/src/handlers/verses.py" />
+        <option value="$PROJECT_DIR$/src/handlers/logic/verses/utils.py" />
+        <option value="$PROJECT_DIR$/src/central.py" />
+        <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
       </list>
     </option>
   </component>
@@ -235,17 +193,6 @@
             <path>
               <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
               <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
-              <item name="i18n" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
-              <item name="i18n" type="462c0819:PsiDirectoryNode" />
-              <item name="default" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
@@ -306,8 +253,7 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="handlers" type="462c0819:PsiDirectoryNode" />
               <item name="logic" type="462c0819:PsiDirectoryNode" />
-              <item name="commands" type="462c0819:PsiDirectoryNode" />
-              <item name="information" type="462c0819:PsiDirectoryNode" />
+              <item name="extrabiblical" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
@@ -315,7 +261,7 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="handlers" type="462c0819:PsiDirectoryNode" />
               <item name="logic" type="462c0819:PsiDirectoryNode" />
-              <item name="extrabiblical" type="462c0819:PsiDirectoryNode" />
+              <item name="verses" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
@@ -426,7 +372,8 @@
       <workItem from="1566236245121" duration="257000" />
       <workItem from="1566251231953" duration="363000" />
       <workItem from="1566261687744" duration="1621000" />
-      <workItem from="1567086048162" duration="7865000" />
+      <workItem from="1567086048162" duration="9091000" />
+      <workItem from="1567174793787" duration="1721000" />
     </task>
     <task id="LOCAL-00001" summary="Fix some bugs and start work on resources, starting with Luther's Small Catechism.">
       <created>1551150489506</created>
@@ -442,35 +389,52 @@
       <option name="project" value="LOCAL" />
       <updated>1552354792339</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Clean up code, add the CCC, remove Esperanto and merge English languages.">
+      <created>1567095072402</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1567095072402</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22980000" />
+    <option name="totallyTimeSpent" value="25927000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1696" height="1036" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.31559634" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24281345" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3295325" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49879372" visible="true" weight="0.3295325" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49879372" visible="true" weight="0.3295325" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4996942" weight="0.3295325" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3295325" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.3295325" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5012063" side_tool="true" weight="0.3295325" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50030583" side_tool="true" weight="0.3295325" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.3295325" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="right" id="Database" order="3" weight="0.3296636" />
       <window_info anchor="right" id="SciView" order="4" />
     </layout>
   </component>
@@ -530,7 +494,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fix some bugs and start work on resources, starting with Luther's Small Catechism." />
     <MESSAGE value="Clean up some code with the verses handler and begin the Heidelberg Catechism." />
-    <option name="LAST_COMMIT_MESSAGE" value="Clean up some code with the verses handler and begin the Heidelberg Catechism." />
+    <MESSAGE value="Clean up code, add the CCC, remove Esperanto and merge English languages." />
+    <option name="LAST_COMMIT_MESSAGE" value="Clean up code, add the CCC, remove Esperanto and merge English languages." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/CODE_OF_CONDUCT.md">
@@ -562,25 +527,11 @@
     <entry file="file://$PROJECT_DIR$/src/extensions/vylogger.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/bibleutils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-138">
-          <caret line="27" selection-start-line="27" selection-end-line="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/vytypes/language.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/vytypes/version.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="793">
-          <caret line="109" column="17" lean-forward="true" selection-start-line="109" selection-start-column="17" selection-end-line="109" selection-end-column="17" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
@@ -619,16 +570,6 @@
     <entry file="file://$PROJECT_DIR$/LICENSE.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/extensions/bot_extensions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="295" selection-start-line="295" selection-end-line="295" />
-          <folding>
-            <element signature="e#753#767#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/config.ini">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="161">
@@ -643,95 +584,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/central.py">
+    <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="356">
-          <caret line="136" column="34" selection-start-line="136" selection-start-column="34" selection-end-line="136" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="151" column="38" selection-start-line="151" selection-start-column="38" selection-end-line="151" selection-end-column="38" />
-          <folding>
-            <element signature="e#753#764#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4761">
-          <caret line="293" column="1" selection-start-line="293" selection-start-column="1" selection-end-line="293" selection-end-column="1" />
-          <folding>
-            <element signature="e#753#767#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-794">
-          <caret line="42" column="39" lean-forward="true" selection-start-line="42" selection-start-column="39" selection-end-line="42" selection-end-column="39" />
-          <folding>
-            <element signature="e#753#767#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="46" column="90" selection-start-line="46" selection-start-column="90" selection-end-line="46" selection-end-column="90" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/extrabiblical/catechisms/catechism_of_the_catholic_church.raw.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="4" column="53" lean-forward="true" selection-start-line="4" selection-start-column="53" selection-end-line="4" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/verses/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="314" column="20" selection-start-line="314" selection-start-column="20" selection-end-line="314" selection-end-column="20" />
-          <folding>
-            <element signature="e#753#764#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3935">
-          <caret line="64" column="11" lean-forward="true" selection-start-line="64" selection-start-column="11" selection-end-line="64" selection-end-column="11" />
-          <folding>
-            <element signature="e#753#767#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/extrabiblical/catechisms/heidelberg_catechism.raw.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="57" column="10" lean-forward="true" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="54" column="57" lean-forward="true" selection-start-line="54" selection-start-column="57" selection-end-line="54" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/bridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="600" column="68" selection-start-line="600" selection-start-column="68" selection-end-line="600" selection-end-column="68" />
+        <state relative-caret-position="481">
+          <caret line="105" column="27" selection-start-line="105" selection-start-column="27" selection-end-line="105" selection-end-column="27" />
         </state>
       </provider>
     </entry>
@@ -742,17 +598,143 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/languages.py">
+    <entry file="file://$PROJECT_DIR$/src/handlers/commands.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="28" column="50" lean-forward="true" selection-start-line="28" selection-start-column="50" selection-end-line="28" selection-end-column="50" />
+        <state relative-caret-position="504">
+          <caret line="54" column="57" lean-forward="true" selection-start-line="54" selection-start-column="57" selection-end-line="54" selection-end-column="57" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="481">
-          <caret line="105" column="27" selection-start-line="105" selection-start-column="27" selection-end-line="105" selection-end-column="27" />
+        <state relative-caret-position="1311">
+          <caret line="64" column="11" selection-start-line="64" selection-start-column="11" selection-end-line="64" selection-end-column="11" />
+          <folding>
+            <element signature="e#753#767#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="356">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/apibible.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2808">
+          <caret selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblehub.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2624" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/bibleserver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3519" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/bibleutils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/bridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="390" lean-forward="true" selection-start-line="390" selection-end-line="390" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/languages.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="655">
+          <caret line="62" column="54" lean-forward="true" selection-start-line="62" selection-start-column="54" selection-end-line="62" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/extrabiblical/catechisms/catechism_of_the_catholic_church.raw.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="19" column="9" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/extensions/bot_extensions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-391">
+          <caret line="74" lean-forward="true" selection-start-line="74" selection-end-line="74" />
+          <folding>
+            <element signature="e#753#767#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="205">
+          <caret line="292" lean-forward="true" selection-start-line="292" selection-end-line="292" />
+          <folding>
+            <element signature="e#753#767#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/extrabiblical/catechisms/heidelberg_catechism.raw.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="122">
+          <caret line="57" column="10" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1401">
+          <caret line="107" column="85" selection-start-line="107" selection-start-column="85" selection-end-line="107" selection-end-column="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/verses.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+          <folding>
+            <element signature="e#753#764#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/central.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2555">
+          <caret line="21" column="11" selection-start-line="21" selection-start-column="11" selection-end-line="21" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/verses/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="99" column="74" selection-start-line="99" selection-start-column="74" selection-end-line="99" selection-end-column="74" />
+          <folding>
+            <element signature="e#753#767#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

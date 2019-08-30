@@ -16,19 +16,7 @@
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os
-import sys
-import ast
-
-import discord
-import tinydb
-
 from . import utils
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(f"{dir_path}/../..")
-
-import central  # noqa: E402
 
 catechisms = ["lsc", "heidelberg", "ccc"]
 
