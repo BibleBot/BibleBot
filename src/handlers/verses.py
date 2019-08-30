@@ -131,7 +131,7 @@ class VerseHandler:
                                 return [support]
 
                     biblehub_versions = ["BSB", "NHEB", "WBT"]
-                    bibleserver_versions = ["LUT", "LXX", "SLT"]
+                    bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
                     apibible_versions = ["KJVA"]
 
                     non_bible_gateway = biblehub_versions + apibible_versions + bibleserver_versions

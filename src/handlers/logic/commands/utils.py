@@ -81,7 +81,7 @@ def get_version(user, guild):
 
 def get_bible_verse(reference, version, headings, verse_numbers):
     biblehub_versions = ["BSB", "NHEB", "WBT"]
-    bibleserver_versions = ["LUT", "LXX", "SLT"]
+    bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
     apibible_versions = ["KJVA"]
 
     non_bg = biblehub_versions + apibible_versions + bibleserver_versions
@@ -89,7 +89,7 @@ def get_bible_verse(reference, version, headings, verse_numbers):
     if version not in non_bg:
         result = biblegateway.get_result(reference, version, headings, verse_numbers)
         return verseutils.process_result(result, reference, version, None)
-    elif version in biblesorg_versions:
+    elif version in apibible_versions:
         result = apibible.get_result(reference, version, headings, verse_numbers)
         return verseutils.process_result(result, reference, version, None)
     elif version in biblehub_versions:

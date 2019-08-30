@@ -35,6 +35,7 @@ version_names = {
     "LUT": "Lutherbibel 2017 (LUT)",
     "LXX": "Septuaginta (LXX)",
     "SLT": "Schlachter 2000 (SLT)",
+    "EU": "Einheitsübersetzung 2016 (EU)"
 }
 
 book_names = {
@@ -146,10 +147,16 @@ book_names = {
 
 
 def get_result(query, version, verse_numbers):
-    book = query.split("|")[0]
-    chapter = query.split("|")[1].split(":")[0]
-    starting_verse = query.split("|")[1].split(":")[1]
-    ending_verse = starting_verse
+    if "|" in query:
+        book = query.split("|")[0]
+        chapter = query.split("|")[1].split(":")[0]
+        starting_verse = query.split("|")[1].split(":")[1]
+        ending_verse = starting_verse
+    else:
+        book = " ".join(query.split(" ")[:-1])
+        chapter = query.split(" ")[-1].split(":")[0]
+        starting_verse = query.split(" ")[-1].split(":")[1]
+        ending_verse = starting_verse
 
     if "-" in starting_verse:
         temp = starting_verse.split("-")
