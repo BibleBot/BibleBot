@@ -108,44 +108,30 @@ def get_books(msg):
                     numbered_esdras = books["1esd"] + books["2esd"]
                     psalm_151 = books["ps151"]
 
+                    store = {
+                        "john": numbered_johns,
+                        "ezra": numbered_esdras,
+                        "ps": psalm_151
+                    }
+
+                    last_item = item.split(" ")[-1]
+                    msg_split = msg.split(" ")
+
+                    indices = [i for i, x in enumerate(msg_split) if x == last_item]
+
                     # tl;dr - if we find a "john", but "1/2/3 John" exists, add any non-numbered "john"
                     # etc for esdras and psalms
-                    if key == "john" and any([True for x in numbered_johns if f" {x} " in f" {msg} "]):
-                        last_item = item.split(" ")[-1]
-                        msg_split = msg.split(" ")
-
-                        indices = [i for i, x in enumerate(msg_split) if x == last_item]
-
+                    if key in store.keys() and any([True for x in store[key] if f" {x} " in f" {msg} "]):
                         for index in indices:
-                            if f"{msg_split[index - 1]} {msg_split[index]}" not in numbered_johns:
-                                results.append(("john", index))
-                                existing_indices.append(index)
-                    elif key == "ezra" and any([True for x in numbered_esdras if f" {x} " in f" {msg} "]):
-                        last_item = item.split(" ")[-1]
-                        msg_split = msg.split(" ")
+                            if key != "ps":
+                                book_name = f"{msg_split[index - 1]} {msg_split[index]}"
+                            else:
+                                book_name = f"{msg_split[index]} {msg_split[index + 1]}"
 
-                        indices = [i for i, x in enumerate(msg_split) if x == last_item]
-
-                        for index in indices:
-                            if f"{msg_split[index - 1]} {msg_split[index]}" not in numbered_esdras:
-                                results.append(("ezra", index))
-                                existing_indices.append(index)
-                    elif key == "ps" and any([True for x in psalm_151 if f" {x} " in f" {msg} "]):
-                        last_item = item.split(" ")[-1]
-                        msg_split = msg.split(" ")
-
-                        indices = [i for i, x in enumerate(msg_split) if x == last_item]
-
-                        for index in indices:
-                            if f"{msg_split[index]} {msg_split[index + 1]}" not in psalm_151:
-                                results.append(("ps", index))
-                                existing_indices.append(index)
+                            if book_name not in store[key]:
+                                    results.append((key, index))
+                                    existing_indices.append(index)
                     else:
-                        last_item = item.split(" ")[-1]
-                        msg_split = msg.split(" ")
-
-                        indices = [i for i, x in enumerate(msg_split) if x == last_item]
-
                         for index in indices:
                             if index not in existing_indices:
                                 results.append((key, index))
@@ -190,7 +176,7 @@ def create_verse_object(name, book_index, msg, available_versions, brackets):
 
     if len(number_split) > 1:
         dash_split = number_split[1].split("-")
-    elif name in ["ps151", "obad", "phlm", "2john", "3john" "jude"]:
+    elif name in ["ps151", "obad", "phlm", "2john", "3john", "jude"]:
         number_split = [1]
         dash_split = array[book_index + 1].split("-")
 

@@ -104,19 +104,7 @@ def create_embeds(lang, resource, section=None, page=None, guild=None):
             image = None
 
         if not section:
-            title_page = create_title_page(lang, title, author, _copyright, category, sections=sections,
-                                           image=image)
-            pages = [title_page]
-
-            for item in sections:
-                for i in range(0, len(item["pages"])):
-                    pages.append(create_section_page(lang, title, item, i, _copyright))
-
-            return {
-                "level": "info",
-                "paged": True,
-                "pages": pages
-            }
+            return create_full_embed(lang, title, author, _copyright, category, sections, image)
         elif not page:
             if section_is_index:
                 try:
@@ -168,19 +156,7 @@ def create_embeds(lang, resource, section=None, page=None, guild=None):
                         "message": create_section_page(lang, title, section_obj, page - 1, _copyright)
                     }
             else:
-                title_page = create_title_page(lang, title, author, _copyright, category, sections=sections,
-                                               image=image)
-                pages = [title_page]
-
-                for item in sections:
-                    for i in range(0, len(item["pages"])):
-                        pages.append(create_section_page(lang, title, item, i, _copyright))
-
-                return {
-                    "level": "info",
-                    "paged": True,
-                    "pages": pages
-                }
+                return create_full_embed(lang, title, author, _copyright, category, sections, image)
 
 
 def create_title_page(lang, title, author, _copyright, category, sections=None, section=None, image=None):
@@ -193,32 +169,26 @@ def create_title_page(lang, title, author, _copyright, category, sections=None, 
 
     if not sections:
         if section:
-            description += f"{section_translated}"
-
-            i_title = section["title"]
-            slugs = section["slugs"]
-
-            if len(section["pages"]) > 1:
-                page_count = lang["pages"].replace("<num>", str(len(section["pages"])))
-            else:
-                page_count = lang["singlePage"]  # "1 page"
-
-            description += f"{slugs[0]}. {i_title} - {page_count} `{slugs}`\n"
+            description += f"{section_translated}{create_section_description(section)}"
     else:
         description += f"{sections_translated}"
 
         for item in sections:
-            i_title = item["title"]
-            slugs = item["slugs"]
-
-            if len(item["pages"]) > 1:
-                page_count = lang["pages"].replace("<num>", str(len(item["pages"])))
-            else:
-                page_count = lang["singlePage"]  # "1 page"
-
-            description += f"{slugs[0]}. {i_title} ({page_count}) `{slugs}`\n"
+            description += create_section_description(item)
 
     return create_embed(lang, title, description, image=image, _copyright=_copyright)
+
+
+def create_section_description(item):
+    i_title = item["title"]
+    slugs = item["slugs"]
+
+    if len(item["pages"]) > 1:
+        page_count = lang["pages"].replace("<num>", str(len(item["pages"])))
+    else:
+        page_count = lang["singlePage"]  # "1 page"
+
+    return f"{slugs[0]}. {i_title} ({page_count}) `{slugs}`\n"
 
 
 def create_section_page(lang, title, section, page_num, _copyright):
@@ -252,6 +222,22 @@ def parse_category(lang, category):
         return_str = lang[category]
 
     return return_str
+
+
+def create_full_embed(lang, title, author, _copyright, category, sections, image):
+    title_page = create_title_page(lang, title, author, _copyright, category, sections=sections,
+                                   image=image)
+    pages = [title_page]
+
+    for item in sections:
+        for i in range(0, len(item["pages"])):
+            pages.append(create_section_page(lang, title, item, i, _copyright))
+
+    return {
+        "level": "info",
+        "paged": True,
+        "pages": pages
+    }
 
 
 def create_numbered_embed(lang, resource, paragraph=None):

@@ -291,7 +291,7 @@ if int(config["BibleBot"]["shards"]) > 1:
 else:
     bot = BibleBot()
 
-#name_scraper.update_books(config["apis"]["apibible"])
+name_scraper.update_books(config["apis"]["apibible"])
 
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()

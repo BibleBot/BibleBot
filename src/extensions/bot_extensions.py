@@ -24,7 +24,7 @@ import datetime
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc
 from handlers.logic.commands import utils
-from bible_modules import biblegateway, biblehub, bibleserver, apibible, bibleutils  # noqa: E501
+from bible_modules import bibleutils
 
 
 async def run_timed_votds(self):
