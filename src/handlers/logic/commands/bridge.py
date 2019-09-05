@@ -619,14 +619,16 @@ async def run_owner_command(ctx, command, remainder):
         parsed = ast.parse(body)
         body = parsed.body[0].body
 
-        insert_returns(body)
+        utils.insert_returns(body)
 
         env = {
-            'bot': ctx["bot"],
+            'bot': ctx["self"],
             'discord': discord,
             '__import__': __import__,
-            'channel': channel
+            'channel': channel,
+            'central': central
         }
+
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
         result = (await eval(f"{fn_name}()", env))

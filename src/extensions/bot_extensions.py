@@ -20,6 +20,7 @@ import central
 import asyncio
 import aiohttp
 import datetime
+import discord
 
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc
@@ -81,9 +82,10 @@ async def send_server_count(bot):
 
 async def send_announcement(ctx, res):
     count = 1
-    total = len(ctx["bot"].guilds)
+    total = len(ctx["self"].guilds)
+    message_counter = None
 
-    for guild in ctx["bot"].guilds:
+    for guild in ctx["self"].guilds:
         announce_tuple = misc.get_guild_announcements(guild, False)
 
         if "Discord Bot" not in guild.name:
@@ -97,7 +99,7 @@ async def send_announcement(ctx, res):
                          "congregation", "general", "bot-spam", "staff"]
 
             if chan != "preferred" and setting:
-                ch = ctx["bot"].get_channel(chan)
+                ch = ctx["self"].get_channel(chan)
                 perm = ch.permissions_for(guild.me)
 
                 if perm.read_messages and perm.send_messages:
@@ -107,18 +109,26 @@ async def send_announcement(ctx, res):
                         msg = await ch.send(res["message"].fields[0].value)
 
                     if msg:
-                        await ctx["channel"].send(
-                            f"`{str(count)} / {str(total)} - {guild.name} - {msg.id}` " +
-                            ":white_check_mark:")
+                        if message_counter is None:
+                            embed = craft_counting_embed(count, total)
+                            message_counter = await ctx["channel"].send(embed=embed)
+                        else:
+                            embed = craft_counting_embed(count, total)
+                            message_counter = await message_counter.edit(embed=embed)
                     else:
-                        await ctx["channel"].send(
-                            f"`{str(count)} / {str(total)} - {guild.name}` " +
-                            ":regional_indicator_x:")
+                        if message_counter is None:
+                            embed = craft_counting_embed(count, total)
+                            message_counter = await ctx["channel"].send(embed=embed)
+                        else:
+                            embed = craft_counting_embed(count, total)
+                            message_counter = await message_counter.edit(embed=embed)
                 else:
-                    await ctx["channel"].send(
-                        f"`{str(count)} / {str(total)} - {guild.name}` " +
-                        ":regional_indicator_x:")
-
+                    if message_counter is None:
+                        embed = craft_counting_embed(count, total)
+                        message_counter = await  ctx["channel"].send(embed=embed)
+                    else:
+                        embed = craft_counting_embed(count, total)
+                        message_counter = await message_counter.edit(embed=embed)
                 count += 1
             elif chan == "preferred" and setting:
                 sent = False
@@ -135,28 +145,75 @@ async def send_announcement(ctx, res):
                                     msg = await ch.send(res["message"].fields[0].value)
 
                                 if msg:
-                                    await ctx["channel"].send(
-                                        f"`{str(count)} / {str(total)} - {guild.name} - {msg.id}` " +
-                                        ":white_check_mark:")
+                                    if message_counter is None:
+                                        embed = craft_counting_embed(count, total)
+                                        message_counter = await ctx["channel"].send(embed=embed)
+                                    else:
+                                        embed = craft_counting_embed(count, total)
+                                        message_counter = await message_counter.edit(embed=embed)
                                 else:
-                                    await ctx["channel"].send(
-                                        f"`{str(count)} / {str(total)} - {guild.name}` " +
-                                        ":regional_indicator_x:")
+                                    if message_counter is None:
+                                        embed = craft_counting_embed(count, total)
+                                        message_counter = await ctx["channel"].send(embed=embed)
+                                    else:
+                                        embed = craft_counting_embed(count, total)
+                                        message_counter = await message_counter.edit(embed=embed)
 
                             else:
-                                await ctx["channel"].send(
-                                    f"`{str(count)} / {str(total)} - {guild.name}` " +
-                                    ":regional_indicator_x:")
+                                if message_counter is None:
+                                    embed = craft_counting_embed(count, total)
+                                    message_counter = await ctx["channel"].send(embed=embed)
+                                else:
+                                    embed = craft_counting_embed(count, total)
+                                    message_counter = await message_counter.edit(embed=embed)
 
                             count += 1
                             sent = True
                     except (AttributeError, IndexError):
                         sent = True
             else:
-                await ctx["channel"].send(
-                    f"`{str(count)} / {str(total)} - {guild.name}` " +
-                    ":regional_indicator_x:")
+                if message_counter is None:
+                    embed = craft_counting_embed(count, total)
+                    message_counter = await ctx["channel"].send(embed=embed)
+                else:
+                    embed = craft_counting_embed(count, total)
+                    message_counter = await message_counter.edit(embed=embed)
 
                 count += 1
 
-    await ctx["channel"].send(ctx["author"].mention + ": Announcements completed.")
+    if message_counter is None:
+        embed = craft_counting_embed(count, total, done=True)
+        await ctx["channel"].send(embed=embed)
+    else:
+        embed = craft_counting_embed(count, total, done=True)
+        await message_counter.edit(embed=embed)
+
+
+def craft_counting_embed(count, total, done=None):
+    embed = discord.Embed()
+
+    embed.color = 303102
+    embed.set_footer(text=f"BibleBot {central.version}", icon_url=central.icon)
+
+    embed.title = "Announcements"
+
+    percentage = "{:.1%}".format(count / total)
+    progress = f"Progress: {percentage} ({str(count)}/{str(total)})"
+
+    if done:
+        embed.description = f"Announcements completed.\n\n"
+    else:
+        embed.description = progress
+
+    return embed
+
+
+async def update_counter(message_counter, ctx, count, total):
+    if message_counter is None:
+        embed = craft_counting_embed(count, total)
+        message_counter = await ctx["channel"].send(embed=embed)
+    else:
+        embed = craft_counting_embed(count, total)
+        message_counter = await message_counter.edit(embed=embed)
+
+    return message_counter
