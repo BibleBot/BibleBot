@@ -34,6 +34,7 @@ version_names = {
     "BSB": "Berean Study Bible (BSB)",
     "NHEB": "New Heart Study Bible (NHEB)",
     "WBT": "Webster's Bible Translation (WBT)"
+    "AKJV": "Authorized (King James) Version (AKJV)"
 }
 
 
