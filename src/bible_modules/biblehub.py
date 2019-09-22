@@ -106,7 +106,8 @@ def get_result(query, version, verse_numbers):
             heading.decompose()
 
         if ending_verse == "-":
-            ending_verse = div.find_all("span", {"class": "reftext"})[-1].get_text()
+            ending_verse = div.find_all(
+                "span", {"class": "reftext"})[-1].get_text()
 
         for sup in div.find_all("span", {"class": "reftext"}):
             if verse_numbers == "enable":
@@ -119,7 +120,8 @@ def get_result(query, version, verse_numbers):
         text = text.split(f"<{int(ending_verse) + 1}>")[0]
 
         if int(starting_verse) != 1:
-            text = f" <{starting_verse}>" + text.split(f"<{int(starting_verse)}>")[1]
+            text = f" <{starting_verse}>" + text.split(
+                f"<{int(starting_verse)}>")[1]
 
         if text is None:
             return

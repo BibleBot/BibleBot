@@ -25,34 +25,44 @@ __sys.path.append(__dir_path + "/..")
 
 from vytypes.language import Language as __Language  # noqa: E402
 
-__defaultLang = open(__dir_path + "/../../i18n/default/default.json", encoding="utf-8")
+__defaultLang = open(__dir_path + "/../../i18n/default/default.json",
+                     encoding="utf-8")
 __defaultLang = __json.loads(__defaultLang.read())
 
-__english_us = open(__dir_path + "/../../i18n/english_us/english_us.json", encoding="utf-8")
+__english_us = open(__dir_path + "/../../i18n/english_us/english_us.json",
+                    encoding="utf-8")
 __english_us = __json.loads(__english_us.read())
 
-__english_uk = open(__dir_path + "/../../i18n/english_uk/english_uk.json", encoding="utf-8")
+__english_uk = open(__dir_path + "/../../i18n/english_uk/english_uk.json",
+                    encoding="utf-8")
 __english_uk = __json.loads(__english_uk.read())
 
-# __esperanto = open(__dir_path + "/../../i18n/esperanto/esperanto.json", encoding="utf-8")
+# __esperanto = open(__dir_path + "/../../i18n/esperanto/esperanto.json",
+#                    encoding="utf-8")
 # __esperanto = __json.loads(__esperanto.read())
 
-__finnish = open(__dir_path + "/../../i18n/finnish/finnish.json", encoding="utf-8")
+__finnish = open(__dir_path + "/../../i18n/finnish/finnish.json",
+                 encoding="utf-8")
 __finnish = __json.loads(__finnish.read())
 
-__french = open(__dir_path + "/../../i18n/french/french.json", encoding="utf-8")
+__french = open(__dir_path + "/../../i18n/french/french.json",
+                encoding="utf-8")
 __french = __json.loads(__french.read())
 
-# __french_qc = open(__dir_path + "/../../i18n/french_qc/french_qc.json", encoding="utf-8")
+# __french_qc = open(__dir_path + "/../../i18n/french_qc/french_qc.json",
+#                    encoding="utf-8")
 # __french_qc = __json.loads(__french_qc.read())
 
-__greek = open(__dir_path + "/../../i18n/greek/greek.json", encoding="utf-8")
+__greek = open(__dir_path + "/../../i18n/greek/greek.json",
+               encoding="utf-8")
 __greek = __json.loads(__greek.read())
 
-__italian = open(__dir_path + "/../../i18n/italian/italian.json", encoding="utf-8")
+__italian = open(__dir_path + "/../../i18n/italian/italian.json",
+                 encoding="utf-8")
 __italian = __json.loads(__italian.read())
 
-# __welsh = open(__dir_path + "/../../i18n/welsh/welsh.json", encoding="utf-8")
+# __welsh = open(__dir_path + "/../../i18n/welsh/welsh.json",
+#                encoding="utf-8")
 # __welsh = __json.loads(__welsh.read())
 
 default = __Language("Default", "default", __defaultLang, "RSV")

@@ -19,7 +19,6 @@
 import asyncio
 import configparser
 import os
-import time
 
 import discord
 
@@ -43,14 +42,17 @@ class BibleBot(discord.AutoShardedClient):
     def __init__(self, *args, loop=None, **kwargs):
         super().__init__(*args, loop=loop, **kwargs)
 
-        self.bg_task = self.loop.create_task(bot_extensions.run_timed_votds(self))
+        self.bg_task = self.loop.create_task(
+            bot_extensions.run_timed_votds(self))
         self.current_page = None
         self.total_pages = None
 
     async def on_ready(self):
         if int(config["BibleBot"]["shards"]) < 2:
-            activity = discord.Game(f"+biblebot {central.version} | Shard: 1 / 1")
-            await self.change_presence(status=discord.Status.online, activity=activity)
+            status = f"+biblebot {central.version} | Shard: 1 / 1"
+            activity = discord.Game(status)
+            await self.change_presence(status=discord.Status.online,
+                                       activity=activity)
 
             central.log_message("info", 1, "global", "global", "connected")
 
@@ -58,10 +60,15 @@ class BibleBot(discord.AutoShardedClient):
 
     async def on_shard_ready(self, shard_id):
         shard_count = str(config["BibleBot"]["shards"])
-        activity = discord.Game(f"+biblebot {central.version} | Shard: {str(shard_id + 1)} / {shard_count}")
-        await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
+        s_id = str(shard_id + 1)
+        status = f"+biblebot {central.version} | Shard {s_id} / {shard_count}"
 
-        central.log_message("info", shard_id + 1, "global", "global", "shard connected")
+        activity = discord.Game(status)
+        await self.change_presence(status=discord.Status.online,
+                                   activity=activity, shard_id=shard_id)
+
+        central.log_message(
+            "info", shard_id + 1, "global", "global", "shard connected")
 
     async def on_guild_join(self):
         await bot_extensions.send_server_count(self)
@@ -84,7 +91,9 @@ class BibleBot(discord.AutoShardedClient):
             "language": None
         }
 
-        if ctx["author"] == self.user or central.is_optout(str(ctx["author"].id)):
+        is_self = ctx["author"] == self.user
+        is_optout = central.is_optout(str(ctx["author"].id))
+        if is_self or is_optout:
             return
 
         language = languages.get_language(ctx["author"])
@@ -115,8 +124,9 @@ class BibleBot(discord.AutoShardedClient):
             language = "english_us"
 
         if config["BibleBot"]["devMode"] == "True":
-            # more often than not, new things are added that aren't filtered through crowdin yet
-            # so we do this to avoid having to deal with missing values
+            # more often than not, new things are added that aren't filtered
+            # through crowdin yet so we do this to avoid having to deal with
+            # missing values
             language = "default"
 
             if str(ctx["author"].id) != owner_id:
@@ -138,7 +148,10 @@ class BibleBot(discord.AutoShardedClient):
                     if not perms.add_reactions:
                         embed_or_reaction_not_allowed = True
 
-                    if not perms.manage_messages or not perms.read_message_history:
+                    no_managing = not perms.manage_messages
+                    no_history = not perms.read_message_history
+
+                    if no_managing or no_history:
                         embed_or_reaction_not_allowed = True
             except AttributeError:
                 pass
@@ -156,100 +169,113 @@ class BibleBot(discord.AutoShardedClient):
             original_command = ""
             self.current_page = 1
 
-            if res is not None:
-                if "announcement" in res:
-                    await bot_extensions.send_announcement(ctx, res)
+            if res is None:
+                return
+
+            if "announcement" in res:
+                await bot_extensions.send_announcement(ctx, res)
+                return
+
+            if "isError" not in res:
+                if embed_or_reaction_not_allowed:
+                    ch = ctx["channel"]
+
+                    await ch.send("Permissions are not properly" +
+                                  " configured.")
+                    await ch.send("Please check https://github.com" +
+                                  "/BibleBot/BibleBot" +
+                                  "#permissions for more information.")
                     return
 
-                if "isError" not in res:
-                    if embed_or_reaction_not_allowed:
-                        await ctx["channel"].send("I need `Embed Links`, `Read Message History`, "
-                                                  + "`Manage Messages`, and `Add Reactions` permissions!")
-                        await ctx["channel"].send("If you are not sure why, please see " +
-                                                  "https://github.com/BibleBot/BibleBot#permissions.")
-                        return
+                if "twoMessages" in res:
+                    await ctx["channel"].send(res["firstMessage"])
+                    await ctx["channel"].send(res["secondMessage"])
+                elif "paged" in res:
+                    self.total_pages = len(res["pages"])
 
-                    if "twoMessages" in res:
-                        await ctx["channel"].send(res["firstMessage"])
-                        await ctx["channel"].send(res["secondMessage"])
-                    elif "paged" in res:
-                        self.total_pages = len(res["pages"])
+                    msg = await ctx["channel"].send(embed=res["pages"][0])
 
-                        msg = await ctx["channel"].send(embed=res["pages"][0])
+                    await msg.add_reaction("⬅")
+                    await msg.add_reaction("➡")
 
-                        await msg.add_reaction("⬅")
-                        await msg.add_reaction("➡")
+                    def check(r, u):
+                        if r.message.id == msg.id:
+                            if str(r.emoji) == "⬅":
+                                if u.id != bot.user.id:
+                                    if self.current_page != 1:
+                                        self.current_page -= 1
+                                        return True
+                            elif str(r.emoji) == "➡":
+                                if u.id != bot.user.id:
+                                    if self.current_page != self.total_pages:  # noqa: E501
+                                        self.current_page += 1
+                                        return True
 
-                        def check(r, u):
-                            if r.message.id == msg.id:
-                                if str(r.emoji) == "⬅":
-                                    if u.id != bot.user.id:
-                                        if self.current_page != 1:
-                                            self.current_page -= 1
-                                            return True
-                                elif str(r.emoji) == "➡":
-                                    if u.id != bot.user.id:
-                                        if self.current_page != self.total_pages:
-                                            self.current_page += 1
-                                            return True
+                    continue_paging = True
 
-                        continue_paging = True
+                    try:
+                        while continue_paging:
+                            reaction, user = await bot.wait_for(
+                                'reaction_add', timeout=60.0, check=check)
+                            await reaction.message.edit(
+                                embed=res["pages"][self.current_page - 1])
 
+                            reaction, user = await bot.wait_for(
+                                'reaction_remove', timeout=60.0, check=check)
+                            await reaction.message.edit(
+                                embed=res["pages"][self.current_page - 1])
+                    except (asyncio.TimeoutError, IndexError):
                         try:
-                            while continue_paging:
-                                reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
-                                await reaction.message.edit(embed=res["pages"][self.current_page - 1])
-
-                                reaction, user = await bot.wait_for('reaction_remove', timeout=60.0, check=check)
-                                await reaction.message.edit(embed=res["pages"][self.current_page - 1])
-                        except (asyncio.TimeoutError, IndexError):
-                            try:
-                                await msg.clear_reactions()
-                            except (discord.errors.Forbidden, discord.errors.NotFound):
-                                pass
-                    else:
-                        if "reference" not in res and "text" not in res:
-                            await ctx["channel"].send(embed=res["message"])
-                        else:
-                            if res["message"] is not None:
-                                await ctx["channel"].send(res["message"])
-                            else:
-                                await ctx["channel"].send("Done.")
-
-                    lang = central.get_raw_language(language)  # this stops the inspector from whining about types
-                    for original_command_name in lang["commands"].keys():
-                        untranslated = ["setlanguage", "userid", "ban", "unban", "reason",
-                                        "optout", "unoptout", "eval", "jepekula", "joseph",
-                                        "tiger", "lsc", "heidelberg"]
-
-                        if lang["commands"][original_command_name] == command:
-                            original_command = original_command_name
-                        elif command in untranslated:
-                            original_command = command
-
-                    clean_args = remainder.replace("\"", "").replace("'", "").replace("  ", " ")
-                    clean_args = clean_args.replace("\n", "").strip()
-
-                    ignore_arg_commands = ["puppet", "eval", "announce"]
-
-                    if original_command in ignore_arg_commands:
-                        clean_args = ""
-
-                    central.log_message(res["level"], shard, ctx["identifier"],
-                                        source, f"+{original_command} {clean_args}")
+                            await msg.clear_reactions()
+                        except (discord.errors.Forbidden,
+                                discord.errors.NotFound):
+                            pass
                 else:
-                    await ctx["channel"].send(embed=res["message"])
+                    if "reference" not in res and "text" not in res:
+                        await ctx["channel"].send(embed=res["message"])
+                    else:
+                        if res["message"] is not None:
+                            await ctx["channel"].send(res["message"])
+                        else:
+                            await ctx["channel"].send("Done.")
+
+                lang = central.get_raw_language(language)
+                for original_command_name in lang["commands"].keys():
+                    untranslated = ["setlanguage", "userid", "ban", "unban",
+                                    "reason", "optout", "unoptout", "eval",
+                                    "jepekula", "joseph", "tiger",
+                                    "lsc", "heidelberg"]
+
+                    if lang["commands"][original_command_name] == command:
+                        original_command = original_command_name
+                    elif command in untranslated:
+                        original_command = command
+
+                clean_args = remainder.replace("\"", "").replace("'", "").replace("  ", " ")
+                clean_args = clean_args.replace("\n", "").strip()
+
+                ignore_arg_commands = ["puppet", "eval", "announce"]
+
+                if original_command in ignore_arg_commands:
+                    clean_args = ""
+
+                central.log_message(res["level"], shard,
+                                    ctx["identifier"], source,
+                                    f"+{original_command} {clean_args}")
+            else:
+                await ctx["channel"].send(embed=res["message"])
         else:
             verse_handler = VerseHandler()
 
-            result = verse_handler.process_raw_message(raw, ctx["author"], ctx["language"], ctx["guild"])
+            result = verse_handler.process_raw_message(
+                raw, ctx["author"], ctx["language"], ctx["guild"])
 
             if result is not None:
                 if embed_or_reaction_not_allowed:
-                    await ctx["channel"].send("I need `Embed Links`, `Read Message History`, "
-                                              + "`Manage Messages`, and `Add Reactions` permissions!")
-                    await ctx["channel"].send("If you are not sure why, please see " +
-                                              "https://github.com/BibleBot/BibleBot#permissions.")
+                    await ctx["channel"].send("I need `Embed Links`, `Read Message History`, "  # noqa: E501
+                                              + "`Manage Messages`, and `Add Reactions` permissions!")  # noqa: E501
+                    await ctx["channel"].send("If you are not sure why, please see " +  # noqa: E501
+                                              "https://github.com/BibleBot/BibleBot#permissions.")  # noqa: E501
                     return
 
                 if "invalid" not in result and "spam" not in result:
@@ -257,16 +283,20 @@ class BibleBot(discord.AutoShardedClient):
                         try:
                             if "twoMessages" in item:
                                 await ctx["channel"].send(item["firstMessage"])
-                                await ctx["channel"].send(item["secondMessage"])
+                                await ctx["channel"].send(item["secondMessage"])  # noqa: E501
                             elif "message" in item:
                                 await ctx["channel"].send(item["message"])
                         except KeyError:
                             pass
 
                         if "reference" in item:
-                            central.log_message(item["level"], shard, ctx["identifier"], source, item["reference"])
+                            central.log_message(
+                                item["level"], shard, ctx["identifier"],
+                                source, item["reference"])
                 elif "spam" in result:
-                    central.log_message("warn", shard, ctx["identifier"], source, "Too many verses at once.")
+                    central.log_message("warn", shard,
+                                        ctx["identifier"], source,
+                                        "Too many verses at once.")
                     await ctx["channel"].send(result["spam"])
 
 
@@ -275,10 +305,11 @@ if int(config["BibleBot"]["shards"]) > 1:
 else:
     bot = BibleBot()
 
-#name_scraper.update_books(config["apis"]["apibible"])
+# name_scraper.update_books(config["apis"]["apibible"])
 
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
 
-central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
+central.log_message("info", 0, "global", "global",
+                    f"BibleBot {central.version} by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])
