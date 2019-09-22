@@ -64,8 +64,6 @@ class BibleBot(discord.AutoShardedClient):
 
         activity = discord.Game(status)
         await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
-        s_id = str(shard_id + 1)
-        status = f"+biblebot {central.version} | Shard {s_id} / {shard_count}"
 
         central.log_message("info", shard_id + 1, "global", "global", "shard connected")
 
