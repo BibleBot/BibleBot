@@ -64,6 +64,8 @@ class BibleBot(discord.AutoShardedClient):
 
         activity = discord.Game(status)
         await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
+        s_id = str(shard_id + 1)
+        status = f"+biblebot {central.version} | Shard {s_id} / {shard_count}"
 
         central.log_message("info", shard_id + 1, "global", "global", "shard connected")
 
@@ -227,10 +229,7 @@ class BibleBot(discord.AutoShardedClient):
                     if "reference" not in res and "text" not in res:
                         await ctx["channel"].send(embed=res["message"])
                     else:
-                        if res["message"] is not None:
-                            await ctx["channel"].send(res["message"])
                         else:
-                            await ctx["channel"].send("Done.")
 
                 lang = central.get_raw_language(language)
                 for original_command_name in lang["commands"].keys():
@@ -273,7 +272,7 @@ class BibleBot(discord.AutoShardedClient):
                         try:
                             if "twoMessages" in item:
                                 await ctx["channel"].send(item["firstMessage"])
-                                await ctx["channel"].send(item["secondMessage"])
+                                await ctx["channel"].send(item["secondMessage"])  # noqa: E501
                             elif "message" in item:
                                 await ctx["channel"].send(item["message"])
                         except KeyError:
@@ -282,7 +281,9 @@ class BibleBot(discord.AutoShardedClient):
                         if "reference" in item:
                             central.log_message(item["level"], shard, ctx["identifier"],  source, item["reference"])
                 elif "spam" in result:
-                    central.log_message("warn", shard, ctx["identifier"], source, "Too many verses at once.")
+                    central.log_message("warn", shard,
+                                        ctx["identifier"], source,
+                                        "Too many verses at once.")
                     await ctx["channel"].send(result["spam"])
 
 
@@ -296,5 +297,6 @@ name_scraper.update_books(config["apis"]["apibible"])
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
 
-central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
+central.log_message("info", 0, "global", "global",
+                    f"BibleBot {central.version} by Elliott Pardee (vypr)")
 bot.run(config["BibleBot"]["token"])

@@ -31,7 +31,8 @@ __defaultLang = __json.loads(__defaultLang.read())
 # __english = open(__dir_path + "/../../i18n/english/english.json", encoding="utf-8")
 # __english = __json.loads(__english_us.read())
 
-# __esperanto = open(__dir_path + "/../../i18n/esperanto/esperanto.json", encoding="utf-8")
+# __esperanto = open(__dir_path + "/../../i18n/esperanto/esperanto.json",
+#                    encoding="utf-8")
 # __esperanto = __json.loads(__esperanto.read())
 
 # __finnish = open(__dir_path + "/../../i18n/finnish/finnish.json", encoding="utf-8")
@@ -40,7 +41,8 @@ __defaultLang = __json.loads(__defaultLang.read())
 # __french = open(__dir_path + "/../../i18n/french/french.json", encoding="utf-8")
 # __french = __json.loads(__french.read())
 
-# __french_qc = open(__dir_path + "/../../i18n/french_qc/french_qc.json", encoding="utf-8")
+# __french_qc = open(__dir_path + "/../../i18n/french_qc/french_qc.json",
+#                    encoding="utf-8")
 # __french_qc = __json.loads(__french_qc.read())
 
 # __greek = open(__dir_path + "/../../i18n/greek/greek.json", encoding="utf-8")
@@ -49,7 +51,8 @@ __defaultLang = __json.loads(__defaultLang.read())
 # __italian = open(__dir_path + "/../../i18n/italian/italian.json", encoding="utf-8")
 # __italian = __json.loads(__italian.read())
 
-# __welsh = open(__dir_path + "/../../i18n/welsh/welsh.json", encoding="utf-8")
+# __welsh = open(__dir_path + "/../../i18n/welsh/welsh.json",
+#                encoding="utf-8")
 # __welsh = __json.loads(__welsh.read())
 
 default = __Language("Default", "default", __defaultLang, "RSV")
