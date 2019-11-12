@@ -99,8 +99,8 @@ async def send_announcement(ctx, res):
                          "congregation", "general", "bot-spam", "staff"]
 
             if chan != "preferred" and setting:
-                ch = ctx["self"].get_channel(chan)
-                if ch:
+                try:
+                    ch = ctx["self"].get_channel(chan)
                     perm = ch.permissions_for(guild.me)
 
                     if perm.read_messages and perm.send_messages:
@@ -123,14 +123,16 @@ async def send_announcement(ctx, res):
                             else:
                                 embed = craft_counting_embed(count, total)
                                 message_counter = await message_counter.edit(embed=embed)
-                else:
-                    if message_counter is None:
-                        embed = craft_counting_embed(count, total)
-                        message_counter = await ctx["channel"].send(embed=embed)
                     else:
-                        embed = craft_counting_embed(count, total)
-                        message_counter = await message_counter.edit(embed=embed)
-                count += 1
+                        if message_counter is None:
+                            embed = craft_counting_embed(count, total)
+                            message_counter = await ctx["channel"].send(embed=embed)
+                        else:
+                            embed = craft_counting_embed(count, total)
+                            message_counter = await message_counter.edit(embed=embed)
+                    count += 1
+                except (AttributeError, IndexError):
+                    pass
             elif chan == "preferred" and setting:
                 sent = False
 

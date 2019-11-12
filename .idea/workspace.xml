@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1db95e2a-4454-4f08-b3cf-02a978cd3358" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/central.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/central.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/extensions/bot_extensions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/bot_extensions.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,8 +34,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="103" column="38" lean-forward="true" selection-start-line="103" selection-start-column="38" selection-end-line="103" selection-end-column="38" />
+            <state relative-caret-position="-48">
+              <caret line="87" column="35" lean-forward="true" selection-start-line="87" selection-start-column="35" selection-end-line="87" selection-end-column="35" />
+              <folding>
+                <element signature="e#753#767#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/extensions/bot_extensions.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="113">
+              <caret line="134" column="24" selection-start-line="134" selection-start-column="24" selection-end-line="134" selection-end-column="24" />
               <folding>
                 <element signature="e#753#767#0" expanded="true" />
               </folding>
@@ -52,11 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/central.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="97" column="39" selection-start-line="97" selection-start-column="39" selection-end-line="97" selection-end-column="39" />
+            <state relative-caret-position="178">
+              <caret line="95" column="26" lean-forward="true" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
               <folding>
                 <element signature="e#753#772#0" expanded="true" />
               </folding>
@@ -173,7 +185,6 @@
         <option value="$PROJECT_DIR$/src/handlers/logic/verses/utils.py" />
         <option value="$PROJECT_DIR$/src/config.ini" />
         <option value="$PROJECT_DIR$/src/data/languages.py" />
-        <option value="$PROJECT_DIR$/src/extensions/bot_extensions.py" />
         <option value="$PROJECT_DIR$/src/config.example.ini" />
         <option value="$PROJECT_DIR$/src/handlers/logic/settings/languages.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
@@ -181,10 +192,11 @@
         <option value="$PROJECT_DIR$/src/handlers/logic/commands/bridge.py" />
         <option value="$PROJECT_DIR$/src/bot.py" />
         <option value="$PROJECT_DIR$/src/central.py" />
+        <option value="$PROJECT_DIR$/src/extensions/bot_extensions.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="840" />
     <option name="width" value="840" />
     <option name="height" value="1020" />
@@ -382,7 +394,7 @@
       <workItem from="1567553638908" duration="77000" />
       <workItem from="1568404130689" duration="187000" />
       <workItem from="1573587146780" duration="537000" />
-      <workItem from="1573588038889" duration="7866000" />
+      <workItem from="1573588038889" duration="8594000" />
     </task>
     <task id="LOCAL-00001" summary="Fix some bugs and start work on resources, starting with Luther's Small Catechism.">
       <created>1551150489506</created>
@@ -552,11 +564,25 @@
       <option name="project" value="LOCAL" />
       <updated>1573595638059</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Temporary workaround for language errors.">
+      <created>1573596001877</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1573596001877</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Fix +announce.">
+      <created>1573596625279</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1573596625279</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44256000" />
+    <option name="totallyTimeSpent" value="44984000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -568,10 +594,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="840" y="0" width="840" height="1020" extended-state="0" />
+    <frame x="-8" y="-8" width="1696" height="1036" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1732991" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.08256881" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -581,7 +607,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4996942" weight="0.3295325" />
-      <window_info anchor="bottom" id="Version Control" order="7" visible="true" weight="0.33565623" />
+      <window_info anchor="bottom" id="Version Control" order="7" visible="true" weight="0.3295325" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50030583" side_tool="true" weight="0.3295325" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.3295325" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.3295325" />
@@ -691,7 +717,9 @@
     <MESSAGE value="Fix typo." />
     <MESSAGE value="Fix bug where mode wasn't detected for +votd and +random." />
     <MESSAGE value="Add parameter to guild events in order to prevent a warning." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add parameter to guild events in order to prevent a warning." />
+    <MESSAGE value="Temporary workaround for language errors." />
+    <MESSAGE value="Fix +announce." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix +announce." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/CODE_OF_CONDUCT.md">
@@ -903,16 +931,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/extensions/bot_extensions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
-          <folding>
-            <element signature="e#753#767#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../name_scraper/name_scraper/client.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
@@ -981,6 +999,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/central.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="95" column="26" lean-forward="true" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
+          <folding>
+            <element signature="e#753#772#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/logic/settings/languages.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="193">
@@ -990,20 +1018,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="103" column="38" lean-forward="true" selection-start-line="103" selection-start-column="38" selection-end-line="103" selection-end-column="38" />
+        <state relative-caret-position="-48">
+          <caret line="87" column="35" lean-forward="true" selection-start-line="87" selection-start-column="35" selection-end-line="87" selection-end-column="35" />
           <folding>
             <element signature="e#753#767#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/central.py">
+    <entry file="file://$PROJECT_DIR$/src/extensions/bot_extensions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="97" column="39" selection-start-line="97" selection-start-column="39" selection-end-line="97" selection-end-column="39" />
+        <state relative-caret-position="113">
+          <caret line="134" column="24" selection-start-line="134" selection-start-column="24" selection-end-line="134" selection-end-column="24" />
           <folding>
-            <element signature="e#753#772#0" expanded="true" />
+            <element signature="e#753#767#0" expanded="true" />
           </folding>
         </state>
       </provider>
