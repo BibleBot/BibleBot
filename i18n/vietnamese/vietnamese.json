@@ -48,7 +48,7 @@
     "headingsfail": "Sử dụng `+<setheadings> <enable>` hay `+<setheadings> <disable>`.",
     "mode": "Your mode is set to `<value>`. Use `+<setmode>` to change it.",
     "modesuccess": "Set mode successfully.",
-    "modefail": "Use `+<setmode>` with one of the following paramters: `default, embed, blockquote, code`",
+    "modefail": "Use `+<setmode>` with one of the following parameters: `default, embed, blockquote, code`",
     "setlanguagesuccess": "Đặt ngôn ngữ thành công.",
     "setlanguagefail": "Không thể đặt ngôn ngữ, xem `+<languages>`.",
     "languageused": "Bạn đang sử dụng Replace_With_Language_Name. Sử dụng `+<setlanguage>` để đặt ngôn ngữ khác.",
