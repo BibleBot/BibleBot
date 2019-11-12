@@ -29,7 +29,7 @@ from vytypes.language import Language as __Language  # noqa: E402
 # __defaultLang = __json.loads(__defaultLang.read())
 
 __english = open(__dir_path + "/../../i18n/english/english.json", encoding="utf-8")
-__english = __json.loads(__english_us.read())
+__english = __json.loads(__english.read())
 
 # __esperanto = open(__dir_path + "/../../i18n/esperanto/esperanto.json",
 #                    encoding="utf-8")

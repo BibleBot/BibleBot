@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1db95e2a-4454-4f08-b3cf-02a978cd3358" name="Default Changelist" comment="Push version number.">
+    <list default="true" id="1db95e2a-4454-4f08-b3cf-02a978cd3358" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/extrabiblical/catechisms/heidelberg_catechism.bin" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/extrabiblical/catechisms/heidelberg_catechism.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/extrabiblical/catechisms/luthers_small_catechism.bin" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/extrabiblical/catechisms/luthers_small_catechism.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/languages.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/languages.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,8 +34,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="233" column="66" lean-forward="true" selection-start-line="233" selection-start-column="66" selection-end-line="233" selection-end-column="66" />
+            <state relative-caret-position="223">
+              <caret line="81" column="22" lean-forward="true" selection-start-line="81" selection-start-column="22" selection-end-line="81" selection-end-column="22" />
               <folding>
                 <element signature="e#753#767#0" expanded="true" />
               </folding>
@@ -89,7 +87,7 @@
         <entry file="file://$PROJECT_DIR$/src/data/languages.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="280">
-              <caret line="31" selection-start-line="31" selection-end-line="31" />
+              <caret line="31" column="34" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -451,7 +449,7 @@
       <workItem from="1567553638908" duration="77000" />
       <workItem from="1568404130689" duration="187000" />
       <workItem from="1573587146780" duration="537000" />
-      <workItem from="1573588038889" duration="3576000" />
+      <workItem from="1573588038889" duration="4613000" />
     </task>
     <task id="LOCAL-00001" summary="Fix some bugs and start work on resources, starting with Luther's Small Catechism.">
       <created>1551150489506</created>
@@ -523,11 +521,25 @@
       <option name="project" value="LOCAL" />
       <updated>1573591033295</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Fix a bug.">
+      <created>1573591630745</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1573591630745</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Fix a bug.">
+      <created>1573591975647</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1573591975647</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="39966000" />
+    <option name="totallyTimeSpent" value="41003000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -552,9 +564,9 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4996942" weight="0.3295325" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.3295325" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3295325" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50030583" side_tool="true" weight="0.3295325" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3295325" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50030583" side_tool="true" weight="0.3295325" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.3295325" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.3295325" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" />
@@ -652,7 +664,8 @@
     <MESSAGE value="Add +catechisms and more bugfixes." />
     <MESSAGE value="Add display modes, prepare for launch." />
     <MESSAGE value="Push version number." />
-    <option name="LAST_COMMIT_MESSAGE" value="Push version number." />
+    <MESSAGE value="Fix a bug." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix a bug." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/CODE_OF_CONDUCT.md">
@@ -935,16 +948,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="233" column="66" lean-forward="true" selection-start-line="233" selection-start-column="66" selection-end-line="233" selection-end-column="66" />
-          <folding>
-            <element signature="e#753#767#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/i18n/default/default.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="207">
@@ -957,10 +960,20 @@
         <state relative-caret-position="-1380" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/bot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="81" column="22" lean-forward="true" selection-start-line="81" selection-start-column="22" selection-end-line="81" selection-end-column="22" />
+          <folding>
+            <element signature="e#753#767#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/data/languages.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
+          <caret line="31" column="34" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
         </state>
       </provider>
     </entry>
