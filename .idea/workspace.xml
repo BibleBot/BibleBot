@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1db95e2a-4454-4f08-b3cf-02a978cd3358" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bible_modules/biblegateway.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bible_modules/biblegateway.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,14 +31,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="127" column="55" selection-start-line="127" selection-start-column="55" selection-end-line="127" selection-end-column="55" />
+            <state relative-caret-position="665">
+              <caret line="130" column="21" lean-forward="true" selection-start-line="130" selection-start-column="21" selection-end-line="130" selection-end-column="21" />
               <folding>
                 <element signature="e#753#767#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="188">
+              <caret line="75" column="35" lean-forward="true" selection-start-line="75" selection-start-column="35" selection-end-line="75" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -78,15 +87,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="280">
               <caret line="31" column="34" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/config.ini">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="9" column="43" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -224,7 +224,6 @@
         <option value="$PROJECT_DIR$/src/handlers/logic/commands/bridge.py" />
         <option value="$PROJECT_DIR$/src/handlers/logic/settings/formatting.py" />
         <option value="$PROJECT_DIR$/i18n/default/default.json" />
-        <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/bibleserver.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/biblehub.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/apibible.py" />
@@ -235,6 +234,7 @@
         <option value="$PROJECT_DIR$/src/config.example.ini" />
         <option value="$PROJECT_DIR$/src/handlers/logic/settings/languages.py" />
         <option value="$PROJECT_DIR$/src/bot.py" />
+        <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
       </list>
     </option>
   </component>
@@ -263,18 +263,13 @@
             <path>
               <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
               <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
-              <item name="i18n" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
-              <item name="i18n" type="462c0819:PsiDirectoryNode" />
-              <item name="default" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
               <item name="BibleBot" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="bible_modules" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BibleBot" type="b2602c69:ProjectViewProjectNode" />
@@ -458,7 +453,7 @@
       <workItem from="1567553638908" duration="77000" />
       <workItem from="1568404130689" duration="187000" />
       <workItem from="1573587146780" duration="537000" />
-      <workItem from="1573588038889" duration="6103000" />
+      <workItem from="1573588038889" duration="6508000" />
     </task>
     <task id="LOCAL-00001" summary="Fix some bugs and start work on resources, starting with Luther's Small Catechism.">
       <created>1551150489506</created>
@@ -586,11 +581,25 @@
       <option name="project" value="LOCAL" />
       <updated>1573593705214</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Fix a bug where old english translations don't switch to the new ones.">
+      <created>1573594224706</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1573594224706</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Ensure this bug doesn't bother us.">
+      <created>1573594394037</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1573594394037</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="42493000" />
+    <option name="totallyTimeSpent" value="42898000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -720,7 +729,8 @@
     <MESSAGE value="Turn name_scraper on." />
     <MESSAGE value="Update discordbots.org to top.gg." />
     <MESSAGE value="Fix a bug where old english translations don't switch to the new ones." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix a bug where old english translations don't switch to the new ones." />
+    <MESSAGE value="Ensure this bug doesn't bother us." />
+    <option name="LAST_COMMIT_MESSAGE" value="Ensure this bug doesn't bother us." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/CODE_OF_CONDUCT.md">
@@ -921,13 +931,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="112" column="44" selection-start-line="112" selection-start-column="44" selection-end-line="112" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/logic/verses/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -1029,11 +1032,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="127" column="55" selection-start-line="127" selection-start-column="55" selection-end-line="127" selection-end-column="55" />
+        <state relative-caret-position="665">
+          <caret line="130" column="21" lean-forward="true" selection-start-line="130" selection-start-column="21" selection-end-line="130" selection-end-column="21" />
           <folding>
             <element signature="e#753#767#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bible_modules/biblegateway.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="75" column="35" lean-forward="true" selection-start-line="75" selection-start-column="35" selection-end-line="75" selection-end-column="35" />
         </state>
       </provider>
     </entry>
