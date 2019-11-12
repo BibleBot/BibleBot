@@ -132,7 +132,14 @@ async def send_announcement(ctx, res):
                             message_counter = await message_counter.edit(embed=embed)
                     count += 1
                 except (AttributeError, IndexError):
-                    pass
+                    if message_counter is None:
+                        embed = craft_counting_embed(count, total)
+                        message_counter = await ctx["channel"].send(embed=embed)
+                    else:
+                        embed = craft_counting_embed(count, total)
+                        message_counter = await message_counter.edit(embed=embed)
+
+                    count += 1
             elif chan == "preferred" and setting:
                 sent = False
 
@@ -173,6 +180,14 @@ async def send_announcement(ctx, res):
                             count += 1
                             sent = True
                     except (AttributeError, IndexError):
+                        if message_counter is None:
+                            embed = craft_counting_embed(count, total)
+                            message_counter = await ctx["channel"].send(embed=embed)
+                        else:
+                            embed = craft_counting_embed(count, total)
+                            message_counter = await message_counter.edit(embed=embed)
+
+                        count += 1
                         sent = True
             else:
                 if message_counter is None:
