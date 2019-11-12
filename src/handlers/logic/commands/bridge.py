@@ -385,18 +385,20 @@ async def run_command(ctx, command, remainder):
             }
     elif command in ["votd", "verseoftheday"]:
         verse = bibleutils.get_votd()
+        mode = formatting.get_mode(user)
         version = utils.get_version(user, guild)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        return utils.get_bible_verse(verse, version, headings, verse_numbers)
+        return utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
     elif command == "random":
         verse = bibleutils.get_random_verse()
+        mode = formatting.get_mode(user)
         version = utils.get_version(user, guild)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        return utils.get_bible_verse(verse, version, headings, verse_numbers)
+        return utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
     elif command == "setheadings":
         if formatting.set_headings(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setheadings"], lang["headingssuccess"])
