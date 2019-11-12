@@ -100,32 +100,33 @@ async def send_announcement(ctx, res):
 
             if chan != "preferred" and setting:
                 ch = ctx["self"].get_channel(chan)
-                perm = ch.permissions_for(guild.me)
+                if ch:
+                    perm = ch.permissions_for(guild.me)
 
-                if perm.read_messages and perm.send_messages:
-                    if perm.embed_links:
-                        msg = await ch.send(embed=res["message"])
-                    else:
-                        msg = await ch.send(res["message"].fields[0].value)
+                    if perm.read_messages and perm.send_messages:
+                        if perm.embed_links:
+                            msg = await ch.send(embed=res["message"])
+                        else:
+                            msg = await ch.send(res["message"].fields[0].value)
 
-                    if msg:
-                        if message_counter is None:
-                            embed = craft_counting_embed(count, total)
-                            message_counter = await ctx["channel"].send(embed=embed)
+                        if msg:
+                            if message_counter is None:
+                                embed = craft_counting_embed(count, total)
+                                message_counter = await ctx["channel"].send(embed=embed)
+                            else:
+                                embed = craft_counting_embed(count, total)
+                                message_counter = await message_counter.edit(embed=embed)
                         else:
-                            embed = craft_counting_embed(count, total)
-                            message_counter = await message_counter.edit(embed=embed)
-                    else:
-                        if message_counter is None:
-                            embed = craft_counting_embed(count, total)
-                            message_counter = await ctx["channel"].send(embed=embed)
-                        else:
-                            embed = craft_counting_embed(count, total)
-                            message_counter = await message_counter.edit(embed=embed)
+                            if message_counter is None:
+                                embed = craft_counting_embed(count, total)
+                                message_counter = await ctx["channel"].send(embed=embed)
+                            else:
+                                embed = craft_counting_embed(count, total)
+                                message_counter = await message_counter.edit(embed=embed)
                 else:
                     if message_counter is None:
                         embed = craft_counting_embed(count, total)
-                        message_counter = await  ctx["channel"].send(embed=embed)
+                        message_counter = await ctx["channel"].send(embed=embed)
                     else:
                         embed = craft_counting_embed(count, total)
                         message_counter = await message_counter.edit(embed=embed)
