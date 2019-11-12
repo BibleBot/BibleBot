@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@ import configparser
 import math
 import os
 import time
-import numbers
 
 import tinydb
 
@@ -35,15 +34,15 @@ config.read(f"{dir_path}/config.ini")
 configVersion = configparser.ConfigParser()
 configVersion.read(f"{dir_path}/config.example.ini")
 
-version = "BibleBot v" + configVersion["meta"]["version"]
-icon = "https://cdn.discordapp.com/avatars/361033318273384449/cc2758488d104770c9630e4c21ad1e4a.png"  # noqa: E501
+version = configVersion["meta"]["version"]
+icon = "https://cdn.discordapp.com/avatars/367665336239128577/b8ab407073f4a3be980d8fa6a03e9586.png"  # noqa: E501
+cmd_prefix = config["BibleBot"]["commandPrefix"]
 
 logger = VyLogger("default")
 
 db = tinydb.TinyDB(f"{dir_path}/../databases/db")
 guildDB = tinydb.TinyDB(f"{dir_path}/../databases/guilddb")
 versionDB = tinydb.TinyDB(f"{dir_path}/../databases/versiondb")
-banDB = tinydb.TinyDB(f"{dir_path}/../databases/bandb")
 optoutDB = tinydb.TinyDB(f"{dir_path}/../databases/optoutdb")
 
 languages = languages
@@ -58,7 +57,14 @@ def capitalize_first_letter(string):
     return string[0].upper() + string[1:]
 
 
-def splitter(s):
+def halve_string(s):
+    """
+    This function works by finding the space nearest the middle
+    of 's' and cutting the string into two separate strings on that space.
+    :param s: string; The input.
+    :return: dict; A dict with the first half at dict["first"] and the second at dict["second"].
+    """
+
     middle = math.floor(len(s) / 2)
     before = s.rfind(" ", middle)
     after = s.index(" ", middle + 1)
@@ -87,39 +93,8 @@ def log_message(level, shard, sender, source, msg):
         logger.debug(message)
 
 
-def add_ban(entryid, reason):
-    ideal_entry = tinydb.Query()
-    result = banDB.search(ideal_entry.id == entryid)
-
-    if len(result) > 0:
-        return False
-    else:
-        banDB.insert({"id": entryid, "reason": reason})
-        return True
-
-
-def remove_ban(entryid):
-    ideal_entry = tinydb.Query()
-    result = banDB.search(ideal_entry.id == entryid)
-
-    if len(result) > 0:
-        banDB.remove(ideal_entry.id == entryid)
-        return True
-    else:
-        return False
-
-
-def is_banned(entryid):
-    ideal_entry = tinydb.Query()
-    result = banDB.search(ideal_entry.id == entryid)
-
-    if len(result) > 0:
-        if "reason" in result[0].keys():
-            return True, result[0]["reason"]
-        else:
-            return True, "Unspecified"
-    else:
-        return False, None
+def get_raw_language(obj):
+    return getattr(languages, obj).raw_object
 
 
 def add_optout(entryid):
@@ -158,12 +133,16 @@ def is_optout(entryid):
 
 
 def is_snowflake(snowflake):
-    try:
-        if isinstance(int(snowflake), numbers.Number):
-            if int(snowflake) > 1.4200704e+16:
-                return True
-    except ValueError:
-        return False
+    if isinstance(snowflake, int):
+        if snowflake > 1.4200704e+16:
+            return True
+    else:
+        try:
+            if isinstance(int(snowflake), int):
+                if int(snowflake) > 1.4200704e+16:
+                    return True
+        except ValueError:
+            return False
 
 
 def sleep(milliseconds):

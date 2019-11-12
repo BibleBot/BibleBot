@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -120,3 +120,34 @@ def get_guild_brackets(guild):
                 return results[0]["brackets"]
 
         return central.brackets
+
+
+def set_mode(user, mode):
+    mode = mode.lower()
+    modes = ["default", "embed", "blockquote", "code"]
+
+    if mode not in modes:
+        return False
+
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
+
+    if len(results) > 0:
+        central.db.update({"mode": mode}, ideal_user.id == user.id)
+    else:
+        central.db.insert({"id": user.id, "mode": mode})
+
+    return True
+
+
+def get_mode(user):
+    ideal_user = tinydb.Query()
+    results = central.db.search(ideal_user.id == user.id)
+
+    if len(results) > 0:
+        if "mode" in results[0]:
+            return results[0]["mode"]
+        else:
+            return "embed"
+    else:
+        return "embed"

@@ -16,23 +16,29 @@
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import json
+from handlers.logic.commands import utils
+import central
+
+catechisms = ["lsc", "heidelberg", "ccc"]
+
+catechism_titles = {
+    "lsc": "Luther's Small Catechism (1529)",
+    "heidelberg": "Heidelberg Catechism (1563)",
+    "ccc": "Catechism of the Catholic Church (1992)"
+}
 
 
-class Language:
-    def __init__(self, name, object_name, raw_object, default_version):
-        self.name = name
-        self.object_name = object_name
-        self.raw_object = raw_object
-        self.default_version = default_version
+def get_catechisms(lang):
+    title = lang["catechisms"]
+    description = lang["catechisms_text"]
 
-    def to_object(self):
-        return {
-            "name": self.name,
-            "object_name": self.object_name,
-            "raw_object": self.raw_object,
-            "default_version": self.default_version
-        }
+    for catechism in catechisms:
+        command_name = catechism
+        description += f"`{central.cmd_prefix}{command_name}` - **{catechism_titles[catechism]}**\n"
 
-    def to_string(self):
-        return json.dumps(self.to_object())
+    embed = utils.create_embed(title, description, custom_title=True)
+
+    return {
+        "level": "info",
+        "message": embed
+    }

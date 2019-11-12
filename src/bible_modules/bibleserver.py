@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ version_names = {
     "LUT": "Lutherbibel 2017 (LUT)",
     "LXX": "Septuaginta (LXX)",
     "SLT": "Schlachter 2000 (SLT)",
+    "EU": "Einheitsübersetzung 2016 (EU)"
 }
 
 book_names = {
@@ -146,10 +147,16 @@ book_names = {
 
 
 def get_result(query, version, verse_numbers):
-    book = query.split("|")[0]
-    chapter = query.split("|")[1].split(":")[0]
-    starting_verse = query.split("|")[1].split(":")[1]
-    ending_verse = starting_verse
+    if "|" in query:
+        book = query.split("|")[0]
+        chapter = query.split("|")[1].split(":")[0]
+        starting_verse = query.split("|")[1].split(":")[1]
+        ending_verse = starting_verse
+    else:
+        book = " ".join(query.split(" ")[:-1])
+        chapter = query.split(" ")[-1].split(":")[0]
+        starting_verse = query.split(" ")[-1].split(":")[1]
+        ending_verse = starting_verse
 
     if "-" in starting_verse:
         temp = starting_verse.split("-")
@@ -176,21 +183,23 @@ def get_result(query, version, verse_numbers):
             heading.decompose()
 
         if ending_verse == "-":
-            ending_verse = div.find_all("span", {"class": "verseNumber"})[-1].get_text()
+            ending_verse = div.find_all(
+                "span", {"class": "verseNumber"})[-1].get_text()
 
         for sup in div.find_all("span", {"class": "verseNumber"}):
             if verse_numbers == "enable":
-                sup.replace_with(f"<{sup.get_text().strip()}> ")
+                sup.replace_with(f"<**{sup.get_text().strip()}**> ")
             else:
                 sup.replace_with(" ")
 
         for d in div.find_all("div", {"class": "verse"}):
             text += d.get_text()
 
-        text = text.split(f"<{int(ending_verse) + 1}>")[0]
+        text = text.split(f"<**{int(ending_verse) + 1}**>")[0]
 
         if int(starting_verse) != 1:
-            text = f" <{starting_verse}>" + text.split(f"<{int(starting_verse)}>")[1]
+            text = f" <**{starting_verse}**>" + text.split(
+                f"<**{int(starting_verse)}**>")[1]
 
         if text is None:
             return

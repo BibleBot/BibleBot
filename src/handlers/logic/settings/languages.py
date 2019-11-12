@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -85,7 +85,7 @@ def get_guild_language(guild):
             if "language" in results[0]:
                 return results[0]["language"]
 
-        return central.languages.english_us.object_name
+        return "english_us"
 
 
 def get_languages():

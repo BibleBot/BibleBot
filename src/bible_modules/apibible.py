@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -30,6 +30,8 @@ import bible_modules.bibleutils as bibleutils
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f"{dir_path}/..")
 
+import central  # noqa: E402
+
 config = configparser.ConfigParser()
 config.read(f"{dir_path}/../config.ini")
 
@@ -40,21 +42,11 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 versions = {
-    "KJVA": "eng-KJVA",
-    "ESP": "epo-ESP",
-    "TGVD": "ell-TGVD",
-    "GVNT": "ell-GVNT",
-    "BYZ1904": "grc-BYZ1904",
-    "NTPT": "grc-NTPT",
+    "KJVA": "de4e12af7f28f599-01",
 }
 
 version_names = {
     "KJVA": "King James Version with Apocrypha (KJVA)",
-    "ESP": "La Sankta Biblio (ESP)",
-    "TGVD": "Η Αγία Γραφή με τα Δευτεροκανονικά (TGVD)",
-    "GVNT": "Η Καινή Διαθήκη κατά νεοελληνικήν απόδοσιν - Βέλλας (GVNT)",
-    "BYZ1904": "Πατριαρχικό Κείμενο (Έκδοση Αντωνιάδη, 1904) (BYZ1904)",
-    "NTPT": "Η ΚΑΙΝΗ ΔΙΑΘΗΚΗ ΕΓΚΡΙΣΕΙ ΤΗΣ ΜΕΓΑΛΗΣ ΤΟΥ ΧΡΙΣΤΟΥ ΕΚΚΛΗΣΙΑΣ (NTPT)"
 }
 
 # def remove_bible_title_in_search(string):
@@ -65,7 +57,8 @@ version_names = {
 #     query = html.escape(query)
 #
 #     url = "https://www.biblegateway.com/quicksearch/?search=" + query + \
-#           "&version=" + version + "&searchtype=all&limit=50000&interface=print"
+#           "&version=" + version + \
+#           "&searchtype=all&limit=50000&interface=print"
 #
 #     search_results = {}
 #     length = 0
@@ -95,20 +88,27 @@ version_names = {
 #     return search_results
 
 
-def get_result(query, version, headings, verse_numbers):
+def get_result(query, ver, headings, verse_numbers):
     query = query.replace("|", " ")
 
-    url = f"https://bibles.org/v2/passages.js?q[]={query}&version={versions[version]}"
+    url = f"https://api.scripture.api.bible/v1/bibles/{versions[ver]}/search"
+    headers = {"api-key": config["apis"]["apibible"]}
+    params = {"query": query, "limit": "1"}
 
-    resp = requests.get(url, auth=(config["apis"]["biblesorg"], "X"))
+    resp = requests.get(url, headers=headers, params=params)
 
     if resp is not None:
         data = resp.json()
-        data = data["response"]["search"]["result"]["passages"]
+        data = data["data"]["passages"]
         text = None
 
+        if data[0]["bibleId"] != versions[ver]:
+            central.log_message("err", 0, "apibible", "global",
+                                f"{version} is no longer able to be used.")
+            return
+
         if len(data) > 0:
-            text = data[0]["text"]
+            text = data[0]["content"]
 
         if text is None:
             return
@@ -122,11 +122,13 @@ def get_result(query, version, headings, verse_numbers):
             title += f"{heading.get_text()} / "
             heading.decompose()
 
-        for sup in soup.find_all("sup", {"class": "v"}):
+        for span in soup.find_all("span", {"class": "v"}):
             if verse_numbers == "enable":
-                sup.replace_with(f"<{sup.get_text()}> ")
+                span.replace_with(f"<**{span.get_text()}**> ")
             else:
-                sup.replace_with(" ")
+                span.replace_with(" ")
+
+            span.decompose()
 
         for p in soup.find_all("p", {"class": "p"}):
             text += p.get_text()
@@ -134,11 +136,13 @@ def get_result(query, version, headings, verse_numbers):
         if headings == "disable":
             title = ""
 
+        text = f" {bibleutils.purify_text(text).rstrip()}"
+
         verse_object = {
             "passage": query,
-            "version": version_names[version],
+            "version": version_names[ver],
             "title": title[0:-3],
-            "text": bibleutils.purify_text(text)
+            "text": text
         }
 
         return verse_object

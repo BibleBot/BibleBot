@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ def get_version(user):
         if "version" in results[0]:
             return results[0]["version"]
 
-    return None
+    return "RSV"
 
 
 def get_guild_version(guild):
@@ -87,7 +87,7 @@ def get_guild_version(guild):
             if "version" in results[0]:
                 return results[0]["version"]
 
-        return None
+        return "RSV"
 
 
 def get_versions():

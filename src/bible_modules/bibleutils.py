@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -20,6 +20,10 @@ import re
 
 import requests
 from bs4 import BeautifulSoup
+
+
+def remove_html(text):
+    return re.sub(r"<[^<]+?>", "", text)
 
 
 def purify_text(text):
@@ -44,6 +48,7 @@ def purify_text(text):
     result = result.replace("? '", "?'")
     result = result.replace(":", ": ")
     result = result.replace(";", "; ")
+    result = result.replace("¶ ", "")
     result = result.replace("â", "\"")  # biblehub beginning smart quote
     result = result.replace(" â", "\"")  # biblehub ending smart quote
     result = result.replace("â", "-")  # biblehub dash unicode
@@ -57,7 +62,8 @@ def get_random_verse():
 
     if resp is not None:
         soup = BeautifulSoup(resp.text, "html.parser")
-        verse = soup.find("div", {"class": "bibleChapter"}).find("a").get_text()
+        verse = soup.find(
+            "div", {"class": "bibleChapter"}).find("a").get_text()
 
         return verse
 

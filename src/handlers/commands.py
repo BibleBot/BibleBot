@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -19,84 +19,31 @@
 import os
 import sys
 
-import discord
-
-from handlers.commandlogic import commandbridge as command_bridge
+from handlers.logic.commands import bridge as command_bridge
+from handlers.logic.extrabiblical import bridge as catechisms_bridge
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(dir_path + "/..")
 
 import central  # noqa: E402
 
-command_map = {
-    "biblebot": 0,
-    "search": 1,
-    "versions": 0,
-    "setversion": 1,
-    "setguildversion": 1,
-    "version": 0,
-    "guildversion": 0,
-    "versioninfo": 1,
-    "random": 0,
-    "verseoftheday": 0,
-    "votd": 0,
-    "setheadings": 1,
-    "headings": 0,
-    "setversenumbers": 1,
-    "versenumbers": 0,
-    "languages": 0,
-    "setlanguage": 1,
-    "setguildlanguage": 1,
-    "language": 0,
-    "guildlanguage": 0,
-    "setguildbrackets": 1,
-    "guildbrackets": 0,
-    "setvotdtime": 1,
-    "clearvotdtime": 0,
-    "votdtime": 0,
-    "setannouncements": 1,
-    "announcements": 0,
-    "users": 0,
-    "servers": 0,
-    "invite": 0,
-
-    "creeds": 0,
-    "apostles": 0,
-    "nicene": 0,
-    "chalcedonian": 0,
-    "athanasian": 0,
-
-    "jepekula": 0,
-    "joseph": 0,
-    "tiger": 0,
-    "supporters": 0,
-
-    "addversion": 5
-}
-
 
 def is_command(command, lang):
     commands = lang["commands"]
-    untranslated_commands = ["setlanguage", "userid", "ban", "unban", "reason",
-                             "optout", "unoptout", "eval", "jepekula", "joseph",
-                             "tiger"]
+    untranslated_commands = ["biblebot", "setlanguage", "userid",
+                             "ban", "unban", "reason",
+                             "optout", "unoptout", "eval",
+                             "jepekula", "joseph", "tiger", "lsc", "heidelberg", "ccc"]
 
     result = {
         "ok": False
     }
 
-    if command in untranslated_commands:
+    if command in (untranslated_commands + list(commands.values())):
         result = {
             "ok": True,
-            "orig": command,
+            "orig": command
         }
-    else:
-        for original_command_name in commands.keys():
-            if commands[original_command_name] == command:
-                result = {
-                    "ok": True,
-                    "orig": original_command_name
-                }
 
     return result
 
@@ -104,112 +51,32 @@ def is_command(command, lang):
 def is_owner_command(command, lang):
     commands = lang["commands"]
     owner_commands = [commands["leave"], commands["puppet"], commands["announce"],
-                      commands["addversion"], "userid", "ban", "unban", "reason",
+                      commands["addversion"], commands["rmversion"],
+                      "userid", "ban", "unban", "reason",
                       "optout", "unoptout", "eval"]
 
-    if command in owner_commands:
-        return True
-    else:
-        return False
+    return command in owner_commands
+
+
+def is_catechism_command(command):
+    catechism_commands = ["lsc", "heidelberg", "ccc"]
+
+    return command in catechism_commands
 
 
 class CommandHandler:
     @classmethod
-    def process_command(cls, bot, command, lang, sender, guild, channel, args=None):
-        raw_language = getattr(central.languages, lang).raw_object
-        commands = raw_language["commands"]
-
-        proper_command = is_command(command, raw_language)
+    async def process_command(cls, ctx, command, remainder=None):
+        proper_command = is_command(command, ctx["language"])
 
         if proper_command["ok"]:
             orig_cmd = proper_command["orig"]
-            if not is_owner_command(orig_cmd, raw_language):
-                if orig_cmd != commands["search"]:
-                    if orig_cmd != commands["servers"] and orig_cmd != commands["users"]:
-                        required_arguments = command_map[orig_cmd]
 
-                        if args is None:
-                            args = []
-
-                        if len(args) != required_arguments:
-                            embed = discord.Embed()
-
-                            embed.color = 16723502
-                            embed.set_footer(text=central.version, icon_url=central.icon)
-
-                            response = raw_language["argumentCountError"]
-
-                            response = response.replace("<command>", command)
-                            response = response.replace("<count>", str(required_arguments))
-
-                            embed.add_field(name=raw_language["error"], value=response)
-
-                            return {
-                                "isError": True,
-                                "return": embed
-                            }
-
-                        return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
-                    else:
-                        required_arguments = command_map[orig_cmd]
-
-                        if args is None:
-                            args = []
-
-                        if len(args) != required_arguments:
-                            embed = discord.Embed()
-
-                            embed.color = 16723502
-                            embed.set_footer(text=central.version, icon_url=central.icon)
-
-                            response = raw_language["argumentCountError"]
-                            response = response.replace("<command>", command)
-                            response = response.replace("<count>", str(required_arguments))
-
-                            embed.add_field(name=raw_language["error"], value=response)
-
-                            return {
-                                "isError": True,
-                                "return": embed
-                            }
-
-                        return command_bridge.run_command(orig_cmd, [bot], raw_language, sender, guild, channel)
+            if not is_owner_command(orig_cmd, ctx["language"]):
+                if not is_catechism_command(orig_cmd):
+                    return await command_bridge.run_command(ctx, orig_cmd, remainder)
                 else:
-                    if args is None:
-                        args = []
-
-                    if len(args) == 1 and len(args[0]) < 4:
-                        embed = discord.Embed()
-
-                        embed.color = 16723502
-                        embed.set_footer(text=central.version, icon_url=central.icon)
-
-                        embed.add_field(name=raw_language["error"], value=raw_language["queryTooShort"])
-
-                        return {
-                            "isError": True,
-                            "return": embed
-                        }
-
-                    if len(args) == 0:
-                        embed = discord.Embed()
-
-                        embed.color = 16723502
-                        embed.set_footer(text=central.version, icon_url=central.icon)
-
-                        response = raw_language["argumentCountErrorAL"]
-
-                        response = response.replace("<command>", command)
-                        response = response.replace("<count>", "1")
-
-                        embed.add_field(name=raw_language["error"], value=response)
-
-                        return {
-                            "isError": True,
-                            "return": embed
-                        }
-                    else:
-                        return command_bridge.run_command(orig_cmd, args, raw_language, sender, guild, channel)
+                    return await catechisms_bridge.run_command(ctx, orig_cmd, remainder)
             else:
-                if str(sender.id) == central.config["BibleBot"]["owner"]:
-                    return command_bridge.run_owner_command(bot, command, args, raw_language)
+                if str(ctx["author"].id) == central.config["BibleBot"]["owner"]:
+                    return await command_bridge.run_owner_command(ctx, command, remainder)

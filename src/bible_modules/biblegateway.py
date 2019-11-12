@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -40,8 +40,8 @@ def remove_bible_title_in_search(string):
 def search(version, query):
     query = html.escape(query)
 
-    url = f"https://www.biblegateway.com/quicksearch/?search={query}&version={version}" + \
-        "&searchtype=all&limit=50000&interface=print"
+    url = f"https://www.biblegateway.com/quicksearch/?search={query}" + \
+        f"&version={version}&searchtype=all&limit=50000&interface=print"
 
     search_results = {}
     length = 0
@@ -64,7 +64,8 @@ def search(version, query):
                 if result["text"] is not None:
                     result["title"] = result["title"].getText()
                     result["text"] = remove_bible_title_in_search(
-                        bibleutils.purify_text(result["text"].get_text()[0:-1]))
+                        bibleutils.purify_text(
+                            result["text"].get_text()[0:-1]))
 
                     length += 1
                     search_results["result" + str(length)] = result
@@ -72,12 +73,15 @@ def search(version, query):
 
 
 def get_result(query, version, headings, verse_numbers):
-    url = f"https://www.biblegateway.com/passage/?search={query}&version={version}&interface=print"
+    query = query.replace("|", " ")
+
+
 
     resp = requests.get(url)
 
     if resp is not None:
         soup = BeautifulSoup(resp.text, "lxml")
+        soup.prettify(formatter=lambda s: s.replace(u'\xa0', ' '))
 
         for div in soup.find_all("div", {"class": "result-text-style-normal"}):
             text = ""
@@ -100,25 +104,26 @@ def get_result(query, version, headings, verse_numbers):
                 footnote.decompose()
 
             if verse_numbers == "disable":
-                for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):
-                    num.string = " "
+                for num in div.find_all(True, {"class": ["chapternum", "versenum"]}):  # noqa: E501
+                    num.replace_with(" ")
             else:
-                # turn all chapter numbers into "1" otherwise the verse numbers look strange
+                # turn chapter numbers into "1" otherwise the verse numbers
+                # look strange
                 for num in div.find_all(True, {"class": "chapternum"}):
-                    num.string = "<1> "
+                    num.replace_with("<**1**> ")
 
                 for num in div.find_all(True, {"class": "versenum"}):
-                    num.string = f"<{num.string[0:-1]}> "
+                    num.replace_with(f"<**{num.text[0:-1]}**> ")
 
-            for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):
+            for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):  # noqa: E501
                 meta.decompose()
 
             for paragraph in div.find_all("p"):
                 text += paragraph.get_text()
 
             verse_object = {
-                "passage": div.find(True, {"class": "passage-display-bcv"}).string,
-                "version": div.find(True, {"class": "passage-display-version"}).string,
+                "passage": div.find(True, {"class": "passage-display-bcv"}).string,  # noqa: E501
+                "version": div.find(True, {"class": "passage-display-version"}).string,  # noqa: E501
                 "title": title[0:-3],
                 "text": bibleutils.purify_text(text)
             }

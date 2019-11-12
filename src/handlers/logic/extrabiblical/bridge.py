@@ -16,23 +16,21 @@
     along with BibleBot.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import json
+from . import utils
+
+catechisms = ["lsc", "heidelberg", "ccc"]
 
 
-class Language:
-    def __init__(self, name, object_name, raw_object, default_version):
-        self.name = name
-        self.object_name = object_name
-        self.raw_object = raw_object
-        self.default_version = default_version
+async def run_command(ctx, command, remainder):
+    lang = ctx["language"]
+    args = remainder.split(" ")
 
-    def to_object(self):
-        return {
-            "name": self.name,
-            "object_name": self.object_name,
-            "raw_object": self.raw_object,
-            "default_version": self.default_version
-        }
+    if command in catechisms:
+        if len(args) == 2:
+            return utils.create_embeds(lang, command, section=args[0], page=args[1], guild=ctx["guild"])
+        elif len(args) == 1:
+            if args[0] == "":
+                return utils.create_embeds(lang, command, guild=ctx["guild"])
 
-    def to_string(self):
-        return json.dumps(self.to_object())
+            return utils.create_embeds(lang, command, section=args[0], guild=ctx["guild"])
+

@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -76,10 +76,16 @@ version_names = {
 
 
 def get_result(query, version, verse_numbers):
-    book = query.split("|")[0]
-    chapter = query.split("|")[1].split(":")[0]
-    starting_verse = query.split("|")[1].split(":")[1]
-    ending_verse = starting_verse
+    if "|" in query:
+        book = query.split("|")[0]
+        chapter = query.split("|")[1].split(":")[0]
+        starting_verse = query.split("|")[1].split(":")[1]
+        ending_verse = starting_verse
+    else:
+        book = " ".join(query.split(" ")[:-1])
+        chapter = query.split(" ")[-1].split(":")[0]
+        starting_verse = query.split(" ")[-1].split(":")[1]
+        ending_verse = starting_verse
 
     if "-" in starting_verse:
         temp = starting_verse.split("-")
@@ -106,20 +112,22 @@ def get_result(query, version, verse_numbers):
             heading.decompose()
 
         if ending_verse == "-":
-            ending_verse = div.find_all("span", {"class": "reftext"})[-1].get_text()
+            ending_verse = div.find_all(
+                "span", {"class": "reftext"})[-1].get_text()
 
         for sup in div.find_all("span", {"class": "reftext"}):
             if verse_numbers == "enable":
-                sup.replace_with(f"<{sup.get_text()}> ")
+                sup.replace_with(f"<**{sup.get_text()}**> ")
             else:
                 sup.replace_with(" ")
 
         text = div.get_text()
 
-        text = text.split(f"<{int(ending_verse) + 1}>")[0]
+        text = text.split(f"<**{int(ending_verse) + 1}**>")[0]
 
         if int(starting_verse) != 1:
-            text = f" <{starting_verse}>" + text.split(f"<{int(starting_verse)}>")[1]
+            text = f" <**{starting_verse}**>" + text.split(
+                f"<**{int(starting_verse)}**>")[1]
 
         if text is None:
             return

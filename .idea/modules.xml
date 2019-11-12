@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../name_scraper/.idea/BGBookNames.iml" filepath="$PROJECT_DIR$/../name_scraper/.idea/BGBookNames.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/BibleBot.iml" filepath="$PROJECT_DIR$/.idea/BibleBot.iml" />
     </modules>
   </component>

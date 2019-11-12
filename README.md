@@ -1,25 +1,42 @@
 # BibleBot
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3c19643f9d964f3daa0e2e70c1ad83f4)](https://app.codacy.com/app/vypr/BibleBot?utm_source=github.com&utm_medium=referral&utm_content=BibleBot/BibleBot&utm_campaign=Badge_Grade_Dashboard)
-[![Help Translate on Crowdin](https://d322cqt584bo4o.cloudfront.net/biblebot/localized.svg)](https://crowdin.com/project/biblebot) [![Join us on Discord](https://img.shields.io/discord/362503610006765568.svg)](https://discord.gg/seKEJUn) [![Discord Bots](https://discordbots.org/api/widget/lib/361033318273384449.png)](https://discordbots.org/bot/361033318273384449)
+[![Help Translate on Crowdin](https://d322cqt584bo4o.cloudfront.net/biblebot/localized.svg)](https://crowdin.com/project/biblebot)
+[![Join us on Discord](https://img.shields.io/discord/362503610006765568.svg)](https://discord.gg/H7ZyHqE)
+[![Discord Bots](https://discordbots.org/api/widget/lib/361033318273384449.png)](https://discordbots.org/bot/361033318273384449)
 
-A Discord bot for Bible verses.
 
-To use it, just say a Bible verse.
+The premier Discord bot for Bible verses and Christian resources.
 
----
+To use it, just say a Bible verse or use the `+biblebot` help command.
 
-Installation:
+## Self-Host Installation
 
+### Linux/MacOS
 ```bash
 git clone https://github.com/BibleBot/BibleBot.git
 cd BibleBot
-git submodule update --init
 python3 -m venv venv
 source venv/bin/activate
 cp src/config.example.ini src/config.ini
 $EDITOR src/config.ini
 pip install -U "https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord.py[voice]"
-pip install -U tinydb colorama requests bs4 lxml
+pip install -U bs4 colorama lxml requests tinydb name_scraper zlib
+python src/bot.py
+```
+
+### Windows (requires Git Bash)
+
+#### Step 1. Git
+1. Clone or download the repository.
+2. Open a command prompt in that folder.
+
+#### Step 2. Command Prompt
+```
+python -m venv venv
+.\venv\Scripts\activate
+copy src\config.example.ini src\config.ini
+notepad src\config.ini
+pip install -U discord.py[voice] bs4 colorama lxml requests tinydb name_scraper
 python src/bot.py
 ```
 
@@ -63,18 +80,14 @@ Bot Owner Commands:
 * `+puppet message` - say something as the bot (requires 'Manage Messages' perms in order to fully function)
 * `+eval python` - execute python code (it's an exec() wrapper)
 * `+userid name#discriminator` - grab a user id by name and discriminator
-* `+ban id reason` - ban an id from using the bot (works for both users and guilds)
-* `+unban id reason` - unban an id from using the bot (works for both users and guilds)
-* `+reason id` - get ban reason for an id
 * `+optout id` - optout an id from using the bot (works for users)
 * `+unoptout id` - unoptout an id from using the bot (works for users)
 * `+leave NAME` - leave the current or NAME server (argument optional)
 
-Invite BibleBot to your server! https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=93248
+Invite BibleBot to your server!  
+https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=93248
 
----
-
-### Permissions
+## Permissions
 
 BibleBot requires the following permissions in order to function properly:
 
@@ -86,26 +99,8 @@ BibleBot requires the following permissions in order to function properly:
 - Add Reactions, Manage Messages (to clear reactions after timeout), Read Message History - To use reactions properly on things like +search and +versions.
   - Example:  
   ![](https://i.imgur.com/DosRFtd.gif)
+  
+## Special Thanks
 
----
-
-### Versioning
-
-Every commit, add 1 to the last number of the version, if the result is 10,
-add 1 to the second number of the version. If the result of the second number is 10,
-add 1 to the first number of the version.
-
-Examples:  
-2.8.9 --> Commit --> 2.9.0  
-2.9.8 --> Commit --> 2.9.9  
-2.9.9 --> Commit --> 3.0.0  
-
-Every commit done involving the code itself must have the version number updated.   
-Commits done to the README, the package.json file (except when adding dependencies),   
-and the dotfiles do not need to have the version number updated.   
-
----
-
-### Special Thanks
-
-**adfizz, apocz, audiovideodisco, Blubb, BonaventureSissokovitch, Buggyrcobra, Coal, DeadPixels, jznsamuel, Koockies, Mark Nunberg, Manelic, Raven Melodie, omeratagun, Sezess, sunray.steemit, SwedishMeatball, Tuonela, TySpeedy, Viva98, xnkmevaou, Zyxl and many more** for their hard work on helping BibleBot reach the world by translating languages :heart:
+- My translators on Crowdin for their hard work on helping BibleBot reach the world.
+- My Patreon supporters for helping fund development and keep BibleBot running.
