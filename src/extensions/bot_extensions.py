@@ -72,7 +72,7 @@ async def send_server_count(bot):
     if dbl_token:
         headers = {"Authorization": dbl_token}
         data = {"server_count": len(bot.guilds)}
-        url = f"https://discordbots.org/api/bots/{bot.user.id}/stats"
+        url = f"https://top.gg/api/bots/{bot.user.id}/stats"
 
         async with aiohttp.ClientSession() as session:
             await session.post(url, data=data, headers=headers)
