@@ -227,6 +227,8 @@ class BibleBot(discord.AutoShardedClient):
                             await msg.clear_reactions()
                         except (discord.errors.Forbidden, discord.errors.NotFound):
                             pass
+                elif "embed" in res:
+                    await ctx["channel"].send(embed=res["embed"])
                 else:
                     if "reference" not in res and "text" not in res:
                         await ctx["channel"].send(embed=res["message"])
