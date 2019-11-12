@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1db95e2a-4454-4f08-b3cf-02a978cd3358" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/extensions/bot_extensions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/bot_extensions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/logic/commands/bridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/logic/commands/bridge.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,11 +32,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-531">
-              <caret line="209" column="53" lean-forward="true" selection-start-line="209" selection-start-column="53" selection-end-line="209" selection-end-column="53" />
+            <state relative-caret-position="345">
+              <caret line="235" column="50" selection-start-line="235" selection-start-column="50" selection-end-line="235" selection-end-column="50" />
               <folding>
                 <element signature="e#753#767#0" expanded="true" />
               </folding>
@@ -43,11 +44,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/extensions/bot_extensions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="140" column="24" selection-start-line="140" selection-start-column="24" selection-end-line="140" selection-end-column="24" />
+            <state relative-caret-position="-1129">
+              <caret line="140" selection-start-line="140" selection-end-line="140" />
               <folding>
                 <element signature="e#753#767#0" expanded="true" />
               </folding>
@@ -59,7 +60,7 @@
         <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="274">
-              <caret line="127" column="61" lean-forward="true" selection-start-line="127" selection-start-column="61" selection-end-line="127" selection-end-column="61" />
+              <caret line="127" column="61" selection-start-line="127" selection-start-column="61" selection-end-line="127" selection-end-column="61" />
               <folding>
                 <element signature="e#753#767#0" expanded="true" />
               </folding>
@@ -68,19 +69,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/handlers/logic/settings/languages.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="193">
-              <caret line="94" column="18" lean-forward="true" selection-start-line="94" selection-start-column="18" selection-end-line="94" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/central.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="178">
-              <caret line="95" column="26" lean-forward="true" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
+            <state relative-caret-position="2001">
+              <caret line="95" column="26" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
               <folding>
                 <element signature="e#753#772#0" expanded="true" />
               </folding>
@@ -91,8 +83,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/bridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="446" column="28" selection-start-line="446" selection-start-column="28" selection-end-line="446" selection-end-column="28" />
+            <state relative-caret-position="228">
+              <caret line="600" column="36" selection-start-line="600" selection-start-column="36" selection-end-line="600" selection-end-column="36" />
               <folding>
                 <element signature="e#753#762#0" expanded="true" />
               </folding>
@@ -101,10 +93,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/information/special.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="298">
+              <caret line="33" column="24" lean-forward="true" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="103">
-              <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+            <state relative-caret-position="506">
+              <caret line="22" selection-start-line="22" selection-end-line="22" />
             </state>
           </provider>
         </entry>
@@ -113,8 +114,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="FIRST">
-              <first_editor relative-caret-position="-1182">
-                <caret line="34" column="19" lean-forward="true" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
+              <first_editor relative-caret-position="782">
+                <caret line="34" column="19" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
               </first_editor>
               <second_editor />
             </state>
@@ -124,8 +125,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/logic/settings/formatting.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="689">
-              <caret line="149" column="30" lean-forward="true" selection-start-line="149" selection-start-column="30" selection-end-line="149" selection-end-column="30" />
+            <state relative-caret-position="3358">
+              <caret line="149" column="30" selection-start-line="149" selection-start-column="30" selection-end-line="149" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -133,7 +134,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="37">
+            <state relative-caret-position="1725">
               <caret line="81" column="4" selection-start-line="81" selection-start-column="4" selection-end-line="81" selection-end-column="4" />
               <folding>
                 <element signature="e#753#767#0" expanded="true" />
@@ -242,11 +243,11 @@
         <option value="$PROJECT_DIR$/src/handlers/logic/settings/languages.py" />
         <option value="$PROJECT_DIR$/src/bible_modules/biblegateway.py" />
         <option value="$PROJECT_DIR$/i18n/default/default.json" />
-        <option value="$PROJECT_DIR$/src/handlers/logic/commands/bridge.py" />
         <option value="$PROJECT_DIR$/src/central.py" />
-        <option value="$PROJECT_DIR$/src/bot.py" />
         <option value="$PROJECT_DIR$/src/handlers/logic/settings/formatting.py" />
         <option value="$PROJECT_DIR$/src/extensions/bot_extensions.py" />
+        <option value="$PROJECT_DIR$/src/handlers/logic/commands/bridge.py" />
+        <option value="$PROJECT_DIR$/src/bot.py" />
       </list>
     </option>
   </component>
@@ -260,6 +261,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -351,7 +353,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -456,7 +457,8 @@
       <workItem from="1567553638908" duration="77000" />
       <workItem from="1568404130689" duration="187000" />
       <workItem from="1573587146780" duration="537000" />
-      <workItem from="1573588038889" duration="11115000" />
+      <workItem from="1573588038889" duration="11304000" />
+      <workItem from="1573600564698" duration="223000" />
     </task>
     <task id="LOCAL-00001" summary="Fix some bugs and start work on resources, starting with Luther's Small Catechism.">
       <created>1551150489506</created>
@@ -661,11 +663,25 @@
       <option name="project" value="LOCAL" />
       <updated>1573598851744</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Fix announcements more.">
+      <created>1573599995301</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1573599995301</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Fix announcements more.">
+      <created>1573600018492</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1573600018492</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="47505000" />
+    <option name="totallyTimeSpent" value="47917000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -680,7 +696,7 @@
     <frame x="-8" y="-8" width="1696" height="1036" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3229358" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.32721713" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -690,7 +706,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4996942" weight="0.3295325" />
-      <window_info anchor="bottom" id="Version Control" order="7" visible="true" weight="0.3295325" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.3295325" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50030583" side_tool="true" weight="0.3295325" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.3295325" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.3295325" />
@@ -804,7 +820,8 @@
     <MESSAGE value="Fix +announce." />
     <MESSAGE value="Fix +random and +votd." />
     <MESSAGE value="Fix bug where setting the mode to default wouldn't be processed properly." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix bug where setting the mode to default wouldn't be processed properly." />
+    <MESSAGE value="Fix announcements more." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix announcements more." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/CODE_OF_CONDUCT.md">
@@ -851,13 +868,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/LICENSE.txt">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/information/special.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="36" column="5" lean-forward="true" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bible_modules/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
@@ -1030,81 +1040,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="-1182">
-            <caret line="34" column="19" lean-forward="true" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/logic/settings/languages.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="94" column="18" lean-forward="true" selection-start-line="94" selection-start-column="18" selection-end-line="94" selection-end-column="18" />
+        <state relative-caret-position="2093">
+          <caret line="94" column="18" selection-start-line="94" selection-start-column="18" selection-end-line="94" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/central.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="95" column="26" lean-forward="true" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
+        <state relative-caret-position="2001">
+          <caret line="95" column="26" selection-start-line="95" selection-start-column="26" selection-end-line="95" selection-end-column="26" />
           <folding>
             <element signature="e#753#772#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/utils.py">
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="37">
-          <caret line="81" column="4" selection-start-line="81" selection-start-column="4" selection-end-line="81" selection-end-column="4" />
-          <folding>
-            <element signature="e#753#767#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="506">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="782">
+            <caret line="34" column="19" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/handlers/logic/settings/formatting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="689">
-          <caret line="149" column="30" lean-forward="true" selection-start-line="149" selection-start-column="30" selection-end-line="149" selection-end-column="30" />
+        <state relative-caret-position="3358">
+          <caret line="149" column="30" selection-start-line="149" selection-start-column="30" selection-end-line="149" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/bridge.py">
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="446" column="28" selection-start-line="446" selection-start-column="28" selection-end-line="446" selection-end-column="28" />
-          <folding>
-            <element signature="e#753#762#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/bridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="127" column="61" lean-forward="true" selection-start-line="127" selection-start-column="61" selection-end-line="127" selection-end-column="61" />
-          <folding>
-            <element signature="e#753#767#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-531">
-          <caret line="209" column="53" lean-forward="true" selection-start-line="209" selection-start-column="53" selection-end-line="209" selection-end-column="53" />
+        <state relative-caret-position="1725">
+          <caret line="81" column="4" selection-start-line="81" selection-start-column="4" selection-end-line="81" selection-end-column="4" />
           <folding>
             <element signature="e#753#767#0" expanded="true" />
           </folding>
@@ -1113,8 +1093,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/extensions/bot_extensions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="140" column="24" selection-start-line="140" selection-start-column="24" selection-end-line="140" selection-end-column="24" />
+        <state relative-caret-position="-1129">
+          <caret line="140" selection-start-line="140" selection-end-line="140" />
+          <folding>
+            <element signature="e#753#767#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/extrabiblical/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="274">
+          <caret line="127" column="61" selection-start-line="127" selection-start-column="61" selection-end-line="127" selection-end-column="61" />
+          <folding>
+            <element signature="e#753#767#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/bridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="600" column="36" selection-start-line="600" selection-start-column="36" selection-end-line="600" selection-end-column="36" />
+          <folding>
+            <element signature="e#753#762#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/handlers/logic/commands/information/special.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="298">
+          <caret line="33" column="24" lean-forward="true" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="235" column="50" selection-start-line="235" selection-start-column="50" selection-end-line="235" selection-end-column="50" />
           <folding>
             <element signature="e#753#767#0" expanded="true" />
           </folding>

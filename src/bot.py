@@ -232,6 +232,8 @@ class BibleBot(discord.AutoShardedClient):
                 else:
                     if "reference" not in res and "text" not in res:
                         await ctx["channel"].send(embed=res["message"])
+                    else:
+                        await ctx["channel"].send(res["message"])
 
                 lang = central.get_raw_language(language)
                 for original_command_name in lang["commands"].keys():
@@ -279,7 +281,7 @@ class BibleBot(discord.AutoShardedClient):
                                 await ctx["channel"].send(item["message"])
                             elif "embed" in item:
                                 await ctx["channel"].send(embed=item["embed"])
-                        except KeyError:
+                        except (KeyError, TypeError):
                             pass
 
                         if "reference" in item:

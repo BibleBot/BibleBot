@@ -592,10 +592,11 @@ async def run_command(ctx, command, remainder):
         }
     elif command == "jepekula":
         version = utils.get_version(user, guild)
+        mode = formatting.get_mode(user)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        return utils.get_bible_verse("Mark 9:23-24", version, headings, verse_numbers)
+        return utils.get_bible_verse("Mark 9:23-24", mode, version, headings, verse_numbers)
     elif command in special.cm_commands:
         return special.get_custom_message(command)
     elif command == "supporters":
