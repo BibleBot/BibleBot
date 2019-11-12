@@ -146,7 +146,10 @@ def get_mode(user):
 
     if len(results) > 0:
         if "mode" in results[0]:
-            return results[0]["mode"]
+            if results[0]["mode"] == "default":
+                return "embed"
+            else:
+                return results[0]["mode"]
         else:
             return "embed"
     else:
