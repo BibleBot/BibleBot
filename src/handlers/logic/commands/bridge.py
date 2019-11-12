@@ -441,6 +441,39 @@ async def run_command(ctx, command, remainder):
                 "level": "info",
                 "message": embed
             }
+    elif command == "setmode":
+        if formatting.set_mode(user, args[0]):
+            embed = utils.create_embed(lang["commands"]["setmode"], lang["modesuccess"])
+
+            return {
+                "level": "info",
+                "message": embed
+            }
+        else:
+            response = lang["modefail"]
+
+            response = response.replace("<setmode>", lang["commands"]["setmode"])
+
+            embed = utils.create_embed(lang["commands"]["setmode"], response, error=True)
+
+            return {
+                "level": "err",
+                "message": embed
+            }
+    elif command == "mode":
+        mode = formatting.get_mode(user)
+        modes = ["default", "embed", "blockquote", "code"]
+
+        if mode in modes:
+            response = lang["mode"].replace("<value>", mode)
+            response = response.replace("<setmode>", lang["commands"]["setmode"])
+
+            embed = utils.create_embed(lang["commands"]["mode"], response)
+
+            return {
+                "level": "info",
+                "message": embed
+            }
     elif command == "setversenumbers":
         if formatting.set_verse_numbers(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setversenumbers"], lang["versenumberssuccess"])

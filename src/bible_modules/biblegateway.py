@@ -111,10 +111,10 @@ def get_result(query, version, headings, verse_numbers):
                 # turn chapter numbers into "1" otherwise the verse numbers
                 # look strange
                 for num in div.find_all(True, {"class": "chapternum"}):
-                    num.replace_with("<1> ")
+                    num.replace_with("<**1**> ")
 
                 for num in div.find_all(True, {"class": "versenum"}):
-                    num.replace_with(f"<{num.text[0:-1]}> ")
+                    num.replace_with(f"<**{num.text[0:-1]}**> ")
 
             for meta in div.find_all(True, {"class": ["crossreference", "footnote"]}):
                 meta.decompose()

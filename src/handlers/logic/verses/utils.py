@@ -20,6 +20,7 @@ import numbers
 import os
 import re
 import sys
+import discord
 
 from name_scraper.books import item_to_book
 from name_scraper import client
@@ -296,42 +297,107 @@ def check_section_support(version, verse, reference, section, lang):
     }
 
 
-def process_result(result, reference, version, lang):
+def process_result(result, mode, reference, version, lang):
     if result is not None:
-        if result["text"][0] != " ":
-            result["text"] = " " + result["text"]
+        if mode == "code":
+            if result["text"][0] != " ":
+                result["text"] = " " + result["text"]
 
-        content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
-        response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+            result["text"] = result["text"].replace("**", "")
 
-        reference = reference.replace("|", " ")
+            content = "```Dust\n" + result["title"] + "\n\n" + result["text"] + "```"
+            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
 
-        if len(response_string) < 2000:
-            return {
-                "level": "info",
-                "reference": reference + " " + version,
-                "message": response_string
-            }
-        elif 2000 < len(response_string) < 3500:
-            split_text = central.halve_string(result["text"])
+            reference = reference.replace("|", " ")
 
-            content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
-            response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
-                               "\n\n" + content1
-
-            content2 = "```Dust\n" + split_text["second"] + "```"
-
-            return {
-                "level": "info",
-                "twoMessages": True,
-                "reference": f"{reference} {version}",
-                "firstMessage": response_string1,
-                "secondMessage": content2
-            }
-        else:
-            if lang:
+            if len(response_string) < 2000:
                 return {
-                    "level": "err",
-                    "reference": f"{reference} {version}",
-                    "message": lang["passagetoolong"]
+                    "level": "info",
+                    "reference": reference + " " + version,
+                    "message": response_string
                 }
+            elif 2000 < len(response_string) < 3500:
+                split_text = central.halve_string(result["text"])
+
+                content1 = "```Dust\n" + result["title"] + "\n\n" + split_text["first"] + "```"
+                response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
+                                   "\n\n" + content1
+
+                content2 = "```Dust\n" + split_text["second"] + "```"
+
+                return {
+                    "level": "info",
+                    "twoMessages": True,
+                    "reference": f"{reference} {version}",
+                    "firstMessage": response_string1,
+                    "secondMessage": content2
+                }
+            else:
+                if lang:
+                    return {
+                        "level": "err",
+                        "reference": f"{reference} {version}",
+                        "message": lang["passagetoolong"]
+                    }
+        elif mode == "blockquote":
+            if result["title"]:
+                content = "> " + result["title"] + "\n> \n>  " + result["text"]
+            else:
+                content = ">  " + result["text"]
+
+            response_string = "**" + result["passage"] + " - " + result["version"] + "**\n\n" + content
+
+            reference = reference.replace("|", " ")
+
+            if len(response_string) < 2000:
+                return {
+                    "level": "info",
+                    "reference": reference + " " + version,
+                    "message": response_string
+                }
+            elif 2000 < len(response_string) < 3500:
+                split_text = central.halve_string(result["text"])
+
+                content1 = "> " + result["title"] + "\n> \n> " + split_text["first"]
+                response_string1 = "**" + result["passage"] + " - " + result["version"] + "**" + \
+                                   "\n\n" + content1
+
+                content2 = "> " + split_text["second"]
+
+                return {
+                    "level": "info",
+                    "twoMessages": True,
+                    "reference": f"{reference} {version}",
+                    "firstMessage": response_string1,
+                    "secondMessage": content2
+                }
+            else:
+                if lang:
+                    return {
+                        "level": "err",
+                        "reference": f"{reference} {version}",
+                        "message": lang["passagetoolong"]
+                    }
+        elif mode == "embed":
+            embed = discord.Embed()
+            embed.color = 303102
+            embed.title = result["title"]
+            embed.set_author(name=result["passage"] + " - " + result["version"])
+            embed.description = result["text"]
+            embed.set_footer(text=f"BibleBot {central.version}", icon_url=central.icon)
+
+            reference = reference.replace("|", " ")
+
+            if len(embed.description) < 2048:
+                return {
+                    "level": "info",
+                    "reference": reference + " " + version,
+                    "embed": embed
+                }
+            else:
+                if lang:
+                    return {
+                        "level": "err",
+                        "reference": f"{reference} {version}",
+                        "message": lang["passagetoolong"]
+                    }

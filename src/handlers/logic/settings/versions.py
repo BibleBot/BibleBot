@@ -75,7 +75,7 @@ def get_version(user):
         if "version" in results[0]:
             return results[0]["version"]
 
-    return None
+    return "RSV"
 
 
 def get_guild_version(guild):

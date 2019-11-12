@@ -276,6 +276,8 @@ class BibleBot(discord.AutoShardedClient):
                                 await ctx["channel"].send(item["secondMessage"])
                             elif "message" in item:
                                 await ctx["channel"].send(item["message"])
+                            elif "embed" in item:
+                                await ctx["channel"].send(embed=item["embed"])
                         except KeyError:
                             pass
 

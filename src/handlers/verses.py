@@ -94,13 +94,7 @@ class VerseHandler:
 
             for reference in references:
                 version = versions.get_version(sender)
-
-                if version is None:
-                    version = versions.get_guild_version(guild)
-
-                    if version is None:
-                        version = "RSV"
-
+                mode = formatting.get_mode(sender)
                 headings = formatting.get_headings(sender)
                 verse_numbers = formatting.get_verse_numbers(sender)
 
@@ -138,15 +132,15 @@ class VerseHandler:
 
                     if version not in non_bible_gateway:
                         result = biblegateway.get_result(reference, version, headings, verse_numbers)
-                        return_list.append(utils.process_result(result, reference, version, lang))
+                        return_list.append(utils.process_result(result, mode, reference, version, lang))
                     elif version in apibible_versions:
                         result = apibible.get_result(reference, version, headings, verse_numbers)
-                        return_list.append(utils.process_result(result, reference, version, lang))
+                        return_list.append(utils.process_result(result, mode, reference, version, lang))
                     elif version in biblehub_versions:
                         result = biblehub.get_result(reference, version, verse_numbers)
-                        return_list.append(utils.process_result(result, reference, version, lang))
+                        return_list.append(utils.process_result(result, mode, reference, version, lang))
                     elif version in bibleserver_versions:
                         result = bibleserver.get_result(reference, version, verse_numbers)
-                        return_list.append(utils.process_result(result, reference, version, lang))
+                        return_list.append(utils.process_result(result, mode, reference, version, lang))
 
             return return_list

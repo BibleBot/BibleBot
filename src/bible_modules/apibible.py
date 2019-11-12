@@ -124,7 +124,7 @@ def get_result(query, ver, headings, verse_numbers):
 
         for span in soup.find_all("span", {"class": "v"}):
             if verse_numbers == "enable":
-                span.replace_with(f"<{span.get_text()}> ")
+                span.replace_with(f"<**{span.get_text()}**> ")
             else:
                 span.replace_with(" ")
 

@@ -25,11 +25,11 @@ __sys.path.append(__dir_path + "/..")
 
 from vytypes.language import Language as __Language  # noqa: E402
 
-__defaultLang = open(__dir_path + "/../../i18n/default/default.json", encoding="utf-8")
-__defaultLang = __json.loads(__defaultLang.read())
+# __defaultLang = open(__dir_path + "/../../i18n/default/default.json", encoding="utf-8")
+# __defaultLang = __json.loads(__defaultLang.read())
 
-# __english = open(__dir_path + "/../../i18n/english/english.json", encoding="utf-8")
-# __english = __json.loads(__english_us.read())
+__english = open(__dir_path + "/../../i18n/english/english.json", encoding="utf-8")
+__english = __json.loads(__english_us.read())
 
 # __esperanto = open(__dir_path + "/../../i18n/esperanto/esperanto.json", encoding="utf-8")
 # __esperanto = __json.loads(__esperanto.read())
@@ -52,8 +52,8 @@ __defaultLang = __json.loads(__defaultLang.read())
 # __welsh = open(__dir_path + "/../../i18n/welsh/welsh.json", encoding="utf-8")
 # __welsh = __json.loads(__welsh.read())
 
-default = __Language("Default", "default", __defaultLang, "RSV")
-# english = __Language("English", "english", __english, "RSV")
+# default = __Language("Default", "default", __defaultLang, "RSV")
+english = __Language("English", "english", __english, "RSV")
 # esperanto = __Language("Esperanto", "esperanto", __esperanto, "RSV")
 # finnish = __Language("Finnish", "finnish", __finnish, "R1933")
 # french = __Language("French", "french", __french, "BDS")

@@ -117,17 +117,17 @@ def get_result(query, version, verse_numbers):
 
         for sup in div.find_all("span", {"class": "reftext"}):
             if verse_numbers == "enable":
-                sup.replace_with(f"<{sup.get_text()}> ")
+                sup.replace_with(f"<**{sup.get_text()}**> ")
             else:
                 sup.replace_with(" ")
 
         text = div.get_text()
 
-        text = text.split(f"<{int(ending_verse) + 1}>")[0]
+        text = text.split(f"<**{int(ending_verse) + 1}**>")[0]
 
         if int(starting_verse) != 1:
-            text = f" <{starting_verse}>" + text.split(
-                f"<{int(starting_verse)}>")[1]
+            text = f" <**{starting_verse}**>" + text.split(
+                f"<**{int(starting_verse)}**>")[1]
 
         if text is None:
             return
