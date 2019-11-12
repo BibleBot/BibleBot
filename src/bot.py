@@ -77,6 +77,10 @@ class BibleBot(discord.AutoShardedClient):
         owner_id = config["BibleBot"]["owner"]
         await self.wait_until_ready()
 
+        if ":" not in raw.content:
+            if config["BibleBot"]["commandPrefix"] not in raw.content:
+                return
+
         ctx = {
             "self": bot,
             "author": raw.author,
