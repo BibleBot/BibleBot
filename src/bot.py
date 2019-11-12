@@ -226,8 +226,6 @@ class BibleBot(discord.AutoShardedClient):
                 else:
                     if "reference" not in res and "text" not in res:
                         await ctx["channel"].send(embed=res["message"])
-                    else:
-                        else:
 
                 lang = central.get_raw_language(language)
                 for original_command_name in lang["commands"].keys():
@@ -292,7 +290,7 @@ if int(config["BibleBot"]["shards"]) > 1:
 else:
     bot = BibleBot()
 
-name_scraper.update_books(config["apis"]["apibible"])
+# name_scraper.update_books(config["apis"]["apibible"])
 
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
