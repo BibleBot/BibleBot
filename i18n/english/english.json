@@ -48,7 +48,7 @@
     "headingsfail": "Use `+<setheadings> <enable>` or `+<setheadings> <disable>`.",
     "mode": "Your mode is set to `<value>`. Use `+<setmode>` to change it.",
     "modesuccess": "Set mode successfully.",
-    "modefail": "Use `+<setmode>` with one of the following paramters: `default, embed, blockquote, code`",
+    "modefail": "Use `+<setmode>` with one of the following parameters: `default, embed, blockquote, code`",
     "setlanguagesuccess": "Set language successfully.",
     "setlanguagefail": "Failed to set language, see `+<languages>`.",
     "languageused": "You are using English. Use `+<setlanguage>` to set a different language.",
