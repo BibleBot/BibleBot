@@ -67,10 +67,10 @@ class BibleBot(discord.AutoShardedClient):
 
         central.log_message("info", shard_id + 1, "global", "global", "shard connected")
 
-    async def on_guild_join(self):
+    async def on_guild_join(self, guild):
         await bot_extensions.send_server_count(self)
 
-    async def on_guild_remove(self):
+    async def on_guild_remove(self, guild):
         await bot_extensions.send_server_count(self)
 
     async def on_message(self, raw):
