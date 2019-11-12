@@ -71,6 +71,9 @@ def get_language(user):
         if "language" in results[0]:
             for item in languages:
                 if item["object_name"] == results[0]["language"]:
+                    if results[0]["language"] in ["english_us", "english_uk"]:
+                        return "english"
+
                     return results[0]["language"]
 
     return None
