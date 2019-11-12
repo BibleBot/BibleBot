@@ -67,7 +67,7 @@ async def run_timed_votds(self):
 
 
 async def send_server_count(bot):
-    dbl_token = central.config["apis"]["discordbots"]
+    dbl_token = central.config["apis"]["topgg"]
 
     if dbl_token:
         headers = {"Authorization": dbl_token}
@@ -77,7 +77,7 @@ async def send_server_count(bot):
         async with aiohttp.ClientSession() as session:
             await session.post(url, data=data, headers=headers)
 
-        central.log_message("info", 0, "global", "global", "Server count sent to Discordbots.org.")
+        central.log_message("info", 0, "global", "global", "Server count sent to top.gg.")
 
 
 async def send_announcement(ctx, res):
