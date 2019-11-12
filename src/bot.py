@@ -126,7 +126,7 @@ class BibleBot(discord.AutoShardedClient):
             shard = ctx["guild"].shard_id + 1
 
         if language is None:
-            language = "english_us"
+            language = "english"
 
         if config["BibleBot"]["devMode"] == "True":
             # more often than not, new things are added that aren't filtered
