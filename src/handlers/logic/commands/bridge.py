@@ -639,9 +639,9 @@ async def run_owner_command(ctx, command, remainder):
         except (discord.errors.Forbidden, discord.errors.HTTPException):
             pass
 
-        channel.send(message[0:-1])
+        await channel.send(message[0:-1])
 
-        return {"level": "info"}
+        return None
     elif command == "eval":
         cmd = " ".join(args)
         fn_name = "_eval_expr"
@@ -813,7 +813,7 @@ async def run_owner_command(ctx, command, remainder):
                     return {"level": "info", "leave": True}
 
             await channel.send("Server does not exist.")
-            return {"level": "err"}
+            return None
         else:
             await guild.leave()
-            return {"level": "info"}
+            return None
