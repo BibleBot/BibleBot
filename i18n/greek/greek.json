@@ -1,5 +1,5 @@
 {
-    "biblebot": "BibleBot <version> by Elliott Pardee (vypr)",
+    "biblebot": "<Έκδοση Βiblebot από Elliott Pardee (vypr)",
     "code": "Code: <repositoryLink>",
     "commandlist": "* `+<search> query` - search using keywords (only in Bible Gateway versions)\n* `+<setversion> ABBV` - set preferred version to ABBV\n* `+<version>` - see what version you've set\n* `+<versions>` - see the supported versions\n* `+<versioninfo> VER` - read information about a version, using the acronym\n* `+<random>` - get a random Bible verse\n* `+<verseoftheday>` (`+<votd>`) - get the verse of the day\n* `+<setheadings> <enable>/<disable>` - enable or disable topic/chapter headings\n* `+<headings>` - see your topic/chapter headings preference\n* `+<setmode> mode` - set your preferred mode (use blank command for options)\n* `+<mode>` - see your mode preference\n* `+<setversenumbers> <enable>/<disable>` - enable or disable verse numbers\n* `+<versenumbers>` - see your verse numbers preference\n* `+<setlanguage> LANG` - set preferred language to LANG\n* `+<language>` - see your current language, if one is set (default: english)\n* `+<languages>` - see the supported languages\n* `+<users>` - list all users throughout all servers (not counting duplicates or bots)\n* `+<servers>` - show how many servers BibleBot is in\n* `+<invite>` - get the invite link for BibleBot\n* `+<supporters>` - the supporters of BibleBot",
     "commandlist2": "* `+<creeds>` - the ecumenical creeds (contains further commands)\n* `+<catechisms>` - catechisms of various denominations (contains further commands)",
@@ -48,7 +48,7 @@
     "headingsfail": "Χρησιμοποίησε `+<setheadings> <enable>` ή `+<setheadings> <disable>`.",
     "mode": "Your mode is set to `<value>`. Use `+<setmode>` to change it.",
     "modesuccess": "Set mode successfully.",
-    "modefail": "Use `+<setmode>` with one of the following paramters: `default, embed, blockquote, code`",
+    "modefail": "Use `+<setmode>` with one of the following parameters: `default, embed, blockquote, code`",
     "setlanguagesuccess": "Η γλώσσα ορίστηκε επιτυχώς.",
     "setlanguagefail": "Αποτυχία ορισμού γλώσσας, δες `+<languages>`.",
     "languageused": "Χρησιμοποιείς Ελληνικά. Χρησιμοποιήσε `+<setlanguage>` για να ορίσεις άλλη γλώσσα.",

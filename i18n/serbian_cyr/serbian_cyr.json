@@ -48,7 +48,7 @@
     "headingsfail": "Користите `+<setheadings> <enable>` или `+<setheadings> <disable>`.",
     "mode": "Your mode is set to `<value>`. Use `+<setmode>` to change it.",
     "modesuccess": "Set mode successfully.",
-    "modefail": "Use `+<setmode>` with one of the following paramters: `default, embed, blockquote, code`",
+    "modefail": "Use `+<setmode>` with one of the following parameters: `default, embed, blockquote, code`",
     "setlanguagesuccess": "Успешно сте подесили језик.",
     "setlanguagefail": "Подешавање језика није успело, погледајте `+<languages>`.",
     "languageused": "Тренутно користите Replace_With_Language_Name. Користите `+<setlanguage>` како бисте подесили други језик.",
