@@ -281,11 +281,11 @@ class BibleBot(discord.AutoShardedClient):
                                 await ctx["channel"].send(item["message"])
                             elif "embed" in item:
                                 await ctx["channel"].send(embed=item["embed"])
+
+                            if "reference" in item:
+                                central.log_message(item["level"], shard, ctx["identifier"],  source, item["reference"])
                         except (KeyError, TypeError):
                             pass
-
-                        if "reference" in item:
-                            central.log_message(item["level"], shard, ctx["identifier"],  source, item["reference"])
                 elif "spam" in result:
                     central.log_message("warn", shard,
                                         ctx["identifier"], source,
