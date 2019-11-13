@@ -73,8 +73,10 @@ def create_embed(lang, title, description, image=None, _copyright=None, error=Fa
 def create_embeds(lang, resource, section=None, page=None, guild=None):
     if resource in resources.keys():
         if resource == "ccc":
-            if guild is not None:
-                if guild.id != "238001909716353025":
+            if guild:
+                if guild.id == "238001909716353025":
+                    return
+                else:
                     return create_numbered_embed(lang, resource, paragraph=section)
         elif resource in ["heidelberg"]:
             return create_numbered_embed(lang, resource, paragraph=section)
