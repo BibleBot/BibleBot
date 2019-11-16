@@ -94,8 +94,10 @@ def log_message(level, shard, sender, source, msg):
 
 
 def get_raw_language(obj):
-    # todo: when more languages are added, put `obj` in place of "english"
-    return getattr(languages, "english").raw_object
+    try:
+        return getattr(languages, obj).raw_object
+    except AttributeError:
+        return getattr(languages, "english").raw_object
 
 
 def add_optout(entryid):
