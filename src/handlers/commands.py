@@ -32,7 +32,7 @@ def is_command(command, lang):
     commands = lang["commands"]
     untranslated_commands = ["biblebot", "setlanguage", "userid",
                              "ban", "unban", "reason",
-                             "optout", "unoptout", "eval",
+                             "optout", "unoptout", "eval", "rose",
                              "jepekula", "joseph", "tiger", "lsc", "heidelberg", "ccc"]
 
     result = {
