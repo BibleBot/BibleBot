@@ -239,7 +239,7 @@ class BibleBot(discord.AutoShardedClient):
                 for original_command_name in lang["commands"].keys():
                     untranslated = ["setlanguage", "userid", "ban", "unban",
                                     "reason", "optout", "unoptout", "eval",
-                                    "jepekula", "joseph", "tiger",
+                                    "jepekula", "joseph", "tiger", "rose",
                                     "lsc", "heidelberg", "ccc"]
 
                     if lang["commands"][original_command_name] == command:
