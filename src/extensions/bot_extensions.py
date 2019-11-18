@@ -57,7 +57,7 @@ async def run_timed_votds(self):
 
                     # noinspection PyBroadException
                     try:
-                        result = utils.get_bible_verse(reference, version, "enable", "enable")
+                        result = utils.get_bible_verse(reference, "embed", version, "enable", "enable")
                         await channel.send(result["message"])
                     except Exception:
                         pass
