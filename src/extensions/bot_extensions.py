@@ -33,7 +33,7 @@ async def run_timed_votds(self):
     await self.wait_until_ready()
 
     while not self.is_closed():
-        current_time = datetime.datetime.utcnow().strftime("%H:%M
+        current_time = datetime.datetime.utcnow().strftime("%H:%M")
         results = [x for x in central.guildDB.all() if "channel" in x and x["time"] == current_time]
 
         for item in results:
