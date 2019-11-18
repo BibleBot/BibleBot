@@ -75,6 +75,15 @@ async def run_command(ctx, command, remainder):
             }
     elif command == "setguildversion":
         perms = user.guild_permissions
+        
+        if not perms:
+            embed = utils.create_embed(lang["commands"]["setguildversion"], lang["setguildversionnoperm"],
+                                           error=True)
+            
+            return {
+                    "level": "err",
+                    "message": embed
+            }
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
@@ -203,6 +212,15 @@ async def run_command(ctx, command, remainder):
     elif command == "setguildlanguage":
         perms = user.guild_permissions
 
+        if not perms:
+            embed = utils.create_embed(lang["commands"]["setguildlanguage"], lang["setguildlanguagenoperm"],
+                                           error=True)
+            
+            return {
+                    "level": "err",
+                    "message": embed
+            }
+        
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
                 embed = utils.create_embed(lang["commands"]["setguildlanguage"], lang["setguildlanguagenoperm"],
@@ -270,6 +288,15 @@ async def run_command(ctx, command, remainder):
     elif command == "setguildbrackets":
         perms = user.guild_permissions
 
+        if not perms:
+            embed = utils.create_embed(lang["commands"]["setguildbrackets"], lang["setguildbracketsnoperm"],
+                                           error=True)
+            
+            return {
+                    "level": "err",
+                    "message": embed
+            }
+        
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
                 embed = utils.create_embed(lang["commands"]["setguildbrackets"], lang["setguildbracketsnoperm"],
@@ -311,6 +338,15 @@ async def run_command(ctx, command, remainder):
         }
     elif command == "setvotdtime":
         perms = user.guild_permissions
+        
+        if not perms:
+            embed = utils.create_embed(lang["commands"]["setvotdtime"], lang["setvotdtimenoperm"],
+                                           error=True)
+            
+            return {
+                    "level": "err",
+                    "message": embed
+            }
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
@@ -337,6 +373,15 @@ async def run_command(ctx, command, remainder):
             }
     elif command == "clearvotdtime":
         perms = user.guild_permissions
+        
+        if not perms:
+            embed = utils.create_embed(lang["commands"]["clearvotdtime"], lang["clearvotdtimenoperm"],
+                                           error=True)
+            
+            return {
+                    "level": "err",
+                    "message": embed
+            }
 
         if str(user.id) != central.config["BibleBot"]["owner"]:
             if not perms.manage_guild:
@@ -512,6 +557,15 @@ async def run_command(ctx, command, remainder):
         }
     elif command == "setannouncements":
         perms = user.guild_permissions
+        
+        if not perms:
+            embed = utils.create_embed(lang["commands"]["setannouncements"], lang["setannouncementsnoperm"],
+                                           error=True)
+            
+            return {
+                    "level": "err",
+                    "message": embed
+            }
 
         if not perms.manage_guild:
             embed = utils.create_embed(lang["commands"]["setannouncements"], lang["setannouncementsnoperm"], error=True)
@@ -581,8 +635,6 @@ async def run_command(ctx, command, remainder):
             "message": embed
         }
     elif command == "servers":
-        await bot_extensions.send_server_count(ctx["self"])
-
         processed = len(ctx["self"].guilds)
         embed = utils.create_embed(lang["commands"]["servers"], lang["servers"].replace("<count>", str(processed)))
 
