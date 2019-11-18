@@ -20,7 +20,8 @@ from handlers.logic.commands import utils
 
 custom_messages = {
     "joseph": "Jesus never consecrated peanut butter and jelly sandwiches and Coca-Cola!",
-    "tiger": "Our favorite Tiger lives by Ephesians 4:29,31-32, Matthew 16:26, James 4:6, and lastly, his calling from God, Matthew 28:19-20. He tells everyone that because of grace in faith (Ephesians 2:8-10) he was saved, and not of works. Christ Jesus has made him a new creation (2 Corinthians 5:17). He asks you make God preeminent not prominent."  # noqa
+    "tiger": "Our favorite Tiger lives by Ephesians 4:29,31-32, Matthew 16:26, James 4:6, and lastly, his calling from God, Matthew 28:19-20. He tells everyone that because of grace in faith (Ephesians 2:8-10) he was saved, and not of works. Christ Jesus has made him a new creation (2 Corinthians 5:17). He asks you make God preeminent not prominent.",  # noqa
+    "rose": "I am a rose of Sharon, a lily of the valleys.  Because, if you confess with your mouth that Jesus is Lord and believe in your heart that God raised him from the dead, you will be saved.  For everyone who calls on the name of the Lord will be saved.  The desert and the parched land will be glad..."
 }
 
 cm_commands = list(custom_messages.keys())
