@@ -21,6 +21,7 @@ import asyncio
 import aiohttp
 import datetime
 import discord
+import traceback
 
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc
@@ -32,13 +33,13 @@ async def run_timed_votds(self):
     await self.wait_until_ready()
 
     while not self.is_closed():
-        results = [x for x in central.guildDB.all() if "channel" in x]
+        current_time = datetime.datetime.utcnow().strftime("%H:%M
+        results = [x for x in central.guildDB.all() if "channel" in x and x["time"] == current_time]
 
         for item in results:
             if "channel" in item and "time" in item:
                 channel = self.get_channel(item["channel"])
-                votd_time = item["time"]
-
+                                                           
                 try:
                     version = versions.get_guild_version(channel.guild)
                     lang = languages.get_guild_language(channel.guild)
@@ -48,19 +49,17 @@ async def run_timed_votds(self):
 
                 lang = central.get_raw_language(lang)
 
-                current_time = datetime.datetime.utcnow().strftime("%H:%M")
+                await channel.send(lang["votd"])
 
-                if votd_time == current_time:
-                    await channel.send(lang["votd"])
+                reference = bibleutils.get_votd()
 
-                    reference = bibleutils.get_votd()
-
-                    # noinspection PyBroadException
-                    try:
-                        result = utils.get_bible_verse(reference, "embed", version, "enable", "enable")
-                        await channel.send(embed=result["embed"])
-                    except Exception:
-                        pass
+                # noinspection PyBroadException
+                try:
+                    result = utils.get_bible_verse(reference, "embed", version, "enable", "enable")
+                    await channel.send(embed=result["embed"])
+                except Exception as e:
+                    traceback.print_exc()
+                    pass
 
         # central.log_message("info", 0, "votd_sched", "global", "Sending VOTDs...")
         await asyncio.sleep(60)
