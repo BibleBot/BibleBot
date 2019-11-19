@@ -45,7 +45,10 @@ async def run_timed_votds(self):
                     lang = languages.get_guild_language(channel.guild)
                 except AttributeError:
                     version = "RSV"
-                    lang = "default"
+                    lang = "english"
+                    
+                if not lang:
+                    lang = "english"
 
                 lang = central.get_raw_language(lang)
 
