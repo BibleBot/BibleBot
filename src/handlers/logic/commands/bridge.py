@@ -53,7 +53,7 @@ async def run_command(ctx, command, remainder):
         }
     elif command == "search":
         version = utils.get_version(user, guild)
-        return paged_commands.search(version, remainder, lang)
+        return await paged_commands.search(version, remainder, lang)
     elif command == "versions":
         return paged_commands.get_versions(lang)
     elif command == "setversion":
