@@ -44,6 +44,8 @@ python src/bot.py
 
 Commands:
 
+(this section needs to be updated, use `+biblebot` for current command reference)
+
 * `+biblebot` - the help command
 * `+versions` - show all Bible translations you can set
 * `+setversion VER` - set a preferred version

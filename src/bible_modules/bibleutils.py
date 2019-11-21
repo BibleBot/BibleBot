@@ -18,7 +18,7 @@
 
 import re
 
-import requests
+import aiohttp
 from bs4 import BeautifulSoup
 
 
@@ -55,26 +55,26 @@ def purify_text(text):
     return re.sub(r"\s+", " ", result)
 
 
-def get_random_verse():
+async def get_random_verse():
     url = "https://dailyverses.net/random-bible-verse"
 
-    resp = requests.get(url)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp is not None:
+                soup = BeautifulSoup(await resp.text(), "lxml")
+                verse = soup.find(
+                    "div", {"class": "bibleChapter"}).find("a").get_text()
 
-    if resp is not None:
-        soup = BeautifulSoup(resp.text, "html.parser")
-        verse = soup.find(
-            "div", {"class": "bibleChapter"}).find("a").get_text()
-
-        return verse
+                return verse
 
 
-def get_votd():
+async def get_votd():
     url = "https://www.biblegateway.com/reading-plans/verse-of-the-day/next"
 
-    resp = requests.get(url)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp is not None:
+                soup = BeautifulSoup(await resp.text(), "lxml")
+                verse = soup.find(True, {"class": "rp-passage-display"}).get_text()
 
-    if resp is not None:
-        soup = BeautifulSoup(resp.text, "html.parser")
-        verse = soup.find(True, {"class": "rp-passage-display"}).get_text()
-
-        return verse
+                return verse
