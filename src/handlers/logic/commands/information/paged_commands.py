@@ -23,15 +23,15 @@ from handlers.logic.settings import versions
 from bible_modules import biblegateway
 
 
-def search(version, query, lang):
+async def search(version, query, lang):
     biblehub_versions = ["BSB", "NHEB", "WBT"]
-    bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
+    # bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
     apibible_versions = ["KJVA"]
 
-    non_bible_gateway = biblehub_versions + apibible_versions + bibleserver_versions
+    non_bible_gateway = biblehub_versions + apibible_versions  # + bibleserver_versions
 
     if version not in non_bible_gateway:
-        results = biblegateway.search(version, query)
+        results = await biblegateway.search(version, query)
 
         if results is not None:
             query.replace("\"", "")
