@@ -43,6 +43,7 @@ class BibleBot(discord.AutoShardedClient):
         super().__init__(*args, loop=loop, **kwargs)
 
         self.bg_task = self.loop.create_task(bot_extensions.run_timed_votds(self))
+        self.load_names = self.loop.create_task(name_scraper.update_books(config["apis"]["apibible"]))
         self.current_page = None
         self.total_pages = None
 
@@ -261,7 +262,7 @@ class BibleBot(discord.AutoShardedClient):
         else:
             verse_handler = VerseHandler()
 
-            result = verse_handler.process_raw_message(raw, ctx["author"], ctx["language"], ctx["guild"])
+            result = await verse_handler.process_raw_message(raw, ctx["author"], ctx["language"], ctx["guild"])
 
             if result is not None:
                 if embed_or_reaction_not_allowed:
@@ -276,7 +277,7 @@ class BibleBot(discord.AutoShardedClient):
                         try:
                             if "twoMessages" in item:
                                 await ctx["channel"].send(item["firstMessage"])
-                                await ctx["channel"].send(item["secondMessage"])  # noqa: E501
+                                await ctx["channel"].send(item["secondMessage"])
                             elif "message" in item:
                                 await ctx["channel"].send(item["message"])
                             elif "embed" in item:
@@ -297,8 +298,6 @@ if int(config["BibleBot"]["shards"]) > 1:
     bot = BibleBot(shard_count=int(config["BibleBot"]["shards"]))
 else:
     bot = BibleBot()
-
-name_scraper.update_books(config["apis"]["apibible"])
 
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()

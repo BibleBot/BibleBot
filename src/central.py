@@ -146,7 +146,3 @@ def is_snowflake(snowflake):
                     return True
         except ValueError:
             return False
-
-
-def sleep(milliseconds):
-    time.sleep(milliseconds / 1000.0)

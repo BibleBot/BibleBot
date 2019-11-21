@@ -20,14 +20,14 @@ import re
 import logging
 from http.client import HTTPConnection
 
-import requests
+import aiohttp
 from bs4 import BeautifulSoup
 
 import bible_modules.bibleutils as bibleutils
 
 HTTPConnection.debuglevel = 0
 
-logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("aiohttp").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
@@ -146,7 +146,7 @@ book_names = {
 #     return search_results
 
 
-def get_result(query, version, verse_numbers):
+async def get_result(query, version, verse_numbers):
     if "|" in query:
         book = query.split("|")[0]
         chapter = query.split("|")[1].split(":")[0]
@@ -172,43 +172,47 @@ def get_result(query, version, verse_numbers):
     book = book_names[book]
 
     url = f"https://www.bibleserver.com/text/{version}/{book}{chapter}"
+    # TODO: Fix this, don't forget to readd versions.
 
-    resp = requests.get(url)
-    soup = BeautifulSoup(resp.text, "lxml")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            soup = BeautifulSoup(await resp.text(), "lxml")
 
-    text = ""
+            print(soup)
 
-    for div in soup.find_all("div", {"class": "chapter"}):
-        for heading in div.find_all("h3", {"class": "caption"}):
-            heading.decompose()
+            text = ""
 
-        if ending_verse == "-":
-            ending_verse = div.find_all(
-                "span", {"class": "verseNumber"})[-1].get_text()
+            for div in soup.find_all("div", {"class": "chapter"}):
+                for heading in div.find_all("h3", {"class": "caption"}):
+                    heading.decompose()
 
-        for sup in div.find_all("span", {"class": "verseNumber"}):
-            if verse_numbers == "enable":
-                sup.replace_with(f"<**{sup.get_text().strip()}**> ")
-            else:
-                sup.replace_with(" ")
+                if ending_verse == "-":
+                    ending_verse = div.find_all(
+                        "span", {"class": "verseNumber"})[-1].get_text()
 
-        for d in div.find_all("div", {"class": "verse"}):
-            text += d.get_text()
+                for sup in div.find_all("span", {"class": "verseNumber"}):
+                    if verse_numbers == "enable":
+                        sup.replace_with(f"<**{sup.get_text().strip()}**> ")
+                    else:
+                        sup.replace_with(" ")
 
-        text = text.split(f"<**{int(ending_verse) + 1}**>")[0]
+                for d in div.find_all("div", {"class": "verse"}):
+                    text += d.get_text()
 
-        if int(starting_verse) != 1:
-            text = f" <**{starting_verse}**>" + text.split(
-                f"<**{int(starting_verse)}**>")[1]
+                text = text.split(f"<**{int(ending_verse) + 1}**>")[0]
 
-        if text is None:
-            return
+                if int(starting_verse) != 1:
+                    text = f" <**{starting_verse}**>" + text.split(
+                        f"<**{int(starting_verse)}**>")[1]
 
-        verse_object = {
-            "passage": query.replace("|", " "),
-            "version": version_names[version],
-            "title": "",
-            "text": bibleutils.purify_text(text)
-        }
+                if text is None:
+                    return
 
-        return verse_object
+                verse_object = {
+                    "passage": query.replace("|", " "),
+                    "version": version_names[version],
+                    "title": "",
+                    "text": bibleutils.purify_text(text)
+                }
+
+                return verse_object

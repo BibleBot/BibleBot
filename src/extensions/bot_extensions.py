@@ -54,17 +54,17 @@ async def run_timed_votds(self):
 
                 await channel.send(lang["votd"])
 
-                reference = bibleutils.get_votd()
+                reference = await bibleutils.get_votd()
 
                 # noinspection PyBroadException
                 try:
-                    result = utils.get_bible_verse(reference, "embed", version, "enable", "enable")
+                    result = await utils.get_bible_verse(reference, "embed", version, "enable", "enable")
                     await channel.send(embed=result["embed"])
-                except Exception as e:
+                except Exception:
                     traceback.print_exc()
                     pass
 
-        # central.log_message("info", 0, "votd_sched", "global", "Sending VOTDs...")
+        central.log_message("info", 0, "votd_sched", "global", f"Sending VOTDs at {current_time}...")
         await asyncio.sleep(60)
 
 
@@ -107,40 +107,12 @@ async def send_announcement(ctx, res):
 
                     if perm.read_messages and perm.send_messages:
                         if perm.embed_links:
-                            msg = await ch.send(embed=res["message"])
+                            await ch.send(embed=res["message"])
                         else:
-                            msg = await ch.send(res["message"].fields[0].value)
+                            await ch.send(res["message"].fields[0].value)
 
-                        if msg:
-                            if message_counter is None:
-                                embed = craft_counting_embed(count, total)
-                                message_counter = await ctx["channel"].send(embed=embed)
-                            else:
-                                embed = craft_counting_embed(count, total)
-                                message_counter = await message_counter.edit(embed=embed)
-                        else:
-                            if message_counter is None:
-                                embed = craft_counting_embed(count, total)
-                                message_counter = await ctx["channel"].send(embed=embed)
-                            else:
-                                embed = craft_counting_embed(count, total)
-                                message_counter = await message_counter.edit(embed=embed)
-                    else:
-                        if message_counter is None:
-                            embed = craft_counting_embed(count, total)
-                            message_counter = await ctx["channel"].send(embed=embed)
-                        else:
-                            embed = craft_counting_embed(count, total)
-                            message_counter = await message_counter.edit(embed=embed)
                     count += 1
                 except (AttributeError, IndexError):
-                    if message_counter is None:
-                        embed = craft_counting_embed(count, total)
-                        message_counter = await ctx["channel"].send(embed=embed)
-                    else:
-                        embed = craft_counting_embed(count, total)
-                        message_counter = await message_counter.edit(embed=embed)
-
                     count += 1
             elif chan == "preferred" and setting:
                 sent = False
@@ -152,61 +124,19 @@ async def send_announcement(ctx, res):
 
                             if perm.read_messages and perm.send_messages:
                                 if perm.embed_links:
-                                    msg = await ch.send(embed=res["message"])
+                                    await ch.send(embed=res["message"])
                                 else:
-                                    msg = await ch.send(res["message"].fields[0].value)
-
-                                if msg:
-                                    if message_counter is None:
-                                        embed = craft_counting_embed(count, total)
-                                        message_counter = await ctx["channel"].send(embed=embed)
-                                    else:
-                                        embed = craft_counting_embed(count, total)
-                                        message_counter = await message_counter.edit(embed=embed)
-                                else:
-                                    if message_counter is None:
-                                        embed = craft_counting_embed(count, total)
-                                        message_counter = await ctx["channel"].send(embed=embed)
-                                    else:
-                                        embed = craft_counting_embed(count, total)
-                                        message_counter = await message_counter.edit(embed=embed)
-
-                            else:
-                                if message_counter is None:
-                                    embed = craft_counting_embed(count, total)
-                                    message_counter = await ctx["channel"].send(embed=embed)
-                                else:
-                                    embed = craft_counting_embed(count, total)
-                                    message_counter = await message_counter.edit(embed=embed)
+                                    await ch.send(res["message"].fields[0].value)
 
                             count += 1
                             sent = True
                     except (AttributeError, IndexError):
-                        if message_counter is None:
-                            embed = craft_counting_embed(count, total)
-                            message_counter = await ctx["channel"].send(embed=embed)
-                        else:
-                            embed = craft_counting_embed(count, total)
-                            message_counter = await message_counter.edit(embed=embed)
-
                         count += 1
                         sent = True
             else:
-                if message_counter is None:
-                    embed = craft_counting_embed(count, total)
-                    message_counter = await ctx["channel"].send(embed=embed)
-                else:
-                    embed = craft_counting_embed(count, total)
-                    message_counter = await message_counter.edit(embed=embed)
-
                 count += 1
 
-    if message_counter is None:
-        embed = craft_counting_embed(count, total, done=True)
-        await ctx["channel"].send(embed=embed)
-    else:
-        embed = craft_counting_embed(count, total, done=True)
-        await message_counter.edit(embed=embed)
+    await update_counter(message_counter, ctx, count, total)
 
 
 def craft_counting_embed(count, total, done=None):
@@ -229,7 +159,7 @@ def craft_counting_embed(count, total, done=None):
 
 
 async def update_counter(message_counter, ctx, count, total):
-    if message_counter is None:
+    if count == 1:
         embed = craft_counting_embed(count, total)
         message_counter = await ctx["channel"].send(embed=embed)
     else:

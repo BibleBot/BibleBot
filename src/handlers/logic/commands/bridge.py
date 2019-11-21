@@ -429,21 +429,21 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command in ["votd", "verseoftheday"]:
-        verse = bibleutils.get_votd()
+        verse = await bibleutils.get_votd()
         mode = formatting.get_mode(user)
         version = utils.get_version(user, guild)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        return utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
+        return await utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
     elif command == "random":
-        verse = bibleutils.get_random_verse()
+        verse = await bibleutils.get_random_verse()
         mode = formatting.get_mode(user)
         version = utils.get_version(user, guild)
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        return utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
+        return await utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
     elif command == "setheadings":
         if formatting.set_headings(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setheadings"], lang["headingssuccess"])
@@ -560,7 +560,7 @@ async def run_command(ctx, command, remainder):
         
         if not perms:
             embed = utils.create_embed(lang["commands"]["setannouncements"], lang["setannouncementsnoperm"],
-                                           error=True)
+                                       error=True)
             
             return {
                     "level": "err",
@@ -648,7 +648,7 @@ async def run_command(ctx, command, remainder):
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
 
-        return utils.get_bible_verse("Mark 9:23-24", mode, version, headings, verse_numbers)
+        return await utils.get_bible_verse("Mark 9:23-24", mode, version, headings, verse_numbers)
     elif command in special.cm_commands:
         return special.get_custom_message(command)
     elif command == "supporters":

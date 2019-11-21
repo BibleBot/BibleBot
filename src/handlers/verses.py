@@ -39,7 +39,7 @@ books = client.get_books()
 
 class VerseHandler:
     @classmethod
-    def process_raw_message(cls, raw_message, sender, lang, guild):
+    async def process_raw_message(cls, raw_message, sender, lang, guild):
         available_versions = versions.get_versions_by_acronym()
         brackets = formatting.get_guild_brackets(guild)
         msg = raw_message.content
@@ -122,22 +122,22 @@ class VerseHandler:
                                 return [support]
 
                     biblehub_versions = ["BSB", "NHEB", "WBT"]
-                    bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
+                    # bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
                     apibible_versions = ["KJVA"]
 
-                    non_bible_gateway = biblehub_versions + apibible_versions + bibleserver_versions
+                    non_bible_gateway = biblehub_versions + apibible_versions  # + bibleserver_versions
 
                     if version not in non_bible_gateway:
-                        result = biblegateway.get_result(reference, version, headings, verse_numbers)
+                        result = await biblegateway.get_result(reference, version, headings, verse_numbers)
                         return_list.append(utils.process_result(result, mode, reference, version, lang))
                     elif version in apibible_versions:
-                        result = apibible.get_result(reference, version, headings, verse_numbers)
+                        result = await apibible.get_result(reference, version, headings, verse_numbers)
                         return_list.append(utils.process_result(result, mode, reference, version, lang))
                     elif version in biblehub_versions:
-                        result = biblehub.get_result(reference, version, verse_numbers)
+                        result = await biblehub.get_result(reference, version, verse_numbers)
                         return_list.append(utils.process_result(result, mode, reference, version, lang))
-                    elif version in bibleserver_versions:
-                        result = bibleserver.get_result(reference, version, verse_numbers)
-                        return_list.append(utils.process_result(result, mode, reference, version, lang))
+                    # elif version in bibleserver_versions:
+                    #    result = await bibleserver.get_result(reference, version, verse_numbers)
+                    #    return_list.append(utils.process_result(result, mode, reference, version, lang))
 
             return return_list

@@ -74,7 +74,8 @@ def create_embeds(lang, resource, section=None, page=None, guild=None):
     if resource in resources.keys():
         if resource == "ccc":
             if guild:
-                if guild.id == 238001909716353025:  # ignore /r/catholicism as they already have a bot (thanks balrogath for ccc help)
+                # ignore /r/catholicism as they already have a bot (thanks balrogath for ccc help)
+                if guild.id == 238001909716353025:
                     return
                 else:
                     return create_numbered_embed(lang, resource, paragraph=section)

@@ -22,7 +22,7 @@ import sys
 import configparser
 from http.client import HTTPConnection
 
-import requests
+import aiohttp
 from bs4 import BeautifulSoup
 
 import bible_modules.bibleutils as bibleutils
@@ -37,7 +37,7 @@ config.read(f"{dir_path}/../config.ini")
 
 HTTPConnection.debuglevel = 0
 
-logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("aiohttp").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
@@ -88,61 +88,61 @@ version_names = {
 #     return search_results
 
 
-def get_result(query, ver, headings, verse_numbers):
+async def get_result(query, ver, headings, verse_numbers):
     query = query.replace("|", " ")
 
     url = f"https://api.scripture.api.bible/v1/bibles/{versions[ver]}/search"
     headers = {"api-key": config["apis"]["apibible"]}
     params = {"query": query, "limit": "1"}
 
-    resp = requests.get(url, headers=headers, params=params)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params=params, headers=headers) as resp:
+            if resp is not None:
+                data = await resp.json()
+                data = data["data"]["passages"]
+                text = None
 
-    if resp is not None:
-        data = resp.json()
-        data = data["data"]["passages"]
-        text = None
+                if data[0]["bibleId"] != versions[ver]:
+                    central.log_message("err", 0, "apibible", "global",
+                                        f"{version} is no longer able to be used.")
+                    return
 
-        if data[0]["bibleId"] != versions[ver]:
-            central.log_message("err", 0, "apibible", "global",
-                                f"{version} is no longer able to be used.")
-            return
+                if len(data) > 0:
+                    text = data[0]["content"]
 
-        if len(data) > 0:
-            text = data[0]["content"]
+                if text is None:
+                    return
 
-        if text is None:
-            return
+                soup = BeautifulSoup(text, "lxml")
 
-        soup = BeautifulSoup(text, "lxml")
+                title = ""
+                text = ""
 
-        title = ""
-        text = ""
+                for heading in soup.find_all("h3"):
+                    title += f"{heading.get_text()} / "
+                    heading.decompose()
 
-        for heading in soup.find_all("h3"):
-            title += f"{heading.get_text()} / "
-            heading.decompose()
+                for span in soup.find_all("span", {"class": "v"}):
+                    if verse_numbers == "enable":
+                        span.replace_with(f"<**{span.get_text()}**> ")
+                    else:
+                        span.replace_with(" ")
 
-        for span in soup.find_all("span", {"class": "v"}):
-            if verse_numbers == "enable":
-                span.replace_with(f"<**{span.get_text()}**> ")
-            else:
-                span.replace_with(" ")
+                    span.decompose()
 
-            span.decompose()
+                for p in soup.find_all("p", {"class": "p"}):
+                    text += p.get_text()
 
-        for p in soup.find_all("p", {"class": "p"}):
-            text += p.get_text()
+                if headings == "disable":
+                    title = ""
 
-        if headings == "disable":
-            title = ""
+                text = f" {bibleutils.purify_text(text).rstrip()}"
 
-        text = f" {bibleutils.purify_text(text).rstrip()}"
+                verse_object = {
+                    "passage": query,
+                    "version": version_names[ver],
+                    "title": title[0:-3],
+                    "text": text
+                }
 
-        verse_object = {
-            "passage": query,
-            "version": version_names[ver],
-            "title": title[0:-3],
-            "text": text
-        }
-
-        return verse_object
+                return verse_object
