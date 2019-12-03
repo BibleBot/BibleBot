@@ -64,7 +64,10 @@ def create_biblebot_embeds(lang):
                     new_command = ""
                     for placeholder in re.findall(r"<[a-zA-Z0-9]*>", command):
                         placeholder = placeholder[1:-1]
-
+                        
+                        if new_command:
+                            command = new_command
+                            
                         if placeholder == "biblebotversion":
                             command = command.replace(
                                 f"<{placeholder}>", central.version)
@@ -76,8 +79,8 @@ def create_biblebot_embeds(lang):
                                 f"<{placeholder}>", lang["commands"][placeholder])
                         
                         new_command = command
-                    new_chunk.append(new_command)      
-                new_resp.append(new_chunk)  
+                    new_chunk += new_command
+                new_resp.append(new_chunk)
 
     command_list_count = len(command_list)
     pages[0].add_field(name=lang["commandlistName"],
