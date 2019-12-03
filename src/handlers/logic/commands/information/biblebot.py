@@ -39,6 +39,7 @@ def create_biblebot_embeds(lang):
         page.set_footer(text=page.title, icon_url=central.icon)
 
     responses = command_list + [lang["commandlist2"], lang["guildcommandlist"]]
+    new_resp = []
 
     for response in responses:
         if response == responses[-1] or response == responses[-2]:
@@ -54,9 +55,13 @@ def create_biblebot_embeds(lang):
                 else:
                     response = response.replace(
                         f"<{placeholder}>", lang["commands"][placeholder])
+                    
+            new_resp.append(response)
         else:
             for chunk in response:
+                new_chunk = ""
                 for command in chunk:
+                    new_command = ""
                     for placeholder in re.findall(r"<[a-zA-Z0-9]*>", command):
                         placeholder = placeholder[1:-1]
 
@@ -69,27 +74,31 @@ def create_biblebot_embeds(lang):
                         else:
                             command = command.replace(
                                 f"<{placeholder}>", lang["commands"][placeholder])
+                        
+                        new_command = command
+                    new_chunk.append(new_command)      
+                new_resp.append(new_chunk)  
 
     command_list_count = len(command_list)
     pages[0].add_field(name=lang["commandlistName"],
-                       value="".join(responses[0]), inline=False)
+                       value="".join(new_resp[0]), inline=False)
 
     for i in range(1, command_list_count):
         if i != command_list_count - 1:
             pages[0].add_field(name=u"\u200B",
-                               value="".join(responses[i]), inline=False)
+                               value="".join(new_resp[i]), inline=False)
         else:
             pages[0].add_field(name=u"\u200B",
-                               value="".join(responses[i]) + "\n" + u"\u200B",
+                               value="".join(new_resp[i]) + "\n" + u"\u200B",
                                inline=False)
 
     # pages[0].add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
     pages[1].add_field(name=lang["extrabiblicalcommandlistName"],
-                       value=responses[-2].replace("* ", ""), inline=False)
+                       value=new_resp[-2].replace("* ", ""), inline=False)
     pages[1].add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
-    guild_commands = responses[-1].replace("* ", "") + "\n" + u"\u200B"
+    guild_commands = new_resp[-1].replace("* ", "") + "\n" + u"\u200B"
     pages[1].add_field(name=lang["guildcommandlistName"], value=guild_commands,
                        inline=False)
     # pages[1].add_field(name=u"\u200B", value=u"\u200B", inline=False)
