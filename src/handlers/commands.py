@@ -39,11 +39,18 @@ def is_command(command, lang):
         "ok": False
     }
 
-    if command in (untranslated_commands + list(commands.values())):
+    if command in untranslated_commands:
         result = {
             "ok": True,
             "orig": command
         }
+    else:
+        for key, val in commands.items():
+            if command == val:
+                result = {
+                    "ok": True,
+                    "orig": key
+                }
 
     return result
 

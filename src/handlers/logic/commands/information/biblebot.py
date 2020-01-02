@@ -38,67 +38,42 @@ def create_biblebot_embeds(lang):
         page.color = 303102
         page.set_footer(text=page.title, icon_url=central.icon)
 
-    responses = command_list + [lang["commandlist2"], lang["guildcommandlist"]]
-    new_resp = []
+    responses = command_list + [[lang["commandlist2"]]] + [[lang["guildcommandlist"]]]
 
-    for response in responses:
-        if response == responses[-1] or response == responses[-2]:
-            for placeholder in re.findall(r"<[a-zA-Z0-9]*>", response):
+    for r, response in enumerate(responses):
+        for i, item in enumerate(response):
+            for placeholder in re.findall(r"<[a-zA-Z0-9]*>", item):
                 placeholder = placeholder[1:-1]
 
                 if placeholder == "biblebotversion":
-                    response = response.replace(
-                        f"<{placeholder}>", central.version)
+                    responses[r][i] = responses[r][i].replace(f"<{placeholder}>", central.version)
                 elif placeholder in ["enable", "disable"]:
-                    response = response.replace(
-                        f"<{placeholder}>", lang["arguments"][placeholder])
+                    responses[r][i] = responses[r][i].replace(f"<{placeholder}>", lang["arguments"][placeholder])
                 else:
-                    response = response.replace(
-                        f"<{placeholder}>", lang["commands"][placeholder])
-                    
-            new_resp.append(response)
-        else:
-            for chunk in response:
-                new_chunk = ""
-                for command in chunk:
-                    new_command = ""
-                    for placeholder in re.findall(r"<[a-zA-Z0-9]*>", command):
-                        placeholder = placeholder[1:-1]
+                    responses[r][i] = responses[r][i].replace(f"<{placeholder}>", lang["commands"][placeholder])
 
-                        if placeholder == "biblebotversion":
-                            command = command.replace(
-                                f"<{placeholder}>", central.version)
-                        elif placeholder in ["enable", "disable"]:
-                            command = command.replace(
-                                f"<{placeholder}>", lang["arguments"][placeholder])
-                        else:
-                            command = command.replace(
-                                f"<{placeholder}>", lang["commands"][placeholder])
-                        
-                        new_command = command
-                    new_chunk.append(new_command)      
-                new_resp.append(new_chunk)  
 
     command_list_count = len(command_list)
-    pages[0].add_field(name=lang["commandlistName"],
-                       value="".join(new_resp[0]), inline=False)
+    pages[0].add_field(name=lang["commandlistName"], value="".join(responses[0]), inline=False)
 
     for i in range(1, command_list_count):
-        if i != command_list_count - 1:
+        response = "".join(responses[i])
+
+        if i != command_list_count:
             pages[0].add_field(name=u"\u200B",
-                               value="".join(new_resp[i]), inline=False)
+                               value=response, inline=False)
         else:
             pages[0].add_field(name=u"\u200B",
-                               value="".join(new_resp[i]) + "\n" + u"\u200B",
+                               value=response + "\n" + u"\u200B",
                                inline=False)
 
     # pages[0].add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
     pages[1].add_field(name=lang["extrabiblicalcommandlistName"],
-                       value=new_resp[-2].replace("* ", ""), inline=False)
+                       value="".join(responses[-2]).replace("* ", ""), inline=False)
     pages[1].add_field(name=u"\u200B", value=u"\u200B", inline=False)
 
-    guild_commands = new_resp[-1].replace("* ", "") + "\n" + u"\u200B"
+    guild_commands = "".join(responses[-1]).replace("* ", "") + "\n" + u"\u200B"
     pages[1].add_field(name=lang["guildcommandlistName"], value=guild_commands,
                        inline=False)
     # pages[1].add_field(name=u"\u200B", value=u"\u200B", inline=False)
