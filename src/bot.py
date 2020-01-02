@@ -43,6 +43,7 @@ class BibleBot(discord.AutoShardedClient):
         super().__init__(*args, loop=loop, **kwargs)
 
         self.bg_task = self.loop.create_task(bot_extensions.run_timed_votds(self))
+        self.load_names = self.loop.create_task(name_scraper.update_books(config["apis"]["apibible"]))
         self.current_page = None
         self.total_pages = None
 
@@ -300,8 +301,6 @@ else:
 
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
-
-name_scraper.update_books(config["apis"]["apibible"])
 
 central.log_message("info", 0, "global", "global",
                     f"BibleBot {central.version} by Elliott Pardee (vypr)")
