@@ -93,7 +93,7 @@ class VerseHandler:
             return_list = []
 
             for reference in references:
-                version = versions.get_version(sender)
+                version = None
                 mode = formatting.get_mode(sender)
                 headings = formatting.get_headings(sender)
                 verse_numbers = formatting.get_verse_numbers(sender)
@@ -105,10 +105,13 @@ class VerseHandler:
                     version = ref_split[1]
 
                 if version is None or version == "REV":
-                    version = versions.get_guild_version(guild)
+                    version = versions.get_version(user)
 
                     if version is None or version == "REV":
-                        version = "RSV"
+                        version = versions.get_guild_version(guild)
+
+                        if version is None or version == "REV":
+                            version = "RSV"
 
                 ideal_version = tinydb.Query()
                 results = central.versionDB.search(ideal_version.abbv == version)
