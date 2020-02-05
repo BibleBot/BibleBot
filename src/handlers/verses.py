@@ -105,7 +105,7 @@ class VerseHandler:
                     version = ref_split[1]
 
                 if version is None or version == "REV":
-                    version = versions.get_version(sender)
+                    version = versions.get_version(user)
 
                     if version is None or version == "REV":
                         version = versions.get_guild_version(guild)
