@@ -44,6 +44,15 @@ __french = __json.loads(__french.read())
 __french_qc = open(__dir_path + "/../../i18n/french_qc/french_qc.json", encoding="utf-8")
 __french_qc = __json.loads(__french_qc.read())
 
+__german = open(__dir_path + "/../../i18n/german/german.json", encoding="utf-8")
+__german = __json.loads(__german.read())
+
+__meankieli = open(__dir_path + "/../../i18n/meankieli/meankieli.json", encoding="utf-8")
+__meankieli = __json.loads(__meankieli.read())
+
+__russian = open(__dir_path + "/../../i18n/russian/russian.json", encoding="utf-8")
+__russian = __json.loads(__russian.read())
+
 # __greek = open(__dir_path + "/../../i18n/greek/greek.json", encoding="utf-8")
 # __greek = __json.loads(__greek.read())
 
@@ -60,6 +69,9 @@ english = __Language("English", "english", __english, "RSV")
 finnish = __Language("Finnish", "finnish", __finnish, "R1933")
 french = __Language("French", "french", __french, "BDS")
 french_qc = __Language("French (QC)", "french_qc", __french_qc, "BDS")
+german = __Language("Deutsch", "german", __german, "HOF")
+meankieli = __Language("Meänkieli", "meankieli", __meankieli, "R1933")
+russian = __Language("Русский", "russian", __russian, "RUSV")
 # greek = __Language("Greek", "greek", __greek, "RSV")
 # italian = __Language("Italian", "italian", __italian, "CEI")
 # welsh = __Language("Welsh", "welsh", __welsh, "BWM")
