@@ -113,7 +113,7 @@
     "sections": "**Gebiete**:\n",
     "commands": {
         "search": "suchen",
-        "setversion": "setversion",
+        "setversion": "versioneinstellen",
         "setguildversion": "gildenversionsetzen",
         "version": "version",
         "guildversion": "gildenversion",

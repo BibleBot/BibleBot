@@ -160,7 +160,7 @@
     "arguments": {
         "yes": "Да",
         "no": "Нет",
-        "enable": "включено",
-        "disable": "отключено"
+        "enable": "вкл",
+        "disable": "откл"
     }
 }
