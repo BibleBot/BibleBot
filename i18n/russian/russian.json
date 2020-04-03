@@ -112,7 +112,7 @@
     "section": "**Раздел**:\n",
     "sections": "**Разделы**:\n",
     "commands": {
-        "search": "поиск",
+        "search": "search",
         "setversion": "setversion",
         "setguildversion": "setguildversion",
         "version": "version",
