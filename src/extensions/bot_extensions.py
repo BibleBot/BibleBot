@@ -136,7 +136,7 @@ async def send_announcement(ctx, res):
             else:
                 count += 1
 
-    await update_counter(message_counter, ctx, count, total)
+        message_counter = await update_counter(message_counter, ctx, count, total)
 
 
 def craft_counting_embed(count, total, done=None):
