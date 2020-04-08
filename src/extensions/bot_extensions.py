@@ -48,7 +48,10 @@ async def run_timed_votds(bot):
             except AttributeError:
                 version = "RSV"
                 lang = "english"
-                    
+            
+            if not version:
+                version = "RSV"
+
             if not lang:
                 lang = "english"
 
@@ -66,8 +69,9 @@ async def run_timed_votds(bot):
                     await channel.send(lang["votd"])
                     await channel.send(embed=result["embed"])
                     count += 1
-
-    central.log_message("info", 0, "votd_sched", "global", f"Sending {str(count)} VOTDs at {current_time}...")
+    
+    if count > 0:
+        central.log_message("info", 0, "votd_sched", "global", f"Sending {str(count)} VOTDs at {current_time}...")
 
 
 async def send_server_count(bot):
