@@ -58,16 +58,15 @@ async def run_timed_votds(bot):
             lang = central.get_raw_language(lang)
 
             if channel:
-                await channel.send(lang["votd"])
-
                 reference = await bibleutils.get_votd()
                 result = await utils.get_bible_verse(reference, "embed", version, "enable", "enable")
                 
-                central.log_message("info", 0, "votd_sched", "global", f"{reference} - {result}")
-
                 if result:
-                    await channel.send(lang["votd"])
-                    await channel.send(embed=result["embed"])
+                    try:
+                        await channel.send(lang["votd"])
+                        await channel.send(embed=result["embed"])
+                    except discord.errors.Forbidden:
+                        pass
                     count += 1
     
     if count > 0:
