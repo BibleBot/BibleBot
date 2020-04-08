@@ -42,8 +42,6 @@ class BibleBot(discord.AutoShardedClient):
     def __init__(self, *args, loop=None, **kwargs):
         super().__init__(*args, loop=loop, **kwargs)
 
-        self.bg_task = self.loop.create_task(bot_extensions.run_timed_votds(self))
-        self.load_names = self.loop.create_task(name_scraper.update_books(config["apis"]["apibible"]))
         self.current_page = None
         self.total_pages = None
 
@@ -81,7 +79,7 @@ class BibleBot(discord.AutoShardedClient):
         if ":" not in raw.content:
             if config["BibleBot"]["commandPrefix"] not in raw.content:
                 return
-
+            
         ctx = {
             "self": bot,
             "author": raw.author,
@@ -179,17 +177,12 @@ class BibleBot(discord.AutoShardedClient):
                 return
 
             if "announcement" in res:
+                central.log_message("info", 0, "owner", "global", "Announcement starting.")
                 await bot_extensions.send_announcement(ctx, res)
+                central.log_message("info", 0, "owner", "global", "Announcement finished.")
                 return
 
             if "isError" not in res:
-                if embed_or_reaction_not_allowed:
-                    ch = ctx["channel"]
-
-                    await ch.send("Permissions are not properly configured.")
-                    await ch.send("Please check https://biblebot.xyz/permissions for more information.")
-                    return
-
                 if "twoMessages" in res:
                     await ctx["channel"].send(res["firstMessage"])
                     await ctx["channel"].send(res["secondMessage"])
@@ -265,13 +258,6 @@ class BibleBot(discord.AutoShardedClient):
             result = await verse_handler.process_raw_message(raw, ctx["author"], ctx["language"], ctx["guild"])
 
             if result is not None:
-                if embed_or_reaction_not_allowed:
-                    ch = ctx["channel"]
-
-                    await ch.send("Permissions are not properly configured.")
-                    await ch.send("Please check https://biblebot.xyz/permissions for more information.")
-                    return
-
                 if "invalid" not in result and "spam" not in result:
                     for item in result:
                         try:
@@ -302,6 +288,9 @@ else:
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
 
-central.log_message("info", 0, "global", "global",
-                    f"BibleBot {central.version} by Elliott Pardee (vypr)")
+asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
+
+central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
+
+bot_extensions.run_timed_votds.start(bot)
 bot.run(config["BibleBot"]["token"])

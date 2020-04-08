@@ -23,49 +23,51 @@ import datetime
 import discord
 import traceback
 
+from discord.ext import tasks
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc
 from handlers.logic.commands import utils
 from bible_modules import bibleutils
 
+@tasks.loop(seconds=60)
+async def run_timed_votds(bot):
+    await bot.wait_until_ready()
+    
+    current_time = datetime.datetime.utcnow().strftime("%H:%M")
+    results = [x for x in central.guildDB.all() if "channel" in x and x["time"] == current_time]
 
-async def run_timed_votds(self):
-    await self.wait_until_ready()
+    count = 0
 
-    while not self.is_closed():
-        current_time = datetime.datetime.utcnow().strftime("%H:%M")
-        results = [x for x in central.guildDB.all() if "channel" in x and x["time"] == current_time]
-
-        for item in results:
-            if "channel" in item and "time" in item:
-                channel = self.get_channel(item["channel"])
-                                                           
-                try:
-                    version = versions.get_guild_version(channel.guild)
-                    lang = languages.get_guild_language(channel.guild)
-                except AttributeError:
-                    version = "RSV"
-                    lang = "english"
+    for item in results:
+        if "channel" in item and "time" in item:
+            channel = bot.get_channel(item["channel"])
+                                                       
+            try:
+                version = versions.get_guild_version(channel.guild)
+                lang = languages.get_guild_language(channel.guild)
+            except AttributeError:
+                version = "RSV"
+                lang = "english"
                     
-                if not lang:
-                    lang = "english"
+            if not lang:
+                lang = "english"
 
-                lang = central.get_raw_language(lang)
+            lang = central.get_raw_language(lang)
 
+            if channel:
                 await channel.send(lang["votd"])
 
                 reference = await bibleutils.get_votd()
+                result = await utils.get_bible_verse(reference, "embed", version, "enable", "enable")
+                
+                central.log_message("info", 0, "votd_sched", "global", f"{reference} - {result}")
 
-                # noinspection PyBroadException
-                try:
-                    result = await utils.get_bible_verse(reference, "embed", version, "enable", "enable")
+                if result:
+                    await channel.send(lang["votd"])
                     await channel.send(embed=result["embed"])
-                except Exception:
-                    traceback.print_exc()
-                    pass
+                    count += 1
 
-        central.log_message("info", 0, "votd_sched", "global", f"Sending VOTDs at {current_time}...")
-        await asyncio.sleep(60)
+    central.log_message("info", 0, "votd_sched", "global", f"Sending {str(count)} VOTDs at {current_time}...")
 
 
 async def send_server_count(bot):
@@ -136,7 +138,7 @@ async def send_announcement(ctx, res):
             else:
                 count += 1
 
-    await update_counter(message_counter, ctx, count, total)
+        message_counter = await update_counter(message_counter, ctx, count, total)
 
 
 def craft_counting_embed(count, total, done=None):
@@ -162,7 +164,7 @@ async def update_counter(message_counter, ctx, count, total):
     if count == 1:
         embed = craft_counting_embed(count, total)
         message_counter = await ctx["channel"].send(embed=embed)
-    else:
+    elif message_counter:
         embed = craft_counting_embed(count, total)
         message_counter = await message_counter.edit(embed=embed)
 
