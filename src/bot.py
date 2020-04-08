@@ -222,7 +222,10 @@ class BibleBot(discord.AutoShardedClient):
                         except (discord.errors.Forbidden, discord.errors.NotFound):
                             pass
                 elif "embed" in res:
-                    await ctx["channel"].send(embed=res["embed"])
+                    try:
+                        await ctx["channel"].send(embed=res["embed"])
+                    except discord.errors.Forbidden:
+                        await ctx["channel"].send("Unable to send embed, please verify permissions.")
                 else:
                     if "reference" not in res and "text" not in res:
                         await ctx["channel"].send(embed=res["message"])
