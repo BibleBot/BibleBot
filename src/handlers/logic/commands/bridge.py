@@ -23,6 +23,8 @@ import ast
 import discord
 import tinydb
 
+from itertools import chain
+
 from .information import biblebot, creeds, catechisms, special, paged_commands
 from handlers.logic.settings import versions
 from handlers.logic.settings import languages, misc, formatting
@@ -626,7 +628,9 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "users":
-        processed = len(ctx["self"].users)
+        # get the length of a list of all of the members of each server combined
+        # it looks like a right mess, because it is
+        processed = len(list(chain(*[server.members for server in bot.guilds]))); 
 
         embed = utils.create_embed(lang["commands"]["users"], lang["users"] + ": " + str(processed))
 
