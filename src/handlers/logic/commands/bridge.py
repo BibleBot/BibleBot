@@ -630,13 +630,7 @@ async def run_command(ctx, command, remainder):
     elif command == "users":
         # get the length of a list of all of the members of each server combined
         # it looks like a right mess, because it is
-        __ids = []
-
-        for member in list(chain(*[guild.members for guild in bot.guilds])):
-            if member.id not in __ids:
-                __ids.append(member.id)
-
-        processed = len(__ids); 
+        processed = len(list(chain(*[server.members for server in bot.guilds]))); 
 
         embed = utils.create_embed(lang["commands"]["users"], lang["users"] + ": " + str(processed))
 
