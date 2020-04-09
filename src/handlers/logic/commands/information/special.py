@@ -39,7 +39,7 @@ def get_custom_message(name):
 
 
 supporters = ["<@169500883825065985>", "Jepekula", "Joseph", "<@199366508139249665>", "<@384202884553768961>",
-              "<@288825133731414017>", "AdriannaR", "boobfar"]
+              "<@288825133731414017>"]
 
 
 def get_supporters(lang):
