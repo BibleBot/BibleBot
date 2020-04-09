@@ -259,7 +259,7 @@ async def run_command(ctx, command, remainder):
         }
     elif command == "guildlanguage":
         glang = languages.get_guild_language(guild)
-        glang = getattr(central.languages, glang).raw_object
+        glang = central.get_raw_language(glang)
 
         response = glang["guildlanguageused"]
         response = response.replace("<setguildlanguage>", glang["commands"]["setguildlanguage"])
