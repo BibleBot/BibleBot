@@ -632,11 +632,11 @@ async def run_command(ctx, command, remainder):
         # it looks like a right mess, because it is
         __ids = []
 
-        for member in list(chain(*[guild.members for guild in bot.guilds])):
+        for member in list(chain(*[guild.members for guild in ctx["self"].guilds])):
             if member.id not in __ids:
                 __ids.append(member.id)
 
-        processed = len(__ids); 
+        processed = len(__ids);
 
         embed = utils.create_embed(lang["commands"]["users"], lang["users"] + ": " + str(processed))
 
