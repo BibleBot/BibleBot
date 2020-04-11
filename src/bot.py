@@ -42,8 +42,9 @@ class BibleBot(discord.AutoShardedClient):
     def __init__(self, *args, loop=None, **kwargs):
         super().__init__(*args, loop=loop, **kwargs)
 
-        self.current_page = None
-        self.total_pages = None
+        self.current_page = {}
+        self.total_pages = {}
+        self.continue_paging = {}
 
     async def on_ready(self):
         if int(config["BibleBot"]["shards"]) < 2:
@@ -171,7 +172,6 @@ class BibleBot(discord.AutoShardedClient):
             res = await cmd_handler.process_command(ctx, command, remainder)
 
             original_command = ""
-            self.current_page = 1
 
             if res is None:
                 return
@@ -187,9 +187,10 @@ class BibleBot(discord.AutoShardedClient):
                     await ctx["channel"].send(res["firstMessage"])
                     await ctx["channel"].send(res["secondMessage"])
                 elif "paged" in res:
-                    self.total_pages = len(res["pages"])
-
                     msg = await ctx["channel"].send(embed=res["pages"][0])
+
+                    self.current_page[msg.id] = 1
+                    self.total_pages[msg.id] = len(res["pages"])
 
                     await msg.add_reaction("⬅")
                     await msg.add_reaction("➡")
@@ -198,26 +199,30 @@ class BibleBot(discord.AutoShardedClient):
                         if r.message.id == msg.id:
                             if str(r.emoji) == "⬅":
                                 if u.id != bot.user.id:
-                                    if self.current_page != 1:
-                                        self.current_page -= 1
+                                    if self.current_page[msg.id] != 1:
+                                        self.current_page[msg.id] -= 1
                                         return True
                             elif str(r.emoji) == "➡":
                                 if u.id != bot.user.id:
-                                    if self.current_page != self.total_pages:
-                                        self.current_page += 1
+                                    if self.current_page[msg.id] != self.total_pages[msg.id]:
+                                        self.current_page[msg.id] += 1
                                         return True
 
-                    continue_paging = True
+                    self.continue_paging[msg.id] = True
 
                     try:
-                        while continue_paging:
-                            reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
-                            await reaction.message.edit(embed=res["pages"][self.current_page - 1])
+                        while self.continue_paging[msg.id]:
+                            reaction, _ = await asyncio.ensure_future(bot.wait_for('reaction_add', timeout=60.0, check=check))
+                            await reaction.message.edit(embed=res["pages"][self.current_page[msg.id] - 1])
 
-                            reaction, user = await bot.wait_for('reaction_remove', timeout=60.0, check=check)
-                            await reaction.message.edit(embed=res["pages"][self.current_page - 1])
+                            reaction, _ = await asyncio.ensure_future(bot.wait_for('reaction_remove', timeout=60.0, check=check))
+                            await reaction.message.edit(embed=res["pages"][self.current_page[msg.id] - 1])
                     except (asyncio.TimeoutError, IndexError):
                         try:
+                            self.current_page.pop(msg.id)
+                            self.total_pages.pop(msg.id)
+                            self.continue_paging.pop(msg.id)
+
                             await msg.clear_reactions()
                         except (discord.errors.Forbidden, discord.errors.NotFound):
                             pass
@@ -291,7 +296,7 @@ else:
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
 
-asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
+#asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 
