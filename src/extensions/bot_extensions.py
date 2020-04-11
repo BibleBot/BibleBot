@@ -48,7 +48,7 @@ async def run_timed_votds(bot):
             except AttributeError:
                 version = "RSV"
                 lang = "english"
-            
+
             if not version:
                 version = "RSV"
 
