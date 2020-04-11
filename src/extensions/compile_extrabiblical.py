@@ -37,7 +37,11 @@ paths = [
 
 def compile_resources():
     for file_location in paths:
-        temp_file = open(f"{extrabiblical_path}{file_location}").read()
+        try:
+            temp_file = open(f"{extrabiblical_path}{file_location}").read()
+        except FileNotFoundError:
+            return
+        
         output = f"{extrabiblical_path}" + file_location.replace(".raw.json", ".bin")
 
         with open(f"{output}", "wb") as fl:

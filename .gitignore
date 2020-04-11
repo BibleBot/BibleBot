@@ -114,3 +114,5 @@ config.ini
 
 # ignore plaintext resources
 *.raw.json
+
+.vscode/
