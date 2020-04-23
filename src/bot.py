@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2020 Elliott Pardee <me [at] thevypr [dot] com>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -296,7 +296,7 @@ else:
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
 
-#asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
+asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 
