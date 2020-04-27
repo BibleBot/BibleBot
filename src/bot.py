@@ -313,7 +313,7 @@ if config["BibleBot"]["devMode"] == "True":
 elif len(sys.argv) == 2 and any([sys.argv[1] == x for x in ["-d", "--dry"]]):
     asyncio.run(name_scraper.update_books(dry=True))
 else:
-    asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
+    asyncio.run(name_scraper.update_books(apibible_key=config["apis"]["apibible"]))
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 
