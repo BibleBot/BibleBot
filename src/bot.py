@@ -94,10 +94,10 @@ class BibleBot(discord.AutoShardedClient):
         central.log_message("info", 0, "global", "global", "shard disconnected")
 
     async def on_error(self, event, *args, **kwargs):
-        current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-        central.log_message("err", 0, "global", "global", f"received {event}, logging to error_logs/log-{current_time}.txt")
+        current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        central.log_message("err", 0, "global", "global", f"received error in {event}, logging to error_logs/log-{current_time}.txt")
 
-        output = f"{event}\n\nargs: {args}\n\nkwargs: {kwargs}\n\nex: {sys.exc_info()}"
+        output = f"{event}\n\nargs: {args}\n\nkwargs: {kwargs}\n\nex: {sys.exc_info()}\n"
         
         pathlib.Path("./error_logs").mkdir(exist_ok=True)
         output_file = open(f"./error_logs/log-{current_time}.txt", "w")
