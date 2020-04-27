@@ -56,7 +56,7 @@ class BibleBot(discord.AutoShardedClient):
         central.log_message("info", self.connection_counter, "global", "global", "connected to discord")
         self.connection_counter += 1
         
-        if self.connection_counter == int(config["BibleBot"]["shards"]):
+        if self.connection_counter == int(config["BibleBot"]["shards"]) + 1:
             self.connection_counter = 1
 
     async def on_ready(self):
