@@ -21,7 +21,7 @@ import configparser
 import os
 import sys
 import pathlib
-import datetime
+from datetime import datetime
 import math
 
 import discord
