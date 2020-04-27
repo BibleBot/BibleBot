@@ -671,8 +671,8 @@ async def run_command(ctx, command, remainder):
 
 async def run_owner_command(ctx, command, remainder):
     embed = discord.Embed()
+    bot = ctx["self"]
     lang = ctx["language"]
-    user = ctx["author"]
     guild = ctx["guild"]
     channel = ctx["channel"]
     args = remainder.split(" ")
@@ -869,3 +869,10 @@ async def run_owner_command(ctx, command, remainder):
         else:
             await guild.leave()
             return None
+    elif command == "quit":
+        await channel.send("Good night...")
+
+        try:
+            await bot.logout()
+        except:
+            pass

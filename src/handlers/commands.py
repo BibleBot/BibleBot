@@ -33,7 +33,8 @@ def is_command(command, lang):
     untranslated_commands = ["biblebot", "setlanguage", "userid",
                              "ban", "unban", "reason",
                              "optout", "unoptout", "eval", "rose",
-                             "jepekula", "joseph", "tiger", "lsc", "heidelberg", "ccc"]
+                             "jepekula", "joseph", "tiger", "lsc", "heidelberg", "ccc",
+                             "quit", "restart"]
 
     result = {
         "ok": False
@@ -60,7 +61,7 @@ def is_owner_command(command, lang):
     owner_commands = [commands["leave"], commands["puppet"], commands["announce"],
                       commands["addversion"], commands["rmversion"],
                       "userid", "ban", "unban", "reason",
-                      "optout", "unoptout", "eval"]
+                      "optout", "unoptout", "eval", "quit"]
 
     return command in owner_commands
 

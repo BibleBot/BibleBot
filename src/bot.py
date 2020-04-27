@@ -255,7 +255,7 @@ class BibleBot(discord.AutoShardedClient):
                     untranslated = ["setlanguage", "userid", "ban", "unban",
                                     "reason", "optout", "unoptout", "eval",
                                     "jepekula", "joseph", "tiger", "rose",
-                                    "lsc", "heidelberg", "ccc"]
+                                    "lsc", "heidelberg", "ccc", "quit"]
 
                     if lang["commands"][original_command_name] == command:
                         original_command = original_command_name
