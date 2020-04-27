@@ -50,17 +50,12 @@ class BibleBot(discord.AutoShardedClient):
         self.current_page = {}
         self.total_pages = {}
         self.continue_paging = {}
-        self.connection_counter = 1
 
     async def on_connect(self):
-        central.log_message("info", self.connection_counter, "global", "global", "connected to discord")
-        self.connection_counter += 1
-        
-        if self.connection_counter == int(config["BibleBot"]["shards"]) + 1:
-            self.connection_counter = 1
+        central.log_message("info", self.connection_counter, "global", "global", "shard connected to discord")
 
     async def on_ready(self):
-        if int(config["BibleBot"]["shards"]) < 2:
+        if int(config["BibleBot"]["shards"]) < 1:
             status = f"+biblebot {central.version} | Shard: 1 / 1"
             activity = discord.Game(status)
 
@@ -92,7 +87,7 @@ class BibleBot(discord.AutoShardedClient):
         central.log_message("info", shard_id + 1, "global", "global", "prepared")
 
     async def on_disconnect(self):
-        central.log_message("info", 0, "global", "global", "disconnected")
+        central.log_message("info", 0, "global", "global", "shard disconnected")
 
     async def on_error(self, event, *args, **kwargs):
         output = f"{event}\n\nargs: {args}\n\nkwargs: {kwargs}\n\nex: {sys.exc_info()}"
