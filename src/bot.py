@@ -20,8 +20,12 @@ import asyncio
 import configparser
 import os
 import sys
+import pathlib
+import datetime
+import math
 
 import discord
+from discord.ext import tasks
 
 import central
 from name_scraper import client as name_scraper
@@ -47,6 +51,9 @@ class BibleBot(discord.AutoShardedClient):
         self.total_pages = {}
         self.continue_paging = {}
 
+    async def on_connect(self):
+        central.log_message("info", 0, "global", "global", "connected to discord")
+
     async def on_ready(self):
         if int(config["BibleBot"]["shards"]) < 2:
             status = f"+biblebot {central.version} | Shard: 1 / 1"
@@ -54,9 +61,20 @@ class BibleBot(discord.AutoShardedClient):
 
             await self.change_presence(status=discord.Status.online, activity=activity)
 
-            central.log_message("info", 1, "global", "global", "connected")
+            central.log_message("info", 1, "global", "global", "finished")
 
+        self.heartbeat.start()
         await bot_extensions.send_server_count(self)
+
+    @tasks.loop(seconds=1)
+    async def heartbeat(self):
+        output = ""
+
+        for latency_item in self.latencies:
+            shard, latency = latency_item
+            output += f"{shard + 1}: {math.ceil(latency * 100)}ms, "
+
+        central.log_message("info", 0, "global", "global", output[:-2])
 
     async def on_shard_ready(self, shard_id):
         shard_count = str(config["BibleBot"]["shards"])
@@ -66,8 +84,20 @@ class BibleBot(discord.AutoShardedClient):
         activity = discord.Game(status)
         await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
 
-        central.log_message("info", shard_id + 1, "global", "global", "shard connected")
+        central.log_message("info", shard_id + 1, "global", "global", "shard prepared")
 
+    async def on_disconnect(self):
+        central.log_message("info", 0, "global", "global", "disconnected")
+
+    async def on_error(self, event, *args, **kwargs):
+        output = f"{event}\n\nargs: {args}\n\nkwargs: {kwargs}\n\nex: {sys.exc_info()}"
+        
+        pathlib.Path("./error_logs").mkdir(exist_ok=True)
+        current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+        output_file = open(f"./error_logs/log-{current_time}.txt", "w")
+
+        output_file.write(output)
+        
     async def on_guild_join(self, guild):
         await bot_extensions.send_server_count(self)
 
