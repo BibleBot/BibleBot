@@ -70,7 +70,7 @@ class BibleBot(discord.AutoShardedClient):
 
         await bot_extensions.send_server_count(self)
 
-    @tasks.loop(seconds=30.0)
+    @tasks.loop(seconds=60.0)
     async def heartbeat(self):
         output = ""
 
