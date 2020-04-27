@@ -98,7 +98,7 @@ class BibleBot(discord.AutoShardedClient):
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         central.log_message("err", 0, "global", "global", f"received error in {event}, logging to error_logs/log-{current_time}.txt")
 
-        output = f"{event}\n\nargs: {args}\n\nkwargs: {kwargs}\n\nex: {traceback.print_exception(sys.exc_info())}\n"
+        output = f"{event}\n\nargs: {args}\n\nkwargs: {kwargs}\n\nex:\n\n{traceback.print_exception(sys.exc_info())}\n"
         
         pathlib.Path("./error_logs").mkdir(exist_ok=True)
         output_file = open(f"./error_logs/log-{current_time}.txt", "w")
