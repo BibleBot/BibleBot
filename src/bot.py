@@ -19,6 +19,7 @@
 import asyncio
 import configparser
 import os
+import sys
 
 import discord
 
@@ -136,30 +137,6 @@ class BibleBot(discord.AutoShardedClient):
 
             if not is_owner:
                 return
-
-        embed_or_reaction_not_allowed = False
-
-        if ctx["guild"] is not None:
-            try:
-                perms = ctx["channel"].permissions_for(ctx["guild"].me)
-
-                if perms is not None:
-                    if not perms.send_messages or not perms.read_messages:
-                        return
-
-                    if not perms.embed_links:
-                        embed_or_reaction_not_allowed = True
-
-                    if not perms.add_reactions:
-                        embed_or_reaction_not_allowed = True
-
-                    no_managing = not perms.manage_messages
-                    no_history = not perms.read_message_history
-
-                    if no_managing or no_history:
-                        embed_or_reaction_not_allowed = True
-            except AttributeError:
-                pass
 
         ctx["language"] = central.get_raw_language(language)
 
@@ -295,8 +272,11 @@ else:
 
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
-
-asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
+    asyncio.run(name_scraper.update_books(dry=True))
+elif len(sys.argv) == 2 and any([sys.argv[1] == x for x in ["-d", "--dry"]]):
+    asyncio.run(name_scraper.update_books(dry=True))
+else:
+    asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 
