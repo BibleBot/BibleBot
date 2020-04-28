@@ -24,6 +24,9 @@ from bible_modules import biblehub, bibleserver, apibible, biblegateway
 from handlers.logic.settings import versions
 from handlers.logic.verses import utils as verseutils
 
+import quantumrandom
+import json
+
 
 def divide_list(dividend, divisor):
     # tl;dr for every n (divisor) entries, separate and place into a new array

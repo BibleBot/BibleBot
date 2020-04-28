@@ -51,6 +51,15 @@ async def run_command(ctx, command, remainder):
             "paged": True,
             "pages": pages
         }
+
+    elif command == "qrandom":
+        verse = await bibleutils.get_quantum_random_verse()
+        mode = formatting.get_mode(user)
+        version = utils.get_version(user, guild)
+        headings = formatting.get_headings(user)
+        verse_numbers = formatting.get_verse_numbers(user)
+
+        return await utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
     elif command == "search":
         version = utils.get_version(user, guild)
         return await paged_commands.search(version, remainder, lang)
