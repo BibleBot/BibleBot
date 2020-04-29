@@ -21,6 +21,7 @@ import re
 import aiohttp
 from bs4 import BeautifulSoup
 
+import quantumrandom
 
 def remove_html(text):
     return re.sub(r"<[^<]+?>", "", text)
@@ -54,6 +55,9 @@ def purify_text(text):
     result = result.replace("â", "-")  # biblehub dash unicode
     return re.sub(r"\s+", " ", result)
 
+@staticmethod
+async def get_quantum_random_verse():
+    return 3
 
 async def get_random_verse():
     url = "https://dailyverses.net/random-bible-verse"
