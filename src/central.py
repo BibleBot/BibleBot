@@ -29,13 +29,6 @@ from data import languages
 from extensions.vylogger import VyLogger
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-
-#load up the verse counts to initialize corresponding api request/random number ranges
-with open('qbiblebot/verse count.json', 'r') as fp:
-    obj = json.load(fp)
-    print('loaded')
-
-
 config = configparser.ConfigParser()
 config.read(f"{dir_path}/config.ini")
 

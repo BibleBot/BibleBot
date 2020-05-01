@@ -18,10 +18,11 @@
 
 import re
 
-import aiohttp
-from bs4 import BeautifulSoup
+# import aiohttp
+# from bs4 import BeautifulSoup
 
 import quantumrandom
+import verseReader
 
 def remove_html(text):
     return re.sub(r"<[^<]+?>", "", text)
@@ -55,9 +56,10 @@ def purify_text(text):
     result = result.replace("â", "-")  # biblehub dash unicode
     return re.sub(r"\s+", " ", result)
 
-@staticmethod
 async def get_quantum_random_verse():
-    return 3
+
+    newVerseList = verseReader.returnArrayOfVerse()
+
 
 async def get_random_verse():
     url = "https://dailyverses.net/random-bible-verse"
@@ -70,7 +72,6 @@ async def get_random_verse():
                     "div", {"class": "bibleChapter"}).find("a").get_text()
 
                 return verse
-
 
 async def get_votd():
     url = "https://www.biblegateway.com/reading-plans/verse-of-the-day/next"
