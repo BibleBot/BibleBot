@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2020 Elliott Pardee <me [at] thevypr [dot] com>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -19,8 +19,14 @@
 import asyncio
 import configparser
 import os
+import sys
+import pathlib
+from datetime import datetime
+import math
+import traceback
 
 import discord
+from discord.ext import tasks
 
 import central
 from name_scraper import client as name_scraper
@@ -46,16 +52,34 @@ class BibleBot(discord.AutoShardedClient):
         self.total_pages = {}
         self.continue_paging = {}
 
+    async def on_connect(self):
+        central.log_message("info", 0, "global", "global", "shard connected to discord")
+
     async def on_ready(self):
-        if int(config["BibleBot"]["shards"]) < 2:
+        if int(config["BibleBot"]["shards"]) < 1:
             status = f"+biblebot {central.version} | Shard: 1 / 1"
             activity = discord.Game(status)
 
             await self.change_presence(status=discord.Status.online, activity=activity)
 
-            central.log_message("info", 1, "global", "global", "connected")
+            central.log_message("info", 1, "global", "global", "finished")
+
+        try:
+            self.heartbeat.start()
+        except RuntimeError:
+            pass
 
         await bot_extensions.send_server_count(self)
+
+    @tasks.loop(seconds=60.0)
+    async def heartbeat(self):
+        output = ""
+
+        for latency_item in self.latencies:
+            shard, latency = latency_item
+            output += f"{shard + 1}: {math.ceil(latency * 100)}ms, "
+
+        central.log_message("info", 0, "global", "global", output[:-2])
 
     async def on_shard_ready(self, shard_id):
         shard_count = str(config["BibleBot"]["shards"])
@@ -65,8 +89,23 @@ class BibleBot(discord.AutoShardedClient):
         activity = discord.Game(status)
         await self.change_presence(status=discord.Status.online, activity=activity, shard_id=shard_id)
 
-        central.log_message("info", shard_id + 1, "global", "global", "shard connected")
+        central.log_message("info", shard_id + 1, "global", "global", "shard finished")
 
+    async def on_disconnect(self):
+        central.log_message("info", 0, "global", "global", "shard disconnected")
+
+    async def on_error(self, event, *args, **kwargs):
+        current_time = datetime.now().strftime("%H-%M-%S")
+        file_time = datetime.now().strftime("%Y-%m-%d")
+        central.log_message("err", 0, "global", "global", f"received error in {event}, logging to error_logs/log-{file_time}.txt")
+
+        output = f"{current_time}\n\n{event}\n\nargs: {args}\n\nkwargs: {kwargs}\n\nex:\n\n{traceback.format_exc()}\n\n---\n\n"
+        
+        pathlib.Path("./error_logs").mkdir(exist_ok=True)
+        output_file = open(f"./error_logs/log-{file_time}.txt", "w")
+
+        output_file.write(output)
+        
     async def on_guild_join(self, guild):
         await bot_extensions.send_server_count(self)
 
@@ -136,30 +175,6 @@ class BibleBot(discord.AutoShardedClient):
 
             if not is_owner:
                 return
-
-        embed_or_reaction_not_allowed = False
-
-        if ctx["guild"] is not None:
-            try:
-                perms = ctx["channel"].permissions_for(ctx["guild"].me)
-
-                if perms is not None:
-                    if not perms.send_messages or not perms.read_messages:
-                        return
-
-                    if not perms.embed_links:
-                        embed_or_reaction_not_allowed = True
-
-                    if not perms.add_reactions:
-                        embed_or_reaction_not_allowed = True
-
-                    no_managing = not perms.manage_messages
-                    no_history = not perms.read_message_history
-
-                    if no_managing or no_history:
-                        embed_or_reaction_not_allowed = True
-            except AttributeError:
-                pass
 
         ctx["language"] = central.get_raw_language(language)
 
@@ -242,7 +257,7 @@ class BibleBot(discord.AutoShardedClient):
                     untranslated = ["setlanguage", "userid", "ban", "unban",
                                     "reason", "optout", "unoptout", "eval",
                                     "jepekula", "joseph", "tiger", "rose",
-                                    "lsc", "heidelberg", "ccc"]
+                                    "lsc", "heidelberg", "ccc", "quit"]
 
                     if lang["commands"][original_command_name] == command:
                         original_command = original_command_name
@@ -295,8 +310,11 @@ else:
 
 if config["BibleBot"]["devMode"] == "True":
     compile_extrabiblical.compile_resources()
-
-#asyncio.run(name_scraper.update_books(config["apis"]["apibible"]))
+    asyncio.run(name_scraper.update_books(dry=True))
+elif len(sys.argv) == 2 and any([sys.argv[1] == x for x in ["-d", "--dry"]]):
+    asyncio.run(name_scraper.update_books(dry=True))
+else:
+    asyncio.run(name_scraper.update_books(apibible_key=config["apis"]["apibible"]))
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 

@@ -1,5 +1,5 @@
 """
-    Copyright (c) 2018-2019 Elliott Pardee <me [at] vypr [dot] xyz>
+    Copyright (c) 2018-2020 Elliott Pardee <me [at] thevypr [dot] com>
     This file is part of BibleBot.
 
     BibleBot is free software: you can redistribute it and/or modify
@@ -680,8 +680,8 @@ async def run_command(ctx, command, remainder):
 
 async def run_owner_command(ctx, command, remainder):
     embed = discord.Embed()
+    bot = ctx["self"]
     lang = ctx["language"]
-    user = ctx["author"]
     guild = ctx["guild"]
     channel = ctx["channel"]
     args = remainder.split(" ")
@@ -878,3 +878,10 @@ async def run_owner_command(ctx, command, remainder):
         else:
             await guild.leave()
             return None
+    elif command == "quit":
+        await channel.send("Good night...")
+
+        try:
+            await bot.logout()
+        except:
+            pass
