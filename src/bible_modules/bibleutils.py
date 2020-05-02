@@ -18,11 +18,13 @@
 
 import re
 
-# import aiohttp
-# from bs4 import BeautifulSoup
+import aiohttp
+from bs4 import BeautifulSoup
 
 import quantumrandom
 import verseReader
+
+quantumMinimumInt = 777778 #(31,102 verses in bible)
 
 def remove_html(text):
     return re.sub(r"<[^<]+?>", "", text)
@@ -57,8 +59,11 @@ def purify_text(text):
     return re.sub(r"\s+", " ", result)
 
 async def get_quantum_random_verse():
-
     newVerseList = verseReader.returnArrayOfVerse()
+    #using modular array access so that more bits of randomness can easily be changed
+    verseID = newVerseList[quantumrandom.randint(1, quantumMinimumInt) % (verseReader.verseTotalCount)]
+    verseString = verseID.bookAbbr + str(verseID.chapter) + ":" + str(verseID.verseNum)
+    return verseString
 
 
 async def get_random_verse():

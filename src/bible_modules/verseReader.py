@@ -10,11 +10,13 @@ class verseID:
         verseObject.verseNum = verseNum
 
 verseList = [] #should be accessible from outside of py file
+verseTotalCount = 0
 
 def addVersesToList(abbr, chap, verseNumberString):
     for x in range(1, int(verseNumberString)+1):
         y = verseID(abbr, chap, x)
         verseList.append(y)
+    verseTotalCount = int(verseNumberString)
     return
 
 #load up the verse counts to initialize corresponding api request/random number ranges
@@ -32,6 +34,9 @@ def returnArrayOfVerse():
                 addVersesToList(tempAbbr, tempChapNum, tempNumVerses)
 
     return verseList
+
+def returnVerseTotalCount():
+    return verseTotalCount
 
 # testArr = returnArrayOfVerse()
 # for m in testArr:
