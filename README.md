@@ -19,7 +19,7 @@ python3 -m venv venv
 source venv/bin/activate
 cp src/config.example.ini src/config.ini
 $EDITOR src/config.ini
-pip install -U discord.py[voice] bs4 colorama lxml tinydb name_scraper
+pip install -U discord.py[voice] bs4 colorama lxml tinydb name_scraper quantumrandom
 python src/bot.py
 ```
 
@@ -35,7 +35,7 @@ python -m venv venv
 .\venv\Scripts\activate
 copy src\config.example.ini src\config.ini
 notepad src\config.ini
-pip install -U discord.py[voice] bs4 colorama lxml requests tinydb name_scraper
+pip install -U discord.py[voice] bs4 colorama lxml requests tinydb name_scraper quantumrandom
 python src/bot.py
 ```
 
@@ -46,7 +46,6 @@ Commands:
 (this section needs to be updated, use `+biblebot` for current command reference)
 
 * `+qrandom` - get a quantumly-random Bible verse generated from Australia National University
-
 
 * `+biblebot` - the help command
 * `+versions` - show all Bible translations you can set
