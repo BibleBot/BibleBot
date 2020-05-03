@@ -44,6 +44,9 @@ def returnArrayOfVerse():
 def returnVerseTotalCount():
     return verseTotalCount
 
+def getVerseArray(): #didnt seem to work with storing initialized list in bibleutils but might have to double check
+    return verseList
+
 # testArr = returnArrayOfVerse()
 # for m in testArr:
 #     print(m.bookAbbr + str(m.chapter) + "-" + str(m.verseNum))
