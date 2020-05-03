@@ -45,7 +45,7 @@ Commands:
 
 (this section needs to be updated, use `+biblebot` for current command reference)
 
-* `+qrandom` - get a quantumly-random Bible verse generated from Australia National University
+* `+qrandom` - get a quantum-random Bible verse generated through Australia National University
 
 * `+biblebot` - the help command
 * `+versions` - show all Bible translations you can set

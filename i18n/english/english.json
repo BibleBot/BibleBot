@@ -120,6 +120,7 @@
         "versions": "versions",
         "votd": "votd",
         "verseoftheday": "verseoftheday",
+        "qrandom": "qrandom",
         "random": "random",
         "biblebot": "biblebot",
         "addversion": "addversion",

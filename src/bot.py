@@ -37,6 +37,8 @@ from extensions import bot_extensions, compile_extrabiblical
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+#from bible_modules import verseReader
+
 config = configparser.ConfigParser()
 config.read(f"{dir_path}/config.ini")
 

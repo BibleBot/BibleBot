@@ -2,6 +2,7 @@ import math
 import os
 import json
 import sys
+from pathlib import Path
 
 class verseID:
     def __init__(verseObject, bookAbbr, chapter, verseNum):
@@ -11,6 +12,11 @@ class verseID:
 
 verseList = [] #should be accessible from outside of py file
 verseTotalCount = 0
+
+
+# dir_path = os.path.dirname(os.path.realpath(__file__))
+# sys.path.append(f"{dir_path}")
+
 
 def addVersesToList(abbr, chap, verseNumberString):
     for x in range(1, int(verseNumberString)+1):
@@ -22,7 +28,7 @@ def addVersesToList(abbr, chap, verseNumberString):
 #load up the verse counts to initialize corresponding api request/random number ranges
 def returnArrayOfVerse():
 
-    with open('qbiblebot/verse count.json', 'r') as fp:
+    with open('/home/anon/stuff/quantum-word-bot/qbiblebot/src/bible_modules/verse count.json', 'r') as fp:
         obj = json.load(fp)
 
         for i in obj:

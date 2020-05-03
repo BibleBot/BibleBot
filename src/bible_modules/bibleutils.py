@@ -1,3 +1,4 @@
+# This Python file uses the following encoding: utf-8
 """
     Copyright (c) 2018-2020 Elliott Pardee <me [at] thevypr [dot] com>
     This file is part of BibleBot.
@@ -17,12 +18,12 @@
 """
 
 import re
-
+import os, sys
 import aiohttp
 from bs4 import BeautifulSoup
 
 import quantumrandom
-import verseReader
+from .verseReader import returnArrayOfVerse
 
 quantumMinimumInt = 777778 #(31,102 verses in bible)
 
@@ -59,12 +60,11 @@ def purify_text(text):
     return re.sub(r"\s+", " ", result)
 
 async def get_quantum_random_verse():
-    newVerseList = verseReader.returnArrayOfVerse()
+    newVerseList = returnArrayOfVerse()
     #using modular array access so that more bits of randomness can easily be changed
-    verseID = newVerseList[quantumrandom.randint(1, quantumMinimumInt) % (verseReader.verseTotalCount)]
+    verseID = newVerseList[int(quantumrandom.randint(1, quantumMinimumInt) % len(newVerseList))]
     verseString = verseID.bookAbbr + str(verseID.chapter) + ":" + str(verseID.verseNum)
-    return verseString
-
+    return newVerseList
 
 async def get_random_verse():
     url = "https://dailyverses.net/random-bible-verse"
@@ -88,3 +88,5 @@ async def get_votd():
                 verse = soup.find(True, {"class": "rp-passage-display"}).get_text()
 
                 return verse
+
+#print(len(get_quantum_random_verse()))

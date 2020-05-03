@@ -1,0 +1,28 @@
+01-28-33
+
+on_message
+
+args: (<Message id=706406827377557555 channel=<TextChannel id=699389495384080388 name='general' position=0 nsfw=False news=False category_id=699389495384080386> type=<MessageType.default: 0> author=<Member id=217464127373836288 name='BorpZorp' discriminator='4202' bot=False nick=None guild=<Guild id=699389495384080384 name="BorpZorp's server" shard_id=0 chunked=True member_count=2>> flags=<MessageFlags value=0>>,)
+
+kwargs: {}
+
+ex:
+
+Traceback (most recent call last):
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/venv/lib/python3.7/site-packages/discord/client.py", line 312, in _run_event
+    await coro(*args, **kwargs)
+  File "src/bot.py", line 189, in on_message
+    res = await cmd_handler.process_command(ctx, command, remainder)
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/src/handlers/commands.py", line 85, in process_command
+    return await command_bridge.run_command(ctx, orig_cmd, remainder)
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/src/handlers/logic/commands/bridge.py", line 62, in run_command
+    return await utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/src/handlers/logic/commands/utils.py", line 93, in get_bible_verse
+    result = await biblegateway.get_result(reference, version, headings, verse_numbers)
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/src/bible_modules/biblegateway.py", line 76, in get_result
+    query = query.replace("|", " ")
+AttributeError: 'list' object has no attribute 'replace'
+
+
+---
+
