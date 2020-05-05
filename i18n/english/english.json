@@ -36,6 +36,7 @@
     "error": "Error",
     "versions": "I support",
     "setversionsuccess": "Set version successfully.",
+    "qrandomfail": "Please only use a maximum of 3 verses at a time, or use search instead.",
     "setversionfail": "Failed to set version, see `+<versions>`.",
     "versionused": "You are using <version>. Use `+<setversion>` to set a different version.",
     "noversionused": "I couldn't find your name in my database, have you used `+<setversion>` yet?",

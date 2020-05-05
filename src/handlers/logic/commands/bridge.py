@@ -53,12 +53,21 @@ async def run_command(ctx, command, remainder):
         }
 
     elif command == "qrandom":
-        verse = await bibleutils.get_quantum_random_verse()
+        verse = await bibleutils.get_quantum_random_verse(args[0])
+        if (args[0].isdigit()):
+            if(int(args[0]) > 3 or int(args[0]) < 0): #just going to do verification here
+                embed = utils.create_embed(lang["commands"]["qrandom"],
+                                        lang["qrandomfail"],
+                                        error=True)
+                return {
+                    "level": "err",
+                    "message": embed
+                }
         mode = formatting.get_mode(user)
-        version = utils.get_version(user, guild)
+        version = utils.get_version(user, guild)    
         headings = formatting.get_headings(user)
         verse_numbers = formatting.get_verse_numbers(user)
-
+        print(verse)
         return await utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
     elif command == "search":
         version = utils.get_version(user, guild)

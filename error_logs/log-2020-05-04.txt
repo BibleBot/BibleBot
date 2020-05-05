@@ -1,0 +1,26 @@
+20-49-53
+
+on_message
+
+args: (<Message id=707061477239947285 channel=<TextChannel id=699389495384080388 name='general' position=0 nsfw=False news=False category_id=699389495384080386> type=<MessageType.default: 0> author=<Member id=217464127373836288 name='BorpZorp' discriminator='4202' bot=False nick=None guild=<Guild id=699389495384080384 name="BorpZorp's server" shard_id=0 chunked=True member_count=2>> flags=<MessageFlags value=0>>,)
+
+kwargs: {}
+
+ex:
+
+Traceback (most recent call last):
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/venv/lib/python3.7/site-packages/discord/client.py", line 312, in _run_event
+    await coro(*args, **kwargs)
+  File "src/bot.py", line 189, in on_message
+    res = await cmd_handler.process_command(ctx, command, remainder)
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/src/handlers/commands.py", line 85, in process_command
+    return await command_bridge.run_command(ctx, orig_cmd, remainder)
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/src/handlers/logic/commands/bridge.py", line 56, in run_command
+    verse = await bibleutils.get_quantum_random_verse(args[0])
+  File "/home/anon/stuff/quantum-word-bot/qbiblebot/src/bible_modules/bibleutils.py", line 73, in get_quantum_random_verse
+    if (int(versesRequested) > 1 and int(versesRequested) < 4): #preventing overlapping chapters/books
+ValueError: invalid literal for int() with base 10: ''
+
+
+---
+
