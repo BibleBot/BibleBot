@@ -11,6 +11,8 @@ To use it, just say a Bible verse or use the `+biblebot` help command.
 
 ## Self-Host Installation
 
+NOTE: you may have to change the file read path for verse count.json in verseReader for your machine. Spent a while but couldnt get that working relatively.
+
 ### Linux/MacOS
 ```bash
 git clone https://github.com/BibleBot/BibleBot.git
