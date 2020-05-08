@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/git,python
 
 ### Git ###
@@ -115,4 +114,5 @@ config.ini
 # ignore plaintext resources
 *.raw.json
 
+error_logs/
 .vscode/
