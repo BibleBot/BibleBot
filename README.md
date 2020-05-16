@@ -19,7 +19,7 @@ python3 -m venv venv
 source venv/bin/activate
 cp src/config.example.ini src/config.ini
 $EDITOR src/config.ini
-pip install -U discord.py[voice] bs4 colorama lxml tinydb name_scraper
+pip install -U discord.py[voice] bs4 colorama lxml tinydb aiotinydb name_scraper
 python src/bot.py
 ```
 
