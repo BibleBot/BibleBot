@@ -19,6 +19,7 @@
 import os
 import sys
 
+import aiotinydb
 import tinydb
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -27,68 +28,76 @@ sys.path.append(f"{dir_path}/../../..")
 import central  # noqa: E402
 
 
-def set_language(user, language):
+async def set_language(user, language):
     # noinspection PyBroadException
     try:
         if getattr(central.languages, language) is not None:
             ideal_user = tinydb.Query()
-            results = central.db.search(ideal_user.id == user.id)
 
-            if len(results) > 0:
-                central.db.update({"language": language}, ideal_user.id == user.id)
-            else:
-                central.db.insert({"id": user.id, "language": language})
+            async with aiotinydb.AIOTinyDB(central.db_path) as db:
+                results = db.search(ideal_user.id == user.id)
+
+                if len(results) > 0:
+                    db.update({"language": language}, ideal_user.id == user.id)
+                else:
+                    db.insert({"id": user.id, "language": language})
 
             return True
     except Exception:
         return False
 
 
-def set_guild_language(guild, language):
+async def set_guild_language(guild, language):
     # noinspection PyBroadException
     try:
         if getattr(central.languages, language) is not None:
             ideal_guild = tinydb.Query()
-            results = central.guildDB.search(ideal_guild.id == guild.id)
 
-            if len(results) > 0:
-                central.guildDB.update({"language": language}, ideal_guild.id == guild.id)
-            else:
-                central.guildDB.insert({"id": guild.id, "language": language})
+            async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+                results = guildDB.search(ideal_guild.id == guild.id)
 
-            return True
+                if len(results) > 0:
+                    guildDB.update({"language": language}, ideal_guild.id == guild.id)
+                else:
+                    guildDB.insert({"id": guild.id, "language": language})
+
+                return True
     except Exception:
         return False
 
 
-def get_language(user):
+async def get_language(user):
     ideal_user = tinydb.Query()
-    results = central.db.search(ideal_user.id == user.id)
 
-    languages = get_languages()
+    async with aiotinydb.AIOTinyDB(central.db_path) as db:
+        results = db.search(ideal_user.id == user.id)
 
-    if len(results) > 0:
-        if "language" in results[0]:
-            for item in languages:
-                if item["object_name"] == results[0]["language"]:
-                    if results[0]["language"] in ["english_us", "english_uk"]:
-                        return "english"
-
-                    return results[0]["language"]
-
-    return None
-
-
-def get_guild_language(guild):
-    if guild is not None:
-        ideal_guild = tinydb.Query()
-        results = central.guildDB.search(ideal_guild.id == guild.id)
+        languages = get_languages()
 
         if len(results) > 0:
             if "language" in results[0]:
-                return results[0]["language"]
+                for item in languages:
+                    if item["object_name"] == results[0]["language"]:
+                        if results[0]["language"] in ["english_us", "english_uk"]:
+                            return "english"
 
-        return "english_us"
+                        return results[0]["language"]
+
+        return None
+
+
+async def get_guild_language(guild):
+    if guild is not None:
+        ideal_guild = tinydb.Query()
+
+        async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+            results = guildDB.search(ideal_guild.id == guild.id)
+
+            if len(results) > 0:
+                if "language" in results[0]:
+                    return results[0]["language"]
+
+            return "english"
 
 
 def get_languages():

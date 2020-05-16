@@ -22,6 +22,7 @@ import aiohttp
 import datetime
 import discord
 import traceback
+import aiotinydb
 
 from discord.ext import tasks
 from handlers.logic.settings import versions
@@ -34,43 +35,45 @@ async def run_timed_votds(bot):
     await bot.wait_until_ready()
     
     current_time = datetime.datetime.utcnow().strftime("%H:%M")
-    results = [x for x in central.guildDB.all() if "channel" in x and x["time"] == current_time]
-
-    count = 0
-
-    for item in results:
-        if "channel" in item and "time" in item:
-            channel = bot.get_channel(item["channel"])
-                                                       
-            try:
-                version = versions.get_guild_version(channel.guild)
-                lang = languages.get_guild_language(channel.guild)
-            except AttributeError:
-                version = "RSV"
-                lang = "english"
-
-            if not version:
-                version = "RSV"
-
-            if not lang:
-                lang = "english"
-
-            lang = central.get_raw_language(lang)
-
-            if channel:
-                reference = await bibleutils.get_votd()
-                result = await utils.get_bible_verse(reference, "embed", version, "enable", "enable")
-                
-                if result:
-                    try:
-                        await channel.send(lang["votd"])
-                        await channel.send(embed=result["embed"])
-                    except discord.errors.Forbidden:
-                        pass
-                    count += 1
     
-    if count > 0:
-        central.log_message("info", 0, "votd_sched", "global", f"Sending {str(count)} VOTDs at {current_time}...")
+    async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+        results = [x for x in guildDB.all() if "channel" in x and x["time"] == current_time]
+
+        count = 0
+
+        for item in results:
+            if "channel" in item and "time" in item:
+                channel = bot.get_channel(item["channel"])
+                                                        
+                try:
+                    version = await versions.get_guild_version(channel.guild)
+                    lang = await languages.get_guild_language(channel.guild)
+                except AttributeError:
+                    version = "RSV"
+                    lang = "english"
+
+                if not version:
+                    version = "RSV"
+
+                if not lang:
+                    lang = "english"
+
+                lang = central.get_raw_language(lang)
+
+                if channel:
+                    reference = await bibleutils.get_votd()
+                    result = await utils.get_bible_verse(reference, "embed", version, "enable", "enable")
+                    
+                    if result:
+                        try:
+                            await channel.send(lang["votd"])
+                            await channel.send(embed=result["embed"])
+                        except discord.errors.Forbidden:
+                            pass
+                        count += 1
+        
+        if count > 0:
+            central.log_message("info", 0, "votd_sched", "global", f"Sending {str(count)} VOTDs at {current_time}...")
 
 
 async def send_server_count(bot):
@@ -93,7 +96,7 @@ async def send_announcement(ctx, res):
     message_counter = None
 
     for guild in ctx["self"].guilds:
-        announce_tuple = misc.get_guild_announcements(guild, False)
+        announce_tuple = await misc.get_guild_announcements(guild, False)
 
         if "Discord Bot" not in guild.name:
             if announce_tuple is not None:

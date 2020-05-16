@@ -116,3 +116,5 @@ config.ini
 *.raw.json
 
 .vscode/
+
+error_logs/

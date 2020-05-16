@@ -19,6 +19,7 @@
 import os
 import sys
 
+import aiotinydb
 import tinydb
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -27,61 +28,59 @@ sys.path.append(f"{dir_path}/../../..")
 import central  # noqa: E402
 
 
-def set_version(user, version):
+async def set_version(user, version):
     version = version.upper()
 
     ideal_version = tinydb.Query()
-    version_results = central.versionDB.search(ideal_version.abbv == version)
 
-    if len(version_results) > 0:
-        ideal_user = tinydb.Query()
-        results = central.db.search(ideal_user.id == user.id)
+    async with aiotinydb.AIOTinyDB(central.versionDB_path) as versionDB:
+        version_results = versionDB.search(ideal_version.abbv == version)
 
-        if len(results) > 0:
-            central.db.update({"version": version}, ideal_user.id == user.id)
-        else:
-            central.db.insert({"id": user.id, "version": version})
+        if len(version_results) > 0:
+            ideal_user = tinydb.Query()
 
-        return True
+            async with aiotinydb.AIOTinyDB(central.db_path) as db:
+                results = db.search(ideal_user.id == user.id)
 
-    return False
+                if len(results) > 0:
+                    db.update({"version": version}, ideal_user.id == user.id)
+                else:
+                    db.insert({"id": user.id, "version": version})
+
+                return True
+
+        return False
 
 
-def set_guild_version(guild, version):
+async def set_guild_version(guild, version):
     version = version.upper()
 
     ideal_version = tinydb.Query()
-    version_results = central.versionDB.search(ideal_version.abbv == version)
 
-    if len(version_results) > 0:
-        ideal_guild = tinydb.Query()
-        results = central.guildDB.search(ideal_guild.id == guild.id)
+    async with aiotinydb.AIOTinyDB(central.versionDB_path) as versionDB:
+        version_results = versionDB.search(ideal_version.abbv == version)
 
-        if len(results) > 0:
-            central.guildDB.update({"version": version}, ideal_guild.id == guild.id)
-        else:
-            central.guildDB.insert({"id": guild.id, "version": version})
+        if len(version_results) > 0:
+            ideal_guild = tinydb.Query()
 
-        return True
+            async with aiotinydb.AIOTinyDB(central.db_path) as guildDB:
+                results = guildDB.search(ideal_guild.id == guild.id)
 
-    return False
+                if len(results) > 0:
+                    guildDB.update({"version": version}, ideal_guild.id == guild.id)
+                else:
+                    guildDB.insert({"id": guild.id, "version": version})
+
+                return True
+
+        return False
 
 
-def get_version(user):
+async def get_version(user):
     ideal_user = tinydb.Query()
-    results = central.db.search(ideal_user.id == user.id)
 
-    if len(results) > 0:
-        if "version" in results[0]:
-            return results[0]["version"]
-
-    return None
-
-
-def get_guild_version(guild):
-    if guild is not None:
-        ideal_guild = tinydb.Query()
-        results = central.guildDB.search(ideal_guild.id == guild.id)
+    async with aiotinydb.AIOTinyDB(central.db_path) as db:
+        results = db.search(ideal_user.id == user.id)
 
         if len(results) > 0:
             if "version" in results[0]:
@@ -90,21 +89,37 @@ def get_guild_version(guild):
         return None
 
 
-def get_versions():
-    results = central.versionDB.all()
-    versions = []
+async def get_guild_version(guild):
+    if guild is not None:
+        ideal_guild = tinydb.Query()
 
-    for result in results:
-        versions.append(result["name"])
+        async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+            results = guildDB.search(ideal_guild.id == guild.id)
 
-    return sorted(versions)
+            if len(results) > 0:
+                if "version" in results[0]:
+                    return results[0]["version"]
+
+            return None
 
 
-def get_versions_by_acronym():
-    results = central.versionDB.all()
-    versions = []
+async def get_versions():
+    async with aiotinydb.AIOTinyDB(central.versionDB_path) as versionDB:
+        results = versionDB.all()
+        versions = []
 
-    for result in results:
-        versions.append(result["abbv"])
+        for result in results:
+            versions.append(result["name"])
 
-    return sorted(versions)
+        return sorted(versions)
+
+
+async def get_versions_by_acronym():
+    async with aiotinydb.AIOTinyDB(central.versionDB_path) as versionDB:
+        results = versionDB.all()
+        versions = []
+
+        for result in results:
+            versions.append(result["abbv"])
+
+        return sorted(versions)

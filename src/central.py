@@ -21,6 +21,7 @@ import math
 import os
 import time
 
+import aiotinydb
 import tinydb
 
 from data import languages
@@ -40,10 +41,10 @@ cmd_prefix = config["BibleBot"]["commandPrefix"]
 
 logger = VyLogger("default")
 
-db = tinydb.TinyDB(f"{dir_path}/../databases/db")
-guildDB = tinydb.TinyDB(f"{dir_path}/../databases/guilddb")
-versionDB = tinydb.TinyDB(f"{dir_path}/../databases/versiondb")
-optoutDB = tinydb.TinyDB(f"{dir_path}/../databases/optoutdb")
+db_path = f"{dir_path}/../databases/db"
+guildDB_path = f"{dir_path}/../databases/guilddb"
+versionDB_path = f"{dir_path}/../databases/versiondb"
+optoutDB_path = f"{dir_path}/../databases/optoutdb"
 
 languages = languages
 
@@ -100,39 +101,45 @@ def get_raw_language(obj):
         return getattr(languages, "english").raw_object
 
 
-def add_optout(entryid):
+async def add_optout(entryid):
     ideal_entry = tinydb.Query()
-    result = optoutDB.search(ideal_entry.id == entryid)
 
-    if len(result) > 0:
-        return False
-    else:
-        db.remove(ideal_entry.id == entryid)
-        guildDB.remove(ideal_entry.id == entryid)
+    async with aiotinydb.AIOTinyDB(optoutDB_path) as optoutDB:
+        result = optoutDB.search(ideal_entry.id == entryid)
 
-        optoutDB.insert({"id": entryid})
-        return True
+        if len(result) > 0:
+            return False
+        else:
+            db.remove(ideal_entry.id == entryid)
+            guildDB.remove(ideal_entry.id == entryid)
+
+            optoutDB.insert({"id": entryid})
+            return True
 
 
-def remove_optout(entryid):
+async def remove_optout(entryid):
     ideal_entry = tinydb.Query()
-    result = optoutDB.search(ideal_entry.id == entryid)
 
-    if len(result) > 0:
-        optoutDB.remove(ideal_entry.id == entryid)
-        return True
-    else:
-        return False
+    async with aiotinydb.AIOTinyDB(optoutDB_path) as optoutDB:
+        result = optoutDB.search(ideal_entry.id == entryid)
+
+        if len(result) > 0:
+            optoutDB.remove(ideal_entry.id == entryid)
+            return True
+        else:
+            return False
 
 
-def is_optout(entryid):
+async def is_optout(entryid):
     ideal_entry = tinydb.Query()
-    result = optoutDB.search(ideal_entry.id == entryid)
 
-    if len(result) > 0:
-        return True
-    else:
-        return False
+    async with aiotinydb.AIOTinyDB(optoutDB_path) as optoutDB:
+        result = optoutDB.search(ideal_entry.id == entryid)
+
+        if len(result) > 0:
+            return True
+        else:
+            return False
 
 
 def is_snowflake(snowflake):

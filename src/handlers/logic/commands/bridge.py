@@ -21,6 +21,7 @@ import sys
 import ast
 
 import discord
+import aiotinydb
 import tinydb
 
 from .information import biblebot, creeds, catechisms, special, paged_commands
@@ -52,12 +53,12 @@ async def run_command(ctx, command, remainder):
             "pages": pages
         }
     elif command == "search":
-        version = utils.get_version(user, guild)
+        version = await utils.get_version(user, guild)
         return await paged_commands.search(version, remainder, lang)
     elif command == "versions":
         return paged_commands.get_versions(lang)
     elif command == "setversion":
-        if versions.set_version(user, args[0]):
+        if await versions.set_version(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setversion"], lang["setversionsuccess"])
 
             return {
@@ -95,7 +96,7 @@ async def run_command(ctx, command, remainder):
                     "message": embed
                 }
 
-        if versions.set_guild_version(guild, args[0]):
+        if await versions.set_guild_version(guild, args[0]):
             embed = utils.create_embed(lang["commands"]["setguildversion"], lang["setguildversionsuccess"])
 
             return {
@@ -112,7 +113,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "version":
-        version = versions.get_version(user)
+        version = await versions.get_version(user)
 
         if version is not None:
             response = lang["versionused"]
@@ -137,7 +138,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "guildversion":
-        version = versions.get_guild_version(guild)
+        version = await versions.get_guild_version(guild)
 
         if version is not None:
             response = lang["guildversionused"]
@@ -163,37 +164,39 @@ async def run_command(ctx, command, remainder):
             }
     elif command == "versioninfo":
         ideal_version = tinydb.Query()
-        results = central.versionDB.search(ideal_version["abbv"] == args[0])
 
-        if len(results) > 0:
-            response = lang["versioninfo"]
+        async with aiotinydb.AIOTinyDB(central.versionDB_path) as versionDB:
+            results = versionDB.search(ideal_version["abbv"] == args[0])
 
-            response = response.replace("<versionname>", results[0]["name"])
+            if len(results) > 0:
+                response = lang["versioninfo"]
 
-            def check_validity(section):
-                if results[0]["has" + section]:
-                    return lang["arguments"]["yes"]
-                else:
-                    return lang["arguments"]["no"]
+                response = response.replace("<versionname>", results[0]["name"])
 
-            for category in ["OT", "NT", "DEU"]:
-                response = response.replace(f"<has{category}>", check_validity(category))
+                def check_validity(section):
+                    if results[0]["has" + section]:
+                        return lang["arguments"]["yes"]
+                    else:
+                        return lang["arguments"]["no"]
 
-            embed = utils.create_embed(lang["commands"]["versioninfo"], response)
+                for category in ["OT", "NT", "DEU"]:
+                    response = response.replace(f"<has{category}>", check_validity(category))
 
-            return {
-                "level": "info",
-                "message": embed
-            }
-        else:
-            embed = utils.create_embed(lang["commands"]["versioninfo"], lang["versioninfofailed"], error=True)
+                embed = utils.create_embed(lang["commands"]["versioninfo"], response)
 
-            return {
-                "level": "err",
-                "message": embed
-            }
+                return {
+                    "level": "info",
+                    "message": embed
+                }
+            else:
+                embed = utils.create_embed(lang["commands"]["versioninfo"], lang["versioninfofailed"], error=True)
+
+                return {
+                    "level": "err",
+                    "message": embed
+                }
     elif command == "setlanguage":
-        if languages.set_language(user, args[0]):
+        if await languages.set_language(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setlanguage"], lang["setlanguagesuccess"])
 
             return {
@@ -231,7 +234,7 @@ async def run_command(ctx, command, remainder):
                     "message": embed
                 }
 
-        if languages.set_guild_language(guild, args[0]):
+        if await languages.set_guild_language(guild, args[0]):
             embed = utils.create_embed(lang["commands"]["setguildlanguage"], lang["setguildlanguagesuccess"])
 
             return {
@@ -258,7 +261,7 @@ async def run_command(ctx, command, remainder):
             "message": embed
         }
     elif command == "guildlanguage":
-        glang = languages.get_guild_language(guild)
+        glang = await languages.get_guild_language(guild)
         glang = central.get_raw_language(glang)
 
         response = glang["guildlanguageused"]
@@ -271,7 +274,7 @@ async def run_command(ctx, command, remainder):
             "message": embed
         }
     elif command == "languages":
-        available_languages = languages.get_languages()
+        available_languages = await languages.get_languages()
 
         string = ""
 
@@ -307,7 +310,7 @@ async def run_command(ctx, command, remainder):
                     "message": embed
                 }
 
-        if formatting.set_guild_brackets(guild, args[0]):
+        if await formatting.set_guild_brackets(guild, args[0]):
             embed = utils.create_embed(lang["commands"]["setguildbrackets"], lang["setguildbracketssuccess"])
 
             return {
@@ -322,7 +325,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "guildbrackets":
-        brackets_dict = formatting.get_guild_brackets(guild)
+        brackets_dict = await formatting.get_guild_brackets(guild)
         brackets = brackets_dict["first"] + brackets_dict["second"]
 
         response = lang["guildbracketsused"]
@@ -357,7 +360,7 @@ async def run_command(ctx, command, remainder):
                     "message": embed
                 }
 
-        if misc.set_guild_votd_time(guild, channel, args[0]):
+        if await misc.set_guild_votd_time(guild, channel, args[0]):
             embed = utils.create_embed(lang["commands"]["setvotdtime"], lang["setvotdtimesuccess"])
 
             return {
@@ -392,7 +395,7 @@ async def run_command(ctx, command, remainder):
                     "message": embed
                 }
 
-        if misc.set_guild_votd_time(guild, channel, "clear"):
+        if await misc.set_guild_votd_time(guild, channel, "clear"):
             embed = utils.create_embed(lang["commands"]["clearvotdtime"], lang["clearvotdtimesuccess"])
 
             return {
@@ -400,7 +403,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "votdtime":
-        time_tuple = misc.get_guild_votd_time(guild)
+        time_tuple = await misc.get_guild_votd_time(guild)
 
         if time_tuple is not None:
             channel, time = time_tuple
@@ -430,22 +433,22 @@ async def run_command(ctx, command, remainder):
             }
     elif command in ["votd", "verseoftheday"]:
         verse = await bibleutils.get_votd()
-        mode = formatting.get_mode(user)
-        version = utils.get_version(user, guild)
-        headings = formatting.get_headings(user)
-        verse_numbers = formatting.get_verse_numbers(user)
+        mode = await formatting.get_mode(user)
+        version = await utils.get_version(user, guild)
+        headings = await formatting.get_headings(user)
+        verse_numbers = await formatting.get_verse_numbers(user)
 
         return await utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
     elif command == "random":
         verse = await bibleutils.get_random_verse()
-        mode = formatting.get_mode(user)
-        version = utils.get_version(user, guild)
-        headings = formatting.get_headings(user)
-        verse_numbers = formatting.get_verse_numbers(user)
+        mode = await formatting.get_mode(user)
+        version = await utils.get_version(user, guild)
+        headings = await formatting.get_headings(user)
+        verse_numbers = await formatting.get_verse_numbers(user)
 
         return await utils.get_bible_verse(verse, mode, version, headings, verse_numbers)
     elif command == "setheadings":
-        if formatting.set_headings(user, args[0]):
+        if await formatting.set_headings(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setheadings"], lang["headingssuccess"])
 
             return {
@@ -466,7 +469,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "headings":
-        headings = formatting.get_headings(user)
+        headings = await formatting.get_headings(user)
 
         if headings == "enable":
             response = lang["headings"].replace("<enabled/disabled>", lang["enabled"])
@@ -489,7 +492,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "setmode":
-        if formatting.set_mode(user, args[0]):
+        if await formatting.set_mode(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setmode"], lang["modesuccess"])
 
             return {
@@ -508,7 +511,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "mode":
-        mode = formatting.get_mode(user)
+        mode = await formatting.get_mode(user)
         modes = ["default", "embed", "blockquote", "code"]
 
         if mode in modes:
@@ -522,7 +525,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "setversenumbers":
-        if formatting.set_verse_numbers(user, args[0]):
+        if await formatting.set_verse_numbers(user, args[0]):
             embed = utils.create_embed(lang["commands"]["setversenumbers"], lang["versenumberssuccess"])
 
             return {
@@ -541,7 +544,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "versenumbers":
-        verse_numbers = formatting.get_verse_numbers(user)
+        verse_numbers = await formatting.get_verse_numbers(user)
         response = lang["versenumbers"].replace("<setversenumbers>", lang["commands"]["setversenumbers"])
 
         if verse_numbers == "enable":
@@ -575,7 +578,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
 
-        if misc.set_guild_announcements(guild, channel, args[0]):
+        if await misc.set_guild_announcements(guild, channel, args[0]):
             embed = utils.create_embed(lang["commands"]["setannouncements"], lang["setannouncementssuccess"])
 
             return {
@@ -596,7 +599,7 @@ async def run_command(ctx, command, remainder):
                 "message": embed
             }
     elif command == "announcements":
-        announce_tuple = misc.get_guild_announcements(guild, True)
+        announce_tuple = await misc.get_guild_announcements(guild, True)
 
         if announce_tuple is not None:
             channel, setting = announce_tuple
@@ -643,10 +646,10 @@ async def run_command(ctx, command, remainder):
             "message": embed
         }
     elif command == "jepekula":
-        version = utils.get_version(user, guild)
-        mode = formatting.get_mode(user)
-        headings = formatting.get_headings(user)
-        verse_numbers = formatting.get_verse_numbers(user)
+        version = await utils.get_version(user, guild)
+        mode = await formatting.get_mode(user)
+        headings = await formatting.get_headings(user)
+        verse_numbers = await formatting.get_verse_numbers(user)
 
         return await utils.get_bible_verse("Mark 9:23-24", mode, version, headings, verse_numbers)
     elif command in special.cm_commands:
@@ -763,31 +766,34 @@ async def run_owner_command(ctx, command, remainder):
             has_deu = True
 
         new_version = Version(name, abbv, has_ot, has_nt, has_deu)
-        central.versionDB.insert(new_version.to_object())
 
-        embed = utils.create_embed(lang["commands"]["addversion"], lang["addversionsuccess"])
+        async with aiotinydb.AIOTinyDB(central.versionDB_path) as versionDB:
+            versionDB.insert(new_version.to_object())
 
-        return {
-            "level": "info",
-            "message": embed
-        }
+            embed = utils.create_embed(lang["commands"]["addversion"], lang["addversionsuccess"])
+
+            return {
+                "level": "info",
+                "message": embed
+            }
     elif command == "rmversion":
         query = tinydb.Query()
 
-        result = central.versionDB.remove(query.abbv == args[0])
+        async with aiotinydb.AIOTinyDB(central.versionDB_path) as versionDB:
+            result = versionDB.remove(query.abbv == args[0])
 
-        if result:
-            return {
-                "level": "info",
-                "text": True,
-                "message": f"Removed {result}."
-            }
-        else:
-            return {
-                "level": "err",
-                "text": True,
-                "message": f"No version available to remove."
-            }
+            if result:
+                return {
+                    "level": "info",
+                    "text": True,
+                    "message": f"Removed {result}."
+                }
+            else:
+                return {
+                    "level": "err",
+                    "text": True,
+                    "message": f"No version available to remove."
+                }
     elif command == "userid":
         arg = ""
 
@@ -814,7 +820,7 @@ async def run_owner_command(ctx, command, remainder):
         }
     elif command == "optout":
         if central.is_snowflake(args[0]):
-            if central.add_optout(args[0]):
+            if await central.add_optout(args[0]):
                 return {
                     "level": "info",
                     "text": True,
@@ -834,7 +840,7 @@ async def run_owner_command(ctx, command, remainder):
             }
     elif command == "unoptout":
         if central.is_snowflake(args[0]):
-            if central.remove_optout(args[0]):
+            if await central.remove_optout(args[0]):
                 return {
                     "level": "info",
                     "text": True,

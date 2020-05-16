@@ -67,11 +67,11 @@ def create_embed(title, description, custom_title=False, error=False):
     return embed
 
 
-def get_version(user, guild):
-    version = versions.get_version(user)
+async def get_version(user, guild):
+    version = await versions.get_version(user)
 
     if version is None:
-        version = versions.get_guild_version(guild)
+        version = await versions.get_guild_version(guild)
 
         if version is None:
             version = "RSV"

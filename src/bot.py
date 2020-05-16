@@ -132,7 +132,7 @@ class BibleBot(discord.AutoShardedClient):
         }
 
         is_self = ctx["author"] == self.user
-        is_optout = central.is_optout(str(ctx["author"].id))
+        is_optout = await central.is_optout(str(ctx["author"].id))
         if is_self or is_optout:
             return
 
@@ -140,13 +140,13 @@ class BibleBot(discord.AutoShardedClient):
         if is_owner:
             ctx["identifier"] = "owner"
 
-        language = languages.get_language(ctx["author"])
+        language = await languages.get_language(ctx["author"])
 
         if hasattr(ctx["channel"], "guild"):
             ctx["guild"] = ctx["channel"].guild
 
             if language is None:
-                language = languages.get_guild_language(ctx["guild"])
+                language = await languages.get_guild_language(ctx["guild"])
 
             guild_id = str(ctx["channel"].guild.id)
             chan_id = str(ctx["channel"].id)

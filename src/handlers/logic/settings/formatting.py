@@ -19,6 +19,7 @@
 import os
 import sys
 
+import aiotinydb
 import tinydb
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -27,67 +28,75 @@ sys.path.append(f"{dir_path}/../../..")
 import central  # noqa: E402
 
 
-def set_headings(user, headings):
+async def set_headings(user, headings):
     headings = headings.lower()
 
     if headings != "enable" and headings != "disable":
         return False
 
     ideal_user = tinydb.Query()
-    results = central.db.search(ideal_user.id == user.id)
 
-    if len(results) > 0:
-        central.db.update({"headings": headings}, ideal_user.id == user.id)
-    else:
-        central.db.insert({"id": user.id, "headings": headings})
+    async with aiotinydb.AIOTinyDB(central.db_path) as db:
+        results = db.search(ideal_user.id == user.id)
+
+        if len(results) > 0:
+            db.update({"headings": headings}, ideal_user.id == user.id)
+        else:
+            db.insert({"id": user.id, "headings": headings})
 
     return True
 
 
-def get_headings(user):
+async def get_headings(user):
     ideal_user = tinydb.Query()
-    results = central.db.search(ideal_user.id == user.id)
 
-    if len(results) > 0:
-        if "headings" in results[0]:
-            return results[0]["headings"]
+    async with aiotinydb.AIOTinyDB(central.db_path) as db:
+        results = db.search(ideal_user.id == user.id)
+
+        if len(results) > 0:
+            if "headings" in results[0]:
+                return results[0]["headings"]
+            else:
+                return "enable"
         else:
             return "enable"
-    else:
-        return "enable"
 
 
-def set_verse_numbers(user, verse_numbers):
+async def set_verse_numbers(user, verse_numbers):
     verse_numbers = verse_numbers.lower()
 
     if verse_numbers != "enable" and verse_numbers != "disable":
         return False
 
     ideal_user = tinydb.Query()
-    results = central.db.search(ideal_user.id == user.id)
 
-    if len(results) > 0:
-        central.db.update({"verseNumbers": verse_numbers}, ideal_user.id == user.id)
-    else:
-        central.db.insert({"id": user.id, "verseNumbers": verse_numbers})
+    async with aiotinydb.AIOTinyDB(central.db_path) as db:
+        results = db.search(ideal_user.id == user.id)
 
-    return True
+        if len(results) > 0:
+            db.update({"verseNumbers": verse_numbers}, ideal_user.id == user.id)
+        else:
+            db.insert({"id": user.id, "verseNumbers": verse_numbers})
+
+        return True
 
 
-def get_verse_numbers(user):
+async def get_verse_numbers(user):
     ideal_user = tinydb.Query()
-    results = central.db.search(ideal_user.id == user.id)
 
-    if len(results) > 0:
-        if "verseNumbers" in results[0]:
-            return results[0]["verseNumbers"]
+    async with aiotinydb.AIOTinyDB(central.db_path) as db:
+        results = db.search(ideal_user.id == user.id)
+
+        if len(results) > 0:
+            if "verseNumbers" in results[0]:
+                return results[0]["verseNumbers"]
+            else:
+                return "enable"
         else:
             return "enable"
-    else:
-        return "enable"
 
 
-def set_guild_brackets(guild, brackets):
+async def set_guild_brackets(guild, brackets):
     if len(brackets) != 2:
         return False
 
@@ -95,34 +104,38 @@ def set_guild_brackets(guild, brackets):
         return False
 
     ideal_guild = tinydb.Query()
-    results = central.guildDB.search(ideal_guild.id == guild.id)
 
-    item = {
-        "first": brackets[0],
-        "second": brackets[1]
-    }
+    async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+        results = guildDB.search(ideal_guild.id == guild.id)
 
-    if len(results) > 0:
-        central.guildDB.update({"brackets": item}, ideal_guild.id == guild.id)
-    else:
-        central.guildDB.insert({"id": guild.id, "brackets": item})
-
-    return True
-
-
-def get_guild_brackets(guild):
-    if guild is not None:
-        ideal_guild = tinydb.Query()
-        results = central.guildDB.search(ideal_guild.id == guild.id)
+        item = {
+            "first": brackets[0],
+            "second": brackets[1]
+        }
 
         if len(results) > 0:
-            if "brackets" in results[0]:
-                return results[0]["brackets"]
+            guildDB.update({"brackets": item}, ideal_guild.id == guild.id)
+        else:
+            guildDB.insert({"id": guild.id, "brackets": item})
 
-        return central.brackets
+        return True
 
 
-def set_mode(user, mode):
+async def get_guild_brackets(guild):
+    if guild is not None:
+        ideal_guild = tinydb.Query()
+
+        async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+            results = guildDB.search(ideal_guild.id == guild.id)
+
+            if len(results) > 0:
+                if "brackets" in results[0]:
+                    return results[0]["brackets"]
+
+            return central.brackets
+
+
+async def set_mode(user, mode):
     mode = mode.lower()
     modes = ["default", "embed", "blockquote", "code"]
 
@@ -130,27 +143,31 @@ def set_mode(user, mode):
         return False
 
     ideal_user = tinydb.Query()
-    results = central.db.search(ideal_user.id == user.id)
 
-    if len(results) > 0:
-        central.db.update({"mode": mode}, ideal_user.id == user.id)
-    else:
-        central.db.insert({"id": user.id, "mode": mode})
+    async with aiotinydb.AIOTinyDB(central.db_path) as db:
+        results = db.search(ideal_user.id == user.id)
 
-    return True
+        if len(results) > 0:
+            db.update({"mode": mode}, ideal_user.id == user.id)
+        else:
+            db.insert({"id": user.id, "mode": mode})
+
+        return True
 
 
-def get_mode(user):
+async def get_mode(user):
     ideal_user = tinydb.Query()
-    results = central.db.search(ideal_user.id == user.id)
 
-    if len(results) > 0:
-        if "mode" in results[0]:
-            if results[0]["mode"] == "default":
-                return "embed"
+    async with aiotinydb.AIOTinyDB(central.db_path) as db:
+        results = db.search(ideal_user.id == user.id)
+
+        if len(results) > 0:
+            if "mode" in results[0]:
+                if results[0]["mode"] == "default":
+                    return "embed"
+                else:
+                    return results[0]["mode"]
             else:
-                return results[0]["mode"]
+                return "embed"
         else:
             return "embed"
-    else:
-        return "embed"

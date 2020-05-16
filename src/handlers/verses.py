@@ -21,6 +21,7 @@ import os
 import random
 import sys
 
+import aiotinydb
 import tinydb
 
 from handlers.logic.verses import utils
@@ -111,33 +112,35 @@ class VerseHandler:
                         version = "RSV"
 
                 ideal_version = tinydb.Query()
-                results = central.versionDB.search(ideal_version.abbv == version)
 
-                if len(results) > 0:
-                    for verse in verses:
-                        for section in ["ot", "nt", "deu"]:
-                            support = utils.check_section_support(results[0], verse, reference, section, lang)
+                async with aiotinydb.AIOTinyDB(central.versionDB_path) as versionDB: 
+                    results = versionDB.search(ideal_version.abbv == version)
 
-                            if "ok" not in support.keys():
-                                return [support]
+                    if len(results) > 0:
+                        for verse in verses:
+                            for section in ["ot", "nt", "deu"]:
+                                support = utils.check_section_support(results[0], verse, reference, section, lang)
 
-                    biblehub_versions = ["BSB", "NHEB", "WBT"]
-                    # bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
-                    apibible_versions = ["KJVA"]
+                                if "ok" not in support.keys():
+                                    return [support]
 
-                    non_bible_gateway = biblehub_versions + apibible_versions  # + bibleserver_versions
+                        biblehub_versions = ["BSB", "NHEB", "WBT"]
+                        # bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
+                        apibible_versions = ["KJVA"]
 
-                    if version not in non_bible_gateway:
-                        result = await biblegateway.get_result(reference, version, headings, verse_numbers)
-                        return_list.append(utils.process_result(result, mode, reference, version, lang))
-                    elif version in apibible_versions:
-                        result = await apibible.get_result(reference, version, headings, verse_numbers)
-                        return_list.append(utils.process_result(result, mode, reference, version, lang))
-                    elif version in biblehub_versions:
-                        result = await biblehub.get_result(reference, version, verse_numbers)
-                        return_list.append(utils.process_result(result, mode, reference, version, lang))
-                    # elif version in bibleserver_versions:
-                    #    result = await bibleserver.get_result(reference, version, verse_numbers)
-                    #    return_list.append(utils.process_result(result, mode, reference, version, lang))
+                        non_bible_gateway = biblehub_versions + apibible_versions  # + bibleserver_versions
+
+                        if version not in non_bible_gateway:
+                            result = await biblegateway.get_result(reference, version, headings, verse_numbers)
+                            return_list.append(utils.process_result(result, mode, reference, version, lang))
+                        elif version in apibible_versions:
+                            result = await apibible.get_result(reference, version, headings, verse_numbers)
+                            return_list.append(utils.process_result(result, mode, reference, version, lang))
+                        elif version in biblehub_versions:
+                            result = await biblehub.get_result(reference, version, verse_numbers)
+                            return_list.append(utils.process_result(result, mode, reference, version, lang))
+                        # elif version in bibleserver_versions:
+                        #    result = await bibleserver.get_result(reference, version, verse_numbers)
+                        #    return_list.append(utils.process_result(result, mode, reference, version, lang))
 
             return return_list

@@ -19,6 +19,7 @@
 import os
 import sys
 
+import aiotinydb
 import tinydb
 import tinydb.operations
 
@@ -28,40 +29,44 @@ sys.path.append(f"{dir_path}/../../..")
 import central  # noqa: E402
 
 
-def set_guild_votd_time(guild, channel, time):
+async def set_guild_votd_time(guild, channel, time):
     if len(time) != 5:
         return False
 
     ideal_guild = tinydb.Query()
-    results = central.guildDB.search(ideal_guild.id == guild.id)
 
-    if len(results) > 0:
-        if time != "clear":
-            central.guildDB.update({"time": time, "channel": channel.id, "channel_name": channel.name},
-                                   ideal_guild.id == guild.id)
-        else:
-            central.guildDB.update(tinydb.operations.delete("time"), ideal_guild.id == guild.id)
-            central.guildDB.update(tinydb.operations.delete("channel"), ideal_guild.id == guild.id)
-            central.guildDB.update(tinydb.operations.delete("channel_name"), ideal_guild.id == guild.id)
-    else:
-        central.guildDB.insert({"id": guild.id, "time": time, "channel": channel.id, "channel_name": channel.name})
-
-    return True
-
-
-def get_guild_votd_time(guild):
-    if guild is not None:
-        ideal_guild = tinydb.Query()
-        results = central.guildDB.search(ideal_guild.id == guild.id)
+    async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+        results = guildDB.search(ideal_guild.id == guild.id)
 
         if len(results) > 0:
-            if "channel_name" in results[0] and "time" in results[0]:
-                return results[0]["channel_name"], results[0]["time"]
+            if time != "clear":
+                guildDB.update({"time": time, "channel": channel.id, "channel_name": channel.name},
+                                    ideal_guild.id == guild.id)
+            else:
+                guildDB.update(aiotinydb.operations.delete("time"), ideal_guild.id == guild.id)
+                guildDB.update(aiotinydb.operations.delete("channel"), ideal_guild.id == guild.id)
+                guildDB.update(aiotinydb.operations.delete("channel_name"), ideal_guild.id == guild.id)
+        else:
+            guildDB.insert({"id": guild.id, "time": time, "channel": channel.id, "channel_name": channel.name})
 
-        return None
+        return True
 
 
-def set_guild_announcements(guild, channel, setting):
+async def get_guild_votd_time(guild):
+    if guild is not None:
+        ideal_guild = tinydb.Query()
+
+        async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+            results = guildDB.search(ideal_guild.id == guild.id)
+
+            if len(results) > 0:
+                if "channel_name" in results[0] and "time" in results[0]:
+                    return results[0]["channel_name"], results[0]["time"]
+
+            return None
+
+
+async def set_guild_announcements(guild, channel, setting):
     if setting == "enable":
         setting = True
     else:
@@ -69,31 +74,35 @@ def set_guild_announcements(guild, channel, setting):
 
     if guild is not None:
         ideal_guild = tinydb.Query()
-        results = central.guildDB.search(ideal_guild.id == guild.id)
 
-        item = {"announce": setting, "announcechannel": channel.id, "announcechannelname": channel.name}
+        async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+            results = guildDB.search(ideal_guild.id == guild.id)
 
-        if len(results) > 0:
-            central.guildDB.update(item, ideal_guild.id == guild.id)
-        else:
-            item["id"] = guild.id
-            central.guildDB.insert(item)
+            item = {"announce": setting, "announcechannel": channel.id, "announcechannelname": channel.name}
 
-        return True
+            if len(results) > 0:
+                guildDB.update(item, ideal_guild.id == guild.id)
+            else:
+                item["id"] = guild.id
+                guildDB.insert(item)
+
+            return True
 
     return False
 
 
-def get_guild_announcements(guild, notice):
+async def get_guild_announcements(guild, notice):
     if guild is not None:
         ideal_guild = tinydb.Query()
-        results = central.guildDB.search(ideal_guild.id == guild.id)
 
-        if len(results) > 0:
-            if "announce" in results[0]:
-                if not notice:
-                    return results[0]["announcechannel"], results[0]["announce"]
-                else:
-                    return results[0]["announcechannelname"], results[0]["announce"]
+        async with aiotinydb.AIOTinyDB(central.guildDB_path) as guildDB:
+            results = guildDB.search(ideal_guild.id == guild.id)
+
+            if len(results) > 0:
+                if "announce" in results[0]:
+                    if not notice:
+                        return results[0]["announcechannel"], results[0]["announce"]
+                    else:
+                        return results[0]["announcechannelname"], results[0]["announce"]
 
     return None
