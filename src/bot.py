@@ -107,14 +107,17 @@ class BibleBot(discord.AutoShardedClient):
         output_file.write(output)
         
     async def on_guild_join(self, guild):
+        await self.wait_until_ready()
         await bot_extensions.send_server_count(self)
 
     async def on_guild_remove(self, guild):
+        await self.wait_until_ready()
         await bot_extensions.send_server_count(self)
 
     async def on_message(self, raw):
-        owner_id = config["BibleBot"]["owner"]
         await self.wait_until_ready()
+
+        owner_id = config["BibleBot"]["owner"]
 
         if ":" not in raw.content:
             if config["BibleBot"]["commandPrefix"] not in raw.content:
