@@ -56,14 +56,13 @@ def purify_text(text):
 
 
 async def get_random_verse():
-    url = "https://dailyverses.net/random-bible-verse"
+    url = "https://www.bibledice.com/scripture.php"
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             if resp is not None:
                 soup = BeautifulSoup(await resp.text(), "lxml")
-                verse = soup.find(
-                    "div", {"class": "bibleChapter"}).find("a").get_text()
+                verse = soup.find("p", {"class": "heading"}).get_text()
 
                 return verse
 
