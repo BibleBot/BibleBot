@@ -127,3 +127,5 @@ config.ini
 .vscode/
 
 error_logs/
+
+bin/

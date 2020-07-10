@@ -4,6 +4,7 @@
 [![Join us on Discord](https://img.shields.io/discord/362503610006765568.svg)](https://discord.gg/H7ZyHqE)
 [![Discord Bots](https://discordbots.org/api/widget/lib/361033318273384449.png)](https://discordbots.org/bot/361033318273384449)
 
+## This repo is a work in progress, none of the following instructions apply currently. For self-hosting, use the master branch.
 
 The premier Discord bot for Bible verses and Christian resources.
 
