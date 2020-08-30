@@ -1,0 +1,37 @@
+{
+  "name": "biblebot",
+  "version": "9.0.0",
+  "description": "The premier Discord bot for Bible verses.",
+  "main": "dist/init.js",
+  "scripts": {
+    "build": "npx tsc",
+    "genconf": "node ./dist/scripts/config_generator.js",
+    "prod": "node ./dist/init.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BibleBot/BibleBot.git"
+  },
+  "author": "Seraphim R.P. (vypr)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BibleBot/BibleBot/issues"
+  },
+  "homepage": "https://github.com/BibleBot/BibleBot#readme",
+  "devDependencies": {
+    "@types/node": "^14.6.2",
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^3.10.1",
+    "eslint": "^7.7.0",
+    "eslint-plugin-json": "^2.1.2",
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "@types/ini": "^1.3.30",
+    "chalk": "^4.1.0",
+    "discord.js": "^12.3.1",
+    "ini": "^1.3.5",
+    "readline": "^1.3.0"
+  }
+}
