@@ -60,7 +60,7 @@ const generateConfiguration = async () => {
 
     rl.close();
 
-    fs.writeFile(__dirname + '/' + outputDirectory + '/config.ini', ini.stringify(config), (err) => {
+    fs.writeFile(`${__dirname}/${outputDirectory}/config.ini`, ini.stringify(config), (err) => {
         if (err) {
             console.error('Error writing configuration file, please ensure proper permissions.');
         } else {

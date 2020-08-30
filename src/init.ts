@@ -10,7 +10,7 @@ import { VersesRouter } from './routes/verses';
 import { Client } from 'discord.js';
 const bot = new Client({shards: 'auto'});
 
-const config = ini.parse(fs.readFileSync(__dirname + '/config.ini', 'utf-8'));
+const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 
 const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
@@ -20,25 +20,25 @@ bot.on('ready', () => {
 });
 
 bot.on('shardReady', shard => {
-    console.log('<shard ' + (shard + 1) + '> shard connected');
+    console.log(`<shard ${(shard + 1)}> shard connected`);
     
     bot.user.setPresence({
         activity: {
-            name: config.biblebot.commandPrefix + 'biblebot v' + config.meta.version + ' | Shard: ' + String(shard + 1) + ' / ' + String(bot.options.shardCount)
+            name: `${config.biblebot.commandPrefix}biblebot v${config.meta.version} | Shard: ${String(shard + 1)} / ${String(bot.options.shardCount)}`
         },
         shardID: shard
     });
 });
 
 bot.on('shardDisconnect', (_, shard) => {
-    console.log('<shard ' + (shard + 1) + '> shard disconnected');
+    console.log(`<shard ${(shard + 1)}> shard disconnected`);
 });
 bot.on('shardReconnecting', shard => {
-    console.log('<shard ' + (shard + 1) + '> shard reconnecting');
+    console.log(`<shard ${(shard + 1)}> shard reconnecting`);
 });
 
 bot.on('shardResume', shard => {
-    console.log('<shard ' + (shard + 1) + '> shard resuming');
+    console.log(`<shard ${(shard + 1)}> shard resuming`);
 });
 
 bot.on('message', message => {
@@ -53,5 +53,5 @@ bot.on('message', message => {
     }
 });
 
-console.log('BibleBot v' + process.env.npm_package_version + ' by Seraphim R.P. (vypr)');
+console.log(`BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
 bot.login(config.biblebot.token);
