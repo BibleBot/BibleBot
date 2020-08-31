@@ -16,11 +16,11 @@ const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
 
 bot.on('ready', () => {
-    console.log('<shard 0> initialization complete');
+    console.log(0, 'initialization complete');
 });
 
 bot.on('shardReady', shard => {
-    console.log(`<shard ${(shard + 1)}> shard connected`);
+    console.log(shard + 1, 'shard connected');
     
     bot.user.setPresence({
         activity: {
@@ -31,14 +31,14 @@ bot.on('shardReady', shard => {
 });
 
 bot.on('shardDisconnect', (_, shard) => {
-    console.log(`<shard ${(shard + 1)}> shard disconnected`);
+    console.log(shard + 1, 'shard disconnected');
 });
 bot.on('shardReconnecting', shard => {
-    console.log(`<shard ${(shard + 1)}> shard reconnecting`);
+    console.log(shard + 1, 'shard reconnecting');
 });
 
 bot.on('shardResume', shard => {
-    console.log(`<shard ${(shard + 1)}> shard resuming`);
+    console.log(shard + 1, 'shard resuming');
 });
 
 bot.on('message', message => {
@@ -53,5 +53,5 @@ bot.on('message', message => {
     }
 });
 
-console.log(`BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
+console.log(0, `BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
 bot.login(config.biblebot.token);

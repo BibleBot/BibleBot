@@ -2,7 +2,7 @@ import * as chalk from 'chalk';
 
 ['log', 'warn', 'error'].forEach((method) => {
     const old = console[method].bind(console);
-    console[method] = (...args) => {
+    console[method] = (shard: number, ...args) => {
         let color = chalk.cyanBright;
         let loggedMethod = method;
 
@@ -19,7 +19,11 @@ import * as chalk from 'chalk';
                 break;
         }
 
-        const prefix = color('[' + loggedMethod + ']');
+        const prefix = color(`[${loggedMethod}]`);
+        
+        if (shard > 0) {
+            args.unshift(chalk.greenBright(`<shard ${shard}>`));
+        }
 
         old.apply(console, [prefix].concat(args));
     };
