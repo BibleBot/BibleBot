@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as ini from 'ini';
 
-require('./helpers/console_wrapper');
+//require('./helpers/console_wrapper');
 
 import Context from './models/context';
 import { CommandsRouter } from './routes/commands';

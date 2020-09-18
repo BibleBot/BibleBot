@@ -9,6 +9,7 @@ import * as chalk from 'chalk';
         switch (method) {
             case 'warn':
                 color = chalk.yellowBright;
+                loggedMethod = 'info';
                 break;
             case 'error':
                 color = chalk.redBright;

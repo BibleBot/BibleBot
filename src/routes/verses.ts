@@ -1,4 +1,5 @@
 import Context from '../models/context';
+import * as bibleGateway from '../interfaces/bible_gateway';
 
 export class VersesRouter {
     private static instance: VersesRouter;
@@ -16,6 +17,12 @@ export class VersesRouter {
     }
 
     processMessage(ctx: Context): void {
-        ctx.channel.send(ctx.msg);
+        bibleGateway.getResult(ctx.msg, 'RSV', true, true, (err, data) => {
+            if (err != null) {
+                console.error(err);
+            } else {
+                console.log(data);
+            }
+        });
     }
 }
