@@ -24,7 +24,7 @@ bot.on('shardReady', shard => {
     
     bot.user.setPresence({
         activity: {
-            name: `${config.biblebot.commandPrefix}biblebot v${config.meta.version} | Shard: ${String(shard + 1)} / ${String(bot.options.shardCount)}`
+            name: `${config.biblebot.commandPrefix}biblebot v${process.env.npm_package_version} | Shard: ${String(shard + 1)} / ${String(bot.options.shardCount)}`
         },
         shardID: shard
     });

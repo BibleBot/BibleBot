@@ -1,5 +1,6 @@
 import Context from '../models/context';
 import * as bibleGateway from '../interfaces/bible_gateway';
+import { createEmbed } from '../helpers/embed_builder';
 
 export class VersesRouter {
     private static instance: VersesRouter;
@@ -21,7 +22,13 @@ export class VersesRouter {
             if (err != null) {
                 console.error(err);
             } else {
-                console.log(data);
+                try {
+                    ctx.channel.send({
+                        embed: createEmbed(`${data.passage} - ${data.version}`, `${data.title}`, `${data.text}`, false)
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
             }
         });
     }

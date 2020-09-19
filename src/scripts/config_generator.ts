@@ -10,7 +10,7 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-const config = { 'biblebot': {}, 'apis': {}, 'meta': {'version': process.env.npm_package_version}};
+const config = { 'biblebot': {}, 'apis': {} };
 
 const queryToken = () => {
     return new Promise((resolve, reject) => {

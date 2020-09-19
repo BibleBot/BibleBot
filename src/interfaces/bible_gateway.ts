@@ -1,5 +1,3 @@
-import Version from '../models/version';
-
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import { purifyVerseText } from '../helpers/text_purification';
@@ -12,11 +10,11 @@ export function getResult(query: string, version: string, headings: boolean, ver
             const container = document.getElementsByClassName('passage-col')[0];
 
             Array.from(container.getElementsByClassName('chapternum')).forEach((el: Element) => {
-                el.textContent = `<${el.textContent.slice(0, -1)}> `;
+                el.textContent = `<**${el.textContent.slice(0, -1)}**> `;
             });
 
             Array.from(container.getElementsByClassName('versenum')).forEach((el: Element) => {
-                el.textContent = `<${el.textContent.slice(0, -1)}> `;
+                el.textContent = `<**${el.textContent.slice(0, -1)}**> `;
             });
 
             Array.from(container.getElementsByClassName('footnote')).forEach((el: Element) => {
