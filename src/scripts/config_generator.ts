@@ -13,7 +13,7 @@ const rl = readline.createInterface({
 const config = { 'biblebot': {}, 'apis': {} };
 
 const queryToken = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         rl.question('Discord API Token: ', (token) => {
             config.biblebot['token'] = token;
 
@@ -23,7 +23,7 @@ const queryToken = () => {
 };
 
 const queryId = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         rl.question('Owner Discord ID: ', (id) => {
             config.biblebot['id'] = id;
 
@@ -33,7 +33,7 @@ const queryId = () => {
 };
 
 const queryBrackets = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         rl.question('Dividing Brackets (ex. <>): ', (brackets) => {
             config.biblebot['dividingBrackets'] = brackets;
 
@@ -43,9 +43,19 @@ const queryBrackets = () => {
 };
 
 const queryPrefix = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         rl.question('Command prefix: ', (prefix) => {
             config.biblebot['commandPrefix'] = prefix;
+
+            resolve();
+        });
+    });
+};
+
+const queryAPIBible = () => {
+    return new Promise((resolve) => {
+        rl.question('API.Bible Key: ', (key) => {
+            config.apis['apiBible'] = key;
 
             resolve();
         });
@@ -57,6 +67,7 @@ const generateConfiguration = async () => {
     await queryId();
     await queryBrackets();
     await queryPrefix();
+    await queryAPIBible();
 
     rl.close();
 

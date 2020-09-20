@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import { purifyVerseText } from '../helpers/text_purification';
+import Reference from '../models/reference';
+import Verse from '../models/verse';
 
-export function getResult(query: string, version: string, headings: boolean, verseNumbers: boolean, 
-    callback: (err: Error, data: (null | Record<string, string>)) => void): void {
-        axios.get(`https://www.biblegateway.com/passage/?search=${query}&version=${version}&interface=print`).then((res) => {
+export function getResult(ref: Reference, headings: boolean, verseNumbers: boolean, 
+    callback: (err: Error, data: Verse) => void): void {
+        axios.get(`https://www.biblegateway.com/passage/?search=${ref.toString()}&version=${ref.version.abbreviation()}&interface=print`).then((res) => {
             const { document } = (new JSDOM(res.data)).window;
 
             const container = document.getElementsByClassName('passage-col')[0];
@@ -24,11 +26,12 @@ export function getResult(query: string, version: string, headings: boolean, ver
             const title = Array.from(container.getElementsByTagName('h3')).map((el: Element) => el.textContent.trim()).join(' / ');
             const text = Array.from(container.getElementsByTagName('p')).map((el: Element) => el.textContent.trim()).join('\n');
 
-            return callback(null, {
-                passage: `${document.getElementsByClassName('bcv')[0].textContent}`,
-                version: `${document.getElementsByClassName('translation')[0].textContent} (${version})`,
-                title: title,
-                text: purifyVerseText(text),
-            });
+            return callback(null, new Verse(
+                `${document.getElementsByClassName('bcv')[0].textContent}`,
+                title,
+                purifyVerseText(text),
+                ref,
+                'bg'
+            ));
         });
 }

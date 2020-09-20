@@ -7,6 +7,8 @@ import Context from './models/context';
 import { CommandsRouter } from './routes/commands';
 import { VersesRouter } from './routes/verses';
 
+import * as NameFetcher from './helpers/name_fetcher';
+
 import { Client } from 'discord.js';
 const bot = new Client({shards: 'auto'});
 
@@ -43,6 +45,7 @@ bot.on('shardResume', shard => {
 
 bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
+    if (message.author.id !== config.biblebot.id) return; //devmode for now
 
     const ctx = new Context(message.author.id, message.channel, message.guild, message.content);
 
@@ -54,4 +57,6 @@ bot.on('message', message => {
 });
 
 console.log(0, `BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
-bot.login(config.biblebot.token);
+NameFetcher.fetchBookNames().then(() => {
+    bot.login(config.biblebot.token);
+});
