@@ -5,12 +5,18 @@ import axios from 'axios';
 import chalk = require('chalk');
 import { JSDOM } from 'jsdom';
 import * as ora from 'ora';
+import * as _ from 'lodash';
 
 import * as defaultNames from './name_data/default_names.json';
 import * as apiBibleNames from './name_data/apibible_names.json';
 import * as abbreviations from './name_data/abbreviations.json';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
+
+export function getBookNames(): Record<string, Array<string>> {
+    const file = fs.readFileSync(`${__dirname}/name_data/completed_names.json`, 'utf-8');
+    return JSON.parse(file);
+}
 
 export async function fetchBookNames(): Promise<boolean> {
     const bgVersions = await getBibleGatewayVersions();
@@ -24,9 +30,21 @@ export async function fetchBookNames(): Promise<boolean> {
         text: 'Writing to file...'
     }).start();
 
-    fs.writeFileSync(`${__dirname}/name_data/completed_names.json`, JSON.stringify({ ...bgNames, ...abNames, ...abbreviations }));
+    try {
+        const content = JSON.stringify(_.mergeWith({}, bgNames, abNames, abbreviations, (objValue, srcValue) => {
+            if (_.isArray(objValue)) {
+                return objValue.concat(srcValue);
+            }
+        }));
+
+        fs.writeFileSync(`${__dirname}/name_data/completed_names.json`, content);
     
-    loadingSpinner.succeed();
+        loadingSpinner.succeed();
+    } catch (err) {
+        console.error(err);
+
+        loadingSpinner.fail();
+    }
 
     return new Promise((resolve) => {
         resolve(true);
@@ -65,7 +83,7 @@ function getBibleGatewayNames(versions: Record<string, string>): Promise<Record<
 
     const loadingSpinner = ora({
         prefixText: chalk.cyanBright('[info]'),
-        text: `Grabbing BibleGateway names from ${links.length} versions...`,
+        text: `Grabbing names from ${links.length} BibleGateway versions...`,
         interval: links.length * 10
     }).start();
 
@@ -87,8 +105,19 @@ function getBibleGatewayNames(versions: Record<string, string>): Promise<Record<
                     span.remove();
                 });
 
-                const englishName = defaultNames[book.getAttribute('data-target').slice(1, -5)];
+                let dataName = book.getAttribute('data-target').slice(1, -5);
+                
                 const name = book.textContent.trim();
+
+                if (['3macc', '4macc'].includes(dataName)) {
+                    dataName = dataName.slice(0, -2);
+                } else if (['gkesth', 'adest', 'addesth'].includes(dataName)) {
+                    dataName = 'gkest';
+                } else if (['sgthree', 'sgthr', 'prazar'].includes(dataName)) {
+                    dataName = 'praz';
+                }
+
+                const englishName = defaultNames[dataName];
 
                 if (names[englishName]) {
                     if (!names[englishName].includes(name)) {
@@ -130,7 +159,7 @@ function getAPIBibleNames(versions: Record<string, string>): Promise<Record<stri
 
     const loadingSpinner = ora({
         prefixText: chalk.cyanBright('[info]'),
-        text: `Grabbing API.Bible names from ${links.length} versions...`,
+        text: `Grabbing names from ${links.length} API.Bible versions...`,
         interval: links.length * 10
     }).start();
 
@@ -141,7 +170,7 @@ function getAPIBibleNames(versions: Record<string, string>): Promise<Record<stri
     return Promise.all(promisesList).then(values => {
         values.forEach(res => {
             for (const book of res.data.data) {
-                let id = book.id;
+                const trueId = book.id;
                 let name = book.name;
                 const abbv = book.abbreviation;
 
@@ -149,21 +178,32 @@ function getAPIBibleNames(versions: Record<string, string>): Promise<Record<stri
                 name = name.trim();
 
                 try {
-                    id = apiBibleNames[id];
+                    const id = apiBibleNames[trueId];
 
                     if ((id == '1sam' && name == '1 Kings') || (id == '2sam' && name == '2 Kings') || (['3 Kings', '4 Kings'].includes(abbv))) {
                         continue;
                     }
 
-                    if (names[id]) {
-                        if (!names[id].includes(name)) {
-                            names[id].push(name);
+                    const englishName = defaultNames[id];
+
+                    if (englishName === undefined) {
+                        // DAG/Daniel (Greek) does not correspond to any Bible Gateway book.
+                        if (trueId !== 'DAG') {
+                            console.error(`Inconsistency found: ${trueId} in ${book.bibleId}.`);
+                        }
+
+                        continue;
+                    }
+
+                    if (names[englishName]) {
+                        if (!names[englishName].includes(name)) {
+                            names[englishName].push(name);
                         }
                     } else {
-                        names[id] = [ name ];
+                        names[englishName] = [ name ];
                     }
                 } catch (err) {
-                    console.log(`Inconsistency found: ${id} in ${book.bibleId}`);
+                    console.error(err);
                 }
 
             }

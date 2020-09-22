@@ -32,11 +32,13 @@ export class VersesRouter {
         }
 
         results.forEach(result => {
-            const reference = utils.generateReference(result);
+            console.log(result);
+            
+            /*const reference = utils.generateReference(result);
 
             if (reference === undefined) {
                 return;
-            }
+            }*/
 
             
         });

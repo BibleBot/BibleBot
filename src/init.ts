@@ -7,7 +7,7 @@ import Context from './models/context';
 import { CommandsRouter } from './routes/commands';
 import { VersesRouter } from './routes/verses';
 
-import * as NameFetcher from './helpers/name_fetcher';
+import { fetchBookNames } from './helpers/name_fetcher';
 
 import { Client } from 'discord.js';
 const bot = new Client({shards: 'auto'});
@@ -57,6 +57,6 @@ bot.on('message', message => {
 });
 
 console.log(0, `BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
-NameFetcher.fetchBookNames().then(() => {
+fetchBookNames().then(() => {
     bot.login(config.biblebot.token);
 });

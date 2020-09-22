@@ -4,9 +4,8 @@
   "description": "The premier Discord bot for Bible verses.",
   "main": "dist/init.js",
   "scripts": {
-    "build": "npx tsc",
     "genconf": "node ./dist/scripts/config_generator.js",
-    "prod": "node ./dist/init.js",
+    "prod": "npx tsc && node ./dist/init.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -34,6 +33,7 @@
     "discord.js": "^12.3.1",
     "ini": "^1.3.5",
     "jsdom": "^16.4.0",
+    "lodash": "^4.17.20",
     "ora": "^5.1.0",
     "readline": "^1.3.0"
   }

@@ -40,8 +40,8 @@
 - [ ] +unoptout id - unoptout an id from using the bot (works for users)
 - [ ] +leave NAME - leave the current or NAME server (argument optional)
 
-- [ ] Verse Processing with Bible Gateway
-- [ ] Verse Processing with Bibles.org
-- [ ] Verse Processing with BibleHub
+- [ ] Verse Parsing
+- [x] Verse Processing with Bible Gateway
+- [ ] Verse Processing with API.Bible
+- [ ] Verse Processing with Bible Hub
 - [ ] Verse Processing with Bibleserver
-- [ ] Verse Processing with REV (disabled)
