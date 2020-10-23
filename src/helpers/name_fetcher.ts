@@ -18,7 +18,18 @@ export function getBookNames(): Record<string, Array<string>> {
     return JSON.parse(file);
 }
 
-export async function fetchBookNames(): Promise<boolean> {
+export async function fetchBookNames(isDryRun: boolean): Promise<boolean> {
+    if (isDryRun) {
+        ora({
+            prefixText: chalk.cyanBright('[info]'),
+            text: 'Name fetching set to dry, skipping...'
+        }).succeed();
+        
+        return new Promise((resolve) => {
+            resolve(true);
+        });
+    }
+
     const bgVersions = await getBibleGatewayVersions();
     const bgNames = await getBibleGatewayNames(bgVersions);
     

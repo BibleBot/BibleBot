@@ -129,3 +129,5 @@ config.ini
 error_logs/
 
 venv/
+
+db*/

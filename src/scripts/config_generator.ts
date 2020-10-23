@@ -10,7 +10,7 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-const config = { 'biblebot': {}, 'apis': {} };
+const config = { 'biblebot': { 'dry': false }, 'apis': {} };
 
 const queryToken = () => {
     return new Promise((resolve) => {
@@ -34,8 +34,8 @@ const queryId = () => {
 
 const queryBrackets = () => {
     return new Promise((resolve) => {
-        rl.question('Dividing Brackets (ex. <>): ', (brackets) => {
-            config.biblebot['dividingBrackets'] = brackets;
+        rl.question('Ignoring Brackets (ex. <>): ', (brackets) => {
+            config.biblebot['ignoringBrackets'] = brackets;
 
             resolve();
         });

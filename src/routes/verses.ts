@@ -1,7 +1,12 @@
+import * as ini from 'ini';
+import * as fs from 'fs';
+
 import Context from '../models/context';
 import * as bibleGateway from '../interfaces/bible_gateway';
 import { createEmbed } from '../helpers/embed_builder';
 import * as utils from '../helpers/verse_utils';
+
+const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
 export class VersesRouter {
     private static instance: VersesRouter;
@@ -18,7 +23,7 @@ export class VersesRouter {
         return VersesRouter.instance;
     }
 
-    processMessage(ctx: Context): void {
+    processMessage(ctx: Context, inputType: string): void {
         // get rid of newlines and instead put a space between lines
         const msg = ctx.msg.split(/\r?\n/).join(' ');
         
@@ -31,12 +36,20 @@ export class VersesRouter {
             return;
         }
 
-        results.forEach(result => {
-            console.log(result);
-            
-            /*const reference = utils.generateReference(result);
+        results.forEach((result) => {
+            if (utils.isSurroundedByBrackets(config.biblebot.ignoringBrackets, result, msg)) {
+                return;
+            }
 
-            if (reference === undefined) {
+            if (inputType == 'erasmus' && (!utils.isSurroundedByBrackets('[]', result, msg) || msg.charAt(0) != '$')) {
+                return;
+            }
+
+            const reference = utils.generateReference(result, msg);
+
+            console.log(reference);
+
+            /*if (reference === undefined) {
                 return;
             }*/
 

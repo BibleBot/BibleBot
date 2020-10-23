@@ -1,7 +1,7 @@
 import { isValidSource } from '../helpers/verse_utils';
 
 export default class Version {
-    private name: string;
+    private _name: string;
     private abbv: string;
     private src: string;
     private supportsOldTestament: boolean;
@@ -9,7 +9,7 @@ export default class Version {
     private supportsDeuterocanon: boolean;
 
     constructor(name: string, abbv: string, source: string, supportsOldTestament: boolean, supportsNewTestament: boolean, supportsDeuterocanon: boolean) {
-        this.name = name;
+        this._name = name;
         this.abbv = abbv.toUpperCase();
         
         if (!isValidSource(source)) {
@@ -28,5 +28,9 @@ export default class Version {
 
     source(): string {
         return this.src;
+    }
+
+    name(): string {
+        return `${this._name} (${this.abbv})`;
     }
 }

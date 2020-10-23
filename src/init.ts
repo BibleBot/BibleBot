@@ -9,8 +9,18 @@ import { VersesRouter } from './routes/verses';
 
 import { fetchBookNames } from './helpers/name_fetcher';
 
+import * as PouchDB from 'pouchdb';
+
+import * as pdbFind from 'pouchdb-find';
+PouchDB.plugin(pdbFind);
+
 import { Client } from 'discord.js';
 const bot = new Client({shards: 'auto'});
+
+const db = new PouchDB('biblebot');
+db.sync('http://localhost:5984/db', { live: true }).on('error', (err) => {
+    console.error(err);
+});
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 
@@ -47,16 +57,51 @@ bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
     if (message.author.id !== config.biblebot.id) return; //devmode for now
 
-    const ctx = new Context(message.author.id, message.channel, message.guild, message.content);
 
-    if (ctx.msg.startsWith(config.biblebot.commandPrefix)) {
-        commandsRouter.processCommand(ctx);
-    } else if (ctx.msg.includes(':')) {
-        versesRouter.processMessage(ctx);
-    }
+    db.get(`preference:${message.author.id}`).catch((err) => {
+        if (err.name === 'not_found') {
+            return {
+                _id: `preference:${message.author.id}`,
+                input: 'default',
+                language: 'english',
+                version: 'RSV',
+                headings: true,
+                verseNumbers: true
+            };
+        }
+    }).then((prefs) => {
+        const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, prefs, db);
+
+        switch(prefs['input']) {
+            case 'default': {
+                if (ctx.msg.startsWith(config.biblebot.commandPrefix)) {
+                    commandsRouter.processCommand(ctx);
+                } else if (ctx.msg.includes(':')) {
+                    versesRouter.processMessage(ctx, 'default');
+                }
+
+                break;
+            }
+            case 'erasmus': {
+                // tl;dr - Erasmus verse processing is invoked by mention in beginning of message
+                // or if verse is surrounded by square brackets or if message starts with '$'
+                if (ctx.msg.startsWith('$')) {
+                        if (ctx.msg.includes(':')) {
+                            versesRouter.processMessage(ctx, 'erasmus');
+                        } else if (commandsRouter.isCommand('$', ctx.msg.split(' ')[0])[0] === true) {
+                            commandsRouter.processCommand(ctx);
+                        }
+                }
+
+                break;
+            }
+        }
+    });
+
+    
 });
 
 console.log(0, `BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
-fetchBookNames().then(() => {
+fetchBookNames(config.biblebot.dry).then(() => {
     bot.login(config.biblebot.token);
 });
