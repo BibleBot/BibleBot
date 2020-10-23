@@ -31,6 +31,32 @@ bot.on('ready', () => {
     console.log(0, 'initialization complete');
 });
 
+bot.on('error', (error) => {
+    const date = new Date();
+    const fileTimestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    const errorTimestamp = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+    const output = `${errorTimestamp}
+    
+    name: ${error.name}
+    
+    msg: ${error.message}
+    
+    stack: ${error.stack}
+    
+    ---`;
+
+    const dir = `${__dirname}/../error_logs`;
+
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+
+    fs.appendFileSync(`${dir}/log-${fileTimestamp}.txt`, output);
+
+    console.log();
+});
+
 bot.on('shardReady', shard => {
     console.log(shard + 1, 'shard connected');
     
