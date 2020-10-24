@@ -26,6 +26,10 @@ import * as chalk from 'chalk';
             args.unshift(chalk.greenBright(`<shard ${shard}>`));
         }
 
-        old.apply(console, [prefix].concat(args));
+        if (method == 'error') {
+            old.apply(console, [prefix].concat('Internal error occurred. Fix yo code.'));
+        } else {
+            old.apply(console, [prefix].concat(args));
+        }
     };
 });

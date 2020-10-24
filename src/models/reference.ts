@@ -33,6 +33,8 @@ export default class Reference {
             result += `-${this._endingVerse}`;
         }
 
+        result += ` ${this.version.abbreviation}`;
+
         return `${result}`;
     }
 

@@ -2,7 +2,10 @@ import * as ini from 'ini';
 import * as fs from 'fs';
 
 import Context from '../models/context';
+import Verse from '../models/verse';
+
 import * as bibleGateway from '../interfaces/bible_gateway';
+import * as apiBible from '../interfaces/api_bible';
 import { createEmbed } from '../helpers/embed_builder';
 import * as utils from '../helpers/verse_utils';
 
@@ -41,18 +44,33 @@ export class VersesRouter {
                 return;
             }
 
-            if (inputType == 'erasmus' && (!utils.isSurroundedByBrackets('[]', result, msg) || msg.charAt(0) != '$')) {
+            if (inputType == 'erasmus' && !utils.isSurroundedByBrackets('[]', result, msg)) {
                 return;
             }
 
             const reference = utils.generateReference(result, msg);
 
-            console.log(reference);
-
-            /*if (reference === undefined) {
+            if (reference === null) {
                 return;
-            }*/
+            }
 
+            let processor = bibleGateway;
+
+            switch (reference.version.source()) {
+                case 'ab':
+                    processor = apiBible;
+                    break;
+            }
+
+            processor.getResult(reference, true, true, (err, data: Verse) => {
+                if (err) {
+                    return;
+                }
+
+                const embed = createEmbed(`${data.passage} - ${data.version().name}`, data.title(), data.text(), false);
+
+                ctx.channel.send(embed);
+            });
             
         });
     }

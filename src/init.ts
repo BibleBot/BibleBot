@@ -17,7 +17,7 @@ PouchDB.plugin(pdbFind);
 import { Client } from 'discord.js';
 const bot = new Client({shards: 'auto'});
 
-const db = new PouchDB('biblebot');
+const db = new PouchDB('db');
 db.sync('http://localhost:5984/db', { live: true }).on('error', (err) => {
     console.error(err);
 });
