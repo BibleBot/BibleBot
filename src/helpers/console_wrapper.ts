@@ -27,7 +27,9 @@ import * as chalk from 'chalk';
         }
 
         if (method == 'error') {
-            old.apply(console, [prefix].concat('Internal error occurred. Fix yo code.'));
+            if (args.length > 0) {
+                old.apply(console, [prefix].concat(args));
+            }
         } else {
             old.apply(console, [prefix].concat(args));
         }

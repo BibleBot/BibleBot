@@ -34,8 +34,9 @@ export class VersesRouter {
 
         const results = utils.findBooksInMessage(msg);
 
-        if (results.length > 6) {
+        if (results.length > 5) {
             ctx.channel.send('Please don\'t spam me.');
+            ctx.logMessage('erro', ctx.shard, ctx.id, ctx.guild.id, ctx.channel.id, 'spam attempt');
             return;
         }
 
@@ -64,6 +65,7 @@ export class VersesRouter {
 
             processor.getResult(reference, true, true, (err, data: Verse) => {
                 if (err) {
+                    console.error(err);
                     return;
                 }
 
