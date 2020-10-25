@@ -31,8 +31,7 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
                     `${document.getElementsByClassName('bcv')[0].textContent}`,
                     title,
                     purifyVerseText(text),
-                    ref,
-                    'bg'
+                    ref
                 ));
             } catch (err) {
                 return callback(err, null);

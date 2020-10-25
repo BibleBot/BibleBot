@@ -52,8 +52,7 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
                 ref.version.name(),
                 title,
                 purifyVerseText(text),
-                ref,
-                'ab'
+                ref
             ));
         });
 }

@@ -1,4 +1,3 @@
-import { isValidSource } from '../helpers/verse_utils';
 import Reference from './reference';
 import Version from './version';
 
@@ -7,19 +6,12 @@ export default class Verse {
     private _title: string;
     private _text: string;
     private _ref: Reference;
-    private _src: string;
 
-    constructor(passage: string, title: string, text: string, reference: Reference, source: string) {
+    constructor(passage: string, title: string, text: string, reference: Reference) {
         this._passage = passage;
         this._title = title;
         this._text = text;
         this._ref = reference;
-        
-        if (!isValidSource(source)) {
-            throw new Error('Invalid source specified.');
-        }
-
-        this._src = source;
     }
 
     passage(): string {
@@ -40,9 +32,5 @@ export default class Verse {
 
     reference(): Reference {
         return this._ref;
-    }
-
-    source(): string {
-        return this._src;
     }
 }
