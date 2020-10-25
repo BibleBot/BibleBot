@@ -1,21 +1,37 @@
-require('../helpers/console_wrapper');
-
+import * as chalk from 'chalk';
 import { Snowflake } from 'discord.js';
 
-export function logMessage(level: string, shard: number, sender: Snowflake, guild: Snowflake, channel: Snowflake, msg: string): void {
-    const output = `<${sender}@${guild}#${channel}> ${msg}`;
+export function logInteraction(level: string, shard: number, sender: Snowflake, guild: Snowflake, channel: Snowflake, msg: string): void {
+    const sourceSection = '<' + chalk.blueBright(sender) + '@' + chalk.magentaBright(`${guild}`) + '#' + chalk.greenBright(`${channel}`) + '>';
+    const output = `${sourceSection} ${msg}`;
+    log(level, shard, output);
+}
 
-    console.log(output);
+export function log(level: string, shard: number, msg: string): void {
+    let internalLog = console.log;
+    let color = chalk.cyanBright;
+    let output;
 
     switch (level) {
-        case 'info':
-            console.log(shard, output);
-            break;
         case 'warn':
-            console.warn(shard, output);
+            internalLog = console.warn;
+            color = chalk.yellowBright;
             break;
-        case 'erro':
-            console.error(output);
+        case 'err':
+            level = 'erro';
+            internalLog = console.error;
+            color = chalk.redBright;
             break;
     }
+
+    const levelPrefix = color(`[${level}]`);
+    if (shard > 0) {
+        const shardPrefix = chalk.blackBright(`[shard ${shard}]`) + ' ';
+        output = `${levelPrefix} ${shardPrefix}${msg}`;
+    } else {
+        output = `${levelPrefix} ${msg}`;
+    }
+    
+
+    internalLog(output);
 }

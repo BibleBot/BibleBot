@@ -1,7 +1,7 @@
 import Language from './language';
 import * as Discord from 'discord.js';
 import * as PouchDB from 'pouchdb';
-import { logMessage } from '../helpers/logger';
+import { logInteraction } from '../helpers/logger';
 
 export default class Context {
     id: string;
@@ -13,7 +13,7 @@ export default class Context {
     preferences: (PouchDB.Core.IdMeta & PouchDB.Core.GetMeta) | Record<string, unknown>;
     db: PouchDB.Database;
     shard: number;
-    logMessage;
+    logInteraction;
 
     constructor(id: string, bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel, guild: Discord.Guild,
                 msg: string, preferences: (PouchDB.Core.IdMeta & PouchDB.Core.GetMeta) | Record<string, unknown>, db: PouchDB.Database) {
@@ -25,6 +25,6 @@ export default class Context {
         this.preferences = preferences;
         this.db = db;
         this.shard = guild.shardID + 1;
-        this.logMessage = logMessage;
+        this.logInteraction = logInteraction;
     }
 }

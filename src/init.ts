@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as ini from 'ini';
 
-//require('./helpers/console_wrapper');
+import { log } from './helpers/logger';
 
 import Context from './models/context';
 import { CommandsRouter } from './routes/commands';
@@ -18,8 +18,8 @@ import { Client } from 'discord.js';
 const bot = new Client({shards: 'auto'});
 
 const db = new PouchDB('db');
-db.sync('http://localhost:5984/db', { live: true }).on('error', (err) => {
-    console.error(err);
+db.sync('http://localhost:5984/db', { live: true }).on('error', () => {
+    log('err', 0, 'couldn\'t sync to remote db');
 });
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
@@ -28,7 +28,7 @@ const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
 
 bot.on('ready', () => {
-    console.log(0, 'initialization complete');
+    log('info', 0, 'initialization complete');
 });
 
 bot.on('error', (error) => {
@@ -54,11 +54,11 @@ bot.on('error', (error) => {
 
     fs.appendFileSync(`${dir}/log-${fileTimestamp}.txt`, output);
 
-    console.log();
+    log('err', 0, error.message);
 });
 
 bot.on('shardReady', shard => {
-    console.log(shard + 1, 'shard connected');
+    log('info', shard + 1, 'shard connected');
     
     bot.user.setPresence({
         activity: {
@@ -69,14 +69,14 @@ bot.on('shardReady', shard => {
 });
 
 bot.on('shardDisconnect', (_, shard) => {
-    console.log(shard + 1, 'shard disconnected');
+    log('info', shard + 1, 'shard disconnected');
 });
 bot.on('shardReconnecting', shard => {
-    console.log(shard + 1, 'shard reconnecting');
+    log('info', shard + 1, 'shard reconnecting');
 });
 
 bot.on('shardResume', shard => {
-    console.log(shard + 1, 'shard resuming');
+    log('info', shard + 1, 'shard resuming');
 });
 
 bot.on('message', message => {
@@ -127,7 +127,7 @@ bot.on('message', message => {
     
 });
 
-console.log(0, `BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
+log('info', 0, `BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
 fetchBookNames(config.biblebot.dry).then(() => {
     bot.login(config.biblebot.token);
 });
