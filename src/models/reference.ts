@@ -6,12 +6,12 @@ export default class Reference {
     private _startingVerse: number;
     private _endingChapter: number;
     private _endingVerse: number;
-    public version: Version;
+    public version: string;
     private _isOT: boolean;
     private _isNT: boolean;
     private _isDEU: boolean;
 
-    constructor(book: string, startingChapter: number, startingVerse: number, endingChapter: number, endingVerse: number, version: Version, isOT?: boolean, isNT?: boolean, isDEU?: boolean) {
+    constructor(book: string, startingChapter: number, startingVerse: number, endingChapter: number, endingVerse: number, version: string, isOT?: boolean, isNT?: boolean, isDEU?: boolean) {
         this._book = book;
         this._startingChapter = startingChapter;
         this._startingVerse = startingVerse;
@@ -32,8 +32,6 @@ export default class Reference {
         } else if (this._endingVerse) {
             result += `-${this._endingVerse}`;
         }
-
-        result += ` ${this.version.abbreviation}`;
 
         return `${result}`;
     }

@@ -6,7 +6,7 @@ import Verse from '../models/verse';
 
 export function getResult(ref: Reference, headings: boolean, verseNumbers: boolean, 
     callback: (err: Error, data: Verse) => void): void {
-        axios.get(`https://www.biblegateway.com/passage/?search=${ref.toString()}&version=${ref.version.abbreviation()}&interface=print`).then((res) => {
+        axios.get(`https://www.biblegateway.com/passage/?search=${ref.toString()}&version=${ref.version}&interface=print`).then((res) => {
             try {
                 const { document } = (new JSDOM(res.data)).window;
 

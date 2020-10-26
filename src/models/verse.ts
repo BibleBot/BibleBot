@@ -18,7 +18,7 @@ export default class Verse {
         return this._passage;
     }
 
-    version(): Version {
+    version(): string {
         return this._ref.version;
     }
 

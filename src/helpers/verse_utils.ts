@@ -103,7 +103,7 @@ export function isSurroundedByBrackets(brackets: string, result: BookSearchResul
     return false;
 }
 
-export function generateReference(result: BookSearchResult, msg: string): Reference {
+export function generateReference(result: BookSearchResult, msg: string, version: string): Reference {
     const book = result['name'];
     let startingChapter = 0;
     let startingVerse = 0;
@@ -179,6 +179,5 @@ export function generateReference(result: BookSearchResult, msg: string): Refere
         }
     }
 
-    // TODO: Versions.
-    return new Reference(book, startingChapter, startingVerse, endingChapter, endingVerse, null);
+    return new Reference(book, startingChapter, startingVerse, endingChapter, endingVerse, version);
 }

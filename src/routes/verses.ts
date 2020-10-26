@@ -49,31 +49,33 @@ export class VersesRouter {
                 return;
             }
 
-            const reference = utils.generateReference(result, msg);
+            ctx.db.get(`pref:${ctx.id}`).then((res) => {
+                const reference = utils.generateReference(result, msg, res['version']);
 
-            if (reference === null) {
-                return;
-            }
-
-            let processor = bibleGateway;
-
-            switch (reference.version.source()) {
-                case 'ab':
-                    processor = apiBible;
-                    break;
-            }
-
-            processor.getResult(reference, true, true, (err, data: Verse) => {
-                if (err) {
-                    console.error(err);
+                if (reference === null) {
                     return;
                 }
-
-                const embed = createEmbed(`${data.passage} - ${data.version().name}`, data.title(), data.text(), false);
-
-                ctx.channel.send(embed);
+    
+                const processor = bibleGateway;
+    
+                /*switch (reference.version.source()) {
+                    case 'ab':
+                        processor = apiBible;
+                        break;
+                }*/
+    
+                processor.getResult(reference, true, true, (err, data: Verse) => {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+    
+                    const title = `${data.passage()} - ${data.version()}`;
+                    const embed = createEmbed(title, data.title(), data.text(), false);
+    
+                    ctx.channel.send(embed);
+                });
             });
-            
         });
     }
 }

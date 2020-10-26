@@ -5,6 +5,8 @@ import Context from '../models/context';
 import Version from '../models/version';
 
 import * as commandList from '../helpers/command_list.json';
+import { createEmbed } from '../helpers/embed_builder';
+import { create } from 'domain';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
@@ -46,27 +48,50 @@ export class CommandsRouter {
     }
 
     processCommand(ctx: Context): void {
-        const command = ctx.msg.slice(1).split(' ')[0];
+        const tokens = ctx.msg.slice(1).split(' ');
+        const command = tokens[0];
+        const args = tokens.slice(1);
 
         switch (command) {
-            case 'versions': {
-                ctx.db.createIndex({
-                    index: { fields: ['_id'] }
-                }).then(() => {
-                    ctx.db.find({
-                        selector: {
-                            _id: {$regex: 'version:(.*)'}
+            case 'setversion': 
+                ctx.db.createIndex({ index: { fields: ['_id'] } }).then(() => {
+                    ctx.db.find({ selector: {  _id: `version:${args[0]}` } }).then((res) => {
+                        if (res.docs.length == 0) {
+                            const embed = createEmbed(null, `${config.biblebot.commandPrefix}${command}`, 'Version does not exist.', true);
+                            ctx.channel.send(embed);
+                            return;
                         }
-                    }).then((res) => {
-                        res.docs.forEach((doc) => {
-                            console.log(`${doc['version']._name} (${doc['version'].abbv})`);
+
+                        ctx.db.get(`pref:${ctx.id}`).catch((err) => {
+                            if (err.name === 'not_found') {
+                                return {
+                                    _id: `pref:${ctx.id}`,
+                                    version: args[0]
+                                };
+                            }
+                        }).then((doc) => {
+                            doc['version'] = args[0];
+                            return ctx.db.put(doc).then(() => {
+                                const embed = createEmbed(null, `${config.biblebot.commandPrefix}${command}`, 'Set version successfully.', false);
+                                ctx.channel.send(embed);
+                            });
                         });
                     });
                 });
-
                 
                 break;
-            }
+            case 'version':
+                ctx.db.get(`pref:${ctx.id}`).then((res) => {
+                    const embed = createEmbed(null, `${config.biblebot.commandPrefix}${command}`, `You are using ${res['version']}.`, false);
+                    ctx.channel.send(embed);
+                }).catch((err) => {
+                    if (err.name === 'not_found') {
+                        const embed = createEmbed(null, `${config.biblebot.commandPrefix}${command}`, 'No version found in database.', true);
+                        ctx.channel.send(embed);
+                    }
+                });
+                
+                break;
         }
     }
 }

@@ -4,7 +4,8 @@
   "description": "The premier Discord bot for Bible verses.",
   "main": "dist/init.js",
   "scripts": {
-    "genconf": "node ./dist/scripts/config_generator.js",
+    "genconf": "tsc && node ./dist/scripts/config_generator.js",
+    "importdbs": "tsc && node ./dist/scripts/import_old_databases.js",
     "prod": "tsc && node ./dist/init.js",
     "dev": "tsc && node ./dist/init.js",
     "test": "echo \"Error: no test specified\" && exit 1"

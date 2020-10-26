@@ -17,7 +17,7 @@ const versionTable = {
 
 export function getResult(ref: Reference, headings: boolean, verseNumbers: boolean, 
     callback: (err: Error, data: Verse) => void): void {
-        axios.get(`https://api.scripture.api.bible/v1/bibles/${versionTable[ref.version.abbreviation()]}/search`, {
+        axios.get(`https://api.scripture.api.bible/v1/bibles/${versionTable[ref.version]}/search`, {
             headers: { 'api-key': config.apis.apiBible },
             params: { query: ref.toString(), limit: 1 }
         }).then((res) => {
@@ -28,8 +28,8 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
                 return;
             }
 
-            if (data[0].bibleId != versionTable[ref.version.abbreviation()]) {
-                console.error(`${ref.version.abbreviation} is no longer able to be used.`);
+            if (data[0].bibleId != versionTable[ref.version]) {
+                console.error(`${ref.version} is no longer able to be used.`);
                 return;
             }
 
@@ -48,11 +48,11 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
             const title = Array.from(document.getElementsByTagName('h3')).map((el: Element) => el.textContent.trim()).join(' / ');
             text = Array.from(document.getElementsByClassName('p')).map((el: Element) => el.textContent.trim()).join('\n');
 
-            return callback(null, new Verse(
+            /*return callback(null, new Verse(
                 ref.version.name(),
                 title,
                 purifyVerseText(text),
                 ref
-            ));
+            ));*/
         });
 }
