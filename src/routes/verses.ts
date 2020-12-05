@@ -3,6 +3,7 @@ import * as fs from 'fs';
 
 import Context from '../models/context';
 import Verse from '../models/verse';
+import Version from '../models/version';
 
 import * as bibleGateway from '../interfaces/bible_gateway';
 import * as apiBible from '../interfaces/api_bible';
@@ -49,33 +50,39 @@ export class VersesRouter {
                 return;
             }
 
-            ctx.db.get(`pref:${ctx.id}`).then((res) => {
-                const reference = utils.generateReference(result, msg, res['version']);
+            let queryVersion = 'RSV';
+            if (Object.keys(ctx.preferences).includes('version')) {
+                queryVersion = ctx.preferences.version;
+            }
+
+            Version.findOne({ abbv: queryVersion }).then((version) => {
+                const reference = utils.generateReference(result, msg, version);
 
                 if (reference === null) {
                     return;
                 }
-    
-                const processor = bibleGateway;
-    
-                /*switch (reference.version.source()) {
+        
+                let processor = bibleGateway;
+        
+                switch (version['src']) {
                     case 'ab':
                         processor = apiBible;
                         break;
-                }*/
-    
+                }
+        
                 processor.getResult(reference, true, true, (err, data: Verse) => {
                     if (err) {
                         console.error(err);
                         return;
                     }
-    
-                    const title = `${data.passage()} - ${data.version()}`;
+        
+                    const title = `${data.passage()} - ${data.version().name}`;
                     const embed = createEmbed(title, data.title(), data.text(), false);
-    
+        
                     ctx.channel.send(embed);
+                    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${data.passage()} ${data.version().abbv}`);
                 });
             });
-        });
+        }); 
     }
 }

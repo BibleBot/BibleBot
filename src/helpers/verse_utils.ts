@@ -1,10 +1,9 @@
 import * as BibleGateway from '../interfaces/bible_gateway';
 import Reference from '../models/reference';
 import { getBookNames } from './name_fetcher';
-import * as defaultNames from '../helpers/name_data/default_names.json';
 import { removePunctuation } from './text_purification';
 
-const books = getBookNames();
+import * as mongoose from 'mongoose';
 
 const sources = {
     'bg': { name: 'BibleGateway', interface: BibleGateway },
@@ -27,6 +26,7 @@ export function sourceHasInterface(source: string): boolean {
 }
 
 export function findBooksInMessage(msg: string): Array<BookSearchResult> {
+    // TODO: Check message for book name by amount of tokens.
     const msgTokens = msg.split(' ');
     const books = getBookNames();
     const results: Array<BookSearchResult> = [];
@@ -71,6 +71,8 @@ export function findBooksInMessage(msg: string): Array<BookSearchResult> {
                             });
                         }
                     }
+                } else if (book == 'Jeremiah') {
+                    // TODO: Letter of Jeremiah
                 } else {
                     results.push({
                         name: book,
@@ -103,7 +105,7 @@ export function isSurroundedByBrackets(brackets: string, result: BookSearchResul
     return false;
 }
 
-export function generateReference(result: BookSearchResult, msg: string, version: string): Reference {
+export function generateReference(result: BookSearchResult, msg: string, version: mongoose.Document): Reference {
     const book = result['name'];
     let startingChapter = 0;
     let startingVerse = 0;

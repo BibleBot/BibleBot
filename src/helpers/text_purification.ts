@@ -2,6 +2,7 @@ const nuisances = {
     '  ': ' ',
     '“': '"',
     '”': '"',
+    '\n': ' '
 };
 
 export function removePunctuation(text: string): string {

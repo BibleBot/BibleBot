@@ -1,19 +1,18 @@
-export default class Language {
-    private name: string;
-    private objectName: string;
-    private rawObject: Record<string, string>;
-    private defaultVersion: string;
+import * as mongoose from 'mongoose';
 
-    constructor(name: string, objectName: string, rawObject: Record<string, string>, defaultVersion: string) {
-        this.name = name;
-        this.objectName = objectName;
-        this.rawObject = rawObject;
-        this.defaultVersion = defaultVersion;
-    }
+import Version from './version';
 
-    get(value: string): string {
-        if (Object.keys(this.rawObject).includes(value)) {
-            return this.rawObject[value];
-        }
+const LanguageSchema: mongoose.Schema = new mongoose.Schema({
+    name: { type: String, required: true },
+    objectName: { type: String, required: true },
+    rawObject: { type: mongoose.Mixed, required: true },
+    defaultVersion: { type: Version, required: true }
+});
+
+LanguageSchema.methods.get = function(value: string): string {
+    if (Object.keys(this.rawObject).includes(value)) {
+        return this.rawObject[value];
     }
-}
+};
+
+export default mongoose.model('Language', LanguageSchema);

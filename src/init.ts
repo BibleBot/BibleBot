@@ -4,28 +4,38 @@ import * as ini from 'ini';
 import { log } from './helpers/logger';
 
 import Context from './models/context';
+import Version from './models/version';
+import Language from './models/language';
+import Preference from './models/preference';
+
 import { CommandsRouter } from './routes/commands';
 import { VersesRouter } from './routes/verses';
 
 import { fetchBookNames } from './helpers/name_fetcher';
 
-import * as PouchDB from 'pouchdb';
-
-import * as pdbFind from 'pouchdb-find';
-PouchDB.plugin(pdbFind);
+import * as mongoose from 'mongoose';
 
 import { Client } from 'discord.js';
+import language from './models/language';
 const bot = new Client({shards: 'auto'});
-
-const db = new PouchDB('db');
-db.sync('http://localhost:5984/db', { live: true }).on('error', () => {
-    log('err', 0, 'couldn\'t sync to remote db');
-});
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 
 const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
+
+const connect = () => {
+    mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+        return log('info', 0, 'connected to db');
+    }).catch((err) => {
+        log('err', 0, `error connecting to database: ${err}`);
+        return process.exit(1);
+    });
+};
+
+connect();
+mongoose.connection.on('disconnected', connect);
+const db = mongoose.connection;
 
 bot.on('ready', () => {
     log('info', 0, 'initialization complete');
@@ -83,19 +93,13 @@ bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
     if (message.author.id !== config.biblebot.id) return; //devmode for now
 
-
-    db.get(`preference:${message.author.id}`).catch((err) => {
-        if (err.name === 'not_found') {
-            return {
-                _id: `preference:${message.author.id}`,
+    Preference.findById(`${message.author.id}`, (err, prefs) => {
+        if (err) {
+            prefs = {
                 input: 'default',
-                language: 'english',
-                version: 'RSV',
-                headings: true,
-                verseNumbers: true
             };
         }
-    }).then((prefs) => {
+
         const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, prefs, db);
 
         switch(prefs['input']) {
@@ -127,7 +131,7 @@ bot.on('message', message => {
     
 });
 
-log('info', 0, `BibleBot v${process.env.npm_package_version} by Seraphim R.P. (vypr)`);
+log('info', 0, `BibleBot v${process.env.npm_package_version} by Evangelion Ltd.`);
 fetchBookNames(config.biblebot.dry).then(() => {
     bot.login(config.biblebot.token);
 });

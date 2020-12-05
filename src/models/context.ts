@@ -1,6 +1,5 @@
-import Language from './language';
 import * as Discord from 'discord.js';
-import * as PouchDB from 'pouchdb';
+import * as mongoose from 'mongoose';
 import { logInteraction } from '../helpers/logger';
 
 export default class Context {
@@ -9,14 +8,13 @@ export default class Context {
     channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel;
     guild: Discord.Guild;
     msg: string;
-    lang: Language;
-    preferences: (PouchDB.Core.IdMeta & PouchDB.Core.GetMeta) | Record<string, unknown>;
-    db: PouchDB.Database;
+    preferences: mongoose.Document;
+    db: mongoose.Connection;
     shard: number;
     logInteraction;
 
     constructor(id: string, bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel, guild: Discord.Guild,
-                msg: string, preferences: (PouchDB.Core.IdMeta & PouchDB.Core.GetMeta) | Record<string, unknown>, db: PouchDB.Database) {
+                msg: string, preferences: mongoose.Document, db: mongoose.Connection) {
         this.id = id;
         this.bot = bot;
         this.msg = msg;

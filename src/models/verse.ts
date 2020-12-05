@@ -1,5 +1,6 @@
+import * as mongoose from 'mongoose';
+
 import Reference from './reference';
-import Version from './version';
 
 export default class Verse {
     private _passage: string;
@@ -18,7 +19,7 @@ export default class Verse {
         return this._passage;
     }
 
-    version(): string {
+    version(): mongoose.Document {
         return this._ref.version;
     }
 

@@ -1,4 +1,4 @@
-import * as PouchDB from 'pouchdb';
+import * as mongoose from 'mongoose';
 
 import { log } from '../helpers/logger';
 
@@ -6,11 +6,17 @@ import Version from '../models/version';
 
 import * as oldVersions from './old_databases/versiondb.json';
 
-const db = new PouchDB('db');
-db.sync('http://localhost:5984/db', { live: true }).on('error', (err) => {
-    log('err', 0, 'couldn\'t sync to remote db');
-    console.log(err);
-});
+const connect = () => {
+    mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+        return log('info', 0, 'connected to db');
+    }).catch((err) => {
+        log('err', 0, `error connecting to database: ${err}`);
+        return process.exit(1);
+    });
+};
+
+connect();
+mongoose.connection.on('disconnected', connect);
 
 const importOldVersions = () => {
     for (const key in oldVersions) {
@@ -26,16 +32,27 @@ const importOldVersions = () => {
                 source = 'ab';
             }
 
-            const newVersion = new Version(oldVersion['name'], oldVersion['abbv'], source, oldVersion['hasOT'], oldVersion['hasNT'], oldVersion['hasDEU']);
+            if (oldVersion['abbv'] == 'NKJV') {
+                // RIP NKJV - 2016 to 2020
+                continue;
+            }
 
-            db.put({
-                _id: `version:${newVersion.abbreviation()}`,
-                data: newVersion
-            }).then(() => {
-                log('info', 0, `added ${newVersion.abbreviation()}`);
-            }).catch((err) => {
-                log('err', 0, `unable to insert ${newVersion.abbreviation()}`);
-                log('err', 0, err);
+            const newVersion = new Version({
+                name: oldVersion['name'], 
+                abbv: oldVersion['abbv'],
+                src: source,
+                supportsOldTestament: oldVersion['hasOT'],
+                supportsNewTestament: oldVersion['hasNT'],
+                supportsDeuterocanon: oldVersion['hasDEU']
+            });
+
+            newVersion.save((err, version) => {
+                if (err) {
+                    log('err', 0, `unable to save ${oldVersion['abbv']}`);
+                    log('err', 0, err);
+                } else {
+                    log('info', 0, `saved ${version.abbv}`);
+                }
             });
         }
     }

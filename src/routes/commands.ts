@@ -1,12 +1,15 @@
 import * as fs from 'fs';
 import * as ini from 'ini';
 
+import * as mongoose from 'mongoose';
+
 import Context from '../models/context';
+import Preference from '../models/preference';
 import Version from '../models/version';
+import Language from '../models/language';
 
 import * as commandList from '../helpers/command_list.json';
 import { createEmbed } from '../helpers/embed_builder';
-import { create } from 'domain';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
@@ -53,41 +56,68 @@ export class CommandsRouter {
         const args = tokens.slice(1);
 
         switch (command) {
-            case 'setversion': 
-                ctx.db.createIndex({ index: { fields: ['_id'] } }).then(() => {
-                    ctx.db.find({ selector: {  _id: `version:${args[0]}` } }).then((res) => {
-                        if (res.docs.length == 0) {
-                            const embed = createEmbed(null, `${config.biblebot.commandPrefix}${command}`, 'Version does not exist.', true);
-                            ctx.channel.send(embed);
-                            return;
-                        }
+            case 'setversion':
+                Version.findOne({ abbv: args[0] }).then((version) => {
+                    if (!version) {
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `cannot save preference - invalid version (${args[0]})`);
+                        ctx.channel.send(createEmbed(null, '+setversion', `${args[0]} not in database`, true));
+                        return;
+                    }
 
-                        ctx.db.get(`pref:${ctx.id}`).catch((err) => {
-                            if (err.name === 'not_found') {
-                                return {
-                                    _id: `pref:${ctx.id}`,
-                                    version: args[0]
-                                };
-                            }
-                        }).then((doc) => {
-                            doc['version'] = args[0];
-                            return ctx.db.put(doc).then(() => {
-                                const embed = createEmbed(null, `${config.biblebot.commandPrefix}${command}`, 'Set version successfully.', false);
-                                ctx.channel.send(embed);
+                    Preference.findOne({ user: ctx.id }, (err, prefs) => {
+                        if (err) {
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'cannot save preference - db error');
+                            ctx.channel.send(createEmbed(null, '+setversion', 'Failed to set preference.', true));
+                        } else if (!prefs) {
+                            const newPreference = new Preference({
+                                user: ctx.id,
+                                input: 'default',
+                                version: args[0],
+                                headings: true,
+                                verseNumbers: true
                             });
-                        });
+
+                            newPreference.save((err, prefs) => {
+                                if (err || !prefs) {
+                                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'cannot save preference - db error');
+                                    ctx.channel.send(createEmbed(null, '+setversion', 'Failed to set preference.', true));
+                                } else {
+                                    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `setversion ${args[0]}`);
+                                    ctx.channel.send(createEmbed(null, '+setversion', 'Set version successfully.', false));
+                                }
+                            });
+                        } else {
+                            prefs.version = args[0];
+
+                            prefs.save((err, preference) => {
+                                if (err || !preference) {
+                                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'cannot overwrite preference - db error');
+                                    ctx.channel.send(createEmbed(null, '+setversion', 'Failed to set preference.', true));
+                                } else {
+                                    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `overwritten preference - setversion ${args[0]}`);
+                                    ctx.channel.send(createEmbed(null, '+setversion', 'Set version successfully.', false));
+                                }
+                            });
+                        }
                     });
+                }).catch(() => {
+                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `cannot save preference - invalid version (${args[0]})`);
+                    ctx.channel.send(createEmbed(null, '+setversion', `${args[0]} not in database`, true));
                 });
+                
                 
                 break;
             case 'version':
-                ctx.db.get(`pref:${ctx.id}`).then((res) => {
-                    const embed = createEmbed(null, `${config.biblebot.commandPrefix}${command}`, `You are using ${res['version']}.`, false);
-                    ctx.channel.send(embed);
-                }).catch((err) => {
-                    if (err.name === 'not_found') {
-                        const embed = createEmbed(null, `${config.biblebot.commandPrefix}${command}`, 'No version found in database.', true);
-                        ctx.channel.send(embed);
+                Preference.findOne({ user: ctx.id }, (err, prefs) => {
+                    if (err) {
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'cannot find preference - db error');
+                        ctx.channel.send(createEmbed(null, '+version', 'A database error has occurred.', true));
+                    } else if (!prefs) {
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version');
+                        ctx.channel.send(createEmbed(null, '+version', 'Preferences not found.', true));
+                    } else {
+                        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
+                        ctx.channel.send(createEmbed(null, '+version', `You are currently using ${prefs['version']}.`, false));
                     }
                 });
                 

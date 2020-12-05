@@ -1,8 +1,19 @@
 import * as chalk from 'chalk';
-import { Snowflake } from 'discord.js';
+import { Snowflake, DMChannel, NewsChannel, TextChannel } from 'discord.js';
 
-export function logInteraction(level: string, shard: number, sender: Snowflake, guild: Snowflake, channel: Snowflake, msg: string): void {
-    const sourceSection = '<' + chalk.blueBright(sender) + '@' + chalk.magentaBright(`${guild}`) + '#' + chalk.greenBright(`${channel}`) + '>';
+export function logInteraction(level: string, shard: number, sender: Snowflake, channel: TextChannel | DMChannel | NewsChannel, msg: string): void {
+    let guild;
+    let chan;
+    
+    if (channel instanceof DMChannel) {
+        guild = 'DMs';
+        chan = 'DMs';
+    } else {
+        guild = channel.guild.id;
+        chan = channel.id;
+    }
+
+    const sourceSection = '<' + chalk.blueBright(sender) + '@' + chalk.magentaBright(`${guild}`) + '#' + chalk.greenBright(`${chan}`) + '>';
     const output = `${sourceSection} ${msg}`;
     log(level, shard, output);
 }
