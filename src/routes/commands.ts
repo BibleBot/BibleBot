@@ -94,7 +94,7 @@ export class CommandsRouter {
                                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'cannot overwrite preference - db error');
                                     ctx.channel.send(createEmbed(null, '+setversion', 'Failed to set preference.', true));
                                 } else {
-                                    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `overwritten preference - setversion ${args[0]}`);
+                                    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `setversion ${args[0]} (overwrite)`);
                                     ctx.channel.send(createEmbed(null, '+setversion', 'Set version successfully.', false));
                                 }
                             });
