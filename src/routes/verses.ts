@@ -51,12 +51,12 @@ export class VersesRouter {
             }
 
             let queryVersion = 'RSV';
-            if (Object.keys(ctx.preferences).includes('version')) {
+            if (ctx.preferences.version) {
                 queryVersion = ctx.preferences.version;
             }
 
-            Version.findOne({ abbv: queryVersion }).then((version) => {
-                const reference = utils.generateReference(result, msg, version);
+            Version.findOne({ abbv: queryVersion }).then(async (version) => {
+                const reference = await utils.generateReference(result, msg, version);
 
                 if (reference === null) {
                     return;

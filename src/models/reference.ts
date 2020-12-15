@@ -31,6 +31,8 @@ export default class Reference {
             result += `-${this._endingChapter}:${this._endingVerse}`;
         } else if (this._endingVerse && this._endingVerse != this._startingVerse) {
             result += `-${this._endingVerse}`;
+        } else if (this._endingChapter && this._endingVerse == 0) {
+            result += '-';
         }
 
         return `${result}`;

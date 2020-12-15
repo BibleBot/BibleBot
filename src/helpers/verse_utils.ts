@@ -1,5 +1,6 @@
 import * as BibleGateway from '../interfaces/bible_gateway';
 import Reference from '../models/reference';
+import Version from '../models/version';
 import { getBookNames } from './name_fetcher';
 import { removePunctuation } from './text_purification';
 
@@ -69,6 +70,11 @@ export function findBooksInMessage(msg: string): Array<BookSearchResult> {
                                 name: `${book} ${nextTokenToNumber}`,
                                 index: index + 1
                             });
+                        } else {
+                            results.push({
+                                name: `${book}`,
+                                index
+                            });
                         }
                     }
                 } else if (book == 'Jeremiah') {
@@ -105,7 +111,7 @@ export function isSurroundedByBrackets(brackets: string, result: BookSearchResul
     return false;
 }
 
-export function generateReference(result: BookSearchResult, msg: string, version: mongoose.Document): Reference {
+export async function generateReference(result: BookSearchResult, msg: string, version: mongoose.Document): Promise<Reference> {
     const book = result['name'];
     let startingChapter = 0;
     let startingVerse = 0;
@@ -154,6 +160,8 @@ export function generateReference(result: BookSearchResult, msg: string, version
                     startingChapter = Number(pairing[0]);
                     endingChapter = Number(pairing[0]);
 
+                    const spanQuantity = (relevantToken.match(/-/g) || []).length;
+
                     const span = pairing[1].split('-');
                     span.forEach((num, index) => {
                         num = removePunctuation(num);
@@ -171,12 +179,19 @@ export function generateReference(result: BookSearchResult, msg: string, version
                         }
                     });
 
-                    if (endingVerse == 0) {
+                    if (endingVerse == 0 && spanQuantity == 0) {
                         endingVerse = startingVerse;
                     }
 
                     break;
                 }
+            }
+
+            const lastToken = tokens[tokens.length - 1];
+            const mentionedVersion = await Version.findOne({ abbv: lastToken }).exec();
+
+            if (mentionedVersion) {
+                version = mentionedVersion;
             }
         }
     }
