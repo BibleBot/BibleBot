@@ -93,7 +93,7 @@ bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
     if (message.author.id !== config.biblebot.id) return; //devmode for now
 
-    Preference.findById(`${message.author.id}`, (err, prefs) => {
+    Preference.findOne({ user: message.author.id }, (err, prefs) => {
         if (err) {
             prefs = {
                 input: 'default',
