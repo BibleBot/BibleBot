@@ -130,4 +130,4 @@ error_logs/
 
 venv/
 
-db*/
+.db/
