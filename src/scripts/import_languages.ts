@@ -1,5 +1,4 @@
 import Language from '../models/language';
-import Version from '../models/version';
 
 import * as mongoose from 'mongoose';
 
