@@ -26,9 +26,9 @@ const versesRouter = VersesRouter.getInstance();
 
 const connect = () => {
     mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-        return log('info', 0, 'connected to db');
+        return log('info', null, 'connected to db');
     }).catch((err) => {
-        log('err', 0, `error connecting to database: ${err}`);
+        log('err', null, `error connecting to database: ${err}`);
         return process.exit(1);
     });
 };
@@ -38,7 +38,7 @@ mongoose.connection.on('disconnected', connect);
 const db = mongoose.connection;
 
 bot.on('ready', () => {
-    log('info', 0, 'initialization complete');
+    log('info', null, 'initialization complete');
 });
 
 bot.on('error', (error) => {
@@ -64,11 +64,11 @@ bot.on('error', (error) => {
 
     fs.appendFileSync(`${dir}/log-${fileTimestamp}.txt`, output);
 
-    log('err', 0, error.message);
+    log('err', null, error.message);
 });
 
 bot.on('shardReady', shard => {
-    log('info', shard + 1, 'shard connected');
+    log('info', shard, 'shard connected');
     
     bot.user.setPresence({
         activity: {
@@ -79,14 +79,14 @@ bot.on('shardReady', shard => {
 });
 
 bot.on('shardDisconnect', (_, shard) => {
-    log('info', shard + 1, 'shard disconnected');
+    log('info', shard, 'shard disconnected');
 });
 bot.on('shardReconnecting', shard => {
-    log('info', shard + 1, 'shard reconnecting');
+    log('info', shard, 'shard reconnecting');
 });
 
 bot.on('shardResume', shard => {
-    log('info', shard + 1, 'shard resuming');
+    log('info', shard, 'shard resuming');
 });
 
 bot.on('message', message => {
@@ -131,7 +131,7 @@ bot.on('message', message => {
     
 });
 
-log('info', 0, `BibleBot v${process.env.npm_package_version} by Evangelion Ltd.`);
+log('info', null, `BibleBot v${process.env.npm_package_version} by Evangelion Ltd.`);
 fetchBookNames(config.biblebot.dry).then(() => {
     bot.login(config.biblebot.token);
 });
