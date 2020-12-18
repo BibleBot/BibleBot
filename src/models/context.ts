@@ -22,7 +22,7 @@ export default class Context {
         this.guild = guild;
         this.preferences = preferences;
         this.db = db;
-        this.shard = guild.shardID + 1;
+        this.shard = guild.shardID;
         this.logInteraction = logInteraction;
     }
 }
