@@ -19,6 +19,8 @@ const connect = () => {
 connect();
 mongoose.connection.on('disconnected', connect);
 
+const defaultVersion = 'RSV';
+
 const importLanguages = () => {
     const _default = JSON.parse(readFileSync(`${__dirname}/../../../i18n/default/default.json`, 'utf-8'));
 
@@ -26,7 +28,7 @@ const importLanguages = () => {
         name: 'Default',
         objectName: 'default',
         rawObject: _default,
-        defaultVersion: Version.find({ abbv: 'RSV' }).exec()
+        defaultVersion
     });
 
     def.save((err, language) => {
