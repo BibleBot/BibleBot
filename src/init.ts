@@ -12,11 +12,11 @@ import { CommandsRouter } from './routes/commands';
 import { VersesRouter } from './routes/verses';
 
 import { fetchBookNames } from './helpers/name_fetcher';
+import defaultUserPreferences from './helpers/default_user_preference.json';
 
 import * as mongoose from 'mongoose';
 
 import { Client } from 'discord.js';
-import language from './models/language';
 const bot = new Client({shards: 'auto'});
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
@@ -94,10 +94,8 @@ bot.on('message', message => {
     if (message.author.id !== config.biblebot.id) return; //devmode for now
 
     Preference.findOne({ user: message.author.id }, (err, prefs) => {
-        if (err) {
-            prefs = {
-                input: 'default',
-            };
+        if (err || !prefs) {
+            prefs = { ...defaultUserPreferences };
         }
 
         const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, prefs, db);
