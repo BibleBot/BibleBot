@@ -5,7 +5,7 @@ import { logInteraction } from '../helpers/logger';
 export default class Context {
     id: string;
     bot: Discord.Client;
-    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel;
+    channel: Discord.TextChannel | Discord.DMChannel;
     guild: Discord.Guild;
     msg: string;
     preferences: mongoose.Document;
@@ -13,7 +13,7 @@ export default class Context {
     shard: number;
     logInteraction;
 
-    constructor(id: string, bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel, guild: Discord.Guild,
+    constructor(id: string, bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel, guild: Discord.Guild,
                 msg: string, preferences: mongoose.Document, db: mongoose.Connection) {
         this.id = id;
         this.bot = bot;
