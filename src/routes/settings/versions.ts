@@ -82,4 +82,18 @@ export class VersionSettingsRouter {
             }
         });
     }
+
+    processCommand(ctx: Context, params: Array<string>): void {
+        const subcommand = params[0];
+        const args = params.slice(1);
+
+        switch (subcommand) {
+            case 'set':
+                this.setUserVersion(ctx, args[1]);
+                break;
+            default:
+                this.getUserVersion(ctx);
+                break;
+        }
+    }
 }

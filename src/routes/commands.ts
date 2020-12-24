@@ -51,19 +51,63 @@ export class CommandsRouter {
     processCommand(ctx: Context): void {
         const tokens = ctx.msg.slice(1).split(' ');
         const command = tokens[0];
-        const subcommand = tokens[1];
         const args = tokens.slice(1);
 
         switch (command) {
+            case 'biblebot':
+                // informationRouter.getHelp(ctx);
+                break;
+            case 'search':
+                // verseCommandsRouter.search(ctx, args);
+                break;
             case 'version':
-                switch (subcommand) {
-                    case 'set':
-                        versionSettingsRouter.setUserVersion(ctx, args[1]);
-                        break;
-                    default:
-                        versionSettingsRouter.getUserVersion(ctx);
-                        break;
-                }
+                versionSettingsRouter.processCommand(ctx, args);
+                break;
+            case 'random':
+                // verseCommandsRouter.randomVerse(ctx);
+                break;
+            case 'votd':
+                // votdRouter.processCommand(ctx, args);
+                break;
+            case 'formatting':
+                // formattingRouter.processCommand(ctx, args);
+                break;
+            case 'language':
+                // languageRouter.processCommand(ctx, args);
+                break;
+            case 'stats':
+                // informationRouter.getStats(ctx);
+                break;
+            case 'creeds':
+                // resourceRouter.processCreedCommand(ctx, args);
+                break;
+            case 'catechisms':
+                // resourceRouter.processCatechismCommand(ctx, args);
+                break;
+        }
+    }
+
+    processOwnerCommand(ctx: Context): void {
+        const tokens = ctx.msg.slice(1).split(' ');
+        const command = tokens[0];
+        const args = tokens.slice(1);
+
+        switch (command) {
+            case 'manageversions':
+                // managementRouter.processVersion(ctx, args);
+                break;
+            case 'echo':
+                // ctx.send(args.join(' '));
+                // ctx.msg.delete();
+                break;
+            case 'eval':
+                // ?
+                break;
+            case 'manageoptout':
+                // managementRouter.processIgnore(ctx, args);
+                break;
+            case 'leave':
+                // ?
                 break;
         }
     }
