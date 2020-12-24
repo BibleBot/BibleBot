@@ -51,14 +51,19 @@ export class CommandsRouter {
     processCommand(ctx: Context): void {
         const tokens = ctx.msg.slice(1).split(' ');
         const command = tokens[0];
+        const subcommand = tokens[1];
         const args = tokens.slice(1);
 
         switch (command) {
-            case 'setversion':
-                versionSettingsRouter.setUserVersion(ctx, args[0]);
-                break;
             case 'version':
-                versionSettingsRouter.getUserVersion(ctx);
+                switch (subcommand) {
+                    case 'set':
+                        versionSettingsRouter.setUserVersion(ctx, args[1]);
+                        break;
+                    default:
+                        versionSettingsRouter.getUserVersion(ctx);
+                        break;
+                }
                 break;
         }
     }

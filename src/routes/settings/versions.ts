@@ -78,7 +78,7 @@ export class VersionSettingsRouter {
                 ctx.channel.send(createEmbed(null, '+version', 'Preferences not found.', true));
             } else {
                 ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
-                ctx.channel.send(createEmbed(null, '+version', `You are currently using ${prefs['version']}.`, false));
+                ctx.channel.send(createEmbed(null, '+version', `You are currently using **${prefs['version']}**.\n\n__**Subcommands**__\n**set** set your preferred version\n**setserver** set the server's default version (requires \`Manage Server\` permission)`, false));
             }
         });
     }
