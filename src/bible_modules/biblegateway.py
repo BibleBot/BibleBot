@@ -75,13 +75,16 @@ async def search(version, query):
 async def get_result(query, version, headings, verse_numbers):
     query = query.replace("|", " ")
 
-    url = f"https://www.biblegateway.com/passage/?search={query}&version={version}&interface=print"
+    url = f"https://biblegateway.com/passage/?search={query}&version={version}&interface=print"
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             if resp is not None:
                 soup = BeautifulSoup(await resp.text(), "lxml")
                 soup.prettify(formatter=lambda s: s.replace(u'\xa0', ' '))
+
+                passage = soup.find("div", {"class": "bcv"}).get_text()
+                version = soup.find("div", {"class": "translation"}).get_text()
 
                 for div in soup.find_all("div", {"class": "result-text-style-normal"}):
                     text = ""
@@ -121,11 +124,11 @@ async def get_result(query, version, headings, verse_numbers):
                     for paragraph in div.find_all("p"):
                         text += paragraph.get_text()
 
+
                     verse_object = {
-                        "passage": div.find(True, {"class": "passage-display-bcv"}).string,  # noqa: E501
-                        "version": div.find(True, {"class": "passage-display-version"}).string,  # noqa: E501
+                        "passage": passage,  # noqa: E501
+                        "version": version,  # noqa: E501
                         "title": title[0:-3],
                         "text": bibleutils.purify_text(text)
                     }
-
                     return verse_object

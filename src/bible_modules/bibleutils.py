@@ -63,7 +63,7 @@ async def get_random_verse():
             if resp is not None:
                 soup = BeautifulSoup(await resp.text(), "lxml")
                 verse = soup.find(
-                    "div", {"class": "bibleChapter"}).find("a").get_text()
+                        "div", {"class": "vr"}).find("a", {"class": "vc"}).get_text()
 
                 return verse
 
@@ -75,6 +75,6 @@ async def get_votd():
         async with session.get(url) as resp:
             if resp is not None:
                 soup = BeautifulSoup(await resp.text(), "lxml")
-                verse = soup.find(True, {"class": "rp-passage-display"}).get_text()
+                verse = soup.find("div", {"class": "rp-passage-display"}).get_text()
 
                 return verse

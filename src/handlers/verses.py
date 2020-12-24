@@ -93,10 +93,16 @@ class VerseHandler:
             return_list = []
 
             for reference in references:
-                version = versions.get_version(sender)
-                mode = formatting.get_mode(sender)
-                headings = formatting.get_headings(sender)
-                verse_numbers = formatting.get_verse_numbers(sender)
+                if sender.bot:
+                    version = None 
+                    mode = "embed"
+                    headings = "enable"
+                    verse_numbers = "enable"
+                else:
+                    version = versions.get_version(sender)
+                    mode = formatting.get_mode(sender)
+                    headings = formatting.get_headings(sender)
+                    verse_numbers = formatting.get_verse_numbers(sender)
 
                 ref_split = reference.split(" | v: ")
 
@@ -104,10 +110,10 @@ class VerseHandler:
                     reference = ref_split[0]
                     version = ref_split[1]
 
-                if version is None or version == "REV":
+                if version is None or version in ["REV", "NKJV"]:
                     version = versions.get_guild_version(guild)
 
-                    if version is None or version == "REV":
+                    if version is None or version in ["REV", "NKJV"]:
                         version = "RSV"
 
                 ideal_version = tinydb.Query()
@@ -123,7 +129,7 @@ class VerseHandler:
 
                     biblehub_versions = ["BSB", "NHEB", "WBT"]
                     # bibleserver_versions = ["LUT", "LXX", "SLT", "EU"]
-                    apibible_versions = ["KJVA"]
+                    apibible_versions = ["KJVA", "FBV", "ELXX", "LXX"]
 
                     non_bible_gateway = biblehub_versions + apibible_versions  # + bibleserver_versions
 

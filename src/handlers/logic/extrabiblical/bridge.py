@@ -18,13 +18,13 @@
 
 from . import utils
 
-catechisms = ["lsc", "heidelberg", "ccc"]
+catechisms = ["lsc", "heidelberg", "ccc", "bbccc"]
 
 
 async def run_command(ctx, command, remainder):
     lang = ctx["language"]
     args = remainder.split(" ")
-
+    
     if command in catechisms:
         if len(args) == 2:
             return utils.create_embeds(lang, command, section=args[0], page=args[1], guild=ctx["guild"])

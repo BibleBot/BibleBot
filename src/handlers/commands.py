@@ -34,7 +34,7 @@ def is_command(command, lang):
                              "ban", "unban", "reason",
                              "optout", "unoptout", "eval", "rose",
                              "jepekula", "joseph", "tiger", "lsc", "heidelberg", "ccc",
-                             "quit", "restart"]
+                             "quit", "restart", "bbccc"]
 
     result = {
         "ok": False
@@ -67,7 +67,7 @@ def is_owner_command(command, lang):
 
 
 def is_catechism_command(command):
-    catechism_commands = ["lsc", "heidelberg", "ccc"]
+    catechism_commands = ["lsc", "heidelberg", "ccc", "bbccc"]
 
     return command in catechism_commands
 

@@ -43,10 +43,16 @@ logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 versions = {
     "KJVA": "de4e12af7f28f599-01",
+    "FBV": "65eec8e0b60e656b-01",
+    "ELXX": "65bfdebd704a8324-01",
+    "LXX": "c114c33098c4fef1-01"
 }
 
 version_names = {
     "KJVA": "King James Version with Apocrypha (KJVA)",
+    "FBV": "Free Bible Version",
+    "ELXX": "Brenton English Septuagint (ELXX)",
+    "LXX": "Brenton Greek Septuagint (LXX)"
 }
 
 # def remove_bible_title_in_search(string):
@@ -130,7 +136,7 @@ async def get_result(query, ver, headings, verse_numbers):
 
                     span.decompose()
 
-                for p in soup.find_all("p", {"class": "p"}):
+                for p in soup.find_all("p"):
                     text += p.get_text()
 
                 if headings == "disable":

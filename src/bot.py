@@ -51,6 +51,7 @@ class BibleBot(discord.AutoShardedClient):
         self.current_page = {}
         self.total_pages = {}
         self.continue_paging = {}
+        bot_extensions.run_timed_votds.start(self)
 
     async def on_connect(self):
         central.log_message("info", 0, "global", "global", "shard connected to discord")
@@ -73,13 +74,16 @@ class BibleBot(discord.AutoShardedClient):
 
     @tasks.loop(seconds=60.0)
     async def heartbeat(self):
-        output = ""
+        try:
+            output = ""
 
-        for latency_item in self.latencies:
-            shard, latency = latency_item
-            output += f"{shard + 1}: {math.ceil(latency * 100)}ms, "
+            for latency_item in self.latencies:
+                shard, latency = latency_item
+                output += f"{shard + 1}: {math.ceil(latency * 100)}ms, "
 
-        central.log_message("info", 0, "global", "global", output[:-2])
+            central.log_message("info", 0, "global", "global", output[:-2])
+        except OverflowError:
+            central.log_message("err", 0, "global", "global", "heartbeat overflow - are we offline?")
 
     async def on_shard_ready(self, shard_id):
         shard_count = str(config["BibleBot"]["shards"])
@@ -99,10 +103,10 @@ class BibleBot(discord.AutoShardedClient):
         file_time = datetime.now().strftime("%Y-%m-%d")
         central.log_message("err", 0, "global", "global", f"received error in {event}, logging to error_logs/log-{file_time}.txt")
 
-        output = f"{current_time}\n\n{event}\n\nargs: {args}\n\nkwargs: {kwargs}\n\nex:\n\n{traceback.format_exc()}\n\n---\n\n"
+        output = f"{current_time}\n\n{event}\n\nargs: {args}\n\nmessage: \"{args[0].content}\"\n\nkwargs: {kwargs}\n\nex:\n\n{traceback.format_exc()}\n\n---\n\n"
         
         pathlib.Path("./error_logs").mkdir(exist_ok=True)
-        output_file = open(f"./error_logs/log-{file_time}.txt", "w")
+        output_file = open(f"./error_logs/log-{file_time}.txt", "a")
 
         output_file.write(output)
         
@@ -145,7 +149,7 @@ class BibleBot(discord.AutoShardedClient):
         if hasattr(ctx["channel"], "guild"):
             ctx["guild"] = ctx["channel"].guild
 
-            if language is None:
+            if language is None or raw.author.bot:
                 language = languages.get_guild_language(ctx["guild"])
 
             guild_id = str(ctx["channel"].guild.id)
@@ -192,9 +196,11 @@ class BibleBot(discord.AutoShardedClient):
                 return
 
             if "announcement" in res:
+                await ctx["channel"].send("Starting announcement...")
                 central.log_message("info", 0, "owner", "global", "Announcement starting.")
                 await bot_extensions.send_announcement(ctx, res)
                 central.log_message("info", 0, "owner", "global", "Announcement finished.")
+                await ctx["channel"].send("Announcement finished.")
                 return
 
             if "isError" not in res:
@@ -206,6 +212,7 @@ class BibleBot(discord.AutoShardedClient):
 
                     self.current_page[msg.id] = 1
                     self.total_pages[msg.id] = len(res["pages"])
+                    self.continue_paging[msg.id] = True
 
                     await msg.add_reaction("⬅")
                     await msg.add_reaction("➡")
@@ -223,14 +230,10 @@ class BibleBot(discord.AutoShardedClient):
                                         self.current_page[msg.id] += 1
                                         return True
 
-                    self.continue_paging[msg.id] = True
-
                     try:
                         while self.continue_paging[msg.id]:
-                            reaction, _ = await asyncio.ensure_future(bot.wait_for('reaction_add', timeout=60.0, check=check))
-                            await reaction.message.edit(embed=res["pages"][self.current_page[msg.id] - 1])
-
-                            reaction, _ = await asyncio.ensure_future(bot.wait_for('reaction_remove', timeout=60.0, check=check))
+                            reaction, _ = await bot.wait_for('reaction_add', timeout=60.0, check=check)
+                            await reaction.message.remove_reaction(reaction.emoji, _)
                             await reaction.message.edit(embed=res["pages"][self.current_page[msg.id] - 1])
                     except (asyncio.TimeoutError, IndexError):
                         try:
@@ -257,7 +260,7 @@ class BibleBot(discord.AutoShardedClient):
                     untranslated = ["setlanguage", "userid", "ban", "unban",
                                     "reason", "optout", "unoptout", "eval",
                                     "jepekula", "joseph", "tiger", "rose",
-                                    "lsc", "heidelberg", "ccc", "quit"]
+                                    "lsc", "heidelberg", "ccc", "quit", "bbccc"]
 
                     if lang["commands"][original_command_name] == command:
                         original_command = original_command_name
@@ -318,5 +321,4 @@ else:
 
 central.log_message("info", 0, "global", "global", f"BibleBot {central.version} by Elliott Pardee (vypr)")
 
-bot_extensions.run_timed_votds.start(bot)
 bot.run(config["BibleBot"]["token"])

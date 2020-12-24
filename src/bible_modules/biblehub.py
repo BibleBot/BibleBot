@@ -82,10 +82,15 @@ async def get_result(query, version, verse_numbers):
         starting_verse = query.split("|")[1].split(":")[1]
         ending_verse = starting_verse
     else:
-        book = " ".join(query.split(" ")[:-1])
+        book = "_".join(query.split(" ")[:-1])
         chapter = query.split(" ")[-1].split(":")[0]
         starting_verse = query.split(" ")[-1].split(":")[1]
         ending_verse = starting_verse
+    
+    book = "_".join(book.split(" ")[:-1])
+
+    if "Song" in book:
+        book = "songs"
 
     if "-" in starting_verse:
         temp = starting_verse.split("-")

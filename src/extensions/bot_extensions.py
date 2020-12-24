@@ -49,7 +49,7 @@ async def run_timed_votds(bot):
                 version = "RSV"
                 lang = "english"
 
-            if not version:
+            if not version or version in ["NKJV"]:
                 version = "RSV"
 
             if not lang:
@@ -71,6 +71,8 @@ async def run_timed_votds(bot):
     
     if count > 0:
         central.log_message("info", 0, "votd_sched", "global", f"Sending {str(count)} VOTDs at {current_time}...")
+    else:
+        central.log_message("info", 0, "votd_sched", "global", f"Did not send VOTDs at {current_time}...")
 
 
 async def send_server_count(bot):

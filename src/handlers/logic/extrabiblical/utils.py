@@ -71,13 +71,20 @@ def create_embed(lang, title, description, image=None, _copyright=None, error=Fa
 
 
 def create_embeds(lang, resource, section=None, page=None, guild=None):
-    if resource in resources.keys():
-        if resource == "ccc":
+    if resource in resources.keys() or ("ccc" in resources.keys() and resource == "bbccc"):
+        if resource == "ccc" or resource == "bbccc":
             if guild:
                 # ignore /r/catholicism as they already have a bot (thanks balrogath for ccc help)
-                if guild.id == 238001909716353025:
-                    return
-                else:
+                try:
+                    if guild.id == 238001909716353025:
+                        if resource == "bbccc":
+                            resource = "ccc"
+                            return create_numbered_embed(lang, resource, paragraph=section)
+                        else:
+                            return
+                    else:
+                        return create_numbered_embed(lang, resource, paragraph=section)
+                except:
                     return create_numbered_embed(lang, resource, paragraph=section)
         elif resource in ["heidelberg"]:
             return create_numbered_embed(lang, resource, paragraph=section)
