@@ -1,13 +1,8 @@
-import * as fs from 'fs';
-import * as ini from 'ini';
-
 import Context from '../models/context';
 
 import * as commandList from '../helpers/command_list.json';
 
 import { VersionSettingsRouter } from './settings/versions';
-
-const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
 const versionSettingsRouter = VersionSettingsRouter.getInstance();
 
