@@ -21,23 +21,41 @@ mongoose.connection.on('disconnected', connect);
 const defaultVersion = 'RSV';
 
 const importLanguages = () => {
-    const _default = JSON.parse(readFileSync(`${__dirname}/../../../i18n/default/default.json`, 'utf-8'));
+    const _default = JSON.parse(readFileSync(`${__dirname}/../../i18n/default/default.json`, 'utf-8'));
 
-    const def = new Language({
-        name: 'Default',
-        objectName: 'default',
-        rawObject: _default,
-        defaultVersion
-    });
+    Language.findOne({ objectName: 'default' }, (err, lang) => {
+        if (!lang) {
+            const def = new Language({
+                name: 'Default',
+                objectName: 'default',
+                rawObject: _default,
+                defaultVersion
+            });
 
-    def.save((err, language) => {
-        if (err) {
-            log('err', 0, `unable to save ${def['name']}`);
-            log('err', 0, err);
+            def.save((err, language) => {
+                if (err) {
+                    log('err', 0, `unable to save ${def['name']}`);
+                    log('err', 0, err);
+                } else {
+                    log('info', 0, `saved ${language.name}`);
+                }
+            });
         } else {
-            log('info', 0, `saved ${language.name}`);
+            lang.rawObject = _default;
+
+            lang.save((err, language) => {
+                if (err) {
+                    log('err', 0, `unable to overwrite ${lang['name']}`);
+                    log('err', 0, err);
+                } else {
+                    log('info', 0, `overwritten ${language.name}`);
+                }
+            });
         }
     });
+
+    
 };
 
 importLanguages();
+setTimeout(() => { process.exit(0); }, 2000);

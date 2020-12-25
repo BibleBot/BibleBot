@@ -1,5 +1,6 @@
 import Context from '../../models/context';
 import Version from '../../models/version';
+import Language from '../../models/language';
 import Preference from '../../models/preference';
 
 import { createEmbed } from '../../helpers/embed_builder';
@@ -36,7 +37,7 @@ export class VersionSettingsRouter {
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         user: ctx.id,
-                        abbv,
+                        version: abbv,
                         ...defaultUserPreferences
                     };
 
@@ -77,8 +78,20 @@ export class VersionSettingsRouter {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version - cannot save preference');
                 ctx.channel.send(createEmbed(null, '+version', 'Preferences not found.', true));
             } else {
-                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
-                ctx.channel.send(createEmbed(null, '+version', `You are currently using **${prefs['version']}**.\n\n__**Subcommands**__\n**set** set your preferred version\n**setserver** set the server's default version (requires \`Manage Server\` permission)`, false));
+                Language.findOne({ objectName: prefs.language }, (err, lang) => {
+                    Version.findOne({ abbv: prefs.version }, (err, ver) => {
+                        const message = `
+                        ${lang.getString('versionused').replace('<version>', '**' + ver['name'] + '**')}
+                        
+                        __**${lang.getString('subcommands')}**__
+                        **${lang.getCommand('set')}** - ${lang.getString('setversionusage')}
+                        **${lang.getCommand('setserver')}** - ${lang.getString('setserverversionusage')}
+                        `;
+        
+                        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
+                        ctx.channel.send(createEmbed(null, '+version', message, false));
+                    });
+                });
             }
         });
     }
@@ -89,7 +102,7 @@ export class VersionSettingsRouter {
 
         switch (subcommand) {
             case 'set':
-                this.setUserVersion(ctx, args[1]);
+                this.setUserVersion(ctx, args[0]);
                 break;
             default:
                 this.getUserVersion(ctx);

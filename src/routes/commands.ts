@@ -3,8 +3,10 @@ import Context from '../models/context';
 import * as commandList from '../helpers/command_list.json';
 
 import { VersionSettingsRouter } from './settings/versions';
+import { LanguageRouter } from './settings/languages';
 
 const versionSettingsRouter = VersionSettingsRouter.getInstance();
+const languageRouter = LanguageRouter.getInstance();
 
 export class CommandsRouter {
     private static instance: CommandsRouter;
@@ -68,7 +70,7 @@ export class CommandsRouter {
                 // formattingRouter.processCommand(ctx, args);
                 break;
             case 'language':
-                // languageRouter.processCommand(ctx, args);
+                languageRouter.processCommand(ctx, args);
                 break;
             case 'stats':
                 // informationRouter.getStats(ctx);
@@ -102,7 +104,7 @@ export class CommandsRouter {
                 // managementRouter.processIgnore(ctx, args);
                 break;
             case 'leave':
-                // ?
+                ctx.bot;
                 break;
         }
     }
