@@ -23,26 +23,12 @@ export class CommandsRouter {
         return CommandsRouter.instance;
     }
 
-    isCommand(prefix: string, firstWord: string): Array<boolean> {
-        const results = [false, false, false];
+    isCommand(str: string): boolean {
+        return commandList.commands.indexOf(str) > -1;
+    }
 
-        if (firstWord.startsWith(prefix)) {
-            firstWord = firstWord.slice(1);
-
-            if (commandList.commands.indexOf(firstWord) > -1) {
-                results[0] = true;
-            }
-
-            if (commandList.guild_commands.indexOf(firstWord) > -1) {
-                results[1] = true;
-            }
-
-            if (commandList.owner_commands.indexOf(firstWord) > -1) {
-                results[2] = true;
-            }
-        }
-
-        return results;
+    isOwnerCommand(str: string): boolean {
+        return commandList.owner_commands.indexOf(str) > -1;
     }
 
     processCommand(ctx: Context): void {
@@ -81,6 +67,10 @@ export class CommandsRouter {
             case 'catechisms':
                 // resourceRouter.processCatechismCommand(ctx, args);
                 break;
+            case 'ping':
+                ctx.channel.send('pong');
+                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'ping');
+                break;
         }
     }
 
@@ -94,8 +84,9 @@ export class CommandsRouter {
                 // managementRouter.processVersion(ctx, args);
                 break;
             case 'echo':
-                // ctx.send(args.join(' '));
-                // ctx.msg.delete();
+                ctx.channel.send(args.join(' '));
+                ctx.raw.delete();
+                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `echo ${args.join(' ')}`);
                 break;
             case 'eval':
                 // ?

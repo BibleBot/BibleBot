@@ -31,9 +31,7 @@ const connect = () => {
     });
 };
 
-connect();
-mongoose.connection.on('disconnected', connect);
-const db = mongoose.connection;
+let db;
 
 bot.on('ready', () => {
     log('info', null, 'initialization complete');
@@ -96,11 +94,15 @@ bot.on('message', message => {
             prefs = { ...defaultUserPreferences };
         }
 
-        const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, prefs, db);
+        const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, prefs, db, message);
+
+        const potentialCommand = ctx.msg.split(' ')[0].slice(1);
 
         switch(prefs['input']) {
             case 'default': {
-                if (ctx.msg.startsWith(config.biblebot.commandPrefix)) {
+                if (commandsRouter.isOwnerCommand(potentialCommand)) {
+                    commandsRouter.processOwnerCommand(ctx);
+                } else if (commandsRouter.isCommand(potentialCommand)) {
                     commandsRouter.processCommand(ctx);
                 } else if (ctx.msg.includes(':')) {
                     versesRouter.processMessage(ctx, 'default');
@@ -114,7 +116,7 @@ bot.on('message', message => {
                 if (ctx.msg.startsWith('$')) {
                         if (ctx.msg.includes(':')) {
                             versesRouter.processMessage(ctx, 'erasmus');
-                        } else if (commandsRouter.isCommand('$', ctx.msg.split(' ')[0])[0] === true) {
+                        } else if (commandsRouter.isCommand(potentialCommand)) {
                             commandsRouter.processCommand(ctx);
                         }
                 }
@@ -128,6 +130,10 @@ bot.on('message', message => {
 });
 
 log('info', null, `BibleBot v${process.env.npm_package_version} by Evangelion Ltd.`);
-fetchBookNames(config.biblebot.dry).then(() => {
+fetchBookNames(config.biblebot.dry == 'True').then(() => {
+    connect();
+    mongoose.connection.on('disconnected', connect);
+    db = mongoose.connection;
+
     bot.login(config.biblebot.token);
 });

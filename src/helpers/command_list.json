@@ -2,26 +2,14 @@
     "commands": [
         "biblebot",
         "search",
-        "versions",
-        "setversion",
         "version",
-        "versioninfo",
         "random",
         "verseoftheday",
         "votd",
-        "headings",
-        "versenumbers",
-        "languages",
-        "setlanguage",
         "language",
-        "users",
-        "servers",
         "invite",
         "creeds",
-        "apostles",
-        "nicene325",
-        "nicene",
-        "chalcedonian"
+        "ping"
     ],
     "guild_commands": [
         "setguildversion",
@@ -33,13 +21,8 @@
         "votdtime"
     ],
     "owner_commands": [
-        "addversion",
-        "av",
-        "rmversion",
-        "rmv",
-        "puppet",
+        "echo",
         "eval",
-        "userid",
         "leave"
     ]
 }
