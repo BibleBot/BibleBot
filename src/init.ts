@@ -22,6 +22,8 @@ const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
 
+import * as heartbeats from './tasks/heartbeat';
+
 const connect = () => {
     mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
         return log('info', null, 'connected to db');
@@ -34,6 +36,7 @@ const connect = () => {
 let db;
 
 bot.on('ready', () => {
+    heartbeats.startHeartbeatMonitor(bot);
     log('info', null, 'initialization complete');
 });
 
