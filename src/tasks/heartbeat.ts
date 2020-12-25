@@ -6,13 +6,13 @@ export const startHeartbeatMonitor = (bot: Client): void => {
     cron.schedule('30 * * * * *', () => {
         try {
             const shards = [...bot.ws.shards.values()];
-            let message = '';
+            const pings = [];
             
             for (const shard of shards) {
-                message += `${shards.indexOf(shard)}: ${shard.ping}ms, `;
+                pings.push(`${shards.indexOf(shard)}: ${shard.ping}ms`);
             }
 
-            log('info', null, `heartbeat - ${message.slice(0, -2)}`);
+            log('info', null, `heartbeat (avg. ${bot.ws.ping}ms) - ${pings.join(', ')}`);
         } catch (e) {
             log('err', null, 'heartbeat failed - are we offline?');
         }
