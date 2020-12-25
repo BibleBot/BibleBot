@@ -4,8 +4,6 @@ import * as ini from 'ini';
 import { log } from './helpers/logger';
 
 import Context from './models/context';
-import Version from './models/version';
-import Language from './models/language';
 import Preference from './models/preference';
 
 import { CommandsRouter } from './routes/commands';
