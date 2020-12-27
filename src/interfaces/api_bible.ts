@@ -21,38 +21,42 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
             headers: { 'api-key': config.apis.apiBible },
             params: { query: ref.toString(), limit: 1 }
         }).then((res) => {
-            const data = res.data.data.passages;
-            let text;
+            try {
+                const data = res.data.data.passages;
+                let text;
 
-            if (data.length == 0) {
-                return;
+                if (data.length == 0) {
+                    return;
+                }
+
+                if (data[0].bibleId != versionTable[ref.version]) {
+                    console.error(`${ref.version} is no longer able to be used.`);
+                    return;
+                }
+
+                if (data[0].content.length > 0) {
+                    text = data[0].content;
+                } else {
+                    return;
+                }
+
+                const { document } = (new JSDOM(text)).window;
+
+                Array.from(document.getElementsByClassName('v')).forEach((el: Element) => {
+                    el.textContent = `<**${el.textContent.slice(0, -1)}**> `;
+                });
+
+                const title = Array.from(document.getElementsByTagName('h3')).map((el: Element) => el.textContent.trim()).join(' / ');
+                text = Array.from(document.getElementsByClassName('p')).map((el: Element) => el.textContent.trim()).join('\n');
+
+                return callback(null, new Verse(
+                    ref.version.name(),
+                    title,
+                    purifyVerseText(text),
+                    ref
+                ));
+            } catch (err) {
+                return callback(err, null);
             }
-
-            if (data[0].bibleId != versionTable[ref.version]) {
-                console.error(`${ref.version} is no longer able to be used.`);
-                return;
-            }
-
-            if (data[0].content.length > 0) {
-                text = data[0].content;
-            } else {
-                return;
-            }
-
-            const { document } = (new JSDOM(text)).window;
-
-            Array.from(document.getElementsByClassName('v')).forEach((el: Element) => {
-                el.textContent = `<**${el.textContent.slice(0, -1)}**> `;
-            });
-
-            const title = Array.from(document.getElementsByTagName('h3')).map((el: Element) => el.textContent.trim()).join(' / ');
-            text = Array.from(document.getElementsByClassName('p')).map((el: Element) => el.textContent.trim()).join('\n');
-
-            /*return callback(null, new Verse(
-                ref.version.name(),
-                title,
-                purifyVerseText(text),
-                ref
-            ));*/
         });
 }
