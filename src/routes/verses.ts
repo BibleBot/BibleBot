@@ -7,6 +7,8 @@ import Version from '../models/version';
 
 import * as bibleGateway from '../interfaces/bible_gateway';
 import * as apiBible from '../interfaces/api_bible';
+import * as dbgLxx from '../interfaces/dbg_lxx';
+
 import { createEmbed } from '../helpers/embed_builder';
 import * as utils from '../helpers/verse_utils';
 
@@ -67,6 +69,9 @@ export class VersesRouter {
                 switch (version['src']) {
                     case 'ab':
                         processor = apiBible;
+                        break;
+                    case 'dbg':
+                        processor = dbgLxx;
                         break;
                 }
         
