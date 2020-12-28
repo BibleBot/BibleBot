@@ -1,26 +1,25 @@
 {
     "biblebot": "BibleBot <version> by Evangelion Ltd.",
-    "code": "Code: <repository>",
-
-    "commandlist": "* `+<search> query` - search using keywords (only in Bible Gateway versions)\n* `+<setversion> ABBV` - set preferred version to ABBV\n* `+<version>` - see what version you've set\n* `+<versions>` - see the supported versions\n* `+<versioninfo> VER` - read information about a version, using the acronym\n* `+<random>` - get a random Bible verse\n* `+<verseoftheday>` (`+<votd>`) - get the verse of the day\n* `+<setheadings> <enable>/<disable>` - enable or disable topic/chapter headings\n* `+<headings>` - see your topic/chapter headings preference\n* `+<setmode> mode` - set your preferred mode (use blank command for options)\n* `+<mode>` - see your mode preference\n* `+<setversenumbers> <enable>/<disable>` - enable or disable verse numbers\n* `+<versenumbers>` - see your verse numbers preference\n* `+<setlanguage> LANG` - set preferred language to LANG\n* `+<language>` - see your current language, if one is set (default: english)\n* `+<languages>` - see the supported languages\n* `+<users>` - list all users throughout all servers (not counting duplicates or bots)\n* `+<servers>` - show how many servers BibleBot is in\n* `+<invite>` - get the invite link for BibleBot\n* `+<supporters>` - the supporters of BibleBot",
-    "commandlist2": "* `+<creeds>` - the ecumenical creeds (contains further commands)\n* `+<catechisms>` - catechisms of various denominations (contains further commands)",
-    "guildcommandlist": "* `+<setguildversion> ABBV` - set the guild's default version to ABBV\n* `+<guildversion>` - see the default version for this guild\n* `+<setguildlanguage> LANG` - set the guild's default language to LANG\n* `+<guildlanguage>` - see the guild's default language, if one is set (default: english)\n* `+<setvotdtime> TIME` - set the VOTD scheduler time to TIME (TIME must be 24h format and in UTC)\n* `+<clearvotdtime>` - clear the VOTD scheduler time\n* `+<votdtime>` - see the VOTD scheduler time and channel\n* `+<setannouncements> <enable>/<disable>` - enable or disable announcements\n* `+<announcements>` - see the guild's announcement preference",
+    
+    "commandlist": "`<+><search> query` - search using keywords\n`<+><version>` - version preferences and information\n`<+><random>` - get a random Bible verse\n`<+><verseoftheday>` (`<+><votd>`) - daily verses and automation\n`<+><formatting>` - formatting preferences for verse styles\n`<+><language>` - language preferences and information\n`<+><stats>` - view bot statistics\n`<+><invite>` - get the invite link for BibleBot\n`<+><supporters>` - the supporters of BibleBot\n\n`<+><creeds>` - ecumenical creeds\n`<+><resources>` - various Christian resources (catechisms, confessions, etc.)",
     "usage": "To use the bot, just say a Bible verse. I'll handle the rest.",
-
+    
     "commandlistName": "Commands",
-    "extrabiblicalcommandlistName": "Extra-Biblical Commands",
-    "guildcommandlistName": "Guild Commands",
     "links": "Links",
-
+    
     "website": "Website: <website>",
-    "joinserver": "Official Discord Server: <invite>",
+    "code": "Source Code: <repository>",
+    "server": "Official Discord Server: <invite>",
     "terms": "Terms and Conditions: <terms>",
 
     "creeds": "Creeds",
     "creeds_text": "These are the creeds available in BibleBot:\n\n",
 
+    "resources": "Resources",
+    "resources_text": "These are the resources available in BibleBot:\n\n",
+
     "catechisms": "Catechisms",
-    "catechisms_text": "These are the catechisms available in BibleBot:\n\n",
+    "confessions": "Confessions",
 
     "protestant": "Protestant",
     "lutheran": "Lutheran",
@@ -133,6 +132,8 @@
         "votd": "votd",
         "verseoftheday": "verseoftheday",
         "random": "random",
+        "formatting": "formatting",
+        "stats": "stats",
         "biblebot": "biblebot",
         "addversion": "addversion",
         "rmversion": "rmversion",
@@ -160,10 +161,9 @@
         "apostles": "apostles",
         "chalcedon": "chalcedon",
         "creeds": "creeds",
-        "catechisms": "catechisms",
+        "resources": "resources",
         "setannouncements": "setannouncements",
         "announcements": "announcements",
-        "stats": "stats",
         "announce": "announce",
         "invite": "invite",
         "supporters": "supporters"

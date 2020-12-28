@@ -1,12 +1,16 @@
+import * as ts from 'typescript';
+
 import Context from '../models/context';
 
 import * as commandList from '../helpers/command_list.json';
 
 import { VersionSettingsRouter } from './settings/versions';
 import { LanguageRouter } from './settings/languages';
+import { InformationRouter } from './information/router';
 
 const versionSettingsRouter = VersionSettingsRouter.getInstance();
 const languageRouter = LanguageRouter.getInstance();
+const informationRouter = InformationRouter.getInstance();
 
 export class CommandsRouter {
     private static instance: CommandsRouter;
@@ -38,7 +42,7 @@ export class CommandsRouter {
 
         switch (command) {
             case 'biblebot':
-                // informationRouter.getHelp(ctx);
+                informationRouter.getHelp(ctx);
                 break;
             case 'search':
                 // verseCommandsRouter.search(ctx, args);
@@ -88,14 +92,12 @@ export class CommandsRouter {
                 ctx.raw.delete();
                 ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `echo ${args.join(' ')}`);
                 break;
-            case 'eval':
-                // ?
+            case 'eval': 
+                ctx.channel.send(eval(ts.transpile(args.join(' '))));
+                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'eval');
                 break;
             case 'manageoptout':
                 // managementRouter.processIgnore(ctx, args);
-                break;
-            case 'leave':
-                ctx.bot;
                 break;
         }
     }
