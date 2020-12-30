@@ -1,5 +1,6 @@
 {
-    "biblebot": "BibleBot <version> by Evangelion Ltd.",
+    "biblebot": "BibleBot <version>",
+    "credit": "Made with ❤️ by Evangelion Ltd.",
     
     "commandlist": "`<+><search> query` - search using keywords\n`<+><version>` - version preferences and information\n`<+><random>` - get a random Bible verse\n`<+><verseoftheday>` (`<+><votd>`) - daily verses and automation\n`<+><formatting>` - formatting preferences for verse styles\n`<+><language>` - language preferences and information\n`<+><stats>` - view bot statistics\n`<+><invite>` - get the invite link for BibleBot\n`<+><supporters>` - the supporters of BibleBot\n\n`<+><creeds>` - ecumenical creeds\n`<+><resources>` - various Christian resources (catechisms, confessions, etc.)",
     "usage": "To use the bot, just say a Bible verse. I'll handle the rest.",
@@ -7,10 +8,10 @@
     "commandlistName": "Commands",
     "links": "Links",
     
-    "website": "Website: <website>",
-    "code": "Source Code: <repository>",
-    "server": "Official Discord Server: <invite>",
-    "terms": "Terms and Conditions: <terms>",
+    "website": "**Website**: <website>",
+    "code": "**Source Code**: <repository>",
+    "server": "**Official Discord Server**: <invite>",
+    "terms": "**Terms and Conditions**: <terms>",
 
     "creeds": "Creeds",
     "creeds_text": "These are the creeds available in BibleBot:\n\n",

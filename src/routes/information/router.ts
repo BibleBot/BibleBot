@@ -21,21 +21,19 @@ export class InformationRouter {
     getHelp(ctx: Context): void {
         Language.findOne({ objectName: ctx.preferences.language }, (err, lang) => {
             const title = lang.getString('biblebot').replace('<version>', process.env.npm_package_version);
+            const desc = lang.getString('credit');
 
-            // TODO: command prefixes and put this in a for loop
+            // TODO: command prefixes
             let commandList = lang.getString('commandlist').split('<+>').join('+');
-            commandList = commandList.replace('<search>', lang.getCommand('search'))
-                                     .replace('<version>', lang.getCommand('version'))
-                                     .replace('<random>', lang.getCommand('random'))
-                                     .replace('<verseoftheday>', lang.getCommand('verseoftheday'))
-                                     .replace('<votd>', lang.getCommand('votd'))
-                                     .replace('<formatting>', lang.getCommand('formatting'))
-                                     .replace('<language>', lang.getCommand('language'))
-                                     .replace('<stats>', lang.getCommand('stats'))
-                                     .replace('<invite>', lang.getCommand('invite'))
-                                     .replace('<supporters>', lang.getCommand('supporters'))
-                                     .replace('<creeds>', lang.getCommand('creeds'))
-                                     .replace('<resources>', lang.getCommand('resources'));
+
+            const replacements = ['search', 'version', 'random',
+                                  'verseoftheday', 'votd', 'formatting',
+                                  'language', 'stats', 'invite',
+                                  'supporters', 'creeds', 'resources'];
+
+            for (const replacement of replacements) {
+                commandList = commandList.replace(`<${replacement}>`, lang.getCommand(replacement));
+            }
 
             const links = `
             ${lang.getString('website').replace('<website>', 'https://biblebot.xyz')}
@@ -46,9 +44,9 @@ export class InformationRouter {
             **${lang.getString('usage')}**
             `;
 
-            const embed = createEmbed(null, title, null, false);
+            const embed = createEmbed(null, title, desc, false);
             embed.addField(lang.getString('commandlistName'), commandList, false);
-            embed.addField('\u200B', '\u200B', false);
+            embed.addField('\u200B', '—————————————', false);
             embed.addField(lang.getString('links'), links, false);
 
             ctx.channel.send(embed);
