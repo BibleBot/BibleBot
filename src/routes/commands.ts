@@ -7,10 +7,12 @@ import * as commandList from '../helpers/command_list.json';
 import { VersionSettingsRouter } from './settings/versions';
 import { LanguageRouter } from './settings/languages';
 import { InformationRouter } from './information/router';
+import { VerseCommandsRouter } from './resources/verses';
 
 const versionSettingsRouter = VersionSettingsRouter.getInstance();
 const languageRouter = LanguageRouter.getInstance();
 const informationRouter = InformationRouter.getInstance();
+const verseCommandsRouter = VerseCommandsRouter.getInstance();
 
 export class CommandsRouter {
     private static instance: CommandsRouter;
@@ -51,7 +53,10 @@ export class CommandsRouter {
                 versionSettingsRouter.processCommand(ctx, args);
                 break;
             case 'random':
-                // verseCommandsRouter.randomVerse(ctx);
+                verseCommandsRouter.getRandomVerse(ctx);
+                break;
+            case 'truerandom':
+                // verseCommandsRouter.getTrulyRandomVerse(ctx);
                 break;
             case 'votd':
                 // votdRouter.processCommand(ctx, args);

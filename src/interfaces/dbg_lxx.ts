@@ -1,11 +1,17 @@
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
+import mongoose from 'mongoose';
+
 import { purifyVerseText } from '../helpers/text_purification';
 import Reference from '../models/reference';
 import Verse from '../models/verse';
 
-export function getResult(ref: Reference, headings: boolean, verseNumbers: boolean, 
+export function getResult(ref: Reference, headings: boolean, verseNumbers: boolean, version: mongoose.Document,
     callback: (err: Error, data: Verse) => void): void {
+        if (ref instanceof Reference) {
+            version = ref.version;
+        }
+
         axios.get(`https://www.academic-bible.com/en/online-bibles/septuagint-lxx/read-the-bible-text/bibel/text/lesen/?tx_buhbibelmodul_bibletext%5Bscripture%5D=${ref.toString()}`).then((res) => {
             try {
                 const { document } = (new JSDOM(res.data)).window;
@@ -27,7 +33,8 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
                     ref.toString(),
                     null,
                     purifyVerseText(text),
-                    ref
+                    ref,
+                    version
                 ));
             } catch (err) {
                 return callback(err, null);

@@ -1,16 +1,24 @@
-import * as BibleGateway from '../interfaces/bible_gateway';
 import Reference from '../models/reference';
+import Context from '../models/context';
 import Version from '../models/version';
-import { getBookNames } from './name_fetcher';
-import { removePunctuation } from './text_purification';
+import Verse from '../models/verse';
 
 import * as mongoose from 'mongoose';
 
+import * as bibleGateway from '../interfaces/bible_gateway';
+import * as apiBible from '../interfaces/api_bible';
+import * as dbgLxx from '../interfaces/dbg_lxx';
+
+import { createEmbed } from '../helpers/embed_builder';
+import { getBookNames } from './name_fetcher';
+import { removePunctuation } from './text_purification';
+
 const sources = {
-    'bg': { name: 'BibleGateway', interface: BibleGateway },
-    'ab': { name: 'API.Bible', interface: null },
+    'bg': { name: 'BibleGateway', interface: bibleGateway },
+    'ab': { name: 'API.Bible', interface: apiBible },
     'bh': { name: 'Bible Hub', interface: null },
-    'bs': { name: 'Bible Server', interface: null }
+    'bs': { name: 'Bible Server', interface: null },
+    'dl': { name: 'DBG Septuagint', interface: dbgLxx }
 };
 
 interface BookSearchResult {
@@ -197,4 +205,30 @@ export async function generateReference(result: BookSearchResult, msg: string, v
     }
 
     return new Reference(book, startingChapter, startingVerse, endingChapter, endingVerse, version);
+}
+
+export async function processVerse(ctx: Context, version: mongoose.Document, reference: Reference | string): Promise<void> {
+    let processor = bibleGateway;
+
+    switch (version.src) {
+        case 'ab':
+            processor = apiBible;
+            break;
+        case 'dbg':
+            processor = dbgLxx;
+            break;
+    }
+
+    processor.getResult(reference, true, true, version, (err, data: Verse) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        const title = `${data.passage()} - ${data.version().name}`;
+        const embed = createEmbed(title, data.title(), data.text(), false);
+
+        ctx.channel.send(embed);
+        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${data.passage()} ${data.version().abbv}`);
+    });
 }

@@ -3,6 +3,7 @@ import * as fs from 'fs';
 
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
+import mongoose from 'mongoose';
 
 import { purifyVerseText } from '../helpers/text_purification';
 import Reference from '../models/reference';
@@ -15,9 +16,13 @@ const versionTable = {
     FBV: '65eec8e0b60e656b-01'
 };
 
-export function getResult(ref: Reference, headings: boolean, verseNumbers: boolean, 
+export function getResult(ref: Reference | string, headings: boolean, verseNumbers: boolean, version: mongoose.Document,
     callback: (err: Error, data: Verse) => void): void {
-        axios.get(`https://api.scripture.api.bible/v1/bibles/${versionTable[ref.version]}/search`, {
+        if (ref instanceof Reference) {
+            version = ref.version;
+        }
+
+        axios.get(`https://api.scripture.api.bible/v1/bibles/${versionTable[version.abbv]}/search`, {
             headers: { 'api-key': config.apis.apiBible },
             params: { query: ref.toString(), limit: 1 }
         }).then((res) => {
@@ -29,8 +34,8 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
                     return;
                 }
 
-                if (data[0].bibleId != versionTable[ref.version]) {
-                    console.error(`${ref.version} is no longer able to be used.`);
+                if (data[0].bibleId != versionTable[version.abbv]) {
+                    console.error(`${version.abbv} is no longer able to be used.`);
                     return;
                 }
 
@@ -43,17 +48,18 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
                 const { document } = (new JSDOM(text)).window;
 
                 Array.from(document.getElementsByClassName('v')).forEach((el: Element) => {
-                    el.textContent = `<**${el.textContent.slice(0, -1)}**> `;
+                    el.textContent = `<**${el.textContent}**> `;
                 });
 
                 const title = Array.from(document.getElementsByTagName('h3')).map((el: Element) => el.textContent.trim()).join(' / ');
                 text = Array.from(document.getElementsByClassName('p')).map((el: Element) => el.textContent.trim()).join('\n');
 
                 return callback(null, new Verse(
-                    ref.version.name(),
+                    data[0].reference,
                     title,
                     purifyVerseText(text),
-                    ref
+                    ref,
+                    version
                 ));
             } catch (err) {
                 return callback(err, null);

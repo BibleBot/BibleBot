@@ -3,10 +3,15 @@ import { JSDOM } from 'jsdom';
 import { purifyVerseText } from '../helpers/text_purification';
 import Reference from '../models/reference';
 import Verse from '../models/verse';
+import mongoose from 'mongoose';
 
-export function getResult(ref: Reference, headings: boolean, verseNumbers: boolean, 
+export function getResult(ref: Reference | string, headings: boolean, verseNumbers: boolean, version: mongoose.Document, 
     callback: (err: Error, data: Verse) => void): void {
-        axios.get(`https://www.biblegateway.com/passage/?search=${ref.toString()}&version=${ref.version.abbv}&interface=print`).then((res) => {
+        if (ref instanceof Reference) {
+            version = ref.version;
+        }
+
+        axios.get(`https://www.biblegateway.com/passage/?search=${ref.toString()}&version=${version.abbv}&interface=print`).then((res) => {
             try {
                 const { document } = (new JSDOM(res.data)).window;
 
@@ -31,7 +36,8 @@ export function getResult(ref: Reference, headings: boolean, verseNumbers: boole
                     `${document.getElementsByClassName('bcv')[0].textContent}`,
                     title,
                     purifyVerseText(text),
-                    ref
+                    ref,
+                    version
                 ));
             } catch (err) {
                 return callback(err, null);

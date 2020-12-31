@@ -2,14 +2,8 @@ import * as ini from 'ini';
 import * as fs from 'fs';
 
 import Context from '../models/context';
-import Verse from '../models/verse';
 import Version from '../models/version';
 
-import * as bibleGateway from '../interfaces/bible_gateway';
-import * as apiBible from '../interfaces/api_bible';
-import * as dbgLxx from '../interfaces/dbg_lxx';
-
-import { createEmbed } from '../helpers/embed_builder';
 import * as utils from '../helpers/verse_utils';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
@@ -57,36 +51,14 @@ export class VersesRouter {
                 queryVersion = ctx.preferences.version;
             }
 
-            Version.findOne({ abbv: queryVersion }).then(async (version) => {
-                const reference = await utils.generateReference(result, msg, version);
+            Version.findOne({ abbv: queryVersion }, async (err, version) => {
+                const reference = await utils.generateReference(result, ctx.msg.split(/\r?\n/).join(' '), version);
 
                 if (reference === null) {
                     return;
                 }
-        
-                let processor = bibleGateway;
-        
-                switch (version['src']) {
-                    case 'ab':
-                        processor = apiBible;
-                        break;
-                    case 'dbg':
-                        processor = dbgLxx;
-                        break;
-                }
-        
-                processor.getResult(reference, true, true, (err, data: Verse) => {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
-        
-                    const title = `${data.passage()} - ${data.version().name}`;
-                    const embed = createEmbed(title, data.title(), data.text(), false);
-        
-                    ctx.channel.send(embed);
-                    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${data.passage()} ${data.version().abbv}`);
-                });
+
+                utils.processVerse(ctx, reference.version, reference);
             });
         }); 
     }
