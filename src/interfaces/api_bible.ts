@@ -12,7 +12,7 @@ import Verse from '../models/verse';
 const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
 const versionTable = {
-    KJVA: 'de4e12af7f28f599-02',
+    KJVA: 'de4e12af7f28f599-01',
     FBV: '65eec8e0b60e656b-01'
 };
 
@@ -52,7 +52,7 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
                 });
 
                 const title = Array.from(document.getElementsByTagName('h3')).map((el: Element) => el.textContent.trim()).join(' / ');
-                text = Array.from(document.getElementsByClassName('p')).map((el: Element) => el.textContent.trim()).join('\n');
+                text = Array.from(document.getElementsByTagName('p')).map((el: Element) => el.textContent.trim()).join('\n');
 
                 return callback(null, new Verse(
                     data[0].reference,
