@@ -35,14 +35,12 @@ export class VerseCommandsRouter {
                 }
 
                 Version.findOne({ abbv: queryVersion }, (err, version) => {
+                    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'used +random for next reference');
                     utils.processVerse(ctx, version, verse);
                 });
             } catch (err) {
                 return;
             }
         });
-
-        //    ctx.channel.send(embed);
-        //    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'biblebot');
     }
 }
