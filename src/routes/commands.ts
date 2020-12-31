@@ -56,7 +56,7 @@ export class CommandsRouter {
                 verseCommandsRouter.getRandomVerse(ctx);
                 break;
             case 'truerandom':
-                // verseCommandsRouter.getTrulyRandomVerse(ctx);
+                verseCommandsRouter.getTrulyRandomVerse(ctx);
                 break;
             case 'votd':
                 // votdRouter.processCommand(ctx, args);

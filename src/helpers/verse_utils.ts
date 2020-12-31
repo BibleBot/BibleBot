@@ -229,6 +229,5 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
         const embed = createEmbed(title, data.title(), data.text(), false);
 
         ctx.channel.send(embed);
-        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${data.passage()} ${data.version().abbv}`);
     });
 }
