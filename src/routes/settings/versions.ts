@@ -2,10 +2,12 @@ import Context from '../../models/context';
 import Version from '../../models/version';
 import Language from '../../models/language';
 import Preference from '../../models/preference';
+import GuildPreference from '../../models/guild_preference';
 
 import { createEmbed } from '../../helpers/embed_builder';
 
-import defaultUserPreferences from '../../helpers/default_user_preference.json';
+import * as defaultUserPreferences from '../../helpers/default_user_preference.json';
+import * as defaultGuildPreferences from '../../helpers/default_guild_preference.json';
 
 export class VersionSettingsRouter {
     private static instance: VersionSettingsRouter;
@@ -25,15 +27,15 @@ export class VersionSettingsRouter {
     setUserVersion(ctx: Context, abbv: string): void {
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
-                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `setversion - invalid version (${abbv})`);
-                ctx.channel.send(createEmbed(null, '+setversion', `${abbv} not in database`, true));
+                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version set - invalid version (${abbv})`);
+                ctx.channel.send(createEmbed(null, '+version set', `${abbv} not in database`, true));
                 return;
             }
 
             Preference.findOne({ user: ctx.id }, (err, prefs) => {
                 if (err) {
-                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'setversion - cannot save preference');
-                    ctx.channel.send(createEmbed(null, '+setversion', 'Failed to set preference.', true));
+                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version set - cannot save preference');
+                    ctx.channel.send(createEmbed(null, '+version set', 'Failed to set preference.', true));
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         user: ctx.id,
@@ -45,11 +47,11 @@ export class VersionSettingsRouter {
 
                     newPreference.save((err, prefs) => {
                         if (err || !prefs) {
-                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'setversion - cannot save new preference');
-                            ctx.channel.send(createEmbed(null, '+setversion', 'Failed to set preference.', true));
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version set - cannot save new preference');
+                            ctx.channel.send(createEmbed(null, '+version set', 'Failed to set preference.', true));
                         } else {
-                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `setversion ${abbv}`);
-                            ctx.channel.send(createEmbed(null, '+setversion', 'Set version successfully.', false));
+                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version set ${abbv}`);
+                            ctx.channel.send(createEmbed(null, '+version set', 'Set version successfully.', false));
                         }
                     });
                 } else {
@@ -57,43 +59,88 @@ export class VersionSettingsRouter {
 
                     prefs.save((err, preference) => {
                         if (err || !preference) {
-                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'setversion - cannot overwrite preference');
-                            ctx.channel.send(createEmbed(null, '+setversion', 'Failed to set preference.', true));
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version set - cannot overwrite preference');
+                            ctx.channel.send(createEmbed(null, '+version set', 'Failed to set preference.', true));
                         } else {
-                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `setversion ${abbv} (overwrite)`);
-                            ctx.channel.send(createEmbed(null, '+setversion', 'Set version successfully.', false));
+                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version set ${abbv} (overwrite)`);
+                            ctx.channel.send(createEmbed(null, '+version set', 'Set version successfully.', false));
                         }
                     });
                 }
             });
         }).catch(() => {
-            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `setversion - invalid version (${abbv})`);
-            ctx.channel.send(createEmbed(null, '+setversion', `${abbv} not in database`, true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version set - invalid version (${abbv})`);
+            ctx.channel.send(createEmbed(null, '+version set', `${abbv} not in database`, true));
         });
     }
 
-    getUserVersion(ctx: Context): void {
-        Preference.findOne({ user: ctx.id }, (err, prefs) => {
-            if (err || !prefs) {
-                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version - cannot save preference');
-                ctx.channel.send(createEmbed(null, '+version', 'Preferences not found.', true));
-            } else {
-                Language.findOne({ objectName: prefs.language }, (err, lang) => {
-                    Version.findOne({ abbv: prefs.version }, (err, ver) => {
-                        const message = `
-                        ${lang.getString('versionused').replace('<version>', '**' + ver['name'] + '**')}
-                        
-                        __**${lang.getString('subcommands')}**__
-                        **${lang.getCommand('set')}** - ${lang.getString('setversionusage')}
-                        **${lang.getCommand('setserver')}** - ${lang.getString('setserverversionusage')}
-                        `;
-        
-                        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
-                        ctx.channel.send(createEmbed(null, '+version', message, false));
-                    });
-                });
+    setGuildVersion(ctx: Context, abbv: string): void {
+        Version.findOne({ abbv }).then((version) => {
+            if (!version) {
+                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version setserver - invalid version (${abbv})`);
+                ctx.channel.send(createEmbed(null, '+version setserver', `${abbv} not in database`, true));
+                return;
             }
+
+            GuildPreference.findOne({ user: ctx.id }, (err, prefs) => {
+                if (err) {
+                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - cannot save preference');
+                    ctx.channel.send(createEmbed(null, '+version setserver', 'Failed to set preference.', true));
+                } else if (!prefs) {
+                    const derivedFromDefault = {
+                        guild: ctx.guild.id,
+                        version: abbv,
+                        ...defaultGuildPreferences
+                    };
+
+                    const newPreference = new GuildPreference(derivedFromDefault);
+
+                    newPreference.save((err, prefs) => {
+                        if (err || !prefs) {
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - cannot save new preference');
+                            ctx.channel.send(createEmbed(null, '+version setserver', 'Failed to set preference.', true));
+                        } else {
+                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version set ${abbv}`);
+                            ctx.channel.send(createEmbed(null, '+version setserver', 'Set version successfully.', false));
+                        }
+                    });
+                } else {
+                    prefs.version = abbv;
+
+                    prefs.save((err, preference) => {
+                        if (err || !preference) {
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - cannot overwrite preference');
+                            ctx.channel.send(createEmbed(null, '+version setserver', 'Failed to set preference.', true));
+                        } else {
+                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version setserver ${abbv} (overwrite)`);
+                            ctx.channel.send(createEmbed(null, '+version setserver', 'Set version successfully.', false));
+                        }
+                    });
+                }
+            });
+        }).catch(() => {
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version setserver - invalid version (${abbv})`);
+            ctx.channel.send(createEmbed(null, '+version setserver', `${abbv} not in database`, true));
         });
+    }
+
+    async getVersion(ctx: Context): Promise<void> {
+        const lang = await Language.findOne({ objectName: ctx.preferences.language }).exec();
+        
+        const userVersion = await Version.findOne({ abbv: ctx.preferences.version }).exec();
+        const guildVersion = await Version.findOne({ abbv: ctx.guildPreferences.version }).exec();
+
+        const message = `
+        ${lang.getString('versionused').replace('<version>', '**' + userVersion.name + '**')}
+        ${lang.getString('guildversionused').replace('<version>', '**' + guildVersion.name + '**')}
+                                
+        __**${lang.getString('subcommands')}**__
+        **${lang.getCommand('set')}** - ${lang.getString('setversionusage')}
+        **${lang.getCommand('setserver')}** - ${lang.getString('setserverversionusage')}
+        `;
+                
+        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
+        ctx.channel.send(createEmbed(null, '+version', message, false));
     }
 
     processCommand(ctx: Context, params: Array<string>): void {
@@ -105,7 +152,7 @@ export class VersionSettingsRouter {
                 this.setUserVersion(ctx, args[0]);
                 break;
             default:
-                this.getUserVersion(ctx);
+                this.getVersion(ctx);
                 break;
         }
     }

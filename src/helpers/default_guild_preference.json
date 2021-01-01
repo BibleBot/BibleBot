@@ -1,5 +1,7 @@
 {
     "input": "default",
     "prefix": "+",
-    "ignoringBrackets": "<>"
+    "ignoringBrackets": "<>",
+    "version": "RSV",
+    "language": "default"
 }

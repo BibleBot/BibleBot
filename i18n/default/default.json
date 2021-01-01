@@ -40,6 +40,7 @@
     "setversionsuccess": "Set version successfully.",
     "setversionfail": "Failed to set version, see `<+><version> <list>`.",
     "versionused": "Your preferred version is set to <version>.",
+    "guildversionused": "The server's preferred version is set to <version>.",
     "setversionusage": "set your preferred version",
     "setserverversionusage": "set the server's default version (staff only)",
     
@@ -71,8 +72,6 @@
     "setguildversionsuccess": "Set guild version successfully.",
     "setguildversionnoperm": "You must have the 'Manage Server' permission to modify a guild's version!",
     "setguildversionfail": "Failed to set guild version, see `<+><version> <list>`.",
-    "guildversionused": "This guild is using <version>. Have someone with the 'Manage Server' permission use `<+><version> <setserver>` to set a different version.",
-    "noguildversionused": "I couldn't find this guild in my database, has someone with the 'Manage Server' permission used `<+><version> <setserver>` yet?",
     
     "setguildlanguagesuccess": "Set guild language successfully.",
     "setguildlanguagenoperm": "You must have the 'Manage Server' permission to modify a guild's language!",

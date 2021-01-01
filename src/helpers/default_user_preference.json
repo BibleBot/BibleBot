@@ -1,5 +1,7 @@
 {
     "input": "default",
     "headings": true,
-    "verseNumbers": true
+    "verseNumbers": true,
+    "version": "RSV",
+    "language": "default"
 }

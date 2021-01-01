@@ -9,19 +9,21 @@ export default class Context {
     guild: Discord.Guild;
     msg: string;
     preferences: mongoose.Document;
+    guildPreferences: mongoose.Document;
     db: mongoose.Connection;
     shard: number;
     logInteraction;
     raw: Discord.Message;
 
     constructor(id: string, bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel, guild: Discord.Guild,
-                msg: string, preferences: mongoose.Document, db: mongoose.Connection, raw: Discord.Message) {
+                msg: string, preferences: mongoose.Document, guildPreferences: mongoose.Document, db: mongoose.Connection, raw: Discord.Message) {
         this.id = id;
         this.bot = bot;
         this.msg = msg;
         this.channel = channel;
         this.guild = guild;
         this.preferences = preferences;
+        this.guildPreferences = guildPreferences;
         this.db = db;
         this.shard = guild.shardID;
         this.logInteraction = logInteraction;
