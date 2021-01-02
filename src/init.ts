@@ -128,9 +128,9 @@ bot.on('message', message => {
                                 commandsRouter.processOwnerCommand(ctx);
                             } else if (commandsRouter.isCommand(potentialCommand)) {
                                 commandsRouter.processCommand(ctx);
-                            } else if (ctx.msg.includes(':')) {
-                                versesRouter.processMessage(ctx, 'default');
                             }
+                        } else if (ctx.msg.includes(':')) {
+                            versesRouter.processMessage(ctx, 'default');
                         }
         
                         break;

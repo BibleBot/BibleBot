@@ -18,7 +18,7 @@ export function createEmbed(author: string, title: string, description: string, 
     }
 
     if (description) {
-        if (description.length < 2048) {
+        if (description.length < 2049) {
             embed.setDescription(description);
         } else {
             throw new Error('Description is too long.');

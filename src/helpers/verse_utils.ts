@@ -12,6 +12,7 @@ import * as dbgLxx from '../interfaces/dbg_lxx';
 import { createEmbed } from '../helpers/embed_builder';
 import { getBookNames } from './name_fetcher';
 import { removePunctuation } from './text_purification';
+import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript';
 
 const sources = {
     'bg': { name: 'BibleGateway', interface: bibleGateway },
@@ -226,7 +227,16 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
         }
 
         const title = `${data.passage()} - ${data.version().name}`;
-        const embed = createEmbed(title, data.title(), data.text(), false);
+        let text = data.text();
+
+        if (text.length > 2048) {
+            text = `${text.slice(0, -(text.length - 2044))}...`;
+        }
+
+        // I am so sorry.
+        text = text.replace(/(\.*\s*<*\**\d*\**>*\.\.\.)$/g, '...');
+
+        const embed = createEmbed(title, data.title(), text, false);
 
         ctx.channel.send(embed);
     });
