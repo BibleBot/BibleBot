@@ -4,6 +4,7 @@ import * as ini from 'ini';
 import { log } from './helpers/logger';
 
 import Context from './models/context';
+import Language from './models/language';
 import Preference from './models/preference';
 import GuildPreference from './models/guild_preference';
 
@@ -104,37 +105,43 @@ bot.on('message', message => {
             if (err || !gPrefs) {
                 gPrefs = { ...defaultGuildPreferences };
             }
-    
-            const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, prefs, gPrefs, db, message);
-    
-            const potentialCommand = ctx.msg.split(' ')[0].slice(1);
-    
-            switch(prefs['input']) {
-                case 'default': {
-                    if (commandsRouter.isOwnerCommand(potentialCommand)) {
-                        commandsRouter.processOwnerCommand(ctx);
-                    } else if (commandsRouter.isCommand(potentialCommand)) {
-                        commandsRouter.processCommand(ctx);
-                    } else if (ctx.msg.includes(':')) {
-                        versesRouter.processMessage(ctx, 'default');
-                    }
-    
-                    break;
+
+            Language.findOne({ objectName: prefs.language }, (err, lang) => {
+                if (err) {
+                    throw new Error('unable to find language');
                 }
-                case 'erasmus': {
-                    // tl;dr - Erasmus verse processing is invoked by mention in beginning of message
-                    // or if verse is surrounded by square brackets or if message starts with '$'
-                    if (ctx.msg.startsWith('$')) {
-                            if (ctx.msg.includes(':')) {
-                                versesRouter.processMessage(ctx, 'erasmus');
-                            } else if (commandsRouter.isCommand(potentialCommand)) {
-                                commandsRouter.processCommand(ctx);
-                            }
-                    }
+                
+                const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, lang, prefs, gPrefs, message);
     
-                    break;
+                const potentialCommand = ctx.msg.split(' ')[0].slice(1);
+        
+                switch(prefs['input']) {
+                    case 'default': {
+                        if (commandsRouter.isOwnerCommand(potentialCommand)) {
+                            commandsRouter.processOwnerCommand(ctx);
+                        } else if (commandsRouter.isCommand(potentialCommand)) {
+                            commandsRouter.processCommand(ctx);
+                        } else if (ctx.msg.includes(':')) {
+                            versesRouter.processMessage(ctx, 'default');
+                        }
+        
+                        break;
+                    }
+                    case 'erasmus': {
+                        // tl;dr - Erasmus verse processing is invoked by mention in beginning of message
+                        // or if verse is surrounded by square brackets or if message starts with '$'
+                        if (ctx.msg.startsWith('$')) {
+                                if (ctx.msg.includes(':')) {
+                                    versesRouter.processMessage(ctx, 'erasmus');
+                                } else if (commandsRouter.isCommand(potentialCommand)) {
+                                    commandsRouter.processCommand(ctx);
+                                }
+                        }
+        
+                        break;
+                    }
                 }
-            }
+            });
         });
     });
 

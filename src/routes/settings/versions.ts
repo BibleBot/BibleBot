@@ -125,7 +125,7 @@ export class VersionSettingsRouter {
     }
 
     async getVersion(ctx: Context): Promise<void> {
-        const lang = await Language.findOne({ objectName: ctx.preferences.language }).exec();
+        const lang = ctx.language;
         
         const userVersion = await Version.findOne({ abbv: ctx.preferences.version }).exec();
         const guildVersion = await Version.findOne({ abbv: ctx.guildPreferences.version }).exec();
