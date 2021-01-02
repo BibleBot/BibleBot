@@ -39,14 +39,18 @@ export class CommandsRouter {
         return commandList.owner_commands.indexOf(str) > -1;
     }
 
-    processCommand(ctx: Context): void {
-        const tokens = ctx.msg.slice(1).split(' ');
-        const command = tokens[0];
+    processCommand(ctx: Context, rescue?: string): void {
+        const tokens = rescue ? ctx.msg.slice(1).split(' ').slice(1) : ctx.msg.slice(1).split(' ');
+        const command = rescue ? rescue : tokens[0];
         const args = tokens.slice(1);
 
         switch (command) {
             case 'biblebot':
-                informationRouter.getHelp(ctx);
+                if (args.length == 0) {
+                    informationRouter.getHelp(ctx);
+                } else if (this.isCommand(args[0])) {
+                    this.processCommand(ctx, args[0]);
+                }
                 break;
             case 'search':
                 // verseCommandsRouter.search(ctx, args);

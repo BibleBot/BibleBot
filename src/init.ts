@@ -113,10 +113,17 @@ bot.on('message', message => {
     
                 const prefix = ctx.msg.split(' ')[0].slice(0, 1);
                 const potentialCommand = ctx.msg.split(' ')[0].slice(1);
+                let couldBeRescue = false;
+
+                if (prefix == gPrefs.prefix || prefix == config.biblebot.commandPrefix) {
+                    if (potentialCommand == 'biblebot') {
+                        couldBeRescue = true;
+                    }
+                }
         
                 switch(prefs['input']) {
                     case 'default': {
-                        if (prefix == gPrefs.prefix || prefix == '+') {
+                        if (prefix == gPrefs.prefix || couldBeRescue) {
                             if (commandsRouter.isOwnerCommand(potentialCommand)) {
                                 commandsRouter.processOwnerCommand(ctx);
                             } else if (commandsRouter.isCommand(potentialCommand)) {
