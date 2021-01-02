@@ -36,9 +36,10 @@ export class LanguageRouter {
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         user: ctx.id,
-                        language: objectName,
                         ...defaultUserPreferences
                     };
+
+                    derivedFromDefault.language = objectName;
 
                     const newPreference = new Preference(derivedFromDefault);
 

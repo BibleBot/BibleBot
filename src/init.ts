@@ -37,8 +37,6 @@ const connect = () => {
     });
 };
 
-let db;
-
 bot.on('ready', () => {
     heartbeats.startHeartbeatMonitor(bot);
     log('info', null, 'initialization complete');
@@ -113,33 +111,36 @@ bot.on('message', message => {
                 
                 const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, lang, prefs, gPrefs, message);
     
+                const prefix = ctx.msg.split(' ')[0].slice(0, 1);
                 const potentialCommand = ctx.msg.split(' ')[0].slice(1);
         
                 switch(prefs['input']) {
                     case 'default': {
-                        if (commandsRouter.isOwnerCommand(potentialCommand)) {
-                            commandsRouter.processOwnerCommand(ctx);
-                        } else if (commandsRouter.isCommand(potentialCommand)) {
-                            commandsRouter.processCommand(ctx);
-                        } else if (ctx.msg.includes(':')) {
-                            versesRouter.processMessage(ctx, 'default');
+                        if (prefix == gPrefs.prefix || prefix == '+') {
+                            if (commandsRouter.isOwnerCommand(potentialCommand)) {
+                                commandsRouter.processOwnerCommand(ctx);
+                            } else if (commandsRouter.isCommand(potentialCommand)) {
+                                commandsRouter.processCommand(ctx);
+                            } else if (ctx.msg.includes(':')) {
+                                versesRouter.processMessage(ctx, 'default');
+                            }
                         }
         
                         break;
                     }
-                    case 'erasmus': {
-                        // tl;dr - Erasmus verse processing is invoked by mention in beginning of message
-                        // or if verse is surrounded by square brackets or if message starts with '$'
-                        if (ctx.msg.startsWith('$')) {
-                                if (ctx.msg.includes(':')) {
-                                    versesRouter.processMessage(ctx, 'erasmus');
-                                } else if (commandsRouter.isCommand(potentialCommand)) {
-                                    commandsRouter.processCommand(ctx);
-                                }
-                        }
-        
-                        break;
-                    }
+                    //case 'erasmus': {
+                    //    // tl;dr - Erasmus verse processing is invoked by mention in beginning of message
+                    //    // or if verse is surrounded by square brackets or if message starts with '$'
+                    //    if (ctx.msg.startsWith('$')) {
+                    //            if (ctx.msg.includes(':')) {
+                    //                versesRouter.processMessage(ctx, 'erasmus');
+                    //            } else if (commandsRouter.isCommand(potentialCommand)) {
+                    //                commandsRouter.processCommand(ctx);
+                    //            }
+                    //    }
+                    //
+                    //    break;
+                    //}
                 }
             });
         });
@@ -152,7 +153,6 @@ log('info', null, `BibleBot v${process.env.npm_package_version} by Evangelion Lt
 fetchBookNames(config.biblebot.dry == 'True').then(() => {
     connect();
     mongoose.connection.on('disconnected', connect);
-    db = mongoose.connection;
 
     bot.login(config.biblebot.token);
 });

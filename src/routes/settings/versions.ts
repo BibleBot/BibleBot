@@ -38,9 +38,10 @@ export class VersionSettingsRouter {
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         user: ctx.id,
-                        version: abbv,
                         ...defaultUserPreferences
                     };
+
+                    derivedFromDefault.version = abbv;
 
                     const newPreference = new Preference(derivedFromDefault);
 
@@ -88,9 +89,10 @@ export class VersionSettingsRouter {
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         guild: ctx.guild.id,
-                        version: abbv,
                         ...defaultGuildPreferences
                     };
+
+                    derivedFromDefault.version = abbv;
 
                     const newPreference = new GuildPreference(derivedFromDefault);
 

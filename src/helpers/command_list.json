@@ -10,6 +10,7 @@
         "language",
         "invite",
         "creeds",
+        "misc",
         "ping"
     ],
     "guild_commands": [

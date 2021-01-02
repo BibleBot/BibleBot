@@ -8,11 +8,13 @@ import { VersionSettingsRouter } from './settings/versions';
 import { LanguageRouter } from './settings/languages';
 import { InformationRouter } from './information/router';
 import { VerseCommandsRouter } from './resources/verses';
+import { MiscSettingsRouter } from './settings/misc';
 
 const versionSettingsRouter = VersionSettingsRouter.getInstance();
 const languageRouter = LanguageRouter.getInstance();
 const informationRouter = InformationRouter.getInstance();
 const verseCommandsRouter = VerseCommandsRouter.getInstance();
+const miscSettingsRouter = MiscSettingsRouter.getInstance();
 
 export class CommandsRouter {
     private static instance: CommandsRouter;
@@ -75,6 +77,9 @@ export class CommandsRouter {
                 break;
             case 'catechisms':
                 // resourceRouter.processCatechismCommand(ctx, args);
+                break;
+            case 'misc':
+                miscSettingsRouter.processCommand(ctx, args);
                 break;
             case 'ping':
                 ctx.channel.send('pong');
