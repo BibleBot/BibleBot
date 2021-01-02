@@ -119,13 +119,11 @@ export class MiscSettingsRouter {
     async getMiscSettings(ctx: Context): Promise<void> {
         const lang = ctx.language;
 
-        const message = `
-        ${lang.getString('guildprefixused').replace('<prefix>', '**' + ctx.guildPreferences.prefix + '**')}
-        ${lang.getString('guildbracketsused').replace('<brackets>', '**' + ctx.guildPreferences.ignoringBrackets + '**')}
-        
-        __**${lang.getString('subcommands')}**__
-        **${lang.getCommand('setprefix')}** - ${lang.getString('setprefixusage')}
-        **${lang.getCommand('setbrackets')}** - ${lang.getString('setbracketsusage')}`;
+        const message = `${lang.getString('guildprefixused').replace('<prefix>', '**' + ctx.guildPreferences.prefix + '**')}\n` +
+        `${lang.getString('guildbracketsused').replace('<brackets>', '**' + ctx.guildPreferences.ignoringBrackets + '**')}\n\n` +
+        `__**${lang.getString('subcommands')}**__\n` +
+        `**${lang.getCommand('setprefix')}** - ${lang.getString('setprefixusage')}\n` + 
+        `**${lang.getCommand('setbrackets')}** - ${lang.getString('setbracketsusage')}`;
                 
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'misc');
         ctx.channel.send(createEmbed(null, '+misc', message, false));

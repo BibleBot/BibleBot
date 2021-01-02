@@ -131,14 +131,11 @@ export class VersionSettingsRouter {
         const userVersion = await Version.findOne({ abbv: ctx.preferences.version }).exec();
         const guildVersion = await Version.findOne({ abbv: ctx.guildPreferences.version }).exec();
 
-        const message = `
-        ${lang.getString('versionused').replace('<version>', '**' + userVersion.name + '**')}
-        ${lang.getString('guildversionused').replace('<version>', '**' + guildVersion.name + '**')}
-                                
-        __**${lang.getString('subcommands')}**__
-        **${lang.getCommand('set')}** - ${lang.getString('setversionusage')}
-        **${lang.getCommand('setserver')}** - ${lang.getString('setserverversionusage')}
-        `;
+        const message = `${lang.getString('versionused').replace('<version>', '**' + userVersion.name + '**')}\n` +
+        `${lang.getString('guildversionused').replace('<version>', '**' + guildVersion.name + '**')}\n\n` +
+        `__**${lang.getString('subcommands')}**__\n` +
+        `**${lang.getCommand('set')}** - ${lang.getString('setversionusage')}\n` +
+        `**${lang.getCommand('setserver')}** - ${lang.getString('setserverversionusage')}`;
                 
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
         ctx.channel.send(createEmbed(null, '+version', message, false));

@@ -34,14 +34,11 @@ export class InformationRouter {
             commandList = commandList.replace(`<${replacement}>`, lang.getCommand(replacement));
         }
 
-        const links = `
-        ${lang.getString('website').replace('<website>', 'https://biblebot.xyz')}
-        ${lang.getString('code').replace('<repository>', 'https://github.com/BibleBot/BibleBot')}
-        ${lang.getString('server').replace('<invite>', 'https://discord.gg/H7ZyHqE')}
-        ${lang.getString('terms').replace('<terms>', 'https://biblebot.xyz/terms')}
-
-        **${lang.getString('usage')}**
-        `;
+        const links = `${lang.getString('website').replace('<website>', 'https://biblebot.xyz')}\n` +
+        `${lang.getString('code').replace('<repository>', 'https://github.com/BibleBot/BibleBot')}\n` +
+        `${lang.getString('server').replace('<invite>', 'https://discord.gg/H7ZyHqE')}\n` +
+        `${lang.getString('terms').replace('<terms>', 'https://biblebot.xyz/terms')}\n\n` +
+        `**${lang.getString('usage')}**`;
 
         const embed = createEmbed(null, title, desc, false);
         embed.addField(lang.getString('commandlistName'), commandList, false);
