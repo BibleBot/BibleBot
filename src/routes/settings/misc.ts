@@ -28,7 +28,7 @@ export class MiscSettingsRouter {
             return;
         }
 
-        GuildPreference.findOne({ user: ctx.id }, (err, prefs) => {
+        GuildPreference.findOne({ guild: ctx.guild.id }, (err, prefs) => {
             if (err) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - cannot save preference');
                 ctx.channel.send(createEmbed(null, '+misc setprefix', 'Failed to set preference.', true));
@@ -73,7 +73,7 @@ export class MiscSettingsRouter {
         if (brackets.length != 2 && validBrackets.includes(brackets)) {
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setbrackets - invalid input');
             ctx.channel.send(createEmbed(null, '+misc setbrackets', 'invalid input.', true));
-            
+
             return;
         }
 
