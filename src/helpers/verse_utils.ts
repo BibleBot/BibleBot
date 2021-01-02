@@ -12,7 +12,6 @@ import * as dbgLxx from '../interfaces/dbg_lxx';
 import { createEmbed } from '../helpers/embed_builder';
 import { getBookNames } from './name_fetcher';
 import { removePunctuation } from './text_purification';
-import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript';
 
 const sources = {
     'bg': { name: 'BibleGateway', interface: bibleGateway },
