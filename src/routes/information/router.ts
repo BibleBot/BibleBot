@@ -1,5 +1,4 @@
 import Context from '../../models/context';
-import Language from '../../models/language';
 
 import { createEmbed } from '../../helpers/embed_builder';
 

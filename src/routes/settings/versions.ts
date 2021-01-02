@@ -1,6 +1,5 @@
 import Context from '../../models/context';
 import Version from '../../models/version';
-import Language from '../../models/language';
 import Preference from '../../models/preference';
 import GuildPreference from '../../models/guild_preference';
 
