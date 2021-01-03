@@ -82,7 +82,7 @@ export class InformationRouter {
             'win32': 'Windows'
         };
 
-        const platform = lang.getString('runningon').replace('<platform>', `**${platformMap[os.platform()]} ${os.release()}** (\`${os.arch()}\`)`);
+        const platform = lang.getString('runningon').replace('<platform>', `**${platformMap[os.platform()]} ${os.release()}** (${os.arch()})`);
 
         git.getLastCommit((err, commit) => {
             const message = `**${lang.getString('shardcount')}** ${ctx.bot.ws.shards.size}\n` +
@@ -95,7 +95,7 @@ export class InformationRouter {
             `**${lang.getString('versioncount')}** ${versionCount}\n` +
             `**${lang.getString('languagecount')}** ${languageCount}\n\n` +
 
-            `**BibleBot:** ${process.env.npm_package_version} (commit: \`${commit.shortHash}\`)\n` +
+            `**BibleBot:** ${process.env.npm_package_version} ([${commit.shortHash}](https://github.com/BibleBot/BibleBot/commit/${commit.hash}))\n` +
             `**Discord.js:** ${packageJson.dependencies['discord.js'].slice(1)}\n` + 
             `**Mongoose:** ${packageJson.dependencies.mongoose.slice(1)}\n\n` +
             
