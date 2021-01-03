@@ -83,6 +83,9 @@ async def get_result(query, version, headings, verse_numbers):
                 soup = BeautifulSoup(await resp.text(), "lxml")
                 soup.prettify(formatter=lambda s: s.replace(u'\xa0', ' '))
 
+                if (soup.find("div", {"class": "bcv"}) is None):
+                    return
+
                 passage = soup.find("div", {"class": "bcv"}).get_text()
                 version = soup.find("div", {"class": "translation"}).get_text()
 

@@ -117,10 +117,8 @@ async def send_announcement(ctx, res):
                             await ch.send(embed=res["message"])
                         else:
                             await ch.send(res["message"].fields[0].value)
-
-                    count += 1
                 except (AttributeError, IndexError):
-                    count += 1
+                    pass
             elif chan == "preferred" and setting:
                 sent = False
 
@@ -135,14 +133,12 @@ async def send_announcement(ctx, res):
                                 else:
                                     await ch.send(res["message"].fields[0].value)
 
-                            count += 1
                             sent = True
                     except (AttributeError, IndexError):
-                        count += 1
                         sent = True
-            else:
-                count += 1
-
+        count += 1
+        percentage = "{:.1%}".format(count / total)
+        central.log_message("info", 0, "global", "global", f"Announcement progress: {percentage} {str(count)}/{str(total)}")
         message_counter = await update_counter(message_counter, ctx, count, total)
 
 
