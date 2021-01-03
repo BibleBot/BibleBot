@@ -19,9 +19,9 @@ export default class Reference {
         this._endingVerse = endingVerse;
         this.version = version;
         
-        this._isOT = (isOT !== undefined);
-        this._isNT = (isNT !== undefined);
-        this._isDEU = (isDEU !== undefined);
+        this._isOT = isOT ? isOT : null;
+        this._isNT = isNT ? isNT : null;
+        this._isDEU = isDEU ? isDEU : null;
     }
 
     toString(): string {

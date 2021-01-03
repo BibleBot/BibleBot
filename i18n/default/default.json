@@ -120,6 +120,9 @@
     "donorsNotListed": "And those not listed!",
     
     "addversionsuccess": "Added version successfully.",
+
+    "verseerror": "Processing Error",
+    "invalidsection": "The version you are using does not support this section of the Bible.",
     
     "enabled": "enabled",
     "disabled": "disabled",

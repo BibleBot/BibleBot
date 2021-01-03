@@ -59,7 +59,6 @@ export class VersesRouter {
                 }
 
                 utils.processVerse(ctx, reference.version, reference);
-                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${reference.version.abbv}`);
             });
         }); 
     }

@@ -13,6 +13,8 @@ import { createEmbed } from '../helpers/embed_builder';
 import { getBookNames } from './name_fetcher';
 import { removePunctuation } from './text_purification';
 
+import * as bookMap from '../helpers/name_data/book_map.json';
+
 const sources = {
     'bg': { name: 'BibleGateway', interface: bibleGateway },
     'ab': { name: 'API.Bible', interface: apiBible },
@@ -24,6 +26,24 @@ const sources = {
 interface BookSearchResult {
     name: string;
     index: number;
+}
+
+function checkSectionSupport(book: string, section: string, version: mongoose.Document): boolean {
+    let supportValue;
+
+    switch (section) {
+        case 'ot':
+            supportValue = version.supportsOldTestament;
+            break;
+        case 'nt':
+            supportValue = version.supportsNewTestament;
+            break;
+        case 'deu':
+            supportValue = version.supportsDeuterocanon;
+            break;
+    }
+
+    return Object.values(bookMap[section]).includes(book) && !supportValue;
 }
 
 export function isValidSource(source: string): boolean {
@@ -204,10 +224,57 @@ export async function generateReference(result: BookSearchResult, msg: string, v
         }
     }
 
-    return new Reference(book, startingChapter, startingVerse, endingChapter, endingVerse, version);
+    const isOT = Object.values(bookMap.ot).includes(book);
+    const isNT = Object.values(bookMap.nt).includes(book);
+    const isDEU = Object.values(bookMap.deu).includes(book);
+
+    return new Reference(book, startingChapter, startingVerse, endingChapter, endingVerse, version, isOT, isNT, isDEU);
 }
 
 export async function processVerse(ctx: Context, version: mongoose.Document, reference: Reference | string): Promise<void> {
+    if (reference instanceof Reference) {
+        switch (reference.section()) {
+            case 'OT':
+                if (!version.supportsOldTestament) {
+                    ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
+                    ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${reference.section()}`);
+                    return;
+                }
+
+                break;
+            case 'NT':
+                if (!version.supportsNewTestament) {
+                    ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
+                    ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${reference.section()}`);
+                    return;
+                }
+
+                break;
+            case 'DEU':
+                if (!version.supportsDeuterocanon) {
+                    ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
+                    ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${reference.section()}`);
+                    return;
+                }
+
+                break;
+        }
+
+        
+        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${reference.version.abbv}`);
+    } else {
+        for (const section of ['ot', 'nt', 'deu']) {
+            if (!checkSectionSupport(reference.slice(0, -1), section, version)) {
+                ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
+                ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${section.toUpperCase()}`);
+                return;
+            }
+        }
+
+        
+        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${version.abbv}`);
+    }
+
     let processor = bibleGateway;
 
     switch (version.src) {
