@@ -1,4 +1,14 @@
 import Context from '../../models/context';
+import Preference from '../../models/preference';
+import GuildPreference from '../../models/guild_preference';
+import Version from '../../models/version';
+import Language from '../../models/language';
+
+import * as git from 'git-last-commit';
+import * as os from 'os';
+import * as fs from 'fs';
+
+const packageJson = JSON.parse(fs.readFileSync(__dirname + '/../../../package.json', 'utf-8'));
 
 import { createEmbed } from '../../helpers/embed_builder';
 
@@ -47,5 +57,55 @@ export class InformationRouter {
 
         ctx.channel.send(embed);
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'biblebot');
+    }
+
+    async getStats(ctx: Context): Promise<void> {
+        const lang = ctx.language;
+        let userCount = 0;
+
+        for (const guild of ctx.bot.guilds.cache.values()) {
+            userCount += guild.memberCount;
+        }
+
+        const prefCount = await Preference.estimatedDocumentCount().exec();
+        const gPrefCount = await GuildPreference.estimatedDocumentCount().exec();
+        const versionCount = await Version.estimatedDocumentCount().exec();
+        const languageCount = await Language.estimatedDocumentCount().exec();
+
+        const platformMap = {
+            'aix': 'IBM AIX',
+            'darwin': 'Darwin/MacOS',
+            'freebsd': 'FreeBSD',
+            'linux': 'Linux',
+            'openbsd': 'OpenBSD',
+            'sunos': 'SunOS',
+            'win32': 'Windows'
+        };
+
+        const platform = lang.getString('runningon').replace('<platform>', `**${platformMap[os.platform()]} ${os.release()}** (\`${os.arch()}\`)`);
+
+        git.getLastCommit((err, commit) => {
+            const message = `**${lang.getString('shardcount')}** ${ctx.bot.ws.shards.size}\n` +
+            `**${lang.getString('cachedguilds')}** ${ctx.bot.guilds.cache.size}\n` +
+            `**${lang.getString('cachedchannels')}** ${ctx.bot.channels.cache.size}\n` +
+            `**${lang.getString('cachedusers')}** ${userCount}\n\n` +
+
+            `**${lang.getString('preferencecount')}** ${prefCount}\n` +
+            `**${lang.getString('guildprefcount')}** ${gPrefCount}\n` +
+            `**${lang.getString('versioncount')}** ${versionCount}\n` +
+            `**${lang.getString('languagecount')}** ${languageCount}\n\n` +
+
+            `**BibleBot:** ${process.env.npm_package_version} (commit: \`${commit.shortHash}\`)\n` +
+            `**Discord.js:** ${packageJson.dependencies['discord.js'].slice(1)}\n` + 
+            `**Mongoose:** ${packageJson.dependencies.mongoose.slice(1)}\n\n` +
+            
+            `${platform}`;
+
+            const embed = createEmbed(null, '+stats', message, false);
+            embed.setThumbnail('https://cdn.discordapp.com/avatars/367665336239128577/b8ab407073f4a3be980d8fa6a03e9586.png');
+
+            ctx.channel.send(embed);
+            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'stats');
+        });
     }
 }

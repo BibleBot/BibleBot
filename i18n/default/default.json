@@ -99,7 +99,15 @@
     "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
     "versioninfofailed": "I couldn't find that version, are you sure you used the right acronym?",
     
-    "stats": "BibleBot has <usercount> users across <servercount> servers.",
+    "shardcount": "Shard Count: ",
+    "cachedguilds": "Server Count: ",
+    "cachedchannels": "Channel Count: ",
+    "cachedusers": "User Count: ",
+    "preferencecount": "Preference Count: ",
+    "guildprefcount": "GuildPreference Count: ",
+    "versioncount": "Version Count: ",
+    "languagecount": "Language Count: ",
+    "runningon": "This instance is running on <platform>.",
     
     "queryTooShort": "Your search query must be longer than 3 characters.",
     "searchResults": "Search results for",

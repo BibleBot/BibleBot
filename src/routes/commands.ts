@@ -76,7 +76,7 @@ export class CommandsRouter {
                 languageRouter.processCommand(ctx, args);
                 break;
             case 'stats':
-                // informationRouter.getStats(ctx);
+                informationRouter.getStats(ctx);
                 break;
             case 'creeds':
                 // resourceRouter.processCreedCommand(ctx, args);
