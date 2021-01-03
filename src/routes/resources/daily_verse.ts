@@ -114,12 +114,63 @@ export class DailyVerseRouter {
         }
     }
 
+    clearAutomation(ctx: Context): void {
+        GuildPreference.findOne({ guild: ctx.guild.id }, (err, gPrefs) => {
+            if (err) {
+                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - cannot save preference');
+                ctx.channel.send(createEmbed(null, '+dailyverse clear', 'Failed to set preference.', true));
+            } else if (!gPrefs) {
+                const derivedFromDefault = {
+                    guild: ctx.guild.id,
+                    dailyVerseTime: null,
+                    dailyVerseChannel: null,
+                    dailyVerseTz: null,
+                    ...defaultGuildPreferences
+                };
+
+
+                const newPreference = new GuildPreference(derivedFromDefault);
+
+                newPreference.save((err, prefs) => {
+                    if (err || !prefs) {
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - cannot save new preference');
+                        ctx.channel.send(createEmbed(null, '+dailyverse clear', 'Failed to set preference.', true));
+                    } else {
+                        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear');
+                        ctx.channel.send(createEmbed(null, '+dailyverse clear', 'Cleared automation successfully.', false));
+                    }
+                });
+            } else {
+                gPrefs.dailyVerseTime = null;
+                gPrefs.dailyVerseChannel = null;
+                gPrefs.dailyVerseTz = null;
+
+                gPrefs.save((err, preference) => {
+                    if (err || !preference) {
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - cannot overwrite preference');
+                        ctx.channel.send(createEmbed(null, '+dailyverse clear', 'Failed to set preference.', true));
+                    } else {
+                        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear (overwrite)');
+                        ctx.channel.send(createEmbed(null, '+dailyverse clear', 'Cleared automation successfully.', false));
+                    }
+                });
+            }
+        });
+    }
+
     automationStatus(ctx: Context): void {
         const lang = ctx.language;
 
         GuildPreference.findOne({ guild: ctx.guild.id }, async (err, gPrefs) => {
             // TODO: use guild language
             try {
+                const checkArray = [gPrefs.dailyVerseTime, gPrefs.dailyVerseChannel, gPrefs.dailyVerseTz];
+                for (const check of checkArray) {
+                    if (check == null) {
+                        throw Error();
+                    }
+                }
+
                 // I hate how messy moment makes this but it's still 100x easier than normal JS times.
                 const version = await Version.findOne({ abbv: gPrefs.version }).exec();
                 const time = moment.tz(`1970-01-01 ${gPrefs.dailyVerseTime}`, 'UTC').tz(gPrefs.dailyVerseTz).format('hh:mma');
@@ -151,6 +202,9 @@ export class DailyVerseRouter {
                 break;
             case 'status':
                 this.automationStatus(ctx);
+                break;
+            case 'clear':
+                this.clearAutomation(ctx);
                 break;
             default:
                 this.sendDailyVerse(ctx);

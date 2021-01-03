@@ -3,8 +3,6 @@ import * as cron from 'node-cron';
 import * as moment from 'moment';
 import 'moment-timezone';
 
-import { log } from '../helpers/logger';
-
 import GuildPreference from '../models/guild_preference';
 import { DailyVerseRouter } from '../routes/resources/daily_verse';
 import Context from '../models/context';
@@ -24,7 +22,7 @@ export const startDailyVerse = (bot: Client): void => {
                     try {
                         bot.guilds.fetch(guildPref.guild).then((guild) => {
                             const chan = guild.channels.resolve(guildPref.dailyVerseChannel);
-                            const ctx = new Context('autodaily', bot, (chan as TextChannel), guild, null, null, null, guildPref, null);
+                            const ctx = new Context('auto', bot, (chan as TextChannel), guild, null, null, null, guildPref, null);
 
                             Language.findOne({ objectName: guildPref.language }, (err, lang) => {
                                 (chan as TextChannel).send(lang.getString('votd'));
