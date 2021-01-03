@@ -203,81 +203,84 @@ class BibleBot(discord.AutoShardedClient):
                 await ctx["channel"].send("Announcement finished.")
                 return
 
-            if "isError" not in res:
-                if "twoMessages" in res:
-                    await ctx["channel"].send(res["firstMessage"])
-                    await ctx["channel"].send(res["secondMessage"])
-                elif "paged" in res:
-                    msg = await ctx["channel"].send(embed=res["pages"][0])
+            try:
+                if "isError" not in res:
+                    if "twoMessages" in res:
+                        await ctx["channel"].send(res["firstMessage"])
+                        await ctx["channel"].send(res["secondMessage"])
+                    elif "paged" in res:
+                        msg = await ctx["channel"].send(embed=res["pages"][0])
 
-                    self.current_page[msg.id] = 1
-                    self.total_pages[msg.id] = len(res["pages"])
-                    self.continue_paging[msg.id] = True
+                        self.current_page[msg.id] = 1
+                        self.total_pages[msg.id] = len(res["pages"])
+                        self.continue_paging[msg.id] = True
 
-                    await msg.add_reaction("⬅")
-                    await msg.add_reaction("➡")
+                        await msg.add_reaction("⬅")
+                        await msg.add_reaction("➡")
 
-                    def check(r, u):
-                        if r.message.id == msg.id:
-                            if str(r.emoji) == "⬅":
-                                if u.id != bot.user.id:
-                                    if self.current_page[msg.id] != 1:
-                                        self.current_page[msg.id] -= 1
-                                        return True
-                            elif str(r.emoji) == "➡":
-                                if u.id != bot.user.id:
-                                    if self.current_page[msg.id] != self.total_pages[msg.id]:
-                                        self.current_page[msg.id] += 1
-                                        return True
+                        def check(r, u):
+                            if r.message.id == msg.id:
+                                if str(r.emoji) == "⬅":
+                                    if u.id != bot.user.id:
+                                        if self.current_page[msg.id] != 1:
+                                            self.current_page[msg.id] -= 1
+                                            return True
+                                elif str(r.emoji) == "➡":
+                                    if u.id != bot.user.id:
+                                        if self.current_page[msg.id] != self.total_pages[msg.id]:
+                                            self.current_page[msg.id] += 1
+                                            return True
 
-                    try:
-                        while self.continue_paging[msg.id]:
-                            reaction, _ = await bot.wait_for('reaction_add', timeout=60.0, check=check)
-                            await reaction.message.remove_reaction(reaction.emoji, _)
-                            await reaction.message.edit(embed=res["pages"][self.current_page[msg.id] - 1])
-                    except (asyncio.TimeoutError, IndexError):
                         try:
-                            self.current_page.pop(msg.id)
-                            self.total_pages.pop(msg.id)
-                            self.continue_paging.pop(msg.id)
+                            while self.continue_paging[msg.id]:
+                                reaction, _ = await bot.wait_for('reaction_add', timeout=60.0, check=check)
+                                await reaction.message.remove_reaction(reaction.emoji, _)
+                                await reaction.message.edit(embed=res["pages"][self.current_page[msg.id] - 1])
+                        except (asyncio.TimeoutError, IndexError):
+                            try:
+                                self.current_page.pop(msg.id)
+                                self.total_pages.pop(msg.id)
+                                self.continue_paging.pop(msg.id)
 
-                            await msg.clear_reactions()
-                        except (discord.errors.Forbidden, discord.errors.NotFound):
-                            pass
-                elif "embed" in res:
-                    try:
-                        await ctx["channel"].send(embed=res["embed"])
-                    except discord.errors.Forbidden:
-                        await ctx["channel"].send("Unable to send embed, please verify permissions.")
-                else:
-                    if "reference" not in res and "text" not in res:
-                        await ctx["channel"].send(embed=res["message"])
+                                await msg.clear_reactions()
+                            except (discord.errors.Forbidden, discord.errors.NotFound):
+                                pass
+                    elif "embed" in res:
+                        try:
+                            await ctx["channel"].send(embed=res["embed"])
+                        except discord.errors.Forbidden:
+                            await ctx["channel"].send("Unable to send embed, please verify permissions.")
                     else:
-                        await ctx["channel"].send(res["message"])
+                        if "reference" not in res and "text" not in res:
+                            await ctx["channel"].send(embed=res["message"])
+                        else:
+                            await ctx["channel"].send(res["message"])
 
-                lang = central.get_raw_language(language)
-                for original_command_name in lang["commands"].keys():
-                    untranslated = ["setlanguage", "userid", "ban", "unban",
-                                    "reason", "optout", "unoptout", "eval",
-                                    "jepekula", "joseph", "tiger", "rose",
-                                    "lsc", "heidelberg", "ccc", "quit", "bbccc"]
+                    lang = central.get_raw_language(language)
+                    for original_command_name in lang["commands"].keys():
+                        untranslated = ["setlanguage", "userid", "ban", "unban",
+                                        "reason", "optout", "unoptout", "eval",
+                                        "jepekula", "joseph", "tiger", "rose",
+                                        "lsc", "heidelberg", "ccc", "quit", "bbccc"]
 
-                    if lang["commands"][original_command_name] == command:
-                        original_command = original_command_name
-                    elif command in untranslated:
-                        original_command = command
+                        if lang["commands"][original_command_name] == command:
+                            original_command = original_command_name
+                        elif command in untranslated:
+                            original_command = command
 
-                clean_args = remainder.replace("\"", "").replace("'", "").replace("  ", " ")
-                clean_args = clean_args.replace("\n", "").strip()
+                    clean_args = remainder.replace("\"", "").replace("'", "").replace("  ", " ")
+                    clean_args = clean_args.replace("\n", "").strip()
 
-                ignore_arg_commands = ["puppet", "eval", "announce"]
+                    ignore_arg_commands = ["puppet", "eval", "announce"]
 
-                if original_command in ignore_arg_commands:
-                    clean_args = ""
+                    if original_command in ignore_arg_commands:
+                        clean_args = ""
 
-                central.log_message(res["level"], shard, ctx["identifier"], source, f"+{original_command} {clean_args}")
-            else:
-                await ctx["channel"].send(embed=res["message"])
+                    central.log_message(res["level"], shard, ctx["identifier"], source, f"+{original_command} {clean_args}")
+                else:
+                    await ctx["channel"].send(embed=res["message"])
+            except:
+                pass
         else:
             verse_handler = VerseHandler()
 
