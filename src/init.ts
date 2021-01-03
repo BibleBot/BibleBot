@@ -27,6 +27,7 @@ const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
 
 import * as heartbeats from './tasks/heartbeat';
+import * as dailyVerses from './tasks/daily_verses';
 
 const connect = () => {
     mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
@@ -39,6 +40,11 @@ const connect = () => {
 
 bot.on('ready', () => {
     heartbeats.startHeartbeatMonitor(bot);
+    log('info', null, 'started heartbeat monitor');
+
+    dailyVerses.startDailyVerse(bot);
+    log('info', null, 'started automatic daily verses');
+
     log('info', null, 'initialization complete');
 });
 

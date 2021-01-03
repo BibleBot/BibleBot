@@ -13,7 +13,7 @@ export const startHeartbeatMonitor = (bot: Client): void => {
             }
 
             log('info', null, `heartbeat (avg. ${bot.ws.ping}ms) - ${pings.join(', ')}`);
-        } catch (e) {
+        } catch {
             log('err', null, 'heartbeat failed - are we offline?');
         }
     }).start();

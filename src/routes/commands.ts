@@ -4,16 +4,18 @@ import Context from '../models/context';
 
 import * as commandList from '../helpers/command_list.json';
 
-import { VersionSettingsRouter } from './settings/versions';
-import { LanguageRouter } from './settings/languages';
 import { InformationRouter } from './information/router';
 import { VerseCommandsRouter } from './resources/verses';
+import { DailyVerseRouter } from './resources/daily_verse';
+import { VersionSettingsRouter } from './settings/versions';
+import { LanguageRouter } from './settings/languages';
 import { MiscSettingsRouter } from './settings/misc';
 
-const versionSettingsRouter = VersionSettingsRouter.getInstance();
-const languageRouter = LanguageRouter.getInstance();
 const informationRouter = InformationRouter.getInstance();
 const verseCommandsRouter = VerseCommandsRouter.getInstance();
+const dailyVerseRouter = DailyVerseRouter.getInstance();
+const versionSettingsRouter = VersionSettingsRouter.getInstance();
+const languageRouter = LanguageRouter.getInstance();
 const miscSettingsRouter = MiscSettingsRouter.getInstance();
 
 export class CommandsRouter {
@@ -64,8 +66,8 @@ export class CommandsRouter {
             case 'truerandom':
                 verseCommandsRouter.getTrulyRandomVerse(ctx);
                 break;
-            case 'votd':
-                // votdRouter.processCommand(ctx, args);
+            case 'dailyverse':
+                dailyVerseRouter.processCommand(ctx, args);
                 break;
             case 'formatting':
                 // formattingRouter.processCommand(ctx, args);
