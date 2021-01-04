@@ -100,6 +100,12 @@ bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
     if (message.author.id !== config.biblebot.id) return; //devmode for now
 
+    // Ignore Discord.bots.gg and Top.gg's server.
+    // The bot has to be there in order to be listed.
+    if (['110373943822540800', '264445053596991498'].includes(message.guild.id)) {
+        return;
+    }
+
     Preference.findOne({ user: message.author.id }, (err, prefs) => {
         if (err || !prefs) {
             prefs = { ...defaultUserPreferences };
