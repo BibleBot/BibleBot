@@ -28,22 +28,46 @@ interface BookSearchResult {
     index: number;
 }
 
-function checkSectionSupport(book: string, section: string, version: mongoose.Document): boolean {
+function checkSectionSupport(ref: Reference | string, version: mongoose.Document): Record<string, unknown> {
     let supportValue;
+    let section;
+
+    if (ref instanceof Reference) {
+        section = ref.section();
+    } else {
+        const book = ref.slice(0, -1);
+        
+        const isOT = Object.values(bookMap.ot).includes(book);
+        const isNT = Object.values(bookMap.nt).includes(book);
+        const isDEU = Object.values(bookMap.deu).includes(book);
+        
+        section = isOT ? 'OT' : isNT ? 'NT' : isDEU ? 'DEU' : null;
+    }
 
     switch (section) {
-        case 'ot':
+        case 'OT':
             supportValue = version.supportsOldTestament;
             break;
-        case 'nt':
+        case 'NT':
             supportValue = version.supportsNewTestament;
             break;
-        case 'deu':
+        case 'DEU':
             supportValue = version.supportsDeuterocanon;
             break;
     }
 
-    return Object.values(bookMap[section]).includes(book) && !supportValue;
+    let ok = false;
+
+    if (ref instanceof Reference) {
+        ok = (ref.section() == section && supportValue);
+    } else {
+        ok = (Object.values(bookMap[section]).includes(ref.slice(0, -1)) && !supportValue);
+    }
+
+    return {
+        ok,
+        section,
+    };
 }
 
 export function isValidSource(source: string): boolean {
@@ -232,46 +256,14 @@ export async function generateReference(result: BookSearchResult, msg: string, v
 }
 
 export async function processVerse(ctx: Context, version: mongoose.Document, reference: Reference | string): Promise<void> {
-    if (reference instanceof Reference) {
-        switch (reference.section()) {
-            case 'OT':
-                if (!version.supportsOldTestament) {
-                    ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
-                    ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${reference.section()}`);
-                    return;
-                }
+    const sectionCheckResults = checkSectionSupport(reference, version);
+    if (!sectionCheckResults.ok) {
+        ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
+        ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${sectionCheckResults.section}`);
+        return;
+    }
 
-                break;
-            case 'NT':
-                if (!version.supportsNewTestament) {
-                    ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
-                    ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${reference.section()}`);
-                    return;
-                }
-
-                break;
-            case 'DEU':
-                if (!version.supportsDeuterocanon) {
-                    ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
-                    ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${reference.section()}`);
-                    return;
-                }
-
-                break;
-        }
-
-        
-        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${reference.version.abbv}`);
-    } else {
-        for (const section of ['ot', 'nt', 'deu']) {
-            if (!checkSectionSupport(reference.slice(0, -1), section, version)) {
-                ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
-                ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${section.toUpperCase()}`);
-                return;
-            }
-        }
-
-        
+    if (!(reference instanceof Reference)) {
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${version.abbv}`);
     }
 
