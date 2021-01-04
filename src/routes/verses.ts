@@ -33,7 +33,7 @@ export class VersesRouter {
 
         if (results.length > 5) {
             ctx.channel.send('Please don\'t spam me.');
-            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.guild.id, ctx.channel.id, 'spam attempt');
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'spam attempt');
             return;
         }
 

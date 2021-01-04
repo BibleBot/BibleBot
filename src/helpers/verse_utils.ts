@@ -263,7 +263,7 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
         return;
     }
 
-    if (!(reference instanceof Reference)) {
+    if (reference instanceof Reference) {
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${version.abbv}`);
     }
 
