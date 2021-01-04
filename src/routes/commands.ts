@@ -55,7 +55,7 @@ export class CommandsRouter {
                 }
                 break;
             case 'search':
-                // verseCommandsRouter.search(ctx, args);
+                verseCommandsRouter.search(ctx, args);
                 break;
             case 'version':
                 versionSettingsRouter.processCommand(ctx, args);

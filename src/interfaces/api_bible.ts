@@ -16,6 +16,12 @@ const versionTable = {
     FBV: '65eec8e0b60e656b-01'
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function search(query: string, version: mongoose.Document, callback: (err: Error, res: Array<Record<string, string>>) => void): void {
+    // Temporary workaround to get the compiler to stop complaining in verse_utils.ts.
+    return null;
+}
+
 export function getResult(ref: Reference | string, headings: boolean, verseNumbers: boolean, version: mongoose.Document,
     callback: (err: Error, data: Verse) => void): void {
         if (ref instanceof Reference) {

@@ -6,6 +6,12 @@ import Version from '../../models/version';
 
 import * as utils from '../../helpers/verse_utils';
 
+import * as bibleGateway from '../../interfaces/bible_gateway';
+import * as apiBible from '../../interfaces/api_bible';
+
+import { createEmbed } from '../../helpers/embed_builder';
+import { Paginator } from '../../helpers/paginator';
+
 export class VerseCommandsRouter {
     private static instance: VerseCommandsRouter;
 
@@ -64,6 +70,74 @@ export class VerseCommandsRouter {
             } catch (err) {
                 return;
             }
+        });
+    }
+
+    async search(ctx: Context, args: Array<string>): Promise<void> {
+        const version = await Version.findOne({ abbv: ctx.preferences.version }).exec();
+        let processor = bibleGateway;
+
+        switch (version.src) {
+            case 'ab':
+                processor = apiBible;
+                break;
+            case 'dbg':
+                ctx.channel.send(createEmbed(null, '+search', ctx.language.getString('searchNotSupported'), true));
+                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `search not supported for ${version.abbv}`);
+                return;
+                break;
+        }
+
+        processor.search(args.join(' '), version, (err, data: Array<Record<string, string>>) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+
+            const pages = [];
+            const maxResultsPerPage = 6;
+            let totalPages = Number(Math.ceil(data.length / maxResultsPerPage));
+
+            if (totalPages == 0) {
+                totalPages = 1;
+            } else if (totalPages > 100) {
+                totalPages = 100;
+            }
+
+            for (let i = 0; i < totalPages; i++) {
+                const pageCounter = ctx.language.getString('pageOf').replace('<num>', i + 1)
+                                                                    .replace('<total>', totalPages);
+                                                                    
+                const embed = createEmbed(null, `${ctx.language.getString('searchResults')} "${args.join(' ')}"`, pageCounter, false);
+
+                if (data.length > 0) {
+                    let count = 0;
+
+                    for (const item of data) {
+                        if (item.text.length < 700) {
+                            if (count < maxResultsPerPage) {
+                                embed.addField(item.title, item.text, false);
+
+                                data.shift();
+                                count++;
+                            }
+                        }
+                    }
+                } else {
+                    embed.setTitle(ctx.language.getString('nothingFound').replace('<query>', args.join(' ')));
+                    embed.setDescription('You may have to try a different query.');
+                }
+
+                pages.push(embed);
+            }
+
+
+            const paginator = new Paginator(pages, ctx.id, 180);
+            paginator.run(ctx.channel);
+
+            //const embed = createEmbed(title, data.title(), text, false);
+
+            //ctx.channel.send(embed);
         });
     }
 }

@@ -113,7 +113,7 @@
     "searchResults": "Search results for",
     "nothingFound": "Nothing found for \"<query>\"",
     "pageOf": "Page <num> of <total>",
-    "searchNotSupported": "+<search> only supports BibleGateway versions at this time.",
+    "searchNotSupported": "<+><search> is not supported by this version.",
     
     "supporters": "A special thank you to the following contributors:",
     "anonymousDonors": "Anonymous Donors",

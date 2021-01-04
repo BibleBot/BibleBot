@@ -259,7 +259,7 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
     const sectionCheckResults = checkSectionSupport(reference, version);
     if (!sectionCheckResults.ok) {
         ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
-        ctx.logInteraction('err', ctx.shard, ctx.guild, ctx.channel, `${version.abbv} does not support ${sectionCheckResults.section}`);
+        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `${version.abbv} does not support ${sectionCheckResults.section}`);
         return;
     }
 
