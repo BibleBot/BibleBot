@@ -118,7 +118,7 @@ bot.on('message', message => {
 
             Language.findOne({ objectName: prefs.language }, (err, lang) => {
                 if (err) {
-                    throw new Error('unable to find language');
+                    throw new Error('Unable to obtain language, probable database error.');
                 }
                 
                 const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, lang, prefs, gPrefs, message);
