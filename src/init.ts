@@ -28,6 +28,7 @@ const versesRouter = VersesRouter.getInstance();
 
 import * as heartbeats from './tasks/heartbeat';
 import * as dailyVerses from './tasks/daily_verses';
+import handleError from './helpers/error_handler';
 
 const connect = () => {
     mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
@@ -49,29 +50,7 @@ bot.on('ready', () => {
 });
 
 bot.on('error', (error) => {
-    const date = new Date();
-    const fileTimestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    const errorTimestamp = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-
-    const output = `${errorTimestamp}
-    
-    name: ${error.name}
-    
-    msg: ${error.message}
-    
-    stack: ${error.stack}
-    
-    ---`;
-
-    const dir = `${__dirname}/../error_logs`;
-
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
-
-    fs.appendFileSync(`${dir}/log-${fileTimestamp}.txt`, output);
-
-    log('err', null, error.message);
+    handleError(error);
 });
 
 bot.on('shardReady', shard => {
@@ -133,33 +112,37 @@ bot.on('message', message => {
                     }
                 }
         
-                switch(prefs['input']) {
-                    case 'default': {
-                        if (prefix == gPrefs.prefix || couldBeRescue) {
-                            if (commandsRouter.isOwnerCommand(potentialCommand)) {
-                                commandsRouter.processOwnerCommand(ctx);
-                            } else if (commandsRouter.isCommand(potentialCommand)) {
-                                commandsRouter.processCommand(ctx);
+                try {
+                    switch(prefs['input']) {
+                        case 'default': {
+                            if (prefix == gPrefs.prefix || couldBeRescue) {
+                                if (commandsRouter.isOwnerCommand(potentialCommand)) {
+                                    commandsRouter.processOwnerCommand(ctx);
+                                } else if (commandsRouter.isCommand(potentialCommand)) {
+                                    commandsRouter.processCommand(ctx);
+                                }
+                            } else if (ctx.msg.includes(':')) {
+                                versesRouter.processMessage(ctx, 'default');
                             }
-                        } else if (ctx.msg.includes(':')) {
-                            versesRouter.processMessage(ctx, 'default');
+            
+                            break;
                         }
-        
-                        break;
+                        //case 'erasmus': {
+                        //    // tl;dr - Erasmus verse processing is invoked by mention in beginning of message
+                        //    // or if verse is surrounded by square brackets or if message starts with '$'
+                        //    if (ctx.msg.startsWith('$')) {
+                        //            if (ctx.msg.includes(':')) {
+                        //                versesRouter.processMessage(ctx, 'erasmus');
+                        //            } else if (commandsRouter.isCommand(potentialCommand)) {
+                        //                commandsRouter.processCommand(ctx);
+                        //            }
+                        //    }
+                        //
+                        //    break;
+                        //}
                     }
-                    //case 'erasmus': {
-                    //    // tl;dr - Erasmus verse processing is invoked by mention in beginning of message
-                    //    // or if verse is surrounded by square brackets or if message starts with '$'
-                    //    if (ctx.msg.startsWith('$')) {
-                    //            if (ctx.msg.includes(':')) {
-                    //                versesRouter.processMessage(ctx, 'erasmus');
-                    //            } else if (commandsRouter.isCommand(potentialCommand)) {
-                    //                commandsRouter.processCommand(ctx);
-                    //            }
-                    //    }
-                    //
-                    //    break;
-                    //}
+                } catch (err) {
+                    handleError(err);
                 }
             });
         });
