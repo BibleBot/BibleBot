@@ -2,7 +2,10 @@ const nuisances = {
     '  ': ' ',
     '“': '"',
     '”': '"',
-    '\n': ' '
+    '\n': ' ',
+    '¶ ': '',
+    ' , ': ', ',
+    ' .': '.'
 };
 
 export function removePunctuation(text: string): string {

@@ -1,5 +1,10 @@
 import * as discord from 'discord.js';
 
+import * as fs from 'fs';
+
+const FILE_PATH = __dirname + '/existing_paginators.json';
+let existingPaginators;
+
 // inspired by @Jo3-L's discord-paginator
 
 export class Paginator {
@@ -22,6 +27,18 @@ export class Paginator {
 
         this.currentPage = 1;
         this.totalPages = pages.length + 1;
+
+        // existingPaginators is initialized *before* the reset in src/init.ts, so...
+        existingPaginators = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
+
+        if (existingPaginators.userIDs.includes(userID)) {
+            throw Error('User already using paginator.');
+        } else {
+            existingPaginators.userIDs.push(userID);
+            
+            fs.writeFileSync(FILE_PATH, JSON.stringify(existingPaginators));
+            existingPaginators = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
+        }
     }
 
     async run(chan: discord.TextChannel | discord.DMChannel | discord.NewsChannel): Promise<void> {
@@ -55,6 +72,13 @@ export class Paginator {
     
             reactionCollector.on('end', () => {
                 msg.reactions.removeAll();
+
+                existingPaginators.userIDs = existingPaginators.userIDs.filter((val) => {
+                    return val != this.userID;
+                });
+            
+                fs.writeFileSync(FILE_PATH, JSON.stringify(existingPaginators));
+                existingPaginators = JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'));
             });
         }
     }

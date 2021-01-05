@@ -96,6 +96,7 @@ export class VerseCommandsRouter {
 
             const pages = [];
             const maxResultsPerPage = 6;
+            const versesUsed = [];
             let totalPages = Number(Math.ceil(data.length / maxResultsPerPage));
 
             if (totalPages == 0) {
@@ -116,10 +117,13 @@ export class VerseCommandsRouter {
                     for (const item of data) {
                         if (item.text.length < 700) {
                             if (count < maxResultsPerPage) {
-                                embed.addField(item.title, item.text, false);
+                                if (!versesUsed.includes(item.title)) {
+                                    embed.addField(item.title, item.text, false);
 
-                                data.shift();
-                                count++;
+                                    data.shift();
+                                    versesUsed.push(item.title);
+                                    count++;
+                                }
                             }
                         }
                     }
@@ -131,9 +135,15 @@ export class VerseCommandsRouter {
                 pages.push(embed);
             }
 
-
-            const paginator = new Paginator(pages, ctx.id, 180);
-            paginator.run(ctx.channel);
+            try {
+                const paginator = new Paginator(pages, ctx.id, 180);
+                paginator.run(ctx.channel);
+            } catch (err) {
+                if (err.message == 'User already using paginator.') {
+                    ctx.channel.send(createEmbed(null, '+search', ctx.language.getString('waitforpaginator'), true));
+                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, err.message);
+                }
+            }
 
             //const embed = createEmbed(title, data.title(), text, false);
 

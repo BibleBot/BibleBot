@@ -169,9 +169,18 @@ bot.on('message', message => {
 });
 
 log('info', null, `BibleBot v${process.env.npm_package_version} by Evangelion Ltd.`);
+
 fetchBookNames(config.biblebot.dry == 'True').then(() => {
     connect();
     mongoose.connection.on('disconnected', connect);
+
+    fs.writeFile(__dirname + '/helpers/existing_paginators.json', JSON.stringify({ 'userIDs': [ null ] }), (err) => {
+        if (err) {
+            log('info', null, 'unable to create existing_paginators.json');
+        } else {
+            log('info', null, 'reset existing paginators');
+        }
+    });
 
     bot.login(config.biblebot.token);
 });

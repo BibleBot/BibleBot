@@ -114,6 +114,8 @@
     "nothingFound": "Nothing found for \"<query>\"",
     "pageOf": "Page <num> of <total>",
     "searchNotSupported": "<+><search> is not supported by this version.",
+
+    "waitforpaginator": "Please wait for your existing pagination to finish before creating another.",
     
     "supporters": "A special thank you to the following contributors:",
     "anonymousDonors": "Anonymous Donors",

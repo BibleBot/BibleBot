@@ -16,10 +16,32 @@ const versionTable = {
     FBV: '65eec8e0b60e656b-01'
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function search(query: string, version: mongoose.Document, callback: (err: Error, res: Array<Record<string, string>>) => void): void {
-    // Temporary workaround to get the compiler to stop complaining in verse_utils.ts.
-    return null;
+    axios.get(`https://api.scripture.api.bible/v1/bibles/${versionTable[version.abbv]}/search`, {
+            headers: { 'api-key': config.apis.apiBible },
+            params: { query, limit: 10000, sort: 'canonical' }
+        }).then((res) => {
+            try {
+                const data = res.data.data.verses;
+                const results = [];
+
+                if (data.length == 0) {
+                    return;
+                }
+
+                data.forEach((passage) => {
+                    results.push({
+                        title: passage.reference,
+                        text: purifyVerseText(passage.text) 
+                    });
+                });
+
+
+                return callback(null, results);
+            } catch (err) {
+                return callback(err, null);
+            }
+        });
 }
 
 export function getResult(ref: Reference | string, headings: boolean, verseNumbers: boolean, version: mongoose.Document,
