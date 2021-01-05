@@ -140,7 +140,7 @@ export class VerseCommandsRouter {
                 paginator.run(ctx.channel);
             } catch (err) {
                 if (err.message == 'User already using paginator.') {
-                    ctx.channel.send(createEmbed(null, '+search', ctx.language.getString('waitforpaginator'), true));
+                    ctx.channel.send(createEmbed(null, '+search', ctx.language.getString('plswait'), true));
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, err.message);
                 }
             }
