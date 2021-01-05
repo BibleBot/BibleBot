@@ -174,7 +174,7 @@ fetchBookNames(config.biblebot.dry == 'True').then(() => {
     connect();
     mongoose.connection.on('disconnected', connect);
 
-    fs.writeFile(__dirname + '/helpers/existing_paginators.json', JSON.stringify({ 'userIDs': [ null ] }), (err) => {
+    fs.writeFile(__dirname + '/helpers/existing_paginators.json', JSON.stringify({ 'userIDs': [ ] }), (err) => {
         if (err) {
             log('info', null, 'unable to create existing_paginators.json');
         } else {

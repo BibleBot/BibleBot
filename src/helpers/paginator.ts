@@ -45,7 +45,7 @@ export class Paginator {
         const msg = await chan.send(this.pages[this.currentPage - 1]);
 
         if (this.pages.length > 1) {
-            const emojis = ['⬅️', '➡️'];
+            const emojis = ['⬅️', '➡️', '🛑'];
 
             for (const emoji of emojis) {
                 await msg.react(emoji);
@@ -64,10 +64,13 @@ export class Paginator {
                     if (this.currentPage != this.totalPages) {
                         this.currentPage += 1;
                     }
+                } else if (reaction.emoji.name == emojis[2]) {
+                    reactionCollector.stop();
                 }
     
                 msg.edit(this.pages[this.currentPage - 1]);
                 reaction.users.remove(user.id);
+                reactionCollector.resetTimer();
             });
     
             reactionCollector.on('end', () => {
