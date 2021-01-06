@@ -18,8 +18,7 @@ const sources = {
     'bg': { name: 'BibleGateway', interface: bibleGateway },
     'ab': { name: 'API.Bible', interface: apiBible },
     'bh': { name: 'Bible Hub', interface: null },
-    'bs': { name: 'Bible Server', interface: null },
-    'dl': { name: 'DBG Septuagint', interface: dbgLxx }
+    'bs': { name: 'Bible Server', interface: null }
 };
 
 interface BookSearchResult {
