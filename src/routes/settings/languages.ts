@@ -1,10 +1,12 @@
 import Context from '../../models/context';
 import Language from '../../models/language';
 import Preference from '../../models/preference';
+import GuildPreference from '../../models/guild_preference';
 
 import { createEmbed } from '../../helpers/embed_builder';
 
-import defaultUserPreferences from '../../helpers/default_user_preference.json';
+import * as defaultUserPreferences from '../../helpers/default_user_preference.json';
+import * as defaultGuildPreferences from '../../helpers/default_guild_preference.json';
 
 export class LanguageRouter {
     private static instance: LanguageRouter;
@@ -72,23 +74,74 @@ export class LanguageRouter {
         });
     }
 
-    getUserLanguage(ctx: Context): void {
+    setGuildLanguage(ctx: Context, objectName: string): void {
+        Language.findOne({ objectName }).then((language) => {
+            if (!language) {
+                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `language setserver - invalid language (${objectName})`);
+                ctx.channel.send(createEmbed(null, '+language setserver', `${objectName} not in database`, true));
+                return;
+            }
+
+            GuildPreference.findOne({ guild: ctx.guild.id }, (err, prefs) => {
+                if (err) {
+                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - cannot save preference');
+                    ctx.channel.send(createEmbed(null, '+language setserver', 'Failed to set preference.', true));
+                } else if (!prefs) {
+                    const derivedFromDefault = {
+                        guild: ctx.guild.id,
+                        ...defaultGuildPreferences
+                    };
+
+                    derivedFromDefault.language = objectName;
+
+                    const newPreference = new GuildPreference(derivedFromDefault);
+
+                    newPreference.save((err, prefs) => {
+                        if (err || !prefs) {
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - cannot save new preference');
+                            ctx.channel.send(createEmbed(null, '+language setserver', 'Failed to set preference.', true));
+                        } else {
+                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `language setserver ${objectName}`);
+                            ctx.channel.send(createEmbed(null, '+language setserver', 'Set server language successfully.', false));
+                        }
+                    });
+                } else {
+                    prefs.language = objectName;
+
+                    prefs.save((err, preference) => {
+                        if (err || !preference) {
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - cannot overwrite preference');
+                            ctx.channel.send(createEmbed(null, '+language setserver', 'Failed to set preference.', true));
+                        } else {
+                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `language set ${objectName} (overwrite)`);
+                            ctx.channel.send(createEmbed(null, '+language setserver', 'Set server language successfully.', false));
+                        }
+                    });
+                }
+            });
+        }).catch(() => {
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `language setserver - invalid version (${objectName})`);
+            ctx.channel.send(createEmbed(null, '+language setserver', `${objectName} not in database`, true));
+        });
+    }
+
+    getLanguage(ctx: Context): void {
         Preference.findOne({ user: ctx.id }, (err, prefs) => {
             if (err || !prefs) {
-                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language - cannot save preference');
+                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language - cannot find preference');
                 ctx.channel.send(createEmbed(null, '+language', 'Preferences not found.', true));
             } else {
                 Language.findOne({ objectName: ctx.preferences.language }, (err, lang) => {
-                    const message = `
-                    ${lang.getString('languageused')}
-                        
-                    __**${lang.getString('subcommands')}**__
-                    **${lang.getCommand('set')}** - ${lang.getString('setlanguageusage')}
-                    **${lang.getCommand('setserver')}** - ${lang.getString('setserverlanguageusage')}
-                    `;
+                    Language.findOne({ objectName: ctx.guildPreferences.language }, (err, gLang) => {
+                        const message = `${lang.getString('languageused')}\n` +
+                        `${gLang.getString('guildlanguageused')}\n\n` +
+                        `__**${lang.getString('subcommands')}**__\n` +
+                        `**${lang.getCommand('set')}** - ${lang.getString('setlanguageusage')}\n` +
+                        `**${lang.getCommand('setserver')}** - ${lang.getString('setserverlanguageusage')}`;
 
-                    ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'language');
-                    ctx.channel.send(createEmbed(null, '+language', message, false));
+                        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'language');
+                        ctx.channel.send(createEmbed(null, '+language', message, false));
+                    });
                 });
             }
         });
@@ -102,8 +155,11 @@ export class LanguageRouter {
             case 'set':
                 this.setUserLanguage(ctx, args[0]);
                 break;
+            case 'setserver':
+                this.setGuildLanguage(ctx, args[0]);
+                break;
             default:
-                this.getUserLanguage(ctx);
+                this.getLanguage(ctx);
                 break;
         }
     }

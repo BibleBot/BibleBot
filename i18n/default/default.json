@@ -81,7 +81,7 @@
     
     "setguildlanguagesuccess": "Set server language successfully.",
     "setguildlanguagefail": "Failed to set server language, see `<+><language> <list>`.",
-    "guildlanguageused": "This server's preferred language is Replace_With_Language_Name.",
+    "guildlanguageused": "This server's preferred language is **Replace_With_Language_Name**.",
     
     "setguildbracketssuccess": "Set ignoring brackets successfully.",
     "guildbracketsfail": "Failed to set ignoring brackets, the supported options are `<>`, `[]`, `()`, `{}`.",
@@ -93,7 +93,6 @@
     "clearvotdtimesuccess": "The automatic daily verse successfully cleared.",
     
     "votd": "Here is the daily verse:",
-    
     "votdcantprocess": "The daily verse can't be processed, see <https://www.biblegateway.com/>.",
     
     "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
