@@ -29,6 +29,7 @@ const versesRouter = VersesRouter.getInstance();
 import * as heartbeats from './tasks/heartbeat';
 import * as dailyVerses from './tasks/daily_verses';
 import handleError from './helpers/error_handler';
+import { checkBotPermissions } from './helpers/permissions';
 
 const connect = () => {
     mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
@@ -82,6 +83,11 @@ bot.on('message', message => {
     // Ignore Discord.bots.gg and Top.gg's server.
     // The bot has to be there in order to be listed.
     if (['110373943822540800', '264445053596991498'].includes(message.guild.id)) {
+        return;
+    }
+
+    if (!checkBotPermissions(message.guild)) {
+        // If the bot doesn't have the necessary permissions, don't pursue further.
         return;
     }
 
