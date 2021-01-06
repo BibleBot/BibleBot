@@ -132,6 +132,7 @@ export class VerseCommandsRouter {
 
             try {
                 const paginator = new Paginator(pages, ctx.id, 180);
+                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `+search ${args.join(' ')}`);
                 paginator.run(ctx.channel);
             } catch (err) {
                 if (err.message == 'User already using paginator.') {

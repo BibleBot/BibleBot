@@ -6,6 +6,7 @@ import GuildPreference from '../../models/guild_preference';
 
 import { createEmbed } from '../../helpers/embed_builder';
 import { checkGuildPermissions } from '../../helpers/permissions';
+import { Paginator } from '../../helpers/paginator';
 
 import * as defaultUserPreferences from '../../helpers/default_user_preference.json';
 import * as defaultGuildPreferences from '../../helpers/default_guild_preference.json';
@@ -147,6 +148,56 @@ export class VersionSettingsRouter {
         });
     }
 
+    async getVersionList(ctx: Context): Promise<void> {
+        const versions = await Version.find({}).sort({ abbv: 'ascending' }).lean();
+
+        const pages = [];
+        const maxResultsPerPage = 25;
+        const versionsUsed = [];
+        let totalPages = Number(Math.ceil(versions.length / maxResultsPerPage));
+
+        if (totalPages == 0) {
+            totalPages = 1;
+        }
+
+        for (let i = 0; i < totalPages; i++) {
+            const pageCounter = ctx.language.getString('pageOf').replace('<num>', i + 1)
+                                                                .replace('<total>', totalPages);
+                                                                
+            const embed = createEmbed(null, `${ctx.language.getCommand('version')} ${ctx.language.getCommand('list')} - ${pageCounter}`, null, false);
+
+            let count = 0;
+            let versionList = '';
+
+            for (const version of versions) {
+                if (count < maxResultsPerPage) {
+                    if (!versionsUsed.includes(version.name)) {
+                        versionList += `${version.name}\n`;
+
+                        versionsUsed.push(version.name);
+                        versions.shift();
+                        count++;
+                    }
+                }
+            }
+
+            embed.setDescription(versionList);
+
+            pages.push(embed);
+        }
+
+        try {
+            const paginator = new Paginator(pages, ctx.id, 180);
+            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, '+version list');
+            paginator.run(ctx.channel);
+        } catch (err) {
+            if (err.message == 'User already using paginator.') {
+                ctx.channel.send(createEmbed(null, '+version list', ctx.language.getString('plswait'), true));
+                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, err.message);
+            }
+        }
+    }
+
     async getVersionInfo(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
@@ -211,7 +262,7 @@ export class VersionSettingsRouter {
                 });
                 break;
             case 'list':
-                //this.getVersionList(ctx);
+                this.getVersionList(ctx);
                 break;
             case 'info':
                 this.getVersionInfo(ctx, args);
