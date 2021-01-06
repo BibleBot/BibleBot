@@ -139,10 +139,6 @@ export class VerseCommandsRouter {
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, err.message);
                 }
             }
-
-            //const embed = createEmbed(title, data.title(), text, false);
-
-            //ctx.channel.send(embed);
         });
     }
 }
