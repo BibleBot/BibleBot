@@ -81,11 +81,6 @@ export class VerseCommandsRouter {
             case 'ab':
                 processor = apiBible;
                 break;
-            case 'dbg':
-                ctx.channel.send(createEmbed(null, '+search', ctx.language.getString('searchNotSupported'), true));
-                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `search not supported for ${version.abbv}`);
-                return;
-                break;
         }
 
         processor.search(args.join(' '), version, (err, data: Array<Record<string, string>>) => {

@@ -273,9 +273,6 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
         case 'ab':
             processor = apiBible;
             break;
-        case 'dbg':
-            processor = dbgLxx;
-            break;
     }
 
     processor.getResult(reference, true, true, version, (err, data: Verse) => {
