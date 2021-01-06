@@ -146,6 +146,19 @@ export class LanguageRouter {
         });
     }
 
+    async getLanguageList(ctx: Context): Promise<void> {
+        const languages = await Language.find({}).sort({ name: 'ascending' }).lean();
+
+        let message = '';
+
+        for (const language of languages) {
+            message += `**${language.name}** [\`${language.objectName}\`]\n`;
+        }
+
+        ctx.channel.send(createEmbed(null, '+language list', message, false));
+        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, '+language list');
+    }
+
     getLanguage(ctx: Context): void {
         Preference.findOne({ user: ctx.id }, (err, prefs) => {
             if (err || !prefs) {
@@ -187,6 +200,9 @@ export class LanguageRouter {
                         });
                     }
                 });
+                break;
+            case 'list':
+                this.getLanguageList(ctx);
                 break;
             default:
                 this.getLanguage(ctx);
