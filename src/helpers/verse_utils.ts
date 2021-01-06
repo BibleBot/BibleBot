@@ -7,7 +7,6 @@ import * as mongoose from 'mongoose';
 
 import * as bibleGateway from '../interfaces/bible_gateway';
 import * as apiBible from '../interfaces/api_bible';
-import * as dbgLxx from '../interfaces/dbg_lxx';
 
 import { createEmbed } from '../helpers/embed_builder';
 import { getBookNames } from './name_fetcher';
