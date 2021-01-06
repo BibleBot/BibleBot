@@ -1,9 +1,11 @@
 import Context from '../../models/context';
 import Version from '../../models/version';
+import Language from '../../models/language';
 import Preference from '../../models/preference';
 import GuildPreference from '../../models/guild_preference';
 
 import { createEmbed } from '../../helpers/embed_builder';
+import { checkGuildPermissions } from '../../helpers/permissions';
 
 import * as defaultUserPreferences from '../../helpers/default_user_preference.json';
 import * as defaultGuildPreferences from '../../helpers/default_guild_preference.json';
@@ -102,7 +104,7 @@ export class VersionSettingsRouter {
                             ctx.channel.send(createEmbed(null, '+version setserver', 'Failed to set preference.', true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version set ${abbv}`);
-                            ctx.channel.send(createEmbed(null, '+version setserver', 'Set version successfully.', false));
+                            ctx.channel.send(createEmbed(null, '+version setserver', 'Set server version successfully.', false));
                         }
                     });
                 } else {
@@ -114,7 +116,7 @@ export class VersionSettingsRouter {
                             ctx.channel.send(createEmbed(null, '+version setserver', 'Failed to set preference.', true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version setserver ${abbv} (overwrite)`);
-                            ctx.channel.send(createEmbed(null, '+version setserver', 'Set version successfully.', false));
+                            ctx.channel.send(createEmbed(null, '+version setserver', 'Set server version successfully.', false));
                         }
                     });
                 }
@@ -148,6 +150,18 @@ export class VersionSettingsRouter {
         switch (subcommand) {
             case 'set':
                 this.setUserVersion(ctx, args[0]);
+                break;
+            case 'setserver':
+                checkGuildPermissions(ctx, (hasPermission) => {
+                    if (hasPermission) {
+                        this.setGuildVersion(ctx, args[0]);
+                    } else {
+                        Language.findOne({ user: ctx.id }, (err, lang) => {
+                            ctx.channel.send(createEmbed(null, '+version setserver', lang.getString('noguildperm'), true));
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - no permission');
+                        });
+                    }
+                });
                 break;
             default:
                 this.getVersion(ctx);

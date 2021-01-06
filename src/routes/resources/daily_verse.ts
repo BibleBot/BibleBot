@@ -5,20 +5,14 @@ import 'moment-timezone';
 
 import Context from '../../models/context';
 import Version from '../../models/version';
+import Language from '../../models/language';
 import GuildPreference from '../../models/guild_preference';
 
 import * as utils from '../../helpers/verse_utils';
 import { createEmbed } from '../../helpers/embed_builder';
+import { checkGuildPermissions } from '../../helpers/permissions';
 
 import * as defaultGuildPreferences from '../../helpers/default_guild_preference.json';
-
-// This is probably the worst file in the codebase, and could benefit from tidying up... eventually.
-
-const formatTime = (h_24) => {
-    let h = Number(h_24.split(':')[0]) % 12;
-    if (h === 0) h = 12;
-    return (h < 10 ? '0' : '') + h + ':' + h_24.split(':')[1] + (Number(h_24.split(':')[0]) < 12 ? ' am' : ' pm');
-};
 
 export class DailyVerseRouter {
     private static instance: DailyVerseRouter;
@@ -198,13 +192,31 @@ export class DailyVerseRouter {
 
         switch (subcommand) {
             case 'setup':
-                this.setupAutomation(ctx, args);
+                checkGuildPermissions(ctx, (hasPermission) => {
+                    if (hasPermission) {
+                        this.setupAutomation(ctx, args);
+                    } else {
+                        Language.findOne({ user: ctx.id }, (err, lang) => {
+                            ctx.channel.send(createEmbed(null, '+dailyverse setup', lang.getString('noguildperm'), true));
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse setup - no permission');
+                        });
+                    }
+                });
                 break;
             case 'status':
                 this.automationStatus(ctx);
                 break;
             case 'clear':
-                this.clearAutomation(ctx);
+                checkGuildPermissions(ctx, (hasPermission) => {
+                    if (hasPermission) {
+                        this.clearAutomation(ctx);
+                    } else {
+                        Language.findOne({ user: ctx.id }, (err, lang) => {
+                            ctx.channel.send(createEmbed(null, '+dailyverse clear', lang.getString('noguildperm'), true));
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - no permission');
+                        });
+                    }
+                });
                 break;
             default:
                 this.sendDailyVerse(ctx);

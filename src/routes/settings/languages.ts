@@ -4,6 +4,7 @@ import Preference from '../../models/preference';
 import GuildPreference from '../../models/guild_preference';
 
 import { createEmbed } from '../../helpers/embed_builder';
+import { checkGuildPermissions } from '../../helpers/permissions';
 
 import * as defaultUserPreferences from '../../helpers/default_user_preference.json';
 import * as defaultGuildPreferences from '../../helpers/default_guild_preference.json';
@@ -156,7 +157,16 @@ export class LanguageRouter {
                 this.setUserLanguage(ctx, args[0]);
                 break;
             case 'setserver':
-                this.setGuildLanguage(ctx, args[0]);
+                checkGuildPermissions(ctx, (hasPermission) => {
+                    if (hasPermission) {
+                        this.setGuildLanguage(ctx, args[0]);
+                    } else {
+                        Language.findOne({ user: ctx.id }, (err, lang) => {
+                            ctx.channel.send(createEmbed(null, '+language setserver', lang.getString('noguildperm'), true));
+                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - no permission');
+                        });
+                    }
+                });
                 break;
             default:
                 this.getLanguage(ctx);
