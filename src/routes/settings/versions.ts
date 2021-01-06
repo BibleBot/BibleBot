@@ -25,7 +25,17 @@ export class VersionSettingsRouter {
         return VersionSettingsRouter.instance;
     }
 
-    setUserVersion(ctx: Context, abbv: string): void {
+    setUserVersion(ctx: Context, args: string[]): void {
+        const lang = ctx.language;
+
+        if (args.length == 0) {
+            ctx.channel.send(createEmbed(null, '+version set', lang.getString('expectedparameter'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version set - no parameter');
+            return;
+        }
+
+        const abbv = args[0];
+
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version set - invalid version (${abbv})`);
@@ -76,7 +86,17 @@ export class VersionSettingsRouter {
         });
     }
 
-    setGuildVersion(ctx: Context, abbv: string): void {
+    setGuildVersion(ctx: Context, args: string[]): void {
+        const lang = ctx.language;
+
+        if (args.length == 0) {
+            ctx.channel.send(createEmbed(null, '+version setserver', lang.getString('expectedparameter'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - no parameter');
+            return;
+        }
+
+        const abbv = args[0];
+
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version setserver - invalid version (${abbv})`);
@@ -127,6 +147,33 @@ export class VersionSettingsRouter {
         });
     }
 
+    async getVersionInfo(ctx: Context, args: string[]): Promise<void> {
+        const lang = ctx.language;
+
+        if (args.length == 0) {
+            ctx.channel.send(createEmbed(null, '+version info', lang.getString('expectedparameter'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version info - no parameter');
+            return;
+        }
+
+        const abbv = args[0];
+
+        const version = await Version.findOne({ abbv }).exec();
+
+        if (version) {
+            const message = lang.getString('versioninfo').replace('<versionname>', version.name)
+                                                         .replace('<hasOT>', `**${version.supportsOldTestament ? lang.getArgument('yes') : lang.getArgument('no')}**`)
+                                                         .replace('<hasNT>', `**${version.supportsNewTestament ? lang.getArgument('yes') : lang.getArgument('no')}**`)
+                                                         .replace('<hasDEU>', `**${version.supportsDeuterocanon ? lang.getArgument('yes') : lang.getArgument('no')}**`);
+            
+            ctx.channel.send(createEmbed(null, '+version info', message, false));
+            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version info ${abbv}`);
+        } else {
+            ctx.channel.send(createEmbed(null, '+version info', lang.getString('versioninfofailed'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version info - invalid version (${abbv})`);
+        }
+    }
+
     async getVersion(ctx: Context): Promise<void> {
         const lang = ctx.language;
         
@@ -149,12 +196,12 @@ export class VersionSettingsRouter {
 
         switch (subcommand) {
             case 'set':
-                this.setUserVersion(ctx, args[0]);
+                this.setUserVersion(ctx, args);
                 break;
             case 'setserver':
                 checkGuildPermissions(ctx, (hasPermission) => {
                     if (hasPermission) {
-                        this.setGuildVersion(ctx, args[0]);
+                        this.setGuildVersion(ctx, args);
                     } else {
                         Language.findOne({ user: ctx.id }, (err, lang) => {
                             ctx.channel.send(createEmbed(null, '+version setserver', lang.getString('noguildperm'), true));
@@ -162,6 +209,12 @@ export class VersionSettingsRouter {
                         });
                     }
                 });
+                break;
+            case 'list':
+                //this.getVersionList(ctx);
+                break;
+            case 'info':
+                this.getVersionInfo(ctx, args);
                 break;
             default:
                 this.getVersion(ctx);

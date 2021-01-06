@@ -88,8 +88,10 @@
     "votd": "Here is the daily verse:",
     "votdcantprocess": "The daily verse can't be processed, see <https://www.biblegateway.com/>.",
     
-    "versioninfo": "\n**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
+    "versioninfo": "**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
     "versioninfofailed": "I couldn't find that version, are you sure you used the right acronym?",
+
+    "expectedparameter": "This command requires a parameter.",
     
     "shardcount": "Shard Count: ",
     "cachedguilds": "Server Count: ",

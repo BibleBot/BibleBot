@@ -22,7 +22,17 @@ export class MiscSettingsRouter {
         return MiscSettingsRouter.instance;
     }
 
-    setGuildPrefix(ctx: Context, prefix: string): void {
+    setGuildPrefix(ctx: Context, args: string[]): void {
+        const lang = ctx.language;
+
+        if (args.length == 0) {
+            ctx.channel.send(createEmbed(null, '+misc setprefix', lang.getString('expectedparameter'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - no parameter');
+            return;
+        }
+
+        const prefix = args[0];
+
         if (prefix.length != 1) {
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - not single character');
             ctx.channel.send(createEmbed(null, '+misc setprefix', 'The prefix must be a single character.', true));
@@ -69,7 +79,16 @@ export class MiscSettingsRouter {
         });
     }
 
-    setGuildBrackets(ctx: Context, brackets: string): void {
+    setGuildBrackets(ctx: Context, args: string[]): void {
+        const lang = ctx.language;
+
+        if (args.length == 0) {
+            ctx.channel.send(createEmbed(null, '+misc setbrackets', lang.getString('expectedparameter'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setbrackets - no parameter');
+            return;
+        }
+
+        const brackets = args[0];
         const validBrackets = ['<>', '[]', '{}', '()'];
 
         if (brackets.length != 2 && validBrackets.includes(brackets)) {
@@ -139,7 +158,7 @@ export class MiscSettingsRouter {
             case 'setprefix':
                 checkGuildPermissions(ctx, (hasPermission) => {
                     if (hasPermission) {
-                        this.setGuildPrefix(ctx, args[0]);
+                        this.setGuildPrefix(ctx, args);
                     } else {
                         Language.findOne({ user: ctx.id }, (err, lang) => {
                             ctx.channel.send(createEmbed(null, '+misc setprefix', lang.getString('noguildperm'), true));
@@ -151,7 +170,7 @@ export class MiscSettingsRouter {
             case 'setbrackets':
                 checkGuildPermissions(ctx, (hasPermission) => {
                     if (hasPermission) {
-                        this.setGuildBrackets(ctx, args[0]);
+                        this.setGuildBrackets(ctx, args);
                     } else {
                         Language.findOne({ user: ctx.id }, (err, lang) => {
                             ctx.channel.send(createEmbed(null, '+misc setbrackets', lang.getString('noguildperm'), true));

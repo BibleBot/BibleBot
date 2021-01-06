@@ -24,7 +24,17 @@ export class LanguageRouter {
         return LanguageRouter.instance;
     }
 
-    setUserLanguage(ctx: Context, objectName: string): void {
+    setUserLanguage(ctx: Context, args: string[]): void {
+        const lang = ctx.language;
+
+        if (args.length == 0) {
+            ctx.channel.send(createEmbed(null, '+language set', lang.getString('expectedparameter'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language set - no parameter');
+            return;
+        }
+
+        const objectName = args[0];
+
         Language.findOne({ objectName }).then((language) => {
             if (!language) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `language set - invalid language (${objectName})`);
@@ -75,7 +85,17 @@ export class LanguageRouter {
         });
     }
 
-    setGuildLanguage(ctx: Context, objectName: string): void {
+    setGuildLanguage(ctx: Context, args: string[]): void {
+        const lang = ctx.language;
+
+        if (args.length == 0) {
+            ctx.channel.send(createEmbed(null, '+language setserver', lang.getString('expectedparameter'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - no parameter');
+            return;
+        }
+
+        const objectName = args[0];
+
         Language.findOne({ objectName }).then((language) => {
             if (!language) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `language setserver - invalid language (${objectName})`);
@@ -154,12 +174,12 @@ export class LanguageRouter {
 
         switch (subcommand) {
             case 'set':
-                this.setUserLanguage(ctx, args[0]);
+                this.setUserLanguage(ctx, args);
                 break;
             case 'setserver':
                 checkGuildPermissions(ctx, (hasPermission) => {
                     if (hasPermission) {
-                        this.setGuildLanguage(ctx, args[0]);
+                        this.setGuildLanguage(ctx, args);
                     } else {
                         Language.findOne({ user: ctx.id }, (err, lang) => {
                             ctx.channel.send(createEmbed(null, '+language setserver', lang.getString('noguildperm'), true));
