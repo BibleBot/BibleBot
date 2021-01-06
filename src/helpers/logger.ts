@@ -1,5 +1,10 @@
+import * as fs from 'fs';
+import * as ini from 'ini';
+
 import * as chalk from 'chalk';
 import { Snowflake, DMChannel, NewsChannel, TextChannel } from 'discord.js';
+
+const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
 export function logInteraction(level: string, shard: number, sender: Snowflake, channel: TextChannel | DMChannel | NewsChannel, msg: string): void {
     let guild;
@@ -13,7 +18,12 @@ export function logInteraction(level: string, shard: number, sender: Snowflake, 
         chan = channel.id;
     }
 
-    const sourceSection = '<' + chalk.blueBright(sender) + '@' + chalk.magentaBright(`${guild}`) + '#' + chalk.greenBright(`${chan}`) + '>';
+    let actualSender = sender;
+    if (sender == config.biblebot.ownerID) {
+        actualSender = 'owner';
+    }
+
+    const sourceSection = '<' + chalk.blueBright(actualSender) + '@' + chalk.magentaBright(`${guild}`) + '#' + chalk.greenBright(`${chan}`) + '>';
     const output = `${sourceSection} ${msg}`;
     log(level, shard, output);
 }

@@ -1,4 +1,9 @@
+import * as fs from 'fs';
+import * as ini from 'ini';
+
 import { MessageEmbed } from 'discord.js';
+
+const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
 const NORMAL_COLOR = 303102;
 const ERROR_COLOR = 16723502;
@@ -8,8 +13,8 @@ export function createEmbed(author: string, title: string, description: string, 
         title,
         color: isError ? ERROR_COLOR : NORMAL_COLOR,
         footer: {
-            text: `BibleBot v${process.env.npm_package_version} by Evangelion Ltd.`,
-            iconURL: 'https://cdn.discordapp.com/avatars/367665336239128577/b8ab407073f4a3be980d8fa6a03e9586.png'
+            text: config.biblebot.footer.replace('<version>', process.env.npm_package_version),
+            iconURL: config.biblebot.icon
         }
     });
 

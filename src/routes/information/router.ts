@@ -7,8 +7,10 @@ import Language from '../../models/language';
 import * as git from 'git-last-commit';
 import * as os from 'os';
 import * as fs from 'fs';
+import * as ini from 'ini';
 
 const packageJson = JSON.parse(fs.readFileSync(__dirname + '/../../../package.json', 'utf-8'));
+const config = ini.parse(fs.readFileSync(`${__dirname}/../../config.ini`, 'utf-8'));
 
 import { createEmbed } from '../../helpers/embed_builder';
 
@@ -102,7 +104,7 @@ export class InformationRouter {
             `${platform}`;
 
             const embed = createEmbed(null, '+stats', message, false);
-            embed.setThumbnail('https://cdn.discordapp.com/avatars/367665336239128577/b8ab407073f4a3be980d8fa6a03e9586.png');
+            embed.setThumbnail(config.biblebot.icon);
 
             ctx.channel.send(embed);
             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'stats');

@@ -77,7 +77,7 @@ bot.on('shardResume', shard => {
 
 bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
-    if (message.author.id !== config.biblebot.id) return; //devmode for now
+    if (message.author.id !== config.biblebot.ownerID) return; //devmode for now
 
     // Ignore Discord.bots.gg and Top.gg's server.
     // The bot has to be there in order to be listed.
