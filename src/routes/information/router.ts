@@ -40,13 +40,15 @@ export class InformationRouter {
         const replacements = ['search', 'version', 'random',
                               'verseoftheday', 'votd', 'formatting',
                               'language', 'stats', 'invite',
-                              'supporters', 'creeds', 'resources'];
+                              'supporters', 'creeds', 'resources',
+                              'misc', 'dailyverse', 'truerandom'];
 
         for (const replacement of replacements) {
             commandList = commandList.replace(`<${replacement}>`, lang.getCommand(replacement));
         }
 
         const links = `${lang.getString('website').replace('<website>', 'https://biblebot.xyz')}\n` +
+        `${lang.getString('copyrights').replace('<copyrights>', 'https://biblebot.xyz/copyright')}\n` +
         `${lang.getString('code').replace('<repository>', 'https://github.com/BibleBot/BibleBot')}\n` +
         `${lang.getString('server').replace('<invite>', 'https://discord.gg/H7ZyHqE')}\n` +
         `${lang.getString('terms').replace('<terms>', 'https://biblebot.xyz/terms')}\n\n` +
