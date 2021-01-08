@@ -3,12 +3,22 @@ import * as mongoose from 'mongoose';
 import { log } from '../helpers/logger';
 
 import Version from '../models/version';
+import Preference from '../models/preference';
+import GuildPreference from '../models/guild_preference';
 
 import * as oldVersions from './old_databases/versiondb.json';
+import * as oldPreferences from './old_databases/db.json';
+import * as oldGuildPreferences from './old_databases/guilddb.json';
 
 const connect = () => {
     mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-        return log('info', 0, 'connected to db');
+        log('info', 0, 'connected to db');
+
+        importOldVersions();
+        importOldPreferences();
+        importOldGuildPreferences();
+        
+        setTimeout(() => { process.exit(0); }, 5000);
     }).catch((err) => {
         log('err', 0, `error connecting to database: ${err}`);
         return process.exit(1);
@@ -53,13 +63,101 @@ const importOldVersions = () => {
                 if (err) {
                     log('err', 0, `unable to save ${oldVersion['abbv']}`);
                     log('err', 0, err);
+
+                    console.log(oldVersion);
+                    console.log('----');
+                    console.log(newVersion);
                 } else {
-                    log('info', 0, `saved ${version.abbv}`);
+                    //log('info', 0, `saved ${version.abbv}`);
                 }
             });
         }
     }
+
+    console.log('versions done');
 };
 
-importOldVersions();
-setTimeout(() => { process.exit(0); }, 2000);
+const importOldPreferences = () => {
+    for (const key in oldPreferences) {
+        if (Object.prototype.hasOwnProperty.call(oldPreferences, key)) {
+            const oldPreference = oldPreferences[key];
+            
+            // example
+            // {"id": 186046294286925824, "version": "RSV", "verseNumbers": "enable", "headings": "enable", "language": "english", "mode": "code"}
+
+            const formatMap = {
+                'enable': true,
+                'disable': false
+            };
+
+            const newPreference = new Preference({
+                user: oldPreference.id,
+                input: 'default',
+                language: 'english',
+                version: oldPreference.version ? oldPreference.version : 'RSV',
+                headings: oldPreference.headings ? formatMap[oldPreference.headings] : true,
+                verseNumbers: oldPreference.verseNumbers ? formatMap[oldPreference.verseNumbers] : true,
+                display: oldPreference.mode ? oldPreference.mode : 'default'
+            });
+
+            newPreference.save((err, pref) => {
+                if (err) {
+                    log('err', 0, `unable to save ${oldPreference.id}`);
+                    log('err', 0, err);
+
+                    console.log(oldPreference);
+                    console.log('----');
+                    console.log(newPreference);
+                } else {
+                    //log('info', 0, `saved ${pref.user}`);
+                }
+            });
+        }
+    }
+
+    
+    console.log('prefs done');
+};
+
+const importOldGuildPreferences = () => {
+    for (const key in oldGuildPreferences) {
+        if (Object.prototype.hasOwnProperty.call(oldPreferences, key)) {
+            const oldPreference = oldGuildPreferences[key];
+
+            // example
+            // {"id": 362503610006765568, "time": "13:00", "channel": 366888351326011394, "channel_name": "daily-verse"}
+
+            const newPreference = new GuildPreference({
+                guild: oldPreference.id,
+                prefix: '+',
+                ignoringBrackets: '<>',
+                language: 'english',
+                version: oldPreference.version ? oldPreference.version : 'RSV'
+            });
+
+            if (oldPreference.channel && oldPreference.time) {
+                if (oldPreference.time != 'clear') {
+                    newPreference.dailyVerseChannel = oldPreference.channel;
+                    newPreference.dailyVerseTime = oldPreference.time;
+                    newPreference.dailyVerseTz = 'UTC';
+                }
+            }
+
+            newPreference.save((err, pref) => {
+                if (err) {
+                    log('err', 0, `unable to save ${oldPreference.id}`);
+                    log('err', 0, err);
+
+                    console.log(oldPreference);
+                    console.log('----');
+                    console.log(newPreference);
+                } else {
+                    //log('info', 0, `saved ${pref.guild}`);
+                }
+            });
+        }
+    }
+
+    
+    console.log('gprefs done');
+};
