@@ -17,7 +17,7 @@ const queryToken = () => {
         rl.question('Discord API Token: ', (token) => {
             config.biblebot['token'] = token;
 
-            resolve();
+            resolve(null);
         });
     });
 };
@@ -25,9 +25,9 @@ const queryToken = () => {
 const queryId = () => {
     return new Promise((resolve) => {
         rl.question('Owner Discord ID: ', (id) => {
-            config.biblebot['id'] = id;
+            config.biblebot['ownerID'] = id;
 
-            resolve();
+            resolve(null);
         });
     });
 };
@@ -37,7 +37,7 @@ const queryBrackets = () => {
         rl.question('Ignoring Brackets (ex. <>): ', (brackets) => {
             config.biblebot['ignoringBrackets'] = brackets;
 
-            resolve();
+            resolve(null);
         });
     });
 };
@@ -47,7 +47,27 @@ const queryPrefix = () => {
         rl.question('Command prefix: ', (prefix) => {
             config.biblebot['commandPrefix'] = prefix;
 
-            resolve();
+            resolve(null);
+        });
+    });
+};
+
+const queryFooter = () => {
+    return new Promise((resolve) => {
+        rl.question('Footer Text: ', (footer) => {
+            config.biblebot['footer'] = footer;
+
+            resolve(null);
+        });
+    });
+};
+
+const queryIconURL = () => {
+    return new Promise((resolve) => {
+        rl.question('Icon URL: ', (icon) => {
+            config.biblebot['icon'] = icon;
+
+            resolve(null);
         });
     });
 };
@@ -57,7 +77,7 @@ const queryAPIBible = () => {
         rl.question('API.Bible Key: ', (key) => {
             config.apis['apiBible'] = key;
 
-            resolve();
+            resolve(null);
         });
     });
 };
@@ -67,6 +87,8 @@ const generateConfiguration = async () => {
     await queryId();
     await queryBrackets();
     await queryPrefix();
+    await queryFooter();
+    await queryIconURL();
     await queryAPIBible();
 
     rl.close();

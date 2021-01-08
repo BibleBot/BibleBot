@@ -38,7 +38,7 @@ export class VersesRouter {
         }
 
         results.forEach((result) => {
-            if (utils.isSurroundedByBrackets(config.biblebot.ignoringBrackets, result, msg)) {
+            if (utils.isSurroundedByBrackets(ctx.guildPreferences.ignoringBrackets, result, msg)) {
                 return;
             }
 
