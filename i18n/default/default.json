@@ -125,7 +125,7 @@
     
     "queryTooShort": "Your search query must be longer than 3 characters.",
     "searchResults": "Search results for",
-    "nothingFound": "Nothing found for \"<query>\"",
+    "nothingFound": "Nothing found for \"<query>\".",
     "pageOf": "Page <num> of <total>",
     "searchNotSupported": "<+><search> is not supported by this version.",
 
