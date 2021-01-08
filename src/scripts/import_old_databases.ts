@@ -26,10 +26,13 @@ const importOldVersions = () => {
 
             if (['BSB', 'NHEB', 'WBT'].includes(oldVersion['abbv'])) {
                 // BibleHub Versions
-                source = 'bh';
+                // source = 'bh';
+                continue;
             } else if (['KJVA', 'FBV'].includes(oldVersion['abbv'])) {
                 // API.Bible Versions
                 source = 'ab';
+            } else if (['ELXX', 'LXX'].includes(oldVersion['abbv'])) {
+                continue;
             }
 
             if (oldVersion['abbv'] == 'NKJV') {
