@@ -3,7 +3,6 @@ import Context from '../../models/context';
 import { createEmbed, translateCommand } from '../../helpers/embed_builder';
 
 import * as creeds from '../../resources/english/creeds.json';
-import { create } from 'domain';
 
 export class ResourcesCommandsRouter {
     private static instance: ResourcesCommandsRouter;
@@ -66,7 +65,7 @@ export class ResourcesCommandsRouter {
     }
 
     sendCCC(ctx: Context, args: string[], isFallback?: boolean): void {
-        if (ctx.guild.id == "238001909716353025" && !isFallback) {
+        if (ctx.guild.id == '238001909716353025' && !isFallback) {
             return;
         }
     }
