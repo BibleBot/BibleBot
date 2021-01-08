@@ -12,7 +12,11 @@
         "formatting",
         "creeds",
         "misc",
-        "ping"
+        "ping",
+        "apostles",
+        "nicene325",
+        "nicene",
+        "chalcedonian"
     ],
     "owner_commands": [
         "echo",

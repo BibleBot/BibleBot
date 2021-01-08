@@ -11,6 +11,7 @@ import { VersionSettingsRouter } from './settings/versions';
 import { LanguageRouter } from './settings/languages';
 import { MiscSettingsRouter } from './settings/misc';
 import { FormattingSettingsRouter } from './settings/formatting';
+import { ResourcesCommandsRouter } from './resources/router';
 
 const informationRouter = InformationRouter.getInstance();
 const verseCommandsRouter = VerseCommandsRouter.getInstance();
@@ -19,6 +20,7 @@ const versionSettingsRouter = VersionSettingsRouter.getInstance();
 const languageRouter = LanguageRouter.getInstance();
 const miscSettingsRouter = MiscSettingsRouter.getInstance();
 const formattingSettingsRouter = FormattingSettingsRouter.getInstance();
+const resourceCommandsRouter = ResourcesCommandsRouter.getInstance();
 
 export class CommandsRouter {
     private static instance: CommandsRouter;
@@ -81,10 +83,33 @@ export class CommandsRouter {
                 informationRouter.getStats(ctx);
                 break;
             case 'creeds':
-                // resourceRouter.processCreedCommand(ctx, args);
+                resourceCommandsRouter.listCreeds(ctx);
                 break;
             case 'catechisms':
-                // resourceRouter.processCatechismCommand(ctx, args);
+                resourceCommandsRouter.listCatechisms(ctx);
+                break;
+            case 'nicene325':
+                resourceCommandsRouter.sendEarlyNicene(ctx);
+                break;
+            case 'nicene':
+                resourceCommandsRouter.sendNicene(ctx);
+                break;
+            case 'apostles':
+                resourceCommandsRouter.sendApostles(ctx);
+                break;
+            case 'chalcedonian':
+                resourceCommandsRouter.sendChalcedonian(ctx);
+                break;
+            case 'ccc':
+            case 'bbccc':
+                //if (command == 'bbccc') {
+                //    resourceCommandsRouter.sendCCC(ctx, args, true);
+                //} else {
+                //    resourceCommandsRouter.sendCCC(ctx, args);
+                //}
+                break;
+            case 'lsc':
+                //resourceCommandsRouter.sendLSC(ctx, args);
                 break;
             case 'misc':
                 miscSettingsRouter.processCommand(ctx, args);

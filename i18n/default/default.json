@@ -13,11 +13,14 @@
     "server": "**Official Discord Server**: <invite>",
     "terms": "**Terms and Conditions**: <terms>",
 
-    "creeds": "Creeds",
     "creeds_text": "These are the creeds available in BibleBot:\n\n",
 
-    "resources": "Resources",
-    "resources_text": "These are the resources available in BibleBot:\n\n",
+    "apostles_name": "The Apostles' Creed",
+    "nicene325_name": "The Nicene Creed (325)",
+    "nicene_name": "The Nicene-Constantinopolitan Creed (381)",
+    "chalcedon_name": "The Chalcedonian Definition (451)",
+
+    "catechisms_text": "These are the catechisms available in BibleBot:\n\n",
 
     "catechisms": "Catechisms",
     "confessions": "Confessions",
@@ -32,6 +35,8 @@
     "oriental_orthodox": "Oriental Orthodox",
 
     "pubdomain": "Public Domain",
+
+    "invalidrange": "Invalid range.",
 
     "error": "Error",
 
