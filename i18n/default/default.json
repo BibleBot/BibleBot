@@ -70,7 +70,6 @@
     "setversenumbersusage": "enable or disable verse numbers",
     "setheadingsusage": "enable or disable headings",
     "setdisplayusage": "set your preferred display style",
-
     
     "versenumbers": "Verse numbers are <status>.",
     "versenumberssuccess": "Set verse numbers successfully.",
