@@ -9,7 +9,7 @@ import * as utils from '../../helpers/verse_utils';
 import * as bibleGateway from '../../interfaces/bible_gateway';
 import * as apiBible from '../../interfaces/api_bible';
 
-import { createEmbed } from '../../helpers/embed_builder';
+import { createEmbed, translateCommand } from '../../helpers/embed_builder';
 import { Paginator } from '../../helpers/paginator';
 
 export class VerseCommandsRouter {
@@ -136,7 +136,7 @@ export class VerseCommandsRouter {
                 paginator.run(ctx.channel);
             } catch (err) {
                 if (err.message == 'User already using paginator.') {
-                    ctx.channel.send(createEmbed(null, '+search', ctx.language.getString('plswait'), true));
+                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'search']), ctx.language.getString('plswait'), true));
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, err.message);
                 }
             }

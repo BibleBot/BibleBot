@@ -1,8 +1,7 @@
 import Context from '../../models/context';
-import Language from '../../models/language';
 import Preference from '../../models/preference';
 
-import { createEmbed } from '../../helpers/embed_builder';
+import { createEmbed, translateCommand } from '../../helpers/embed_builder';
 
 import * as defaultUserPreferences from '../../helpers/default_user_preference.json';
 
@@ -25,7 +24,7 @@ export class FormattingSettingsRouter {
         const lang = ctx.language;
 
         if (args.length == 0) {
-            ctx.channel.send(createEmbed(null, '+formatting setversenumbers', lang.getString('expectedparameter'), true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setversenumbers']), lang.getString('expectedparameter'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setversenumbers - no parameter');
             return;
         }
@@ -43,7 +42,7 @@ export class FormattingSettingsRouter {
                 actualValue = false;
                 break;
             default:
-                ctx.channel.send(createEmbed(null, '+formatting setversenumbers', lang.getString('otherformatfail'), true));
+                ctx.channel.send(createEmbed(null,  translateCommand(ctx, ['+', 'formatting', 'setversenumbers']), lang.getString('otherformatfail'), true));
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setversenumbers - invalid parameter');
                 return;
         }
@@ -55,7 +54,7 @@ export class FormattingSettingsRouter {
         Preference.findOne({ user: ctx.id }, (err, prefs) => {
             if (err) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setversenumbers - cannot save preference');
-                ctx.channel.send(createEmbed(null, '+formatting setversenumbers', 'Failed to set preference.', true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setversenumbers']), 'Failed to set preference.', true));
             } else if (!prefs) {
                 const derivedFromDefault = {
                     user: ctx.id,
@@ -69,10 +68,10 @@ export class FormattingSettingsRouter {
                 newPreference.save((err, prefs) => {
                     if (err || !prefs) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setversenumbers - cannot save new preference');
-                        ctx.channel.send(createEmbed(null, '+formatting setversenumbers', 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setversenumbers']), 'Failed to set preference.', true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `formatting setversenumbers ${value}`);
-                        ctx.channel.send(createEmbed(null, '+formatting setversenumbers', 'Set verse numbers successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setversenumbers']), 'Set verse numbers successfully.', false));
                     }
                 });
             } else {
@@ -81,10 +80,10 @@ export class FormattingSettingsRouter {
                 prefs.save((err, preference) => {
                     if (err || !preference) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setversenumbers - cannot overwrite preference');
-                        ctx.channel.send(createEmbed(null, '+formatting setversenumbers', 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setversenumbers']), 'Failed to set preference.', true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `formatting setversenumbers ${value} (overwrite)`);
-                        ctx.channel.send(createEmbed(null, '+formatting setversenumbers', 'Set verse numbers successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setversenumbers']), 'Set verse numbers successfully.', false));
                     }
                 });
             }
@@ -95,7 +94,7 @@ export class FormattingSettingsRouter {
         const lang = ctx.language;
 
         if (args.length == 0) {
-            ctx.channel.send(createEmbed(null, '+formatting setheadings', lang.getString('expectedparameter'), true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setheadings']), lang.getString('expectedparameter'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setheadings - no parameter');
             return;
         }
@@ -113,7 +112,7 @@ export class FormattingSettingsRouter {
                 actualValue = false;
                 break;
             default:
-                ctx.channel.send(createEmbed(null, '+formatting setheadings', lang.getString('otherformatfail'), true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setheadings']), lang.getString('otherformatfail'), true));
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setheadings - invalid parameter');
                 return;
         }
@@ -125,7 +124,7 @@ export class FormattingSettingsRouter {
         Preference.findOne({ user: ctx.id }, (err, prefs) => {
             if (err) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setheadings - cannot save preference');
-                ctx.channel.send(createEmbed(null, '+formatting setheadings', 'Failed to set preference.', true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setheadings']), 'Failed to set preference.', true));
             } else if (!prefs) {
                 const derivedFromDefault = {
                     user: ctx.id,
@@ -139,10 +138,10 @@ export class FormattingSettingsRouter {
                 newPreference.save((err, prefs) => {
                     if (err || !prefs) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setheadings - cannot save new preference');
-                        ctx.channel.send(createEmbed(null, '+formatting setheadings', 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setheadings']), 'Failed to set preference.', true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `formatting setheadings ${value}`);
-                        ctx.channel.send(createEmbed(null, '+formatting setheadings', 'Set headings successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setheadings']), 'Set headings successfully.', false));
                     }
                 });
             } else {
@@ -151,10 +150,10 @@ export class FormattingSettingsRouter {
                 prefs.save((err, preference) => {
                     if (err || !preference) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setheadings - cannot overwrite preference');
-                        ctx.channel.send(createEmbed(null, '+formatting setheadings', 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setheadings']), 'Failed to set preference.', true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `formatting setheadings ${value} (overwrite)`);
-                        ctx.channel.send(createEmbed(null, '+formatting setheadings', 'Set headings successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setheadings']), 'Set headings successfully.', false));
                     }
                 });
             }
@@ -165,7 +164,7 @@ export class FormattingSettingsRouter {
         const lang = ctx.language;
 
         if (args.length == 0) {
-            ctx.channel.send(createEmbed(null, '+formatting setdisplay', lang.getString('expectedparameter'), true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setdisplay']), lang.getString('expectedparameter'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setdisplay - no parameter');
             return;
         }
@@ -173,7 +172,7 @@ export class FormattingSettingsRouter {
         const value = args[0];
 
         if (!['code', 'embed', 'blockquote', 'default'].includes(value)) {
-            ctx.channel.send(createEmbed(null, '+formatting setdisplay', lang.getString('otherformatfail'), true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setdisplay']), lang.getString('otherformatfail'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setdisplay - invalid parameter');
             return;
         }
@@ -181,7 +180,7 @@ export class FormattingSettingsRouter {
         Preference.findOne({ user: ctx.id }, (err, prefs) => {
             if (err) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setheadings - cannot save preference');
-                ctx.channel.send(createEmbed(null, '+formatting setdisplay', 'Failed to set preference.', true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setdisplay']), 'Failed to set preference.', true));
             } else if (!prefs) {
                 const derivedFromDefault = {
                     user: ctx.id,
@@ -195,10 +194,10 @@ export class FormattingSettingsRouter {
                 newPreference.save((err, prefs) => {
                     if (err || !prefs) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setdisplay - cannot save new preference');
-                        ctx.channel.send(createEmbed(null, '+formatting setdisplay', 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setdisplay']), 'Failed to set preference.', true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `formatting setdisplay ${value}`);
-                        ctx.channel.send(createEmbed(null, '+formatting setdisplay', 'Set display style successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setdisplay']), 'Set display style successfully.', false));
                     }
                 });
             } else {
@@ -207,10 +206,10 @@ export class FormattingSettingsRouter {
                 prefs.save((err, preference) => {
                     if (err || !preference) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'formatting setdisplay - cannot overwrite preference');
-                        ctx.channel.send(createEmbed(null, '+formatting setdisplay', 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setdisplay']), 'Failed to set preference.', true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `formatting setdisplay ${value} (overwrite)`);
-                        ctx.channel.send(createEmbed(null, '+formatting setdisplay', 'Set display style successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting', 'setdisplay']), 'Set display style successfully.', false));
                     }
                 });
             }
@@ -232,7 +231,7 @@ export class FormattingSettingsRouter {
         `**${lang.getCommand('setdisplay')}** - ${lang.getString('setdisplayusage')}`;
                 
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'formatting');
-        ctx.channel.send(createEmbed(null, '+formatting', message, false));
+        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting']), message, false));
     }
 
     processCommand(ctx: Context, params: Array<string>): void {

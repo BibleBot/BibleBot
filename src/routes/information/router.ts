@@ -12,7 +12,7 @@ import * as ini from 'ini';
 const packageJson = JSON.parse(fs.readFileSync(__dirname + '/../../../package.json', 'utf-8'));
 const config = ini.parse(fs.readFileSync(`${__dirname}/../../config.ini`, 'utf-8'));
 
-import { createEmbed } from '../../helpers/embed_builder';
+import { translateCommand, createEmbed } from '../../helpers/embed_builder';
 
 export class InformationRouter {
     private static instance: InformationRouter;
@@ -105,7 +105,7 @@ export class InformationRouter {
             
             `${platform}`;
 
-            const embed = createEmbed(null, '+stats', message, false);
+            const embed = createEmbed(null, translateCommand(ctx, ['+', 'stats']), message, false);
             embed.setThumbnail(config.biblebot.icon);
 
             ctx.channel.send(embed);

@@ -4,7 +4,7 @@ import Language from '../../models/language';
 import Preference from '../../models/preference';
 import GuildPreference from '../../models/guild_preference';
 
-import { createEmbed } from '../../helpers/embed_builder';
+import { createEmbed, translateCommand } from '../../helpers/embed_builder';
 import { checkGuildPermissions } from '../../helpers/permissions';
 import { Paginator } from '../../helpers/paginator';
 
@@ -30,7 +30,7 @@ export class VersionSettingsRouter {
         const lang = ctx.language;
 
         if (args.length == 0) {
-            ctx.channel.send(createEmbed(null, '+version set', lang.getString('expectedparameter'), true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'set']), lang.getString('expectedparameter'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version set - no parameter');
             return;
         }
@@ -40,14 +40,14 @@ export class VersionSettingsRouter {
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version set - invalid version (${abbv})`);
-                ctx.channel.send(createEmbed(null, '+version set', `${abbv} not in database`, true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'set']), `${abbv} not in database`, true));
                 return;
             }
 
             Preference.findOne({ user: ctx.id }, (err, prefs) => {
                 if (err) {
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version set - cannot save preference');
-                    ctx.channel.send(createEmbed(null, '+version set', 'Failed to set preference.', true));
+                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'set']), 'Failed to set preference.', true));
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         user: ctx.id,
@@ -61,10 +61,10 @@ export class VersionSettingsRouter {
                     newPreference.save((err, prefs) => {
                         if (err || !prefs) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version set - cannot save new preference');
-                            ctx.channel.send(createEmbed(null, '+version set', 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'set']), 'Failed to set preference.', true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version set ${abbv}`);
-                            ctx.channel.send(createEmbed(null, '+version set', 'Set version successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'set']), 'Set version successfully.', false));
                         }
                     });
                 } else {
@@ -73,17 +73,17 @@ export class VersionSettingsRouter {
                     prefs.save((err, preference) => {
                         if (err || !preference) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version set - cannot overwrite preference');
-                            ctx.channel.send(createEmbed(null, '+version set', 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'set']), 'Failed to set preference.', true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version set ${abbv} (overwrite)`);
-                            ctx.channel.send(createEmbed(null, '+version set', 'Set version successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'set']), 'Set version successfully.', false));
                         }
                     });
                 }
             });
         }).catch(() => {
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version set - invalid version (${abbv})`);
-            ctx.channel.send(createEmbed(null, '+version set', `${abbv} not in database`, true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'set']), `${abbv} not in database`, true));
         });
     }
 
@@ -91,7 +91,7 @@ export class VersionSettingsRouter {
         const lang = ctx.language;
 
         if (args.length == 0) {
-            ctx.channel.send(createEmbed(null, '+version setserver', lang.getString('expectedparameter'), true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), lang.getString('expectedparameter'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - no parameter');
             return;
         }
@@ -101,14 +101,14 @@ export class VersionSettingsRouter {
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version setserver - invalid version (${abbv})`);
-                ctx.channel.send(createEmbed(null, '+version setserver', `${abbv} not in database`, true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), `${abbv} not in database`, true));
                 return;
             }
 
             GuildPreference.findOne({ user: ctx.id }, (err, prefs) => {
                 if (err) {
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - cannot save preference');
-                    ctx.channel.send(createEmbed(null, '+version setserver', 'Failed to set preference.', true));
+                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), 'Failed to set preference.', true));
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         guild: ctx.guild.id,
@@ -122,10 +122,10 @@ export class VersionSettingsRouter {
                     newPreference.save((err, prefs) => {
                         if (err || !prefs) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - cannot save new preference');
-                            ctx.channel.send(createEmbed(null, '+version setserver', 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), 'Failed to set preference.', true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version set ${abbv}`);
-                            ctx.channel.send(createEmbed(null, '+version setserver', 'Set server version successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), 'Set server version successfully.', false));
                         }
                     });
                 } else {
@@ -134,17 +134,17 @@ export class VersionSettingsRouter {
                     prefs.save((err, preference) => {
                         if (err || !preference) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - cannot overwrite preference');
-                            ctx.channel.send(createEmbed(null, '+version setserver', 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), 'Failed to set preference.', true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version setserver ${abbv} (overwrite)`);
-                            ctx.channel.send(createEmbed(null, '+version setserver', 'Set server version successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), 'Set server version successfully.', false));
                         }
                     });
                 }
             });
         }).catch(() => {
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version setserver - invalid version (${abbv})`);
-            ctx.channel.send(createEmbed(null, '+version setserver', `${abbv} not in database`, true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), `${abbv} not in database`, true));
         });
     }
 
@@ -164,7 +164,7 @@ export class VersionSettingsRouter {
             const pageCounter = ctx.language.getString('pageOf').replace('<num>', i + 1)
                                                                 .replace('<total>', totalPages);
                                                                 
-            const embed = createEmbed(null, `${ctx.language.getCommand('version')} ${ctx.language.getCommand('list')} - ${pageCounter}`, null, false);
+            const embed = createEmbed(null, `${translateCommand(ctx, ['+', 'version', 'list'])} - ${pageCounter}`, null, false);
 
             let count = 0;
             let versionList = '';
@@ -188,11 +188,11 @@ export class VersionSettingsRouter {
 
         try {
             const paginator = new Paginator(pages, ctx.id, 180);
-            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, '+version list');
+            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version list');
             paginator.run(ctx.channel);
         } catch (err) {
             if (err.message == 'User already using paginator.') {
-                ctx.channel.send(createEmbed(null, '+version list', ctx.language.getString('plswait'), true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'list']), ctx.language.getString('plswait'), true));
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, err.message);
             }
         }
@@ -202,7 +202,7 @@ export class VersionSettingsRouter {
         const lang = ctx.language;
 
         if (args.length == 0) {
-            ctx.channel.send(createEmbed(null, '+version info', lang.getString('expectedparameter'), true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'info']), lang.getString('expectedparameter'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version info - no parameter');
             return;
         }
@@ -217,10 +217,10 @@ export class VersionSettingsRouter {
                                                          .replace('<hasNT>', `**${version.supportsNewTestament ? lang.getArgument('yes') : lang.getArgument('no')}**`)
                                                          .replace('<hasDEU>', `**${version.supportsDeuterocanon ? lang.getArgument('yes') : lang.getArgument('no')}**`);
             
-            ctx.channel.send(createEmbed(null, '+version info', message, false));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'info']), message, false));
             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version info ${abbv}`);
         } else {
-            ctx.channel.send(createEmbed(null, '+version info', lang.getString('versioninfofailed'), true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'info']), lang.getString('versioninfofailed'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `version info - invalid version (${abbv})`);
         }
     }
@@ -238,7 +238,7 @@ export class VersionSettingsRouter {
         `**${lang.getCommand('setserver')}** - ${lang.getString('setserverversionusage')}`;
                 
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
-        ctx.channel.send(createEmbed(null, '+version', message, false));
+        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version']), message, false));
     }
 
     processCommand(ctx: Context, params: Array<string>): void {
@@ -255,7 +255,7 @@ export class VersionSettingsRouter {
                         this.setGuildVersion(ctx, args);
                     } else {
                         Language.findOne({ user: ctx.id }, (err, lang) => {
-                            ctx.channel.send(createEmbed(null, '+version setserver', lang.getString('noguildperm'), true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), lang.getString('noguildperm'), true));
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - no permission');
                         });
                     }

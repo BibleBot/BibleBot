@@ -1,6 +1,6 @@
 import Context from '../../models/context';
 
-import { createEmbed } from '../../helpers/embed_builder';
+import { createEmbed, translateCommand } from '../../helpers/embed_builder';
 
 import * as creeds from '../../resources/english/creeds.json';
 import { create } from 'domain';
@@ -29,7 +29,7 @@ export class ResourcesCommandsRouter {
         `**+${lang.getCommand('nicene')}** - ${lang.getString('nicene_name')}\n` +
         `**+${lang.getCommand('chalcedonian')}** - ${lang.getString('chalcedonian_name')}`;
 
-        ctx.channel.send(createEmbed(null, '+creeds', message, false));
+        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'creeds']), message, false));
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'creeds');
     }
 
@@ -40,7 +40,7 @@ export class ResourcesCommandsRouter {
         `**+${lang.getCommand('ccc')}** - **Catechism of the Catholic Church (1992)**\n` +
         `**+${lang.getCommand('lsc')}** - **Luther's Small Catechism (1529)**`;
 
-        ctx.channel.send(createEmbed(null, '+catechisms', message, false));
+        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'catechisms']), message, false));
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'catechisms');
     }
 

@@ -10,6 +10,21 @@ const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'))
 const NORMAL_COLOR = 303102;
 const ERROR_COLOR = 16723502;
 
+export function translateCommand(ctx: Context, args: string[]): string {
+    const lang = ctx.language;
+    let message = '';
+
+    for (const arg of args) {
+        if (arg == '+') {
+            message += ctx.guildPreferences.prefix;
+        } else {
+            message += `${lang.getCommand(arg)} `;
+        }
+    }
+
+    return message.slice(0, -1);
+}
+
 export function createEmbed(author: string, title: string, description: string, isError: boolean, copyright?: string): MessageEmbed {
     const embed = new MessageEmbed({
         title,
