@@ -86,7 +86,7 @@ export class CommandsRouter {
                 resourceCommandsRouter.listCreeds(ctx);
                 break;
             case 'catechisms':
-                resourceCommandsRouter.listCatechisms(ctx);
+                //resourceCommandsRouter.listCatechisms(ctx);
                 break;
             case 'nicene325':
                 resourceCommandsRouter.sendEarlyNicene(ctx);
