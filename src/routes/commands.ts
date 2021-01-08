@@ -10,6 +10,7 @@ import { DailyVerseRouter } from './resources/daily_verse';
 import { VersionSettingsRouter } from './settings/versions';
 import { LanguageRouter } from './settings/languages';
 import { MiscSettingsRouter } from './settings/misc';
+import { FormattingSettingsRouter } from './settings/formatting';
 
 const informationRouter = InformationRouter.getInstance();
 const verseCommandsRouter = VerseCommandsRouter.getInstance();
@@ -17,6 +18,7 @@ const dailyVerseRouter = DailyVerseRouter.getInstance();
 const versionSettingsRouter = VersionSettingsRouter.getInstance();
 const languageRouter = LanguageRouter.getInstance();
 const miscSettingsRouter = MiscSettingsRouter.getInstance();
+const formattingSettingsRouter = FormattingSettingsRouter.getInstance();
 
 export class CommandsRouter {
     private static instance: CommandsRouter;
@@ -70,7 +72,7 @@ export class CommandsRouter {
                 dailyVerseRouter.processCommand(ctx, args);
                 break;
             case 'formatting':
-                // formattingRouter.processCommand(ctx, args);
+                formattingSettingsRouter.processCommand(ctx, args);
                 break;
             case 'language':
                 languageRouter.processCommand(ctx, args);

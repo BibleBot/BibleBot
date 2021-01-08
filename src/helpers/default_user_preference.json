@@ -3,5 +3,6 @@
     "headings": true,
     "verseNumbers": true,
     "version": "RSV",
-    "language": "default"
+    "language": "default",
+    "display": "default"
 }

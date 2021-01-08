@@ -35,6 +35,8 @@
 
     "error": "Error",
 
+    "passagetoolong": "This passage is too long. Try again or use a different display style (`<+><formatting> <setdisplay>`).",
+
     "subcommands": "Subcommands",
 
     "setversionsuccess": "Set version successfully.",
@@ -54,18 +56,23 @@
     "guildbracketsused": "The server's ignoring brackets are set to <brackets>.",
     "setprefixusage": "set the server's command prefix",
     "setbracketsusage": "set the server's ignoring brackets",
+
+    "setversenumbersusage": "enable or disable verse numbers",
+    "setheadingsusage": "enable or disable headings",
+    "setdisplayusage": "set your preferred display style",
+
     
-    "versenumbers": "Verse numbers are <status>. Use `<+><formatting> <setnumbers>` to change it.",
+    "versenumbers": "Verse numbers are <status>.",
     "versenumberssuccess": "Set verse numbers successfully.",
-    "versenumbersfail": "Use `+<formatting> <setnumbers> <enable>` or `<+><formatting> <setnumbers> <disable>`.",
     
-    "headings": "You have headings <status>. Use `<+><formatting> <setheadings>` to change it.",
+    "headings": "Headings are <status>.",
     "headingssuccess": "Set headings successfully.",
-    "headingsfail": "Use `<+><formatting> <setheadings> <enable>` or `<+><formatting> <setheadings> <disable>`.",
+
+    "otherformatfail": "Invalid parameter. Expected 'true' or 'enable', 'false' or 'disable'.",
     
-    "formatting": "Your formatting is set to `<value>`. Use `<+><formatting> <set>` to change it.",
-    "formattingsuccess": "Set mode successfully.",
-    "formattingfail": "Use `<+><formatting> <set>` with one of the following parameters: `default, embed, blockquote, code`",
+    "formatting": "Your display style is set to <value>.",
+    "formattingsuccess": "Set display style successfully.",
+    "formattingfail": "Use `<+><formatting> <setdisplay>` with one of the following parameters: `default, embed, blockquote, code`",
     
     "noguildperm": "You must have the 'Manage Server' permission to modify this setting.",
 
@@ -145,8 +152,8 @@
         "biblebot": "biblebot",
         "addversion": "addversion",
         "rmversion": "rmversion",
-        "versenumbers": "versenumbers",
-        "headings": "headings",
+        "setversenumbers": "setversenumbers",
+        "setheadings": "setheadings",
         "setdisplay": "setdisplay",
         "echo": "echo",
         "leave": "leave",
@@ -172,6 +179,8 @@
         "yes": "Yes",
         "no": "No",
         "enable": "enable",
-        "disable": "disable"
+        "disable": "disable",
+        "true": "true",
+        "false": "false"
     }
 }

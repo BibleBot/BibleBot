@@ -6,7 +6,8 @@ const PreferenceSchema: mongoose.Schema = new mongoose.Schema({
     language: { type: String, required: true },
     version: { type: String, required: true },
     headings: { type: Boolean, required: true },
-    verseNumbers: { type: Boolean, required: true }
+    verseNumbers: { type: Boolean, required: true },
+    display: { type: String, required: true }
 });
 
 export default mongoose.model('Preference', PreferenceSchema);

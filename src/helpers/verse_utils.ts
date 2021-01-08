@@ -261,9 +261,7 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
         return;
     }
 
-    if (reference instanceof Reference) {
-        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${version.abbv}`);
-    }
+    
 
     let processor = bibleGateway;
 
@@ -273,24 +271,71 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
             break;
     }
 
-    processor.getResult(reference, true, true, version, (err, data: Verse) => {
+    processor.getResult(reference, ctx.preferences.headings, ctx.preferences.verseNumbers, version, (err, data: Verse) => {
         if (err) {
             console.error(err);
             return;
         }
 
+        let isError = false;
+
         const title = `${data.passage()} - ${data.version().name}`;
         let text = data.text();
 
-        if (text.length > 2048) {
-            text = `${text.slice(0, -(text.length - 2044))}...`;
+        if (['default', 'embed'].includes(ctx.preferences.display)) {
+            if (text.length > 2048) {
+                text = `${text.slice(0, -(text.length - 2044))}...`;
+            }
+
+            // I am so sorry.
+            text = text.replace(/(\.*\s*<*\**\d*\**>*\.\.\.)$/g, '...');
+
+            const embed = createEmbed(title, data.title(), text, false);
+
+            ctx.channel.send(embed);
+        } else if (ctx.preferences.display == 'code') {
+            text = text.replace(/\*\*/g, '');
+
+            if (text[0] != ' ') {
+                text = ` ${text}`;
+            }
+
+            const newText = '```Dust\n' + (data.title() ? data.title() : null) + '\n\n' + text + '```';
+            const response = `**${title}**\n\n${newText}`;
+
+            if (response.length > 2000) {
+                const embed = createEmbed(null, title, ctx.language.getString('passagetoolong'), true);
+                ctx.channel.send(embed);
+
+                isError = true;
+            } else {
+                ctx.channel.send(response);
+            }
+        } else if (ctx.preferences.display == 'blockquote') {
+            let newText = null;
+
+            if (data.title()) {
+                newText = '> ' + data.title() + '\n> \n> ' + text;
+            } else {
+                newText = '> ' + text;
+            }
+
+            const response = `**${title}**\n\n${newText}`;
+
+            if (response.length > 2000) {
+                const embed = createEmbed(null, title, ctx.language.getString('passagetoolong'), true);
+                ctx.channel.send(embed);
+
+                isError = true;
+            } else {
+                ctx.channel.send(response);
+            }
         }
 
-        // I am so sorry.
-        text = text.replace(/(\.*\s*<*\**\d*\**>*\.\.\.)$/g, '...');
-
-        const embed = createEmbed(title, data.title(), text, false);
-
-        ctx.channel.send(embed);
+        if (reference instanceof Reference && !isError) {
+            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${version.abbv}`);
+        } else if (isError) {
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `${reference.toString()} ${version.abbv} - passage too long`);
+        }
     });
 }

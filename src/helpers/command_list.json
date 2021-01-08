@@ -9,18 +9,10 @@
         "language",
         "invite",
         "stats",
+        "formatting",
         "creeds",
         "misc",
         "ping"
-    ],
-    "guild_commands": [
-        "setguildversion",
-        "guildversion",
-        "setguildlanguage",
-        "guildlanguage",
-        "setvotdtime",
-        "clearvotdtime",
-        "votdtime"
     ],
     "owner_commands": [
         "echo",

@@ -76,10 +76,14 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
                 const { document } = (new JSDOM(text)).window;
 
                 Array.from(document.getElementsByClassName('v')).forEach((el: Element) => {
-                    el.textContent = `<**${el.textContent}**> `;
+                    if (verseNumbers) {
+                        el.textContent = `<**${el.textContent}**> `;
+                    } else {
+                        el.remove();
+                    }
                 });
 
-                const title = Array.from(document.getElementsByTagName('h3')).map((el: Element) => el.textContent.trim()).join(' / ');
+                const title = headings ? Array.from(document.getElementsByTagName('h3')).map((el: Element) => el.textContent.trim()).join(' / ') : null;
                 text = Array.from(document.getElementsByTagName('p')).map((el: Element) => el.textContent.trim()).join('\n');
 
                 return callback(null, new Verse(
