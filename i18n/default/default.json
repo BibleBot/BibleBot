@@ -58,6 +58,10 @@
     "setlanguageusage": "set your preferred language",
     "setserverlanguageusage": "set the server's default language (staff only)",
 
+    "prefixonechar": "The prefix must be a single character.",
+
+    "prefixsuccess": "Set server prefix successfully.",
+
     "guildprefixused": "The server's command prefix is set to <prefix>.",
     "guildbracketsused": "The server's ignoring brackets are set to <brackets>.",
     "setprefixusage": "set the server's command prefix",
@@ -81,9 +85,11 @@
     "formattingfail": "Use `<+><formatting> <setdisplay>` with one of the following parameters: `default, embed, blockquote, code`",
     
     "noguildperm": "You must have the 'Manage Server' permission to modify this setting.",
+    "failedsearch": "You may have to try a different query.",
+    "failedpreference": "Failed to set preference. This is likely a database error and should be reported to the support server. See +biblebot for the invite.",
 
     "setguildversionsuccess": "Set server version successfully.",
-    "setguildversionfail": "Failed to set guild version, see `<+><version> <list>`.",
+    "setguildversionfail": "Failed to set server version, see `<+><version> <list>`.",
     
     "setguildlanguagesuccess": "Set server language successfully.",
     "setguildlanguagefail": "Failed to set server language, see `<+><language> <list>`.",
@@ -105,6 +111,7 @@
     "versioninfofailed": "I couldn't find that version, are you sure you used the right acronym?",
 
     "expectedparameter": "This command requires a parameter.",
+    "donutspam": "Please don't spam me.",
     
     "shardcount": "Shard Count: ",
     "cachedguilds": "Server Count: ",

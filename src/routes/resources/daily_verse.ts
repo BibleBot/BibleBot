@@ -56,6 +56,8 @@ export class DailyVerseRouter {
     }
 
     async setupAutomation(ctx: Context, args: Array<string>): Promise<void> {
+        const lang = ctx.language;
+
         if (args.length != 2) {
             ctx.channel.send(ctx.language.getString('setvotdtimeusage'));
         } else {
@@ -67,7 +69,7 @@ export class DailyVerseRouter {
             GuildPreference.findOne({ guild: ctx.guild.id }, (err, gPrefs) => {
                 if (err) {
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse setup - cannot save preference');
-                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), 'Failed to set preference.', true));
+                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), lang.getString('failedpreference'), true));
                 } else if (!gPrefs) {
                     const derivedFromDefault = {
                         guild: ctx.guild.id,
@@ -83,10 +85,10 @@ export class DailyVerseRouter {
                     newPreference.save((err, prefs) => {
                         if (err || !prefs) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse setup - cannot save new preference');
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), lang.getString('failedpreference'), true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `dailyverse setup ${args[0]} ${tz}`);
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), 'Set automation successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), lang.getString('setvotdtimesuccess'), false));
                         }
                     });
                 } else {
@@ -97,10 +99,10 @@ export class DailyVerseRouter {
                     gPrefs.save((err, preference) => {
                         if (err || !preference) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse setup - cannot overwrite preference');
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), lang.getString('failedpreference'), true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `dailyverse setup ${args[0]} ${tz} (overwrite)`);
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), 'Set automation successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), lang.getString('setvotdtimesuccess'), false));
                         }
                     });
                 }
@@ -109,10 +111,12 @@ export class DailyVerseRouter {
     }
 
     clearAutomation(ctx: Context): void {
+        const lang = ctx.language;
+
         GuildPreference.findOne({ guild: ctx.guild.id }, (err, gPrefs) => {
             if (err) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - cannot save preference');
-                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), 'Failed to set preference.', true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), lang.getString('failedpreference'), true));
             } else if (!gPrefs) {
                 const derivedFromDefault = {
                     guild: ctx.guild.id,
@@ -128,10 +132,10 @@ export class DailyVerseRouter {
                 newPreference.save((err, prefs) => {
                     if (err || !prefs) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - cannot save new preference');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), lang.getString('failedpreference'), true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), 'Cleared automation successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), lang.getString('clearvotdtimesuccess'), false));
                     }
                 });
             } else {
@@ -142,10 +146,10 @@ export class DailyVerseRouter {
                 gPrefs.save((err, preference) => {
                     if (err || !preference) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - cannot overwrite preference');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), lang.getString('failedpreference'), true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear (overwrite)');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), 'Cleared automation successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), lang.getString('clearvotdtimesuccess'), false));
                     }
                 });
             }

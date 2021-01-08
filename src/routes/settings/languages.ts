@@ -38,14 +38,19 @@ export class LanguageRouter {
         Language.findOne({ objectName }).then((language) => {
             if (!language) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `language set - invalid language (${objectName})`);
-                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), `${objectName} not in database`, true));
+
+                const message = lang.getString('setlanguagefail').replace('<+>', ctx.guildPreferences.prefix)
+                                                                 .replace('<language>', lang.getCommand('language'))
+                                                                 .replace('<list>', lang.getCommand('list'));
+
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), message, true));
                 return;
             }
 
             Preference.findOne({ user: ctx.id }, (err, prefs) => {
                 if (err) {
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language set - cannot save preference');
-                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), 'Failed to set preference.', true));
+                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), lang.getString('failedpreference'), true));
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         user: ctx.id,
@@ -59,10 +64,10 @@ export class LanguageRouter {
                     newPreference.save((err, prefs) => {
                         if (err || !prefs) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language set - cannot save new preference');
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), lang.getString('failedpreference'), true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `language set ${objectName}`);
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), 'Set language successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), lang.getString('setlanguagesuccess'), false));
                         }
                     });
                 } else {
@@ -71,17 +76,22 @@ export class LanguageRouter {
                     prefs.save((err, preference) => {
                         if (err || !preference) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language set - cannot overwrite preference');
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), lang.getString('failedpreference'), true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `language set ${objectName} (overwrite)`);
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), 'Set language successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), lang.getString('setlanguagesuccess'), false));
                         }
                     });
                 }
             });
         }).catch(() => {
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `language set - invalid version (${objectName})`);
-            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), `${objectName} not in database`, true));
+
+            const message = lang.getString('setlanguagefail').replace('<+>', ctx.guildPreferences.prefix)
+                                                             .replace('<language>', lang.getCommand('language'))
+                                                             .replace('<list>', lang.getCommand('list'));
+
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'set']), message, true));
         });
     }
 
@@ -99,14 +109,19 @@ export class LanguageRouter {
         Language.findOne({ objectName }).then((language) => {
             if (!language) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `language setserver - invalid language (${objectName})`);
-                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), `${objectName} not in database`, true));
+
+                const message = lang.getString('setguildlanguagefail').replace('<+>', ctx.guildPreferences.prefix)
+                                                                 .replace('<language>', lang.getCommand('language'))
+                                                                 .replace('<list>', lang.getCommand('list'));
+
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), message, true));
                 return;
             }
 
             GuildPreference.findOne({ guild: ctx.guild.id }, (err, prefs) => {
                 if (err) {
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - cannot save preference');
-                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), 'Failed to set preference.', true));
+                    ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), lang.getString('failedpreference'), true));
                 } else if (!prefs) {
                     const derivedFromDefault = {
                         guild: ctx.guild.id,
@@ -120,10 +135,10 @@ export class LanguageRouter {
                     newPreference.save((err, prefs) => {
                         if (err || !prefs) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - cannot save new preference');
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), lang.getString('failedpreference'), true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `language setserver ${objectName}`);
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), 'Set server language successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), lang.getString('setguildlanguagesuccess'), false));
                         }
                     });
                 } else {
@@ -132,17 +147,22 @@ export class LanguageRouter {
                     prefs.save((err, preference) => {
                         if (err || !preference) {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - cannot overwrite preference');
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), 'Failed to set preference.', true));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), lang.getString('failedpreference'), true));
                         } else {
                             ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `language set ${objectName} (overwrite)`);
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), 'Set server language successfully.', false));
+                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), lang.getString('setguildlanguagesuccess'), false));
                         }
                     });
                 }
             });
         }).catch(() => {
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `language setserver - invalid version (${objectName})`);
-            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), `${objectName} not in database`, true));
+
+            const message = lang.getString('setguildlanguagefail').replace('<+>', ctx.guildPreferences.prefix)
+                                                                  .replace('<language>', lang.getCommand('language'))
+                                                                  .replace('<list>', lang.getCommand('list'));
+
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), message, true));
         });
     }
 
@@ -160,10 +180,12 @@ export class LanguageRouter {
     }
 
     getLanguage(ctx: Context): void {
+        const lang = ctx.language;
+
         Preference.findOne({ user: ctx.id }, (err, prefs) => {
             if (err || !prefs) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language - cannot find preference');
-                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language']), 'Preferences not found.', true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language']), lang.getString('failedpreference'), true));
             } else {
                 Language.findOne({ objectName: ctx.preferences.language }, (err, lang) => {
                     Language.findOne({ objectName: ctx.guildPreferences.language }, (err, gLang) => {

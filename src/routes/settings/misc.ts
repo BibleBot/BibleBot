@@ -35,7 +35,7 @@ export class MiscSettingsRouter {
 
         if (prefix.length != 1) {
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - not single character');
-            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), 'The prefix must be a single character.', true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), lang.getString('prefixonechar'), true));
             
             return;
         }
@@ -43,7 +43,7 @@ export class MiscSettingsRouter {
         GuildPreference.findOne({ guild: ctx.guild.id }, (err, prefs) => {
             if (err) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - cannot save preference');
-                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), 'Failed to set preference.', true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), lang.getString('failedpreference'), true));
             } else if (!prefs) {
                 const derivedFromDefault = {
                     guild: ctx.guild.id,
@@ -57,10 +57,10 @@ export class MiscSettingsRouter {
                 newPreference.save((err, prefs) => {
                     if (err || !prefs) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - cannot save new preference');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), lang.getString('failedpreference'), true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `misc setprefix ${prefix}`);
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), 'Set prefix successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), lang.getString('prefixsuccess'), false));
                     }
                 });
             } else {
@@ -69,10 +69,10 @@ export class MiscSettingsRouter {
                 prefs.save((err, preference) => {
                     if (err || !preference) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - cannot overwrite preference');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), lang.getString('failedpreference'), true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `misc setprefix ${prefix} (overwrite)`);
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), 'Set prefix successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), lang.getString('prefixsuccess'), false));
                     }
                 });
             }
@@ -93,7 +93,7 @@ export class MiscSettingsRouter {
 
         if (brackets.length != 2 && validBrackets.includes(brackets)) {
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setbrackets - invalid input');
-            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), 'invalid input.', true));
+            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), lang.getString('guildbracketsfail'), true));
 
             return;
         }
@@ -101,7 +101,7 @@ export class MiscSettingsRouter {
         GuildPreference.findOne({ guild: ctx.guild.id }, (err, prefs) => {
             if (err) {
                 ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setbrackets - cannot save preference');
-                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), 'Failed to set preference.', true));
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), lang.getString('failedpreference'), true));
             } else if (!prefs) {
                 const derivedFromDefault = {
                     guild: ctx.guild.id,
@@ -115,10 +115,10 @@ export class MiscSettingsRouter {
                 newPreference.save((err, prefs) => {
                     if (err || !prefs) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setbrackets - cannot save new preference');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), lang.getString('failedpreference'), true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `misc setbrackets ${brackets}`);
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), 'Set brackets successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), lang.getString('setguildbracketssuccess'), false));
                     }
                 });
             } else {
@@ -127,10 +127,10 @@ export class MiscSettingsRouter {
                 prefs.save((err, preference) => {
                     if (err || !preference) {
                         ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setbrackets - cannot overwrite preference');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), 'Failed to set preference.', true));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), lang.getString('failedpreference'), true));
                     } else {
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `misc setbrackets ${brackets} (overwrite)`);
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), 'Set brackets successfully.', false));
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), lang.getString('setguildbracketssuccess'), false));
                     }
                 });
             }
