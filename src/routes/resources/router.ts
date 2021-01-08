@@ -60,9 +60,9 @@ export class ResourcesCommandsRouter {
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'nicene');
     }
 
-    sendChalcedonian(ctx: Context): void {
-        ctx.channel.send(createEmbed(null, creeds.chalcedonian.title, creeds.chalcedonian.text, false));
-        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'chalcedonian');
+    sendChalcedon(ctx: Context): void {
+        ctx.channel.send(createEmbed(null, creeds.chalcedon.title, creeds.chalcedon.text, false));
+        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'chalcedon');
     }
 
     sendCCC(ctx: Context, args: string[], isFallback?: boolean): void {

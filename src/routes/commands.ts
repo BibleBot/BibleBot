@@ -97,8 +97,8 @@ export class CommandsRouter {
             case 'apostles':
                 resourceCommandsRouter.sendApostles(ctx);
                 break;
-            case 'chalcedonian':
-                resourceCommandsRouter.sendChalcedonian(ctx);
+            case 'chalcedon':
+                resourceCommandsRouter.sendChalcedon(ctx);
                 break;
             case 'ccc':
             case 'bbccc':
