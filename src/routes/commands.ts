@@ -12,6 +12,7 @@ import { LanguageRouter } from './settings/languages';
 import { MiscSettingsRouter } from './settings/misc';
 import { FormattingSettingsRouter } from './settings/formatting';
 import { ResourcesCommandsRouter } from './resources/router';
+import { lang } from 'moment';
 
 const informationRouter = InformationRouter.getInstance();
 const verseCommandsRouter = VerseCommandsRouter.getInstance();
@@ -35,6 +36,12 @@ export class CommandsRouter {
         }
 
         return CommandsRouter.instance;
+    }
+
+    getCommandFromTranslation(ctx: Context, str: string): string {
+        const lang = ctx.language;
+
+        return lang.getCommandKey(str);
     }
 
     isCommand(str: string): boolean {

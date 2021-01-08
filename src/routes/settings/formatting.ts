@@ -235,7 +235,7 @@ export class FormattingSettingsRouter {
     }
 
     processCommand(ctx: Context, params: Array<string>): void {
-        const subcommand = params[0];
+        const subcommand = ctx.language.getCommandKey(params[0]);
         const args = params.slice(1);
 
         switch (subcommand) {

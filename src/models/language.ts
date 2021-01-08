@@ -25,4 +25,8 @@ LanguageSchema.methods.getArgument = function(value: string): string {
     }
 };
 
+LanguageSchema.methods.getCommandKey = function(value: string): string {
+    return Object.keys(this.rawObject.commands).find(key => this.rawObject.commands[key] === value) || null;
+};
+
 export default mongoose.model('Language', LanguageSchema);
