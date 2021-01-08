@@ -114,6 +114,10 @@ export class CommandsRouter {
             case 'misc':
                 miscSettingsRouter.processCommand(ctx, args);
                 break;
+            case 'invite':
+                ctx.channel.send('https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=93248');
+                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'invite');
+                break;
             case 'ping':
                 ctx.channel.send('pong');
                 ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'ping');
