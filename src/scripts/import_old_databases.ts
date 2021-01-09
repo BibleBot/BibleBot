@@ -66,19 +66,21 @@ const importOldVersions = () => {
                     console.log('----');
                     console.log(newVersion);
                 } else {
-                    log('info', 0, `saved ${version.abbv}`);
+                    log('info', 0, `saved version ${version.abbv}`);
                 }
             });
         }
     }
-
-    console.log('versions done');
 };
 
 const importOldPreferences = () => {
     for (const key in oldPreferences) {
         if (Object.prototype.hasOwnProperty.call(oldPreferences, key)) {
             const oldPreference = oldPreferences[key];
+
+            if (oldPreference == null) {
+                continue;
+            }
             
             // example
             // {"id": 186046294286925824, "version": "RSV", "verseNumbers": "enable", "headings": "enable", "language": "english", "mode": "code"}
@@ -107,7 +109,7 @@ const importOldPreferences = () => {
                     console.log('----');
                     console.log(newPreference);
                 } else {
-                    log('info', 0, `saved ${pref.user}`);
+                    log('info', 0, `saved user ${pref.user}`);
                 }
             });
         }
@@ -121,6 +123,10 @@ const importOldGuildPreferences = () => {
     for (const key in oldGuildPreferences) {
         if (Object.prototype.hasOwnProperty.call(oldPreferences, key)) {
             const oldGuildPreference = oldGuildPreferences[key];
+
+            if (oldGuildPreference == null) {
+                continue;
+            }
 
             // example
             // {"id": 362503610006765568, "time": "13:00", "channel": 366888351326011394, "channel_name": "daily-verse"}
@@ -150,7 +156,7 @@ const importOldGuildPreferences = () => {
                     console.log('----');
                     console.log(newGuildPreference);
                 } else {
-                    log('info', 0, `saved ${pref.guild}`);
+                    log('info', 0, `saved guild ${pref.guild}`);
                 }
             });
         }
