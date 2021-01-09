@@ -32,7 +32,7 @@ const importLanguages = () => {
                 defaultVersion
             });
 
-            def.save((err, language) => {
+            eng.save((err, language) => {
                 if (err) {
                     log('err', 0, `unable to save ${eng['name']}`);
                     log('err', 0, err);
