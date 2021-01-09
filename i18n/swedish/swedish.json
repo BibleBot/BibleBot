@@ -118,6 +118,8 @@
         "setserver": "setserver",
         "setup": "setup",
         "list": "list",
+        "info": "info",
+        "status": "status",
         "dailyverse": "dailyverse",
         "random": "slumpa",
         "truerandom": "truerandom",
