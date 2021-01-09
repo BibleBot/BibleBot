@@ -253,6 +253,10 @@ export async function generateReference(result: BookSearchResult, msg: string, v
     const isNT = Object.values(bookMap.nt).includes(book);
     const isDEU = Object.values(bookMap.deu).includes(book);
 
+    if (startingVerse == 0 || startingChapter == 0) {
+        return null;
+    }
+
     return new Reference(book, startingChapter, startingVerse, endingChapter, endingVerse, version, isOT, isNT, isDEU);
 }
 
