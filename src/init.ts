@@ -79,15 +79,19 @@ bot.on('shardResume', shard => {
 bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
 
-    // Ignore Discord.bots.gg and Top.gg's server.
-    // The bot has to be there in order to be listed.
-    if (['110373943822540800', '264445053596991498'].includes(message.guild.id)) {
-        return;
-    }
-
-    if (!checkBotPermissions(message.guild)) {
-        // If the bot doesn't have the necessary permissions, don't pursue further.
-        return;
+    
+    if (message.guild) {
+        // Ignore Discord.bots.gg and Top.gg's server.
+        // The bot has to be there in order to be listed.
+        
+        if (['110373943822540800', '264445053596991498'].includes(message.guild.id)) {
+            return;
+        }
+        
+        if (!checkBotPermissions(message.guild)) {
+            // If the bot doesn't have the necessary permissions, don't pursue further.
+            return;
+        }
     }
 
     Preference.findOne({ user: message.author.id }, (err, prefs) => {
