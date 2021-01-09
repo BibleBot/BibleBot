@@ -74,6 +74,11 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
                     }
                 });
 
+                Array.from(container.getElementsByTagName('br')).forEach((el: Element) => {
+                    el.before(document.createTextNode('\n'));
+                    el.remove();
+                });
+
                 Array.from(container.getElementsByClassName('footnote')).forEach((el: Element) => {
                     el.remove();
                 });
