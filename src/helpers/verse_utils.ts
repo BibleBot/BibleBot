@@ -13,7 +13,6 @@ import { getBookNames } from './name_fetcher';
 import { removePunctuation } from './text_purification';
 
 import * as bookMap from '../helpers/name_data/book_map.json';
-import handleError from './error_handler';
 
 const sources = {
     'bg': { name: 'BibleGateway', interface: bibleGateway },
@@ -60,7 +59,7 @@ function checkSectionSupport(ref: Reference | string, version: mongoose.Document
     if (ref instanceof Reference) {
         ok = (ref.section() == section && supportValue);
     } else {
-        ok = (Object.values(bookMap[section]).includes(ref.slice(0, -1)) && !supportValue);
+        ok = (Object.values(bookMap[section]).includes(ref.split(' ')[0]) && !supportValue);
     }
 
     return {
