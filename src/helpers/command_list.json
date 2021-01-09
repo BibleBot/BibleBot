@@ -1,0 +1,26 @@
+{
+    "commands": [
+        "biblebot",
+        "search",
+        "version",
+        "random",
+        "truerandom",
+        "dailyverse",
+        "language",
+        "invite",
+        "stats",
+        "formatting",
+        "creeds",
+        "misc",
+        "ping",
+        "apostles",
+        "nicene325",
+        "nicene",
+        "chalcedon"
+    ],
+    "owner_commands": [
+        "echo",
+        "eval",
+        "leave"
+    ]
+}

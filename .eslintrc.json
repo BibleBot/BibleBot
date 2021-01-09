@@ -1,0 +1,16 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint",
+      "json"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:json/recommended"
+    ],
+    "rules": {
+      "semi":"warn",
+      "quotes": ["warn", "single"]
+    }
+}
