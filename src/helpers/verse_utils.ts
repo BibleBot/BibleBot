@@ -245,6 +245,8 @@ export async function generateReference(result: BookSearchResult, msg: string, v
                 version = mentionedVersion;
             }
         }
+    } else {
+        return null;
     }
 
     const isOT = Object.values(bookMap.ot).includes(book);
