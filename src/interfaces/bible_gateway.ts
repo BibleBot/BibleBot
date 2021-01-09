@@ -98,7 +98,9 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
                     version
                 ));
             } catch (err) {
-                return callback(err, null);
+                if (err.message !== 'Cannot read property \'getElementsByClassName\' of undefined') {
+                    return callback(err, null);
+                }
             }
         });
 }
