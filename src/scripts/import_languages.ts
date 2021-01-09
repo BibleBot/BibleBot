@@ -21,27 +21,27 @@ mongoose.connection.on('disconnected', connect);
 const defaultVersion = 'RSV';
 
 const importLanguages = () => {
-    const _default = JSON.parse(readFileSync(`${__dirname}/../../i18n/default/default.json`, 'utf-8'));
+    const _english = JSON.parse(readFileSync(`${__dirname}/../../i18n/english/english.json`, 'utf-8'));
 
-    Language.findOne({ objectName: 'default' }, (err, lang) => {
+    Language.findOne({ objectName: 'english' }, (err, lang) => {
         if (!lang) {
-            const def = new Language({
-                name: 'Default',
-                objectName: 'default',
-                rawObject: _default,
+            const eng = new Language({
+                name: 'English',
+                objectName: 'english',
+                rawObject: _english,
                 defaultVersion
             });
 
             def.save((err, language) => {
                 if (err) {
-                    log('err', 0, `unable to save ${def['name']}`);
+                    log('err', 0, `unable to save ${eng['name']}`);
                     log('err', 0, err);
                 } else {
                     log('info', 0, `saved ${language.name}`);
                 }
             });
         } else {
-            lang.rawObject = _default;
+            lang.rawObject = _english;
 
             lang.save((err, language) => {
                 if (err) {
