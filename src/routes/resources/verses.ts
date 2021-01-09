@@ -41,7 +41,7 @@ export class VerseCommandsRouter {
                 }
 
                 Version.findOne({ abbv: queryVersion }, (err, version) => {
-                    utils.processVerse(ctx, version, verse);
+                    utils.processVerse(ctx, version, verse, true);
                     ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'random');
                 });
             } catch (err) {
@@ -64,7 +64,7 @@ export class VerseCommandsRouter {
                 }
 
                 Version.findOne({ abbv: queryVersion }, (err, version) => {
-                    utils.processVerse(ctx, version, verse);
+                    utils.processVerse(ctx, version, verse, true);
                     ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'truerandom');
                 });
             } catch (err) {

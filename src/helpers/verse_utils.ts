@@ -259,14 +259,16 @@ export async function generateReference(result: BookSearchResult, msg: string, v
     return new Reference(book, startingChapter, startingVerse, endingChapter, endingVerse, version, isOT, isNT, isDEU);
 }
 
-export async function processVerse(ctx: Context, version: mongoose.Document, reference: Reference | string): Promise<void> {
-    const sectionCheckResults = checkSectionSupport(reference, version);
-    if (!sectionCheckResults.ok) {
-        ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
-        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `${version.abbv} does not support ${sectionCheckResults.section}`);
-        return;
-    }
+export async function processVerse(ctx: Context, version: mongoose.Document, reference: Reference | string, ignoreSectionCheck?: boolean): Promise<void> {
+    if (!ignoreSectionCheck) {
+        const sectionCheckResults = checkSectionSupport(reference, version);
 
+        if (!sectionCheckResults.ok) {
+            ctx.channel.send(createEmbed(null, ctx.language.getString('verseerror'), ctx.language.getString('invalidsection'), true));
+            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `${version.abbv} does not support ${sectionCheckResults.section}`);
+            return;
+        }
+    }
     
 
     let processor = bibleGateway;
