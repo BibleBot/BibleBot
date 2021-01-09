@@ -8,6 +8,8 @@
 
 ## Changes
 
+Server settings will no longer act as a default for users who don't have a preference set, due to the way our code handles default preferences.
+
 All group commands (except `+dailyverse`) will print the subcommands alongside any other preferences by default.
 
 * `+version` is the group for all version-related commands. As such:
