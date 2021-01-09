@@ -13,6 +13,7 @@ import { getBookNames } from './name_fetcher';
 import { removePunctuation } from './text_purification';
 
 import * as bookMap from '../helpers/name_data/book_map.json';
+import handleError from './error_handler';
 
 const sources = {
     'bg': { name: 'BibleGateway', interface: bibleGateway },
@@ -273,9 +274,10 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
 
     processor.getResult(reference, ctx.preferences.headings, ctx.preferences.verseNumbers, version, (err, data: Verse) => {
         if (err) {
-            console.error(err.message);
-            console.error(reference);
-            console.error(version);
+            console.log('---');
+            console.log(`${reference.toString()} - '${ctx.msg}`);
+            console.log(err.message);
+            console.log('---');
             return;
         }
 
