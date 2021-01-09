@@ -52,6 +52,16 @@ const queryPrefix = () => {
     });
 };
 
+const queryShards = () => {
+    return new Promise((resolve) => {
+        rl.question('Shard count: ', (shards) => {
+            config.biblebot['shards'] = shards;
+
+            resolve(null);
+        });
+    });
+};
+
 const queryFooter = () => {
     return new Promise((resolve) => {
         rl.question('Footer Text: ', (footer) => {
@@ -87,6 +97,7 @@ const generateConfiguration = async () => {
     await queryId();
     await queryBrackets();
     await queryPrefix();
+    await queryShards();
     await queryFooter();
     await queryIconURL();
     await queryAPIBible();
