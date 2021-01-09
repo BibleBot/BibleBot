@@ -118,6 +118,8 @@
         "setserver": "asetapalvelin",
         "setup": "setup",
         "list": "lista",
+        "info": "info",
+        "status": "status",
         "dailyverse": "päivittäinenjae",
         "random": "satunnainen",
         "truerandom": "truerandom",
