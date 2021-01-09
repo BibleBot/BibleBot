@@ -200,10 +200,10 @@ export class DailyVerseRouter {
                     if (hasPermission) {
                         this.setupAutomation(ctx, args);
                     } else {
-                        Language.findOne({ user: ctx.id }, (err, lang) => {
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), lang.getString('noguildperm'), true));
-                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse setup - no permission');
-                        });
+                        const lang = ctx.language;
+                        
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'setup']), lang.getString('noguildperm'), true));
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse setup - no permission');
                     }
                 });
                 break;
@@ -215,10 +215,10 @@ export class DailyVerseRouter {
                     if (hasPermission) {
                         this.clearAutomation(ctx);
                     } else {
-                        Language.findOne({ user: ctx.id }, (err, lang) => {
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), lang.getString('noguildperm'), true));
-                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - no permission');
-                        });
+                        const lang = ctx.language;
+
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'dailyverse', 'clear']), lang.getString('noguildperm'), true));
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'dailyverse clear - no permission');
                     }
                 });
                 break;

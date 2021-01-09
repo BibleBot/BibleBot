@@ -208,10 +208,10 @@ export class LanguageRouter {
                     if (hasPermission) {
                         this.setGuildLanguage(ctx, args);
                     } else {
-                        Language.findOne({ user: ctx.id }, (err, lang) => {
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), lang.getString('noguildperm'), true));
-                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - no permission');
-                        });
+                        const lang = ctx.language;
+
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'setserver']), lang.getString('noguildperm'), true));
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language setserver - no permission');
                     }
                 });
                 break;

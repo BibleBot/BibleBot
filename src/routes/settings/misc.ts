@@ -160,10 +160,10 @@ export class MiscSettingsRouter {
                     if (hasPermission) {
                         this.setGuildPrefix(ctx, args);
                     } else {
-                        Language.findOne({ user: ctx.id }, (err, lang) => {
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), lang.getString('noguildperm'), true));
-                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - no permission');
-                        });
+                        const lang = ctx.language;
+
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setprefix']), lang.getString('noguildperm'), true));
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setprefix - no permission');
                     }
                 });
                 break;
@@ -172,10 +172,10 @@ export class MiscSettingsRouter {
                     if (hasPermission) {
                         this.setGuildBrackets(ctx, args);
                     } else {
-                        Language.findOne({ user: ctx.id }, (err, lang) => {
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), lang.getString('noguildperm'), true));
-                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setbrackets - no permission');
-                        });
+                        const lang = ctx.language;
+
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc', 'setbrackets']), lang.getString('noguildperm'), true));
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'misc setbrackets - no permission');
                     }
                 });
                 break;
