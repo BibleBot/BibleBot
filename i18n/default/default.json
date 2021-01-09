@@ -160,6 +160,7 @@
         "setup": "setup",
         "list": "list",
         "info": "info",
+        "status": "status",
         "dailyverse": "dailyverse",
         "random": "random",
         "truerandom": "truerandom",
