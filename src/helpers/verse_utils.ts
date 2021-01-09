@@ -133,7 +133,8 @@ export function findBooksInMessage(msg: string): Array<BookSearchResult> {
                         name: book,
                         index
                     });
-                } else if (['Corinthians', 'Thessalonians', 'Timothy', 'Peter'].includes(book)) {
+                } else if (['1 Corinthians', '2 Corinthians', '1 Thessalonians', '2 Thessalonians',
+                            '1 Timothy', '2 Timothy', '1 Peter', '2 Peter'].includes(book)) {
                     const prevToken = msgTokens[index - 1];
                     const prevTokenToNumber = Number(prevToken);
 
