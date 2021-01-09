@@ -129,6 +129,22 @@ export function findBooksInMessage(msg: string): Array<BookSearchResult> {
                     }
                 } else if (book == 'Jeremiah') {
                     // TODO: Letter of Jeremiah
+                    results.push({
+                        name: book,
+                        index
+                    });
+                } else if (['Corinthians', 'Thessalonians', 'Timothy', 'Peter'].includes(book)) {
+                    const prevToken = msgTokens[index - 1];
+                    const prevTokenToNumber = Number(prevToken);
+
+                    if (!isNaN(prevTokenToNumber) || prevTokenToNumber !== undefined) {
+                        if (0 < prevTokenToNumber && prevTokenToNumber < 3) {
+                            results.push({
+                                name: `${prevTokenToNumber} ${book}`,
+                                index: index
+                            });
+                        }
+                    }
                 } else {
                     results.push({
                         name: book,
