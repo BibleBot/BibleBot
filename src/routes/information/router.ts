@@ -60,7 +60,7 @@ export class InformationRouter {
         embed.addField('\u200B', '—————————————', false);
         embed.addField(lang.getString('links'), links, false);
         embed.addField('\u200B', '—————————————', false);
-        embed.addField('Important News', '**v9 has been released, click [here](https://github.com/BibleBot/BibleBot/blob/master/usage.md) to learn about the changes.**', false);
+        embed.addField('Important News', '**v9 has been released and databases have been reset, click [here](https://github.com/BibleBot/BibleBot/blob/master/usage.md) to learn about the changes.**', false);
 
         ctx.channel.send(embed);
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'biblebot');
