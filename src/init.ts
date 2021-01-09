@@ -19,7 +19,7 @@ import * as defaultGuildPreferences from './helpers/default_guild_preference.jso
 import * as mongoose from 'mongoose';
 
 import { Client } from 'discord.js';
-const bot = new Client({shards: 'auto'});
+const bot = new Client({shardCount: 12});
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 
