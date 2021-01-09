@@ -12,7 +12,7 @@ export const startHeartbeatMonitor = (bot: Client): void => {
                 pings.push(`${shards.indexOf(shard)}: ${shard.ping}ms`);
             }
 
-            log('info', null, `heartbeat (avg. ${bot.ws.ping}ms) - ${pings.join(', ')}`);
+            log('info', null, `heartbeat (avg. ${Math.ceil(bot.ws.ping)}ms) - ${pings.join(', ')}`);
         } catch {
             log('err', null, 'heartbeat failed - are we offline?');
         }

@@ -16,7 +16,7 @@
     "url": "git+https://github.com/BibleBot/BibleBot.git"
   },
   "author": "Seraphim R.P. (vypr)",
-  "license": "MIT",
+  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/BibleBot/BibleBot/issues"
   },
