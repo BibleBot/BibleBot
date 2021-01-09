@@ -60,7 +60,7 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
 
                 Array.from(container.getElementsByClassName('chapternum')).forEach((el: Element) => {
                     if (verseNumbers) {
-                        el.textContent = `<**${el.textContent.slice(0, -1)}**> `;
+                        el.textContent = '<**1**> ';
                     } else {
                         el.remove();
                     }

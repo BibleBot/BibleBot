@@ -1,45 +1,45 @@
 {
-    "Genesis": [
+    "gen": [
       "Gen",
       "Ge",
       "Gn"
     ],
-    "Exodus": [
+    "exod": [
       "Ex",
       "Exod"
     ],
-    "Leviticus": [
+    "lev": [
       "Lev",
       "Le",
       "Lv"
     ],
-    "Numbers": [
+    "num": [
       "Num",
       "Nu",
       "Nm",
       "Nb"
     ],
-    "Deuteronomy": [
+    "deut": [
       "Deut",
       "De",
       "Dt"
     ],
-    "Joshua": [
+    "josh": [
       "Josh",
       "Jos",
       "Jsh"
     ],
-    "Judges": [
+    "judg": [
       "Judg",
       "Jdg",
       "Jg",
       "Jdgs"
     ],
-    "Ruth": [
+    "ruth": [
       "Rth",
       "Ru"
     ],
-    "1 Samuel": [
+    "1sam": [
       "1 Sam",
       "1 Sm",
       "1 Sa",
@@ -48,7 +48,7 @@
       "1st Sm",
       "1st Sa"
     ],
-    "2 Samuel": [
+    "2sam": [
       "2 Sam",
       "2 Sm",
       "2 Sa",
@@ -57,7 +57,7 @@
       "2nd Sm",
       "2nd Sa"
     ],
-    "1 Kings": [
+    "1kgs": [
       "1 Kgs",
       "1 Kin",
       "1 Ki",
@@ -66,7 +66,7 @@
       "1st Kin",
       "1st Ki"
     ],
-    "2 Kings": [
+    "2kgs": [
       "2 Kgs",
       "2 Kin",
       "2 Ki",
@@ -75,7 +75,7 @@
       "2nd Kin",
       "2nd Ki"
     ],
-    "1 Chronicles": [
+    "1chr": [
       "1 Chr",
       "1 Ch",
       "1st Chronicles",
@@ -91,7 +91,7 @@
       "3rd Kin",
       "3rd Ki"
     ],
-    "2 Chronicles": [
+    "2chr": [
       "2 Chr",
       "2 Ch",
       "2nd Chronicles",
@@ -107,137 +107,137 @@
       "4th Kin",
       "4th Ki"
     ],
-    "Ezra": [
+    "ezra": [
       "Ezr"
     ],
-    "Nehemiah": [
+    "neh": [
       "Neh"
     ],
-    "Esther": [
+    "esth": [
       "Esth"
     ],
-    "Job": [
+    "job": [
       "Jb"
     ],
-    "Psalms": [
+    "ps": [
       "Psalms",
       "Ps",
       "Pslm",
       "Psa",
       "Psm"
     ],
-    "Proverbs": [
+    "prov": [
       "Prov",
       "Prv"
     ],
-    "Ecclesiastes": [
+    "eccl": [
       "Eccl",
       "Eccles",
       "Eccle",
       "Ecc"
     ],
-    "Song of Songs": [
+    "song": [
       "Song"
     ],
-    "Isaiah": [
+    "isa": [
       "Isa"
     ],
-    "Jeremiah": [
+    "jer": [
       "Jer"
     ],
-    "Lamentations": [
+    "lam": [
       "Lam"
     ],
-    "Ezekiel": [
+    "ezek": [
       "Ezek"
     ],
-    "Daniel": [
+    "dan": [
       "Dan"
     ],
-    "Hosea": [
+    "hos": [
       "Hos"
     ],
-    "Joel": [],
-    "Amos": [],
-    "Obadiah": [
+    "joel": [],
+    "amos": [],
+    "obad": [
       "Obad"
     ],
-    "Jonah": [
+    "jonah": [
       "Jnh"
     ],
-    "Micah": [
+    "mic": [
       "Mic"
     ],
-    "Nahum": [
+    "nah": [
       "Nah"
     ],
-    "Habakkuk": [
+    "hab": [
       "Hab"
     ],
-    "Zephaniah": [
+    "zeph": [
       "Zeph"
     ],
-    "Haggai": [
+    "hag": [
       "Hag"
     ],
-    "Zechariah": [
+    "zech": [
       "Zech"
     ],
-    "Malachi": [
+    "mal": [
       "Mal"
     ],
-    "Matthew": [
+    "matt": [
       "Mt"
     ],
-    "Mark": [
+    "mark": [
       "Mk",
       "Mrk"
     ],
-    "Luke": [
+    "luke": [
       "Lk",
       "Luk"
     ],
-    "John": [
+    "john": [
       "Jn",
       "Jhn"
     ],
-    "Acts": [],
-    "Romans": [
+    "acts": [],
+    "rom": [
       "Rom",
       "Ro",
       "Rm"
     ],
-    "1 Corinthians": [
+    "1cor": [
       "1 Cor",
       "1 Co",
       "1st Corinthians",
       "1st Cor",
       "1st Co"
     ],
-    "2 Corinthians": [
+    "2cor": [
       "2 Cor",
       "2 Co",
       "2nd Corinthians",
       "2nd Cor",
       "2nd Co"
     ],
-    "Galatians": [
+    "gal": [
       "Gal",
       "Ga"
     ],
-    "Ephesus": [
+    "eph": [
       "Eph",
       "Ephes"
     ],
-    "Philippians": [
+    "phil": [
       "Phil",
       "Php",
       "Pp"
     ],
-    "Colossians": [
+    "col": [
       "Col"
     ],
-    "1 Thessalonians": [
+    "1thess": [
       "1 Thess",
       "1 Thes",
       "1 Th",
@@ -246,7 +246,7 @@
       "1st Thes",
       "1st Th"
     ],
-    "2 Thessalonians": [
+    "2thess": [
       "2 Thess",
       "2 Thes",
       "2 Th",
@@ -255,37 +255,37 @@
       "2nd Thes",
       "2nd Th"
     ],
-    "1 Timothy": [
+    "1tim": [
       "1 Tim",
       "1 Ti",
       "1st Timothy",
       "1st Tim",
       "1st Ti"
     ],
-    "2 Timothy": [
+    "2tim": [
       "2 Tim",
       "2 Ti",
       "2nd Timothy",
       "2nd Tim",
       "2nd Ti"
     ],
-    "Titus": [
+    "titus": [
       "Titus",
       "Ti"
     ],
-    "Philemon": [
+    "phlm": [
       "Philem",
       "Phm",
       "Pm"
     ],
-    "Hebrews": [
+    "heb": [
       "Heb"
     ],
-    "James": [
+    "jas": [
       "Jas",
       "Jm"
     ],
-    "1 Peter": [
+    "1pet": [
       "1 Pet",
       "1 Pe",
       "1 Pt",
@@ -294,7 +294,7 @@
       "1st Pe",
       "1st Pt"
     ],
-    "2 Peter": [
+    "2pet": [
       "2 Pet",
       "2 Pe",
       "2 Pt",
@@ -303,100 +303,100 @@
       "2nd Pe",
       "2nd Pt"
     ],
-    "1 John": [
+    "1john": [
       "1 Jn",
       "1 Jhn",
       "1st John",
       "1st Jn",
       "1st Jhn"
     ],
-    "2 John": [
+    "2john": [
       "2 Jn",
       "2 Jhn",
       "2nd John",
       "2nd Jn",
       "2nd Jhn"
     ],
-    "3 John": [
+    "3john": [
       "3 Jn",
       "3 Jhn",
       "3rd John",
       "3rd Jn",
       "3rd Jhn"
     ],
-    "Jude": [
+    "jude": [
       "Jud",
       "Jd"
     ],
-    "Revelation": [
+    "rev": [
       "Rev",
       "Apoc",
       "Apocalypse"
     ],
-    "Tobit": [
+    "tob": [
       "Tob"
     ],
-    "Judith": [
+    "jdt": [
       "Jdt"
     ],
-    "Greek Esther": [],
-    "Wisdom": [
+    "gkest": [],
+    "wis": [
       "Wis"
     ],
-    "Sirach": [
+    "sir": [
       "Sir"
     ],
-    "Baruch": [
+    "bar": [
       "Bar"
     ],
-    "Letter of Jeremiah": [],
-    "Prayer of Azariah": [
+    "epjer": [],
+    "praz": [
       "Azariah"
     ],
-    "Susanna": [
+    "sus": [
       "Sus"
     ],
-    "Bel and the Dragon": [
+    "bel": [
       "Bel"
     ],
-    "1 Maccabees": [
+    "1macc": [
       "1 Macc",
       "1 Mac",
       "1st Maccabees",
       "1st Macc",
       "1st Mac"
     ],
-    "2 Maccabees": [
+    "2macc": [
       "2 Macc",
       "2 Mac",
       "2nd Maccabees",
       "2nd Macc",
       "2nd Mac"
     ],
-    "1 Esdras": [
+    "1esd": [
       "1 Esd",
       "1st Esdras",
       "1st Esd"
     ],
-    "Prayer of Manasseh": [
+    "prman": [
       "Manasseh"
     ],
-    "Psalms 151": [
+    "ps151": [
       "Ps 151"
     ],
-    "3 Maccabees": [
+    "3ma": [
       "3 Macc",
       "3 Mac",
       "3rd Maccabees",
       "3rd Macc",
       "3rd Mac"
     ],
-    "2 Esdras": [
+    "2esd": [
       "2 Esd",
       "2nd Esdras",
       "2nd Esd"
     ],
-    "4 Maccabees": [
+    "4ma": [
       "4 Macc",
       "4 Mac",
       "4th Maccabees",
