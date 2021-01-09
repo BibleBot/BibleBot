@@ -78,6 +78,7 @@ bot.on('shardResume', shard => {
 
 bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
+    if (message.author.id !== config.biblebot.ownerID) return;
     let guildID = null;
 
     
