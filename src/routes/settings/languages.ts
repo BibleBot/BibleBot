@@ -180,8 +180,6 @@ export class LanguageRouter {
     }
 
     getLanguage(ctx: Context): void {
-        const lang = ctx.language;
-
         Language.findOne({ objectName: ctx.preferences.language }, (err, lang) => {
             Language.findOne({ objectName: ctx.guildPreferences.language }, (err, gLang) => {
                 const message = `${lang.getString('languageused')}\n` +
