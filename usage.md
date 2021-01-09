@@ -4,8 +4,6 @@
 
 **This documentation only mentions the breaking changes between v8 and v9, assume everything not mentioned works like normal.**
 
-**Additionally, all existing v8 preferences have been imported to v9's system. You do not need to reconfigure old settings.**
-
 **BibleBot will no longer work in DMs. We are looking to resolve this in the future.**
 
 ## Changes
