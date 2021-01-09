@@ -17,8 +17,6 @@ const connect = () => {
         importOldVersions();
         importOldPreferences();
         importOldGuildPreferences();
-        
-        setTimeout(() => { process.exit(0); }, 5000);
     }).catch((err) => {
         log('err', 0, `error connecting to database: ${err}`);
         return process.exit(1);
@@ -68,7 +66,7 @@ const importOldVersions = () => {
                     console.log('----');
                     console.log(newVersion);
                 } else {
-                    //log('info', 0, `saved ${version.abbv}`);
+                    log('info', 0, `saved ${version.abbv}`);
                 }
             });
         }
@@ -109,7 +107,7 @@ const importOldPreferences = () => {
                     console.log('----');
                     console.log(newPreference);
                 } else {
-                    //log('info', 0, `saved ${pref.user}`);
+                    log('info', 0, `saved ${pref.user}`);
                 }
             });
         }
@@ -152,7 +150,7 @@ const importOldGuildPreferences = () => {
                     console.log('----');
                     console.log(newPreference);
                 } else {
-                    //log('info', 0, `saved ${pref.guild}`);
+                    log('info', 0, `saved ${pref.guild}`);
                 }
             });
         }
