@@ -78,12 +78,13 @@ bot.on('shardResume', shard => {
 
 bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
+    let guildID = null;
 
     
     if (message.guild) {
         // Ignore Discord.bots.gg and Top.gg's server.
         // The bot has to be there in order to be listed.
-        
+
         if (['110373943822540800', '264445053596991498'].includes(message.guild.id)) {
             return;
         }
@@ -92,6 +93,8 @@ bot.on('message', message => {
             // If the bot doesn't have the necessary permissions, don't pursue further.
             return;
         }
+
+        guildID = message.guild.id;
     }
 
     Preference.findOne({ user: message.author.id }, (err, prefs) => {
@@ -99,8 +102,8 @@ bot.on('message', message => {
             prefs = { ...defaultUserPreferences };
         }
 
-        GuildPreference.findOne({ guild: message.guild.id }, (err, gPrefs) => {
-            if (err || !gPrefs) {
+        GuildPreference.findOne({ guild: guildID }, (err, gPrefs) => {
+            if (err || !gPrefs || guildID == null) {
                 gPrefs = { ...defaultGuildPreferences };
             }
 
