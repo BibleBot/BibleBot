@@ -79,6 +79,10 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
                     el.remove();
                 });
 
+                Array.from(container.getElementsByClassName('crossreference')).forEach((el: Element) => {
+                    el.remove();
+                });
+
                 Array.from(container.getElementsByClassName('footnote')).forEach((el: Element) => {
                     el.remove();
                 });
