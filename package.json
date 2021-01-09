@@ -7,8 +7,8 @@
     "genconf": "tsc && node ./dist/scripts/config_generator.js",
     "importdbs": "tsc && node ./dist/scripts/import_old_databases.js",
     "importlangs": "tsc && node ./dist/scripts/import_languages.js",
-    "prod": "tsc && node ./dist/init.js",
-    "dev": "tsc && node ./dist/init.js",
+    "prod": "tsc && node --max_old_space_size=4096 ./dist/init.js",
+    "dev": "tsc && node --max_old_space_size=4096 ./dist/init.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
