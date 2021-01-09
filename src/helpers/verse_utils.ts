@@ -273,7 +273,9 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
 
     processor.getResult(reference, ctx.preferences.headings, ctx.preferences.verseNumbers, version, (err, data: Verse) => {
         if (err) {
-            console.error(err);
+            console.error(err.message);
+            console.error(reference);
+            console.error(version);
             return;
         }
 
