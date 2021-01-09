@@ -95,6 +95,8 @@ bot.on('message', message => {
         }
 
         guildID = message.guild.id;
+    } else {
+        return;
     }
 
     Preference.findOne({ user: message.author.id }, (err, prefs) => {
@@ -103,7 +105,7 @@ bot.on('message', message => {
         }
 
         GuildPreference.findOne({ guild: guildID }, (err, gPrefs) => {
-            if (err || !gPrefs || guildID == null) {
+            if (err || !gPrefs) {
                 gPrefs = { ...defaultGuildPreferences };
             }
 

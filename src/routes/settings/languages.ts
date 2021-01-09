@@ -193,7 +193,8 @@ export class LanguageRouter {
                         `${gLang.getString('guildlanguageused')}\n\n` +
                         `__**${lang.getString('subcommands')}**__\n` +
                         `**${lang.getCommand('set')}** - ${lang.getString('setlanguageusage')}\n` +
-                        `**${lang.getCommand('setserver')}** - ${lang.getString('setserverlanguageusage')}`;
+                        `**${lang.getCommand('setserver')}** - ${lang.getString('setserverlanguageusage')}` +
+                        `**${lang.getCommand('list')}** - ${lang.getString('listlanguageusage')}`;
 
                         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'language');
                         ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language']), message, false));

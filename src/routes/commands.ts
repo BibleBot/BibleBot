@@ -12,7 +12,6 @@ import { LanguageRouter } from './settings/languages';
 import { MiscSettingsRouter } from './settings/misc';
 import { FormattingSettingsRouter } from './settings/formatting';
 import { ResourcesCommandsRouter } from './resources/router';
-import { lang } from 'moment';
 
 const informationRouter = InformationRouter.getInstance();
 const verseCommandsRouter = VerseCommandsRouter.getInstance();

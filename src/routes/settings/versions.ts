@@ -255,7 +255,9 @@ export class VersionSettingsRouter {
         `${lang.getString('guildversionused').replace('<version>', '**' + guildVersion.name + '**')}\n\n` +
         `__**${lang.getString('subcommands')}**__\n` +
         `**${lang.getCommand('set')}** - ${lang.getString('setversionusage')}\n` +
-        `**${lang.getCommand('setserver')}** - ${lang.getString('setserverversionusage')}`;
+        `**${lang.getCommand('setserver')}** - ${lang.getString('setserverversionusage')}\n` +
+        `**${lang.getCommand('list')}** - ${lang.getString('listversionusage')}\n` +
+        `**${lang.getCommand('info')}** - ${lang.getString('infousage')}\n`;
                 
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'version');
         ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version']), message, false));
