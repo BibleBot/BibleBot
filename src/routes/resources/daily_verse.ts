@@ -46,7 +46,7 @@ export class DailyVerseRouter {
                 }
 
                 Version.findOne({ abbv: queryVersion }, (err, version) => {
-                    utils.processVerse(ctx, version, verse);
+                    utils.processVerse(ctx, version, verse, true);
                     ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'dailyverse');
                 });
             } catch (err) {
