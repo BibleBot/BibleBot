@@ -182,25 +182,18 @@ export class LanguageRouter {
     getLanguage(ctx: Context): void {
         const lang = ctx.language;
 
-        Preference.findOne({ user: ctx.id }, (err, prefs) => {
-            if (err || !prefs) {
-                ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'language - cannot find preference');
-                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language']), lang.getString('failedpreference'), true));
-            } else {
-                Language.findOne({ objectName: ctx.preferences.language }, (err, lang) => {
-                    Language.findOne({ objectName: ctx.guildPreferences.language }, (err, gLang) => {
-                        const message = `${lang.getString('languageused')}\n` +
-                        `${gLang.getString('guildlanguageused')}\n\n` +
-                        `__**${lang.getString('subcommands')}**__\n` +
-                        `**${lang.getCommand('set')}** - ${lang.getString('setlanguageusage')}\n` +
-                        `**${lang.getCommand('setserver')}** - ${lang.getString('setserverlanguageusage')}` +
-                        `**${lang.getCommand('list')}** - ${lang.getString('listlanguageusage')}`;
-
-                        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'language');
-                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language']), message, false));
-                    });
-                });
-            }
+        Language.findOne({ objectName: ctx.preferences.language }, (err, lang) => {
+            Language.findOne({ objectName: ctx.guildPreferences.language }, (err, gLang) => {
+                const message = `${lang.getString('languageused')}\n` +
+                `${gLang.getString('guildlanguageused')}\n\n` +
+                `__**${lang.getString('subcommands')}**__\n` +
+                `**${lang.getCommand('set')}** - ${lang.getString('setlanguageusage')}\n` +
+                `**${lang.getCommand('setserver')}** - ${lang.getString('setserverlanguageusage')}\n` +
+                `**${lang.getCommand('list')}** - ${lang.getString('listlanguageusage')}`;
+                
+                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'language');
+                ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language']), message, false));
+            });
         });
     }
 
