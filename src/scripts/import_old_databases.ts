@@ -89,7 +89,7 @@ const importOldPreferences = () => {
             };
 
             const newPreference = new Preference({
-                user: oldPreference.id,
+                user: oldPreference.id.toString(),
                 input: 'default',
                 language: 'english',
                 version: oldPreference.version ? oldPreference.version : 'RSV',
@@ -126,7 +126,7 @@ const importOldGuildPreferences = () => {
             // {"id": 362503610006765568, "time": "13:00", "channel": 366888351326011394, "channel_name": "daily-verse"}
 
             const newPreference = new GuildPreference({
-                guild: oldPreference.id,
+                guild: oldPreference.id.toString(),
                 prefix: '+',
                 ignoringBrackets: '<>',
                 language: 'english',
