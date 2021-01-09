@@ -120,35 +120,35 @@ const importOldPreferences = () => {
 const importOldGuildPreferences = () => {
     for (const key in oldGuildPreferences) {
         if (Object.prototype.hasOwnProperty.call(oldPreferences, key)) {
-            const oldPreference = oldGuildPreferences[key];
+            const oldGuildPreference = oldGuildPreferences[key];
 
             // example
             // {"id": 362503610006765568, "time": "13:00", "channel": 366888351326011394, "channel_name": "daily-verse"}
 
-            const newPreference = new GuildPreference({
-                guild: oldPreference.id.toString(),
+            const newGuildPreference = new GuildPreference({
+                guild: oldGuildPreference.id.toString(),
                 prefix: '+',
                 ignoringBrackets: '<>',
                 language: 'english',
-                version: oldPreference.version ? oldPreference.version : 'RSV'
+                version: oldGuildPreference.version ? oldGuildPreference.version : 'RSV'
             });
 
-            if (oldPreference.channel && oldPreference.time) {
-                if (oldPreference.time != 'clear') {
-                    newPreference.dailyVerseChannel = oldPreference.channel;
-                    newPreference.dailyVerseTime = oldPreference.time;
-                    newPreference.dailyVerseTz = 'UTC';
+            if (oldGuildPreference.channel && oldGuildPreference.time) {
+                if (oldGuildPreference.time != 'clear') {
+                    newGuildPreference.dailyVerseChannel = oldGuildPreference.channel.toString();
+                    newGuildPreference.dailyVerseTime = oldGuildPreference.time;
+                    newGuildPreference.dailyVerseTz = 'UTC';
                 }
             }
 
-            newPreference.save((err, pref) => {
+            newGuildPreference.save((err, pref) => {
                 if (err) {
-                    log('err', 0, `unable to save ${oldPreference.id}`);
+                    log('err', 0, `unable to save ${oldGuildPreference.id}`);
                     log('err', 0, err);
 
-                    console.log(oldPreference);
+                    console.log(oldGuildPreference);
                     console.log('----');
-                    console.log(newPreference);
+                    console.log(newGuildPreference);
                 } else {
                     log('info', 0, `saved ${pref.guild}`);
                 }
