@@ -118,11 +118,12 @@ bot.on('message', message => {
                 const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, lang, prefs, gPrefs, message);
     
                 const prefix = ctx.msg.split(' ')[0].slice(0, 1);
-                const potentialCommand = lang.getCommandKey(ctx.msg.split(' ')[0].slice(1));
+                const firstItem = ctx.msg.split(' ')[0].slice(1);
+                const potentialCommand = lang.getCommandKey(firstItem);
                 let couldBeRescue = false;
 
                 if (prefix == gPrefs.prefix || prefix == config.biblebot.commandPrefix) {
-                    if (potentialCommand == 'biblebot') {
+                    if (potentialCommand == 'biblebot' || firstItem == 'biblebot') {
                         couldBeRescue = true;
                     }
                 }

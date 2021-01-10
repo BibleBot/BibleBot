@@ -191,8 +191,12 @@ export class DailyVerseRouter {
     }
 
     processCommand(ctx: Context, params: Array<string>): void {
-        const subcommand = ctx.language.getCommandKey(params[0]);
+        let subcommand = ctx.language.getCommandKey(params[0]);
         const args = params.slice(1);
+
+        if (params[0] == 'setup') {
+            subcommand = 'setup';
+        }
 
         switch (subcommand) {
             case 'setup':
