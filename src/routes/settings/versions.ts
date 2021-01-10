@@ -35,7 +35,7 @@ export class VersionSettingsRouter {
             return;
         }
 
-        const abbv = args[0];
+        const abbv = args[0].toUpperCase();
 
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
@@ -106,7 +106,7 @@ export class VersionSettingsRouter {
             return;
         }
 
-        const abbv = args[0];
+        const abbv = args[0].toUpperCase();
 
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
@@ -227,7 +227,7 @@ export class VersionSettingsRouter {
             return;
         }
 
-        const abbv = args[0];
+        const abbv = args[0].toUpperCase();
 
         const version = await Version.findOne({ abbv }).exec();
 

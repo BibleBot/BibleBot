@@ -292,7 +292,7 @@ export async function generateReference(result: BookSearchResult, msg: string, v
             }
 
             if (tokens[spanToken]) {
-                const lastToken = tokens[spanToken];
+                const lastToken = tokens[spanToken].toUpperCase();
                 const mentionedVersion = await Version.findOne({ abbv: lastToken }).exec();
 
                 if (mentionedVersion) {
