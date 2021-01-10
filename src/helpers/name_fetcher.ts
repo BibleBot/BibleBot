@@ -48,6 +48,10 @@ export async function fetchBookNames(isDryRun: boolean): Promise<boolean> {
             }
         }));
 
+        if (fs.existsSync(`${__dirname}/name_data/completed_names.json`)) {
+            fs.unlinkSync(`${__dirname}/name_data/completed_names.json`);
+        }
+
         fs.writeFileSync(`${__dirname}/name_data/completed_names.json`, content);
     
         loadingSpinner.succeed();
@@ -128,14 +132,12 @@ function getBibleGatewayNames(versions: Record<string, string>): Promise<Record<
                     dataName = 'praz';
                 }
 
-                const englishName = defaultNames[dataName];
-
-                if (names[englishName]) {
-                    if (!names[englishName].includes(name)) {
-                        names[englishName].push(name);
+                if (names[dataName]) {
+                    if (!names[dataName].includes(name)) {
+                        names[dataName].push(name);
                     }
                 } else {
-                    names[englishName] = [ name ];
+                    names[dataName] = [ name ];
                 }
             });
         });
@@ -195,23 +197,12 @@ function getAPIBibleNames(versions: Record<string, string>): Promise<Record<stri
                         continue;
                     }
 
-                    const englishName = defaultNames[id];
-
-                    if (englishName === undefined) {
-                        // DAG/Daniel (Greek) does not correspond to any Bible Gateway book.
-                        if (trueId !== 'DAG') {
-                            console.error(`Inconsistency found: ${trueId} in ${book.bibleId}.`);
-                        }
-
-                        continue;
-                    }
-
-                    if (names[englishName]) {
-                        if (!names[englishName].includes(name)) {
-                            names[englishName].push(name);
+                    if (names[id]) {
+                        if (!names[id].includes(name)) {
+                            names[id].push(name);
                         }
                     } else {
-                        names[englishName] = [ name ];
+                        names[id] = [ name ];
                     }
                 } catch (err) {
                     console.error(err);

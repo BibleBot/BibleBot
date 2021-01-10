@@ -83,7 +83,7 @@ export class VerseCommandsRouter {
                 break;
         }
 
-        if (args.join(' ').length > 3) {
+        if (args.join(' ').length < 4) {
             ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'search']), ctx.language.getString('queryTooShort'), true));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'search (too short)');
             

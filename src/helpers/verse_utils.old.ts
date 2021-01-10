@@ -26,16 +26,6 @@ interface BookSearchResult {
     index: number;
 }
 
-declare global {
-    interface StringConstructor {
-        toTitleCase(str: string): string;
-    }
-}
-
-String.toTitleCase = (str: string): string => {
-    return (str || '').replace(/\w\S*/g, (text) => { return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase(); });
-};
-
 function checkSectionSupport(ref: Reference | string, version: mongoose.Document): Record<string, unknown> {
     let supportValue;
     let section;
@@ -91,107 +81,82 @@ export function findBooksInMessage(msg: string): Array<BookSearchResult> {
     const msgTokens = msg.split(' ');
     const books = getBookNames();
     const results: Array<BookSearchResult> = [];
-    const existingIndices = [];
 
-    for (const [bookKey, valueArray] of Object.entries(books)) {
-        for (const item of valueArray) {
-            const potentialValues = [item.toUpperCase(), item.toLowerCase(), String.toTitleCase(item), item];
+    // eslint-disable-next-line prefer-const
+    for (const [index, origToken] of msgTokens.entries()) {
+        const token = removePunctuation(origToken);
 
-            for (const value of potentialValues) {
-                if (msg.includes(value)) {
-                    const overlappedNames = {
-                        'john': ([] as string[]).concat(books['1john'], books['2john'], books['3john']),
-                        'ezra': ([] as string[]).concat(books['1esd'], books['2esd']),
-                        'jer': books['epjer'],
-                        'song': books['song'],
-                        'ps': books['ps151']
-                    };
+        Object.keys(books).forEach(book => {
+            if (books[book].includes(token)) {
+                if (book == 'John' || book == 'Ezra') {
+                    const previousToken = msgTokens[index - 1];
+                    const prevTokenToNumber = Number(previousToken);
+                    const boundaries = book == 'John' ? [0, 4] : [0, 3];
 
-                    const lastItem = value.split(' ')[value.split(' ').length - 1];
-                    const potentialLastItems = [lastItem.toUpperCase(), lastItem.toLowerCase(), String.toTitleCase(lastItem), lastItem];
-                    const potentialIndices = msgTokens.map((val, idx) => { if (potentialLastItems.includes(val)) return idx; });
+                    if (!isNaN(prevTokenToNumber) || prevTokenToNumber !== undefined) {
+                        if (boundaries[0] < prevTokenToNumber && prevTokenToNumber < boundaries[1]) {
+                            const name = book == 'Ezra' ? 'Esdras' : 'John';
 
-                    const potentialOverlapKey = Object.keys(overlappedNames).includes(bookKey);
-                    const isOverlappingBook = overlappedNames[bookKey] ? overlappedNames[bookKey].some((val) => {
-                        return ` ${msg} `.includes(` ${val} `);
-                    }) : false;
+                            results.push({
+                                name: `${prevTokenToNumber} ${name}`,
+                                index
+                            });
 
-                    if (potentialOverlapKey && isOverlappingBook) {
-                        for (const index of potentialIndices) {
-                            let bookName;
-                            
-                            if (bookKey == 'ps') {
-                                bookName = `${msgTokens[index]} ${msgTokens[index + 1]}`;
-                            } else if (bookKey === 'jer' || bookKey === 'song') {
-                                bookName = `${msgTokens[index - 2]} ${msgTokens[index - 1]} ${msgTokens[index]}`;
-                            } else {
-                                bookName = `${msgTokens[index - 1]} ${msgTokens[index]}`;
-                            }
-                                
-                            if (!overlappedNames[bookKey].includes(bookName)) {
-                                if (bookKey !== 'song') {
-                                    results.push({
-                                        name: bookKey,
-                                        index
-                                    });
-                                } else {
-                                    results.push({
-                                        name: bookKey,
-                                        index: index + 2
-                                    });
-                                }
-                                
-                                
-                                existingIndices.push(index);
-                            }
-                        }
-                    } else {
-                        for (const index of potentialIndices) {
-                            if (index === undefined) {
-                                continue;
-                            }
-
-                            if (bookKey == '2cor' && existingIndices.includes(index)) {
-                                const potentialOverlap = { name: '1cor', index };
-
-                                // Because I can't just results.includes(potentialOverlap) even with coercing to BookSearchResult.
-                                // TypeScript, are you drunk?
-                                const overlappingResults = results.filter((val) => { return val.name == potentialOverlap.name && val.index == potentialOverlap.index; });
-
-                                if (overlappingResults) {
-                                    results.splice(results.indexOf(potentialOverlap), 1);
-                                    
-                                    results.push({
-                                        name: bookKey,
-                                        index
-                                    });
-                                }
-                            }
-
-                            if (!existingIndices.includes(index)) {
-                                results.push({
-                                    name: bookKey,
-                                    index
-                                });
-
-                                existingIndices.push(index);
-
-                                break;
-                            }
+                            return;
                         }
                     }
+
+                    results.push({
+                        name: `${book}`,
+                        index
+                    });
+                } else if (book == 'Psalms') {
+                    const nextToken = msgTokens[index + 1];
+                    const nextTokenToNumber = Number(nextToken);
+
+                    if (!isNaN(nextTokenToNumber) || nextTokenToNumber !== undefined) {
+                        if (nextTokenToNumber == 151) {
+                            results.push({
+                                name: `${book} ${nextTokenToNumber}`,
+                                index: index + 1
+                            });
+                        } else {
+                            results.push({
+                                name: `${book}`,
+                                index
+                            });
+                        }
+                    }
+                } else if (book == 'Jeremiah') {
+                    // TODO: Letter of Jeremiah
+                    results.push({
+                        name: book,
+                        index
+                    });
+                } else if (['1 Corinthians', '2 Corinthians', '1 Thessalonians', '2 Thessalonians',
+                            '1 Timothy', '2 Timothy', '1 Peter', '2 Peter'].includes(book)) {
+                    const prevToken = msgTokens[index - 1];
+                    const prevTokenToNumber = Number(prevToken);
+
+                    if (!isNaN(prevTokenToNumber) || prevTokenToNumber !== undefined) {
+                        if (0 < prevTokenToNumber && prevTokenToNumber < 3) {
+                            results.push({
+                                name: book,
+                                index: index
+                            });
+                        }
+                    }
+                } else {
+                    results.push({
+                        name: book,
+                        index
+                    });
                 }
             }
-        }
+        });
     }
 
-    // Remove invalid and duplicate results. Reverse the output otherwise the input order will not match it.
-    const filteredResults = results.filter((val) => { return val.index !== undefined && !Number.isNaN(val.index); })
-                                   .filter((val, idx, arr) => arr.findIndex((obj) => (obj.name === val.name && obj.index === val.index )) === idx)
-                                   .reverse();
-    
-
-    return filteredResults;
+    return results;
 }
 
 export function isSurroundedByBrackets(brackets: string, result: BookSearchResult, msg: string): boolean {
@@ -214,12 +179,11 @@ export function isSurroundedByBrackets(brackets: string, result: BookSearchResul
 }
 
 export async function generateReference(result: BookSearchResult, msg: string, version: mongoose.Document): Promise<Reference> {
-    let book = result['name'];
+    const book = result['name'];
     let startingChapter = 0;
     let startingVerse = 0;
     let endingChapter = 0;
     let endingVerse = 0;
-    let spanToken = 0;
     
     const tokens = msg.split(' ');
 
@@ -228,7 +192,6 @@ export async function generateReference(result: BookSearchResult, msg: string, v
         const relevantToken = tokens.slice(result.index + 1)[0];
         
         if (relevantToken.includes(':')) {
-            spanToken = result.index + 2;
             const colonQuantity = relevantToken.match(/:/g).length;
 
             switch (colonQuantity) {
@@ -291,30 +254,20 @@ export async function generateReference(result: BookSearchResult, msg: string, v
                 }
             }
 
-            if (tokens[spanToken]) {
-                const lastToken = tokens[spanToken].toUpperCase();
-                const mentionedVersion = await Version.findOne({ abbv: lastToken }).exec();
+            const lastToken = tokens[tokens.length - 1];
+            const mentionedVersion = await Version.findOne({ abbv: lastToken }).exec();
 
-                if (mentionedVersion) {
-                    version = mentionedVersion;
-                }
+            if (mentionedVersion) {
+                version = mentionedVersion;
             }
         }
     } else {
         return null;
     }
 
-    const isOT = Object.keys(bookMap.ot).includes(book);
-    const isNT = Object.keys(bookMap.nt).includes(book);
-    const isDEU = Object.keys(bookMap.deu).includes(book);
-
-    if (isOT) {
-        book = bookMap.ot[book];
-    } else if (isNT) {
-        book = bookMap.nt[book];
-    } else if (isDEU) {
-        book = bookMap.deu[book];
-    }
+    const isOT = Object.values(bookMap.ot).includes(book);
+    const isNT = Object.values(bookMap.nt).includes(book);
+    const isDEU = Object.values(bookMap.deu).includes(book);
 
     if (startingVerse == 0 || startingChapter == 0) {
         return null;

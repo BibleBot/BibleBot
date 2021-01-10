@@ -1,12 +1,7 @@
-import * as ini from 'ini';
-import * as fs from 'fs';
-
 import Context from '../models/context';
 import Version from '../models/version';
 
 import * as utils from '../helpers/verse_utils';
-
-const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
 export class VersesRouter {
     private static instance: VersesRouter;

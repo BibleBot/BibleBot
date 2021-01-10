@@ -1,4 +1,6 @@
 import * as ts from 'typescript';
+import * as fs from 'fs';
+import * as ini from 'ini';
 
 import Context from '../models/context';
 
@@ -12,6 +14,8 @@ import { LanguageRouter } from './settings/languages';
 import { MiscSettingsRouter } from './settings/misc';
 import { FormattingSettingsRouter } from './settings/formatting';
 import { ResourcesCommandsRouter } from './resources/router';
+
+const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
 const informationRouter = InformationRouter.getInstance();
 const verseCommandsRouter = VerseCommandsRouter.getInstance();
@@ -135,6 +139,10 @@ export class CommandsRouter {
         const tokens = ctx.msg.slice(1).split(' ');
         const command = tokens[0];
         const args = tokens.slice(1);
+
+        if (ctx.id !== config.biblebot.ownerID) {
+            return;
+        }
 
         switch (command) {
             case 'manageversions':

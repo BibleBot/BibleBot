@@ -1,6 +1,5 @@
 import Context from '../../models/context';
 import Version from '../../models/version';
-import Language from '../../models/language';
 import Preference from '../../models/preference';
 import GuildPreference from '../../models/guild_preference';
 
@@ -35,7 +34,7 @@ export class VersionSettingsRouter {
             return;
         }
 
-        const abbv = args[0];
+        const abbv = args[0].toUpperCase();
 
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
@@ -106,7 +105,7 @@ export class VersionSettingsRouter {
             return;
         }
 
-        const abbv = args[0];
+        const abbv = args[0].toUpperCase();
 
         Version.findOne({ abbv }).then((version) => {
             if (!version) {
@@ -227,7 +226,7 @@ export class VersionSettingsRouter {
             return;
         }
 
-        const abbv = args[0];
+        const abbv = args[0].toUpperCase();
 
         const version = await Version.findOne({ abbv }).exec();
 
@@ -276,10 +275,10 @@ export class VersionSettingsRouter {
                     if (hasPermission) {
                         this.setGuildVersion(ctx, args);
                     } else {
-                        Language.findOne({ user: ctx.id }, (err, lang) => {
-                            ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), lang.getString('noguildperm'), true));
-                            ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - no permission');
-                        });
+                        const lang = ctx.language;
+
+                        ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), lang.getString('noguildperm'), true));
+                        ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - no permission');
                     }
                 });
                 break;

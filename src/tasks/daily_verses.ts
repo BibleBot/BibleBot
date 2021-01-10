@@ -22,7 +22,8 @@ export const startDailyVerse = (bot: Client): void => {
                     try {
                         bot.guilds.fetch(guildPref.guild).then((guild) => {
                             const chan = guild.channels.resolve(guildPref.dailyVerseChannel);
-                            const ctx = new Context('auto', bot, (chan as TextChannel), guild, null, null, null, guildPref, null);
+                            const ctx = new Context('auto', bot, (chan as TextChannel), guild, null, null,
+                                                    { headings: true, verseNumbers: true, display: 'embed' }, guildPref, null);
 
                             Language.findOne({ objectName: guildPref.language }, (err, lang) => {
                                 (chan as TextChannel).send(lang.getString('votd'));

@@ -60,7 +60,7 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
 
                 Array.from(container.getElementsByClassName('chapternum')).forEach((el: Element) => {
                     if (verseNumbers) {
-                        el.textContent = `<**${el.textContent.slice(0, -1)}**> `;
+                        el.textContent = '<**1**> ';
                     } else {
                         el.remove();
                     }
@@ -72,6 +72,15 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
                     } else {
                         el.remove();
                     }
+                });
+
+                Array.from(container.getElementsByTagName('br')).forEach((el: Element) => {
+                    el.before(document.createTextNode('\n'));
+                    el.remove();
+                });
+
+                Array.from(container.getElementsByClassName('crossreference')).forEach((el: Element) => {
+                    el.remove();
                 });
 
                 Array.from(container.getElementsByClassName('footnote')).forEach((el: Element) => {
@@ -89,7 +98,9 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
                     version
                 ));
             } catch (err) {
-                return callback(err, null);
+                if (err.message !== 'Cannot read property \'getElementsByClassName\' of undefined') {
+                    return callback(err, null);
+                }
             }
         });
 }

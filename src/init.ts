@@ -18,10 +18,10 @@ import * as defaultGuildPreferences from './helpers/default_guild_preference.jso
 
 import * as mongoose from 'mongoose';
 
-import { Client } from 'discord.js';
-const bot = new Client({shardCount: 12});
+import { Client, DMChannel } from 'discord.js';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
+const bot = new Client({shardCount: Number(config.biblebot.shards)});
 
 const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
@@ -79,7 +79,6 @@ bot.on('shardResume', shard => {
 bot.on('message', message => {
     if (message.author.id === bot.user.id) return;
     let guildID = null;
-
     
     if (message.guild) {
         // Ignore Discord.bots.gg and Top.gg's server.
@@ -89,9 +88,11 @@ bot.on('message', message => {
             return;
         }
         
-        if (!checkBotPermissions(message.guild)) {
-            // If the bot doesn't have the necessary permissions, don't pursue further.
-            return;
+        if (!(message.channel instanceof DMChannel)) {
+            if (!checkBotPermissions(message.channel, message.guild)) {
+                // If the bot doesn't have the necessary permissions, don't pursue further.
+                return;
+            }
         }
 
         guildID = message.guild.id;
@@ -117,11 +118,12 @@ bot.on('message', message => {
                 const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, lang, prefs, gPrefs, message);
     
                 const prefix = ctx.msg.split(' ')[0].slice(0, 1);
-                const potentialCommand = lang.getCommandKey(ctx.msg.split(' ')[0].slice(1));
+                const firstItem = ctx.msg.split(' ')[0].slice(1);
+                const potentialCommand = lang.getCommandKey(firstItem);
                 let couldBeRescue = false;
 
                 if (prefix == gPrefs.prefix || prefix == config.biblebot.commandPrefix) {
-                    if (potentialCommand == 'biblebot') {
+                    if (potentialCommand == 'biblebot' || firstItem == 'biblebot') {
                         couldBeRescue = true;
                     }
                 }
