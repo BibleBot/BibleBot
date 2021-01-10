@@ -138,7 +138,7 @@ export class VersionSettingsRouter {
                             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - cannot save new preference');
                             ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), lang.getString('failedpreference'), true));
                         } else {
-                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version set ${abbv}`);
+                            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, `version setserver ${abbv}`);
                             ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), lang.getString('setguildversionsuccess'), false));
                         }
                     });
