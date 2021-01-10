@@ -119,7 +119,7 @@ export class VersionSettingsRouter {
                 return;
             }
 
-            GuildPreference.findOne({ user: ctx.id }, (err, prefs) => {
+            GuildPreference.findOne({ guild: ctx.guild.id }, (err, prefs) => {
                 if (err) {
                     ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'version setserver - cannot save preference');
                     ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version', 'setserver']), lang.getString('failedpreference'), true));
