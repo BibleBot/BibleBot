@@ -1,6 +1,6 @@
 {
     "biblebot": "BibleBot <version>",
-    "credit": "由 Evagelion Ltd. 以 ❤️ 制作。",
+    "credit": "由 Evangelion Ltd. 以 ❤️ 制作",
     "commandlist": "`<+><search>` - search using keywords\n`<+><version>` - version preferences and information\n`<+><random>` - get a random Bible verse\n`<+><truerandom>` - get a truly random Bible verse\n`<+><dailyverse>` - daily verses and automation\n`<+><formatting>` - formatting preferences for verse styles\n`<+><language>` - language preferences and information\n`<+><misc>` - miscellaneous server settings\n`<+><stats>` - view bot statistics\n`<+><invite>` - get the invite link for BibleBot\n\n`<+><creeds>` - ecumenical creeds (contains further commands)",
     "usage": "用法：请输入《圣经》经文章节号码即可",
     "commandlistName": "命令",
@@ -28,7 +28,7 @@
     "pubdomain": "公共域",
     "invalidrange": "范围无效",
     "error": "错误",
-    "passagetoolong": "此节太长。请重试或使用不同的显示样式 (<+><formatting> <setdisplay>`)。",
+    "passagetoolong": "此节太长。请重试或使用不同的显示样式 (`<+><formatting> <setdisplay>`)。",
     "subcommands": "小指令",
     "setversionsuccess": "已成功设置版本。",
     "setversionfail": "无法设置翻译版本, 请参阅 `<+><version> <list>`。",
