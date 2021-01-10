@@ -47,8 +47,9 @@ export function log(level: string, shard: number, msg: string): void {
 
     const levelPrefix = color(`[${level}]`);
     if (shard != null) {
-        const shardPrefix = chalk.blackBright(`[shard ${shard}]`) + ' ';
-        output = `${levelPrefix} ${shardPrefix}${msg}`;
+        const shardInString = shard < 10 ? `0${shard}` : `${shard}`;
+        const shardPrefix = chalk.blackBright(`[shard ${shardInString}]`);
+        output = `${levelPrefix} ${shardPrefix} ${msg}`;
     } else {
         output = `${levelPrefix} ${msg}`;
     }
