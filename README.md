@@ -4,7 +4,7 @@
 [![Join us on Discord](https://img.shields.io/discord/362503610006765568.svg)](https://discord.gg/H7ZyHqE)
 [![top.gg](https://top.gg/api/widget/lib/361033318273384449.png)](https://top.gg/bot/biblebot)
 
-The premier Discord bot for Bible verses.
+The premier Discord bot for Bible verses. To use it, say a verse or use the `+biblebot` help command.
 
 ## Self-Host Installation
 *We recommend using Git Bash if on Windows.*
