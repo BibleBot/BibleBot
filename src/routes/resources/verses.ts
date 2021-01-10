@@ -130,8 +130,13 @@ export class VerseCommandsRouter {
                         }
                     }
                 } else {
-                    embed.setTitle(ctx.language.getString('nothingFound').replace('<query>', args.join(' ')));
-                    embed.setDescription('You may have to try a different query.');
+                    const title = ctx.language.getString('nothingFound').replace('<query>', args.join(' '));
+                    const desc = ctx.language.getString('failedsearch');
+
+                    ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, `search ${args.join(' ')} - nothing found`);
+                    const embed = createEmbed(null, title, desc, true);
+                    ctx.channel.send(embed);
+                    return;
                 }
 
                 pages.push(embed);

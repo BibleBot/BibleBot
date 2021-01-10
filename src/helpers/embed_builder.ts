@@ -27,13 +27,16 @@ export function translateCommand(ctx: Context, args: string[]): string {
 
 export function createEmbed(author: string, title: string, description: string, isError: boolean, copyright?: string): MessageEmbed {
     const embed = new MessageEmbed({
-        title,
         color: isError ? ERROR_COLOR : NORMAL_COLOR,
         footer: {
             text: config.biblebot.footer.replace('<version>', process.env.npm_package_version),
             iconURL: config.biblebot.icon
         }
     });
+
+    if (title) {
+        embed.setTitle(title);
+    }
 
     if (author) {
         embed.setAuthor(author);
