@@ -18,7 +18,7 @@ import * as defaultGuildPreferences from './helpers/default_guild_preference.jso
 
 import * as mongoose from 'mongoose';
 
-import { Client } from 'discord.js';
+import { Client, DMChannel } from 'discord.js';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 const bot = new Client({shardCount: Number(config.biblebot.shards)});
@@ -88,9 +88,11 @@ bot.on('message', message => {
             return;
         }
         
-        if (!checkBotPermissions(message.guild)) {
-            // If the bot doesn't have the necessary permissions, don't pursue further.
-            return;
+        if (!(message.channel instanceof DMChannel)) {
+            if (!checkBotPermissions(message.channel, message.guild)) {
+                // If the bot doesn't have the necessary permissions, don't pursue further.
+                return;
+            }
         }
 
         guildID = message.guild.id;
