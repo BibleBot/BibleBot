@@ -26,7 +26,7 @@ export class VersesRouter {
 
         const results = utils.findBooksInMessage(msg);
 
-        if (results.length > 5) {
+        if (results.length > 10) {
             ctx.channel.send(ctx.language.getString('donutspam'));
             ctx.logInteraction('err', ctx.shard, ctx.id, ctx.channel, 'spam attempt');
             return;
