@@ -114,6 +114,12 @@ bot.on('message', message => {
                 if (err) {
                     throw new Error('Unable to obtain language, probable database error.');
                 }
+
+                if (message.author.bot) {
+                    prefs = gPrefs;
+
+                    prefs['user'] = message.author.id;
+                }
                 
                 const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, lang, prefs, gPrefs, message);
     
