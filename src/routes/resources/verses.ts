@@ -51,12 +51,39 @@ export class VerseCommandsRouter {
     }
 
     getTrulyRandomVerse(ctx: Context): void {
-        axios.get('https://thywordistrue.com/verse_generator').then((res) => {
-            try {
-                const { document } = (new JSDOM(res.data)).window;
+        const randomNumber = Math.floor(Math.random() * (31101 - 0 + 1));
 
-                const container = document.getElementsByClassName('random_verse')[0];
-                const verse = container.getElementsByTagName('small')[0].textContent;
+        axios.get(`https://biblebot.xyz/random-verses-data/${randomNumber}.txt`).then((res) => {
+            try {
+                const verseArray = res.data.split(' ').slice(0, 2);
+
+                const bookMap = {
+                    'Sa1': '1 Samuel',
+                    'Sa2': '2 Samuel',
+                    'Kg1': '1 Kings',
+                    'Kg2': '2 Kings',
+                    'Ch1': '1 Chronicles',
+                    'Ch2': '2 Chronicles',
+                    'Co1': '1 Corinthians',
+                    'Co2': '2 Corinthians',
+                    'Th1': '1 Thessalonians',
+                    'Th2': '2 Thessalonians',
+                    'Ti1': '1 Timothy',
+                    'Ti2': '2 Timothy',
+                    'Pe1': '1 Peter',
+                    'Pe2': '2 Peter',
+                    'Jo1': '1 John',
+                    'Jo2': '2 John',
+                    'Jo3': '3 John'
+                };
+
+                let book = verseArray[0];
+
+                if (Object.keys(bookMap).includes(book)) {
+                    book = bookMap[book];
+                }
+
+                const verse = `${book} ${verseArray[1]}`;
 
                 let queryVersion = 'RSV';
                 if (ctx.preferences.version) {
