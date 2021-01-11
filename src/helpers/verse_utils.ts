@@ -347,7 +347,9 @@ export async function processVerse(ctx: Context, version: mongoose.Document, ref
         if (err) {
             console.log('---');
             console.log(`${reference.toString()} - '${ctx.msg}`);
+            console.log(err.name);
             console.log(err.message);
+            console.log(err.stack);
             console.log('---');
             return;
         }
