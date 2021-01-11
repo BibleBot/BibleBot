@@ -40,6 +40,15 @@ const connect = () => {
     });
 };
 
+process.on('unhandledRejection', (err: Error, promise) => {
+    console.log('---------');
+    console.log('Unhandled promise rejection:');
+    console.log(promise);
+    console.log('Error:', err.message);
+    console.log(err.stack);
+    console.log('---------');
+});
+
 bot.on('ready', () => {
     heartbeats.startHeartbeatMonitor(bot);
     log('info', null, 'started heartbeat monitor');
