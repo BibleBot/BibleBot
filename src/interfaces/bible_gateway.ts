@@ -102,5 +102,7 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
                     return callback(err, null);
                 }
             }
+        }).catch((err) => {
+            return callback(err, null);
         });
 }

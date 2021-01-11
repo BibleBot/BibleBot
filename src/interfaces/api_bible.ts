@@ -96,5 +96,7 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
             } catch (err) {
                 return callback(err, null);
             }
+        }).catch((err) => {
+            return callback(err, null);
         });
 }
