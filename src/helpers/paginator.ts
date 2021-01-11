@@ -74,7 +74,9 @@ export class Paginator {
             });
     
             reactionCollector.on('end', () => {
-                msg.reactions.removeAll();
+                if (!msg.deleted) {
+                    msg.reactions.removeAll();
+                }
 
                 existingPaginators.userIDs = existingPaginators.userIDs.filter((val) => {
                     return val != this.userID;
