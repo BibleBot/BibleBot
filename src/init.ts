@@ -21,7 +21,7 @@ import * as mongoose from 'mongoose';
 import { Client, DMChannel } from 'discord.js';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
-const bot = new Client({shardCount: Number(config.biblebot.shards)});
+const bot = new Client({shardCount: Number(config.biblebot.shards), retryLimit: 10});
 
 const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
