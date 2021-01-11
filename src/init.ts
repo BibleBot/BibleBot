@@ -59,6 +59,8 @@ bot.on('ready', () => {
     log('info', null, 'initialization complete');
 });
 
+bot.on('debug', console.log);
+
 bot.on('error', (error) => {
     handleError(error);
 });
