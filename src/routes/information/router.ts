@@ -70,15 +70,19 @@ export class InformationRouter {
     async getStats(ctx: Context): Promise<void> {
         const lang = ctx.language;
 
-        ctx.bot.shard.fetchClientValues('guilds.cache').then(async (guilds: Guild[]) => {
+        ctx.bot.shard.broadcastEval('this.guilds.cache').then(async (shardGuildsArray) => {
             let userCount = 0;
-
-            guilds.forEach((guild) => {
-                userCount += guild.memberCount;
+            
+            shardGuildsArray.forEach((guilds) => {
+                guilds.forEach((guild) => {
+                    userCount += guild.memberCount;
+                });
             });
 
-            const guildCount = await ctx.bot.shard.fetchClientValues('guilds.cache.size');
-            const channelCount = await ctx.bot.shard.fetchClientValues('channels.cache.size');
+            const guildCounts = await ctx.bot.shard.fetchClientValues('guilds.cache.size');
+            const guildCount = guildCounts.reduce((a, b) => { return a + b; }, 0);
+            const channelCounts = await ctx.bot.shard.fetchClientValues('channels.cache.size');
+            const channelCount = channelCounts.reduce((a, b) => { return a + b; }, 0);
 
             const prefCount = await Preference.estimatedDocumentCount().exec();
             const gPrefCount = await GuildPreference.estimatedDocumentCount().exec();

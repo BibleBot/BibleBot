@@ -20,7 +20,7 @@ export const startDailyVerse = (bot: Client): void => {
             } else if (guilds.length > 0) {
                 for (const guildPref of guilds) {
                     try {
-                        bot.guilds.fetch(guildPref.guild).then((guild) => {
+                        bot.guilds.cache.filter((guild) => { return guildPref.guild == guild.id; }).forEach((guild) => {
                             const chan = guild.channels.resolve(guildPref.dailyVerseChannel);
                             const ctx = new Context('auto', bot, (chan as TextChannel), guild, null, null,
                                                     { headings: true, verseNumbers: true, display: 'embed' }, guildPref, null);
@@ -31,8 +31,6 @@ export const startDailyVerse = (bot: Client): void => {
                                     version: guildPref.version
                                 });
                             });
-                        }).catch(() => {
-                            return;
                         });
                     } catch {
                         continue;
