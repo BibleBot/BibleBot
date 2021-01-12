@@ -56,8 +56,6 @@ bot.on('ready', () => {
     log('info', bot.shard.ids[0], 'started automatic daily verses');
 });
 
-bot.on('debug', console.log);
-
 bot.on('error', (error) => {
     handleError(error);
 });
