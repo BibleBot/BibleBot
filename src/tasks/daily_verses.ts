@@ -31,6 +31,8 @@ export const startDailyVerse = (bot: Client): void => {
                                     version: guildPref.version
                                 });
                             });
+                        }).catch(() => {
+                            return;
                         });
                     } catch {
                         continue;

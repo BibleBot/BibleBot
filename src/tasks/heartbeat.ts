@@ -5,16 +5,9 @@ import { log } from '../helpers/logger';
 export const startHeartbeatMonitor = (bot: Client): void => {
     cron.schedule('30 * * * * *', () => {
         try {
-            const shards = [...bot.ws.shards.values()];
-            const pings = [];
-            
-            for (const shard of shards) {
-                pings.push(`${shards.indexOf(shard)}: ${shard.ping}ms`);
-            }
-
-            log('info', null, `heartbeat (avg. ${Math.ceil(bot.ws.ping)}ms) - ${pings.join(', ')}`);
+            log('info', bot.shard.ids[0], `heartbeat (${Math.ceil(bot.ws.ping)}ms)`);
         } catch {
-            log('err', null, 'heartbeat failed - are we offline?');
+            log('err', bot.shard.ids[0], 'heartbeat failed - are we offline?');
         }
     }).start();
 };

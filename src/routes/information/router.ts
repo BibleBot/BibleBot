@@ -70,7 +70,9 @@ export class InformationRouter {
         const lang = ctx.language;
         let userCount = 0;
 
-        for (const guild of ctx.bot.guilds.cache.values()) {
+        const guilds = await ctx.bot.shard.fetchClientValues('guilds.cache');
+
+        for (const guild of guilds.values()) {
             userCount += guild.memberCount;
         }
 
@@ -92,9 +94,9 @@ export class InformationRouter {
         const platform = lang.getString('runningon').replace('<platform>', `**${platformMap[os.platform()]} ${os.release()}** (${os.arch()})`);
 
         git.getLastCommit((err, commit) => {
-            const message = `**${lang.getString('shardcount')}** ${ctx.bot.ws.shards.size}\n` +
-            `**${lang.getString('cachedguilds')}** ${ctx.bot.guilds.cache.size}\n` +
-            `**${lang.getString('cachedchannels')}** ${ctx.bot.channels.cache.size}\n` +
+            const message = `**${lang.getString('shardcount')}** ${ctx.bot.shard.count}\n` +
+            `**${lang.getString('cachedguilds')}** ${guilds.length}\n` +
+            `**${lang.getString('cachedchannels')}** ${ctx.bot.shard.fetchClientValues('channels.cache.size')}\n` +
             `**${lang.getString('cachedusers')}** ${userCount}\n\n` +
 
             `**${lang.getString('preferencecount')}** ${prefCount}\n` +

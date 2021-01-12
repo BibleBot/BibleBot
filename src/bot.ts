@@ -32,9 +32,9 @@ import { checkBotPermissions } from './helpers/permissions';
 
 const connect = () => {
     mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-        return log('info', null, 'shard connected to db');
+        return log('info', bot.shard.ids[0], 'shard connected to db');
     }).catch((err) => {
-        log('err', null, `error connecting to database: ${err}`);
+        log('err', bot.shard.ids[0], `error connecting to database: ${err}`);
         return process.exit(1);
     });
 };
@@ -50,12 +50,10 @@ process.on('unhandledRejection', (err: Error, promise) => {
 
 bot.on('ready', () => {
     heartbeats.startHeartbeatMonitor(bot);
-    log('info', null, 'started heartbeat monitor');
+    log('info', bot.shard.ids[0], 'started heartbeat monitor');
 
     dailyVerses.startDailyVerse(bot);
-    log('info', null, 'started automatic daily verses');
-
-    log('info', null, 'initialization complete');
+    log('info', bot.shard.ids[0], 'started automatic daily verses');
 });
 
 bot.on('debug', console.log);
@@ -65,6 +63,9 @@ bot.on('error', (error) => {
 });
 
 bot.on('shardReady', shard => {
+    connect();
+    mongoose.connection.on('disconnected', connect);
+    
     log('info', shard, 'shard connected');
     
     bot.user.setPresence({
@@ -182,8 +183,5 @@ bot.on('message', message => {
 
     
 });
-
-connect();
-mongoose.connection.on('disconnected', connect);
 
 bot.login(config.biblebot.token);
