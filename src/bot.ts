@@ -98,7 +98,13 @@ bot.on('message', message => {
         }
         
         if (!(message.channel instanceof DMChannel)) {
-            if (!checkBotPermissions(message.channel, message.guild)) {
+            let shouldLog = false;
+
+            if (message.content == '+permcheck') {
+                shouldLog = true;
+            }
+
+            if (!checkBotPermissions(message.channel, message.guild, shouldLog)) {
                 // If the bot doesn't have the necessary permissions, don't pursue further.
                 return;
             }

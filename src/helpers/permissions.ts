@@ -10,7 +10,7 @@ export function checkGuildPermissions(ctx: Context, callback: (hasPermission: bo
     });
 }
 
-export function checkBotPermissions(channel: TextChannel | NewsChannel, guild: Guild): boolean {
+export function checkBotPermissions(channel: TextChannel | NewsChannel, guild: Guild, shouldLog?: boolean): boolean {
     const permissionsNeeded = {
         'SEND_MESSAGES': Permissions.FLAGS.SEND_MESSAGES,
         'READ_MESSAGE_HISTORY': Permissions.FLAGS.READ_MESSAGE_HISTORY,
@@ -24,14 +24,18 @@ export function checkBotPermissions(channel: TextChannel | NewsChannel, guild: G
 
     for (const [key, permission] of Object.entries(permissionsNeeded)) {
         if (!guild.me.hasPermission(permission)) {
-            log('err', guild.shardID, `${guild.id} does not have the ${key} permissions`);
+            if (shouldLog) {
+                log('err', guild.shardID, `${guild.id} does not have the ${key} permissions`);
+            }
 
             return false;
         }
 
         if (!channelPerms.has(permission)) {
-            log('err', guild.shardID, `${channel.id} on ${guild.id} does not have the ${key} permission`);
-
+            if (shouldLog) {
+                log('err', guild.shardID, `${guild.id} does not have the ${key} permissions`);
+            }
+            
             return false;
         }
     }
