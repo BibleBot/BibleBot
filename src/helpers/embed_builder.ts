@@ -7,7 +7,7 @@ import { MessageEmbed } from 'discord.js';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
-const NORMAL_COLOR = 303102;
+const NORMAL_COLOR = 6709986;
 const ERROR_COLOR = 16723502;
 
 export function translateCommand(ctx: Context, args: string[]): string {
