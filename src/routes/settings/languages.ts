@@ -176,7 +176,7 @@ export class LanguageRouter {
         }
 
         ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'language', 'list']), message, false));
-        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, '+language list');
+        ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'language list');
     }
 
     getLanguage(ctx: Context): void {
