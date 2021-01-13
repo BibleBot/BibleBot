@@ -26,7 +26,7 @@ export class ResourcesCommandsRouter {
         `**+${lang.getCommand('apostles')}** - ${lang.getString('apostles_name')}\n` +
         `**+${lang.getCommand('nicene325')}** - ${lang.getString('nicene325_name')}\n` +
         `**+${lang.getCommand('nicene')}** - ${lang.getString('nicene_name')}\n` +
-        `**+${lang.getCommand('chalcedonian')}** - ${lang.getString('chalcedonian_name')}`;
+        `**+${lang.getCommand('chalcedon')}** - ${lang.getString('chalcedon_name')}`;
 
         ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'creeds']), message, false));
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'creeds');
