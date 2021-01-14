@@ -60,6 +60,10 @@ bot.on('error', (error) => {
     handleError(error);
 });
 
+bot.on('debug', (debug) => {
+    console.log(debug);
+});
+
 bot.on('shardReady', shard => {
     connect();
     mongoose.connection.on('disconnected', connect);
