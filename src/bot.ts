@@ -20,7 +20,12 @@ import { Client, DMChannel } from 'discord.js';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 
-const bot = new Client({ retryLimit: 10 });
+const bot = new Client({
+    retryLimit: 10,
+    messageCacheMaxSize: 100,
+    messageCacheLifetime: 600,
+    messageEditHistoryMaxSize: 100
+});
 
 const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();

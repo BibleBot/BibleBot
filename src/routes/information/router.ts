@@ -70,61 +70,49 @@ export class InformationRouter {
     async getStats(ctx: Context): Promise<void> {
         const lang = ctx.language;
 
-        ctx.bot.shard.broadcastEval('this.guilds.cache').then(async (shardGuildsArray) => {
-            let userCount = 0;
-            
-            shardGuildsArray.forEach((guilds) => {
-                guilds.forEach((guild) => {
-                    userCount += guild.memberCount;
-                });
-            });
+        const guildCounts = await ctx.bot.shard.fetchClientValues('guilds.cache.size');
+        const guildCount = guildCounts.reduce((a, b) => { return a + b; }, 0);
+        const channelCounts = await ctx.bot.shard.fetchClientValues('channels.cache.size');
+        const channelCount = channelCounts.reduce((a, b) => { return a + b; }, 0);
 
-            const guildCounts = await ctx.bot.shard.fetchClientValues('guilds.cache.size');
-            const guildCount = guildCounts.reduce((a, b) => { return a + b; }, 0);
-            const channelCounts = await ctx.bot.shard.fetchClientValues('channels.cache.size');
-            const channelCount = channelCounts.reduce((a, b) => { return a + b; }, 0);
+        const prefCount = await Preference.estimatedDocumentCount().exec();
+        const gPrefCount = await GuildPreference.estimatedDocumentCount().exec();
+        const versionCount = await Version.estimatedDocumentCount().exec();
+        const languageCount = await Language.estimatedDocumentCount().exec();
 
-            const prefCount = await Preference.estimatedDocumentCount().exec();
-            const gPrefCount = await GuildPreference.estimatedDocumentCount().exec();
-            const versionCount = await Version.estimatedDocumentCount().exec();
-            const languageCount = await Language.estimatedDocumentCount().exec();
+        const platformMap = {
+            'aix': 'IBM AIX',
+            'darwin': 'Darwin/MacOS',
+            'freebsd': 'FreeBSD',
+            'linux': 'Linux',
+            'openbsd': 'OpenBSD',
+            'sunos': 'SunOS',
+            'win32': 'Windows'
+        };
 
-            const platformMap = {
-                'aix': 'IBM AIX',
-                'darwin': 'Darwin/MacOS',
-                'freebsd': 'FreeBSD',
-                'linux': 'Linux',
-                'openbsd': 'OpenBSD',
-                'sunos': 'SunOS',
-                'win32': 'Windows'
-            };
+        const platform = lang.getString('runningon').replace('<platform>', `**${platformMap[os.platform()]} ${os.release()}** (${os.arch()})`);
 
-            const platform = lang.getString('runningon').replace('<platform>', `**${platformMap[os.platform()]} ${os.release()}** (${os.arch()})`);
+        git.getLastCommit((err, commit) => {
+            const message = `**${lang.getString('shardcount')}** ${ctx.bot.shard.count}\n` +
+            `**${lang.getString('cachedguilds')}** ${guildCount}\n` +
+            `**${lang.getString('cachedchannels')}** ${channelCount}\n\n` +
 
-            git.getLastCommit((err, commit) => {
-                const message = `**${lang.getString('shardcount')}** ${ctx.bot.shard.count}\n` +
-                `**${lang.getString('cachedguilds')}** ${guildCount}\n` +
-                `**${lang.getString('cachedchannels')}** ${channelCount}\n` +
-                `**${lang.getString('cachedusers')}** ${userCount}\n\n` +
+            `**${lang.getString('preferencecount')}** ${prefCount}\n` +
+            `**${lang.getString('guildprefcount')}** ${gPrefCount}\n` +
+            `**${lang.getString('versioncount')}** ${versionCount}\n` +
+            `**${lang.getString('languagecount')}** ${languageCount}\n\n` +
 
-                `**${lang.getString('preferencecount')}** ${prefCount}\n` +
-                `**${lang.getString('guildprefcount')}** ${gPrefCount}\n` +
-                `**${lang.getString('versioncount')}** ${versionCount}\n` +
-                `**${lang.getString('languagecount')}** ${languageCount}\n\n` +
-
-                `**BibleBot:** ${process.env.npm_package_version} ([${commit.shortHash}](https://github.com/BibleBot/BibleBot/commit/${commit.hash}))\n` +
-                `**Discord.js:** ${packageJson.dependencies['discord.js'].slice(1)}\n` + 
-                `**Mongoose:** ${packageJson.dependencies.mongoose.slice(1)}\n\n` +
+            `**BibleBot:** ${process.env.npm_package_version} ([${commit.shortHash}](https://github.com/BibleBot/BibleBot/commit/${commit.hash}))\n` +
+            `**Discord.js:** ${packageJson.dependencies['discord.js'].slice(1)}\n` + 
+            `**Mongoose:** ${packageJson.dependencies.mongoose.slice(1)}\n\n` +
                 
-                `${platform}`;
+            `${platform}`;
 
-                const embed = createEmbed(null, translateCommand(ctx, ['+', 'stats']), message, false);
-                embed.setThumbnail(config.biblebot.icon);
+            const embed = createEmbed(null, translateCommand(ctx, ['+', 'stats']), message, false);
+            embed.setThumbnail(config.biblebot.icon);
 
-                ctx.channel.send(embed);
-                ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'stats');
-            });
+            ctx.channel.send(embed);
+            ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'stats');
         });
-        
     }
 }
