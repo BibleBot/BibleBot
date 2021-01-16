@@ -7,15 +7,15 @@
     "genconf": "tsc && node ./dist/scripts/config_generator.js",
     "importdbs": "tsc && node ./dist/scripts/import_old_databases.js",
     "importlangs": "tsc && node ./dist/scripts/import_languages.js",
-    "prod": "tsc && node --max_old_space_size=4096 ./dist/init.js",
-    "dev": "tsc && node --trace-warnings --max_old_space_size=4096 ./dist/init.js",
+    "prod": "tsc && node ./dist/init.js",
+    "dev": "tsc && node --trace-warnings ./dist/init.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BibleBot/BibleBot.git"
   },
-  "author": "Seraphim R.P. (vypr)",
+  "author": "Evangelion Ltd.",
   "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/BibleBot/BibleBot/issues"
