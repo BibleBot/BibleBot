@@ -36,7 +36,7 @@ import handleError from './helpers/error_handler';
 import { checkBotPermissions } from './helpers/permissions';
 
 const connect = () => {
-    mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+    mongoose.connect(config.biblebot.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
         return log('info', bot.shard.ids[0], 'shard connected to db');
     }).catch((err) => {
         log('err', bot.shard.ids[0], `error connecting to database: ${err}`);
