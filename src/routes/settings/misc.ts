@@ -1,5 +1,4 @@
 import Context from '../../models/context';
-import Language from '../../models/language';
 import GuildPreference from '../../models/guild_preference';
 
 import { createEmbed, translateCommand } from '../../helpers/embed_builder';

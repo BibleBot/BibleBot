@@ -5,7 +5,6 @@ import 'moment-timezone';
 
 import Context from '../../models/context';
 import Version from '../../models/version';
-import Language from '../../models/language';
 import GuildPreference from '../../models/guild_preference';
 
 import * as utils from '../../helpers/verse_utils';

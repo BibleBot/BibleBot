@@ -7,7 +7,6 @@ import { JSDOM } from 'jsdom';
 import * as ora from 'ora';
 import * as _ from 'lodash';
 
-import * as defaultNames from './name_data/default_names.json';
 import * as apiBibleNames from './name_data/apibible_names.json';
 import * as abbreviations from './name_data/abbreviations.json';
 

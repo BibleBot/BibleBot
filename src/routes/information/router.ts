@@ -13,7 +13,6 @@ const packageJson = JSON.parse(fs.readFileSync(__dirname + '/../../../package.js
 const config = ini.parse(fs.readFileSync(`${__dirname}/../../config.ini`, 'utf-8'));
 
 import { translateCommand, createEmbed } from '../../helpers/embed_builder';
-import { Guild } from 'discord.js';
 
 export class InformationRouter {
     private static instance: InformationRouter;
