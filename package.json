@@ -23,14 +23,12 @@
   },
   "homepage": "https://github.com/BibleBot/BibleBot#readme",
   "devDependencies": {
-    "@floffah/node-memwatch": "github:Floffah/node-memwatch",
     "@types/jsdom": "^16.2.5",
     "@types/node": "^14.6.2",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
     "eslint": "^7.7.0",
     "eslint-plugin-json": "^2.1.2",
-    "nodemon": "^2.0.4",
     "typescript": "^4.0.2"
   },
   "dependencies": {
