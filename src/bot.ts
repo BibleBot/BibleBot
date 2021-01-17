@@ -35,6 +35,7 @@ const versesRouter = VersesRouter.getInstance();
 
 import * as heartbeats from './tasks/heartbeat';
 import * as dailyVerses from './tasks/daily_verses';
+import * as memoryUsage from './tasks/memory_monitor';
 import handleError from './helpers/error_handler';
 import { checkBotPermissions } from './helpers/permissions';
 
@@ -48,11 +49,16 @@ process.on('unhandledRejection', (err: Error, promise) => {
 });
 
 bot.on('ready', () => {
+    log('info', bot.shard.ids[0], 'shard connected to db');
+
     heartbeats.startHeartbeatMonitor(bot);
     log('info', bot.shard.ids[0], 'started heartbeat monitor');
 
     dailyVerses.startDailyVerse(bot);
     log('info', bot.shard.ids[0], 'started automatic daily verses');
+
+    memoryUsage.startMemoryMonitor(bot);
+    log('info', bot.shard.ids[0], 'started memory monitor');
 });
 
 bot.on('error', (error) => {
