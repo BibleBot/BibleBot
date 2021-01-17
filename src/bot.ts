@@ -35,15 +35,6 @@ import * as dailyVerses from './tasks/daily_verses';
 import handleError from './helpers/error_handler';
 import { checkBotPermissions } from './helpers/permissions';
 
-const connect = () => {
-    mongoose.connect(config.biblebot.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-        return log('info', bot.shard.ids[0], 'shard connected to db');
-    }).catch((err) => {
-        log('err', bot.shard.ids[0], `error connecting to database: ${err}`);
-        return process.exit(1);
-    });
-};
-
 process.on('unhandledRejection', (err: Error, promise) => {
     console.log('---------');
     console.log('Unhandled promise rejection:');
@@ -70,8 +61,6 @@ bot.on('debug', (debug) => {
 });
 
 bot.on('shardReady', shard => {
-    connect();
-    mongoose.connection.on('disconnected', connect);
     
     log('info', shard, 'shard connected');
     
@@ -197,4 +186,10 @@ bot.on('message', message => {
     
 });
 
-bot.login(config.biblebot.token);
+
+mongoose.connect(config.biblebot.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+    bot.login(config.biblebot.token);
+}).catch((err) => {
+    log('err', null, `error connecting to database: ${err}`);
+    return process.exit(1);
+});
