@@ -66,7 +66,9 @@ bot.on('error', (error) => {
 });
 
 bot.on('debug', (debug) => {
-    console.log(debug);
+    if (process.env.NODE_ENV == 'dev') {
+        console.log(debug);
+    }
 });
 
 bot.on('shardReady', shard => {
