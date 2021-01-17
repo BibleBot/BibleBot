@@ -7,6 +7,7 @@ import GuildPreference from '../models/guild_preference';
 import { DailyVerseRouter } from '../routes/resources/daily_verse';
 import Context from '../models/context';
 import Language from '../models/language';
+import { PreferenceDocument } from '../models/preference';
 
 const dailyVerseRouter = DailyVerseRouter.getInstance();
 
@@ -23,7 +24,7 @@ export const startDailyVerse = (bot: Client): void => {
                         bot.guilds.cache.filter((guild) => { return guildPref.guild == guild.id; }).forEach((guild) => {
                             const chan = guild.channels.resolve(guildPref.dailyVerseChannel);
                             const ctx = new Context('auto', bot, (chan as TextChannel), guild, null, null,
-                                                    { headings: true, verseNumbers: true, display: 'embed' }, guildPref, null);
+                                                    ({ headings: true, verseNumbers: true, display: 'embed' } as PreferenceDocument), guildPref, null);
 
                             Language.findOne({ objectName: guildPref.language }, (err, lang) => {
                                 (chan as TextChannel).send(lang.getString('votd'));

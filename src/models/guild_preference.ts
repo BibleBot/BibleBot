@@ -1,6 +1,23 @@
 import * as mongoose from 'mongoose';
 
-const GuildPreferenceSchema: mongoose.Schema = new mongoose.Schema({
+export interface GuildPreference {
+    guild: string;
+    prefix: string;
+    ignoringBrackets: string;
+    language: string;
+    version: string;
+    dailyVerseChannel: string;
+    dailyVerseTime: string;
+    dailyVerseTz: string;
+}
+
+export interface GuildPreferenceDocument extends GuildPreference, mongoose.Document {
+    // just to please the compiler
+}
+
+export type GuildPreferenceModel = mongoose.Model<GuildPreferenceDocument>;
+
+const GuildPreferenceSchema = new mongoose.Schema<GuildPreferenceDocument>({
     guild: { type: String, required: true },
     prefix: { type: String, required: true },
     ignoringBrackets: { type: String, required: true },
@@ -11,4 +28,4 @@ const GuildPreferenceSchema: mongoose.Schema = new mongoose.Schema({
     dailyVerseTz: { type: String, required: false }
 });
 
-export default mongoose.model('GuildPreference', GuildPreferenceSchema);
+export default mongoose.model<GuildPreferenceDocument, GuildPreferenceModel>('GuildPreference', GuildPreferenceSchema);

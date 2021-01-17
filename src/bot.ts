@@ -5,8 +5,11 @@ import { log } from './helpers/logger';
 
 import Context from './models/context';
 import Language from './models/language';
+import { LanguageDocument } from './models/language';
 import Preference from './models/preference';
+import { PreferenceDocument } from './models/preference';
 import GuildPreference from './models/guild_preference';
+import { GuildPreferenceDocument } from './models/guild_preference';
 
 import { CommandsRouter } from './routes/commands';
 import { VersesRouter } from './routes/verses';
@@ -113,25 +116,27 @@ bot.on('message', message => {
         return;
     }
 
-    Preference.findOne({ user: message.author.id }, (err, prefs) => {
+    Preference.findOne({ user: message.author.id }, (err, prefs: PreferenceDocument) => {
         if (err || !prefs) {
-            prefs = { ...defaultUserPreferences };
+            prefs = ({ ...defaultUserPreferences } as PreferenceDocument);
         }
 
-        GuildPreference.findOne({ guild: guildID }, (err, gPrefs) => {
+        GuildPreference.findOne({ guild: guildID }, (err, gPrefs: GuildPreferenceDocument) => {
             if (err || !gPrefs) {
-                gPrefs = { ...defaultGuildPreferences };
+                gPrefs = ({ ...defaultGuildPreferences } as GuildPreferenceDocument);
             }
 
-            Language.findOne({ objectName: prefs.language }, (err, lang) => {
+            Language.findOne({ objectName: prefs.language }, (err, lang: LanguageDocument) => {
                 if (err) {
                     throw new Error('Unable to obtain language, probable database error.');
                 }
 
                 if (message.author.bot) {
-                    prefs = gPrefs;
+                    prefs = ({ ...defaultUserPreferences } as PreferenceDocument);
 
                     prefs['user'] = message.author.id;
+                    prefs['version'] = gPrefs.version;
+                    prefs['language'] = gPrefs.language;
                 }
                 
                 const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, lang, prefs, gPrefs, message);

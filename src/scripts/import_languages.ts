@@ -35,7 +35,7 @@ const importLanguages = () => {
             eng.save((err, language) => {
                 if (err) {
                     log('err', 0, `unable to save ${eng['name']}`);
-                    log('err', 0, err);
+                    log('err', 0, err.message);
                 } else {
                     log('info', 0, `saved ${language.name}`);
                 }

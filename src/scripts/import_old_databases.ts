@@ -60,7 +60,7 @@ const importOldVersions = () => {
             newVersion.save((err, version) => {
                 if (err) {
                     log('err', 0, `unable to save ${oldVersion['abbv']}`);
-                    log('err', 0, err);
+                    log('err', 0, err.message);
 
                     console.log(oldVersion);
                     console.log('----');
@@ -103,7 +103,7 @@ const importOldPreferences = () => {
             newPreference.save((err, pref) => {
                 if (err) {
                     log('err', 0, `unable to save ${oldPreference.id}`);
-                    log('err', 0, err);
+                    log('err', 0, err.message);
 
                     console.log(oldPreference);
                     console.log('----');
@@ -150,7 +150,7 @@ const importOldGuildPreferences = () => {
             newGuildPreference.save((err, pref) => {
                 if (err) {
                     log('err', 0, `unable to save ${oldGuildPreference.id}`);
-                    log('err', 0, err);
+                    log('err', 0, err.message);
 
                     console.log(oldGuildPreference);
                     console.log('----');

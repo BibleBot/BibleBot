@@ -1,15 +1,14 @@
-import * as mongoose from 'mongoose';
-
 import Reference from './reference';
+import { VersionDocument } from './version';
 
 export default class Verse {
     private _passage: string;
     private _title: string;
     private _text: string;
     private _ref: Reference | string;
-    private _ver: mongoose.Document;
+    private _ver: VersionDocument;
 
-    constructor(passage: string, title: string, text: string, reference: Reference | string, version: mongoose.Document) {
+    constructor(passage: string, title: string, text: string, reference: Reference | string, version: VersionDocument) {
         this._passage = passage;
         this._title = title;
         this._text = text;
@@ -25,7 +24,7 @@ export default class Verse {
         return this._passage;
     }
 
-    version(): mongoose.Document {
+    version(): VersionDocument {
         if (this._ver) {
             return this._ver;
         }

@@ -1,6 +1,8 @@
 import * as Discord from 'discord.js';
-import * as mongoose from 'mongoose';
 import { logInteraction } from '../helpers/logger';
+import { GuildPreferenceDocument } from './guild_preference';
+import { LanguageDocument } from './language';
+import { PreferenceDocument } from './preference';
 
 export default class Context {
     id: string;
@@ -8,15 +10,15 @@ export default class Context {
     channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel;
     guild: Discord.Guild;
     msg: string;
-    language: mongoose.Document;
-    preferences: mongoose.Document;
-    guildPreferences: mongoose.Document;
+    language: LanguageDocument;
+    preferences: PreferenceDocument;
+    guildPreferences: GuildPreferenceDocument;
     shard: number;
     logInteraction;
     raw: Discord.Message;
 
     constructor(id: string, bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel, guild: Discord.Guild,
-                msg: string, language: mongoose.Document, preferences: mongoose.Document, guildPreferences: mongoose.Document, raw: Discord.Message) {
+                msg: string, language: LanguageDocument, preferences: PreferenceDocument, guildPreferences: GuildPreferenceDocument, raw: Discord.Message) {
         this.id = id;
         this.bot = bot;
         this.msg = msg;

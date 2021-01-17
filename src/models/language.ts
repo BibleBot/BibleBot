@@ -1,9 +1,25 @@
 import * as mongoose from 'mongoose';
 
-const LanguageSchema: mongoose.Schema = new mongoose.Schema({
+export interface Language {
+    name: string;
+    objectName: string;
+    rawObject: Record<string, string>;
+    defaultVersion: string;
+}
+
+export interface LanguageDocument extends Language, mongoose.Document {
+    getString(val: string): string;
+    getCommand(val: string): string;
+    getArgument(val: string): string;
+    getCommandKey(val: string): string;
+}
+
+export type LanguageModel = mongoose.Model<LanguageDocument>
+
+const LanguageSchema = new mongoose.Schema<LanguageDocument>({
     name: { type: String, required: true },
     objectName: { type: String, required: true },
-    rawObject: { type: mongoose.Mixed, required: true },
+    rawObject: { type: mongoose.Schema.Types.Mixed, required: true },
     defaultVersion: { type: String, required: true }
 });
 
@@ -29,4 +45,4 @@ LanguageSchema.methods.getCommandKey = function(value: string): string {
     return Object.keys(this.rawObject.commands).find(key => this.rawObject.commands[key] === value) || null;
 };
 
-export default mongoose.model('Language', LanguageSchema);
+export default mongoose.model<LanguageDocument, LanguageModel>('Language', LanguageSchema);

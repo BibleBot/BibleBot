@@ -180,8 +180,8 @@ export class VersionSettingsRouter {
         }
 
         for (let i = 0; i < totalPages; i++) {
-            const pageCounter = ctx.language.getString('pageOf').replace('<num>', i + 1)
-                                                                .replace('<total>', totalPages);
+            const pageCounter = ctx.language.getString('pageOf').replace('<num>', (i + 1).toString())
+                                                                .replace('<total>', totalPages.toString());
                                                                 
             const embed = createEmbed(null, `${translateCommand(ctx, ['+', 'version', 'list'])} - ${pageCounter}`, null, false);
 

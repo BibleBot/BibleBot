@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import { VersionDocument } from './version';
 
 export default class Reference {
     private _book: string;
@@ -6,12 +6,12 @@ export default class Reference {
     private _startingVerse: number;
     private _endingChapter: number;
     private _endingVerse: number;
-    public version: mongoose.Document;
+    public version: VersionDocument;
     private _isOT: boolean;
     private _isNT: boolean;
     private _isDEU: boolean;
 
-    constructor(book: string, startingChapter: number, startingVerse: number, endingChapter: number, endingVerse: number, version: mongoose.Document, isOT?: boolean, isNT?: boolean, isDEU?: boolean) {
+    constructor(book: string, startingChapter: number, startingVerse: number, endingChapter: number, endingVerse: number, version: VersionDocument, isOT?: boolean, isNT?: boolean, isDEU?: boolean) {
         this._book = book;
         this._startingChapter = startingChapter;
         this._startingVerse = startingVerse;

@@ -3,11 +3,11 @@ import * as fs from 'fs';
 
 import * as fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
-import mongoose from 'mongoose';
 
 import { purifyVerseText } from '../helpers/text_purification';
 import Reference from '../models/reference';
 import Verse from '../models/verse';
+import { VersionDocument } from '../models/version';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
@@ -16,7 +16,7 @@ const versionTable = {
     FBV: '65eec8e0b60e656b-01'
 };
 
-export function search(query: string, version: mongoose.Document, callback: (err: Error, res: Array<Record<string, string>>) => void): void {
+export function search(query: string, version: VersionDocument, callback: (err: Error, res: Array<Record<string, string>>) => void): void {
     const params = new URLSearchParams({
         query,
         limit: '10000',
@@ -49,7 +49,7 @@ export function search(query: string, version: mongoose.Document, callback: (err
         });
 }
 
-export function getResult(ref: Reference | string, headings: boolean, verseNumbers: boolean, version: mongoose.Document,
+export function getResult(ref: Reference | string, headings: boolean, verseNumbers: boolean, version: VersionDocument,
     callback: (err: Error, data: Verse) => void): void {
         if (ref instanceof Reference) {
             version = ref.version;

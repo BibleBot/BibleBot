@@ -3,9 +3,9 @@ import { JSDOM } from 'jsdom';
 import { purifyVerseText } from '../helpers/text_purification';
 import Reference from '../models/reference';
 import Verse from '../models/verse';
-import mongoose from 'mongoose';
+import { VersionDocument } from '../models/version';
 
-export function search(query: string, version: mongoose.Document, callback: (err: Error, res: Array<Record<string,string>>) => void): void {
+export function search(query: string, version: VersionDocument, callback: (err: Error, res: Array<Record<string,string>>) => void): void {
     query = escape(query);
 
     const url = `https://www.biblegateway.com/quicksearch/?search=${query}&version=${version.abbv}&searchtype=all&limit=50000&interface=print`;
@@ -46,7 +46,7 @@ export function search(query: string, version: mongoose.Document, callback: (err
     });
 }
 
-export function getResult(ref: Reference | string, headings: boolean, verseNumbers: boolean, version: mongoose.Document, 
+export function getResult(ref: Reference | string, headings: boolean, verseNumbers: boolean, version: VersionDocument, 
     callback: (err: Error, data: Verse) => void): void {
         if (ref instanceof Reference) {
             version = ref.version;

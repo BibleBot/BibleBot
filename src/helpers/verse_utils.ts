@@ -1,9 +1,7 @@
 import Reference from '../models/reference';
 import Context from '../models/context';
-import Version from '../models/version';
+import Version, { VersionDocument } from '../models/version';
 import Verse from '../models/verse';
-
-import * as mongoose from 'mongoose';
 
 import * as bibleGateway from '../interfaces/bible_gateway';
 import * as apiBible from '../interfaces/api_bible';
@@ -36,7 +34,7 @@ String.toTitleCase = (str: string): string => {
     return (str || '').replace(/\w\S*/g, (text) => { return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase(); });
 };
 
-function checkSectionSupport(ref: Reference | string, version: mongoose.Document): Record<string, unknown> {
+function checkSectionSupport(ref: Reference | string, version: VersionDocument): Record<string, unknown> {
     let supportValue;
     let section;
 
@@ -213,7 +211,7 @@ export function isSurroundedByBrackets(brackets: string, result: BookSearchResul
     return false;
 }
 
-export async function generateReference(result: BookSearchResult, msg: string, version: mongoose.Document): Promise<Reference> {
+export async function generateReference(result: BookSearchResult, msg: string, version: VersionDocument): Promise<Reference> {
     let book = result['name'];
     let startingChapter = 0;
     let startingVerse = 0;
@@ -323,7 +321,7 @@ export async function generateReference(result: BookSearchResult, msg: string, v
     return new Reference(book, startingChapter, startingVerse, endingChapter, endingVerse, version, isOT, isNT, isDEU);
 }
 
-export async function processVerse(ctx: Context, version: mongoose.Document, reference: Reference | string, ignoreSectionCheck?: boolean): Promise<void> {
+export async function processVerse(ctx: Context, version: VersionDocument, reference: Reference | string, ignoreSectionCheck?: boolean): Promise<void> {
     if (!ignoreSectionCheck) {
         const sectionCheckResults = checkSectionSupport(reference, version);
 

@@ -1,6 +1,21 @@
 import * as mongoose from 'mongoose';
 
-const VersionSchema: mongoose.Schema = new mongoose.Schema({
+export interface Version {
+    name: string;
+    abbv: string;
+    src: string;
+    supportsOldTestament: boolean;
+    supportsNewTestament: boolean;
+    supportsDeuterocanon: boolean;
+}
+
+export interface VersionDocument extends Version, mongoose.Document {
+    // just to please the compiler
+}
+
+export type VersionModel = mongoose.Model<VersionDocument>
+
+const VersionSchema = new mongoose.Schema<VersionDocument, VersionModel>({
     name: { type: String, required: true },
     abbv: { type: String, required: true },
     src: { type: String, required: true },
@@ -9,4 +24,4 @@ const VersionSchema: mongoose.Schema = new mongoose.Schema({
     supportsDeuterocanon: { type: Boolean, required: true },
 });
 
-export default mongoose.model('Version', VersionSchema);
+export default mongoose.model<VersionDocument, VersionModel>('Version', VersionSchema);
