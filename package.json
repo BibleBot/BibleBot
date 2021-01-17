@@ -7,8 +7,9 @@
     "genconf": "tsc && node ./dist/scripts/config_generator.js",
     "importdbs": "tsc && node ./dist/scripts/import_old_databases.js",
     "importlangs": "tsc && node ./dist/scripts/import_languages.js",
-    "prod": "tsc && node --trace-warnings ./dist/init.js",
-    "dev": "tsc && node --trace-warnings --inspect-brk ./dist/init.js",
+    "prod": "export NODE_ENV=production && tsc && node --trace-warnings ./dist/init.js",
+    "dev": "export NODE_ENV=dev && tsc && node --trace-warnings --inspect ./dist/init.js",
+    "windev": "set NODE_ENV=dev && tsc && node --trace-warnings --inspect ./dist/init.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/BibleBot/BibleBot#readme",
   "devDependencies": {
+    "@floffah/node-memwatch": "github:Floffah/node-memwatch",
     "@types/jsdom": "^16.2.5",
     "@types/node": "^14.6.2",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
