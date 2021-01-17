@@ -1,4 +1,4 @@
-import axios from 'axios';
+import * as fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 import { purifyVerseText } from '../helpers/text_purification';
 import Reference from '../models/reference';
@@ -12,9 +12,9 @@ export function search(query: string, version: mongoose.Document, callback: (err
 
     const results = [];
 
-    axios.get(url).then((res) => {
+    fetch(url).then(async (res) => {
         try {
-            const { document } = (new JSDOM(res.data)).window;
+            const { document } = (new JSDOM(await res.text())).window;
 
             Array.from(document.getElementsByClassName('row')).forEach((row) => {
                 const result = {};
@@ -52,9 +52,9 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
             version = ref.version;
         }
 
-        axios.get(`https://www.biblegateway.com/passage/?search=${ref.toString()}&version=${version.abbv}&interface=print`).then((res) => {
+        fetch(`https://www.biblegateway.com/passage/?search=${ref.toString()}&version=${version.abbv}&interface=print`).then(async (res) => {
             try {
-                const { document } = (new JSDOM(res.data)).window;
+                const { document } = (new JSDOM(await res.text())).window;
 
                 const container = document.getElementsByClassName('passage-col')[0];
 

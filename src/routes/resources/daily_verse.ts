@@ -1,4 +1,4 @@
-import axios from 'axios';
+import * as fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 import * as moment from 'moment';
 import 'moment-timezone';
@@ -30,9 +30,9 @@ export class DailyVerseRouter {
     }
 
     sendDailyVerse(ctx: Context, task?: Record<string, string>): void {
-        axios.get('https://www.biblegateway.com/reading-plans/verse-of-the-day/next').then((res) => {
+        fetch('https://www.biblegateway.com/reading-plans/verse-of-the-day/next').then(async (res) => {
             try {
-                const { document } = (new JSDOM(res.data)).window;
+                const { document } = (new JSDOM(await res.text())).window;
 
                 const verse = document.getElementsByClassName('rp-passage-display')[0].textContent;
                 let queryVersion = 'RSV';

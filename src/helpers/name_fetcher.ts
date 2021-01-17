@@ -1,8 +1,8 @@
 import * as ini from 'ini';
 import * as fs from 'fs';
 
-import axios from 'axios';
-import chalk = require('chalk');
+import * as chalk from 'chalk';
+import * as fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 import * as ora from 'ora';
 import * as _ from 'lodash';
@@ -72,10 +72,10 @@ function getBibleGatewayVersions(): Promise<Record<string, string>> {
         text: 'Grabbing BibleGateway versions...'
     }).start();
     
-    return axios.get('https://www.biblegateway.com/versions/').then(res => {
+    return fetch('https://www.biblegateway.com/versions/').then(async (res) => {
         const versions = {};
 
-        const { document } = (new JSDOM(res.data)).window;
+        const { document } = (new JSDOM(await res.text())).window;
         const container = document.getElementsByClassName('info-table')[0];
 
         Array.from(container.getElementsByClassName('translation-name')).forEach((element: Element) => {
@@ -103,12 +103,12 @@ function getBibleGatewayNames(versions: Record<string, string>): Promise<Record<
     }).start();
 
     links.forEach(link => {
-        promisesList.push(axios.get(encodeURI(link)));
+        promisesList.push(fetch(encodeURI(link)));
     });
 
     return Promise.all(promisesList).then(values => {
-        values.forEach(res => {
-            const { document } = (new JSDOM(res.data)).window;
+        values.forEach(async (res) => {
+            const { document } = (new JSDOM(await res.text())).window;
             const container = document.getElementsByClassName('chapterlinks')[0];
 
             if (container === undefined) {
@@ -153,10 +153,10 @@ function getAPIBibleVersions(): Promise<Record<string, string>> {
         text: 'Grabbing API.Bible versions...'
     }).start();
     
-    return axios.get('https://api.scripture.api.bible/v1/bibles', { headers: { 'api-key': config.apis.apiBible } }).then(res => {
+    return fetch('https://api.scripture.api.bible/v1/bibles', { headers: { 'api-key': config.apis.apiBible } }).then(async (res) => {
         const versions = {};
 
-        for (const version of res.data.data) {
+        for (const version of (await res.json()).data) {
             versions[version.name] = `https://api.scripture.api.bible/v1/bibles/${version.id}/books`; 
         }
 
@@ -177,12 +177,12 @@ function getAPIBibleNames(versions: Record<string, string>): Promise<Record<stri
     }).start();
 
     links.forEach(link => {
-        promisesList.push(axios.get(link, { headers: { 'api-key': config.apis.apiBible } }));
+        promisesList.push(fetch(link, { headers: { 'api-key': config.apis.apiBible } }));
     });
 
     return Promise.all(promisesList).then(values => {
-        values.forEach(res => {
-            for (const book of res.data.data) {
+        values.forEach(async (res) => {
+            for (const book of (await res.json()).data) {
                 const trueId = book.id;
                 let name = book.name;
                 const abbv = book.abbreviation;

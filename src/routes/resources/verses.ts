@@ -1,4 +1,4 @@
-import axios from 'axios';
+import * as fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 
 import Context from '../../models/context';
@@ -28,9 +28,9 @@ export class VerseCommandsRouter {
     }
 
     getRandomVerse(ctx: Context): void {
-        axios.get('https://dailyverses.net/random-bible-verse').then((res) => {
+        fetch('https://dailyverses.net/random-bible-verse').then(async (res) => {
             try {
-                const { document } = (new JSDOM(res.data)).window;
+                const { document } = (new JSDOM(await res.text())).window;
 
                 const container = document.getElementsByClassName('vr')[0];
                 const verse = container.getElementsByClassName('vc')[0].textContent;
@@ -53,9 +53,9 @@ export class VerseCommandsRouter {
     getTrulyRandomVerse(ctx: Context): void {
         const randomNumber = Math.floor(Math.random() * (31101 - 0 + 1));
 
-        axios.get(`https://biblebot.xyz/random-verses-data/${randomNumber}.txt`).then((res) => {
+        fetch(`https://biblebot.xyz/random-verses-data/${randomNumber}.txt`).then(async (res) => {
             try {
-                const verseArray = res.data.split(' ').slice(0, 2);
+                const verseArray = (await res.text()).split(' ').slice(0, 2);
 
                 const bookMap = {
                     'Sa1': '1 Samuel',

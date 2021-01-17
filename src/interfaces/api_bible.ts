@@ -1,7 +1,7 @@
 import * as ini from 'ini';
 import * as fs from 'fs';
 
-import axios from 'axios';
+import * as fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 import mongoose from 'mongoose';
 
@@ -17,12 +17,17 @@ const versionTable = {
 };
 
 export function search(query: string, version: mongoose.Document, callback: (err: Error, res: Array<Record<string, string>>) => void): void {
-    axios.get(`https://api.scripture.api.bible/v1/bibles/${versionTable[version.abbv]}/search`, {
-            headers: { 'api-key': config.apis.apiBible },
-            params: { query, limit: 10000, sort: 'canonical' }
-        }).then((res) => {
+    const params = new URLSearchParams({
+        query,
+        limit: '10000',
+        sort: 'canonical'
+    });
+
+    fetch(`https://api.scripture.api.bible/v1/bibles/${versionTable[version.abbv]}/search?${params}`, {
+            headers: { 'api-key': config.apis.apiBible }
+        }).then(async (res) => {
             try {
-                const data = res.data.data.verses;
+                const data = (await res.json()).data.verses;
                 const results = [];
 
                 if (data.length == 0) {
@@ -50,12 +55,16 @@ export function getResult(ref: Reference | string, headings: boolean, verseNumbe
             version = ref.version;
         }
 
-        axios.get(`https://api.scripture.api.bible/v1/bibles/${versionTable[version.abbv]}/search`, {
-            headers: { 'api-key': config.apis.apiBible },
-            params: { query: ref.toString(), limit: 1 }
-        }).then((res) => {
+        const params = new URLSearchParams({
+            'query': ref.toString(),
+            'limit': '1'
+        });
+
+        fetch(`https://api.scripture.api.bible/v1/bibles/${versionTable[version.abbv]}/search?${params}`, {
+            headers: { 'api-key': config.apis.apiBible }
+        }).then(async (res) => {
             try {
-                const data = res.data.data.passages;
+                const data = (await res.json()).data.passages;
                 let text;
 
                 if (data.length == 0) {
