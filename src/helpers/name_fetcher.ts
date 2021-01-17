@@ -12,10 +12,10 @@ import * as apiBibleNames from './name_data/apibible_names.json';
 import * as abbreviations from './name_data/abbreviations.json';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
+const bookNames = JSON.parse(fs.readFileSync(`${__dirname}/name_data/completed_names.json`, 'utf-8'));
 
 export function getBookNames(): Record<string, Array<string>> {
-    const file = fs.readFileSync(`${__dirname}/name_data/completed_names.json`, 'utf-8');
-    return JSON.parse(file);
+    return bookNames;
 }
 
 export async function fetchBookNames(isDryRun: boolean): Promise<boolean> {
