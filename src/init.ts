@@ -13,7 +13,7 @@ const shardManager = new ShardingManager('./dist/bot.js', {
 
 });
 
-log('info', null, `BibleBot v${process.env.npm_package_version} by Evangelion Ltd.`);
+log('info', null, `BibleBot v${process.env.npm_package_version} by Kerygma Digital`);
 
 fetchBookNames(config.biblebot.dry == 'True').then(() => {
     fs.writeFile(__dirname + '/helpers/existing_paginators.json', JSON.stringify({ 'userIDs': [ ] }), (err) => {
