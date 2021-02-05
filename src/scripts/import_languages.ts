@@ -5,9 +5,12 @@ import * as mongoose from 'mongoose';
 import { log } from '../helpers/logger';
 
 import { readFileSync } from 'fs';
+import * as ini from 'ini';
+
+const config = ini.parse(readFileSync(`${__dirname}/../config.ini`, 'utf-8'));
 
 const connect = () => {
-    mongoose.connect('mongodb://localhost:27017/db', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+    mongoose.connect(config.biblebot.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
         return log('info', 0, 'connected to db');
     }).catch((err) => {
         log('err', 0, `error connecting to database: ${err}`);
