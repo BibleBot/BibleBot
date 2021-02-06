@@ -24,13 +24,7 @@ import { Client, DMChannel } from 'discord.js';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 
-const bot = new Client({
-    retryLimit: 10,
-    messageCacheMaxSize: 100,
-    messageCacheLifetime: 300,
-    messageEditHistoryMaxSize: 1,
-    messageSweepInterval: 300
-});
+const bot = new Client();
 
 const commandsRouter = CommandsRouter.getInstance();
 const versesRouter = VersesRouter.getInstance();
