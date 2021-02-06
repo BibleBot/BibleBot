@@ -93,8 +93,7 @@ export class InformationRouter {
 
         git.getLastCommit((err, commit) => {
             const message = `**${lang.getString('shardcount')}** ${ctx.bot.shard.count}\n` +
-            `**${lang.getString('cachedguilds')}** ${guildCount}\n` +
-            `**${lang.getString('cachedchannels')}** ${channelCount}\n\n` +
+            `**${lang.getString('cachedguilds')}** ${guildCount}\n\n` +
 
             `**${lang.getString('preferencecount')}** ${prefCount}\n` +
             `**${lang.getString('guildprefcount')}** ${gPrefCount}\n` +
@@ -102,7 +101,7 @@ export class InformationRouter {
             `**${lang.getString('languagecount')}** ${languageCount}\n\n` +
 
             `**BibleBot:** ${process.env.npm_package_version} ([${commit.shortHash}](https://github.com/BibleBot/BibleBot/commit/${commit.hash}))\n` +
-            `**Discord.js:** ${packageJson.dependencies['discord.js'].slice(1)}\n` + 
+            `**Discord.js:** ${packageJson.dependencies['discord.js-light'].slice(1)}\n` + 
             `**Mongoose:** ${packageJson.dependencies.mongoose.slice(1)}\n\n` +
                 
             `${platform}`;
