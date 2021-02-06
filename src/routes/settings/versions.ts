@@ -25,7 +25,7 @@ export class VersionSettingsRouter {
         return VersionSettingsRouter.instance;
     }
 
-    setUserVersion(ctx: Context, args: string[]): void {
+    async setUserVersion(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -96,7 +96,7 @@ export class VersionSettingsRouter {
         });
     }
 
-    setGuildVersion(ctx: Context, args: string[]): void {
+    async setGuildVersion(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -262,16 +262,16 @@ export class VersionSettingsRouter {
         ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'version']), message, false));
     }
 
-    processCommand(ctx: Context, params: Array<string>): void {
+    async processCommand(ctx: Context, params: Array<string>): Promise<void> {
         const subcommand = ctx.language.getCommandKey(params[0]);
         const args = params.slice(1);
 
         switch (subcommand) {
             case 'set':
-                this.setUserVersion(ctx, args);
+                await this.setUserVersion(ctx, args);
                 break;
             case 'setserver':
-                checkGuildPermissions(ctx, (hasPermission) => {
+                checkGuildPermissions(ctx, async (hasPermission) => {
                     if (hasPermission) {
                         this.setGuildVersion(ctx, args);
                     } else {
@@ -283,13 +283,13 @@ export class VersionSettingsRouter {
                 });
                 break;
             case 'list':
-                this.getVersionList(ctx);
+                await this.getVersionList(ctx);
                 break;
             case 'info':
-                this.getVersionInfo(ctx, args);
+                await this.getVersionInfo(ctx, args);
                 break;
             default:
-                this.getVersion(ctx);
+                await this.getVersion(ctx);
                 break;
         }
     }

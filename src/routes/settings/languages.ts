@@ -24,7 +24,7 @@ export class LanguageRouter {
         return LanguageRouter.instance;
     }
 
-    setUserLanguage(ctx: Context, args: string[]): void {
+    async setUserLanguage(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -95,7 +95,7 @@ export class LanguageRouter {
         });
     }
 
-    setGuildLanguage(ctx: Context, args: string[]): void {
+    async setGuildLanguage(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -179,7 +179,7 @@ export class LanguageRouter {
         ctx.logInteraction('info', ctx.shard, ctx.id, ctx.channel, 'language list');
     }
 
-    getLanguage(ctx: Context): void {
+    async getLanguage(ctx: Context): Promise<void> {
         Language.findOne({ objectName: ctx.preferences.language }, (err, lang) => {
             Language.findOne({ objectName: ctx.guildPreferences.language }, (err, gLang) => {
                 const message = `${lang.getString('languageused')}\n` +
@@ -195,18 +195,18 @@ export class LanguageRouter {
         });
     }
 
-    processCommand(ctx: Context, params: Array<string>): void {
+    async processCommand(ctx: Context, params: Array<string>): Promise<void> {
         const subcommand = ctx.language.getCommandKey(params[0]);
         const args = params.slice(1);
 
         switch (subcommand) {
             case 'set':
-                this.setUserLanguage(ctx, args);
+                await this.setUserLanguage(ctx, args);
                 break;
             case 'setserver':
-                checkGuildPermissions(ctx, (hasPermission) => {
+                checkGuildPermissions(ctx, async (hasPermission) => {
                     if (hasPermission) {
-                        this.setGuildLanguage(ctx, args);
+                        await this.setGuildLanguage(ctx, args);
                     } else {
                         const lang = ctx.language;
 
@@ -216,10 +216,10 @@ export class LanguageRouter {
                 });
                 break;
             case 'list':
-                this.getLanguageList(ctx);
+                await this.getLanguageList(ctx);
                 break;
             default:
-                this.getLanguage(ctx);
+                await this.getLanguage(ctx);
                 break;
         }
     }

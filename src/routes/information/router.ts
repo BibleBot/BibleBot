@@ -29,7 +29,7 @@ export class InformationRouter {
         return InformationRouter.instance;
     }
 
-    getHelp(ctx: Context): void {
+    async getHelp(ctx: Context): Promise<void> {
         const lang = ctx.language;
         const title = lang.getString('biblebot').replace('<version>', process.env.npm_package_version);
         const desc = lang.getString('credit');

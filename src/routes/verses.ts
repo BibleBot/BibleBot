@@ -18,13 +18,13 @@ export class VersesRouter {
         return VersesRouter.instance;
     }
 
-    processMessage(ctx: Context, inputType: string): void {
+    async processMessage(ctx: Context, inputType: string): Promise<void> {
         // get rid of newlines and instead put a space between lines
         const msg = ctx.msg.split(/\r?\n/).join(' ');
         
         if (!msg.includes(' ')) { return; }
 
-        const results = utils.findBooksInMessage(msg);
+        const results = await utils.findBooksInMessage(msg);
 
         if (results.length > 10) {
             ctx.channel.send(ctx.language.getString('donutspam'));
@@ -32,8 +32,8 @@ export class VersesRouter {
             return;
         }
 
-        results.forEach((result) => {
-            if (utils.isSurroundedByBrackets(ctx.guildPreferences.ignoringBrackets, result, msg)) {
+        results.forEach(async (result) => {
+            if (await utils.isSurroundedByBrackets(ctx.guildPreferences.ignoringBrackets, result, msg)) {
                 return;
             }
 

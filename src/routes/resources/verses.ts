@@ -27,7 +27,7 @@ export class VerseCommandsRouter {
         return VerseCommandsRouter.instance;
     }
 
-    getRandomVerse(ctx: Context): void {
+    async getRandomVerse(ctx: Context): Promise<void> {
         fetch('https://dailyverses.net/random-bible-verse').then(async (res) => {
             try {
                 const { document } = (new JSDOM(await res.text())).window;
@@ -50,7 +50,7 @@ export class VerseCommandsRouter {
         });
     }
 
-    getTrulyRandomVerse(ctx: Context): void {
+    async getTrulyRandomVerse(ctx: Context): Promise<void> {
         const randomNumber = Math.floor(Math.random() * (31101 - 0 + 1));
 
         fetch(`https://biblebot.xyz/random-verses-data/${randomNumber}.txt`).then(async (res) => {

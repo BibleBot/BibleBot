@@ -18,7 +18,6 @@ import * as defaultUserPreferences from './helpers/default_user_preference.json'
 import * as defaultGuildPreferences from './helpers/default_guild_preference.json';
 
 import * as mongoose from 'mongoose';
-import * as memwatch from '@airbnb/node-memwatch';
 
 import { Client, DMChannel } from 'discord.js';
 
@@ -90,7 +89,6 @@ bot.on('shardResume', shard => {
 });
 
 bot.on('message', async message => {
-    const hd = new memwatch.HeapDiff();
     if (message.author.id === bot.user.id) return;
     let guildID = null;
     
@@ -160,18 +158,16 @@ bot.on('message', async message => {
     try {
         if (prefix == guildPrefs.prefix || couldBeRescue) {
             if (commandsRouter.isOwnerCommand(potentialCommand)) {
-                commandsRouter.processOwnerCommand(ctx);
+                await commandsRouter.processOwnerCommand(ctx);
             } else if (commandsRouter.isCommand(potentialCommand)) {
-                commandsRouter.processCommand(ctx);
+                await commandsRouter.processCommand(ctx);
             }
         } else if (ctx.msg.includes(':')) {
-            versesRouter.processMessage(ctx, 'default');
+            await versesRouter.processMessage(ctx, 'default');
         }
     } catch (err) {
         handleError(err);
     }
-
-    console.log(hd.diff());
 });
 
 
