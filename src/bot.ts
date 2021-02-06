@@ -29,7 +29,7 @@ const bot = new Client({
     messageCacheMaxSize: 100,
     messageCacheLifetime: 300,
     messageEditHistoryMaxSize: 1,
-    messageSweepInterval: 1
+    messageSweepInterval: 300
 });
 
 const commandsRouter = CommandsRouter.getInstance();
