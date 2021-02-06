@@ -18,6 +18,7 @@ import * as defaultUserPreferences from './helpers/default_user_preference.json'
 import * as defaultGuildPreferences from './helpers/default_guild_preference.json';
 
 import * as mongoose from 'mongoose';
+import * as memwatch from '@airbnb/node-memwatch';
 
 import { Client, DMChannel } from 'discord.js';
 
@@ -72,15 +73,14 @@ bot.on('debug', (debug) => {
 });
 
 bot.on('shardReady', shard => {
-    
-    log('info', shard, 'shard connected');
-    
     bot.user.setPresence({
         activity: {
             name: `${config.biblebot.commandPrefix}biblebot v${process.env.npm_package_version} | Shard: ${String(shard + 1)} / ${String(bot.options.shardCount)}`
         },
         shardID: shard
     });
+
+    log('info', shard, 'shard connected');
 });
 
 bot.on('shardDisconnect', (_, shard) => {
@@ -94,7 +94,8 @@ bot.on('shardResume', shard => {
     log('info', shard, 'shard resuming');
 });
 
-bot.on('message', message => {
+bot.on('message', async message => {
+    const hd = new memwatch.HeapDiff();
     if (message.author.id === bot.user.id) return;
     let guildID = null;
     
@@ -124,79 +125,58 @@ bot.on('message', message => {
         return;
     }
 
-    Preference.findOne({ user: message.author.id }, (err, prefs: PreferenceDocument) => {
-        if (err || !prefs) {
-            prefs = ({ ...defaultUserPreferences } as PreferenceDocument);
-        }
+    let prefs: PreferenceDocument = await Preference.findOne({ user: message.author.id }).exec();
+    let guildPrefs: GuildPreferenceDocument = await GuildPreference.findOne({ guild: guildID }).exec();
 
-        GuildPreference.findOne({ guild: guildID }, (err, gPrefs: GuildPreferenceDocument) => {
-            if (err || !gPrefs) {
-                gPrefs = ({ ...defaultGuildPreferences } as GuildPreferenceDocument);
-            }
+    if (!prefs) {
+        prefs = ({ ...defaultUserPreferences } as PreferenceDocument);
+    }
 
-            Language.findOne({ objectName: prefs.language }, (err, lang: LanguageDocument) => {
-                if (err) {
-                    throw new Error('Unable to obtain language, probable database error.');
-                }
+    if (!guildPrefs) {
+        guildPrefs = ({ ...defaultGuildPreferences } as GuildPreferenceDocument);
+    }
 
-                if (message.author.bot) {
-                    prefs = ({ ...defaultUserPreferences } as PreferenceDocument);
+    const language: LanguageDocument = await Language.findOne({ objectName: prefs.language }).exec();
+    if (!language) {
+        throw new Error('Unable to obtain language, probable database error.');
+    }
 
-                    prefs['user'] = message.author.id;
-                    prefs['version'] = gPrefs.version;
-                    prefs['language'] = gPrefs.language;
-                }
+    if (message.author.bot) {
+        prefs = ({ ...defaultUserPreferences } as PreferenceDocument);
+
+        prefs['user'] = message.author.id;
+        prefs['version'] = guildPrefs.version;
+        prefs['language'] = guildPrefs.language;
+    }
                 
-                const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, lang, prefs, gPrefs, message);
+    const ctx = new Context(message.author.id, bot, message.channel, message.guild, message.content, language, prefs, guildPrefs, message);
     
-                const prefix = ctx.msg.split(' ')[0].slice(0, 1);
-                const firstItem = ctx.msg.split(' ')[0].slice(1);
-                const potentialCommand = lang.getCommandKey(firstItem);
-                let couldBeRescue = false;
+    const prefix = ctx.msg.split(' ')[0].slice(0, 1);
+    const firstItem = ctx.msg.split(' ')[0].slice(1);
+    const potentialCommand = language.getCommandKey(firstItem);
+    let couldBeRescue = false;
 
-                if (prefix == gPrefs.prefix || prefix == config.biblebot.commandPrefix) {
-                    if (potentialCommand == 'biblebot' || firstItem == 'biblebot') {
-                        couldBeRescue = true;
-                    }
-                }
+    if (prefix == guildPrefs.prefix || prefix == config.biblebot.commandPrefix) {
+        if (potentialCommand == 'biblebot' || firstItem == 'biblebot') {
+            couldBeRescue = true;
+        }
+    }
         
-                try {
-                    switch(prefs['input']) {
-                        case 'default': {
-                            if (prefix == gPrefs.prefix || couldBeRescue) {
-                                if (commandsRouter.isOwnerCommand(potentialCommand)) {
-                                    commandsRouter.processOwnerCommand(ctx);
-                                } else if (commandsRouter.isCommand(potentialCommand)) {
-                                    commandsRouter.processCommand(ctx);
-                                }
-                            } else if (ctx.msg.includes(':')) {
-                                versesRouter.processMessage(ctx, 'default');
-                            }
-            
-                            break;
-                        }
-                        //case 'erasmus': {
-                        //    // tl;dr - Erasmus verse processing is invoked by mention in beginning of message
-                        //    // or if verse is surrounded by square brackets or if message starts with '$'
-                        //    if (ctx.msg.startsWith('$')) {
-                        //            if (ctx.msg.includes(':')) {
-                        //                versesRouter.processMessage(ctx, 'erasmus');
-                        //            } else if (commandsRouter.isCommand(potentialCommand)) {
-                        //                commandsRouter.processCommand(ctx);
-                        //            }
-                        //    }
-                        //
-                        //    break;
-                        //}
-                    }
-                } catch (err) {
-                    handleError(err);
-                }
-            });
-        });
-    });
+    try {
+        if (prefix == guildPrefs.prefix || couldBeRescue) {
+            if (commandsRouter.isOwnerCommand(potentialCommand)) {
+                commandsRouter.processOwnerCommand(ctx);
+            } else if (commandsRouter.isCommand(potentialCommand)) {
+                commandsRouter.processCommand(ctx);
+            }
+        } else if (ctx.msg.includes(':')) {
+            versesRouter.processMessage(ctx, 'default');
+        }
+    } catch (err) {
+        handleError(err);
+    }
 
-    
+    console.log(hd.diff());
 });
 
 
