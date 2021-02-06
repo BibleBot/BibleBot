@@ -20,7 +20,7 @@ export class FormattingSettingsRouter {
         return FormattingSettingsRouter.instance;
     }
 
-    setVerseNumbers(ctx: Context, args: string[]): void {
+    async setVerseNumbers(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -90,7 +90,7 @@ export class FormattingSettingsRouter {
         });
     }
 
-    setHeadings(ctx: Context, args: string[]): void {
+    async setHeadings(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -160,7 +160,7 @@ export class FormattingSettingsRouter {
         });
     }
 
-    setDisplayStyle(ctx: Context, args: string[]): void {
+    async setDisplayStyle(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -234,22 +234,22 @@ export class FormattingSettingsRouter {
         ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'formatting']), message, false));
     }
 
-    processCommand(ctx: Context, params: Array<string>): void {
+    async processCommand(ctx: Context, params: Array<string>): Promise<void> {
         const subcommand = ctx.language.getCommandKey(params[0]);
         const args = params.slice(1);
 
         switch (subcommand) {
             case 'setversenumbers':
-                this.setVerseNumbers(ctx, args);
+                await this.setVerseNumbers(ctx, args);
                 break;
             case 'setheadings':
-                this.setHeadings(ctx, args);
+                await this.setHeadings(ctx, args);
                 break;
             case 'setdisplay':
-                this.setDisplayStyle(ctx, args);
+                await this.setDisplayStyle(ctx, args);
                 break;
             default:
-                this.getFormattingSettings(ctx);
+                await this.getFormattingSettings(ctx);
                 break;
         }
     }

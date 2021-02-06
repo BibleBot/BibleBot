@@ -55,7 +55,7 @@ export class CommandsRouter {
         return commandList.owner_commands.indexOf(str) > -1;
     }
 
-    processCommand(ctx: Context, rescue?: string): void {
+    async processCommand(ctx: Context, rescue?: string): Promise<void> {
         const tokens = rescue ? ctx.msg.slice(1).split(' ').slice(1) : ctx.msg.slice(1).split(' ');
         const command = rescue ? rescue : tokens[0];
         const args = tokens.slice(1);
@@ -63,52 +63,52 @@ export class CommandsRouter {
         switch (command) {
             case 'biblebot':
                 if (args.length == 0) {
-                    informationRouter.getHelp(ctx);
+                    await informationRouter.getHelp(ctx);
                 } else if (this.isCommand(args[0])) {
-                    this.processCommand(ctx, args[0]);
+                    await this.processCommand(ctx, args[0]);
                 }
                 break;
             case 'search':
-                verseCommandsRouter.search(ctx, args);
+                await verseCommandsRouter.search(ctx, args);
                 break;
             case 'version':
-                versionSettingsRouter.processCommand(ctx, args);
+                await versionSettingsRouter.processCommand(ctx, args);
                 break;
             case 'random':
-                verseCommandsRouter.getRandomVerse(ctx);
+                await verseCommandsRouter.getRandomVerse(ctx);
                 break;
             case 'truerandom':
-                verseCommandsRouter.getTrulyRandomVerse(ctx);
+                await verseCommandsRouter.getTrulyRandomVerse(ctx);
                 break;
             case 'dailyverse':
-                dailyVerseRouter.processCommand(ctx, args);
+                await dailyVerseRouter.processCommand(ctx, args);
                 break;
             case 'formatting':
-                formattingSettingsRouter.processCommand(ctx, args);
+                await formattingSettingsRouter.processCommand(ctx, args);
                 break;
             case 'language':
-                languageRouter.processCommand(ctx, args);
+                await languageRouter.processCommand(ctx, args);
                 break;
             case 'stats':
-                informationRouter.getStats(ctx);
+                await informationRouter.getStats(ctx);
                 break;
             case 'creeds':
-                resourceCommandsRouter.listCreeds(ctx);
+                await resourceCommandsRouter.listCreeds(ctx);
                 break;
             case 'catechisms':
                 //resourceCommandsRouter.listCatechisms(ctx);
                 break;
             case 'nicene325':
-                resourceCommandsRouter.sendEarlyNicene(ctx);
+                await resourceCommandsRouter.sendEarlyNicene(ctx);
                 break;
             case 'nicene':
-                resourceCommandsRouter.sendNicene(ctx);
+                await resourceCommandsRouter.sendNicene(ctx);
                 break;
             case 'apostles':
-                resourceCommandsRouter.sendApostles(ctx);
+                await resourceCommandsRouter.sendApostles(ctx);
                 break;
             case 'chalcedon':
-                resourceCommandsRouter.sendChalcedon(ctx);
+                await resourceCommandsRouter.sendChalcedon(ctx);
                 break;
             case 'ccc':
             case 'bbccc':
@@ -122,7 +122,7 @@ export class CommandsRouter {
                 //resourceCommandsRouter.sendLSC(ctx, args);
                 break;
             case 'misc':
-                miscSettingsRouter.processCommand(ctx, args);
+                await miscSettingsRouter.processCommand(ctx, args);
                 break;
             case 'invite':
                 ctx.channel.send('https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=93248');

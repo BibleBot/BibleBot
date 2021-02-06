@@ -28,7 +28,7 @@ export class DailyVerseRouter {
         return DailyVerseRouter.instance;
     }
 
-    sendDailyVerse(ctx: Context, task?: Record<string, string>): void {
+    async sendDailyVerse(ctx: Context, task?: Record<string, string>): Promise<void> {
         fetch('https://www.biblegateway.com/reading-plans/verse-of-the-day/next').then(async (res) => {
             try {
                 const { document } = (new JSDOM(await res.text())).window;
@@ -109,7 +109,7 @@ export class DailyVerseRouter {
         }
     }
 
-    clearAutomation(ctx: Context): void {
+    async clearAutomation(ctx: Context): Promise<void> {
         const lang = ctx.language;
 
         GuildPreference.findOne({ guild: ctx.guild.id }, (err, gPrefs) => {
@@ -155,7 +155,7 @@ export class DailyVerseRouter {
         });
     }
 
-    automationStatus(ctx: Context): void {
+    async automationStatus(ctx: Context): Promise<void> {
         const lang = ctx.language;
 
         GuildPreference.findOne({ guild: ctx.guild.id }, async (err, gPrefs) => {
@@ -189,7 +189,7 @@ export class DailyVerseRouter {
         });
     }
 
-    processCommand(ctx: Context, params: Array<string>): void {
+    async processCommand(ctx: Context, params: Array<string>): Promise<void> {
         let subcommand = ctx.language.getCommandKey(params[0]);
         const args = params.slice(1);
 
@@ -199,9 +199,9 @@ export class DailyVerseRouter {
 
         switch (subcommand) {
             case 'setup':
-                checkGuildPermissions(ctx, (hasPermission) => {
+                checkGuildPermissions(ctx, async (hasPermission) => {
                     if (hasPermission) {
-                        this.setupAutomation(ctx, args);
+                        await this.setupAutomation(ctx, args);
                     } else {
                         const lang = ctx.language;
                         
@@ -211,12 +211,12 @@ export class DailyVerseRouter {
                 });
                 break;
             case 'status':
-                this.automationStatus(ctx);
+                await this.automationStatus(ctx);
                 break;
             case 'clear':
-                checkGuildPermissions(ctx, (hasPermission) => {
+                checkGuildPermissions(ctx, async (hasPermission) => {
                     if (hasPermission) {
-                        this.clearAutomation(ctx);
+                        await this.clearAutomation(ctx);
                     } else {
                         const lang = ctx.language;
 
@@ -226,7 +226,7 @@ export class DailyVerseRouter {
                 });
                 break;
             default:
-                this.sendDailyVerse(ctx);
+                await this.sendDailyVerse(ctx);
                 break;
         }
     }

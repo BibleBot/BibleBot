@@ -21,7 +21,7 @@ export class MiscSettingsRouter {
         return MiscSettingsRouter.instance;
     }
 
-    setGuildPrefix(ctx: Context, args: string[]): void {
+    async setGuildPrefix(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -78,7 +78,7 @@ export class MiscSettingsRouter {
         });
     }
 
-    setGuildBrackets(ctx: Context, args: string[]): void {
+    async setGuildBrackets(ctx: Context, args: string[]): Promise<void> {
         const lang = ctx.language;
 
         if (args.length == 0) {
@@ -149,15 +149,15 @@ export class MiscSettingsRouter {
         ctx.channel.send(createEmbed(null, translateCommand(ctx, ['+', 'misc']), message, false));
     }
 
-    processCommand(ctx: Context, params: Array<string>): void {
+    async processCommand(ctx: Context, params: Array<string>): Promise<void> {
         const subcommand = ctx.language.getCommandKey(params[0]);
         const args = params.slice(1);
 
         switch (subcommand) {
             case 'setprefix':
-                checkGuildPermissions(ctx, (hasPermission) => {
+                checkGuildPermissions(ctx, async (hasPermission) => {
                     if (hasPermission) {
-                        this.setGuildPrefix(ctx, args);
+                        await this.setGuildPrefix(ctx, args);
                     } else {
                         const lang = ctx.language;
 
@@ -167,9 +167,9 @@ export class MiscSettingsRouter {
                 });
                 break;
             case 'setbrackets':
-                checkGuildPermissions(ctx, (hasPermission) => {
+                checkGuildPermissions(ctx, async (hasPermission) => {
                     if (hasPermission) {
-                        this.setGuildBrackets(ctx, args);
+                        await this.setGuildBrackets(ctx, args);
                     } else {
                         const lang = ctx.language;
 
@@ -179,7 +179,7 @@ export class MiscSettingsRouter {
                 });
                 break;
             default:
-                this.getMiscSettings(ctx);
+                await this.getMiscSettings(ctx);
                 break;
         }
     }

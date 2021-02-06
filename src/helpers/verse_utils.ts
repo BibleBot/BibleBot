@@ -84,7 +84,7 @@ export function sourceHasInterface(source: string): boolean {
     return sources[source].interface !== null;
 }
 
-export function findBooksInMessage(msg: string): Array<BookSearchResult> {
+export async function findBooksInMessage(msg: string): Promise<Array<BookSearchResult>> {
     // TODO: Check message for book name by amount of tokens.
     const msgTokens = msg.split(' ');
     const books = getBookNames();
@@ -192,7 +192,7 @@ export function findBooksInMessage(msg: string): Array<BookSearchResult> {
     return filteredResults;
 }
 
-export function isSurroundedByBrackets(brackets: string, result: BookSearchResult, msg: string): boolean {
+export async function isSurroundedByBrackets(brackets: string, result: BookSearchResult, msg: string): Promise<boolean> {
     const tokens = msg.split(' ');
     const pureIndexOfResult = msg.indexOf(tokens[result.index]);
 
