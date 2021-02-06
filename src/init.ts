@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as ini from 'ini';
 
-import { ShardingManager } from 'discord.js';
+import { ShardingManager } from 'discord.js-light';
 import { fetchBookNames } from './helpers/name_fetcher';
 import { log } from './helpers/logger';
 

@@ -19,7 +19,7 @@ import * as defaultGuildPreferences from './helpers/default_guild_preference.jso
 
 import * as mongoose from 'mongoose';
 
-import { Client, DMChannel } from 'discord.js';
+import { Client, DMChannel } from 'discord.js-light';
 
 const config = ini.parse(fs.readFileSync(`${__dirname}/config.ini`, 'utf-8'));
 
@@ -98,19 +98,6 @@ bot.on('message', async message => {
 
         if (['110373943822540800', '264445053596991498'].includes(message.guild.id)) {
             return;
-        }
-        
-        if (!(message.channel instanceof DMChannel)) {
-            let shouldLog = false;
-
-            if (message.content == '+permcheck') {
-                shouldLog = true;
-            }
-
-            if (!checkBotPermissions(message.channel, message.guild, shouldLog)) {
-                // If the bot doesn't have the necessary permissions, don't pursue further.
-                return;
-            }
         }
 
         guildID = message.guild.id;
