@@ -1,0 +1,52 @@
+version: '1.0.0-{build}'
+image: Visual Studio 2019
+
+clone_depth: 1
+
+branches:
+  only:
+    - master
+
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: bbp4RMA6lCInKRc0at1AV2EW8dSpYVR4QqoUjOT6eOUdA5uV9vXvXb0GJoSEpe2R
+  discord_webhook:
+    secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3vLH5eSf3G0pawFOhwJEj0cPqoqiGh1v95sc23adle9F6sYA+LCTdHYtiyL3Cz5traiteg2vQavv5pzPuWjxShv7PVsRsF4P77VDIBxthK5Z0ypG6K/A4gKOT3lijFv6oE=
+
+skip_commits:
+  message: /.*\[ci skip\].*/
+
+install:
+  - cmd: dotnet restore --verbosity q
+  - cmd: dotnet tool restore --verbosity q
+
+build_script:
+  - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj --verbosity q
+  - cmd: dotnet build ./src/BibleBot.Lib/BibleBot.Lib.csproj --verbosity q
+  - cmd: dotnet pack ./src/BibleBot.Lib/ -o . --verbosity q
+
+artifacts:
+  - path: ./src/BibleBot.Backend/bin/Debug/net5.0/publish
+    name: BibleBot.Backend
+    type: ElasticBeanstalkPackage
+  
+  - path: '*.nupkg'
+    type: NuGetPackage
+
+test_script:
+  - cmd: dotnet test --verbosity q /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+after_test:
+ - cmd: dotnet tool run csmacnz.Coveralls --opencover -i test\BibleBot.Backend.Tests\coverage.opencover.xml
+
+deploy:
+  - provider: NuGet
+    api_key:
+      secure: 3ldSZooGg5G90viYmQhqpQtGqTftoapjkaoGSim3tB7AmBlRIc/G3IqxAxcksdsP
+
+on_success:
+  - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+  - ps: ./send.ps1 success $env:discord_webhook
+on_failure:
+  - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+  - ps: ./send.ps1 failure $env:discord_webhook

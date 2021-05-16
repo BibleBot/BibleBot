@@ -1,3 +1,0 @@
-{
-    "compilerOptions": {"target":"ES2018", "sourceMap": true, "rootDir": "src", "outDir": "dist", "module": "commonjs", "resolveJsonModule": true, "allowSyntheticDefaultImports": true}
-}
