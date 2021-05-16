@@ -17,8 +17,8 @@ skip_commits:
   message: /.*\[ci skip\].*/
 
 install:
-  - cmd: dotnet restore
-  - cmd: nuget restore
+  - cmd: dotnet restore --verbosity q
+  - cmd: nuget restore -Verbosity quiet
 
 build_script:
   - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj --verbosity q
@@ -37,8 +37,8 @@ test_script:
   - sh: dotnet test --verbosity q
 
 after_test: 
-  - cmd: ./packages/OpenCover.4.7.1189/tools/OpenCover.Console.exe -register:user -filter:"+[*]*" -target:"packages/NUnit.Console.3.12.0/tools/nunit3-console.exe" -targetargs:"/domain:single test/BibleBot.Backend.Tests/bin/Debug/BibleBot.Backend.Tests.dll" -output:coverage.xml
-  - cmd: ./packages/coveralls.io.1.4.2/tools/coveralls.net.exe --opencover coverage.xml -r %coveralls%
+  - cmd: packages\OpenCover.4.7.1189\tools\OpenCover.Console.exe -register:user -filter:"+[*]*" -target:"packages\NUnit.Console.3.12.0\tools\nunit3-console.exe" -targetargs:"/domain:single test/BibleBot.Backend.Tests/bin/Debug/BibleBot.Backend.Tests.dll" -output:coverage.xml
+  - cmd: packages\coveralls.io.1.4.2\tools\coveralls.net.exe --opencover coverage.xml -r %coveralls%
 
 deploy:
   - provider: NuGet
