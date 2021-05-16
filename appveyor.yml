@@ -34,7 +34,7 @@ artifacts:
     type: NuGetPackage
 
 test_script:
-  - cmd: dotnet test --verbosity q
+  - cmd: dotnet test --verbosity q /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
 after_test:
  - cmd: dotnet tool run csmacnz.Coveralls --opencover -i coverage.xml
