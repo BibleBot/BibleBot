@@ -37,7 +37,7 @@ test_script:
   - cmd: dotnet test --verbosity q /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
 after_test:
- - cmd: dotnet tool run csmacnz.Coveralls --opencover -i coverage.xml
+ - cmd: dotnet tool run csmacnz.Coveralls --opencover -i test\BibleBot.Backend.Tests\coverage.opencover.xml
 
 deploy:
   - provider: NuGet
