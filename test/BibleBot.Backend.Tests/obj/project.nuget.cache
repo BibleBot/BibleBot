@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "k4/P9q0OP+3I4vH25z3DUDPuE9ofzXxPr1Ce6plA1UqIA9emBAl2aJcDPjOaz5AXvhtKh8Ui+hPvUNzzHqmdRQ==",
+  "dgSpecHash": "JiXLETKEmExdzymxZVjxy1JfyOU4A7oDHuVu8AgbYHGqKK8UYJpN1sG2iP6Kqxc4rb593ZI/yypXE1vaPQXBbw==",
   "success": true,
   "projectFilePath": "C:\\Users\\SeraphimRP\\Desktop\\Code\\BibleBot\\test\\BibleBot.Backend.Tests\\BibleBot.Backend.Tests.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\SeraphimRP\\.nuget\\packages\\coverlet.msbuild\\3.0.3\\coverlet.msbuild.3.0.3.nupkg.sha512",
     "C:\\Users\\SeraphimRP\\.nuget\\packages\\microsoft.codecoverage\\16.5.0\\microsoft.codecoverage.16.5.0.nupkg.sha512",
     "C:\\Users\\SeraphimRP\\.nuget\\packages\\microsoft.csharp\\4.0.1\\microsoft.csharp.4.0.1.nupkg.sha512",
     "C:\\Users\\SeraphimRP\\.nuget\\packages\\microsoft.dotnet.internalabstractions\\1.0.0\\microsoft.dotnet.internalabstractions.1.0.0.nupkg.sha512",
