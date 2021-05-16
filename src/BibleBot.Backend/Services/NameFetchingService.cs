@@ -14,11 +14,11 @@ namespace BibleBot.Backend.Services
 {
     public class NameFetchingService
     {
-        private Dictionary<string, string> _apiBibleNames;
-        private Dictionary<string, List<string>> _abbreviations;
+        private readonly Dictionary<string, string> _apiBibleNames;
+        private readonly Dictionary<string, List<string>> _abbreviations;
         private Dictionary<string, List<string>> _bookNames = new Dictionary<string, List<string>>();
         private List<string> _defaultNames;
-        private List<string> _nuisances;
+        private readonly List<string> _nuisances;
 
         private WebClient _webClient;
 
@@ -61,7 +61,7 @@ namespace BibleBot.Backend.Services
             return _defaultNames;
         }
 
-        public async void FetchBookNames(/*string apiBibleKey, */bool isDryRun)
+        public async Task FetchBookNames(/*string apiBibleKey, */bool isDryRun)
         {
             if (isDryRun)
             {
@@ -202,7 +202,7 @@ namespace BibleBot.Backend.Services
 
         private bool IsNuisance(string word)
         {
-            return _nuisances.Contains(word.ToLower()) || _nuisances.Contains($"{word.ToLower()}.");
+            return _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");
         }
 
         private Dictionary<string, List<string>> MergeDictionaries(List<Dictionary<string, List<string>>> dicts)

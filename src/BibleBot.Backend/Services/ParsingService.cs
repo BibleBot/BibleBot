@@ -19,9 +19,9 @@ namespace BibleBot.Backend.Services
             {
                 foreach (string item in bookName.Value)
                 {
-                    if (IsValueInString(str, item.ToLower()))
+                    if (IsValueInString(str, item.ToLowerInvariant()))
                     {
-                        str = str.Replace(item.ToLower(), bookName.Key);
+                        str = str.Replace(item.ToLowerInvariant(), bookName.Key);
                     }
                 }
             }
@@ -65,101 +65,102 @@ namespace BibleBot.Backend.Services
                     var colonRegex = new Regex(@":", RegexOptions.Compiled);
                     var colonQuantity = colonRegex.Matches(relevantToken).Count();
 
-                    switch (colonQuantity)
+                    if (colonQuantity == 2)
                     {
-                        case 2:
-                            var span = relevantToken.Split("-");
+                        var span = relevantToken.Split("-");
 
-                            foreach (var pairString in span)
+                        foreach (var pairString in span)
+                        {
+                            var pairStringSplit = pairString.Split(":");
+
+                            foreach (var pairValue in pairStringSplit)
                             {
-                                var pairStringSplit = pairString.Split(":");
-
-                                foreach (var pairValue in pairStringSplit)
-                                {
-                                    pairStringSplit[System.Array.IndexOf(pairStringSplit, pairValue)] = RemovePunctuation(pairValue);
-                                }
-                                
-                                try
-                                {
-                                    int firstNum = int.Parse(pairStringSplit[0]);
-                                    int secondNum = int.Parse(pairStringSplit[1]);
-
-                                    if (startingChapter == 0)
-                                    {
-                                        startingChapter = firstNum;
-                                        startingVerse = secondNum;
-                                    }
-                                    else
-                                    {
-                                        endingChapter = firstNum;
-                                        endingVerse = secondNum;
-                                    }
-                                }
-                                catch
-                                {
-                                    return null;
-                                }
+                                pairStringSplit[System.Array.IndexOf(pairStringSplit, pairValue)] = RemovePunctuation(pairValue);
                             }
-
-                            break;
-                        case 1:
-                            var pair = relevantToken.Split(":");
-
+                                
                             try
                             {
-                                int num = int.Parse(pair[0]);
+                                int firstNum = int.Parse(pairStringSplit[0]);
+                                int secondNum = int.Parse(pairStringSplit[1]);
 
-                                startingChapter = num;
-                                endingChapter = num;
+                                if (startingChapter == 0)
+                                {
+                                    startingChapter = firstNum;
+                                    startingVerse = secondNum;
+                                }
+                                else
+                                {
+                                    endingChapter = firstNum;
+                                    endingVerse = secondNum;
+                                }
                             }
                             catch
                             {
                                 return null;
                             }
+                        }
+                    }
+                    else if (colonQuantity == 1)
+                    {
+                        var pair = relevantToken.Split(":");
 
-                            var spanRegex = new Regex(@"-", RegexOptions.Compiled);
-                            var spanQuantity = spanRegex.Matches(relevantToken).Count();
+                        try
+                        {
+                            int num = int.Parse(pair[0]);
 
-                            var spanSplit = pair[1].Split("-");
-                            foreach (string pairValue in spanSplit)
+                            startingChapter = num;
+                            endingChapter = num;
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+
+                        var spanRegex = new Regex(@"-", RegexOptions.Compiled);
+                        var spanQuantity = spanRegex.Matches(relevantToken).Count();
+
+                        var spanSplit = pair[1].Split("-");
+                        foreach (string pairValue in spanSplit)
+                        {
+                            string pairValueCopy = RemovePunctuation(pairValue);
+
+                            try
                             {
-                                string pairValueCopy = RemovePunctuation(pairValue);
+                                int num = int.Parse(pairValueCopy);
 
-                                try
+                                switch (System.Array.IndexOf(spanSplit, pairValue))
                                 {
-                                    int num = int.Parse(pairValueCopy);
-
-                                    switch (System.Array.IndexOf(spanSplit, pairValue))
-                                    {
-                                        case 0:
-                                            startingVerse = num;
-                                            break;
-                                        case 1:
-                                            endingVerse = num;
-                                            break;
-                                        default:
-                                            return null;
-                                    }
-                                }
-                                catch
-                                {
-                                    // We know that BibleGateway will extend to the end of a chapter with this syntax,
-                                    // but for other sources this is likely not available.
-                                    if (version.Source == "bg")
-                                    {
-                                        // Instead of returning nil, we'll break out of the loop
-                                        // in the event that the span exists to extend to the end of a chapter.
+                                    case 0:
+                                        startingVerse = num;
                                         break;
-                                    }
+                                    case 1:
+                                        endingVerse = num;
+                                        break;
+                                    default:
+                                        return null;
                                 }
                             }
-
-                            if (endingVerse == 0 && spanQuantity == 0)
+                            catch
                             {
-                                endingVerse = startingVerse;
+                                // We know that BibleGateway will extend to the end of a chapter with this syntax,
+                                // but for other sources this is likely not available.
+                                if (version.Source == "bg")
+                                {
+                                    // Instead of returning nil, we'll break out of the loop
+                                    // in the event that the span exists to extend to the end of a chapter.
+                                    break;
+                                }
                             }
+                        }
 
-                            break;
+                        if (endingVerse == 0 && spanQuantity == 0)
+                        {
+                            endingVerse = startingVerse;
+                        }
+                    }
+                    else
+                    {
+                        return null;
                     }
 
                     /* Once we implement VersionService, we can add version detection in references like so:

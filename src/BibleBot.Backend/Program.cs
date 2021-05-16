@@ -11,7 +11,7 @@ using BibleBot.Backend.Services;
 
 namespace BibleBot.Backend
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {

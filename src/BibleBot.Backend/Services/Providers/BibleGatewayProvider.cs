@@ -98,7 +98,7 @@ namespace BibleBot.Backend.Services.Providers
 
         private string PurifyVerseText(string text)
         {
-            Dictionary<string, string> nuisances = new Dictionary<string, string>()
+            Dictionary<string, string> nuisances = new Dictionary<string, string>
             {
 		        { "“",     "\"" },
 		        { "”",     "\"" },
