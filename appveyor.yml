@@ -3,6 +3,11 @@ image: Ubuntu
 
 clone_depth: 1
 
+environment:
+  WEBHOOK_URL:
+    secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3tZ72seTIPNzQfilxcJ+pRJMlNUkVpO8zjxqUs/xWPaBHE8+vBMWLuav9/Y25TyKXyXnRTAnMzkOXDg3RXch8Vlv1Vpsun200mPr1sW4yqIhQK39QG8bskhkEP3bLgsC5w=
+
+
 branches:
   only:
     - master
@@ -30,11 +35,3 @@ deploy:
   - provider: NuGet
     api_key:
       secure: 3ldSZooGg5G90viYmQhqpQtGqTftoapjkaoGSim3tB7AmBlRIc/G3IqxAxcksdsP
-
-notifications:
-  - provider: Webhook
-    url:
-      secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3tZ72seTIPNzQfilxcJ+pRJMlNUkVpO8zjxqUs/xWPaBHE8+vBMWLuav9/Y25TyKXyXnRTAnMzkOXDg3RXch8Vlv1Vpsun200mPr1sW4yqIhQK39QG8bskhkEP3bLgsC5w=
-    on_build_success: true
-    on_build_failure: true
-    on_build_status_changed: true
