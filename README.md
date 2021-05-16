@@ -4,6 +4,9 @@
     </a>
     <br>
     <br>
+    <a href="https://coveralls.io/github/BibleBot/BibleBot?branch=master">
+        <img src="https://coveralls.io/repos/github/BibleBot/BibleBot/badge.svg?branch=master" alt="Coverage Status">
+    </a>
     <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot">
         <img alt="AppVeyor Build Status" src="https://ci.appveyor.com/api/projects/status/x6pdy1e2aw1vstru?svg=true">
     </a>
