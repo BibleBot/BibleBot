@@ -23,7 +23,7 @@ install:
 build_script:
   - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj --verbosity q
   - cmd: dotnet build ./src/BibleBot.Lib/BibleBot.Lib.csproj --verbosity q
-  - cmd: nuget pack ./src/BibleBot.Lib/ -Verbosity quiet
+  - cmd: dotnet pack ./src/BibleBot.Lib/ -o . --verbosity q
 
 artifacts:
   - path: ./src/BibleBot.Backend/bin/Debug/net5.0/publish

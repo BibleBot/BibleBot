@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <PackageId>BibleBot.Lib</PackageId>
+    <Version>0.0.3</Version>
+    <Authors>SeraphimRP</Authors>
+    <Description>A shared library between various aspects of BibleBot's stack.</Description>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/BibleBot/BibleBot</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/BibleBot/BibleBot</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
