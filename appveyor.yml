@@ -3,11 +3,6 @@ image: Ubuntu
 
 clone_depth: 1
 
-environment:
-  WEBHOOK_URL:
-    secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3tZ72seTIPNzQfilxcJ+pRJMlNUkVpO8zjxqUs/xWPaBHE8+vBMWLuav9/Y25TyKXyXnRTAnMzkOXDg3RXch8Vlv1Vpsun200mPr1sW4yqIhQK39QG8bskhkEP3bLgsC5w=
-
-
 branches:
   only:
     - master
