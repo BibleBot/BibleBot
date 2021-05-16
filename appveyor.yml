@@ -8,7 +8,7 @@ branches:
     - master
 
 environment:
-  coveralls:
+  COVERALLS_REPO_TOKEN:
     secure: bbp4RMA6lCInKRc0at1AV2EW8dSpYVR4QqoUjOT6eOUdA5uV9vXvXb0GJoSEpe2R
   discord_webhook:
     secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3vLH5eSf3G0pawFOhwJEj0cPqoqiGh1v95sc23adle9F6sYA+LCTdHYtiyL3Cz5traiteg2vQavv5pzPuWjxShv7PVsRsF4P77VDIBxthK5Z0ypG6K/A4gKOT3lijFv6oE=
@@ -37,7 +37,7 @@ test_script:
   - cmd: dotnet test --verbosity q
 
 after_test:
- - cmd: dotnet tool run csmacnz.Coveralls --opencover -i coverage.xml -r %coveralls%
+ - cmd: dotnet tool run csmacnz.Coveralls --opencover -i coverage.xml
 
 deploy:
   - provider: NuGet
