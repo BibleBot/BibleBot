@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>BibleBot.Lib</id>
+    <version>0.0.3$suffix$</version>
+    <title>BibleBot.Lib</title>
+    <authors>Kerygma Digital</authors>
+    <owners>Seraphim R.P.</owners>
+    <description>A shared library between various aspects of BibleBot's stack.</description>
+    <projectUrl>https://github.com/BibleBot/BibleBot</projectUrl>
+    <license type="expression">MPL-2.0</license>
+  </metadata>
+</package>

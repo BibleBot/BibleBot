@@ -2,10 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <PackageId>BibleBot.Lib</PackageId>
-    <Version>0.0.2</Version>
-    <Authors>Seraphim R.P.</Authors>
-    <Company>Kerygma Digital</Company>
   </PropertyGroup>
 
 </Project>
