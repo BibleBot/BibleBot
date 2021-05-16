@@ -18,7 +18,7 @@ skip_commits:
 
 install:
   - cmd: dotnet restore --verbosity q
-  - cmd: nuget restore -Verbosity quiet
+  - cmd: dotnet tool restore --verbosity q
 
 build_script:
   - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj --verbosity q
@@ -34,10 +34,10 @@ artifacts:
     type: NuGetPackage
 
 test_script:
-  - sh: dotnet test --verbosity q
+  - cmd: dotnet test --verbosity q
 
 after_test:
- - cmd: packages\coveralls.io.1.4.2\tools\coveralls.net.exe --opencover coverage.xml -r %coveralls%
+ - cmd: dotnet tool run csmacnz.Coveralls --opencover -i coverage.xml -r %coveralls%
 
 deploy:
   - provider: NuGet
