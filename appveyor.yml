@@ -24,7 +24,7 @@ artifacts:
     type: NuGetPackage
 
 test_script:
-  - sh: dotnet test --verbosity m
+  - sh: dotnet test --verbosity q
 
 deploy:
   - provider: NuGet
