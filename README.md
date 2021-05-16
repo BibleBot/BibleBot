@@ -4,21 +4,15 @@
     </a>
     <br>
     <br>
-    <a href="https://github.com/BibleBot/BibleBot/actions?query=workflow%3A%22docker+%28dev%29%22">
-        <img alt="GitHub Workflow Status" src="https://github.com/BibleBot/BibleBot/workflows/docker%20(dev)/badge.svg">
+    <a href="https://ci.appveyor.com/api/projects/status/x6pdy1e2aw1vstru?svg=true">
+        <img alt="AppVeyor Build Status" src="https://ci.appveyor.com/project/SeraphimRP/biblebot">
     </a>
-    <a href="https://github.com/BibleBot/BibleBot/actions?query=workflow%3Atests">
-        <img alt="GitHub Test Status" src="https://github.com/BibleBot/BibleBot/workflows/tests/badge.svg">
-    </a>
-    <a href="https://github.com/BibleBot/BibleBot/actions?query=workflow%3A%22docker+%28prod%29%22">
-        <img alt="GitHub Workflow Status" src="https://github.com/BibleBot/BibleBot/workflows/docker%20(prod)/badge.svg">
+    <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BibleBot/BibleBot&amp;utm_campaign=Badge_Grade">
+        <img src="https://app.codacy.com/project/badge/Grade/0ebeb56c612a4643851d9beb1003a1de">
     </a>
     <br>
     <a alt="Discord" href="https://discord.gg/H7ZyHqE">
         <img alt="Discord" src="https://img.shields.io/discord/362503610006765568?label=discord">
-    </a>
-    <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BibleBot/BibleBot&amp;utm_campaign=Badge_Grade">
-        <img src="https://app.codacy.com/project/badge/Grade/0ebeb56c612a4643851d9beb1003a1de">
     </a>
     <a href="https://github.com/BibleBot/BibleBot/blob/master/LICENSE.txt">
         <img alt="MPL-2.0" src="https://img.shields.io/github/license/BibleBot/BibleBot">
