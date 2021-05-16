@@ -17,6 +17,9 @@
     <a alt="Discord" href="https://discord.gg/H7ZyHqE">
         <img alt="Discord" src="https://img.shields.io/discord/362503610006765568?label=discord">
     </a>
+    <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BibleBot/BibleBot&amp;utm_campaign=Badge_Grade">
+        <img src="https://app.codacy.com/project/badge/Grade/0ebeb56c612a4643851d9beb1003a1de">
+    </a>
     <a href="https://github.com/BibleBot/BibleBot/blob/master/LICENSE.txt">
         <img alt="MPL-2.0" src="https://img.shields.io/github/license/BibleBot/BibleBot">
     </a>
