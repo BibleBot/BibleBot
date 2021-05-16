@@ -9,5 +9,8 @@
     <description>A shared library between various aspects of BibleBot's stack.</description>
     <projectUrl>https://github.com/BibleBot/BibleBot</projectUrl>
     <license type="expression">MPL-2.0</license>
+    <dependencies>
+      <group targetFramework="net5.0" />
+    </dependencies>
   </metadata>
 </package>
