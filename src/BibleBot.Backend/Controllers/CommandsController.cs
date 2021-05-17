@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
@@ -18,20 +19,23 @@ namespace BibleBot.Backend.Controllers
     {
         private readonly UserService _userService;
         private readonly GuildService _guildService;
+        private readonly VersionService _versionService;
 
         private readonly BibleGatewayProvider _bgpProvider;
 
         private readonly List<ICommandGroup> _commandGroups;
 
-        public CommandsController(UserService userService, GuildService guildService, BibleGatewayProvider bibleGatewayProvider)
+        public CommandsController(UserService userService, GuildService guildService, VersionService versionService,
+                                  BibleGatewayProvider bibleGatewayProvider)
         {
             _userService = userService;
             _guildService = guildService;
+            _versionService = versionService;
             _bgpProvider = bibleGatewayProvider;
 
             _commandGroups = new List<ICommandGroup>
             {
-                new CommandGroups.Settings.VersionGroup(_userService, _guildService)
+                new CommandGroups.Settings.VersionGroup(_userService, _guildService, _versionService)
             };
         }
 
@@ -46,9 +50,41 @@ namespace BibleBot.Backend.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<CommandResponse> ProcessMessage([FromBody] Request req)
+        public CommandResponse ProcessMessage([FromBody] Request req)
         {
-            return new CommandResponse();
+            var tokenizedBody = req.Body.Split(" ");
+            
+            if (tokenizedBody.Length > 0)
+            {
+                var potentialCommand = tokenizedBody[0];
+
+                if (potentialCommand.StartsWith("+"))
+                {
+                    var grp = _commandGroups.Where(grp => grp.Name == potentialCommand.Substring(1)).FirstOrDefault();
+
+                    if (grp != null)
+                    {
+                        if (tokenizedBody.Length > 1)
+                        {
+                            var idealCommand = grp.Commands.Where(cmd => cmd.Name == tokenizedBody[1]).FirstOrDefault();
+
+                            if (idealCommand != null)
+                            {
+                                return idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
+                            }
+                        }
+
+                        // TODO: At the moment, non-grouped commands CANNOT take an argument, which will be problematic later.
+                        return grp.DefaultCommand.ProcessCommand(req, null);
+                    }
+                }
+            }
+
+            return new CommandResponse
+            {
+                OK = false,
+                Pages = null
+            };
         }
     }
 }
