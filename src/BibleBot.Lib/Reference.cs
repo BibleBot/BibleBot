@@ -15,14 +15,20 @@ namespace BibleBot.Lib
         public bool IsNT { get; set; }
         public bool IsDEU { get; set; }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             string result = $"{this.Book} {this.StartingChapter}:{this.StartingVerse}";
 
-            if (this.EndingChapter > 0 && this.EndingChapter != this.StartingChapter) {
+            if (this.EndingChapter > 0 && this.EndingChapter != this.StartingChapter)
+            {
                 result += $"-{this.EndingChapter}:{this.EndingVerse}";
-            } else if (this.EndingVerse > 0 && this.EndingVerse != this.StartingVerse) {
+            }
+            else if (this.EndingVerse > 0 && this.EndingVerse != this.StartingVerse)
+            {
                 result += $"-{this.EndingVerse}";
-            } else if (this.EndingChapter > 0 && this.EndingVerse == 0) {
+            }
+            else if (this.EndingChapter > 0 && this.EndingVerse == 0)
+            {
                 result += "-";
             }
 
