@@ -17,19 +17,75 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
+        private readonly VersionService _versionService;
 
-        public VersionGroup(UserService userService, GuildService guildService)
+        public VersionGroup(UserService userService, GuildService guildService, VersionService versionService)
         {
             Name = "versions";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
-                new VersionSet(_userService, _guildService)
+                new VersionSet(_userService, _guildService, _versionService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
 
             _userService = userService;
             _guildService = guildService;
+            _versionService = versionService;
+        }
+
+        public class VersionUsage : ICommand
+        {
+            public string Name { get; set;}
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            private readonly UserService _userService;
+            private readonly GuildService _guildService;
+            private readonly VersionService _versionService;
+
+            public VersionUsage(UserService userService, GuildService guildService, VersionService versionService)
+            {
+                Name = "usage";
+                ExpectedArguments = 0;
+                PermissionsRequired = null;
+
+                _userService = userService;
+                _guildService = guildService;
+                _versionService = versionService;
+            }
+
+            public CommandResponse ProcessCommand(Request req, List<string> args)
+            {
+                var idealUser = _userService.Get(req.UserId);
+
+                if (idealUser != null)
+                {
+                    var idealVersion = _versionService.Get(idealUser.Version);
+
+                    if (idealVersion != null)
+                    {
+
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new List<DiscordEmbed>
+                            {
+                                new Utils().Embedify("+version", $"You are currently using **{idealVersion.Name}**.", false)
+                            }
+                        };
+                    }
+                }
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = new List<DiscordEmbed>
+                    {
+                        new Utils().Embedify("+version", "No version settings found.", true)
+                    }
+                };
+            }
         }
 
         public class VersionSet : ICommand
@@ -40,8 +96,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             private readonly UserService _userService;
             private readonly GuildService _guildService;
+            private readonly VersionService _versionService;
 
-            public VersionSet(UserService userService, GuildService guildService)
+            public VersionSet(UserService userService, GuildService guildService, VersionService versionService)
             {
                 Name = "set";
                 ExpectedArguments = 1;
@@ -49,13 +106,42 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 _userService = userService;
                 _guildService = guildService;
+                _versionService = versionService;
             }
 
-            public async Task<CommandResponse> ProcessCommand(List<string> args)
+            public CommandResponse ProcessCommand(Request req, List<string> args)
             {
                 var newVersion = args[0].ToUpperInvariant();
+                var idealVersion = _versionService.Get(newVersion);
 
-                return new CommandResponse();
+                if (idealVersion != null)
+                {
+                    var idealUser = _userService.Get(req.UserId);
+
+                    if (idealUser != null)
+                    {
+                        idealUser.Version = idealVersion.Abbreviation;
+                        _userService.Update(req.UserId, idealUser);
+
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new List<DiscordEmbed>
+                            {
+                                new Utils().Embedify("+version set", "Set version successfully.", false)
+                            }
+                        };
+                    }
+                }
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = new List<DiscordEmbed>
+                    {
+                        new Utils().Embedify("+version set", "Failed to set version. See `+version list`.", true)
+                    }
+                };
             }
         }
     }

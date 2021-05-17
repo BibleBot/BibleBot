@@ -16,7 +16,7 @@ namespace BibleBot.Backend.Services
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
-            _versions = database.GetCollection<Version>(settings.UserCollectionName);
+            _versions = database.GetCollection<Version>(settings.VersionCollectionName);
         }
 
         public List<Version> Get() => _versions.Find(version => true).ToList();
