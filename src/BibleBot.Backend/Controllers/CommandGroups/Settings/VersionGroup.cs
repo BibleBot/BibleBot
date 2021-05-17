@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 using BibleBot.Lib;
 using BibleBot.Backend.Models;
-using Microsoft.Extensions.DependencyInjection;
+using BibleBot.Backend.Services;
 
-namespace BibleBot.Backend.Services.CommandGroups.Settings
+namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
-    public class Versions : ICommandGroup
+    public class VersionGroup : ICommandGroup
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
@@ -18,7 +18,7 @@ namespace BibleBot.Backend.Services.CommandGroups.Settings
         private readonly UserService _userService;
         private readonly GuildService _guildService;
 
-        public Versions(UserService userService, GuildService guildService)
+        public VersionGroup(UserService userService, GuildService guildService)
         {
             Name = "versions";
             IsOwnerOnly = false;

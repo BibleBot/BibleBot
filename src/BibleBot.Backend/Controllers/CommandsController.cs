@@ -21,11 +21,18 @@ namespace BibleBot.Backend.Controllers
 
         private readonly BibleGatewayProvider _bgpProvider;
 
+        private readonly List<ICommandGroup> _commandGroups;
+
         public CommandsController(UserService userService, GuildService guildService, BibleGatewayProvider bibleGatewayProvider)
         {
             _userService = userService;
             _guildService = guildService;
             _bgpProvider = bibleGatewayProvider;
+
+            _commandGroups = new List<ICommandGroup>
+            {
+                new CommandGroups.Settings.VersionsGroup(_userService, _guildService)
+            };
         }
 
         /// <summary>
