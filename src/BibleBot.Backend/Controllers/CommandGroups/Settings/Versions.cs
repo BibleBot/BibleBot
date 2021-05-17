@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -7,24 +8,28 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BibleBot.Backend.Services.CommandGroups.Settings
 {
-    public class Versions : CommandGroup
+    public class Versions : ICommandGroup
     {
-        private readonly string Name = "versions";
-        private readonly bool IsOwnerOnly = false;
-        public readonly List<ICommand> Commands;
+        public string Name { get; set; }
+        public bool IsOwnerOnly { get; set; }
+        public ICommand DefaultCommand { get; set; }
+        public List<ICommand> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
 
         public Versions(UserService userService, GuildService guildService)
         {
-            _userService = userService;
-            _guildService = guildService;
-
+            Name = "versions";
+            IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
                 new VersionSet(_userService, _guildService)
             };
+            DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
+
+            _userService = userService;
+            _guildService = guildService;
         }
 
         public class VersionSet : ICommand
