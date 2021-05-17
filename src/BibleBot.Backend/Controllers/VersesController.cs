@@ -18,15 +18,17 @@ namespace BibleBot.Backend.Controllers
     {
         private readonly UserService _userService;
         private readonly ParsingService _parsingService;
+        private readonly VersionService _versionService;
         private readonly NameFetchingService _nameFetchingService;
 
         private readonly BibleGatewayProvider _bgpProvider;
 
-        public VersesController(UserService userService, ParsingService parsingService, NameFetchingService nameFetchingService,
+        public VersesController(UserService userService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
                                 BibleGatewayProvider bibleGatewayProvider)
         {
             _userService = userService;
             _parsingService = parsingService;
+            _versionService = versionService;
             _nameFetchingService = nameFetchingService;
 
             _bgpProvider = bibleGatewayProvider;
@@ -49,30 +51,33 @@ namespace BibleBot.Backend.Controllers
 
             List<Verse> results = new List<Verse>();
 
-            var ver = new Version
-            {
-                Name = "Revised Standard Version (RSV)",
-                Abbreviation = "RSV",
-                Source = "bg",
-                SupportsOldTestament = true,
-                SupportsNewTestament = true,
-                SupportsDeuterocanon = true
-            };
-
             foreach (var bsr in tuple.Item2)
             {
-                var reference = _parsingService.GenerateReference(tuple.Item1, bsr, ver);
+                var idealUser = _userService.Get(req.UserId);
 
-                if (reference != null)
+                if (idealUser != null)
                 {
-                    switch (reference.Version.Source) 
+                    var idealVersion = _versionService.Get(idealUser.Version);
+
+                    if (idealVersion == null)
                     {
-                        case "bg":
-                            Verse result = await _bgpProvider.GetVerse(reference, true, true);
-                            results.Add(result);
-                            break;
+                        idealVersion = _versionService.Get("RSV");
+                    }
+
+                    var reference = _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
+
+                    if (reference != null)
+                    {
+                        switch (reference.Version.Source) 
+                        {
+                            case "bg":
+                                Verse result = await _bgpProvider.GetVerse(reference, true, true);
+                                results.Add(result);
+                                break;
+                        }
                     }
                 }
+                
             }
 
             return results;
