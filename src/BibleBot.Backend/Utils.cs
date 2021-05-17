@@ -29,7 +29,7 @@ namespace BibleBot.Backend
                 Footer = new Footer
                 {
                     Text = copyright != null? $"{copyright} // ${footerText}" : footerText,
-                    IconURL = null,
+                    IconURL = "https://i.imgur.com/hr4RXpy.png",
                 },
                 Image = null,
                 Thumbnail = null,

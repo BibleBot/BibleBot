@@ -21,6 +21,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public VersionGroup(UserService userService, GuildService guildService, VersionService versionService)
         {
+            _userService = userService;
+            _guildService = guildService;
+            _versionService = versionService;
+
             Name = "version";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
@@ -29,10 +33,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new VersionSet(_userService, _guildService, _versionService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
-
-            _userService = userService;
-            _guildService = guildService;
-            _versionService = versionService;
         }
 
         public class VersionUsage : ICommand
@@ -123,16 +123,29 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     {
                         idealUser.Version = idealVersion.Abbreviation;
                         _userService.Update(req.UserId, idealUser);
-
-                        return new CommandResponse
-                        {
-                            OK = true,
-                            Pages = new List<DiscordEmbed>
-                            {
-                                new Utils().Embedify("+version set", "Set version successfully.", false)
-                            }
-                        };
                     }
+                    else
+                    {
+                        _userService.Create(new User
+                        {
+                            UserId = req.UserId,
+                            Version = idealVersion.Abbreviation,
+                            InputMethod = "default",
+                            Language = "english",
+                            TitlesEnabled = true,
+                            VerseNumbersEnabled = true,
+                            DisplayMode = "embed"
+                        });
+                    }
+
+                    return new CommandResponse
+                    {
+                        OK = true,
+                        Pages = new List<DiscordEmbed>
+                        {
+                            new Utils().Embedify("+version set", "Set version successfully.", false)
+                        }
+                    };
                 }
 
                 return new CommandResponse
