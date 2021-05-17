@@ -30,7 +30,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             Commands = new List<ICommand>
             {
                 new VersionUsage(_userService, _guildService, _versionService),
-                new VersionSet(_userService, _guildService, _versionService)
+                new VersionSet(_userService, _guildService, _versionService),
+                new VersionList(_userService, _guildService, _versionService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
@@ -155,6 +156,73 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     {
                         new Utils().Embedify("+version set", "Failed to set version. See `+version list`.", true)
                     }
+                };
+            }
+        }
+
+        public class VersionList : ICommand
+        {
+            public string Name { get; set;}
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            private readonly UserService _userService;
+            private readonly GuildService _guildService;
+            private readonly VersionService _versionService;
+
+            public VersionList(UserService userService, GuildService guildService, VersionService versionService)
+            {
+                Name = "list";
+                ExpectedArguments = 0;
+                PermissionsRequired = null;
+
+                _userService = userService;
+                _guildService = guildService;
+                _versionService = versionService;
+            }
+
+            public CommandResponse ProcessCommand(Request req, List<string> args)
+            {
+                var versions = _versionService.Get();
+                versions.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+                var versionsUsed = new List<string>();
+
+                var pages = new List<DiscordEmbed>();
+                var maxResultsPerPage = 25;
+                var totalPages = (int) System.Math.Ceiling((decimal) (versions.Count / maxResultsPerPage));
+                totalPages++;
+
+                foreach (int i in Enumerable.Range(0, totalPages))
+                {
+                    var embed = new Utils().Embedify($"+version list - Page {i + 1} of {totalPages}", null, false);
+
+                    var count = 0;
+                    var versionList = "";
+
+                    foreach (var version in versions)
+                    {
+                        if (count < maxResultsPerPage)
+                        {
+                            if (!versionsUsed.Contains(version.Name))
+                            {
+                                versionList += $"{version.Name}\n";
+
+                                versionsUsed.Add(version.Name);
+                                count++;
+                            }
+                        }
+                    }
+
+                    embed.Description = versionList;
+                    pages.Add(embed);
+                }
+
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = pages
                 };
             }
         }
