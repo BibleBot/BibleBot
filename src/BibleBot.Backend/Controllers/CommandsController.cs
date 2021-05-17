@@ -64,17 +64,37 @@ namespace BibleBot.Backend.Controllers
 
                     if (grp != null)
                     {
+                        // TODO: Implement OwnerOnly check.
+
                         if (tokenizedBody.Length > 1)
                         {
                             var idealCommand = grp.Commands.Where(cmd => cmd.Name == tokenizedBody[1]).FirstOrDefault();
 
                             if (idealCommand != null)
                             {
+                                if (idealCommand.PermissionsRequired != null)
+                                {
+                                    foreach (var permission in idealCommand.PermissionsRequired)
+                                    {
+                                        if ((req.UserPermissions & (long) permission) != (long) permission)
+                                        {
+                                            return new CommandResponse
+                                            {
+                                                OK = false,
+                                                Pages = new List<DiscordEmbed>
+                                                {
+                                                    new Utils().Embedify("Permissions Error", "You do not have the required permissions to use this command.", true)
+                                                }
+                                            };
+                                        }
+                                    }
+                                }
+                                
                                 return idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
                             }
                         }
 
-                        // TODO: At the moment, non-grouped commands CANNOT take an argument, which will be problematic later.
+                        // TODO: At the moment, non-grouped commands CANNOT take an argument, which could be problematic later.
                         return grp.DefaultCommand.ProcessCommand(req, null);
                     }
                 }
