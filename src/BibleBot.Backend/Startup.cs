@@ -54,9 +54,9 @@ namespace BibleBot.Backend
                 services.AddLettuceEncrypt();
             }
 
-            var nameFetchingService = new NameFetchingService();
-            nameFetchingService.FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun"));
-
+            // Run the NameFetchingService on startup without async.
+            new NameFetchingService().FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
