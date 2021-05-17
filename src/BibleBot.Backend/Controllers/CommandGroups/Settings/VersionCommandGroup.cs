@@ -8,7 +8,7 @@ using BibleBot.Backend.Services;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
-    public class VersionGroup : ICommandGroup
+    public class VersionCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
@@ -19,7 +19,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
 
-        public VersionGroup(UserService userService, GuildService guildService, VersionService versionService)
+        public VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService)
         {
             _userService = userService;
             _guildService = guildService;
@@ -31,8 +31,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             {
                 new VersionUsage(_userService, _guildService, _versionService),
                 new VersionSet(_userService, _guildService, _versionService),
-                new VersionList(_userService, _guildService, _versionService),
-                new VersionInfo(_userService, _guildService, _versionService)
+                new VersionInfo(_userService, _guildService, _versionService),
+                new VersionList(_userService, _guildService, _versionService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
@@ -61,31 +61,47 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public CommandResponse ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
+                var idealGuild = _guildService.Get(req.GuildId);
+
+                var defaultVersion = _versionService.Get("RSV");
+
+                var response = "Your preferred version is set to **<version>**.\n" +
+                               "The server's preferred version is set to **<gversion>**.\n\n" +
+                               "__Subcommands__\n" +
+                               "**set** - set your preferred version\n" +
+                               "**setserver** - set the server's default version (staff only)\n" +
+                               "**info** - get information on a version\n" +
+                               "**list** - list all available versions";
 
                 if (idealUser != null)
                 {
-                    var idealVersion = _versionService.Get(idealUser.Version);
-
-                    if (idealVersion != null)
+                    var idealUserVersion = _versionService.Get(idealUser.Version);
+                    
+                    if (idealUserVersion != null)
                     {
-
-                        return new CommandResponse
-                        {
-                            OK = true,
-                            Pages = new List<DiscordEmbed>
-                            {
-                                new Utils().Embedify("+version", $"You are currently using **{idealVersion.Name}**.", false)
-                            }
-                        };
+                        response = response.Replace("<version>", idealUserVersion.Name);   
                     }
                 }
+
+                if (idealGuild != null)
+                {
+                    var idealGuildVersion = _versionService.Get(idealGuild.Version);
+                    
+                    if (idealGuildVersion != null)
+                    {
+                        response = response.Replace("<gversion>", idealGuildVersion.Name);   
+                    }
+                }
+
+                response = response.Replace("<version>", defaultVersion.Name);
+                response = response.Replace("<gversion>", defaultVersion.Name);
 
                 return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<DiscordEmbed>
                     {
-                        new Utils().Embedify("+version", "No version settings found.", true)
+                        new Utils().Embedify("+version", response, false)
                     }
                 };
             }
@@ -155,7 +171,129 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<DiscordEmbed>
                     {
-                        new Utils().Embedify("+version set", "Failed to set version. See `+version list`.", true)
+                        new Utils().Embedify("+version set", "Failed to set version, see `+version list`.", true)
+                    }
+                };
+            }
+        }
+
+        public class VersionSetServer : ICommand
+        {
+            public string Name { get; set;}
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            private readonly UserService _userService;
+            private readonly GuildService _guildService;
+            private readonly VersionService _versionService;
+
+            public VersionSetServer(UserService userService, GuildService guildService, VersionService versionService)
+            {
+                Name = "setserver";
+                ExpectedArguments = 1;
+                PermissionsRequired.Add(Permissions.MANAGE_GUILD);
+
+                _userService = userService;
+                _guildService = guildService;
+                _versionService = versionService;
+            }
+
+            public CommandResponse ProcessCommand(Request req, List<string> args)
+            {
+                var newVersion = args[0].ToUpperInvariant();
+                var idealVersion = _versionService.Get(newVersion);
+
+                if (idealVersion != null)
+                {
+                    var idealGuild = _guildService.Get(req.GuildId);
+
+                    if (idealGuild != null)
+                    {
+                        idealGuild.Version = idealVersion.Abbreviation;
+                        _guildService.Update(req.GuildId, idealGuild);
+                    }
+                    else
+                    {
+                        _guildService.Create(new Guild
+                        {
+                            GuildId = req.GuildId,
+                            Version = idealVersion.Abbreviation,
+                            Language = "english"
+                        });
+                    }
+
+                    return new CommandResponse
+                    {
+                        OK = true,
+                        Pages = new List<DiscordEmbed>
+                        {
+                            new Utils().Embedify("+version setserver", "Set server version successfully.", false)
+                        }
+                    };
+                }
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = new List<DiscordEmbed>
+                    {
+                        new Utils().Embedify("+version setserver", "Failed to set server version, see `+version list`.", true)
+                    }
+                };
+            }
+        }
+
+         public class VersionInfo : ICommand
+        {
+            public string Name { get; set;}
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            private readonly UserService _userService;
+            private readonly GuildService _guildService;
+            private readonly VersionService _versionService;
+
+            public VersionInfo(UserService userService, GuildService guildService, VersionService versionService)
+            {
+                Name = "info";
+                ExpectedArguments = 1;
+                PermissionsRequired = null;
+
+                _userService = userService;
+                _guildService = guildService;
+                _versionService = versionService;
+            }
+
+            public CommandResponse ProcessCommand(Request req, List<string> args)
+            {
+                if (args.Count > 0)
+                {
+                    var idealVersion = _versionService.Get(args[0]);
+
+                    if (idealVersion != null)
+                    {
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new List<DiscordEmbed>
+                            {
+                                new Utils().Embedify("+version info",
+                                $"**{idealVersion.Name}**\n\n" +
+                                $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? "Yes" : "No")}\n" +
+                                $"Contains New Testament: {(idealVersion.SupportsNewTestament ? "Yes" : "No")}\n" +
+                                $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? "Yes" : "No")}",
+                                false)
+                            }
+                        };
+                    }
+                }
+
+                return new CommandResponse
+                {
+                    OK = false,
+                    Pages = new List<DiscordEmbed>
+                    {
+                        new Utils().Embedify("+version info", "I couldn't find that version, are you sure you used the right acronym?", true)
                     }
                 };
             }
@@ -224,62 +362,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 {
                     OK = true,
                     Pages = pages
-                };
-            }
-        }
-
-        public class VersionInfo : ICommand
-        {
-            public string Name { get; set;}
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
-
-            public VersionInfo(UserService userService, GuildService guildService, VersionService versionService)
-            {
-                Name = "info";
-                ExpectedArguments = 1;
-                PermissionsRequired = null;
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-            }
-
-            public CommandResponse ProcessCommand(Request req, List<string> args)
-            {
-                if (args.Count > 0)
-                {
-                    var idealVersion = _versionService.Get(args[0]);
-
-                    if (idealVersion != null)
-                    {
-                        return new CommandResponse
-                        {
-                            OK = true,
-                            Pages = new List<DiscordEmbed>
-                            {
-                                new Utils().Embedify("+version info",
-                                $"**{idealVersion.Name}**\n\n" +
-                                $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? "Yes" : "No")}\n" +
-                                $"Contains New Testament: {(idealVersion.SupportsNewTestament ? "Yes" : "No")}\n" +
-                                $"Contains Deuterocanon: {(idealVersion.SupportsDeuterocanon ? "Yes" : "No")}",
-                                false)
-                            }
-                        };
-                    }
-                }
-
-                return new CommandResponse
-                {
-                    OK = false,
-                    Pages = new List<DiscordEmbed>
-                    {
-                        new Utils().Embedify("+version info", "I couldn't find a version, did you provide the correct acronym?", true)
-                    }
                 };
             }
         }
