@@ -21,10 +21,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public VersionGroup(UserService userService, GuildService guildService, VersionService versionService)
         {
-            Name = "versions";
+            Name = "version";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
+                new VersionUsage(_userService, _guildService, _versionService),
                 new VersionSet(_userService, _guildService, _versionService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
