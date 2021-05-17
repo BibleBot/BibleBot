@@ -35,7 +35,7 @@ namespace BibleBot.Backend.Controllers
 
             _commandGroups = new List<ICommandGroup>
             {
-                new CommandGroups.Settings.VersionGroup(_userService, _guildService, _versionService)
+                new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService)
             };
         }
 
