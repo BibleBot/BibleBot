@@ -31,6 +31,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             {
                 new VersionUsage(_userService, _guildService, _versionService),
                 new VersionSet(_userService, _guildService, _versionService),
+                new VersionSetServer(_userService, _guildService, _versionService),
                 new VersionInfo(_userService, _guildService, _versionService),
                 new VersionList(_userService, _guildService, _versionService)
             };
@@ -191,7 +192,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             {
                 Name = "setserver";
                 ExpectedArguments = 1;
-                PermissionsRequired.Add(Permissions.MANAGE_GUILD);
+                PermissionsRequired = new List<Permissions>
+                {
+                    Permissions.MANAGE_GUILD
+                };
 
                 _userService = userService;
                 _guildService = guildService;

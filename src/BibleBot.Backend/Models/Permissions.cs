@@ -3,7 +3,7 @@ using System;
 namespace BibleBot.Backend.Models
 {
     [Flags]
-    public enum Permissions: ulong
+    public enum Permissions: long
     {
         CREATE_INSTANT_INVITE = 0x01,
         KICK_MEMBERS = 0x02,
