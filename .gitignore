@@ -276,3 +276,5 @@ __pycache__/
 
 coverage.json
 coverage.xml
+
+.db/
