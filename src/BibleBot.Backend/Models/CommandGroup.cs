@@ -5,11 +5,11 @@ using BibleBot.Lib;
 
 namespace BibleBot.Backend.Models
 {
-    public class CommandGroup
+    public interface ICommandGroup
     {
-        private readonly string Name;
-        private readonly bool IsOwnerOnly;
-        private readonly ICommand DefaultCommand;
-        private readonly List<ICommand> Commands;
+        string Name { get; set; }
+        bool IsOwnerOnly { get; set; }
+        List<ICommand> Commands { get; set; }
+        ICommand DefaultCommand { get; set; }
     }
 }
