@@ -41,11 +41,7 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<CommandResponse> ProcessMessage([FromBody] Request req)
         {
-            return new CommandResponse
-            {
-                OK = true,
-                Pages = new List<IDiscordEmbed>()
-            };
+            return new CommandResponse();
         }
     }
 }
