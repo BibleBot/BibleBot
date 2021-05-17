@@ -31,7 +31,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             {
                 new VersionUsage(_userService, _guildService, _versionService),
                 new VersionSet(_userService, _guildService, _versionService),
-                new VersionList(_userService, _guildService, _versionService)
+                new VersionList(_userService, _guildService, _versionService),
+                new VersionInfo(_userService, _guildService, _versionService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
@@ -223,6 +224,62 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 {
                     OK = true,
                     Pages = pages
+                };
+            }
+        }
+
+        public class VersionInfo : ICommand
+        {
+            public string Name { get; set;}
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            private readonly UserService _userService;
+            private readonly GuildService _guildService;
+            private readonly VersionService _versionService;
+
+            public VersionInfo(UserService userService, GuildService guildService, VersionService versionService)
+            {
+                Name = "info";
+                ExpectedArguments = 1;
+                PermissionsRequired = null;
+
+                _userService = userService;
+                _guildService = guildService;
+                _versionService = versionService;
+            }
+
+            public CommandResponse ProcessCommand(Request req, List<string> args)
+            {
+                if (args.Count > 0)
+                {
+                    var idealVersion = _versionService.Get(args[0]);
+
+                    if (idealVersion != null)
+                    {
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new List<DiscordEmbed>
+                            {
+                                new Utils().Embedify("+version info",
+                                $"**{idealVersion.Name}**\n\n" +
+                                $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? "Yes" : "No")}\n" +
+                                $"Contains New Testament: {(idealVersion.SupportsNewTestament ? "Yes" : "No")}\n" +
+                                $"Contains Deuterocanon: {(idealVersion.SupportsDeuterocanon ? "Yes" : "No")}",
+                                false)
+                            }
+                        };
+                    }
+                }
+
+                return new CommandResponse
+                {
+                    OK = false,
+                    Pages = new List<DiscordEmbed>
+                    {
+                        new Utils().Embedify("+version info", "I couldn't find a version, did you provide the correct acronym?", true)
+                    }
                 };
             }
         }
