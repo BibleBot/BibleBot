@@ -3,46 +3,46 @@ using System.Text.Json.Serialization;
 
 namespace BibleBot.Lib
 {
-    public interface IDiscordEmbed 
+    public class DiscordEmbed 
     {
-        string Title { get; set; }
-        string Description { get; set; }
-        string URL { get; set; }
-        int Colour { get; set; }
-        IFooter Footer { get; set; }
-        IMedia Image { get; set; }
-        IMedia Thumbnail { get; set; }
-        IMedia Video { get; set; }
-        IAuthor Author { get; set; }
-        List<IEmbedField> Fields { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string URL { get; set; }
+        public int Colour { get; set; }
+        public Footer Footer { get; set; }
+        public Media Image { get; set; }
+        public Media Thumbnail { get; set; }
+        public Media Video { get; set; }
+        public Author Author { get; set; }
+        public List<EmbedField> Fields { get; set; }
     }
 
-    public interface IFooter
+    public class Footer
     {
-        string Text { get; set; }
+        public string Text { get; set; }
         
         [JsonPropertyName("icon_url")]
-        string IconURL { get; set; }
+        public string IconURL { get; set; }
     }
 
-    public interface IMedia
+    public class Media
     {
-        string URL { get; set; }
+        public string URL { get; set; }
     }
 
-    public interface IAuthor
+    public class Author
     {
-        string Name { get; set; }
-        string URL { get; set; }
+        public string Name { get; set; }
+        public string URL { get; set; }
 
         [JsonPropertyName("icon_url")]
-        string IconURL { get; set; }
+        public string IconURL { get; set; }
     }
 
-    public interface IEmbedField
+    public class EmbedField
     {
-        string Name { get; set; }
-        string Value { get; set; }
-        bool Inline { get; set; }
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public bool Inline { get; set; }
     }
 }
