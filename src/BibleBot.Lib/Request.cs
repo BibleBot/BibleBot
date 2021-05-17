@@ -7,6 +7,9 @@ namespace BibleBot.Lib
         [JsonPropertyName("userId")]
         public string UserId { get; set; }
 
+        [JsonPropertyName("userPermissions")]
+        public long UserPermissions { get; set; }
+
         [JsonPropertyName("guildId")]
         public string GuildId { get; set; }
 
