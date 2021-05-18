@@ -23,6 +23,7 @@ install:
 build_script:
   - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj --verbosity q
   - cmd: dotnet build ./src/BibleBot.Lib/BibleBot.Lib.csproj --verbosity q
+  - cmd: dotnet publish ./src/BibleBot.Frontend/BibleBot.Frontend.csproj --verbosity q
   - cmd: dotnet pack ./src/BibleBot.Lib/ -o . --verbosity q
 
 artifacts:
@@ -31,7 +32,12 @@ artifacts:
     type: ElasticBeanstalkPackage
   
   - path: '*.nupkg'
+    name: BibleBot.Lib
     type: NuGetPackage
+
+  - path: ./src/BibleBot.Frontend/bin/Debug/net5.0/publish
+    name: BibleBot.Frontend
+    type: ElasticBeanstalkPackage
 
 test_script:
   - cmd: dotnet test --verbosity q /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
