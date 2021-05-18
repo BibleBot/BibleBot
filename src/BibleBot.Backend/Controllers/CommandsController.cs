@@ -47,7 +47,7 @@ namespace BibleBot.Backend.Controllers
         /// <response code="200">Returns the corresponding text</response>
         /// <response code="400">If req is invalid</response>
         [Route("process")]
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public CommandResponse ProcessMessage([FromBody] Request req)

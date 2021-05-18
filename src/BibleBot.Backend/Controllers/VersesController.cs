@@ -42,10 +42,10 @@ namespace BibleBot.Backend.Controllers
         /// <response code="200">Returns the corresponding text</response>
         /// <response code="400">If req is invalid</response>
         [Route("process")]
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<List<Verse>> ProcessMessage([FromBody] Request req)
+        public async Task<VerseResponse> ProcessMessage([FromBody] Request req)
         {
             var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), req.Body.ToLower());
 
@@ -80,7 +80,11 @@ namespace BibleBot.Backend.Controllers
                 
             }
 
-            return results;
+            return new VerseResponse
+            {
+                OK = true,
+                Verses = results
+            };
         }
     }
 }
