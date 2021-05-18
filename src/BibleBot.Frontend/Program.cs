@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -24,14 +23,14 @@ namespace BibleBot.Frontend
         {
             var bot = new DiscordClient(new DiscordConfiguration
             {
-                Token = cfg.GetValue<string>("token"),
+                Token = Environment.GetEnvironmentVariable("DISCORD_TOKEN"),
                 TokenType = TokenType.Bot,
                 Intents = DiscordIntents.AllUnprivileged
             });
             
             bot.MessageCreated += async (s, e) =>
             {
-                if (e.Author.Id.ToString() != cfg.GetValue<string>("ownerId") || e.Author == bot.CurrentUser)
+                if (e.Author.Id.ToString() != "186046294286925824" || e.Author == bot.CurrentUser)
                 {
                     return;
                 }
@@ -40,14 +39,15 @@ namespace BibleBot.Frontend
                 {
                     var authorAsMember = await e.Guild.GetMemberAsync(e.Author.Id);
 
-                    var cli = new RestClient($"http://{cfg.GetValue<string>("endpoint")}");
+                    var cli = new RestClient("http://localhost:5000");
                     var request = new RestRequest("api/commands/process");
                     request.AddJsonBody(new BibleBot.Lib.Request
                     {
                         UserId = e.Author.Id.ToString(),
                         UserPermissions = (long) authorAsMember.PermissionsIn(e.Channel),
                         GuildId = e.Guild.Id.ToString(),
-                        Body = e.Message.Content
+                        Body = e.Message.Content,
+                        Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
                     });
 
                     var resp = await cli.PostAsync<CommandResponse>(request);
@@ -57,14 +57,15 @@ namespace BibleBot.Frontend
                 {
                     var authorAsMember = await e.Guild.GetMemberAsync(e.Author.Id);
 
-                    var cli = new RestClient($"http://{cfg.GetValue<string>("endpoint")}");
+                    var cli = new RestClient("http://localhost:5000");
                     var request = new RestRequest("api/verses/process");
                     request.AddJsonBody(new BibleBot.Lib.Request
                     {
                         UserId = e.Author.Id.ToString(),
                         UserPermissions = (long) authorAsMember.PermissionsIn(e.Channel),
                         GuildId = e.Guild.Id.ToString(),
-                        Body = e.Message.Content
+                        Body = e.Message.Content,
+                        Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
                     });
 
                     var resp = await cli.PostAsync<VerseResponse>(request);
