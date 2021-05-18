@@ -6,9 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <PackageReference Include="BibleBot.Lib" Version="0.7.0" />
     <PackageReference Include="DSharpPlus" Version="4.0.1" />
     <PackageReference Include="DSharpPlus.Interactivity" Version="4.0.1" />
