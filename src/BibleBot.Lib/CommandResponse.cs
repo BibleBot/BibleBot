@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using DSharpPlus.Entities;
+
 namespace BibleBot.Lib
 {
     public class CommandResponse
