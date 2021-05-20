@@ -47,6 +47,7 @@ namespace BibleBot.Frontend
                         UserId = e.Author.Id.ToString(),
                         UserPermissions = (long) authorAsMember.PermissionsIn(e.Channel),
                         GuildId = e.Guild.Id.ToString(),
+                        IsDM = e.Channel.IsPrivate,
                         Body = e.Message.Content,
                         Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
                     });
@@ -64,6 +65,7 @@ namespace BibleBot.Frontend
                         UserId = e.Author.Id.ToString(),
                         UserPermissions = (long) authorAsMember.PermissionsIn(e.Channel),
                         GuildId = e.Guild.Id.ToString(),
+                        IsDM = e.Channel.IsPrivate,
                         Body = e.Message.Content,
                         Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
                     });
