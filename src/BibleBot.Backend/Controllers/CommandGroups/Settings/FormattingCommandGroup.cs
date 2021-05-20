@@ -363,7 +363,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Version = "RSV",
                         Language = "english",
                         Prefix = args[0],
-                        IgnoringBrackets = "<>"
+                        IgnoringBrackets = "<>",
+                        IsDM = req.IsDM
                     });
                 }
 
@@ -443,7 +444,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Version = "RSV",
                         Language = "english",
                         Prefix = "+",
-                        IgnoringBrackets = args[0]
+                        IgnoringBrackets = args[0],
+                        IsDM = req.IsDM
                     });
                 }
 
