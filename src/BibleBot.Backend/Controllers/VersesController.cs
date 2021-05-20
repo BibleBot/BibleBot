@@ -71,7 +71,7 @@ namespace BibleBot.Backend.Controllers
                         switch (reference.Version.Source) 
                         {
                             case "bg":
-                                Verse result = await _bgpProvider.GetVerse(reference, true, true);
+                                Verse result = await _bgpProvider.GetVerse(reference, idealUser.TitlesEnabled, idealUser.VerseNumbersEnabled);
                                 results.Add(result);
                                 break;
                         }
