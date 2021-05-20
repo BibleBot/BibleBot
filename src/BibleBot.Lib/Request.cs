@@ -13,6 +13,9 @@ namespace BibleBot.Lib
         [JsonPropertyName("guildId")]
         public string GuildId { get; set; }
 
+        [JsonPropertyName("isDM")]
+        public bool IsDM { get; set; }
+
         [JsonPropertyName("token")]
         public string Token { get; set; }
 
