@@ -1,9 +1,9 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
 using RestSharp;
 using DSharpPlus;
+using DSharpPlus.Entities;
 
 using BibleBot.Lib;
 
@@ -11,15 +11,13 @@ namespace BibleBot.Frontend
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true)
-                                                                     .Build();
-
-            MainAsync(configuration).GetAwaiter().GetResult();
+            MainAsync(new Utils()).GetAwaiter().GetResult();
         }
 
-        static async Task MainAsync(IConfiguration cfg)
+        static async Task MainAsync(Utils utils)
         {
             var bot = new DiscordClient(new DiscordConfiguration
             {
@@ -51,7 +49,7 @@ namespace BibleBot.Frontend
                     });
 
                     var resp = await cli.PostAsync<CommandResponse>(request);
-                    await e.Message.RespondAsync(resp.Pages[0].Description);
+                    await e.Message.RespondAsync(utils.Embed2Embed(resp.Pages[0]));
                 }
                 else
                 {

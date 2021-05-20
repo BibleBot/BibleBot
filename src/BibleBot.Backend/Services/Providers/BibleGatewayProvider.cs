@@ -32,6 +32,11 @@ namespace BibleBot.Backend.Services.Providers
             var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
             var container = document.QuerySelector(".result-text-style-normal");
 
+            if (container == null)
+            {
+                return null;
+            }
+
             var chapterNumbers = container.QuerySelectorAll(".chapternum");
             var verseNumbers = container.QuerySelectorAll(".versenum");
 
@@ -78,14 +83,15 @@ namespace BibleBot.Backend.Services.Providers
                 el.Remove();
             }
 
+            // In the event that the line-break replacements above don't account for everything...
+            foreach (var el in document.QuerySelectorAll(".text"))
+            {
+                el.TextContent = $" {el.TextContent} ";
+            }
+
             string title = titlesEnabled ? System.String.Join(" / ", container.GetElementsByTagName("h3").Select(el => el.TextContent.Trim())) : null;
             string text = System.String.Join("\n", container.GetElementsByTagName("p").Select(el => el.TextContent.Trim()));
-            string psalmTitle = null;
-
-            foreach (var el in container.QuerySelectorAll(".psalm-title"))
-            {
-                psalmTitle = el.TextContent;
-            }
+            string psalmTitle = titlesEnabled ? System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim())) : null;
 
             return new Verse { Reference = reference, Title = title, PsalmTitle = psalmTitle, Text = PurifyVerseText(text) };
         }

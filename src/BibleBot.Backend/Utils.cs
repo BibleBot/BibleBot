@@ -10,33 +10,35 @@ namespace BibleBot.Backend
             ERROR_COLOR = 16723502
         }
 
-        public DiscordEmbed Embedify(string title, string description, bool isError)
+        public InternalEmbed Embedify(string title, string description, bool isError)
         {
             return Embedify(null, title, description, isError, null);
         }
 
-        public DiscordEmbed Embedify(string author, string title, string description, bool isError, string copyright)
+        public InternalEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
             // TODO: Do not use hard-coded version tags.
             string footerText = "BibleBot v9.1-beta by Kerygma Digital";
 
-            return new DiscordEmbed
+            var embed = new InternalEmbed();
+            embed.Title = title;
+            embed.Description = description;
+            embed.Colour = isError ? (int) Colours.ERROR_COLOR : (int) Colours.NORMAL_COLOR;
+
+            embed.Footer = new Footer();
+            embed.Footer.Text = copyright != null ? $"{copyright} // ${footerText}" : footerText;
+            // I'd put footer icon on this line but for some reason it doesn't get received by frontend.
+
+            if (author != null)
             {
-                Title = title,
-                Description = description,
-                URL = null,
-                Colour = isError ? (int) Colours.ERROR_COLOR : (int) Colours.NORMAL_COLOR,
-                Footer = new Footer
+                embed.Author = new Author
                 {
-                    Text = copyright != null? $"{copyright} // ${footerText}" : footerText,
-                    IconURL = "https://i.imgur.com/hr4RXpy.png",
-                },
-                Image = null,
-                Thumbnail = null,
-                Video = null,
-                Author = author != null ? new Author { Name = author, URL = null, IconURL = null } : null,
-                Fields = null
-            };
+                    Name = author
+                };
+            } 
+            
+
+            return embed;
         }
     }
 }

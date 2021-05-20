@@ -68,7 +68,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 var response = "Your preferred version is set to **<version>**.\n" +
                                "The server's preferred version is set to **<gversion>**.\n\n" +
-                               "__Subcommands__\n" +
+                               "__**Subcommands**__\n" +
                                "**set** - set your preferred version\n" +
                                "**setserver** - set the server's default version (staff only)\n" +
                                "**info** - get information on a version\n" +
@@ -100,7 +100,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<DiscordEmbed>
+                    Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+version", response, false)
                     }
@@ -160,7 +160,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = true,
-                        Pages = new List<DiscordEmbed>
+                        Pages = new List<InternalEmbed>
                         {
                             new Utils().Embedify("+version set", "Set version successfully.", false)
                         }
@@ -170,7 +170,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<DiscordEmbed>
+                    Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+version set", "Failed to set version, see `+version list`.", true)
                     }
@@ -229,7 +229,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = true,
-                        Pages = new List<DiscordEmbed>
+                        Pages = new List<InternalEmbed>
                         {
                             new Utils().Embedify("+version setserver", "Set server version successfully.", false)
                         }
@@ -239,7 +239,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<DiscordEmbed>
+                    Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+version setserver", "Failed to set server version, see `+version list`.", true)
                     }
@@ -279,7 +279,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         return new CommandResponse
                         {
                             OK = true,
-                            Pages = new List<DiscordEmbed>
+                            Pages = new List<InternalEmbed>
                             {
                                 new Utils().Embedify("+version info",
                                 $"**{idealVersion.Name}**\n\n" +
@@ -295,7 +295,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<DiscordEmbed>
+                    Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+version info", "I couldn't find that version, are you sure you used the right acronym?", true)
                     }
@@ -331,15 +331,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 var versionsUsed = new List<string>();
 
-                var pages = new List<DiscordEmbed>();
+                var pages = new List<InternalEmbed>();
                 var maxResultsPerPage = 25;
                 var totalPages = (int) System.Math.Ceiling((decimal) (versions.Count / maxResultsPerPage));
                 totalPages++;
 
                 foreach (int i in Enumerable.Range(0, totalPages))
                 {
-                    var embed = new Utils().Embedify($"+version list - Page {i + 1} of {totalPages}", null, false);
-
                     var count = 0;
                     var versionList = "";
 
@@ -357,7 +355,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         }
                     }
 
-                    embed.Description = versionList;
+                    var embed = new Utils().Embedify($"+version list - Page {i + 1} of {totalPages}", versionList, false);
                     pages.Add(embed);
                 }
 
