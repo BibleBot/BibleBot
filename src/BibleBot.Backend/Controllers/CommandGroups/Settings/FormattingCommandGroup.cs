@@ -322,7 +322,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public CommandResponse ProcessCommand(Request req, List<string> args)
             {
-                var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", ">", "<", "?", "~", "|" };
+                var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
 
                 if (args[0].Length != 1)
                 {
@@ -342,7 +342,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setprefix", "The prefix can only be set to `+`, `-`, `!`, `=`, `$`, `%`, `^`, `*`, `.`, `,`, `>`, `<`, `?`, `~`, or `|`.", true)
+                            new Utils().Embedify("+formatting setprefix", "The prefix can only be set to `+`, `-`, `!`, `=`, `$`, `%`, `^`, `*`, `.`, `,`, `?`, `~`, or `|`.", true)
                         }
                     };
                 }

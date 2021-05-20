@@ -28,7 +28,7 @@ namespace BibleBot.Frontend
             });
 
             var cli = new RestClient("http://localhost:5000");
-            var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", ">", "<", "?", "~", "|" };
+            var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
             
             bot.MessageCreated += async (s, e) =>
             {
