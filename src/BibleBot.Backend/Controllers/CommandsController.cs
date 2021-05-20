@@ -64,7 +64,17 @@ namespace BibleBot.Backend.Controllers
 
                     if (grp != null)
                     {
-                        // TODO: Implement OwnerOnly check.
+                        if (grp.IsOwnerOnly && req.UserId != "186046294286925824")
+                        {
+                            return new CommandResponse
+                            {
+                                OK = false,
+                                Pages = new List<InternalEmbed>
+                                {
+                                    new Utils().Embedify("Permissions Error", "You do not have the required permissions to use this command.", true)
+                                }
+                            };
+                        }
 
                         if (tokenizedBody.Length > 1)
                         {
@@ -81,7 +91,7 @@ namespace BibleBot.Backend.Controllers
                                             return new CommandResponse
                                             {
                                                 OK = false,
-                                                Pages = new List<DiscordEmbed>
+                                                Pages = new List<InternalEmbed>
                                                 {
                                                     new Utils().Embedify("Permissions Error", "You do not have the required permissions to use this command.", true)
                                                 }
