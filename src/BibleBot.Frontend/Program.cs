@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using RestSharp;
 using DSharpPlus;
-using DSharpPlus.Entities;
 
 using BibleBot.Lib;
 
@@ -25,6 +26,9 @@ namespace BibleBot.Frontend
                 TokenType = TokenType.Bot,
                 Intents = DiscordIntents.AllUnprivileged
             });
+
+            var cli = new RestClient("http://localhost:5000");
+            var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", ">", "<", "?", "~", "|" };
             
             bot.MessageCreated += async (s, e) =>
             {
@@ -33,11 +37,10 @@ namespace BibleBot.Frontend
                     return;
                 }
 
-                if (e.Message.Content.StartsWith("+"))
+                if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
                 {
                     var authorAsMember = await e.Guild.GetMemberAsync(e.Author.Id);
 
-                    var cli = new RestClient("http://localhost:5000");
                     var request = new RestRequest("api/commands/process");
                     request.AddJsonBody(new BibleBot.Lib.Request
                     {
@@ -55,7 +58,6 @@ namespace BibleBot.Frontend
                 {
                     var authorAsMember = await e.Guild.GetMemberAsync(e.Author.Id);
 
-                    var cli = new RestClient("http://localhost:5000");
                     var request = new RestRequest("api/verses/process");
                     request.AddJsonBody(new BibleBot.Lib.Request
                     {

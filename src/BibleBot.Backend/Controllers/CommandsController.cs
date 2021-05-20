@@ -35,7 +35,8 @@ namespace BibleBot.Backend.Controllers
 
             _commandGroups = new List<ICommandGroup>
             {
-                new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService)
+                new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
+                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService)
             };
         }
 
@@ -58,7 +59,15 @@ namespace BibleBot.Backend.Controllers
             {
                 var potentialCommand = tokenizedBody[0];
 
-                if (potentialCommand.StartsWith("+"))
+                var idealGuild = _guildService.Get(req.GuildId);
+                var prefix = "+";
+
+                if (idealGuild != null)
+                {
+                    prefix = idealGuild.Prefix;
+                }
+
+                if (potentialCommand.StartsWith(prefix))
                 {
                     var grp = _commandGroups.Where(grp => grp.Name == potentialCommand.Substring(1)).FirstOrDefault();
 
