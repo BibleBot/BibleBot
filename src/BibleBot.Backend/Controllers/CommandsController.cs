@@ -104,8 +104,11 @@ namespace BibleBot.Backend.Controllers
                             }
                         }
 
-                        // TODO: At the moment, non-grouped commands CANNOT take an argument, which could be problematic later.
                         return grp.DefaultCommand.ProcessCommand(req, null);
+                    }
+                    else
+                    {
+                        // TODO: Ungrouped commands.
                     }
                 }
             }
