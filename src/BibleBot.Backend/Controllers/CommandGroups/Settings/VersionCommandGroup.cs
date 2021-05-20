@@ -222,7 +222,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         {
                             GuildId = req.GuildId,
                             Version = idealVersion.Abbreviation,
-                            Language = "english"
+                            Language = "english",
+                            Prefix = "+",
+                            IgnoringBrackets = "<>"
                         });
                     }
 
