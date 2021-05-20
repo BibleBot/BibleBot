@@ -17,16 +17,18 @@ namespace BibleBot.Backend.Controllers
     public class VersesController : ControllerBase
     {
         private readonly UserService _userService;
+        private readonly GuildService _guildService;
         private readonly ParsingService _parsingService;
         private readonly VersionService _versionService;
         private readonly NameFetchingService _nameFetchingService;
 
         private readonly BibleGatewayProvider _bgpProvider;
 
-        public VersesController(UserService userService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
+        public VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
                                 BibleGatewayProvider bibleGatewayProvider)
         {
             _userService = userService;
+            _guildService = guildService;
             _parsingService = parsingService;
             _versionService = versionService;
             _nameFetchingService = nameFetchingService;
@@ -54,16 +56,34 @@ namespace BibleBot.Backend.Controllers
             foreach (var bsr in tuple.Item2)
             {
                 var idealUser = _userService.Get(req.UserId);
+                var idealGuild = _guildService.Get(req.GuildId);
+
+                var version = "RSV";
+                var verseNumbersEnabled = true;
+                var titlesEnabled = true;
+                var ignoringBrackets = "<>";
 
                 if (idealUser != null)
                 {
-                    var idealVersion = _versionService.Get(idealUser.Version);
+                    version = idealUser.Version;
+                    verseNumbersEnabled = idealUser.VerseNumbersEnabled;
+                    titlesEnabled = idealUser.TitlesEnabled;
+                }
+                
+                if (idealGuild != null)
+                {
+                    ignoringBrackets = idealGuild.IgnoringBrackets;
+                }
 
-                    if (idealVersion == null)
-                    {
-                        idealVersion = _versionService.Get("RSV");
-                    }
+                var idealVersion = _versionService.Get(version);
 
+                if (idealVersion == null)
+                {
+                    idealVersion = _versionService.Get("RSV");
+                }
+
+                if (!_parsingService.IsSurroundedByBrackets(ignoringBrackets, bsr, tuple.Item1))
+                {
                     var reference = _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
 
                     if (reference != null)
@@ -77,7 +97,6 @@ namespace BibleBot.Backend.Controllers
                         }
                     }
                 }
-                
             }
 
             return new VerseResponse

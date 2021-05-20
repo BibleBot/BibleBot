@@ -220,6 +220,26 @@ namespace BibleBot.Backend.Services
             };
         }
 
+        public bool IsSurroundedByBrackets(string brackets, BookSearchResult result, string str)
+        {
+            var tokens = str.Split(" ");
+            var pureIndexOfResult = str.IndexOf(tokens[result.Index]);
+
+            var bracketCheckRegex = new Regex(@"\" + brackets[0] + @"(.*?)\" + brackets[1]);
+
+            foreach (Match match in bracketCheckRegex.Matches(str))
+            {
+                var matchStr = match.Value.Trim();
+
+                if (!matchStr.Contains(brackets[0]) || !matchStr.Contains(brackets[1]))
+                {
+                    return str.IndexOf(matchStr) == pureIndexOfResult;
+                }
+            }
+
+            return false;
+        }
+
         private bool IsValueInString(string str, string val)
         {
             return $" {str} ".Contains($" {val} ");
