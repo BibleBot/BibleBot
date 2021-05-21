@@ -6,5 +6,6 @@ namespace BibleBot.Lib
     {
         public bool OK { get; set; }
         public List<Verse> Verses { get; set; }
+        public string DisplayStyle { get; set; }
     }
 }
