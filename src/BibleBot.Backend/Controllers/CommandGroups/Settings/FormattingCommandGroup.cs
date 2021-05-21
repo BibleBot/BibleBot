@@ -77,7 +77,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 {
                     response = response.Replace("<verseNumbers>", idealUser.VerseNumbersEnabled ? "enabled" : "disabled");
                     response = response.Replace("<titles>", idealUser.TitlesEnabled ? "enabled" : "disabled");
-                    response = response.Replace("<displayStyle>", idealUser.DisplayMode);
+                    response = response.Replace("<displayStyle>", idealUser.DisplayStyle);
                 }
 
                 if (idealGuild != null)
@@ -153,7 +153,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Language = "english",
                         TitlesEnabled = true,
                         VerseNumbersEnabled = args[0] == "enable",
-                        DisplayMode = "embed"
+                        DisplayStyle = "embed"
                     });
                 }
 
@@ -218,7 +218,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Language = "english",
                         TitlesEnabled = args[0] == "enable",
                         VerseNumbersEnabled = true,
-                        DisplayMode = "embed"
+                        DisplayStyle = "embed"
                     });
                 }
 
@@ -270,7 +270,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    idealUser.DisplayMode = args[0];
+                    idealUser.DisplayStyle = args[0];
                     _userService.Update(req.UserId, idealUser);
                 }
                 else
@@ -283,7 +283,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Language = "english",
                         TitlesEnabled = true,
                         VerseNumbersEnabled = true,
-                        DisplayMode = args[0]
+                        DisplayStyle = args[0]
                     });
                 }
 

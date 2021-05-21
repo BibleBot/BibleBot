@@ -27,7 +27,7 @@ namespace BibleBot.Backend.Models
         [BsonElement("VerseNumbersEnabled")]
         public bool VerseNumbersEnabled { get; set; }
 
-        [BsonElement("DisplayMode")]
-        public string DisplayMode { get; set; }
+        [BsonElement("DisplayStyle")]
+        public string DisplayStyle { get; set; }
     }
 }
