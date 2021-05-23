@@ -1,7 +1,7 @@
 {
     "biblebot": "BibleBot <version>",
     "credit": "由 Kerygma Digital 以 ❤️ 制作",
-    "commandlist": "`<+><search>` - search using keywords\n`<+><version>` - version preferences and information\n`<+><random>` - get a random Bible verse\n`<+><truerandom>` - get a truly random Bible verse\n`<+><dailyverse>` - daily verses and automation\n`<+><formatting>` - formatting preferences for verse styles\n`<+><language>` - language preferences and information\n`<+><misc>` - miscellaneous server settings\n`<+><stats>` - view bot statistics\n`<+><invite>` - get the invite link for BibleBot\n\n`<+><creeds>` - ecumenical creeds (contains further commands)",
+    "commandlist": "`<+><search>` - 关键词搜索\n`<+><version>` - 翻译版本选项与资讯\n`<+><random>` - 获得一个随机的《圣经》金句\n`<+><truerandom>` - 获得一个真正随机的《圣经》经文\n`<+><dailyverse>` - 每日圣经经文和自动化\n`<+><formatting>` - 《圣经》经文格式设置选项\n`<+><language>` - 语言选项与资讯\n`<+><misc>` - 服务器杂项设置\n`<+><stats>` - 显示此机器人数据\n`<+><invite>` - 获得 BibleBot 的邀请链接\n\n`<+><creeds>` - 基督教各教派联合信经 (包含更多指令)",
     "usage": "用法：请输入《圣经》经文章节号码即可",
     "commandlistName": "命令",
     "links": "链接",
