@@ -22,7 +22,7 @@ namespace BibleBot.Backend.Controllers
         private readonly VersionService _versionService;
         private readonly NameFetchingService _nameFetchingService;
 
-        private readonly BibleGatewayProvider _bgpProvider;
+        private readonly BibleGatewayProvider _bgProvider;
 
         public VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
                                 BibleGatewayProvider bibleGatewayProvider)
@@ -33,7 +33,7 @@ namespace BibleBot.Backend.Controllers
             _versionService = versionService;
             _nameFetchingService = nameFetchingService;
 
-            _bgpProvider = bibleGatewayProvider;
+            _bgProvider = bibleGatewayProvider;
         }
 
         /// <summary>
@@ -62,12 +62,14 @@ namespace BibleBot.Backend.Controllers
                 var verseNumbersEnabled = true;
                 var titlesEnabled = true;
                 var ignoringBrackets = "<>";
+                var displayStyle = "embed";
 
                 if (idealUser != null)
                 {
                     version = idealUser.Version;
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
+                    displayStyle = idealUser.DisplayStyle;
                 }
                 
                 if (idealGuild != null)
@@ -91,7 +93,7 @@ namespace BibleBot.Backend.Controllers
                         switch (reference.Version.Source) 
                         {
                             case "bg":
-                                Verse result = await _bgpProvider.GetVerse(reference, idealUser.TitlesEnabled, idealUser.VerseNumbersEnabled);
+                                Verse result = await _bgProvider.GetVerse(reference, idealUser.TitlesEnabled, idealUser.VerseNumbersEnabled);
                                 results.Add(result);
                                 break;
                         }
@@ -102,7 +104,7 @@ namespace BibleBot.Backend.Controllers
             return new VerseResponse
             {
                 OK = true,
-                Verses = results
+                Verses = results,
             };
         }
     }

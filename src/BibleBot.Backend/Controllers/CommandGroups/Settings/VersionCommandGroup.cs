@@ -59,7 +59,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
                 var idealGuild = _guildService.Get(req.GuildId);
@@ -129,7 +129,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var newVersion = args[0].ToUpperInvariant();
                 var idealVersion = _versionService.Get(newVersion);
@@ -202,7 +202,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var newVersion = args[0].ToUpperInvariant();
                 var idealVersion = _versionService.Get(newVersion);
@@ -271,7 +271,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 if (args.Count > 0)
                 {
@@ -327,7 +327,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var versions = _versionService.Get();
                 versions.Sort((x, y) => x.Name.CompareTo(y.Name));

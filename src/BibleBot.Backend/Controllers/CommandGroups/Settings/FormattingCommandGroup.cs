@@ -56,7 +56,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
                 var idealGuild = _guildService.Get(req.GuildId);
@@ -122,7 +122,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] != "enable" || args[0] != "disable")
                 {
@@ -187,7 +187,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] != "enable" || args[0] != "disable")
                 {
@@ -252,7 +252,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] != "embed" || args[0] != "code" || args[0] == "blockquote")
                 {
@@ -320,7 +320,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
 
@@ -401,7 +401,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public CommandResponse ProcessCommand(Request req, List<string> args)
+            public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var acceptableBrackets = new List<string>{ "<>", "[]", "{}", "()" };
 
