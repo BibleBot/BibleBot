@@ -21,7 +21,7 @@ namespace BibleBot.Backend.Controllers
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
 
-        private readonly BibleGatewayProvider _bgpProvider;
+        private readonly BibleGatewayProvider _bgProvider;
 
         private readonly List<ICommandGroup> _commandGroups;
 
@@ -31,12 +31,13 @@ namespace BibleBot.Backend.Controllers
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
-            _bgpProvider = bibleGatewayProvider;
+            _bgProvider = bibleGatewayProvider;
 
             _commandGroups = new List<ICommandGroup>
             {
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
-                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService)
+                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
+                new CommandGroups.Resources.DailyVerseCommandGroup(_userService, _guildService, _versionService, _bgProvider)
             };
         }
 
@@ -51,7 +52,7 @@ namespace BibleBot.Backend.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public CommandResponse ProcessMessage([FromBody] Request req)
+        public IResponse ProcessMessage([FromBody] Request req)
         {
             var tokenizedBody = req.Body.Split(" ");
             

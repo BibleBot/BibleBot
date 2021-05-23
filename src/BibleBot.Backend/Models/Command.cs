@@ -12,6 +12,6 @@ namespace BibleBot.Backend.Models
         string Name { get; set; }
         int ExpectedArguments { get; set; }
         List<Permissions> PermissionsRequired { get; set; }
-        CommandResponse ProcessCommand(Request req, List<string> args);
+        IResponse ProcessCommand(Request req, List<string> args);
     }
 }

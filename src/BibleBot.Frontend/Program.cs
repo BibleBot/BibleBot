@@ -37,41 +37,47 @@ namespace BibleBot.Frontend
                     return;
                 }
 
-                if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
+                var authorAsMember = await e.Guild.GetMemberAsync(e.Author.Id);
+                var requestObj = new BibleBot.Lib.Request
                 {
-                    var authorAsMember = await e.Guild.GetMemberAsync(e.Author.Id);
-
-                    var request = new RestRequest("api/commands/process");
-                    request.AddJsonBody(new BibleBot.Lib.Request
-                    {
                         UserId = e.Author.Id.ToString(),
                         UserPermissions = (long) authorAsMember.PermissionsIn(e.Channel),
                         GuildId = e.Guild.Id.ToString(),
                         IsDM = e.Channel.IsPrivate,
                         Body = e.Message.Content,
                         Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
-                    });
+                };
+                IResponse response;
 
-                    var resp = await cli.PostAsync<CommandResponse>(request);
-                    await e.Message.RespondAsync(utils.Embed2Embed(resp.Pages[0]));
+                if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
+                {
+
+                    var request = new RestRequest("api/commands/process");
+                    request.AddJsonBody(requestObj);
+
+                    response = await cli.PostAsync<CommandResponse>(request);
                 }
                 else
                 {
-                    var authorAsMember = await e.Guild.GetMemberAsync(e.Author.Id);
-
                     var request = new RestRequest("api/verses/process");
-                    request.AddJsonBody(new BibleBot.Lib.Request
-                    {
-                        UserId = e.Author.Id.ToString(),
-                        UserPermissions = (long) authorAsMember.PermissionsIn(e.Channel),
-                        GuildId = e.Guild.Id.ToString(),
-                        IsDM = e.Channel.IsPrivate,
-                        Body = e.Message.Content,
-                        Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
-                    });
+                    request.AddJsonBody(requestObj);
 
-                    var resp = await cli.PostAsync<VerseResponse>(request);
-                    await e.Message.RespondAsync(resp.Verses[0].Text);
+                    response = await cli.PostAsync<VerseResponse>(request);
+                }
+
+                if (response.GetType().Equals(typeof(CommandResponse)))
+                {
+                    await e.Message.RespondAsync(utils.Embed2Embed((response as CommandResponse).Pages[0]));
+                }
+                else if (response.GetType().Equals(typeof(VerseResponse)))
+                {
+                    var verseResp = response as VerseResponse;
+
+                    foreach (Verse verse in verseResp.Verses)
+                    {
+                        var embed = utils.Embedify($"{verse.Reference.ToString()} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
+                        await e.Message.RespondAsync(embed);
+                    }
                 }
             };
 
