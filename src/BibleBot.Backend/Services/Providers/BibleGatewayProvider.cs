@@ -17,6 +17,7 @@ namespace BibleBot.Backend.Services.Providers
         private readonly WebClient _webClient;
         private readonly string _baseURL = "https://www.biblegateway.com";
         private readonly string _getURI = "/passage/?search={0}&version={1}&interface=print";
+        private readonly string _votdURI = "/reading-plans/verse-of-the-day/next";
 
         public BibleGatewayProvider()
         {
@@ -26,7 +27,12 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
-            string url = _baseURL + System.String.Format(_getURI, reference.ToString(), reference.Version.Abbreviation);
+            if (reference.Book != "str")
+            {
+                reference.AsString = reference.ToString();
+            }
+
+            string url = _baseURL + System.String.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
             string resp = _webClient.DownloadString(url);
 
             var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
@@ -39,8 +45,6 @@ namespace BibleBot.Backend.Services.Providers
 
             var chapterNumbers = container.QuerySelectorAll(".chapternum");
             var verseNumbers = container.QuerySelectorAll(".versenum");
-
-            var undesirableContent = document.All.Where(el => el.TagName == "br" || el.ClassList.Contains("crossreference") || el.ClassList.Contains("footnote"));
 
             foreach (var el in chapterNumbers) 
             {
@@ -66,18 +70,22 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            foreach (var el in undesirableContent)
+            foreach (var el in document.QuerySelectorAll("br"))
             {
-                if (el.TagName == "br")
-                {
-                    el.Before(document.CreateTextNode("\n"));
-                }
-
+                el.Before(document.CreateTextNode("\n"));
                 el.Remove();
             }
 
-            // Logic would suggest that I can just add "el.ClassList.Contains("copyright-table")" to line 37's lookup,
-            // but for some reason it creates an ArgumentOutOfRangeException, so I have to do this.
+            foreach (var el in document.QuerySelectorAll(".crossreference"))
+            {
+                el.Remove();
+            }
+
+            foreach (var el in document.QuerySelectorAll(".footnote"))
+            {
+                el.Remove();
+            }
+
             foreach (var el in document.QuerySelectorAll(".copyright-table"))
             {
                 el.Remove();
@@ -96,10 +104,25 @@ namespace BibleBot.Backend.Services.Providers
             return new Verse { Reference = reference, Title = title, PsalmTitle = psalmTitle, Text = PurifyVerseText(text) };
         }
 
+        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version)
+        {
+            return await GetVerse(new Reference{ Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        }
+
         public async Task<Dictionary<string, string>> Search(string query, Version version)
         {
             // TODO
             return new Dictionary<string, string>();
+        }
+
+        public async Task<string> GetDailyVerse()
+        {
+            string url = _baseURL + _votdURI;
+            string resp = _webClient.DownloadString(url);
+
+            var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
+            
+            return document.GetElementsByClassName("rp-passage-display").FirstOrDefault().TextContent;
         }
 
         private string PurifyVerseText(string text)
