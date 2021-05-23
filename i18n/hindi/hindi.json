@@ -1,6 +1,6 @@
 {
     "biblebot": "BibleBot <version>",
-    "credit": "Made with ❤️ by Kerygma Digital",
+    "credit": "Kerygma Digital द्वारा ❤️ से बनाया",
     "commandlist": "`<+><search>` - search using keywords\n`<+><version>` - version preferences and information\n`<+><random>` - get a random Bible verse\n`<+><truerandom>` - get a truly random Bible verse\n`<+><dailyverse>` - daily verses and automation\n`<+><formatting>` - formatting preferences for verse styles\n`<+><language>` - language preferences and information\n`<+><misc>` - miscellaneous server settings\n`<+><stats>` - view bot statistics\n`<+><invite>` - get the invite link for BibleBot\n\n`<+><creeds>` - ecumenical creeds (contains further commands)",
     "usage": "To use the bot, just say a Bible verse. I'll handle the rest.",
     "commandlistName": "Commands",
