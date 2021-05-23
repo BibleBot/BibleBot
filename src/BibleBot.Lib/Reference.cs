@@ -34,5 +34,7 @@ namespace BibleBot.Lib
 
             return result;
         }
+
+        public string AsString;
     }
 }
