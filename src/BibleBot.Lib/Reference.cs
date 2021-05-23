@@ -35,6 +35,6 @@ namespace BibleBot.Lib
             return result;
         }
 
-        public string AsString;
+        public string AsString { get; set; }
     }
 }
