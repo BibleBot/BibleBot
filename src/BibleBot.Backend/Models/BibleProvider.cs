@@ -9,6 +9,7 @@ namespace BibleBot.Backend.Models
     {
         string Name { get; set; }
         Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled);
+        Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version);
         Task<Dictionary<string, string>> Search(string query, Version version);
     }
 }
