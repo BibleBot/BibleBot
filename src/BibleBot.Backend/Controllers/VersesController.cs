@@ -52,6 +52,7 @@ namespace BibleBot.Backend.Controllers
             var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), req.Body.ToLower());
 
             List<Verse> results = new List<Verse>();
+            var displayStyle = "embed";
 
             foreach (var bsr in tuple.Item2)
             {
@@ -62,7 +63,6 @@ namespace BibleBot.Backend.Controllers
                 var verseNumbersEnabled = true;
                 var titlesEnabled = true;
                 var ignoringBrackets = "<>";
-                var displayStyle = "embed";
 
                 if (idealUser != null)
                 {
@@ -105,6 +105,7 @@ namespace BibleBot.Backend.Controllers
             {
                 OK = true,
                 Verses = results,
+                DisplayStyle = displayStyle
             };
         }
     }

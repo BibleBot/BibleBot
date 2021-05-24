@@ -1,4 +1,4 @@
-using System.Net;
+using System.Net.Http;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace BibleBot.Backend.Services.Providers
     public class BibleGatewayProvider : IBibleProvider
     {
         public string Name { get; set; }
-        private readonly WebClient _webClient;
+        private readonly HttpClient _httpClient;
         private readonly string _baseURL = "https://www.biblegateway.com";
         private readonly string _getURI = "/passage/?search={0}&version={1}&interface=print";
         private readonly string _votdURI = "/reading-plans/verse-of-the-day/next";
@@ -22,7 +22,7 @@ namespace BibleBot.Backend.Services.Providers
         public BibleGatewayProvider()
         {
             Name = "bg";
-            _webClient = new WebClient();
+            _httpClient = new HttpClient();
         }
 
         public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
@@ -33,7 +33,7 @@ namespace BibleBot.Backend.Services.Providers
             }
 
             string url = _baseURL + System.String.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
-            string resp = _webClient.DownloadString(url);
+            string resp = await _httpClient.GetStringAsync(url);
 
             var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
             var container = document.QuerySelector(".result-text-style-normal");
@@ -118,7 +118,7 @@ namespace BibleBot.Backend.Services.Providers
         public async Task<string> GetDailyVerse()
         {
             string url = _baseURL + _votdURI;
-            string resp = _webClient.DownloadString(url);
+            string resp = await _httpClient.GetStringAsync(url);
 
             var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
             
