@@ -1,10 +1,12 @@
-using System.Net.Http;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-using AngleSharp;
+using AngleSharp.Html.Parser;
 
 using BibleBot.Lib;
 using BibleBot.Backend.Models;
@@ -14,7 +16,9 @@ namespace BibleBot.Backend.Services.Providers
     public class BibleGatewayProvider : IBibleProvider
     {
         public string Name { get; set; }
+        private readonly CancellationTokenSource _cancellationToken;
         private readonly HttpClient _httpClient;
+        private readonly HtmlParser _htmlParser;
         private readonly string _baseURL = "https://www.biblegateway.com";
         private readonly string _getURI = "/passage/?search={0}&version={1}&interface=print";
         private readonly string _votdURI = "/reading-plans/verse-of-the-day/next";
@@ -22,7 +26,10 @@ namespace BibleBot.Backend.Services.Providers
         public BibleGatewayProvider()
         {
             Name = "bg";
+
+            _cancellationToken = new CancellationTokenSource();
             _httpClient = new HttpClient();
+            _htmlParser = new HtmlParser();
         }
 
         public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
@@ -33,9 +40,16 @@ namespace BibleBot.Backend.Services.Providers
             }
 
             string url = _baseURL + System.String.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
-            string resp = await _httpClient.GetStringAsync(url);
+            
+            HttpResponseMessage req = await _httpClient.GetAsync(url);
+            _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
+            Stream resp = await req.Content.ReadAsStreamAsync();
+            _cancellationToken.Token.ThrowIfCancellationRequested();
+
+            var document = await _htmlParser.ParseDocumentAsync(resp);
+            _cancellationToken.Token.ThrowIfCancellationRequested();
+
             var container = document.QuerySelector(".result-text-style-normal");
 
             if (container == null)
@@ -118,9 +132,15 @@ namespace BibleBot.Backend.Services.Providers
         public async Task<string> GetDailyVerse()
         {
             string url = _baseURL + _votdURI;
-            string resp = await _httpClient.GetStringAsync(url);
+            
+            HttpResponseMessage req = await _httpClient.GetAsync(url);
+            _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
+            Stream resp = await req.Content.ReadAsStreamAsync();
+            _cancellationToken.Token.ThrowIfCancellationRequested();
+
+            var document = await _htmlParser.ParseDocumentAsync(resp);
+            _cancellationToken.Token.ThrowIfCancellationRequested();
             
             return document.GetElementsByClassName("rp-passage-display").FirstOrDefault().TextContent;
         }
