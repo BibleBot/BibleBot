@@ -69,7 +69,33 @@ namespace BibleBot.Frontend
 
                     if (response.GetType().Equals(typeof(CommandResponse)))
                     {
-                        await e.Message.RespondAsync(utils.Embed2Embed((response as CommandResponse).Pages[0]));
+                        var commandResp = response as CommandResponse;
+
+                        if (commandResp.WebhookCallback == true)
+                        {
+                            var request = new RestRequest("api/webhooks/process");
+                            var webhook = await e.Channel.CreateWebhookAsync("BibleBot Automatic Daily Verses", default, "For automatic daily verses from BibleBot.");
+                            
+                            requestObj.Body = $"https://discord.com/webhooks/{webhook.Id}/{webhook.Token}";
+                            request.AddJsonBody(requestObj);
+
+                            var webhookResp = await cli.PostAsync<CommandResponse>(request);
+
+                            if (webhookResp.OK == false)
+                            {
+                                await e.Message.RespondAsync(
+                                    utils.Embedify("+dailyverse set", "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.", false)
+                                );
+                            }
+                            else
+                            {
+                                await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                            }
+                        }
+                        else
+                        {
+                            await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                        }
                     }
                     else if (response.GetType().Equals(typeof(VerseResponse)))
                     {

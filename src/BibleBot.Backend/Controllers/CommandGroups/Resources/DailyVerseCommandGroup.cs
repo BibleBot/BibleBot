@@ -2,6 +2,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
+using NodaTime;
+
 using BibleBot.Lib;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
@@ -135,40 +137,62 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
-                var newVersion = args[0].ToUpperInvariant();
-                var idealVersion = _versionService.Get(newVersion);
-
-                if (idealVersion != null)
+                if (args.Count == 2)
                 {
-                    var idealUser = _userService.Get(req.UserId);
+                    var timeSplit = args[0].Split(":");
 
-                    if (idealUser != null)
+                    try
                     {
-                        idealUser.Version = idealVersion.Abbreviation;
-                        _userService.Update(req.UserId, idealUser);
-                    }
-                    else
-                    {
-                        _userService.Create(new User
-                        {
-                            UserId = req.UserId,
-                            Version = idealVersion.Abbreviation,
-                            InputMethod = "default",
-                            Language = "english",
-                            TitlesEnabled = true,
-                            VerseNumbersEnabled = true,
-                            DisplayStyle = "embed"
-                        });
-                    }
+                        var hour = int.Parse(timeSplit[0]);
+                        var minute = int.Parse(timeSplit[1]);
 
-                    return new CommandResponse
-                    {
-                        OK = true,
-                        Pages = new List<InternalEmbed>
+                        if ((hour > -1 && hour < 24) || (minute > -1 && minute < 60))
                         {
-                            new Utils().Embedify("+version set", "Set version successfully.", false)
+                            var idealGuild = _guildService.Get(req.GuildId);
+
+                            if (idealGuild != null)
+                            {
+                                idealGuild.DailyVerseTime = args[0];
+                                idealGuild.DailyVerseTimeZone = args[1];
+                                _guildService.Update(req.GuildId, idealGuild);
+                            }
+                            else
+                            {
+                                _guildService.Create(new Guild
+                                {
+                                    GuildId = req.GuildId,
+                                    Version = "RSV",
+                                    Language = "english",
+                                    Prefix = "+",
+                                    IgnoringBrackets = "<>",
+                                    IsDM = req.IsDM,
+                                    DailyVerseTime = args[0],
+                                    DailyVerseTimeZone = args[1]
+                                });
+                            }
+
+                            return new CommandResponse
+                            {
+                                OK = true,
+                                Pages = new List<InternalEmbed>
+                                {
+                                    new Utils().Embedify("+dailyverse set", "Set automatic daily verse successfully.", false)
+                                },
+                                WebhookCallback = true
+                            };
                         }
-                    };
+                    }
+                    catch
+                    {
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new List<InternalEmbed>
+                            {
+                                new Utils().Embedify("+dailyverse set", "Go to https://biblebot.github.io/dailyversesetup/ to continue the setup process.", false)
+                            }
+                        };
+                    }
                 }
 
                 return new CommandResponse
@@ -176,7 +200,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+version set", "Failed to set version, see `+version list`.", true)
+                        new Utils().Embedify("+dailyverse set", "Go to https://biblebot.github.io/dailyversesetup/ to continue the setup process.", false)
                     }
                 };
             }
