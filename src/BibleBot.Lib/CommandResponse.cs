@@ -6,5 +6,6 @@ namespace BibleBot.Lib
     {
         public bool OK { get; set; }
         public List<InternalEmbed> Pages { get; set; }
+        public bool WebhookCallback { get; set; }
     }
 }

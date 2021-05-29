@@ -24,8 +24,8 @@ namespace BibleBot.Backend.Models
         [BsonElement("IgnoringBrackets")]
         public string IgnoringBrackets { get; set; }
 
-        [BsonElement("DailyVerseChannel")]
-        public string DailyVerseChannel { get; set; }
+        [BsonElement("DailyVerseWebhook")]
+        public string DailyVerseWebhook { get; set; }
 
         [BsonElement("DailyVerseTime")]
         public string DailyVerseTime { get; set; }
