@@ -38,6 +38,9 @@ namespace BibleBot.Backend
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
+            // Add background services.
+            services.AddHostedService<AutomaticDailyVerseService>();
+
             // Instantiate the various services.
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();

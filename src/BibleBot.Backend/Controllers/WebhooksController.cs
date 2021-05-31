@@ -37,7 +37,7 @@ namespace BibleBot.Backend.Controllers
         {
             var idealGuild = _guildService.Get(req.GuildId);
 
-            if (idealGuild != null && req.Body.StartsWith("https://discord.com/webhooks/"))
+            if (idealGuild != null)
             {
                 idealGuild.DailyVerseWebhook = req.Body;
                 _guildService.Update(req.GuildId, idealGuild);

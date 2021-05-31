@@ -74,9 +74,19 @@ namespace BibleBot.Frontend
                         if (commandResp.WebhookCallback == true)
                         {
                             var request = new RestRequest("api/webhooks/process");
+                            var existingWebhooks = (await e.Channel.GetWebhooksAsync()).Where((webhook) =>
+                            {
+                                return webhook.User.Id == bot.CurrentUser.Id;
+                            });
+
+                            foreach (var existingWebhook in existingWebhooks)
+                            {
+                                await existingWebhook.DeleteAsync();
+                            }
+
                             var webhook = await e.Channel.CreateWebhookAsync("BibleBot Automatic Daily Verses", default, "For automatic daily verses from BibleBot.");
                             
-                            requestObj.Body = $"https://discord.com/webhooks/{webhook.Id}/{webhook.Token}";
+                            requestObj.Body = $"{webhook.Id}/{webhook.Token}";
                             request.AddJsonBody(requestObj);
 
                             var webhookResp = await cli.PostAsync<CommandResponse>(request);

@@ -27,7 +27,7 @@ namespace BibleBot.Backend
 
             embed.Footer = new Footer();
             embed.Footer.Text = copyright != null ? $"{copyright} // ${footerText}" : footerText;
-            // I'd put footer icon on this line but for some reason it doesn't get received by frontend.
+            embed.Footer.IconURL = "https://i.imgur.com/hr4RXpy.png";
 
             if (author != null)
             {
