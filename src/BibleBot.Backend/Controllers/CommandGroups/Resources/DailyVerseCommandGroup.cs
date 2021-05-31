@@ -189,7 +189,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                             OK = true,
                             Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify("+dailyverse set", "Go to https://biblebot.github.io/dailyversesetup/ to continue the setup process.", false)
+                                new Utils().Embedify("+dailyverse set", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", false)
                             }
                         };
                     }
@@ -200,7 +200,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+dailyverse set", "Go to https://biblebot.github.io/dailyversesetup/ to continue the setup process.", false)
+                        new Utils().Embedify("+dailyverse set", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", false)
                     }
                 };
             }

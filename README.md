@@ -38,20 +38,6 @@ This repository is a monolith containing subprojects in `src/`. These various pr
 
 - .NET Core 5.0 (SDK/Runtime)
 - ASP.NET Core 5.0 (Runtime)
-- Docker
-
-## Self-Host Setup
-This is from the old Golang backend which we'll derive from later. **This does not work.**
-
-```bash
-git clone https://github.com/BibleBot/backend && cd backend
-cp config.example.yml && $EDITOR config.yml
-
-# build production container
-# the build-arg is optional if you're wanting localhost *without* HTTPS
-docker build --build-arg DOMAIN=<domain> -t backend .
-docker run -dp 443:443 backend
-```
 
 ## Special Thanks
 
