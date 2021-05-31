@@ -32,7 +32,7 @@ This repository is a monolith containing subprojects in `src/`. These various pr
 
 - `BibleBot.Backend` is our ASP.NET Core backend API, it does most of the heavy lifting of the project.
 - `BibleBot.Lib` is a class library containing shared models between Backend and Frontend.
-- `BibleBot.Frontend` will eventually exist as a .NET Core Discord bot utilizing DSharpPlus.
+- `BibleBot.Frontend` is a .NET Core Discord bot utilizing DSharpPlus that acts as a middleman between Discord and BibleBot.Backend.
 
 ## Prerequisites
 
