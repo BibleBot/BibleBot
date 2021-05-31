@@ -99,7 +99,7 @@ namespace BibleBot.Backend.Services
                     Content = "Here is the daily verse:",
                     Username = "BibleBot Automatic Daily Verses",
                     AvatarURL = embed.Footer.IconURL,
-                    Embeds = new InternalEmbed[] { embed }
+                    Embeds = new List<InternalEmbed> { embed }
                 };
 
                 var request = new RestRequest(guild.DailyVerseWebhook);
@@ -112,7 +112,7 @@ namespace BibleBot.Backend.Services
                 }
             }
 
-            _logger.LogInformation($"Sent {count} of {idealCount} daily verse(s) at {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
+            _logger.LogInformation($"Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) at {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

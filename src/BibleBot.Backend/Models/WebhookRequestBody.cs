@@ -23,7 +23,7 @@ namespace BibleBot.Backend.Models
         public string File = null;
 
         [JsonPropertyName("embeds")]
-        public InternalEmbed[] Embeds { get; set; }
+        public List<InternalEmbed> Embeds { get; set; }
 
         [JsonPropertyName("payload_json")]
         public string PayloadJSON = null;

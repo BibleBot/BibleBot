@@ -146,7 +146,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                         var hour = int.Parse(timeSplit[0]);
                         var minute = int.Parse(timeSplit[1]);
 
-                        if ((hour > -1 && hour < 24) || (minute > -1 && minute < 60))
+                        if (((hour > -1 && hour < 24) || (minute > -1 && minute < 60)) && DateTimeZoneProviders.Tzdb.GetZoneOrNull(args[1]) != null)
                         {
                             var idealGuild = _guildService.Get(req.GuildId);
 

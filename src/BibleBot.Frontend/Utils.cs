@@ -5,7 +5,7 @@ namespace BibleBot.Frontend
 {
     public class Utils
     {
-        public enum Colours
+        public enum Colors
         {
             NORMAL_COLOR = 6709986,
             ERROR_COLOR = 16723502
@@ -17,7 +17,7 @@ namespace BibleBot.Frontend
 
             builder.WithTitle(embed.Title);
             builder.WithDescription(embed.Description);
-            builder.WithColor(new DiscordColor((int) embed.Colour));
+            builder.WithColor(new DiscordColor(embed.Color));
             builder.WithFooter(embed.Footer.Text, "https://i.imgur.com/hr4RXpy.png");
             
             if (embed.Author != null)
@@ -42,7 +42,7 @@ namespace BibleBot.Frontend
             var builder = new DiscordEmbedBuilder();
             builder.WithTitle(title);
             builder.WithDescription(description);
-            builder.WithColor(isError ? (int) Colours.ERROR_COLOR : (int) Colours.NORMAL_COLOR);
+            builder.WithColor(isError ? (int) Colors.ERROR_COLOR : (int) Colors.NORMAL_COLOR);
 
             builder.WithFooter(footerText, "https://i.imgur.com/hr4RXpy.png");
 

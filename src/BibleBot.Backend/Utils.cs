@@ -4,7 +4,7 @@ namespace BibleBot.Backend
 {
     public class Utils
     {
-        public enum Colours
+        public enum Colors
         {
             NORMAL_COLOR = 6709986,
             ERROR_COLOR = 16723502
@@ -23,7 +23,7 @@ namespace BibleBot.Backend
             var embed = new InternalEmbed();
             embed.Title = title;
             embed.Description = description;
-            embed.Colour = isError ? (int) Colours.ERROR_COLOR : (int) Colours.NORMAL_COLOR;
+            embed.Color = isError ? (int) Colors.ERROR_COLOR : (int) Colors.NORMAL_COLOR;
 
             embed.Footer = new Footer();
             embed.Footer.Text = copyright != null ? $"{copyright} // ${footerText}" : footerText;
