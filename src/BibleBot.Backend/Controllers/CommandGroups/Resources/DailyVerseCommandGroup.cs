@@ -118,7 +118,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             {
                 Name = "set";
                 ExpectedArguments = 0;
-                PermissionsRequired = new List<Permissions> { Permissions.MANAGE_GUILD };
+                PermissionsRequired = new List<Permissions>
+                {
+                    Permissions.MANAGE_GUILD
+                };
 
                 _guildService = guildService;
             }
@@ -207,7 +210,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             {
                 Name = "clear";
                 ExpectedArguments = 0;
-                PermissionsRequired = new List<Permissions> { Permissions.MANAGE_GUILD };
+                PermissionsRequired = new List<Permissions>
+                {
+                    Permissions.MANAGE_GUILD
+                };
 
                 _guildService = guildService;
             }
