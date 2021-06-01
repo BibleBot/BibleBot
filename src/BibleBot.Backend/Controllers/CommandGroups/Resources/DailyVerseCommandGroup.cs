@@ -38,7 +38,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             Commands = new List<ICommand>
             {
                 new DailyVerseUsage(_userService, _guildService, _versionService, _bgProvider),
-                new DailyVerseSet(_guildService)
+                new DailyVerseSet(_guildService),
+                new DailyVerseClear(_guildService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
