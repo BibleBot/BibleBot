@@ -93,7 +93,7 @@ namespace BibleBot.Backend.Controllers
                         switch (reference.Version.Source) 
                         {
                             case "bg":
-                                Verse result = await _bgProvider.GetVerse(reference, idealUser.TitlesEnabled, idealUser.VerseNumbersEnabled);
+                                Verse result = await _bgProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
                                 results.Add(result);
                                 break;
                         }

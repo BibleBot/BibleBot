@@ -72,25 +72,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
-                var idealGuild = _guildService.Get(req.GuildId);
 
                 var version = "RSV";
                 var verseNumbersEnabled = true;
                 var titlesEnabled = true;
-                var ignoringBrackets = "<>";
-                var displayStyle = "embed";
 
                 if (idealUser != null)
                 {
                     version = idealUser.Version;
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
-                    displayStyle = idealUser.DisplayStyle;
-                }
-                
-                if (idealGuild != null)
-                {
-                    ignoringBrackets = idealGuild.IgnoringBrackets;
                 }
 
                 var idealVersion = _versionService.Get(version);
