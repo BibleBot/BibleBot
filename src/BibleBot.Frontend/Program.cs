@@ -73,38 +73,48 @@ namespace BibleBot.Frontend
 
                         if (commandResp.RemoveWebhook)
                         {
-                            var existingWebhooks = (await e.Guild.GetWebhooksAsync()).Where((webhook) =>
+                            try
                             {
-                                return webhook.User.Id == bot.CurrentUser.Id;
-                            });
+                                var webhooks = await e.Guild.GetWebhooksAsync();
 
-                            foreach (var existingWebhook in existingWebhooks)
-                            {
-                                await existingWebhook.DeleteAsync();
+                                foreach (var webhook in webhooks)
+                                {
+                                    if (webhook.User.Id == bot.CurrentUser.Id)
+                                    {
+                                        await webhook.DeleteAsync();
+                                    }
+                                }
                             }
+                            catch
+                            {
+                                await e.Message.RespondAsync(
+                                    utils.Embedify("+dailyverse set", "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.", false)
+                                );
+                            }
+                            
                         }
 
                         if (commandResp.CreateWebhook)
                         {
                             var request = new RestRequest("api/webhooks/process");
 
-                            var webhook = await e.Channel.CreateWebhookAsync("BibleBot Automatic Daily Verses", default, "For automatic daily verses from BibleBot.");
-                            
-                            requestObj.Body = $"{webhook.Id}/{webhook.Token}";
-                            request.AddJsonBody(requestObj);
+                            try
+                            {
+                                var webhook = await e.Channel.CreateWebhookAsync("BibleBot Automatic Daily Verses", default, "For automatic daily verses from BibleBot.");
 
-                            var webhookResp = await cli.PostAsync<CommandResponse>(request);
+                                requestObj.Body = $"{webhook.Id}/{webhook.Token}";
+                                request.AddJsonBody(requestObj);
 
-                            if (webhookResp.OK == false)
+                                await cli.PostAsync<CommandResponse>(request);
+                                await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                            }
+                            catch
                             {
                                 await e.Message.RespondAsync(
                                     utils.Embedify("+dailyverse set", "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.", false)
                                 );
                             }
-                            else
-                            {
-                                await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
-                            }
+                            
                         }
                         else
                         {
