@@ -11,6 +11,13 @@ namespace BibleBot.Backend.Services
 {
     public class ParsingService
     {
+        private readonly VersionService _versionService;
+        
+        public ParsingService(VersionService versionService)
+        {
+            _versionService = versionService;
+        }
+
         public System.Tuple<string, List<BookSearchResult>> GetBooksInString(Dictionary<string, List<string>> bookNames, List<string> defaultNames, string str)
         {
             List<BookSearchResult> results = new List<BookSearchResult>();
@@ -163,18 +170,17 @@ namespace BibleBot.Backend.Services
                         return null;
                     }
 
-                    /* Once we implement VersionService, we can add version detection in references like so:
                     if (tokens.Length > tokenIdxAfterSpan)
                     {
                         string lastToken = tokens[tokenIdxAfterSpan].ToUpper();
 
-                        <db thing to search for version by lasttoken (which is abbreviation)>
+                        var idealVersion = _versionService.Get(lastToken);
 
                         if (idealVersion.Abbreviation == lastToken)
                         {
                             version = idealVersion;
                         }
-                    }*/
+                    }
                 }
             }
             else
