@@ -38,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             Commands = new List<ICommand>
             {
                 new DailyVerseUsage(_userService, _guildService, _versionService, _bgProvider),
-                new DailyVerseSet(_userService, _guildService, _versionService)
+                new DailyVerseSet(_guildService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
@@ -120,19 +120,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
 
-            private readonly UserService _userService;
             private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
 
-            public DailyVerseSet(UserService userService, GuildService guildService, VersionService versionService)
+            public DailyVerseSet(GuildService guildService)
             {
                 Name = "set";
                 ExpectedArguments = 0;
-                PermissionsRequired = null;
+                PermissionsRequired = new List<Permissions> { Permissions.MANAGE_GUILD };
 
-                _userService = userService;
                 _guildService = guildService;
-                _versionService = versionService;
             }
 
             public IResponse ProcessCommand(Request req, List<string> args)
@@ -178,7 +174,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                                 {
                                     new Utils().Embedify("+dailyverse set", "Set automatic daily verse successfully.", false)
                                 },
-                                WebhookCallback = true
+                                CreateWebhook = true,
+                                RemoveWebhook = true
                             };
                         }
                     }
@@ -202,6 +199,48 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     {
                         new Utils().Embedify("+dailyverse set", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", false)
                     }
+                };
+            }
+        }
+
+        public class DailyVerseClear : ICommand
+        {
+            public string Name { get; set; }
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            private readonly GuildService _guildService;
+
+            public DailyVerseClear(GuildService guildService)
+            {
+                Name = "clear";
+                ExpectedArguments = 0;
+                PermissionsRequired = new List<Permissions> { Permissions.MANAGE_GUILD };
+
+                _guildService = guildService;
+            }
+
+            public IResponse ProcessCommand(Request req, List<string> args)
+            {
+                var idealGuild = _guildService.Get(req.GuildId);
+
+                if (idealGuild != null)
+                {
+                    idealGuild.DailyVerseTime = null;
+                    idealGuild.DailyVerseTimeZone = null;
+                    idealGuild.DailyVerseWebhook = null;
+
+                    _guildService.Update(req.GuildId, idealGuild);
+                }
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = new List<InternalEmbed>
+                    {
+                        new Utils().Embedify("+dailyverse clear", "Cleared all daily verse webhooks successfully.", false)
+                    },
+                    RemoveWebhook = true
                 };
             }
         }

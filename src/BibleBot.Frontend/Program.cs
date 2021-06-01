@@ -71,10 +71,9 @@ namespace BibleBot.Frontend
                     {
                         var commandResp = response as CommandResponse;
 
-                        if (commandResp.WebhookCallback == true)
+                        if (commandResp.RemoveWebhook)
                         {
-                            var request = new RestRequest("api/webhooks/process");
-                            var existingWebhooks = (await e.Channel.GetWebhooksAsync()).Where((webhook) =>
+                            var existingWebhooks = (await e.Guild.GetWebhooksAsync()).Where((webhook) =>
                             {
                                 return webhook.User.Id == bot.CurrentUser.Id;
                             });
@@ -83,6 +82,11 @@ namespace BibleBot.Frontend
                             {
                                 await existingWebhook.DeleteAsync();
                             }
+                        }
+
+                        if (commandResp.CreateWebhook)
+                        {
+                            var request = new RestRequest("api/webhooks/process");
 
                             var webhook = await e.Channel.CreateWebhookAsync("BibleBot Automatic Daily Verses", default, "For automatic daily verses from BibleBot.");
                             
