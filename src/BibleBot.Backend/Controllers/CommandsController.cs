@@ -81,7 +81,7 @@ namespace BibleBot.Backend.Controllers
                     prefix = idealGuild.Prefix;
                 }
 
-                if (potentialCommand.StartsWith(prefix))
+                if (potentialCommand.StartsWith(prefix) || (potentialCommand.Substring(1) == "biblebot" && potentialCommand.ElementAt(0) == '+'))
                 {
                     var grp = _commandGroups.Where(grp => grp.Name == potentialCommand.Substring(1)).FirstOrDefault();
 
