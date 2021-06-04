@@ -107,7 +107,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
             private readonly UserService _userService;
             private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
 
             public InfoBibleBot(UserService userService, GuildService guildService)
             {

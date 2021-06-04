@@ -101,7 +101,7 @@ namespace BibleBot.Frontend
                     channelCount += count;
                 }
 
-                cli = new RestClient("http://localhost:5000");
+                cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
                 req = new RestRequest("stats/process");
                 req.AddJsonBody(new BibleBot.Lib.Request
                 {
@@ -122,7 +122,7 @@ namespace BibleBot.Frontend
             _ = Task.Run(async () =>
             {
                 var utils = new Utils();
-                var cli = new RestClient("http://localhost:5000/api");
+                var cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
 
                 var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
 

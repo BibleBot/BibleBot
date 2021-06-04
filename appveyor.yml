@@ -3,10 +3,6 @@ image: Visual Studio 2019
 
 clone_depth: 1
 
-branches:
-  only:
-    - master
-
 environment:
   COVERALLS_REPO_TOKEN:
     secure: bbp4RMA6lCInKRc0at1AV2EW8dSpYVR4QqoUjOT6eOUdA5uV9vXvXb0GJoSEpe2R
@@ -20,14 +16,18 @@ install:
   - cmd: dotnet restore --verbosity q
   - cmd: dotnet tool restore --verbosity q
 
+branches:
+  only:
+    - master
+
 build_script:
-  - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj --verbosity q
-  - cmd: dotnet build ./src/BibleBot.Lib/BibleBot.Lib.csproj --verbosity q
-  - cmd: dotnet publish ./src/BibleBot.Frontend/BibleBot.Frontend.csproj --verbosity q
-  - cmd: dotnet pack ./src/BibleBot.Lib/ -o . --verbosity q
+  - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj -c Release --verbosity q
+  - cmd: dotnet build ./src/BibleBot.Lib/BibleBot.Lib.csproj -c Release --verbosity q
+  - cmd: dotnet publish ./src/BibleBot.Frontend/BibleBot.Frontend.csproj -c Release --verbosity q
+  - cmd: dotnet pack ./src/BibleBot.Lib/ -o . -c Release --verbosity q
 
 artifacts:
-  - path: ./src/BibleBot.Backend/bin/Debug/net5.0/publish
+  - path: ./src/BibleBot.Backend/bin/Release/net5.0/publish
     name: BibleBot.Backend
     type: ElasticBeanstalkPackage
   
@@ -35,7 +35,7 @@ artifacts:
     name: BibleBot.Lib
     type: NuGetPackage
 
-  - path: ./src/BibleBot.Frontend/bin/Debug/net5.0/publish
+  - path: ./src/BibleBot.Frontend/bin/Release/net5.0/publish
     name: BibleBot.Frontend
     type: ElasticBeanstalkPackage
 

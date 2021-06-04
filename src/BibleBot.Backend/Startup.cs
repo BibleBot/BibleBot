@@ -97,11 +97,10 @@ namespace BibleBot.Backend
             {
                 app.UseExceptionHandler("/");
                 app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
             app.UseSerilogRequestLogging();
-
-            //app.UseHttpsRedirection();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -115,7 +114,7 @@ namespace BibleBot.Backend
                 endpoints.MapMetrics();
             });
 
-            Log.Information("Ready at http://localhost:5000 and https://localhost:5001.");
+            Log.Information("Ready at https://backend.biblebot.xyz:5001.");
         }
     }
 }

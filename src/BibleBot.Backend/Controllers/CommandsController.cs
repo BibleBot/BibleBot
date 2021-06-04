@@ -151,7 +151,72 @@ namespace BibleBot.Backend.Controllers
                         
                         if (cmd != null)
                         {
-                            return cmd.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
+                            if (cmd.Name == "biblebot")
+                            {
+                                var args = tokenizedBody.Skip(1).ToList();
+
+                                if (args.Count < 1) {
+                                    return cmd.ProcessCommand(req, null);
+                                }
+
+                                var potentialRescue = _commandGroups.Where(grp => grp.Name == args[0]).FirstOrDefault();
+
+                                if (potentialRescue != null)
+                                {
+                                    if (args.Count > 1) {
+                                        var idealCommand = potentialRescue.Commands.Where(cmd => cmd.Name == args[1]).FirstOrDefault();
+
+                                        if (idealCommand != null)
+                                        {
+                                            if (idealCommand.PermissionsRequired != null)
+                                            {
+                                                foreach (var permission in idealCommand.PermissionsRequired)
+                                                {
+                                                    if ((req.UserPermissions & (long) permission) != (long) permission)
+                                                    {
+                                                        return new CommandResponse
+                                                        {
+                                                            OK = false,
+                                                            Pages = new List<InternalEmbed>
+                                                            {
+                                                                new Utils().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
+                                                            },
+                                                            LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
+                                                        };
+                                                    }
+                                                }
+                                            }
+
+                                            var commandArgs = args.Skip(1).ToList();
+
+                                            if (commandArgs.Count() < idealCommand.ExpectedArguments)
+                                            {
+                                                return new CommandResponse
+                                                {
+                                                    OK = false,
+                                                    Pages = new List<InternalEmbed>
+                                                    {
+                                                        new Utils().Embedify("Insufficient Parameters", idealCommand.ArgumentsError, true)
+                                                    },
+                                                    LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
+                                                };
+                                            }
+                                            
+                                            return idealCommand.ProcessCommand(req, args.Skip(1).ToList());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return potentialRescue.DefaultCommand.ProcessCommand(req, null);
+                                    }
+                                }
+
+                                return cmd.ProcessCommand(req, null);
+                            }
+                            else
+                            {
+                                return cmd.ProcessCommand(req, null);
+                            }
                         }
                     }
                 }
