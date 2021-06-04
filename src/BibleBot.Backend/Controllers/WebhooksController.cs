@@ -39,7 +39,10 @@ namespace BibleBot.Backend.Controllers
 
             if (idealGuild != null)
             {
-                idealGuild.DailyVerseWebhook = req.Body;
+                var fields = req.Body.Split("||");
+                
+                idealGuild.DailyVerseWebhook = fields[0];
+                idealGuild.DailyVerseChannelId = fields[1];
                 _guildService.Update(req.GuildId, idealGuild);
 
                 return new CommandResponse
