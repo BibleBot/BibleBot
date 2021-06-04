@@ -108,8 +108,6 @@ namespace BibleBot.Backend
             app.UseRouting();
             app.UseHttpMetrics();
 
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

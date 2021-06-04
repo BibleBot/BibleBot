@@ -1,7 +1,7 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using BibleBot.Lib;
@@ -54,6 +54,14 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IResponse ProcessMessage([FromBody] Request req)
         {
+            if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
+            {
+                return new CommandResponse
+                {
+                    OK = false
+                };
+            }
+
             var tokenizedBody = req.Body.Split(" ");
             
             if (tokenizedBody.Length > 0)

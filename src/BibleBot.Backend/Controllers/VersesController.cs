@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -49,6 +50,14 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<VerseResponse> ProcessMessage([FromBody] Request req)
         {
+            if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
+            {
+                return new VerseResponse
+                {
+                    OK = false
+                };
+            }
+
             var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), req.Body.ToLower());
 
             List<Verse> results = new List<Verse>();
