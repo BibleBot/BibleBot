@@ -6,7 +6,8 @@ using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+
+using Serilog;
 
 using NodaTime;
 using RestSharp;
@@ -20,8 +21,6 @@ namespace BibleBot.Backend.Services
 {
     public class AutomaticDailyVerseService : IHostedService, IDisposable
     {
-        private readonly ILogger<AutomaticDailyVerseService> _logger;
-
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
         
@@ -30,9 +29,8 @@ namespace BibleBot.Backend.Services
         private readonly RestClient _restClient;
         private Timer _timer;
 
-        public AutomaticDailyVerseService(ILogger<AutomaticDailyVerseService> logger, GuildService guildService, VersionService versionService, BibleGatewayProvider bibleGatewayProvider)
+        public AutomaticDailyVerseService(GuildService guildService, VersionService versionService, BibleGatewayProvider bibleGatewayProvider)
         {
-            _logger = logger;
             _guildService = guildService;
             _versionService = versionService;
             _bgProvider = bibleGatewayProvider;
@@ -42,7 +40,7 @@ namespace BibleBot.Backend.Services
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Starting automatic daily verse service...");
+            Log.Information("AutomaticDailyVerseService: Starting service...");
 
             _timer = new Timer(RunAutomaticDailyVerses, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
@@ -112,12 +110,12 @@ namespace BibleBot.Backend.Services
                 }
             }
 
-            _logger.LogInformation($"Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) at {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
+            Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) at {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Stopping automatic daily verse service...");
+            Log.Information("AutomaticDailyVerseService: Stopping service...");
 
             _timer?.Change(Timeout.Infinite, 0);
 

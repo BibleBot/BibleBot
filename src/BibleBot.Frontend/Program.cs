@@ -3,9 +3,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
+using Serilog;
+using Serilog.Extensions.Logging;
+using Serilog.Sinks.SystemConsole.Themes;
 using RestSharp;
 using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Enums;
+using DSharpPlus.Interactivity.Extensions;
 
 using BibleBot.Lib;
 using BibleBot.Frontend.Models;
@@ -17,6 +24,12 @@ namespace BibleBot.Frontend
 
         static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console(outputTemplate: "[{Level:w4}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
+                .CreateLogger();
+
+            Log.Information("BibleBot v9.1-beta (Frontend) by Kerygma Digital");
+            
             MainAsync().GetAwaiter().GetResult();
         }
 
@@ -26,9 +39,19 @@ namespace BibleBot.Frontend
             {
                 Token = Environment.GetEnvironmentVariable("DISCORD_TOKEN"),
                 TokenType = TokenType.Bot,
-                Intents = DiscordIntents.AllUnprivileged
+                Intents = DiscordIntents.AllUnprivileged,
+                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Error
             });
-            
+            bot.UseInteractivity();
+
+            bot.SocketOpened += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} is connecting"); return Task.CompletedTask; };
+            bot.SocketClosed += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} disconnected"); return Task.CompletedTask; };
+
+            bot.Ready += UpdateStatus;
+            bot.Ready += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} is ready"); return Task.CompletedTask; };
+
+            bot.Resumed += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} resumed"); return Task.CompletedTask; };
+
             bot.MessageCreated += MessageCreatedHandler;
 
             bot.GuildCreated += UpdateTopggStats;
@@ -36,6 +59,20 @@ namespace BibleBot.Frontend
 
             await bot.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        static Task UpdateStatus(DiscordClient s, DiscordEventArgs e)
+        {
+            _ = Task.Run(async () =>
+            {
+                await s.UpdateStatusAsync(new DiscordActivity
+                {
+                    Name = $"+biblebot 9.1-beta | Shard {s.ShardId + 1} / {s.ShardCount}",
+                    ActivityType = ActivityType.Playing
+                });
+            });
+
+            return Task.CompletedTask;
         }
 
         static Task UpdateTopggStats(DiscordClient s, DiscordEventArgs e)
@@ -51,6 +88,8 @@ namespace BibleBot.Frontend
                 });
 
                 await cli.PostAsync<IRestResponse>(req);
+
+                Log.Information($"<global> sent stats to top.gg, server count: {s.Guilds.Count()}");
             });
 
             return Task.CompletedTask;
@@ -70,17 +109,33 @@ namespace BibleBot.Frontend
                     return;
                 }
 
-                var authorAsMember = await e.Guild.GetMemberAsync(e.Author.Id);
+                Permissions permissions = Permissions.None;
+                string guildId;
+                bool isDM = false;
+
+                if (e.Channel.IsPrivate)
+                {
+                    permissions = Permissions.Administrator;
+                    guildId = e.Channel.Id.ToString();
+                    isDM = true;
+                }
+                else
+                {
+                    permissions = (await e.Guild.GetMemberAsync(e.Author.Id)).PermissionsIn(e.Channel);
+                    guildId = e.Guild.Id.ToString();
+                }
+
                 var requestObj = new BibleBot.Lib.Request
                 {
                     UserId = e.Author.Id.ToString(),
-                    UserPermissions = (long) authorAsMember.PermissionsIn(e.Channel),
-                    GuildId = e.Guild.Id.ToString(),
-                    IsDM = e.Channel.IsPrivate,
+                    UserPermissions = (long) permissions,
+                    GuildId = guildId,
+                    IsDM = isDM,
                     Body = e.Message.Content,
                     Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
-                 };
-                IResponse response;
+                };
+
+                IResponse response = null;
 
                 if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
                 {
@@ -89,7 +144,7 @@ namespace BibleBot.Frontend
 
                     response = await cli.PostAsync<CommandResponse>(request);
                 }
-                else
+                else if (e.Message.Content.Contains(":"))
                 {
                     var request = new RestRequest("verses/process");
                     request.AddJsonBody(requestObj);
@@ -100,6 +155,8 @@ namespace BibleBot.Frontend
                 if (response.GetType().Equals(typeof(CommandResponse)))
                 {
                     var commandResp = response as CommandResponse;
+
+                    Log.Information($"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {commandResp.Pages[0].Title}");
 
                     if (commandResp.RemoveWebhook)
                     {
@@ -146,18 +203,75 @@ namespace BibleBot.Frontend
                     }
                     else
                     {
-                        await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                        if (commandResp.Pages.Count() > 1)
+                        {
+                            var properPages = new List<Page>();
+
+                            var paginationEmojis = new PaginationEmojis();
+                            paginationEmojis.SkipLeft = null;
+                            paginationEmojis.SkipRight = null;
+                            paginationEmojis.Left = DiscordEmoji.FromUnicode("⬅");
+                            paginationEmojis.Right = DiscordEmoji.FromUnicode("➡");
+                            paginationEmojis.Stop = DiscordEmoji.FromUnicode("❌");
+
+                            foreach (var page in commandResp.Pages)
+                            {
+                                properPages.Add(new Page
+                                {
+                                    Embed = utils.Embed2Embed(page)
+                                });
+                            }
+
+                            await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.Ignore, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(180));
+                        }
+                        else
+                        {
+                            await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                        }
                     }
                 }
                 else if (response.GetType().Equals(typeof(VerseResponse)))
                 {
                     var verseResp = response as VerseResponse;
 
-                    foreach (Verse verse in verseResp.Verses)
+                    if (verseResp.Verses.Count() > 0)
                     {
+                        var content = String.Join(" / ", verseResp.Verses.Select((verse) => {
+                            return verse.Reference.ToString();
+                        }));
+
+                        Log.Information($"<{e.Author.Id}@{(requestObj.IsDM ? "DM" : e.Guild.Id)}#{e.Channel.Id}> {content}");
+                    }
+
+                    if (verseResp.Verses.Count() > 1)
+                    {
+                        var properPages = new List<Page>();
+
+                        var paginationEmojis = new PaginationEmojis();
+                        paginationEmojis.SkipLeft = null;
+                        paginationEmojis.SkipRight = null;
+                        paginationEmojis.Left = DiscordEmoji.FromUnicode("⬅");
+                        paginationEmojis.Right = DiscordEmoji.FromUnicode("➡");
+                        paginationEmojis.Stop = DiscordEmoji.FromUnicode("❌");
+
+                        foreach (Verse verse in verseResp.Verses)
+                        {
+                            properPages.Add(new Page
+                            {
+                                Embed = utils.Embedify($"{verse.Reference.ToString()} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null)
+                            });
+                        }
+
+                        await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.WrapAround, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(120));
+                    }
+                    else
+                    {
+                        var verse = verseResp.Verses[0];
+
                         var embed = utils.Embedify($"{verse.Reference.ToString()} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
                         await e.Message.RespondAsync(embed);
                     }
+                    
                 }
             });
 

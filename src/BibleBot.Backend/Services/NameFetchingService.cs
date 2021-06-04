@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using AngleSharp;
+using Serilog;
 
 using BibleBot.Backend.Models;
 
@@ -65,34 +66,34 @@ namespace BibleBot.Backend.Services
         {
             if (isDryRun)
             {
-                Console.WriteLine("NameFetchingService: DryRun");
+                Log.Information("NameFetchingService: Dry run enabled, we will not fetch book names for this session.");
 
                 if (!File.Exists("./Data/NameFetching/book_names.json"))
                 {
-                    Console.WriteLine("NameFetchingService: Book names file does NOT exist, some references may not process.");
+                    Log.Warning("NameFetchingService: Book names file does NOT exist, some references may not process");
                 }
                 return;
             }
 
-            Console.WriteLine("NameFetchingService: Getting BibleGateway versions...");
+            Log.Information("NameFetchingService: Getting BibleGateway versions...");
             var bgVersions = await GetBibleGatewayVersions();
 
-            Console.WriteLine("NameFetchingService: Getting BibleGateway book names...");
+            Log.Information("NameFetchingService: Getting BibleGateway book names...");
             var bgNames = await GetBibleGatewayNames(bgVersions);
 
             if (File.Exists("./Data/NameFetching/book_names.json"))
             {
                 File.Delete("./Data/NameFetching/book_names.json");
-                Console.WriteLine("NameFetchingService: Removed old names file...");
+                Log.Information("NameFetchingService: Removed old names file...");
             }
 
             var completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>>{bgNames, _abbreviations});
 
-            Console.WriteLine("NameFetchingService: Serializing and writing to file...");
+            Log.Information("NameFetchingService: Serializing and writing to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, new JsonSerializerOptions{ PropertyNameCaseInsensitive = false });
             File.WriteAllText("./Data/NameFetching/book_names.json", serializedNames);
 
-            Console.WriteLine("NameFetchingService: Done.");
+            Log.Information("NameFetchingService: Finished.");
         }
 
         private async Task<Dictionary<string, string>> GetBibleGatewayVersions()
