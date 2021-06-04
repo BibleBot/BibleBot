@@ -1,5 +1,5 @@
 using System.Linq;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Collections.Generic;
 
 using NodaTime;
@@ -39,6 +39,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             {
                 new DailyVerseUsage(_userService, _guildService, _versionService, _bgProvider),
                 new DailyVerseSet(_guildService),
+                new DailyVerseStatus(_guildService),
                 new DailyVerseClear(_guildService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
@@ -198,6 +199,98 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             }
         }
 
+        public class DailyVerseStatus : ICommand
+        {
+            public string Name { get; set; }
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            private readonly GuildService _guildService;
+
+            public DailyVerseStatus(GuildService guildService)
+            {
+                Name = "status";
+                ExpectedArguments = 0;
+                PermissionsRequired = null;
+
+                _guildService = guildService;
+            }
+
+            public IResponse ProcessCommand(Request req, List<string> args)
+            {
+                var idealGuild = _guildService.Get(req.GuildId);
+
+                if (idealGuild != null)
+                {
+                    if (idealGuild.DailyVerseChannelId != null && idealGuild.DailyVerseTime != null &&
+                        idealGuild.DailyVerseTimeZone != null && idealGuild.DailyVerseWebhook != null)
+                    {
+                        var preferredTimeZone = DateTimeZoneProviders.Tzdb[idealGuild.DailyVerseTimeZone];
+                        var currentTime = SystemClock.Instance.GetCurrentInstant().InZone(preferredTimeZone);
+                        
+                        var preferredHour = int.Parse(idealGuild.DailyVerseTime.Split(":")[0]);
+                        var preferredMinute = int.Parse(idealGuild.DailyVerseTime.Split(":")[1]);
+
+                        var todaysHourPassed = false;
+                        var todaysMinutePassed = false;
+
+                        if (currentTime.Hour != preferredHour)
+                        {
+                            if (currentTime.Hour < preferredHour)
+                            {
+                                currentTime = currentTime.PlusHours(preferredHour - currentTime.Hour);
+                            }
+                            else if (currentTime.Hour > preferredHour)
+                            {
+                                todaysHourPassed = true;
+                                currentTime = currentTime.Minus(Duration.FromHours(currentTime.Hour - preferredHour));
+                            }
+                        }
+
+                        if (currentTime.Minute != preferredMinute)
+                        {
+                            if (currentTime.Minute < preferredMinute)
+                            {
+                                currentTime = currentTime.PlusMinutes(preferredMinute - currentTime.Minute);
+                            }
+                            else if (currentTime.Minute > preferredMinute)
+                            {
+                                todaysMinutePassed = true;
+                                currentTime = currentTime.Minus(Duration.FromMinutes(currentTime.Minute - preferredMinute));
+                            }
+                        }
+
+                        if (todaysHourPassed && todaysMinutePassed)
+                        {
+                            currentTime = currentTime.Plus(Duration.FromDays(1));
+                        }
+
+                        var timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
+
+                        var resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone.ToString()}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>. It will use this server's preferred version, which you can find by using **`+version`**.\n\nUse **`+dailyverse set`** to set a new time or channel.\nUse **`+dailyverse clear`** to clear automatic daily verse settings.";
+                    
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new List<InternalEmbed>
+                            {
+                                new Utils().Embedify("+dailyverse status", resp, false)
+                            }
+                        };
+                    }
+                }
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = new List<InternalEmbed>
+                    {
+                        new Utils().Embedify("+dailyverse status", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `+dailyverse set` to setup the automatic daily verse.", false)
+                    }
+                };
+            }
+        }
+
         public class DailyVerseClear : ICommand
         {
             public string Name { get; set; }
@@ -227,6 +320,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     idealGuild.DailyVerseTime = null;
                     idealGuild.DailyVerseTimeZone = null;
                     idealGuild.DailyVerseWebhook = null;
+                    idealGuild.DailyVerseChannelId = null;
 
                     _guildService.Update(req.GuildId, idealGuild);
                 }
