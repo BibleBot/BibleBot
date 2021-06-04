@@ -45,7 +45,6 @@ namespace BibleBot.Frontend
             
             await bot.UseInteractivityAsync();
 
-
             bot.SocketOpened += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} is connecting"); return Task.CompletedTask; };
             bot.SocketClosed += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} disconnected"); return Task.CompletedTask; };
 
@@ -135,7 +134,7 @@ namespace BibleBot.Frontend
 
                 var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
 
-                if (e.Author.Id.ToString() != "186046294286925824" || e.Author == s.CurrentUser)
+                if (/*e.Author.Id.ToString() != "186046294286925824" ||*/ e.Author == s.CurrentUser)
                 {
                     return;
                 }
