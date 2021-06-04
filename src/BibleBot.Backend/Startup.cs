@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
 
 using Serilog;
+using Prometheus;
 
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
@@ -91,16 +92,28 @@ namespace BibleBot.Backend
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BibleBot.Backend v1"));
             }
+            else
+            {
+                app.UseExceptionHandler("/");
+                app.UseHsts();
+            }
+
+            app.UseSerilogRequestLogging();
 
             //app.UseHttpsRedirection();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
+            app.UseHttpMetrics();
 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapMetrics();
             });
 
             Log.Information("Ready at http://localhost:5000 and https://localhost:5001.");
