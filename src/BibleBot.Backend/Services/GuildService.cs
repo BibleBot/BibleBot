@@ -2,6 +2,7 @@ using BibleBot.Backend.Models;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace BibleBot.Backend.Services
 {
@@ -11,7 +12,7 @@ namespace BibleBot.Backend.Services
         
         public GuildService(IDatabaseSettings settings)
         {
-            var client = new MongoClient(settings.ConnectionString);
+            var client = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONN"));
             var database = client.GetDatabase(settings.DatabaseName);
 
             _guilds = database.GetCollection<Guild>(settings.GuildCollectionName);

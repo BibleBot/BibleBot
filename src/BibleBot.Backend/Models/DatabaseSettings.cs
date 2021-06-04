@@ -6,7 +6,6 @@ namespace BibleBot.Backend.Models
         public string GuildCollectionName { get; set; }
         public string VersionCollectionName { get; set; }
         public string FrontendStatsCollectionName { get; set; }
-        public string ConnectionString { get; set; }
         public string DatabaseName { get; set; }
     }
 
@@ -16,7 +15,6 @@ namespace BibleBot.Backend.Models
         string GuildCollectionName { get; set; }
         string VersionCollectionName { get; set; }
         string FrontendStatsCollectionName { get; set; }
-        string ConnectionString { get; set; }
         string DatabaseName { get; set; }
     }
 }

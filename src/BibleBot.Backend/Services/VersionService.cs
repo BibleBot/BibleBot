@@ -13,7 +13,7 @@ namespace BibleBot.Backend.Services
         
         public VersionService(IDatabaseSettings settings)
         {
-            var client = new MongoClient(settings.ConnectionString);
+            var client = new MongoClient(System.Environment.GetEnvironmentVariable("MONGODB_CONN"));
             var database = client.GetDatabase(settings.DatabaseName);
 
             _versions = database.GetCollection<Version>(settings.VersionCollectionName);
