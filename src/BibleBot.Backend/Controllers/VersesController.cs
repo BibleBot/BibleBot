@@ -102,6 +102,31 @@ namespace BibleBot.Backend.Controllers
 
                     if (reference != null)
                     {
+                        if (reference.IsOT && !reference.Version.SupportsOldTestament)
+                        {
+                            return new VerseResponse
+                            {
+                                OK = false,
+                                LogStatement = $"{reference.Version.Name} does not support the Old Testament."
+                            };
+                        }
+                        else if (reference.IsNT && !reference.Version.SupportsNewTestament)
+                        {
+                            return new VerseResponse
+                            {
+                                OK = false,
+                                LogStatement = $"{reference.Version.Name} does not support the New Testament."
+                            };
+                        }
+                        else if (reference.IsDEU && !reference.Version.SupportsDeuterocanon)
+                        {
+                            return new VerseResponse
+                            {
+                                OK = false,
+                                LogStatement = $"{reference.Version.Name} does not support the Apocrypha/Deuterocanon."
+                            };
+                        }
+
                         switch (reference.Version.Source) 
                         {
                             case "bg":

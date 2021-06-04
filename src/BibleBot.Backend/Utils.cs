@@ -18,7 +18,7 @@ namespace BibleBot.Backend
         public InternalEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
             // TODO: Do not use hard-coded version tags.
-            string footerText = "BibleBot v9.1-beta by Kerygma Digital";
+            string footerText = "BibleBot v9.1 by Kerygma Digital";
 
             var embed = new InternalEmbed();
             embed.Title = title;

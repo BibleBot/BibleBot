@@ -24,7 +24,7 @@ namespace BibleBot.Backend
                 .WriteTo.Console(outputTemplate: "[{Level:w4}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
                 .CreateBootstrapLogger();
 
-            Log.Information("BibleBot v9.1-beta (Backend) by Kerygma Digital");
+            Log.Information("BibleBot v9.1 (Backend) by Kerygma Digital");
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -40,7 +40,7 @@ namespace BibleBot.Backend
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseKestrel();
-                    webBuilder.UseUrls(new string[]{"http://0.0.0.0:5000", "https://0.0.0.0:5001"});
+                    webBuilder.UseUrls(new string[]{"http://0.0.0.0:80", "https://0.0.0.0:443"});
                 });
     }
 }

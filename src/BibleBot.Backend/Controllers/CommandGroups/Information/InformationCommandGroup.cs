@@ -82,7 +82,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**Guild Preference Count**: {guildPrefs.Count}\n" +
                 $"**Version Count**: {versions.Count}\n\n" +
                 $"**__Metadata__**\n" +
-                $"**BibleBot**: v9.1-beta ([{ThisAssembly.Git.Commit}](https://github.com/BibleBot/BibleBot/commit/{ThisAssembly.Git.Sha}))\n" +
+                $"**BibleBot**: v9.1 ([{ThisAssembly.Git.Commit}](https://github.com/BibleBot/BibleBot/commit/{ThisAssembly.Git.Sha}))\n" +
                 $"**BibleBot.Lib**: v{typeof(ThisAssembly).Assembly.GetReferencedAssemblies().Where((asm) => asm.Name == "BibleBot.Lib").First().Version.ToString(3)}";
 
 
@@ -123,7 +123,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             {
                 var embed = new InternalEmbed
                 {
-                    Title = "BibleBot v9.1-beta",
+                    Title = "BibleBot v9.1",
                     Description = "The premier Discord bot for Christians.",
                     Color = 6709986,
                     Footer = new Footer

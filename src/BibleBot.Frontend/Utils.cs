@@ -44,7 +44,7 @@ namespace BibleBot.Frontend
         public DiscordEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
             // TODO: Do not use hard-coded version tags.
-            string footerText = "BibleBot v9.1-beta by Kerygma Digital";
+            string footerText = "BibleBot v9.1 by Kerygma Digital";
 
             var builder = new DiscordEmbedBuilder();
             builder.WithTitle(title);

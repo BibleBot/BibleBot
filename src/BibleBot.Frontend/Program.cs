@@ -28,7 +28,7 @@ namespace BibleBot.Frontend
                 .WriteTo.Console(outputTemplate: "[{Level:w4}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 
-            Log.Information("BibleBot v9.1-beta (Frontend) by Kerygma Digital");
+            Log.Information("BibleBot v9.1 (Frontend) by Kerygma Digital");
             
             MainAsync().GetAwaiter().GetResult();
         }
@@ -68,7 +68,7 @@ namespace BibleBot.Frontend
             {
                 await s.UpdateStatusAsync(new DiscordActivity
                 {
-                    Name = $"+biblebot v9.1-beta | Shard {s.ShardId + 1} / {s.ShardCount}",
+                    Name = $"+biblebot v9.1 | Shard {s.ShardId + 1} / {s.ShardCount}",
                     ActivityType = ActivityType.Playing
                 });
             });
@@ -215,13 +215,14 @@ namespace BibleBot.Frontend
                     response = await cli.PostAsync<VerseResponse>(request);
                 }
 
+                var logStatement = $"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}";
                 if (response.OK)
                 {
-                    Log.Information($"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}");
+                    Log.Information(logStatement);
                 }
                 else if (response.LogStatement != null)
                 {
-                    Log.Error($"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}");
+                    Log.Error(logStatement);
                 }
 
                 if (response.GetType().Equals(typeof(CommandResponse)))
@@ -344,7 +345,7 @@ namespace BibleBot.Frontend
 
                         await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.WrapAround, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(120));
                     }
-                    else
+                    else if (verseResp.Verses.Count == 1)
                     {
                         var verse = verseResp.Verses[0];
                         var referenceTitle = $"{verse.Reference.ToString()} - {verse.Reference.Version.Name}";
@@ -363,6 +364,10 @@ namespace BibleBot.Frontend
                         {
                             await e.Message.RespondAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
                         }
+                    }
+                    else if (verseResp.LogStatement.Contains("does not support the"))
+                    {
+                        await e.Message.RespondAsync(utils.Embedify("Verse Error", verseResp.LogStatement, true));
                     }
                     
                 }
