@@ -176,9 +176,12 @@ namespace BibleBot.Backend.Services
 
                         var idealVersion = _versionService.Get(lastToken);
 
-                        if (idealVersion.Abbreviation == lastToken)
+                        if (idealVersion != null)
                         {
-                            version = idealVersion;
+                            if (idealVersion.Abbreviation == lastToken)
+                            {
+                                version = idealVersion;
+                            }
                         }
                     }
                 }
