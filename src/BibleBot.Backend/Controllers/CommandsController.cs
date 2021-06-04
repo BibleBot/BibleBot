@@ -20,24 +20,29 @@ namespace BibleBot.Backend.Controllers
         private readonly UserService _userService;
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
+        private readonly FrontendStatsService _frontendStatsService;
 
         private readonly BibleGatewayProvider _bgProvider;
 
         private readonly List<ICommandGroup> _commandGroups;
 
         public CommandsController(UserService userService, GuildService guildService, VersionService versionService,
-                                  BibleGatewayProvider bibleGatewayProvider)
+                                  FrontendStatsService frontendStatsService, BibleGatewayProvider bibleGatewayProvider)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
+            _frontendStatsService = frontendStatsService;
+
             _bgProvider = bibleGatewayProvider;
 
             _commandGroups = new List<ICommandGroup>
             {
+                new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
+                new CommandGroups.Resources.DailyVerseCommandGroup(_userService, _guildService, _versionService, _bgProvider),
+                new CommandGroups.Resources.RandomVerseCommandGroup(_userService, _guildService, _versionService, _bgProvider),
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
-                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
-                new CommandGroups.Resources.DailyVerseCommandGroup(_userService, _guildService, _versionService, _bgProvider)
+                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService)
             };
         }
 
@@ -111,11 +116,27 @@ namespace BibleBot.Backend.Controllers
                                                 OK = false,
                                                 Pages = new List<InternalEmbed>
                                                 {
-                                                    new Utils().Embedify("Permissions Error", "You do not have the required permissions to use this command.", true)
-                                                }
+                                                    new Utils().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
+                                                },
+                                                LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
                                             };
                                         }
                                     }
+                                }
+
+                                var commandArgs = tokenizedBody.Skip(2).ToList();
+
+                                if (commandArgs.Count() < idealCommand.ExpectedArguments)
+                                {
+                                    return new CommandResponse
+                                    {
+                                        OK = false,
+                                        Pages = new List<InternalEmbed>
+                                        {
+                                            new Utils().Embedify("Insufficient Parameters", idealCommand.ArgumentsError, true)
+                                        },
+                                        LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
+                                    };
                                 }
                                 
                                 return idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
@@ -126,7 +147,12 @@ namespace BibleBot.Backend.Controllers
                     }
                     else
                     {
-                        // TODO: Ungrouped commands.
+                        var cmd = _commandGroups.Where(grp => grp.Name == "info").FirstOrDefault().Commands.Where(cmd => cmd.Name == potentialCommand.Substring(1)).FirstOrDefault();
+                        
+                        if (cmd != null)
+                        {
+                            return cmd.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
+                        }
                     }
                 }
             }
@@ -134,7 +160,8 @@ namespace BibleBot.Backend.Controllers
             return new CommandResponse
             {
                 OK = false,
-                Pages = null
+                Pages = null,
+                LogStatement = null
             };
         }
     }

@@ -67,7 +67,7 @@ namespace BibleBot.Frontend
             {
                 await s.UpdateStatusAsync(new DiscordActivity
                 {
-                    Name = $"+biblebot 9.1-beta | Shard {s.ShardId + 1} / {s.ShardCount}",
+                    Name = $"+biblebot v9.1-beta | Shard {s.ShardId + 1} / {s.ShardCount}",
                     ActivityType = ActivityType.Playing
                 });
             });
@@ -89,7 +89,29 @@ namespace BibleBot.Frontend
 
                 await cli.PostAsync<IRestResponse>(req);
 
-                Log.Information($"<global> sent stats to top.gg, server count: {s.Guilds.Count()}");
+                int userCount = 0;
+                foreach (var count in s.Guilds.Select((guild) => { return guild.Value.MemberCount; }))
+                {
+                    userCount += count;
+                }
+
+                int channelCount = 0;
+                foreach (var count in s.Guilds.Select((guild) => { return guild.Value.Channels.Count(); }))
+                {
+                    channelCount += count;
+                }
+
+                cli = new RestClient("http://localhost:5000");
+                req = new RestRequest("stats/process");
+                req.AddJsonBody(new BibleBot.Lib.Request
+                {
+                    Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"),
+                    Body = $"{s.ShardCount}||{s.Guilds.Count()}||{userCount}||{channelCount}"
+                });
+
+                await cli.PostAsync<CommandResponse>(req);
+
+                Log.Information($"<global> sent stats to top.gg and backend");
             });
 
             return Task.CompletedTask;
@@ -139,6 +161,31 @@ namespace BibleBot.Frontend
 
                 if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
                 {
+                    if (e.Message.Content.StartsWith("+stats"))
+                    {
+
+                        int userCount = 0;
+                        foreach (var count in s.Guilds.Select((guild) => { return guild.Value.MemberCount; }))
+                        {
+                            userCount += count;
+                        }
+
+                        int channelCount = 0;
+                        foreach (var count in s.Guilds.Select((guild) => { return guild.Value.Channels.Count(); }))
+                        {
+                            channelCount += count;
+                        }
+
+                        var req = new RestRequest("stats/process");
+                        req.AddJsonBody(new BibleBot.Lib.Request
+                        {
+                            Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"),
+                            Body = $"{s.ShardCount}||{s.Guilds.Count()}||{userCount}||{channelCount}"
+                        });
+
+                        await cli.PostAsync<CommandResponse>(req);
+                    }
+
                     var request = new RestRequest("commands/process");
                     request.AddJsonBody(requestObj);
 
@@ -152,11 +199,18 @@ namespace BibleBot.Frontend
                     response = await cli.PostAsync<VerseResponse>(request);
                 }
 
+                if (response.OK)
+                {
+                    Log.Information($"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}");
+                }
+                else if (response.LogStatement != null)
+                {
+                    Log.Error($"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}");
+                }
+
                 if (response.GetType().Equals(typeof(CommandResponse)))
                 {
                     var commandResp = response as CommandResponse;
-
-                    Log.Information($"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {commandResp.Pages[0].Title}");
 
                     if (commandResp.RemoveWebhook)
                     {
@@ -234,15 +288,6 @@ namespace BibleBot.Frontend
                 {
                     var verseResp = response as VerseResponse;
 
-                    if (verseResp.Verses.Count() > 0)
-                    {
-                        var content = String.Join(" / ", verseResp.Verses.Select((verse) => {
-                            return verse.Reference.ToString();
-                        }));
-
-                        Log.Information($"<{e.Author.Id}@{(requestObj.IsDM ? "DM" : e.Guild.Id)}#{e.Channel.Id}> {content}");
-                    }
-
                     if (verseResp.Verses.Count() > 1)
                     {
                         var properPages = new List<Page>();
@@ -256,10 +301,29 @@ namespace BibleBot.Frontend
 
                         foreach (Verse verse in verseResp.Verses)
                         {
-                            properPages.Add(new Page
+                            var referenceTitle = $"{verse.Reference.ToString()} - {verse.Reference.Version.Name}";
+
+                            if (verseResp.DisplayStyle == "embed")
                             {
-                                Embed = utils.Embedify($"{verse.Reference.ToString()} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null)
-                            });
+                                properPages.Add(new Page
+                                {
+                                    Embed = utils.Embedify(referenceTitle, verse.Title, verse.Text, false, null)
+                                });
+                            }
+                            else if (verseResp.DisplayStyle == "code")
+                            {
+                                properPages.Add(new Page
+                                {
+                                    Content = $"**{referenceTitle}**\n\n```css\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")}{(verse.PsalmTitle.Length > 0 ? $"{verse.PsalmTitle}\n\n" : "")}{verse.Text}```"
+                                });
+                            }
+                            else if (verseResp.DisplayStyle == "blockquote")
+                            {
+                                properPages.Add(new Page
+                                {
+                                    Content = $"**{referenceTitle}**\n>\n> {(verse.Title.Length > 0 ? $"{verse.Title}\n>\n> " : "")}{(verse.PsalmTitle.Length > 0 ? $"{verse.PsalmTitle}>\n>\n> " : "")}{verse.Text}```"
+                                });
+                            }
                         }
 
                         await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.WrapAround, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(120));
@@ -267,9 +331,22 @@ namespace BibleBot.Frontend
                     else
                     {
                         var verse = verseResp.Verses[0];
+                        var referenceTitle = $"{verse.Reference.ToString()} - {verse.Reference.Version.Name}";
 
-                        var embed = utils.Embedify($"{verse.Reference.ToString()} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
-                        await e.Message.RespondAsync(embed);
+                        if (verseResp.DisplayStyle == "embed")
+                        {
+                            var embed = utils.Embedify(referenceTitle, verse.Title, verse.Text, false, null);
+                            await e.Message.RespondAsync(embed);
+                        }
+                        else if (verseResp.DisplayStyle == "code")
+                        {
+                            verse.Text = verse.Text.Replace("*", "");
+                            await e.Message.RespondAsync($"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```");
+                        }
+                        else if (verseResp.DisplayStyle == "blockquote")
+                        {
+                            await e.Message.RespondAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
+                        }
                     }
                     
                 }

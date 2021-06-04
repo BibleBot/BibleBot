@@ -25,6 +25,13 @@ namespace BibleBot.Frontend
                 builder.WithAuthor(embed.Author.Name, null, null);
             }
 
+            if (embed.Fields != null)
+            {
+                foreach (EmbedField field in embed.Fields) {
+                    builder.AddField(field.Name, field.Value, field.Inline);
+                }
+            }
+
             return builder.Build();
         }
 

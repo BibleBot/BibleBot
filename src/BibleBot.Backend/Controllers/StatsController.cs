@@ -13,19 +13,19 @@ using BibleBot.Backend.Services.Providers;
 namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
-    [Route("api/webhooks")]
+    [Route("api/stats")]
     [ApiController]
-    public class WebhooksController : ControllerBase
+    public class StatsController : ControllerBase
     {
-        private readonly GuildService _guildService;
+        private readonly FrontendStatsService _frontendStatsService;
 
-        public WebhooksController(GuildService guildService)
+        public StatsController(FrontendStatsService frontendStatsService)
         {
-            _guildService = guildService;
+            _frontendStatsService = frontendStatsService;
         }
 
         /// <summary>
-        /// Processes a message to add a webhook url to a Guild object.
+        /// Processes a message to update stats from frontend.
         /// </summary>
         /// <param name="req">A BibleBot.Lib.Request object</param>
         /// <response code="200">Returns BibleBot.Lib.CommandResponse</response>
@@ -44,25 +44,32 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var idealGuild = _guildService.Get(req.GuildId);
+            var stats = _frontendStatsService.Get();
+            var fields = req.Body.Split("||");
 
-            if (idealGuild != null)
+            if (stats != null)
             {
-                var fields = req.Body.Split("||");
+                stats.ShardCount = int.Parse(fields[0]);
+                stats.ServerCount = int.Parse(fields[1]);
+                stats.UserCount = int.Parse(fields[2]);
+                stats.ChannelCount = int.Parse(fields[3]);
                 
-                idealGuild.DailyVerseWebhook = fields[0];
-                idealGuild.DailyVerseChannelId = fields[1];
-                _guildService.Update(req.GuildId, idealGuild);
-
-                return new CommandResponse
+                _frontendStatsService.Update(stats);
+            }
+            else
+            {
+                _frontendStatsService.Create(new FrontendStats
                 {
-                    OK = true
-                };
+                    ShardCount = int.Parse(fields[0]),
+                    ServerCount = int.Parse(fields[1]),
+                    UserCount = int.Parse(fields[2]),
+                    ChannelCount = int.Parse(fields[3])
+                });
             }
 
             return new CommandResponse
             {
-                OK = false
+                OK = true
             };
         }
     }

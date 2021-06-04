@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -54,7 +56,8 @@ namespace BibleBot.Backend.Controllers
             {
                 return new VerseResponse
                 {
-                    OK = false
+                    OK = false,
+                    LogStatement = null
                 };
             }
 
@@ -103,6 +106,23 @@ namespace BibleBot.Backend.Controllers
                         {
                             case "bg":
                                 Verse result = await _bgProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
+
+                                if (displayStyle == "embed" && result.Text.Length > 2048)
+                                {
+                                    result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
+                                    result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                                }
+                                else if (displayStyle != "embed")
+                                {
+                                    var combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
+
+                                    if (combinedTextLength > 2000)
+                                    {
+                                        result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1995))}...";
+                                        result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                                    }
+                                }
+
                                 results.Add(result);
                                 break;
                         }
@@ -114,7 +134,8 @@ namespace BibleBot.Backend.Controllers
             {
                 OK = true,
                 Verses = results,
-                DisplayStyle = displayStyle
+                DisplayStyle = displayStyle,
+                LogStatement = String.Join(" / ", results.Select(verse => verse.Reference.ToString()))
             };
         }
     }

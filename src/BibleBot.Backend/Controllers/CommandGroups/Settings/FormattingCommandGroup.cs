@@ -39,7 +39,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class FormattingUsage : ICommand
         {
-            public string Name { get; set;}
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
 
@@ -49,6 +50,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public FormattingUsage(UserService userService, GuildService guildService)
             {
                 Name = "usage";
+                ArgumentsError = null;
                 ExpectedArguments = 0;
                 PermissionsRequired = null;
 
@@ -98,14 +100,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+formatting", response, false)
-                    }
+                    },
+                    LogStatement = "+formatting"
                 };
             }
         }
 
         public class FormattingSetVerseNumbers : ICommand
         {
-            public string Name { get; set;}
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
 
@@ -115,6 +119,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public FormattingSetVerseNumbers(UserService userService, GuildService guildService)
             {
                 Name = "setversenumbers";
+                ArgumentsError = "Expected an `enable` or `disable` parameter.";
                 ExpectedArguments = 1;
                 PermissionsRequired = null;
 
@@ -124,15 +129,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
-                if (args[0] != "enable" || args[0] != "disable")
+                if (args[0] != "enable" && args[0] != "disable")
                 {
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages = new List<InternalEmbed>
                         {
                             new Utils().Embedify("+formatting setversenumbers", "Expected an `enable` or `disable` parameter.", true)
-                        }
+                        },
+                        LogStatement = "+formatting setversenumbers"
                     };
                 }
 
@@ -163,14 +169,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+formatting setversenumbers", "Set verse numbers successfully.", false)
-                    }
+                    },
+                    LogStatement = $"+formatting setversenumbers {args[0]}"
                 };
             }
         }
 
         public class FormattingSetTitles : ICommand
         {
-            public string Name { get; set;}
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
 
@@ -180,6 +188,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public FormattingSetTitles(UserService userService, GuildService guildService)
             {
                 Name = "settitles";
+                ArgumentsError = "Expected an `enable` or `disable` parameter.";
                 ExpectedArguments = 1;
                 PermissionsRequired = null;
 
@@ -189,15 +198,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
-                if (args[0] != "enable" || args[0] != "disable")
+                if (args[0] != "enable" && args[0] != "disable")
                 {
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages = new List<InternalEmbed>
                         {
                             new Utils().Embedify("+formatting settitles", "Expected an `enable` or `disable` parameter.", true)
-                        }
+                        },
+                        LogStatement = "+formatting settitles"
                     };
                 }
 
@@ -228,14 +238,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+formatting settitles", "Set titles successfully.", false)
-                    }
+                    },
+                    LogStatement = $"+formatting settitles {args[0]}"
                 };
             }
         }
 
         public class FormattingSetDisplayStyle : ICommand
         {
-            public string Name { get; set;}
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
 
@@ -245,6 +257,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public FormattingSetDisplayStyle(UserService userService, GuildService guildService)
             {
                 Name = "setdisplay";
+                ArgumentsError = "Expected a parameter of `embed`, `code`, or `blockquote`.";
                 ExpectedArguments = 1;
                 PermissionsRequired = null;
 
@@ -254,15 +267,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
-                if (args[0] != "embed" || args[0] != "code" || args[0] == "blockquote")
+                if (!(args[0] == "embed" || args[0] == "code" || args[0] == "blockquote"))
                 {
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages = new List<InternalEmbed>
                         {
                             new Utils().Embedify("+formatting setdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
-                        }
+                        },
+                        LogStatement = "+formatting setdisplay"
                     };
                 }
 
@@ -293,14 +307,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+formatting setdisplay", "Set display style successfully.", false)
-                    }
+                    },
+                    LogStatement = $"+formatting setdisplay {args[0]}"
                 };
             }
         }
 
         public class FormattingSetPrefix : ICommand
         {
-            public string Name { get; set;}
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
 
@@ -310,6 +326,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public FormattingSetPrefix(UserService userService, GuildService guildService)
             {
                 Name = "setprefix";
+                ArgumentsError = "Expected a parameter with a single character, that must be `+`, `-`, `!`, `=`, `$`, `%`, `^`, `*`, `.`, `,`, `?`, `~`, or `|`.";
                 ExpectedArguments = 1;
                 PermissionsRequired = new List<Permissions>
                 {
@@ -328,22 +345,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 {
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages = new List<InternalEmbed>
                         {
                             new Utils().Embedify("+formatting setprefix", "The prefix can only be one character.", true)
-                        }
+                        },
+                        LogStatement = "+formatting setprefix"
                     };
                 }
                 else if (!acceptablePrefixes.Contains(args[0]))
                 {
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages = new List<InternalEmbed>
                         {
                             new Utils().Embedify("+formatting setprefix", "The prefix can only be set to `+`, `-`, `!`, `=`, `$`, `%`, `^`, `*`, `.`, `,`, `?`, `~`, or `|`.", true)
-                        }
+                        },
+                        LogStatement = "+formatting setprefix"
                     };
                 }
 
@@ -374,14 +393,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+formatting setprefix", "Set prefix successfully.", false)
-                    }
+                    },
+                    LogStatement = $"+formatting setprefix {args[0]}"
                 };
             }
         }
 
         public class FormattingSetIgnoringBrackets : ICommand
         {
-            public string Name { get; set;}
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
 
@@ -391,6 +412,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public FormattingSetIgnoringBrackets(UserService userService, GuildService guildService)
             {
                 Name = "setbrackets";
+                ArgumentsError = "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.";
                 ExpectedArguments = 1;
                 PermissionsRequired = new List<Permissions>
                 {
@@ -409,22 +431,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 {
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages = new List<InternalEmbed>
                         {
                             new Utils().Embedify("+formatting setbrackets", "The brackets can only be two characters.", true)
-                        }
+                        },
+                        LogStatement = "+formatting setbrackets"
                     };
                 }
                 else if (!acceptableBrackets.Contains(args[0]))
                 {
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setbrackets", "The brackets can only be set to `<>`, `[]`, `{}`, `()`.", true)
-                        }
+                            new Utils().Embedify("+formatting setbrackets", "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.", true)
+                        },
+                        LogStatement = "+formatting setbrackets"
                     };
                 }
 
@@ -455,7 +479,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     Pages = new List<InternalEmbed>
                     {
                         new Utils().Embedify("+formatting setbrackets", "Set brackets successfully.", false)
-                    }
+                    },
+                    LogStatement = $"+formatting setbrackets {args[0]}"
                 };
             }
         }
