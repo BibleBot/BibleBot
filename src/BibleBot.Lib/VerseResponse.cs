@@ -5,6 +5,7 @@ namespace BibleBot.Lib
     public class VerseResponse: IResponse
     {
         public bool OK { get; set; }
+        public string LogStatement { get; set; }
         public List<Verse> Verses { get; set; }
         public string DisplayStyle { get; set; }
     }
