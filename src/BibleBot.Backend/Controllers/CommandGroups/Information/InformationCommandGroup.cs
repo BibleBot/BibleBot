@@ -73,14 +73,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 var versions = _versionService.Get();
                 var frontendStats = _frontendStatsService.Get();
 
-                var resp = $"**__Frontend Stats__**\n" +
-                $"**Shard Count**: {frontendStats.ShardCount}\n" +
-                $"**Server Count**: {frontendStats.ServerCount}\n" +
-                $"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
+                var resp = //$"**__Frontend Stats__**\n" +
+                //$"**Shard Count**: {frontendStats.ShardCount}\n" +
+                //$"**Server Count**: {frontendStats.ServerCount}\n" +
+                //$"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
                 $"**__Backend Stats__**\n" +
-                $"User Preference Count: {userPrefs.Count}\n" +
-                $"Guild Preference Count: {guildPrefs.Count}\n" +
-                $"Version Count: {versions.Count}\n\n" +
+                $"**User Preference Count**: {userPrefs.Count}\n" +
+                $"**Guild Preference Count**: {guildPrefs.Count}\n" +
+                $"**Version Count**: {versions.Count}\n\n" +
                 $"**__Metadata__**\n" +
                 $"**BibleBot**: v9.1-beta ([{ThisAssembly.Git.Commit}](https://github.com/BibleBot/BibleBot/commit/{ThisAssembly.Git.Sha}))\n" +
                 $"**BibleBot.Lib**: v{typeof(ThisAssembly).Assembly.GetReferencedAssemblies().Where((asm) => asm.Name == "BibleBot.Lib").First().Version.ToString(3)}";

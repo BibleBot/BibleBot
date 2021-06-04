@@ -45,6 +45,7 @@ namespace BibleBot.Frontend
             
             await bot.UseInteractivityAsync();
 
+
             bot.SocketOpened += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} is connecting"); return Task.CompletedTask; };
             bot.SocketClosed += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} disconnected"); return Task.CompletedTask; };
 
@@ -55,8 +56,8 @@ namespace BibleBot.Frontend
 
             bot.MessageCreated += MessageCreatedHandler;
 
-            bot.GuildCreated += UpdateTopggStats;
-            bot.GuildDeleted += UpdateTopggStats;
+            //bot.GuildCreated += UpdateTopggStats;
+            //bot.GuildDeleted += UpdateTopggStats;
 
             await bot.StartAsync();
             await Task.Delay(-1);
@@ -76,7 +77,7 @@ namespace BibleBot.Frontend
             return Task.CompletedTask;
         }
 
-        static Task UpdateTopggStats(DiscordClient s, DiscordEventArgs e)
+        /*static Task UpdateTopggStats(DiscordClient s, DiscordEventArgs e)
         {
             _ = Task.Run(async () =>
             {
@@ -90,33 +91,40 @@ namespace BibleBot.Frontend
 
                 await cli.PostAsync<IRestResponse>(req);
 
+                int shardCount = s.ShardClients.Count;
+                int guildCount = 0;
                 int userCount = 0;
-                foreach (var count in s.Guilds.Select((guild) => { return guild.Value.MemberCount; }))
-                {
-                    userCount += count;
-                }
-
                 int channelCount = 0;
-                foreach (var count in s.Guilds.Select((guild) => { return guild.Value.Channels.Count(); }))
-                {
-                    channelCount += count;
-                }
 
+                foreach (var client in s.ShardClients)
+                {
+                    guildCount += client.Value.Guilds.Count();
+
+                    foreach (var count in client.Value.Guilds.Select((guild) => { return guild.Value.MemberCount; }))
+                    {
+                        userCount += count;
+                    }
+
+                    foreach (var count in client.Value.Guilds.Select((guild) => { return guild.Value.Channels.Count(); }))
+                    {
+                        channelCount += count;
+                    }
+                }
+                
                 cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
                 req = new RestRequest("stats/process");
                 req.AddJsonBody(new BibleBot.Lib.Request
                 {
                     Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"),
-                    Body = $"{s.ShardCount}||{s.Guilds.Count()}||{userCount}||{channelCount}"
+                    Body = $"{shardCount}||{guildCount}||{userCount}||{channelCount}"
                 });
-
                 await cli.PostAsync<CommandResponse>(req);
 
                 Log.Information($"<global> sent stats to top.gg and backend");
             });
 
             return Task.CompletedTask;
-        }
+        }*/
 
         static Task MessageCreatedHandler(DiscordClient s, MessageCreateEventArgs e)
         {
@@ -162,30 +170,38 @@ namespace BibleBot.Frontend
 
                 if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
                 {
-                    if (e.Message.Content.StartsWith("+stats"))
+                    /*if (e.Message.Content.StartsWith("+stats"))
                     {
-
+                        int shardCount = s.ShardClients.Count;
+                        int guildCount = 0;
                         int userCount = 0;
-                        foreach (var count in s.Guilds.Select((guild) => { return guild.Value.MemberCount; }))
-                        {
-                            userCount += count;
-                        }
-
                         int channelCount = 0;
-                        foreach (var count in s.Guilds.Select((guild) => { return guild.Value.Channels.Count(); }))
+
+                        foreach (var client in s.ShardClients)
                         {
-                            channelCount += count;
+                            guildCount += client.Value.Guilds.Count();
+
+                            foreach (var count in client.Value.Guilds.Select((guild) => { return guild.Value.MemberCount; }))
+                            {
+                                userCount += count;
+                            }
+
+                            foreach (var count in client.Value.Guilds.Select((guild) => { return guild.Value.Channels.Count(); }))
+                            {
+                                channelCount += count;
+                            }
                         }
+                        
 
                         var req = new RestRequest("stats/process");
                         req.AddJsonBody(new BibleBot.Lib.Request
                         {
                             Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"),
-                            Body = $"{s.ShardCount}||{s.Guilds.Count()}||{userCount}||{channelCount}"
+                            Body = $"{shardCount}||{guildCount}||{userCount}||{channelCount}"
                         });
 
                         await cli.PostAsync<CommandResponse>(req);
-                    }
+                    }*/
 
                     var request = new RestRequest("commands/process");
                     request.AddJsonBody(requestObj);
