@@ -35,14 +35,15 @@ namespace BibleBot.Frontend
 
         static async Task MainAsync()
         {
-            var bot = new DiscordClient(new DiscordConfiguration
+            var bot = new DiscordShardedClient(new DiscordConfiguration
             {
                 Token = Environment.GetEnvironmentVariable("DISCORD_TOKEN"),
                 TokenType = TokenType.Bot,
                 Intents = DiscordIntents.AllUnprivileged,
                 MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Error
             });
-            bot.UseInteractivity();
+            
+            await bot.UseInteractivityAsync();
 
             bot.SocketOpened += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} is connecting"); return Task.CompletedTask; };
             bot.SocketClosed += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} disconnected"); return Task.CompletedTask; };
@@ -57,7 +58,7 @@ namespace BibleBot.Frontend
             bot.GuildCreated += UpdateTopggStats;
             bot.GuildDeleted += UpdateTopggStats;
 
-            await bot.ConnectAsync();
+            await bot.StartAsync();
             await Task.Delay(-1);
         }
 
