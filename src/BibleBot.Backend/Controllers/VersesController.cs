@@ -130,13 +130,24 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            return new VerseResponse
+            if (results.Count() > 0)
             {
-                OK = true,
-                Verses = results,
-                DisplayStyle = displayStyle,
-                LogStatement = String.Join(" / ", results.Select(verse => verse.Reference.ToString()))
-            };
+                return new VerseResponse
+                {
+                    OK = true,
+                    Verses = results,
+                    DisplayStyle = displayStyle,
+                    LogStatement = String.Join(" / ", results.Select(verse => verse.Reference.ToString()))
+                };
+            }
+            else
+            {
+               return new VerseResponse
+                {
+                    OK = false,
+                    LogStatement = null
+                }; 
+            }
         }
     }
 }
