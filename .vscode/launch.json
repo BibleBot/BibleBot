@@ -14,6 +14,7 @@
             "args": [],
             "cwd": "${workspaceFolder}/src/BibleBot.Frontend",
             "stopAtEntry": false,
+            "requireExactSource": false,
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
@@ -31,6 +32,7 @@
             "args": [],
             "cwd": "${workspaceFolder}/src/BibleBot.Backend",
             "stopAtEntry": false,
+            "requireExactSource": false,
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
