@@ -114,7 +114,14 @@ namespace BibleBot.Backend
                 endpoints.MapMetrics();
             });
 
-            Log.Information("Ready at https://backend.biblebot.xyz:5001.");
+            if (!Configuration.GetSection("BibleBotBackend").GetValue<bool>("IsDevelopment"))
+            {
+                Log.Information("Ready at https://backend.biblebot.xyz.");
+            }
+            else
+            {
+                Log.Information("Ready at http://localhost.");
+            }
         }
     }
 }
