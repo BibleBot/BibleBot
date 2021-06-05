@@ -36,11 +36,11 @@ namespace BibleBot.Backend.Services
             var tokens = str.Split(" ");
             foreach (var bookName in defaultNames)
             {
-                foreach (var token in tokens)
+                for (int i = 0; i < tokens.Length; i++)
                 {
-                    if (token == bookName)
+                    if (tokens[i] == bookName)
                     {
-                        results.Add(new BookSearchResult{ Name = bookName, Index = System.Array.IndexOf(tokens, token) });
+                        results.Add(new BookSearchResult{ Name = bookName, Index = i });
                     }
                 }
             }
