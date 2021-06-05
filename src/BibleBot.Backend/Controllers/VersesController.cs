@@ -148,7 +148,7 @@ namespace BibleBot.Backend.Controllers
 
                                     if (combinedTextLength > 2000)
                                     {
-                                        result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1995))}...";
+                                        result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
                                         result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
                                     }
                                 }
