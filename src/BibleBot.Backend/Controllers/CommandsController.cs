@@ -187,7 +187,7 @@ namespace BibleBot.Backend.Controllers
                                                 }
                                             }
 
-                                            var commandArgs = args.Skip(1).ToList();
+                                            var commandArgs = args.Skip(2).ToList();
 
                                             if (commandArgs.Count() < idealCommand.ExpectedArguments)
                                             {
@@ -202,7 +202,7 @@ namespace BibleBot.Backend.Controllers
                                                 };
                                             }
                                             
-                                            return idealCommand.ProcessCommand(req, args.Skip(1).ToList());
+                                            return idealCommand.ProcessCommand(req, commandArgs);
                                         }
                                     }
                                     else
