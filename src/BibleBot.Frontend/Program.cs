@@ -329,6 +329,7 @@ namespace BibleBot.Frontend
                             }
                             else if (verseResp.DisplayStyle == "code")
                             {
+                                verse.Text = verse.Text.Replace("*", "");
                                 properPages.Add(new Page
                                 {
                                     Content = $"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```"
