@@ -331,14 +331,14 @@ namespace BibleBot.Frontend
                             {
                                 properPages.Add(new Page
                                 {
-                                    Content = $"**{referenceTitle}**\n\n```css\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")}{(verse.PsalmTitle.Length > 0 ? $"{verse.PsalmTitle}\n\n" : "")}{verse.Text}```"
+                                    Content = $"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```"
                                 });
                             }
                             else if (verseResp.DisplayStyle == "blockquote")
                             {
                                 properPages.Add(new Page
                                 {
-                                    Content = $"**{referenceTitle}**\n>\n> {(verse.Title.Length > 0 ? $"{verse.Title}\n>\n> " : "")}{(verse.PsalmTitle.Length > 0 ? $"{verse.PsalmTitle}>\n>\n> " : "")}{verse.Text}```"
+                                    Content = $"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}"
                                 });
                             }
                         }
@@ -369,7 +369,6 @@ namespace BibleBot.Frontend
                     {
                         await e.Message.RespondAsync(utils.Embedify("Verse Error", verseResp.LogStatement, true));
                     }
-                    
                 }
             });
 
