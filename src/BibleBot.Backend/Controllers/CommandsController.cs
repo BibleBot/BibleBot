@@ -22,25 +22,27 @@ namespace BibleBot.Backend.Controllers
         private readonly VersionService _versionService;
         private readonly FrontendStatsService _frontendStatsService;
 
+        private readonly SpecialVerseProvider _spProvider;
         private readonly BibleGatewayProvider _bgProvider;
 
         private readonly List<ICommandGroup> _commandGroups;
 
         public CommandsController(UserService userService, GuildService guildService, VersionService versionService,
-                                  FrontendStatsService frontendStatsService, BibleGatewayProvider bibleGatewayProvider)
+                                  FrontendStatsService frontendStatsService, SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
             _frontendStatsService = frontendStatsService;
 
-            _bgProvider = bibleGatewayProvider;
+            _spProvider = spProvider;
+            _bgProvider = bgProvider;
 
             _commandGroups = new List<ICommandGroup>
             {
                 new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
-                new CommandGroups.Resources.DailyVerseCommandGroup(_userService, _guildService, _versionService, _bgProvider),
-                new CommandGroups.Resources.RandomVerseCommandGroup(_userService, _guildService, _versionService, _bgProvider),
+                new CommandGroups.Resources.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
+                new CommandGroups.Resources.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
                 new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService)
             };
