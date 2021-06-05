@@ -38,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 new InfoBibleBot(_userService, _guildService),
                 new InfoInvite()
             };
-            DefaultCommand = null;
+            DefaultCommand = Commands.Where(cmd => cmd.Name == "biblebot").FirstOrDefault();
         }
 
         public class InfoStats : ICommand
