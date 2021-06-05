@@ -107,6 +107,11 @@ namespace BibleBot.Backend.Controllers
                             case "bg":
                                 Verse result = await _bgProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
+                                if (result.Text == null)
+                                {
+                                    break;
+                                }
+
                                 if (displayStyle == "embed" && result.Text.Length > 2048)
                                 {
                                     result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
