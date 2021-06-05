@@ -272,7 +272,7 @@ namespace BibleBot.Frontend
                             );
                         }							
                     }
-                    else
+                    else if (commandResp.Pages != null)
                     {
                         if (commandResp.Pages.Count() > 1)
                         {
