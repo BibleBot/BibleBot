@@ -73,10 +73,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 var versions = _versionService.Get();
                 var frontendStats = _frontendStatsService.Get();
 
-                var resp = //$"**__Frontend Stats__**\n" +
-                //$"**Shard Count**: {frontendStats.ShardCount}\n" +
-                //$"**Server Count**: {frontendStats.ServerCount}\n" +
-                //$"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
+                var resp = $"**__Frontend Stats__**\n" +
+                $"**Shard Count**: {frontendStats.ShardCount}\n" +
+                $"**Server Count**: {frontendStats.ServerCount}\n" +
+                $"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
                 $"**__Backend Stats__**\n" +
                 $"**User Preference Count**: {userPrefs.Count}\n" +
                 $"**Guild Preference Count**: {guildPrefs.Count}\n" +

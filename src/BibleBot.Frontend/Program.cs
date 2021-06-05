@@ -21,6 +21,7 @@ namespace BibleBot.Frontend
 {
     class Program
     {
+        static DiscordShardedClient bot;
 
         static void Main(string[] args)
         {
@@ -35,7 +36,7 @@ namespace BibleBot.Frontend
 
         static async Task MainAsync()
         {
-            var bot = new DiscordShardedClient(new DiscordConfiguration
+            bot = new DiscordShardedClient(new DiscordConfiguration
             {
                 Token = Environment.GetEnvironmentVariable("DISCORD_TOKEN"),
                 TokenType = TokenType.Bot,
@@ -55,8 +56,8 @@ namespace BibleBot.Frontend
 
             bot.MessageCreated += MessageCreatedHandler;
 
-            //bot.GuildCreated += UpdateTopggStats;
-            //bot.GuildDeleted += UpdateTopggStats;
+            bot.GuildCreated += UpdateTopggStats;
+            bot.GuildDeleted += UpdateTopggStats;
 
             await bot.StartAsync();
             await Task.Delay(-1);
@@ -76,12 +77,12 @@ namespace BibleBot.Frontend
             return Task.CompletedTask;
         }
 
-        /*static Task UpdateTopggStats(DiscordClient s, DiscordEventArgs e)
+        static Task UpdateTopggStats(DiscordClient s, DiscordEventArgs e)
         {
             _ = Task.Run(async () =>
             {
                 var cli = new RestClient("https://top.gg/api");
-                var req = new RestRequest($"bots/{s.CurrentUser.Id}/stats");
+                var req = new RestRequest($"bots/{bot.CurrentUser.Id}/stats");
                 req.AddHeader("Authorization", Environment.GetEnvironmentVariable("TOPGG_TOKEN"));
                 req.AddJsonBody(new TopggStats
                 {
@@ -90,12 +91,12 @@ namespace BibleBot.Frontend
 
                 await cli.PostAsync<IRestResponse>(req);
 
-                int shardCount = s.ShardClients.Count;
+                int shardCount = bot.ShardClients.Count();
                 int guildCount = 0;
                 int userCount = 0;
                 int channelCount = 0;
 
-                foreach (var client in s.ShardClients)
+                foreach (var client in bot.ShardClients)
                 {
                     guildCount += client.Value.Guilds.Count();
 
@@ -123,7 +124,7 @@ namespace BibleBot.Frontend
             });
 
             return Task.CompletedTask;
-        }*/
+        }
 
         static Task MessageCreatedHandler(DiscordClient s, MessageCreateEventArgs e)
         {
@@ -169,14 +170,14 @@ namespace BibleBot.Frontend
 
                 if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
                 {
-                    /*if (e.Message.Content.StartsWith("+stats"))
+                    if (e.Message.Content.StartsWith("+stats"))
                     {
-                        int shardCount = s.ShardClients.Count;
+                        int shardCount = bot.ShardClients.Count();
                         int guildCount = 0;
                         int userCount = 0;
                         int channelCount = 0;
 
-                        foreach (var client in s.ShardClients)
+                        foreach (var client in bot.ShardClients)
                         {
                             guildCount += client.Value.Guilds.Count();
 
@@ -200,7 +201,7 @@ namespace BibleBot.Frontend
                         });
 
                         await cli.PostAsync<CommandResponse>(req);
-                    }*/
+                    }
 
                     var request = new RestRequest("commands/process");
                     request.AddJsonBody(requestObj);
