@@ -41,10 +41,10 @@ namespace BibleBot.Backend.Controllers
             _commandGroups = new List<ICommandGroup>
             {
                 new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
-                new CommandGroups.Resources.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
-                new CommandGroups.Resources.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
+                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
-                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService)
+                new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
+                new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider)
             };
         }
 

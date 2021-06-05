@@ -9,7 +9,7 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 
-namespace BibleBot.Backend.Controllers.CommandGroups.Resources
+namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
     public class RandomVerseCommandGroup : ICommandGroup
     {
