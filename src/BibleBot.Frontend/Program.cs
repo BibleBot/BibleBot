@@ -134,7 +134,7 @@ namespace BibleBot.Frontend
 
                 var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
 
-                if (/*e.Author.Id.ToString() != "186046294286925824" ||*/ e.Author == s.CurrentUser)
+                if (e.Author == s.CurrentUser)
                 {
                     return;
                 }
