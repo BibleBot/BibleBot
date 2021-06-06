@@ -319,7 +319,7 @@ namespace BibleBot.Frontend
 
                         foreach (Verse verse in verseResp.Verses)
                         {
-                            var referenceTitle = $"{verse.Reference.ToString()} - {verse.Reference.Version.Name}";
+                            var referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
 
                             if (verseResp.DisplayStyle == "embed")
                             {
@@ -350,7 +350,7 @@ namespace BibleBot.Frontend
                     else if (verseResp.Verses.Count == 1)
                     {
                         var verse = verseResp.Verses[0];
-                        var referenceTitle = $"{verse.Reference.ToString()} - {verse.Reference.Version.Name}";
+                        var referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
 
                         if (verseResp.DisplayStyle == "embed")
                         {

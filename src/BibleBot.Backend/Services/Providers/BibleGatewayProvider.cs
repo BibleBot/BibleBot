@@ -119,6 +119,9 @@ namespace BibleBot.Backend.Services.Providers
             string text = System.String.Join("\n", container.GetElementsByTagName("p").Select(el => el.TextContent.Trim()));
             string psalmTitle = titlesEnabled ? System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim())) : "";
 
+            // As the verse reference could have a non-English name...
+            reference.AsString = document.GetElementsByClassName("bcv").FirstOrDefault().TextContent.Trim();
+
             return new Verse { Reference = reference, Title = title, PsalmTitle = psalmTitle, Text = PurifyVerseText(text) };
         }
 
