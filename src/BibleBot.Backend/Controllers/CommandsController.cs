@@ -20,6 +20,7 @@ namespace BibleBot.Backend.Controllers
         private readonly UserService _userService;
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
+        private readonly ResourceService _resourceService;
         private readonly FrontendStatsService _frontendStatsService;
 
         private readonly SpecialVerseProvider _spProvider;
@@ -27,12 +28,13 @@ namespace BibleBot.Backend.Controllers
 
         private readonly List<ICommandGroup> _commandGroups;
 
-        public CommandsController(UserService userService, GuildService guildService, VersionService versionService,
+        public CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
                                   FrontendStatsService frontendStatsService, SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
+            _resourceService = resourceService;
             _frontendStatsService = frontendStatsService;
 
             _spProvider = spProvider;
@@ -43,6 +45,7 @@ namespace BibleBot.Backend.Controllers
                 new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
                 new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
+                new CommandGroups.Resources.ResourcesCommandGroup(_userService, _guildService, _resourceService.GetAllResources()),
                 new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
                 new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider)
             };

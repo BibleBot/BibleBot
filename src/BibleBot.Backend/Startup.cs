@@ -44,6 +44,7 @@ namespace BibleBot.Backend
             services.AddSingleton<GuildService>();
             services.AddSingleton<ParsingService>();
             services.AddSingleton<VersionService>();
+            services.AddSingleton<ResourceService>();
             services.AddSingleton<FrontendStatsService>();
 
             // Instantiate the various providers, which are just services.

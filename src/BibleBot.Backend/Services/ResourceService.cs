@@ -7,33 +7,33 @@ using BibleBot.Backend.Models;
 
 namespace BibleBot.Backend.Services
 {
-    public enum ResourceType
-    {
-        CREED = 0,
-        CATECHISM = 1,
-        PARAGRAPHED = 2,
-        SECTIONED = 3
-    }
 
     public class ResourceService
     {
-        private readonly Dictionary<string, Tuple<ResourceType, string>> _catechisms;
-        private readonly List<string> _creedLanguages;
+        private readonly Dictionary<string, Tuple<ResourceStyle, string>> _catechismData;
+        private readonly List<string> _creeds;
+
+        private readonly List<IResource> _resources;
 
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public ResourceService()
         {
-            _catechisms = new Dictionary<string, Tuple<ResourceType, string>>
+            _catechismData = new Dictionary<string, Tuple<ResourceStyle, string>>
             {
-                { "ccc", new Tuple<ResourceType, string>(ResourceType.PARAGRAPHED, "catechism_of_the_catholic_church") },
-                { "lsc" , new Tuple<ResourceType, string>(ResourceType.SECTIONED,  "luthers_small_catechism") }
+                { "ccc", new Tuple<ResourceStyle, string>(ResourceStyle.PARAGRAPHED, "catechism_of_the_catholic_church") },
+                { "lsc" , new Tuple<ResourceStyle, string>(ResourceStyle.SECTIONED,  "luthers_small_catechism") }
             };
 
-            _creedLanguages = new List<string>
+            _creeds = new List<string>
             {
-                "english"
+                "apostles",
+                "nicene325",
+                "nicene",
+                "chalcedon"
             };
+
+            _resources = new List<IResource>();
 
             _jsonSerializerOptions = new JsonSerializerOptions
             {
@@ -42,36 +42,92 @@ namespace BibleBot.Backend.Services
             };
         }
 
+        public List<IResource> GetAllResources()
+        {
+            if (_resources.Count == 0)
+            {
+                foreach (var catechismData in _catechismData)
+                {
+                    _resources.Add(GetResource(ResourceType.CATECHISM, catechismData.Key));
+                }
+
+                foreach (var creed in _creeds)
+                {
+                    _resources.Add(GetResource(ResourceType.CREED, creed));
+                }
+
+                return _resources;
+            }
+
+            return _resources;
+        }
+
         public IResource GetResource(ResourceType type, string name)
         {
+
             if (type == ResourceType.CREED)
             {
-                if (_creedLanguages.Contains(name))
+                if (_creeds.Contains(name))
                 {
-                    var creedFile = File.ReadAllText($"./Data/Creeds/{name}.json");
-                    return JsonSerializer.Deserialize<CreedResource>(creedFile, _jsonSerializerOptions);
+                    var creedFile = File.ReadAllText($"./Data/Creeds/english.json");
+                    
+                    var creedFileObj = JsonSerializer.Deserialize<CreedFile>(creedFile, _jsonSerializerOptions);
+
+                    CreedResource resource;
+
+                    switch (name)
+                    {
+                        case "apostles":
+                            resource = creedFileObj.Apostles;
+                            break;
+                        case "nicene325":
+                            resource = creedFileObj.Nicene325;
+                            break;
+                        case "nicene":
+                            resource = creedFileObj.Nicene;
+                            break;
+                        case "chalcedon":
+                            resource = creedFileObj.Chalcedon;
+                            break;
+                        default:
+                            throw new KeyNotFoundException();
+                    }
+
+                    resource.CommandReference = name;
+                    resource.Type = ResourceType.CREED;
+                    resource.Style = ResourceStyle.FULL_TEXT;
+
+                    return resource;
                 }
             }
             else if (type == ResourceType.CATECHISM)
             {
-                if (_catechisms.ContainsKey(name))
+                if (_catechismData.ContainsKey(name))
                 {
-                    var idealCatechism = _catechisms[name];
+                    var idealCatechism = _catechismData[name];
 
                     var catechismFile = File.ReadAllText($"./Data/Catechisms/{idealCatechism.Item2}.json");
 
-                    if (idealCatechism.Item1 == ResourceType.PARAGRAPHED)
+                    if (idealCatechism.Item1 == ResourceStyle.PARAGRAPHED)
                     {
-                        return JsonSerializer.Deserialize<ParagraphedResource>(catechismFile, _jsonSerializerOptions);
+                        var resource = JsonSerializer.Deserialize<ParagraphedResource>(catechismFile, _jsonSerializerOptions);
+                        resource.CommandReference = name;
+                        resource.Type = ResourceType.CATECHISM;
+                        resource.Style = ResourceStyle.PARAGRAPHED;
+                        return resource;
                     }
-                    else if (idealCatechism.Item1 == ResourceType.SECTIONED)
+                    else if (idealCatechism.Item1 == ResourceStyle.SECTIONED)
                     {
-                        return JsonSerializer.Deserialize<SectionedResource>(catechismFile, _jsonSerializerOptions);
+                        var resource = JsonSerializer.Deserialize<SectionedResource>(catechismFile, _jsonSerializerOptions);
+                        resource.CommandReference = name;
+                        resource.Type = ResourceType.CATECHISM;
+                        resource.Style = ResourceStyle.SECTIONED;
+                        return resource;
                     }
                 }
             }
 
-            return null;
+            throw new KeyNotFoundException();
         }
     }
 }
