@@ -99,6 +99,11 @@ namespace BibleBot.Backend.Services.Providers
                 el.Remove();
             }
 
+            foreach (var el in document.QuerySelectorAll(".footnotes"))
+            {
+                el.Remove();
+            }
+
             foreach (var el in document.QuerySelectorAll(".copyright-table"))
             {
                 el.Remove();
