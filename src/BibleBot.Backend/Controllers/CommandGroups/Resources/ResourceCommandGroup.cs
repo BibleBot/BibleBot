@@ -11,7 +11,7 @@ using BibleBot.Backend.Services.Providers;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 {
-    public class ResourcesCommandGroup : ICommandGroup
+    public class ResourceCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
@@ -23,25 +23,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
         private readonly List<IResource> _resources;
 
-        public ResourcesCommandGroup(UserService userService, GuildService guildService, List<IResource> resources)
+        public ResourceCommandGroup(UserService userService, GuildService guildService, List<IResource> resources)
         {
             _userService = userService;
             _guildService = guildService;
 
             _resources = resources;
 
-            Name = "resources";
+            Name = "resource";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
-                new ResourcesUsage(_userService, _guildService, _resources),
+                new ResourceUsage(_userService, _guildService, _resources),
                 //new InfoBibleBot(_userService, _guildService),
                 //new InfoInvite()
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
 
-        public class ResourcesUsage : ICommand
+        public class ResourceUsage : ICommand
         {
             public string Name { get; set; }
             public string ArgumentsError { get; set; }
@@ -53,7 +53,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
             private readonly List<IResource> _resources;
 
-            public ResourcesUsage(UserService userService, GuildService guildService, List<IResource> resources)
+            public ResourceUsage(UserService userService, GuildService guildService, List<IResource> resources)
             {
                 Name = "usage";
                 ArgumentsError = null;
@@ -73,12 +73,32 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
                     if (matchingResource != null)
                     {
-                        return new CommandResponse
+                        string section = args.ElementAtOrDefault(1) == null ? "" : args.ElementAtOrDefault(1);
+                        int page = 0;
+
+                        if (args.Count > 2)
                         {
-                            OK = true,
-                            Pages = new Utils().EmbedifyResource(matchingResource, args.ElementAtOrDefault(1), 0),
-                            LogStatement = $"+resources {matchingResource.CommandReference}"
-                        };
+                            try
+                            {
+                                page = int.Parse(args[2]);
+                            }
+                            catch
+                            {
+                                page = 0;
+                            }
+                        }
+
+                        var pages = new Utils().EmbedifyResource(matchingResource, section);
+
+                        if (pages != null)
+                        {
+                            return new CommandResponse
+                            {
+                                OK = true,
+                                Pages = new Utils().EmbedifyResource(matchingResource, section),
+                                LogStatement = $"+resource {matchingResource.CommandReference}{(section.Length > 0 ? $" {section}" : section)}"
+                            };
+                        }
                     }
                 }
 
@@ -101,7 +121,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
                 var resp = $"**__Creeds__**\n" + creedsList.Substring(0, creedsList.Length - 1) +
                 "\n\n**__Catechisms__**\n" + catechismsList.Substring(0, catechismsList.Length - 1) +
-                "\n\nTo use a resource, do `+resources <name>`.\nFor example, `+resources nicene` or `+resources ccc`.";
+                "\n\nTo use a resource, do `+resource <name>`.\nFor example, `+resource nicene` or `+resource ccc 1`.";
 
 
                 return new CommandResponse
@@ -109,9 +129,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+resources", resp, false)
+                        new Utils().Embedify("+resource", resp, false)
                     },
-                    LogStatement = "+resources"
+                    LogStatement = "+resource"
                 };
             }
         }

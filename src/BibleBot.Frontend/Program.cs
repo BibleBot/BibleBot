@@ -286,6 +286,12 @@ namespace BibleBot.Frontend
                             paginationEmojis.Right = DiscordEmoji.FromUnicode("➡");
                             paginationEmojis.Stop = DiscordEmoji.FromUnicode("❌");
 
+                            if (commandResp.LogStatement.StartsWith("+resource"))
+                            {
+                                paginationEmojis.SkipLeft = DiscordEmoji.FromUnicode("⏪");
+                                paginationEmojis.SkipRight = DiscordEmoji.FromUnicode("⏩");
+                            }
+                            
                             foreach (var page in commandResp.Pages)
                             {
                                 properPages.Add(new Page

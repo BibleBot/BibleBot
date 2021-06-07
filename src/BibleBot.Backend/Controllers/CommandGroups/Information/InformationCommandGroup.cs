@@ -137,9 +137,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         {
                             Name = "📖 Commands",
                             Value = "`+version` - version preferences and information\n" +
-                            "`+random` - get a random Bible verse\n" +
-                            "`+dailyverse` - daily verses and automation\n" +
                             "`+formatting` - preferences for verse styles and bot behavior\n" +
+                            "`+dailyverse` - daily verses and automation\n" +
+                            "`+random` - get a random Bible verse\n" +
+                            "`+resource` - creeds, catechisms, confessions, and historical documents\n" +
                             "`+stats` - view bot statistics\n" +
                             "`+invite` - get the invite link for BibleBot\n\n─────────────",
                             Inline = false

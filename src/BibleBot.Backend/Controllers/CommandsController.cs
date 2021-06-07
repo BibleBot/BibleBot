@@ -45,7 +45,7 @@ namespace BibleBot.Backend.Controllers
                 new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
                 new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
-                new CommandGroups.Resources.ResourcesCommandGroup(_userService, _guildService, _resourceService.GetAllResources()),
+                new CommandGroups.Resources.ResourceCommandGroup(_userService, _guildService, _resourceService.GetAllResources()),
                 new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
                 new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider)
             };
@@ -146,7 +146,7 @@ namespace BibleBot.Backend.Controllers
                                 
                                 return idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
                             }
-                            else if (grp.Name == "resources")
+                            else if (grp.Name == "resource")
                             {
                                 return grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
                             }
