@@ -20,7 +20,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
-        private readonly ResourceService _resourceService;
 
         private readonly List<IResource> _resources;
 
@@ -69,6 +68,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
+                if (args.Count > 0) {
+                    var matchingResource = _resources.Where(resource => resource.CommandReference == args[0]).FirstOrDefault();
+
+                    if (matchingResource != null)
+                    {
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new Utils().EmbedifyResource(matchingResource, args.ElementAtOrDefault(1), 0),
+                            LogStatement = $"+resources {matchingResource.CommandReference}"
+                        };
+                    }
+                }
+
                 var creeds = _resources.Where(res => res.Type == ResourceType.CREED);
                 var creedsList = "";
 

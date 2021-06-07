@@ -1,3 +1,8 @@
+using System.Linq;
+using System.Collections.Generic;
+
+using BibleBot.Backend.Models;
+
 using BibleBot.Lib;
 
 namespace BibleBot.Backend
@@ -26,7 +31,7 @@ namespace BibleBot.Backend
             embed.Color = isError ? (int) Colors.ERROR_COLOR : (int) Colors.NORMAL_COLOR;
 
             embed.Footer = new Footer();
-            embed.Footer.Text = copyright != null ? $"{copyright} // ${footerText}" : footerText;
+            embed.Footer.Text = copyright != null ? $"{copyright}\n{footerText}" : footerText;
             embed.Footer.IconURL = "https://i.imgur.com/hr4RXpy.png";
 
             if (author != null)
@@ -35,10 +40,43 @@ namespace BibleBot.Backend
                 {
                     Name = author
                 };
-            } 
+            }
             
 
             return embed;
+        }
+
+        public List<InternalEmbed> EmbedifyResource(IResource resource, string section, int page)
+        {
+            if (resource.Style == ResourceStyle.FULL_TEXT)
+            {
+                if (resource.Type == ResourceType.CREED)
+                {
+                    var creedResource = resource as CreedResource;
+                    string copyright = null;
+
+                    if ((new string[] {"apostles", "nicene"}).Contains(creedResource.CommandReference))
+                    {
+                        copyright = "© 1998 English Language Liturgical Consultation (ELLC)";
+                    }
+
+
+                    return new List<InternalEmbed>
+                    {
+                        Embedify(null, creedResource.Title, creedResource.Text, false, copyright)
+                    };
+                }
+            }
+            else if (resource.Style == ResourceStyle.PARAGRAPHED)
+            {
+                return null;
+            }
+            else if (resource.Style == ResourceStyle.SECTIONED)
+            {
+                return null;
+            }
+
+            return null;
         }
     }
 }

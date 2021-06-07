@@ -146,9 +146,13 @@ namespace BibleBot.Backend.Controllers
                                 
                                 return idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
                             }
+                            else if (grp.Name == "resources")
+                            {
+                                return grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
+                            }
                         }
 
-                        return grp.DefaultCommand.ProcessCommand(req, null);
+                        return grp.DefaultCommand.ProcessCommand(req, new List<string>());
                     }
                     else
                     {
@@ -161,7 +165,7 @@ namespace BibleBot.Backend.Controllers
                                 var args = tokenizedBody.Skip(1).ToList();
 
                                 if (args.Count < 1) {
-                                    return cmd.ProcessCommand(req, null);
+                                    return cmd.ProcessCommand(req, new List<string>());
                                 }
 
                                 var potentialRescue = _commandGroups.Where(grp => grp.Name == args[0]).FirstOrDefault();
@@ -212,15 +216,15 @@ namespace BibleBot.Backend.Controllers
                                     }
                                     else
                                     {
-                                        return potentialRescue.DefaultCommand.ProcessCommand(req, null);
+                                        return potentialRescue.DefaultCommand.ProcessCommand(req, new List<string>());
                                     }
                                 }
 
-                                return cmd.ProcessCommand(req, null);
+                                return cmd.ProcessCommand(req, new List<string>());
                             }
                             else
                             {
-                                return cmd.ProcessCommand(req, null);
+                                return cmd.ProcessCommand(req, new List<string>());
                             }
                         }
                     }
