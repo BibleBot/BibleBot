@@ -246,7 +246,7 @@ namespace BibleBot.Frontend
                         }
                         catch
                         {
-                            await e.Message.RespondAsync(
+                            await e.Channel.SendMessageAsync(
                                 utils.Embedify("+dailyverse set", "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.", false)
                             );
                         }	
@@ -264,11 +264,11 @@ namespace BibleBot.Frontend
                             request.AddJsonBody(requestObj);
 
                             await cli.PostAsync<CommandResponse>(request);
-                            await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                            await e.Channel.SendMessageAsync(utils.Embed2Embed(commandResp.Pages[0]));
                         }
                         catch
                         {
-                            await e.Message.RespondAsync(
+                            await e.Channel.SendMessageAsync(
                                 utils.Embedify("+dailyverse set", "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.", false)
                             );
                         }							
@@ -304,7 +304,7 @@ namespace BibleBot.Frontend
                         }
                         else
                         {
-                            await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                            await e.Channel.SendMessageAsync(utils.Embed2Embed(commandResp.Pages[0]));
                         }
                     }
                 }
@@ -361,21 +361,21 @@ namespace BibleBot.Frontend
                         if (verseResp.DisplayStyle == "embed")
                         {
                             var embed = utils.Embedify(referenceTitle, verse.Title, verse.Text, false, null);
-                            await e.Message.RespondAsync(embed);
+                            await e.Channel.SendMessageAsync(embed);
                         }
                         else if (verseResp.DisplayStyle == "code")
                         {
                             verse.Text = verse.Text.Replace("*", "");
-                            await e.Message.RespondAsync($"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```");
+                            await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```");
                         }
                         else if (verseResp.DisplayStyle == "blockquote")
                         {
-                            await e.Message.RespondAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
+                            await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
                         }
                     }
                     else if (verseResp.LogStatement.Contains("does not support the"))
                     {
-                        await e.Message.RespondAsync(utils.Embedify("Verse Error", verseResp.LogStatement, true));
+                        await e.Channel.SendMessageAsync(utils.Embedify("Verse Error", verseResp.LogStatement, true));
                     }
                 }
             });
