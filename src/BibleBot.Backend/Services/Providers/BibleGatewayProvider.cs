@@ -21,6 +21,7 @@ namespace BibleBot.Backend.Services.Providers
         private readonly HtmlParser _htmlParser;
         private readonly string _baseURL = "https://www.biblegateway.com";
         private readonly string _getURI = "/passage/?search={0}&version={1}&interface=print";
+        private readonly string _searchURI = "/quicksearch/?search={0}&version={1}&searchtype=all&limit=50000&interface=print";
 
         public BibleGatewayProvider()
         {
@@ -130,10 +131,47 @@ namespace BibleBot.Backend.Services.Providers
             return await GetVerse(new Reference{ Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
         }
 
-        public async Task<Dictionary<string, string>> Search(string query, Version version)
+        public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            // TODO
-            return new Dictionary<string, string>();
+            string url = _baseURL + System.String.Format(_searchURI, query, version.Abbreviation);
+
+            HttpResponseMessage req = await _httpClient.GetAsync(url);
+            _cancellationToken.Token.ThrowIfCancellationRequested();
+
+            Stream resp = await req.Content.ReadAsStreamAsync();
+            _cancellationToken.Token.ThrowIfCancellationRequested();
+
+            var document = await _htmlParser.ParseDocumentAsync(resp);
+            _cancellationToken.Token.ThrowIfCancellationRequested();
+
+            var results = new List<SearchResult>();
+
+            foreach (var row in document.QuerySelectorAll(".row"))
+            {
+                foreach (var el in row.GetElementsByClassName("bible-item-extras"))
+                {
+                    el.Remove();
+                }
+
+                foreach (var el in row.GetElementsByTagName("h3"))
+                {
+                    el.Remove();
+                }
+
+                var referenceElement = row.GetElementsByClassName("bible-item-title").FirstOrDefault();
+                var textElement = row.GetElementsByClassName("bible-item-text").FirstOrDefault();
+
+                if (referenceElement != null && textElement != null)
+                {
+                    results.Add(new SearchResult
+                    {
+                        Reference = referenceElement.TextContent,
+                        Text = PurifyVerseText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1))
+                    });
+                }
+            }
+
+            return results;
         }
 
         private string PurifyVerseText(string text)

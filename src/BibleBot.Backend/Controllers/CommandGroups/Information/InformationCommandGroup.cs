@@ -136,7 +136,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new EmbedField
                         {
                             Name = "📖 Commands",
-                            Value = "`+version` - version preferences and information\n" +
+                            Value = "`+search` - search for verses by keyword\n" +
+                            "`+version` - version preferences and information\n" +
                             "`+formatting` - preferences for verse styles and bot behavior\n" +
                             "`+dailyverse` - daily verses and automation\n" +
                             "`+random` - get a random Bible verse\n" +
@@ -151,7 +152,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             Value = "**Website**: https://biblebot.xyz\n" +
                             "**Copyrights**: https://biblebot.xyz/copyright\n" +
                             "**Source Code**: https://github.com/BibleBot/BibleBot\n" +
-                            "**Official Support Server**: https://discord.gg/H7ZyHqE\n" +
+                            "**Official Discord Server**: https://biblebot.xyz/discord\n" +
                             "**Terms and Conditions**: https://biblebot.xyz/terms\n\n─────────────"
                         },
                         new EmbedField
@@ -198,7 +199,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+invite", "To invite the bot to your server, click [here](https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=536964160).\nTo join the official support server, click [here](https://discord.gg/H7ZyHqE).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).", false)                    },
+                        new Utils().Embedify("+invite", "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).", false)                    },
                     LogStatement = "+invite"
                 };
             }
