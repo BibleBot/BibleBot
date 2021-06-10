@@ -61,7 +61,8 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), req.Body.ToLower());
+            var body = req.Body.ToLower().Replace("\r", " ").Replace("\n", " ");
+            var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), body);
 
             List<Verse> results = new List<Verse>();
             var displayStyle = "embed";
