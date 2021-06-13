@@ -6,8 +6,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using AngleSharp;
 using Serilog;
+using RestSharp;
+using AngleSharp;
 
 using BibleBot.Backend.Models;
 
@@ -21,7 +22,8 @@ namespace BibleBot.Backend.Services
         private List<string> _defaultNames;
         private readonly List<string> _nuisances;
 
-        private WebClient _webClient;
+        private readonly WebClient _webClient;
+        private readonly RestClient _restClient;
 
         public NameFetchingService()
         {
@@ -38,6 +40,7 @@ namespace BibleBot.Backend.Services
             _nuisances = JsonSerializer.Deserialize<List<string>>(nuisancesText);
 
             _webClient = new WebClient();
+            _restClient = new RestClient("https://api.scripture.api.bible/v1");
         }
 
         public Dictionary<string, List<string>> GetBookNames()
@@ -81,13 +84,19 @@ namespace BibleBot.Backend.Services
             Log.Information("NameFetchingService: Getting BibleGateway book names...");
             var bgNames = await GetBibleGatewayNames(bgVersions);
 
+            Log.Information("NameFetchingService: Getting API.Bible versions...");
+            var abVersions = await GetBibleGatewayVersions();
+
+            Log.Information("NameFetchingService: Getting API.Bible book names...");
+            var abNames = await GetBibleGatewayNames(abVersions);
+
             if (File.Exists("./Data/NameFetching/book_names.json"))
             {
                 File.Delete("./Data/NameFetching/book_names.json");
                 Log.Information("NameFetchingService: Removed old names file...");
             }
 
-            var completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>>{bgNames, _abbreviations});
+            var completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>>{bgNames, abNames, _abbreviations});
 
             Log.Information("NameFetchingService: Serializing and writing to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, new JsonSerializerOptions{ PropertyNameCaseInsensitive = false });
@@ -189,17 +198,73 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        /*private async Task<Dictionary<string, string>> GetAPIBibleVersions(string authenticationToken)
+        private async Task<Dictionary<string, string>> GetAPIBibleVersions()
         {
             Dictionary<string, string> versions = new Dictionary<string, string>();
-            _webClient.DownloadString
+            
+            var req = new RestRequest("bibles");
+            req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
+            ABBibleResponse resp = await _restClient.GetAsync<ABBibleResponse>(req);
+
+            foreach (var version in resp.Data)
+            {
+                versions.Add(version.Name, $"bibles/{version.Id}/books");
+            }
+
+            return versions;
         }
 
-        private async Task<Dictionary<string, List<string>>> GetAPIBibleNames(string authenticationToken)
+        private async Task<Dictionary<string, List<string>>> GetAPIBibleNames(Dictionary<string, string> versions)
         {
+            Dictionary<string, List<string>> names = new Dictionary<string, List<string>>();
 
-        }*/
+            List<string> latterKings = new List<string>{"3 Kings", "4 Kings"};
+
+            foreach (var version in versions)
+            {
+                var req = new RestRequest(version.Value);
+                req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+
+                List<ABBookData> resp = await _restClient.GetAsync<List<ABBookData>>(req);
+
+                foreach (var book in resp)
+                {
+                    if (book.Name == null)
+                    {
+                        continue;
+                    }
+
+                    book.Name = book.Name.Trim();
+
+                    if (!_apiBibleNames.ContainsKey(book.Id))
+                    {
+                        continue;
+                    }
+
+                    var internalId = _apiBibleNames[book.Id];
+
+                    if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || (latterKings.Contains(book.Abbreviation)))
+                    {
+                        continue;
+                    }
+
+                    if (names.ContainsKey(internalId))
+                    {
+                        if (!names[internalId].Contains(book.Name))
+                        {
+                            names[internalId].Add(book.Name);
+                        }
+                    }
+                    else
+                    {
+                        names.Add(internalId, new List<string> { book.Name });
+                    }
+                }
+            }
+
+            return names;
+        }
 
         private bool IsNuisance(string word)
         {

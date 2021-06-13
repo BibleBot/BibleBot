@@ -26,9 +26,10 @@ namespace BibleBot.Backend.Controllers
         private readonly NameFetchingService _nameFetchingService;
 
         private readonly BibleGatewayProvider _bgProvider;
+        private readonly APIBibleProvider _abProvider;
 
         public VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
-                                BibleGatewayProvider bibleGatewayProvider)
+                                BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
         {
             _userService = userService;
             _guildService = guildService;
@@ -36,7 +37,8 @@ namespace BibleBot.Backend.Controllers
             _versionService = versionService;
             _nameFetchingService = nameFetchingService;
 
-            _bgProvider = bibleGatewayProvider;
+            _bgProvider = bgProvider;
+            _abProvider = abProvider;
         }
 
         /// <summary>
@@ -128,35 +130,40 @@ namespace BibleBot.Backend.Controllers
                             };
                         }
 
+                        Verse result = new Verse();
+
                         switch (reference.Version.Source) 
                         {
                             case "bg":
-                                Verse result = await _bgProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
-
-                                if (result.Text == null)
-                                {
-                                    break;
-                                }
-
-                                if (displayStyle == "embed" && result.Text.Length > 2048)
-                                {
-                                    result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
-                                    result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
-                                }
-                                else if (displayStyle != "embed")
-                                {
-                                    var combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
-
-                                    if (combinedTextLength > 2000)
-                                    {
-                                        result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
-                                        result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
-                                    }
-                                }
-
-                                results.Add(result);
+                                result = await _bgProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
+                                break;
+                            case "ab":
+                                result = await _abProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
                                 break;
                         }
+
+                        if (result.Text == null)
+                        {
+                            break;
+                        }
+
+                        if (displayStyle == "embed" && result.Text.Length > 2048)
+                        {
+                            result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
+                            result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                        }
+                        else if (displayStyle != "embed")
+                        {
+                            var combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
+
+                            if (combinedTextLength > 2000)
+                            {
+                                result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
+                                result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                            }
+                        }
+
+                        results.Add(result);
                     }
                 }
             }

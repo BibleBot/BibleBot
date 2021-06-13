@@ -50,6 +50,7 @@ namespace BibleBot.Backend
             // Instantiate the various providers, which are just services.
             services.AddSingleton<SpecialVerseProvider>();
             services.AddSingleton<BibleGatewayProvider>();
+            services.AddSingleton<APIBibleProvider>();
 
             // Add the name fetching service with a predefined instance, since we'll use it later in this function.
             var nameFetchingService = new NameFetchingService();

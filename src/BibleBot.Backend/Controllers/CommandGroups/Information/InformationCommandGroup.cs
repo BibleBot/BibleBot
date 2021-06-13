@@ -205,5 +205,34 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 };
             }
         }
+
+        public class InfoStewards : ICommand
+        {
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            public InfoStewards()
+            {
+                Name = "stewards";
+                ArgumentsError = null;
+                ExpectedArguments = 0;
+                PermissionsRequired = null;
+            }
+
+            public IResponse ProcessCommand(Request req, List<string> args)
+            {
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = new List<InternalEmbed>
+                    {
+                        new Utils().Embedify("+stewards", "", false)
+                    },
+                    LogStatement = "+stewards"
+                };
+            }
+        }
     }
 }
