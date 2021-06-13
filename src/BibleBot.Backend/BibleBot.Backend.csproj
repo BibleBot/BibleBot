@@ -13,7 +13,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="LettuceEncrypt" Version="1.0.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.12.3" />
     <PackageReference Include="NodaTime" Version="3.0.5" />
     <PackageReference Include="NUnit" Version="3.13.2" />

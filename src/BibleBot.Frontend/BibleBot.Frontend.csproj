@@ -7,8 +7,9 @@
 
   <ItemGroup>
     <PackageReference Include="BibleBot.Lib" Version="1.0.0-rc1" />
-    <PackageReference Include="DSharpPlus" Version="4.0.1" />
-    <PackageReference Include="DSharpPlus.Interactivity" Version="4.0.1" />
+    <PackageReference Include="DSharpPlus" Version="4.1.0-nightly-00879" />
+    <PackageReference Include="DSharpPlus.Interactivity" Version="4.1.0-nightly-00879" />
+    <PackageReference Include="Emzi0767.Common" Version="2.6.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />

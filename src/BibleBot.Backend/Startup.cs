@@ -81,7 +81,7 @@ namespace BibleBot.Backend
                     cryptoService.ProcessFile(CryptographicAction.ENCRYPT, $"./Data/{filePath}.json", $"./Data/{filePath}.bin", Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"));
                 }
             }
-
+          
             // Run the NameFetchingService on startup without async.
             nameFetchingService.FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
             
@@ -123,8 +123,6 @@ namespace BibleBot.Backend
             else
             {
                 app.UseExceptionHandler("/");
-                app.UseHsts();
-                app.UseHttpsRedirection();
             }
 
             app.UseSerilogRequestLogging();
@@ -141,14 +139,7 @@ namespace BibleBot.Backend
                 endpoints.MapMetrics();
             });
 
-            if (!Configuration.GetSection("BibleBotBackend").GetValue<bool>("IsDevelopment"))
-            {
-                Log.Information("Ready at https://backend.biblebot.xyz.");
-            }
-            else
-            {
-                Log.Information("Ready at http://localhost.");
-            }
+            Log.Information("Ready at http://localhost:5000.");
         }
     }
 }
