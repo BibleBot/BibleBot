@@ -2,119 +2,119 @@ using System.Collections.Generic;
 
 namespace BibleBot.Backend.Models
 {
-    public interface IABBibleResponse
+    public class ABBibleResponse
     {
-        List<IABBibleData> Data { get; set; }
+        public List<ABBibleData> Data { get; set; }
     }
 
-    public interface IABSearchResponse
+    public class ABSearchResponse
     {
-        string Query { get; set; }
-        IABSearchData Data { get; set; }
-        IABMetadata Metadata { get; set; }
+        public string Query { get; set; }
+        public ABSearchData Data { get; set; }
+        public ABMetadata Metadata { get; set; }
     }
 
-    public interface IABBookData
+    public class ABBookData
     {
-        string Id { get; set; }
-        string BibleId { get; set; }
-        string Abbreviation { get; set; }
-        string Name { get; set; }
-        string NameLong { get; set; }
-        List<IABChapter> Chapters { get; set; }
+        public string Id { get; set; }
+        public string BibleId { get; set; }
+        public string Abbreviation { get; set; }
+        public string Name { get; set; }
+        public string NameLong { get; set; }
+        public List<ABChapter> Chapters { get; set; }
     }
 
-    public interface IABChapter
+    public class ABChapter
     {
-        string Id { get; set; }
-        string BibleId { get; set; }
-        string Number { get; set; } // no, really, it's a string
-        string BookId { get; set; }
-        string Reference { get; set; }
+        public string Id { get; set; }
+        public string BibleId { get; set; }
+        public string Number { get; set; } // no, really, it's a string
+        public string BookId { get; set; }
+        public string Reference { get; set; }
     }
 
-    public interface IABBibleData
+    public class ABBibleData
     {
-        string Id { get; set; }
-        string DBLId { get; set; }
-        string Abbreviation { get; set; }
-        string AbbreviationLocal { get; set; }
-        IABLanguage Language { get; set; }
-        List<IABCountry> Countries { get; set; }
-        string Name { get; set; }
-        string NameLocal { get; set; }
-        string Description { get; set; }
-        string DescriptionLocal { get; set; }
-        string RelatedDBL { get; set; }
-        string Type { get; set; }
-        string UpdatedAt { get; set; }
-        List<IABAudioBible> AudioBibles { get; set; }
+        public string Id { get; set; }
+        public string DBLId { get; set; }
+        public string Abbreviation { get; set; }
+        public string AbbreviationLocal { get; set; }
+        public ABLanguage Language { get; set; }
+        public List<ABCountry> Countries { get; set; }
+        public string Name { get; set; }
+        public string NameLocal { get; set; }
+        public string Description { get; set; }
+        public string DescriptionLocal { get; set; }
+        public string RelatedDBL { get; set; }
+        public string Type { get; set; }
+        public string UpdatedAt { get; set; }
+        public List<ABAudioBible> AudioBibles { get; set; }
     }
 
-    public interface IABLanguage
+    public class ABLanguage
     {
-        string Id { get; set; }
-        string Name { get; set; }
-        string NameLocal { get; set; }
-        string Script { get; set; }
-        string ScriptDirection { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string NameLocal { get; set; }
+        public string Script { get; set; }
+        public string ScriptDirection { get; set; }
     }
 
-    public interface IABCountry
+    public class ABCountry
     {
-        string Id { get; set; }
-        string Name { get; set; }
-        string NameLocal { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string NameLocal { get; set; }
     }
 
-    public interface IABAudioBible
+    public class ABAudioBible
     {
-        string Id { get; set; }
-        string Name { get; set; }
-        string NameLocal { get; set; }
-        string Description { get; set; }
-        string DescriptionLocal { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string NameLocal { get; set; }
+        public string Description { get; set; }
+        public string DescriptionLocal { get; set; }
     }
 
-    public interface IABSearchData
+    public class ABSearchData
     {
-        string Query { get; set; }
-        int Limit { get; set; }
-        int Offset { get; set; }
-        int Total { get; set; }
-        int VerseCount { get; set; }
-        List<IABVerse> Verses { get; set; }
-        List<IABPassage> Passages { get; set; }
+        public string Query { get; set; }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+        public int Total { get; set; }
+        public int VerseCount { get; set; }
+        public List<ABVerse> Verses { get; set; }
+        public List<ABPassage> Passages { get; set; }
     }
 
-    public interface IABVerse
+    public class ABVerse
     {
-        string Id { get; set; }
-        string OrgId { get; set; }
-        string BibleId { get; set; }
-        string BookId { get; set; }
-        string ChapterId { get; set; }
-        string Text { get; set; }
-        string Reference { get; set; }
+        public string Id { get; set; }
+        public string OrgId { get; set; }
+        public string BibleId { get; set; }
+        public string BookId { get; set; }
+        public string ChapterId { get; set; }
+        public string Text { get; set; }
+        public string Reference { get; set; }
     }
 
-    public interface IABPassage
+    public class ABPassage
     {
-        string Id { get; set; }
-        string BibleId { get; set; }
-        string OrgId { get; set; }
-        string Content { get; set; }
-        string Reference { get; set; }
-        int VerseCount { get; set; }
-        string Copyright { get; set; }
+        public string Id { get; set; }
+        public string BibleId { get; set; }
+        public string OrgId { get; set; }
+        public string Content { get; set; }
+        public string Reference { get; set; }
+        public int VerseCount { get; set; }
+        public string Copyright { get; set; }
     }
 
-    public interface IABMetadata
+    public class ABMetadata
     {
-        string FUMS { get; set; }
-        string FUMSId { get; set; }
-        string FUMSJSInclude { get; set; }
-        string FUMSJS { get; set; }
-        string FUMSNoScript { get; set; }
+        public string FUMS { get; set; }
+        public string FUMSId { get; set; }
+        public string FUMSJSInclude { get; set; }
+        public string FUMSJS { get; set; }
+        public string FUMSNoScript { get; set; }
     }
 }

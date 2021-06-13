@@ -9,7 +9,7 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 
-namespace BibleBot.Backend.Controllers.CommandGroups.Resources
+namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
     public class RandomVerseCommandGroup : ICommandGroup
     {
@@ -22,23 +22,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
 
+        private readonly SpecialVerseProvider _spProvider;
         private readonly BibleGatewayProvider _bgProvider;
 
         public RandomVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                       BibleGatewayProvider bgProvider)
+                                       SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
 
+            _spProvider = spProvider;
             _bgProvider = bgProvider;
 
             Name = "random";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
-                new RandomVerse(_userService, _guildService, _versionService, _bgProvider),
-                new TrulyRandomVerse(_userService, _guildService, _versionService, _bgProvider)
+                new RandomVerse(_userService, _guildService, _versionService, _spProvider, _bgProvider),
+                new TrulyRandomVerse(_userService, _guildService, _versionService, _spProvider, _bgProvider)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
@@ -54,10 +56,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
+            private readonly SpecialVerseProvider _spProvider;
             private readonly BibleGatewayProvider _bgProvider;
 
             public RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                               BibleGatewayProvider bgProvider)
+                               SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
             {
                 Name = "usage";
                 ArgumentsError = null;
@@ -68,6 +71,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 _guildService = guildService;
                 _versionService = versionService;
 
+                _spProvider = spProvider;
                 _bgProvider = bgProvider;
             }
 
@@ -93,8 +97,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     idealVersion = _versionService.Get("RSV");
                 }
 
-                string votdRef = _bgProvider.GetRandomVerse().GetAwaiter().GetResult();
-                Verse verse = _bgProvider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
+                string randomRef = _spProvider.GetRandomVerse().GetAwaiter().GetResult();
+                Verse verse = _bgProvider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
 
                 return new CommandResponse
                 {
@@ -119,10 +123,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
+            private readonly SpecialVerseProvider _spProvider;
             private readonly BibleGatewayProvider _bgProvider;
 
             public TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                    BibleGatewayProvider bgProvider)
+                                    SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
             {
                 Name = "true";
                 ArgumentsError = null;
@@ -133,6 +138,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 _guildService = guildService;
                 _versionService = versionService;
 
+                _spProvider = spProvider;
                 _bgProvider = bgProvider;
             }
 
@@ -158,8 +164,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     idealVersion = _versionService.Get("RSV");
                 }
 
-                string votdRef = _bgProvider.GetTrulyRandomVerse().GetAwaiter().GetResult();
-                Verse verse = _bgProvider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
+                string trulyRandomRef = _spProvider.GetTrulyRandomVerse().GetAwaiter().GetResult();
+                Verse verse = _bgProvider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
 
                 return new CommandResponse
                 {

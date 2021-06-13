@@ -22,13 +22,21 @@ namespace BibleBot.Backend.Services
         {
             List<BookSearchResult> results = new List<BookSearchResult>();
 
-            foreach (var bookName in bookNames)
-            {
-                foreach (string item in bookName.Value)
+            // We want to iterate twice through the booknames
+            // in order to skip Ezra in the first iteration,
+            // otherwise 1/2/3 Esdras will collide with Ezra.
+            for (int i = 1; i < 2; i++) {
+                foreach (var bookName in bookNames)
                 {
-                    if (IsValueInString(str, item.ToLowerInvariant()))
+                    foreach (string item in bookName.Value)
                     {
-                        str = str.Replace(item.ToLowerInvariant(), bookName.Key);
+                        if (IsValueInString(str, item.ToLowerInvariant()))
+                        {
+                            if (!(i == 1 && bookName.Key == "ezra"))
+                            {
+                                str = str.Replace(item.ToLowerInvariant(), bookName.Key);
+                            }
+                        }
                     }
                 }
             }
@@ -36,11 +44,11 @@ namespace BibleBot.Backend.Services
             var tokens = str.Split(" ");
             foreach (var bookName in defaultNames)
             {
-                foreach (var token in tokens)
+                for (int i = 0; i < tokens.Length; i++)
                 {
-                    if (token == bookName)
+                    if (tokens[i] == bookName)
                     {
-                        results.Add(new BookSearchResult{ Name = bookName, Index = System.Array.IndexOf(tokens, token) });
+                        results.Add(new BookSearchResult{ Name = bookName, Index = i });
                     }
                 }
             }

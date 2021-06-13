@@ -9,7 +9,7 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 
-namespace BibleBot.Backend.Controllers.CommandGroups.Resources
+namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
     public class DailyVerseCommandGroup : ICommandGroup
     {
@@ -22,22 +22,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
 
+        private readonly SpecialVerseProvider _spProvider;
         private readonly BibleGatewayProvider _bgProvider;
 
         public DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                      BibleGatewayProvider bgProvider)
+                                      SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
 
+            _spProvider = spProvider;
             _bgProvider = bgProvider;
 
             Name = "dailyverse";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
-                new DailyVerseUsage(_userService, _guildService, _versionService, _bgProvider),
+                new DailyVerseUsage(_userService, _guildService, _versionService, _spProvider, _bgProvider),
                 new DailyVerseSet(_guildService),
                 new DailyVerseStatus(_guildService),
                 new DailyVerseClear(_guildService)
@@ -56,10 +58,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
+            private readonly SpecialVerseProvider _spProvider;
             private readonly BibleGatewayProvider _bgProvider;
 
             public DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                                   BibleGatewayProvider bgProvider)
+                                   SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
             {
                 Name = "usage";
                 ArgumentsError = null;
@@ -70,6 +73,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 _guildService = guildService;
                 _versionService = versionService;
 
+                _spProvider = spProvider;
                 _bgProvider = bgProvider;
             }
 
@@ -95,7 +99,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     idealVersion = _versionService.Get("RSV");
                 }
 
-                string votdRef = _bgProvider.GetDailyVerse().GetAwaiter().GetResult();
+                string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
                 Verse verse = _bgProvider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
 
                 return new CommandResponse

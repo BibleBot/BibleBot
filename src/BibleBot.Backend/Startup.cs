@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -42,16 +44,46 @@ namespace BibleBot.Backend
             services.AddSingleton<GuildService>();
             services.AddSingleton<ParsingService>();
             services.AddSingleton<VersionService>();
-            services.AddSingleton<NameFetchingService>();
+            services.AddSingleton<ResourceService>();
             services.AddSingleton<FrontendStatsService>();
 
             // Instantiate the various providers, which are just services.
+            services.AddSingleton<SpecialVerseProvider>();
             services.AddSingleton<BibleGatewayProvider>();
+            services.AddSingleton<APIBibleProvider>();
+
+            // Add the name fetching service with a predefined instance, since we'll use it later in this function.
+            var nameFetchingService = new NameFetchingService();
+            services.AddSingleton<NameFetchingService>(nameFetchingService);
 
             services.AddControllers();
 
+            var cryptoService = new CryptographyService();
+            var cryptedFilePaths = new List<string>
+            {
+                "Catechisms/catechism_of_the_catholic_church",
+                "Catechisms/luthers_small_catechism"
+            };
+
+            if (!Configuration.GetSection("BibleBotBackend").GetValue<bool>("IsDevelopment"))
+            {
+                foreach (var filePath in cryptedFilePaths)
+                {
+                    cryptoService.ProcessFile(CryptographicAction.DECRYPT, $"./Data/{filePath}.bin", $"./Data/{filePath}.json", Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"));
+                }
+
+                services.AddLettuceEncrypt();
+            }
+            else
+            {
+                foreach (var filePath in cryptedFilePaths)
+                {
+                    cryptoService.ProcessFile(CryptographicAction.ENCRYPT, $"./Data/{filePath}.json", $"./Data/{filePath}.bin", Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"));
+                }
+            }
+          
             // Run the NameFetchingService on startup without async.
-            new NameFetchingService().FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
+            nameFetchingService.FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
             
             services.AddSwaggerGen(c =>
             {
