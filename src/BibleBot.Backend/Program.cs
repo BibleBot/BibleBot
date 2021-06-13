@@ -39,7 +39,6 @@ namespace BibleBot.Backend
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseKestrel();
                 });
     }
 }

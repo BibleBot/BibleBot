@@ -71,8 +71,6 @@ namespace BibleBot.Backend
                 {
                     cryptoService.ProcessFile(CryptographicAction.DECRYPT, $"./Data/{filePath}.bin", $"./Data/{filePath}.json", Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"));
                 }
-
-                services.AddLettuceEncrypt();
             }
             else
             {
@@ -139,7 +137,7 @@ namespace BibleBot.Backend
                 endpoints.MapMetrics();
             });
 
-            Log.Information("Ready at http://localhost:5000.");
+            Log.Information("Backend is ready.");
         }
     }
 }
