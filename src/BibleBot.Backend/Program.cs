@@ -40,7 +40,6 @@ namespace BibleBot.Backend
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseKestrel();
-                    webBuilder.UseUrls(new string[]{"http://0.0.0.0:5000", "https://0.0.0.0:5001"});
                 });
     }
 }

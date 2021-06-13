@@ -50,11 +50,6 @@ namespace BibleBot.Backend
 
             services.AddControllers();
 
-            if (!Configuration.GetSection("BibleBotBackend").GetValue<bool>("IsDevelopment"))
-            {
-                services.AddLettuceEncrypt();
-            }
-
             // Run the NameFetchingService on startup without async.
             new NameFetchingService().FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
             
@@ -96,8 +91,6 @@ namespace BibleBot.Backend
             else
             {
                 app.UseExceptionHandler("/");
-                app.UseHsts();
-                app.UseHttpsRedirection();
             }
 
             app.UseSerilogRequestLogging();
@@ -114,7 +107,7 @@ namespace BibleBot.Backend
                 endpoints.MapMetrics();
             });
 
-            Log.Information("Ready at https://backend.biblebot.xyz:5001.");
+            Log.Information("Ready at http://localhost:5000.");
         }
     }
 }
