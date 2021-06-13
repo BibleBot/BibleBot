@@ -13,7 +13,8 @@ skip_commits:
   message: /.*\[ci skip\].*/
 
 install:
-  - cmd: dotnet restore --verbosity q -s https://nuget.emzi0767.com/api/v3/index.json
+  - cmd: dotnet nuget add source https://nuget.emzi0767.com/api/v3/index.json
+  - cmd: dotnet restore --verbosity q
   - cmd: dotnet tool restore --verbosity q
 
 branches:
