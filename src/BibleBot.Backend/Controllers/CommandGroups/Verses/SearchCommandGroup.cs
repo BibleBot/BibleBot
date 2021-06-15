@@ -22,22 +22,22 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
 
-        private readonly BibleGatewayProvider _bgProvider;
+        private readonly List<IBibleProvider> _bibleProviders;
 
         public SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                  BibleGatewayProvider bgProvider)
+                                  List<IBibleProvider> bibleProviders)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
 
-            _bgProvider = bgProvider;
+            _bibleProviders = bibleProviders;
 
             Name = "search";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
-                new Search(_userService, _guildService, _versionService, _bgProvider)
+                new Search(_userService, _guildService, _versionService, _bibleProviders)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
@@ -53,10 +53,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
-            private readonly BibleGatewayProvider _bgProvider;
+            private readonly List<IBibleProvider> _bibleProviders;
 
             public Search(UserService userService, GuildService guildService, VersionService versionService,
-                          BibleGatewayProvider bgProvider)
+                          List<IBibleProvider> bibleProviders)
             {
                 Name = "usage";
                 ArgumentsError = null;
@@ -67,7 +67,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 _guildService = guildService;
                 _versionService = versionService;
 
-                _bgProvider = bgProvider;
+                _bibleProviders = bibleProviders;
             }
 
             public IResponse ProcessCommand(Request req, List<string> args)
@@ -103,8 +103,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
+                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
-                List<SearchResult> searchResults = _bgProvider.Search(System.String.Join(" ", args), idealVersion).GetAwaiter().GetResult();
+                if (provider == null)
+                {
+                    throw new ProviderNotFoundException();
+                }
+
+                List<SearchResult> searchResults = provider.Search(System.String.Join(" ", args), idealVersion).GetAwaiter().GetResult();
 
                 if (searchResults.Count > 1)
                 {

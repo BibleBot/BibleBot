@@ -23,23 +23,23 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
         private readonly VersionService _versionService;
 
         private readonly SpecialVerseProvider _spProvider;
-        private readonly BibleGatewayProvider _bgProvider;
+        private readonly List<IBibleProvider> _bibleProviders;
 
         public DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                      SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
+                                      SpecialVerseProvider spProvider, List<IBibleProvider> bibleProviders)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
 
             _spProvider = spProvider;
-            _bgProvider = bgProvider;
+            _bibleProviders = bibleProviders;
 
             Name = "dailyverse";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
-                new DailyVerseUsage(_userService, _guildService, _versionService, _spProvider, _bgProvider),
+                new DailyVerseUsage(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new DailyVerseSet(_guildService),
                 new DailyVerseStatus(_guildService),
                 new DailyVerseClear(_guildService)
@@ -59,10 +59,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             private readonly VersionService _versionService;
 
             private readonly SpecialVerseProvider _spProvider;
-            private readonly BibleGatewayProvider _bgProvider;
+            private readonly List<IBibleProvider> _bibleProviders;
 
             public DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                                   SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
+                                   SpecialVerseProvider spProvider, List<IBibleProvider> bibleProviders)
             {
                 Name = "usage";
                 ArgumentsError = null;
@@ -74,7 +74,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 _versionService = versionService;
 
                 _spProvider = spProvider;
-                _bgProvider = bgProvider;
+                _bibleProviders = bibleProviders;
             }
 
             public IResponse ProcessCommand(Request req, List<string> args)
@@ -100,17 +100,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 }
 
                 string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
-                Verse verse = _bgProvider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
 
-                return new CommandResponse
+                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+
+                if (provider != null)
                 {
-                    OK = true,
-                    Pages = new List<InternalEmbed>
+                    Verse verse = provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
+                
+                    return new CommandResponse
                     {
-                        new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null)
-                    },
-                    LogStatement = "+dailyverse"
-                };
+                        OK = true,
+                        Pages = new List<InternalEmbed>
+                        {
+                            new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null)
+                        },
+                        LogStatement = "+dailyverse"
+                    };
+                }
+
+                throw new ProviderNotFoundException();
             }
         }
 

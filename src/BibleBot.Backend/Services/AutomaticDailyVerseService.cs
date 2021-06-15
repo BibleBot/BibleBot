@@ -25,18 +25,23 @@ namespace BibleBot.Backend.Services
         private readonly VersionService _versionService;
         
         private readonly SpecialVerseProvider _spProvider;
-        private readonly BibleGatewayProvider _bgProvider;
+        private readonly List<IBibleProvider> _bibleProviders;
 
         private readonly RestClient _restClient;
         private Timer _timer;
 
         public AutomaticDailyVerseService(GuildService guildService, VersionService versionService,
-                                          SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
+                                          SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
         {
             _guildService = guildService;
             _versionService = versionService;
             _spProvider = spProvider;
-            _bgProvider = bgProvider;
+            
+            _bibleProviders = new List<IBibleProvider>
+            {
+                bgProvider,
+                abProvider
+            };
 
             _restClient = new RestClient("https://discord.com/api/webhooks");
             _restClient.UseSystemTextJson(new JsonSerializerOptions { IgnoreNullValues = true });
@@ -93,25 +98,32 @@ namespace BibleBot.Backend.Services
                 }
 
                 string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
-                Verse verse = _bgProvider.GetVerse(votdRef, true, true, idealVersion).GetAwaiter().GetResult();
 
-                var embed = new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
-                var webhookRequestBody = new WebhookRequestBody
+                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+
+                if (provider != null)
                 {
-                    Content = "Here is the daily verse:",
-                    Username = "BibleBot Automatic Daily Verses",
-                    AvatarURL = embed.Footer.IconURL,
-                    Embeds = new List<InternalEmbed> { embed }
-                };
+                    Verse verse = provider.GetVerse(votdRef, true, true, idealVersion).GetAwaiter().GetResult();
 
-                var request = new RestRequest(guild.DailyVerseWebhook);
-                request.AddJsonBody(webhookRequestBody);
+                    var embed = new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
+                    var webhookRequestBody = new WebhookRequestBody
+                    {
+                        Content = "Here is the daily verse:",
+                        Username = "BibleBot Automatic Daily Verses",
+                        AvatarURL = embed.Footer.IconURL,
+                        Embeds = new List<InternalEmbed> { embed }
+                    };
 
-                var resp = await _restClient.ExecuteAsync(request, Method.POST);
-                if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
-                {
-                    count += 1;
+                    var request = new RestRequest(guild.DailyVerseWebhook);
+                    request.AddJsonBody(webhookRequestBody);
+
+                    var resp = await _restClient.ExecuteAsync(request, Method.POST);
+                    if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    {
+                        count += 1;
+                    }
                 }
+
             }
 
             Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) at {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");

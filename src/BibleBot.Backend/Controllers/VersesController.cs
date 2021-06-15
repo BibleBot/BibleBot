@@ -25,8 +25,7 @@ namespace BibleBot.Backend.Controllers
         private readonly VersionService _versionService;
         private readonly NameFetchingService _nameFetchingService;
 
-        private readonly BibleGatewayProvider _bgProvider;
-        private readonly APIBibleProvider _abProvider;
+        private readonly List<IBibleProvider> _bibleProviders;
 
         public VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
                                 BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
@@ -37,8 +36,11 @@ namespace BibleBot.Backend.Controllers
             _versionService = versionService;
             _nameFetchingService = nameFetchingService;
 
-            _bgProvider = bgProvider;
-            _abProvider = abProvider;
+            _bibleProviders = new List<IBibleProvider>
+            {
+                bgProvider,
+                abProvider
+            };
         }
 
         /// <summary>
@@ -132,15 +134,14 @@ namespace BibleBot.Backend.Controllers
 
                         Verse result = new Verse();
 
-                        switch (reference.Version.Source) 
+                        IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+
+                        if (provider == null)
                         {
-                            case "bg":
-                                result = await _bgProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
-                                break;
-                            case "ab":
-                                result = await _abProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
-                                break;
+                            throw new ProviderNotFoundException();
                         }
+
+                        result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
                         if (result.Text == null)
                         {

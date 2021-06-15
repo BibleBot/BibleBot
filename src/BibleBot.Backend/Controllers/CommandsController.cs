@@ -23,13 +23,13 @@ namespace BibleBot.Backend.Controllers
         private readonly ResourceService _resourceService;
         private readonly FrontendStatsService _frontendStatsService;
 
+        private readonly List<IBibleProvider> _bibleProviders;
         private readonly SpecialVerseProvider _spProvider;
-        private readonly BibleGatewayProvider _bgProvider;
 
         private readonly List<ICommandGroup> _commandGroups;
 
         public CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
-                                  FrontendStatsService frontendStatsService, SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider)
+                                  FrontendStatsService frontendStatsService, SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
         {
             _userService = userService;
             _guildService = guildService;
@@ -38,7 +38,11 @@ namespace BibleBot.Backend.Controllers
             _frontendStatsService = frontendStatsService;
 
             _spProvider = spProvider;
-            _bgProvider = bgProvider;
+            _bibleProviders = new List<IBibleProvider>
+            {
+                bgProvider,
+                abProvider
+            };
 
             _commandGroups = new List<ICommandGroup>
             {
@@ -46,9 +50,9 @@ namespace BibleBot.Backend.Controllers
                 new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
                 new CommandGroups.Resources.ResourceCommandGroup(_userService, _guildService, _resourceService.GetAllResources()),
-                new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
-                new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bgProvider),
-                new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bgProvider)
+                new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
+                new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
+                new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bibleProviders)
             };
         }
 
