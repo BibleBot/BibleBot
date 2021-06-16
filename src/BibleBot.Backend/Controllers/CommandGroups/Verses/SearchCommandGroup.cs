@@ -73,6 +73,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
+                var idealGuild = _guildService.Get(req.GuildId);
 
                 var version = "RSV";
 
@@ -80,14 +81,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 {
                     version = idealUser.Version;
                 }
-
-                var idealVersion = _versionService.Get(version);
-
-                if (idealVersion == null)
+                else if (idealGuild != null)
                 {
-                    idealVersion = _versionService.Get("RSV");
+                    version = idealGuild.Version;
                 }
 
+                var idealVersion = _versionService.Get(version);
                 var query = System.String.Join(" ", args);
 
                 if (query.Length < 4)

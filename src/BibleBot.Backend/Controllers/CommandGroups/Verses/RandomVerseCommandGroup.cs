@@ -78,6 +78,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
+                var idealGuild = _guildService.Get(req.GuildId);
 
                 var version = "RSV";
                 var verseNumbersEnabled = true;
@@ -89,16 +90,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
                 }
-
-                var idealVersion = _versionService.Get(version);
-
-                if (idealVersion == null)
+                else if (idealGuild != null)
                 {
-                    idealVersion = _versionService.Get("RSV");
+                    version = idealGuild.Version;
                 }
 
+                var idealVersion = _versionService.Get(version);
                 string randomRef = _spProvider.GetRandomVerse().GetAwaiter().GetResult();
-
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
                 if (provider != null)
@@ -153,6 +151,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
+                var idealGuild = _guildService.Get(req.GuildId);
 
                 var version = "RSV";
                 var verseNumbersEnabled = true;
@@ -164,16 +163,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
                 }
-
-                var idealVersion = _versionService.Get(version);
-
-                if (idealVersion == null)
+                else if (idealGuild != null)
                 {
-                    idealVersion = _versionService.Get("RSV");
+                    version = idealGuild.Version;
                 }
 
+                var idealVersion = _versionService.Get(version);
                 string trulyRandomRef = _spProvider.GetTrulyRandomVerse().GetAwaiter().GetResult();
-
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
                 if (provider != null)

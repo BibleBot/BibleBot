@@ -88,6 +88,13 @@ namespace BibleBot.Backend.Controllers
                     titlesEnabled = idealUser.TitlesEnabled;
                     displayStyle = idealUser.DisplayStyle;
                 }
+                else if (idealGuild != null)
+                {
+                    // As much as I hate the duplication, we have to check independently of the previous
+                    // otherwise the guild default won't be a default.
+
+                    version = idealGuild.Version;
+                }
                 
                 if (idealGuild != null)
                 {
@@ -95,11 +102,6 @@ namespace BibleBot.Backend.Controllers
                 }
 
                 var idealVersion = _versionService.Get(version);
-
-                if (idealVersion == null)
-                {
-                    idealVersion = _versionService.Get("RSV");
-                }
 
                 if (!_parsingService.IsSurroundedByBrackets(ignoringBrackets, bsr, tuple.Item1))
                 {
@@ -133,7 +135,6 @@ namespace BibleBot.Backend.Controllers
                         }
 
                         Verse result = new Verse();
-
                         IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
                         if (provider == null)
