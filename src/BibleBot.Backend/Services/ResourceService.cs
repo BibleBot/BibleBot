@@ -34,6 +34,13 @@ namespace BibleBot.Backend.Services
             };
 
             _resources = new List<IResource>();
+            
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                IgnoreNullValues = true
+            };
+            
             foreach (var catechismData in _catechismData)
             {
                 _resources.Add(GetResource(ResourceType.CATECHISM, catechismData.Key));
@@ -43,12 +50,6 @@ namespace BibleBot.Backend.Services
             {
                 _resources.Add(GetResource(ResourceType.CREED, creed));
             }
-
-            _jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                IgnoreNullValues = true
-            };
         }
 
         public List<IResource> GetAllResources()
