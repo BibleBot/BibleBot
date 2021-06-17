@@ -217,7 +217,7 @@ namespace BibleBot.Frontend
                     response = await cli.PostAsync<VerseResponse>(request);
                 }
 
-                var logStatement = $"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}";
+                var logStatement = $"[{s.ShardId + 1}] <{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}";
                 if (response.OK)
                 {
                     Log.Information(logStatement);
