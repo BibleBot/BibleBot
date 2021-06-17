@@ -1,10 +1,12 @@
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using Serilog;
 using RestSharp;
+using RestSharp.Serializers.SystemTextJson;
 using AngleSharp.Html.Parser;
 
 using BibleBot.Lib;
@@ -22,13 +24,15 @@ namespace BibleBot.Backend.Services.Providers
 
         private readonly string _baseURL = "https://api.scripture.api.bible/v1";
         private readonly string _getURI = "bibles/{0}/search?query={1}&limit=1";
-        private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=10000&sort=canonical";
+        private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=100&sort=relevance";
 
         public APIBibleProvider()
         {
             Name = "ab";
 
             _restClient = new RestClient(_baseURL);
+            _restClient.UseSystemTextJson(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
             _htmlParser = new HtmlParser();
 
             _versionTable = new Dictionary<string, string>
@@ -52,7 +56,7 @@ namespace BibleBot.Backend.Services.Providers
 
             ABSearchResponse resp = await _restClient.GetAsync<ABSearchResponse>(req);
 
-            if (resp.Data.Passages.Count == 0)
+            if (resp.Data == null)
             {
                 return null;
             }
@@ -100,7 +104,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = _baseURL + System.String.Format(_searchURI, query, version.Abbreviation);
+            string url = System.String.Format(_searchURI, _versionTable[version.Abbreviation], query);
             
             var req = new RestRequest(url);
             req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
@@ -109,18 +113,16 @@ namespace BibleBot.Backend.Services.Providers
 
             var results = new List<SearchResult>();
 
-            if (resp.Data.Verses.Count == 0)
+            if (resp.Data != null)
             {
-                return null;
-            }
-
-            foreach (var verse in resp.Data.Verses)
-            {
-                results.Add(new SearchResult
+                foreach (var verse in resp.Data.Verses)
                 {
-                    Reference = verse.Reference,
-                    Text = PurifyVerseText(verse.Text)
-                });
+                    results.Add(new SearchResult
+                    {
+                        Reference = verse.Reference,
+                        Text = PurifyVerseText(verse.Text)
+                    });
+                }
             }
 
             return results;
