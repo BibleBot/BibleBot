@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Data\Catechisms\*.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <PackageReference Include="AngleSharp" Version="0.15.0" />
     <PackageReference Include="BibleBot.Lib" Version="1.0.0" />
     <PackageReference Include="GitInfo" Version="2.1.2">
