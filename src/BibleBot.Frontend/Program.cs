@@ -21,6 +21,7 @@ namespace BibleBot.Frontend
 {
     class Program
     {
+        static DiscordShardedClient bot;
 
         static void Main(string[] args)
         {
@@ -28,14 +29,14 @@ namespace BibleBot.Frontend
                 .WriteTo.Console(outputTemplate: "[{Level:w4}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 
-            Log.Information("BibleBot v9.1-beta (Frontend) by Kerygma Digital");
+            Log.Information($"BibleBot v{Utils.Version} (Frontend) by Kerygma Digital");
             
             MainAsync().GetAwaiter().GetResult();
         }
 
         static async Task MainAsync()
         {
-            var bot = new DiscordShardedClient(new DiscordConfiguration
+            bot = new DiscordShardedClient(new DiscordConfiguration
             {
                 Token = Environment.GetEnvironmentVariable("DISCORD_TOKEN"),
                 TokenType = TokenType.Bot,
@@ -55,8 +56,8 @@ namespace BibleBot.Frontend
 
             bot.MessageCreated += MessageCreatedHandler;
 
-            //bot.GuildCreated += UpdateTopggStats;
-            //bot.GuildDeleted += UpdateTopggStats;
+            bot.GuildCreated += UpdateTopggStats;
+            bot.GuildDeleted += UpdateTopggStats;
 
             await bot.StartAsync();
             await Task.Delay(-1);
@@ -68,7 +69,7 @@ namespace BibleBot.Frontend
             {
                 await s.UpdateStatusAsync(new DiscordActivity
                 {
-                    Name = $"+biblebot v9.1-beta | Shard {s.ShardId + 1} / {s.ShardCount}",
+                    Name = $"+biblebot v{Utils.Version} | Shard {s.ShardId + 1} / {s.ShardCount}",
                     ActivityType = ActivityType.Playing
                 });
             });
@@ -76,12 +77,12 @@ namespace BibleBot.Frontend
             return Task.CompletedTask;
         }
 
-        /*static Task UpdateTopggStats(DiscordClient s, DiscordEventArgs e)
+        static Task UpdateTopggStats(DiscordClient s, DiscordEventArgs e)
         {
             _ = Task.Run(async () =>
             {
                 var cli = new RestClient("https://top.gg/api");
-                var req = new RestRequest($"bots/{s.CurrentUser.Id}/stats");
+                var req = new RestRequest($"bots/{bot.CurrentUser.Id}/stats");
                 req.AddHeader("Authorization", Environment.GetEnvironmentVariable("TOPGG_TOKEN"));
                 req.AddJsonBody(new TopggStats
                 {
@@ -90,12 +91,12 @@ namespace BibleBot.Frontend
 
                 await cli.PostAsync<IRestResponse>(req);
 
-                int shardCount = s.ShardClients.Count;
+                int shardCount = bot.ShardClients.Count();
                 int guildCount = 0;
                 int userCount = 0;
                 int channelCount = 0;
 
-                foreach (var client in s.ShardClients)
+                foreach (var client in bot.ShardClients)
                 {
                     guildCount += client.Value.Guilds.Count();
 
@@ -123,7 +124,7 @@ namespace BibleBot.Frontend
             });
 
             return Task.CompletedTask;
-        }*/
+        }
 
         static Task MessageCreatedHandler(DiscordClient s, MessageCreateEventArgs e)
         {
@@ -134,7 +135,7 @@ namespace BibleBot.Frontend
 
                 var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
 
-                if (/*e.Author.Id.ToString() != "186046294286925824" ||*/ e.Author == s.CurrentUser)
+                if (e.Author == s.CurrentUser)
                 {
                     return;
                 }
@@ -169,14 +170,14 @@ namespace BibleBot.Frontend
 
                 if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
                 {
-                    /*if (e.Message.Content.StartsWith("+stats"))
+                    if (e.Message.Content.StartsWith("+stats"))
                     {
-                        int shardCount = s.ShardClients.Count;
+                        int shardCount = bot.ShardClients.Count();
                         int guildCount = 0;
                         int userCount = 0;
                         int channelCount = 0;
 
-                        foreach (var client in s.ShardClients)
+                        foreach (var client in bot.ShardClients)
                         {
                             guildCount += client.Value.Guilds.Count();
 
@@ -200,7 +201,7 @@ namespace BibleBot.Frontend
                         });
 
                         await cli.PostAsync<CommandResponse>(req);
-                    }*/
+                    }
 
                     var request = new RestRequest("commands/process");
                     request.AddJsonBody(requestObj);
@@ -215,13 +216,14 @@ namespace BibleBot.Frontend
                     response = await cli.PostAsync<VerseResponse>(request);
                 }
 
+                var logStatement = $"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}";
                 if (response.OK)
                 {
-                    Log.Information($"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}");
+                    Log.Information(logStatement);
                 }
                 else if (response.LogStatement != null)
                 {
-                    Log.Error($"<{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}");
+                    Log.Error(logStatement);
                 }
 
                 if (response.GetType().Equals(typeof(CommandResponse)))
@@ -244,7 +246,7 @@ namespace BibleBot.Frontend
                         }
                         catch
                         {
-                            await e.Message.RespondAsync(
+                            await e.Channel.SendMessageAsync(
                                 utils.Embedify("+dailyverse set", "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.", false)
                             );
                         }	
@@ -262,16 +264,16 @@ namespace BibleBot.Frontend
                             request.AddJsonBody(requestObj);
 
                             await cli.PostAsync<CommandResponse>(request);
-                            await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                            await e.Channel.SendMessageAsync(utils.Embed2Embed(commandResp.Pages[0]));
                         }
                         catch
                         {
-                            await e.Message.RespondAsync(
+                            await e.Channel.SendMessageAsync(
                                 utils.Embedify("+dailyverse set", "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.", false)
                             );
                         }							
                     }
-                    else
+                    else if (commandResp.Pages != null)
                     {
                         if (commandResp.Pages.Count() > 1)
                         {
@@ -284,6 +286,12 @@ namespace BibleBot.Frontend
                             paginationEmojis.Right = DiscordEmoji.FromUnicode("➡");
                             paginationEmojis.Stop = DiscordEmoji.FromUnicode("❌");
 
+                            if (commandResp.LogStatement.StartsWith("+resource"))
+                            {
+                                paginationEmojis.SkipLeft = DiscordEmoji.FromUnicode("⏪");
+                                paginationEmojis.SkipRight = DiscordEmoji.FromUnicode("⏩");
+                            }
+                            
                             foreach (var page in commandResp.Pages)
                             {
                                 properPages.Add(new Page
@@ -296,7 +304,7 @@ namespace BibleBot.Frontend
                         }
                         else
                         {
-                            await e.Message.RespondAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                            await e.Channel.SendMessageAsync(utils.Embed2Embed(commandResp.Pages[0]));
                         }
                     }
                 }
@@ -317,7 +325,7 @@ namespace BibleBot.Frontend
 
                         foreach (Verse verse in verseResp.Verses)
                         {
-                            var referenceTitle = $"{verse.Reference.ToString()} - {verse.Reference.Version.Name}";
+                            var referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
 
                             if (verseResp.DisplayStyle == "embed")
                             {
@@ -328,43 +336,47 @@ namespace BibleBot.Frontend
                             }
                             else if (verseResp.DisplayStyle == "code")
                             {
+                                verse.Text = verse.Text.Replace("*", "");
                                 properPages.Add(new Page
                                 {
-                                    Content = $"**{referenceTitle}**\n\n```css\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")}{(verse.PsalmTitle.Length > 0 ? $"{verse.PsalmTitle}\n\n" : "")}{verse.Text}```"
+                                    Content = $"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```"
                                 });
                             }
                             else if (verseResp.DisplayStyle == "blockquote")
                             {
                                 properPages.Add(new Page
                                 {
-                                    Content = $"**{referenceTitle}**\n>\n> {(verse.Title.Length > 0 ? $"{verse.Title}\n>\n> " : "")}{(verse.PsalmTitle.Length > 0 ? $"{verse.PsalmTitle}>\n>\n> " : "")}{verse.Text}```"
+                                    Content = $"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}"
                                 });
                             }
                         }
 
                         await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.WrapAround, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(120));
                     }
-                    else
+                    else if (verseResp.Verses.Count == 1)
                     {
                         var verse = verseResp.Verses[0];
-                        var referenceTitle = $"{verse.Reference.ToString()} - {verse.Reference.Version.Name}";
+                        var referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
 
                         if (verseResp.DisplayStyle == "embed")
                         {
                             var embed = utils.Embedify(referenceTitle, verse.Title, verse.Text, false, null);
-                            await e.Message.RespondAsync(embed);
+                            await e.Channel.SendMessageAsync(embed);
                         }
                         else if (verseResp.DisplayStyle == "code")
                         {
                             verse.Text = verse.Text.Replace("*", "");
-                            await e.Message.RespondAsync($"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```");
+                            await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```");
                         }
                         else if (verseResp.DisplayStyle == "blockquote")
                         {
-                            await e.Message.RespondAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
+                            await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
                         }
                     }
-                    
+                    else if (verseResp.LogStatement.Contains("does not support the"))
+                    {
+                        await e.Channel.SendMessageAsync(utils.Embedify("Verse Error", verseResp.LogStatement, true));
+                    }
                 }
             });
 

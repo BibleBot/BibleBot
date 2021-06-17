@@ -21,9 +21,7 @@ namespace BibleBot.Backend.Services.Providers
         private readonly HtmlParser _htmlParser;
         private readonly string _baseURL = "https://www.biblegateway.com";
         private readonly string _getURI = "/passage/?search={0}&version={1}&interface=print";
-        private readonly string _votdURI = "/reading-plans/verse-of-the-day/next";
-
-        private static readonly System.Random _random = new System.Random();
+        private readonly string _searchURI = "/quicksearch/?search={0}&version={1}&searchtype=all&limit=50000&interface=print";
 
         public BibleGatewayProvider()
         {
@@ -102,6 +100,11 @@ namespace BibleBot.Backend.Services.Providers
                 el.Remove();
             }
 
+            foreach (var el in document.QuerySelectorAll(".footnotes"))
+            {
+                el.Remove();
+            }
+
             foreach (var el in document.QuerySelectorAll(".copyright-table"))
             {
                 el.Remove();
@@ -117,6 +120,9 @@ namespace BibleBot.Backend.Services.Providers
             string text = System.String.Join("\n", container.GetElementsByTagName("p").Select(el => el.TextContent.Trim()));
             string psalmTitle = titlesEnabled ? System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim())) : "";
 
+            // As the verse reference could have a non-English name...
+            reference.AsString = document.GetElementsByClassName("bcv").FirstOrDefault().TextContent.Trim();
+
             return new Verse { Reference = reference, Title = title, PsalmTitle = psalmTitle, Text = PurifyVerseText(text) };
         }
 
@@ -125,17 +131,10 @@ namespace BibleBot.Backend.Services.Providers
             return await GetVerse(new Reference{ Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
         }
 
-        public async Task<Dictionary<string, string>> Search(string query, Version version)
+        public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            // TODO
-            return new Dictionary<string, string>();
-        }
+            string url = _baseURL + System.String.Format(_searchURI, query, version.Abbreviation);
 
-        // These next three functions should probably get moved elsewhere.
-        public async Task<string> GetDailyVerse()
-        {
-            string url = _baseURL + _votdURI;
-            
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
@@ -144,68 +143,35 @@ namespace BibleBot.Backend.Services.Providers
 
             var document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
-            
-            return document.GetElementsByClassName("rp-passage-display").FirstOrDefault().TextContent;
-        }
 
-        public async Task<string> GetRandomVerse()
-        {
-            string url = "https://dailyverses.net/random-bible-verse";
-            
-            HttpResponseMessage req = await _httpClient.GetAsync(url);
-            _cancellationToken.Token.ThrowIfCancellationRequested();
+            var results = new List<SearchResult>();
 
-            Stream resp = await req.Content.ReadAsStreamAsync();
-            _cancellationToken.Token.ThrowIfCancellationRequested();
-
-            var document = await _htmlParser.ParseDocumentAsync(resp);
-            _cancellationToken.Token.ThrowIfCancellationRequested();
-            
-            return document.GetElementsByClassName("b1").FirstOrDefault().GetElementsByClassName("vr").FirstOrDefault().GetElementsByClassName("vc").FirstOrDefault().TextContent;
-        }
-
-        public async Task<string> GetTrulyRandomVerse()
-        {
-            var verseNumber = _random.Next(0, 31102);
-            string url = $"https://biblebot.github.io/RandomVersesData/{verseNumber}.txt";
-            
-            HttpResponseMessage req = await _httpClient.GetAsync(url);
-            _cancellationToken.Token.ThrowIfCancellationRequested();
-
-            string resp = await req.Content.ReadAsStringAsync();
-            _cancellationToken.Token.ThrowIfCancellationRequested();
-
-            var verseArray = resp.Split(" ").Take(2);
-
-            var bookMap = new Dictionary<string, string>
+            foreach (var row in document.QuerySelectorAll(".row"))
             {
-                { "Sa1", "1 Samuel" },
-                { "Sa2", "2 Samuel" },
-                { "Kg1", "1 Kings" },
-                { "Kg2", "2 Kings" },
-                { "Ch1", "1 Chronicles" },
-                { "Ch2", "2 Chronicles" },
-                { "Co1", "1 Corinthians" },
-                { "Co2", "2 Corinthians" },
-                { "Th1", "1 Thessalonians" },
-                { "Th2", "2 Thessalonians" },
-                { "Ti1", "1 Timothy" },
-                { "Ti2", "2 Timothy" },
-                { "Pe1", "1 Peter" },
-                { "Pe2", "2 Peter" },
-                { "Jo1", "1 John" },
-                { "Jo2", "2 John" },
-                { "Jo3", "3 John" }
-            };
+                foreach (var el in row.GetElementsByClassName("bible-item-extras"))
+                {
+                    el.Remove();
+                }
 
-            var book = verseArray.ElementAt(0);
+                foreach (var el in row.GetElementsByTagName("h3"))
+                {
+                    el.Remove();
+                }
 
-            if (bookMap.ContainsKey(book))
-            {
-                book = bookMap[book];
+                var referenceElement = row.GetElementsByClassName("bible-item-title").FirstOrDefault();
+                var textElement = row.GetElementsByClassName("bible-item-text").FirstOrDefault();
+
+                if (referenceElement != null && textElement != null)
+                {
+                    results.Add(new SearchResult
+                    {
+                        Reference = referenceElement.TextContent,
+                        Text = PurifyVerseText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1))
+                    });
+                }
             }
 
-            return $"{book} {verseArray.ElementAt(1)}";
+            return results;
         }
 
         private string PurifyVerseText(string text)

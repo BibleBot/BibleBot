@@ -25,10 +25,10 @@ namespace BibleBot.Backend.Controllers
         private readonly VersionService _versionService;
         private readonly NameFetchingService _nameFetchingService;
 
-        private readonly BibleGatewayProvider _bgProvider;
+        private readonly List<IBibleProvider> _bibleProviders;
 
         public VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
-                                BibleGatewayProvider bibleGatewayProvider)
+                                BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
         {
             _userService = userService;
             _guildService = guildService;
@@ -36,7 +36,11 @@ namespace BibleBot.Backend.Controllers
             _versionService = versionService;
             _nameFetchingService = nameFetchingService;
 
-            _bgProvider = bibleGatewayProvider;
+            _bibleProviders = new List<IBibleProvider>
+            {
+                bgProvider,
+                abProvider
+            };
         }
 
         /// <summary>
@@ -61,7 +65,8 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), req.Body.ToLower());
+            var body = req.Body.ToLower().Replace("\r", " ").Replace("\n", " ");
+            var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), body);
 
             List<Verse> results = new List<Verse>();
             var displayStyle = "embed";
@@ -83,6 +88,13 @@ namespace BibleBot.Backend.Controllers
                     titlesEnabled = idealUser.TitlesEnabled;
                     displayStyle = idealUser.DisplayStyle;
                 }
+                else if (idealGuild != null)
+                {
+                    // As much as I hate the duplication, we have to check independently of the previous
+                    // otherwise the guild default won't be a default.
+
+                    version = idealGuild.Version;
+                }
                 
                 if (idealGuild != null)
                 {
@@ -91,51 +103,74 @@ namespace BibleBot.Backend.Controllers
 
                 var idealVersion = _versionService.Get(version);
 
-                if (idealVersion == null)
-                {
-                    idealVersion = _versionService.Get("RSV");
-                }
-
                 if (!_parsingService.IsSurroundedByBrackets(ignoringBrackets, bsr, tuple.Item1))
                 {
                     var reference = _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
 
                     if (reference != null)
                     {
-                        switch (reference.Version.Source) 
+                        if (reference.IsOT && !reference.Version.SupportsOldTestament)
                         {
-                            case "bg":
-                                Verse result = await _bgProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
-
-                                if (result == null)
-                                {
-                                    break;
-                                }
-
-                                if (result.Text == null)
-                                {
-                                    break;
-                                }
-
-                                if (displayStyle == "embed" && result.Text.Length > 2048)
-                                {
-                                    result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
-                                    result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
-                                }
-                                else if (displayStyle != "embed")
-                                {
-                                    var combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
-
-                                    if (combinedTextLength > 2000)
-                                    {
-                                        result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1995))}...";
-                                        result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
-                                    }
-                                }
-
-                                results.Add(result);
-                                break;
+                            return new VerseResponse
+                            {
+                                OK = false,
+                                LogStatement = $"{reference.Version.Name} does not support the Old Testament."
+                            };
                         }
+                        else if (reference.IsNT && !reference.Version.SupportsNewTestament)
+                        {
+                            return new VerseResponse
+                            {
+                                OK = false,
+                                LogStatement = $"{reference.Version.Name} does not support the New Testament."
+                            };
+                        }
+                        else if (reference.IsDEU && !reference.Version.SupportsDeuterocanon)
+                        {
+                            return new VerseResponse
+                            {
+                                OK = false,
+                                LogStatement = $"{reference.Version.Name} does not support the Apocrypha/Deuterocanon."
+                            };
+                        }
+
+                        Verse result = new Verse();
+                        IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+
+                        if (provider == null)
+                        {
+                            throw new ProviderNotFoundException();
+                        }
+
+                        result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
+                        
+                        if (result == null)
+                        {
+                            break;
+                        }
+
+                        if (result.Text == null)
+                        {
+                            break;
+                        }
+
+                        if (displayStyle == "embed" && result.Text.Length > 2048)
+                        {
+                            result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
+                            result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                        }
+                        else if (displayStyle != "embed")
+                        {
+                            var combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
+
+                            if (combinedTextLength > 2000)
+                            {
+                                result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
+                                result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                            }
+                        }
+
+                        results.Add(result);
                     }
                 }
             }

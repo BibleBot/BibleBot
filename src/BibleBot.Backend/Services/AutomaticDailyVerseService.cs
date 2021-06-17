@@ -24,16 +24,25 @@ namespace BibleBot.Backend.Services
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
         
-        private readonly BibleGatewayProvider _bgProvider;
+        private readonly SpecialVerseProvider _spProvider;
+        private readonly List<IBibleProvider> _bibleProviders;
 
         private readonly RestClient _restClient;
         private Timer _timer;
 
-        public AutomaticDailyVerseService(GuildService guildService, VersionService versionService, BibleGatewayProvider bibleGatewayProvider)
+        public AutomaticDailyVerseService(GuildService guildService, VersionService versionService,
+                                          SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
         {
             _guildService = guildService;
             _versionService = versionService;
-            _bgProvider = bibleGatewayProvider;
+            _spProvider = spProvider;
+            
+            _bibleProviders = new List<IBibleProvider>
+            {
+                bgProvider,
+                abProvider
+            };
+
             _restClient = new RestClient("https://discord.com/api/webhooks");
             _restClient.UseSystemTextJson(new JsonSerializerOptions { IgnoreNullValues = true });
         }
@@ -91,9 +100,8 @@ namespace BibleBot.Backend.Services
                         idealVersion = _versionService.Get("RSV");
                     }
 
-                    string votdRef = _bgProvider.GetDailyVerse().GetAwaiter().GetResult();
-
-                    IBibleProvider provider = _bgProvider;
+                    string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
+                    IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
                     if (provider != null)
                     {

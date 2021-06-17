@@ -356,7 +356,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 var totalPages = (int) System.Math.Ceiling((decimal) (versions.Count / maxResultsPerPage));
                 totalPages++;
 
-                foreach (int i in Enumerable.Range(0, totalPages))
+                for (int i = 0; i < totalPages; i++)
                 {
                     var count = 0;
                     var versionList = "";

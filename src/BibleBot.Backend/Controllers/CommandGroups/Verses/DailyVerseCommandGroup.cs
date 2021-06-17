@@ -9,7 +9,7 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 
-namespace BibleBot.Backend.Controllers.CommandGroups.Resources
+namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
     public class DailyVerseCommandGroup : ICommandGroup
     {
@@ -22,22 +22,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
 
-        private readonly BibleGatewayProvider _bgProvider;
+        private readonly SpecialVerseProvider _spProvider;
+        private readonly List<IBibleProvider> _bibleProviders;
 
         public DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                      BibleGatewayProvider bgProvider)
+                                      SpecialVerseProvider spProvider, List<IBibleProvider> bibleProviders)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
 
-            _bgProvider = bgProvider;
+            _spProvider = spProvider;
+            _bibleProviders = bibleProviders;
 
             Name = "dailyverse";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
-                new DailyVerseUsage(_userService, _guildService, _versionService, _bgProvider),
+                new DailyVerseUsage(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new DailyVerseSet(_guildService),
                 new DailyVerseStatus(_guildService),
                 new DailyVerseClear(_guildService)
@@ -56,10 +58,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
-            private readonly BibleGatewayProvider _bgProvider;
+            private readonly SpecialVerseProvider _spProvider;
+            private readonly List<IBibleProvider> _bibleProviders;
 
             public DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                                   BibleGatewayProvider bgProvider)
+                                   SpecialVerseProvider spProvider, List<IBibleProvider> bibleProviders)
             {
                 Name = "usage";
                 ArgumentsError = null;
@@ -70,12 +73,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 _guildService = guildService;
                 _versionService = versionService;
 
-                _bgProvider = bgProvider;
+                _spProvider = spProvider;
+                _bibleProviders = bibleProviders;
             }
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
+                var idealGuild = _guildService.Get(req.GuildId);
 
                 var version = "RSV";
                 var verseNumbersEnabled = true;
@@ -87,26 +92,31 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
                 }
-
-                var idealVersion = _versionService.Get(version);
-
-                if (idealVersion == null)
+                else if (idealGuild != null)
                 {
-                    idealVersion = _versionService.Get("RSV");
+                    version = idealGuild.Version;
                 }
 
-                string votdRef = _bgProvider.GetDailyVerse().GetAwaiter().GetResult();
-                Verse verse = _bgProvider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
+                var idealVersion = _versionService.Get(version);
+                string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
+                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
-                return new CommandResponse
+                if (provider != null)
                 {
-                    OK = true,
-                    Pages = new List<InternalEmbed>
+                    Verse verse = provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
+                
+                    return new CommandResponse
                     {
-                        new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null)
-                    },
-                    LogStatement = "+dailyverse"
-                };
+                        OK = true,
+                        Pages = new List<InternalEmbed>
+                        {
+                            new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null)
+                        },
+                        LogStatement = "+dailyverse"
+                    };
+                }
+
+                throw new ProviderNotFoundException();
             }
         }
 

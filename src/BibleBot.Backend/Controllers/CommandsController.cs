@@ -20,29 +20,39 @@ namespace BibleBot.Backend.Controllers
         private readonly UserService _userService;
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
+        private readonly ResourceService _resourceService;
         private readonly FrontendStatsService _frontendStatsService;
 
-        private readonly BibleGatewayProvider _bgProvider;
+        private readonly List<IBibleProvider> _bibleProviders;
+        private readonly SpecialVerseProvider _spProvider;
 
         private readonly List<ICommandGroup> _commandGroups;
 
-        public CommandsController(UserService userService, GuildService guildService, VersionService versionService,
-                                  FrontendStatsService frontendStatsService, BibleGatewayProvider bibleGatewayProvider)
+        public CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
+                                  FrontendStatsService frontendStatsService, SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
+            _resourceService = resourceService;
             _frontendStatsService = frontendStatsService;
 
-            _bgProvider = bibleGatewayProvider;
+            _spProvider = spProvider;
+            _bibleProviders = new List<IBibleProvider>
+            {
+                bgProvider,
+                abProvider
+            };
 
             _commandGroups = new List<ICommandGroup>
             {
                 new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
-                new CommandGroups.Resources.DailyVerseCommandGroup(_userService, _guildService, _versionService, _bgProvider),
-                new CommandGroups.Resources.RandomVerseCommandGroup(_userService, _guildService, _versionService, _bgProvider),
+                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
-                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService)
+                new CommandGroups.Resources.ResourceCommandGroup(_userService, _guildService, _resourceService.GetAllResources()),
+                new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
+                new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
+                new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bibleProviders)
             };
         }
 
@@ -141,9 +151,13 @@ namespace BibleBot.Backend.Controllers
                                 
                                 return idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
                             }
+                            else if (grp.Name == "resource" || grp.Name == "search")
+                            {
+                                return grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
+                            }
                         }
 
-                        return grp.DefaultCommand.ProcessCommand(req, null);
+                        return grp.DefaultCommand.ProcessCommand(req, new List<string>());
                     }
                     else
                     {
@@ -156,7 +170,7 @@ namespace BibleBot.Backend.Controllers
                                 var args = tokenizedBody.Skip(1).ToList();
 
                                 if (args.Count < 1) {
-                                    return cmd.ProcessCommand(req, null);
+                                    return cmd.ProcessCommand(req, new List<string>());
                                 }
 
                                 var potentialRescue = _commandGroups.Where(grp => grp.Name == args[0]).FirstOrDefault();
@@ -207,15 +221,15 @@ namespace BibleBot.Backend.Controllers
                                     }
                                     else
                                     {
-                                        return potentialRescue.DefaultCommand.ProcessCommand(req, null);
+                                        return potentialRescue.DefaultCommand.ProcessCommand(req, new List<string>());
                                     }
                                 }
 
-                                return cmd.ProcessCommand(req, null);
+                                return cmd.ProcessCommand(req, new List<string>());
                             }
                             else
                             {
-                                return cmd.ProcessCommand(req, null);
+                                return cmd.ProcessCommand(req, new List<string>());
                             }
                         }
                     }

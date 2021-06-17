@@ -38,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 new InfoBibleBot(_userService, _guildService),
                 new InfoInvite()
             };
-            DefaultCommand = null;
+            DefaultCommand = Commands.Where(cmd => cmd.Name == "biblebot").FirstOrDefault();
         }
 
         public class InfoStats : ICommand
@@ -73,16 +73,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 var versions = _versionService.Get();
                 var frontendStats = _frontendStatsService.Get();
 
-                var resp = //$"**__Frontend Stats__**\n" +
-                //$"**Shard Count**: {frontendStats.ShardCount}\n" +
-                //$"**Server Count**: {frontendStats.ServerCount}\n" +
-                //$"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
+                var resp = $"**__Frontend Stats__**\n" +
+                $"**Shard Count**: {frontendStats.ShardCount}\n" +
+                $"**Server Count**: {frontendStats.ServerCount}\n" +
+                $"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
                 $"**__Backend Stats__**\n" +
                 $"**User Preference Count**: {userPrefs.Count}\n" +
                 $"**Guild Preference Count**: {guildPrefs.Count}\n" +
                 $"**Version Count**: {versions.Count}\n\n" +
                 $"**__Metadata__**\n" +
-                $"**BibleBot**: v9.1-beta ([{ThisAssembly.Git.Commit}](https://github.com/BibleBot/BibleBot/commit/{ThisAssembly.Git.Sha}))\n" +
+                $"**BibleBot**: v{Utils.Version} ([{ThisAssembly.Git.Commit}](https://github.com/BibleBot/BibleBot/commit/{ThisAssembly.Git.Sha}))\n" +
                 $"**BibleBot.Lib**: v{typeof(ThisAssembly).Assembly.GetReferencedAssemblies().Where((asm) => asm.Name == "BibleBot.Lib").First().Version.ToString(3)}";
 
 
@@ -123,8 +123,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             {
                 var embed = new InternalEmbed
                 {
-                    Title = "BibleBot v9.1-beta",
-                    Description = "The premier Discord bot for Christians.",
+                    Title = $"BibleBot v{Utils.Version}",
+                    Description = "Scripture from your Discord client to your heart.",
                     Color = 6709986,
                     Footer = new Footer
                     {
@@ -136,10 +136,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new EmbedField
                         {
                             Name = "📖 Commands",
-                            Value = "`+version` - version preferences and information\n" +
-                            "`+random` - get a random Bible verse\n" +
-                            "`+dailyverse` - daily verses and automation\n" +
+                            Value = "`+search` - search for verses by keyword\n" +
+                            "`+version` - version preferences and information\n" +
                             "`+formatting` - preferences for verse styles and bot behavior\n" +
+                            "`+dailyverse` - daily verses and automation\n" +
+                            "`+random` - get a random Bible verse\n" +
+                            "`+resource` - creeds, catechisms, confessions, and historical documents\n" +
                             "`+stats` - view bot statistics\n" +
                             "`+invite` - get the invite link for BibleBot\n\n─────────────",
                             Inline = false
@@ -150,13 +152,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             Value = "**Website**: https://biblebot.xyz\n" +
                             "**Copyrights**: https://biblebot.xyz/copyright\n" +
                             "**Source Code**: https://github.com/BibleBot/BibleBot\n" +
-                            "**Official Support Server**: https://discord.gg/H7ZyHqE\n" +
+                            "**Official Discord Server**: https://biblebot.xyz/discord\n" +
                             "**Terms and Conditions**: https://biblebot.xyz/terms\n\n─────────────"
                         },
                         new EmbedField
                         {
                             Name = "🔔 News",
-                            Value = "**June 4th** - [v9.1-beta has been released! Read more about the changes.](https://biblebot.xyz/2021/06/04/release-v9-1-beta)",
+                            Value = "**June 17th - [Update: v9.1-beta](https://biblebot.xyz/2021/06/17/update-v9-1-beta/)\n" +
+                            "**June 4th** - [Release: v9.1-beta](https://biblebot.xyz/2021/06/04/release-v9-1-beta)",
                             Inline = false,
                         }
                     }
@@ -197,7 +200,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+invite", "To invite the bot to your server, click [here](https://discordapp.com/oauth2/authorize?client_id=361033318273384449&scope=bot&permissions=536964160).\nTo join the official support server, click [here](https://discord.gg/H7ZyHqE).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).", false)                    },
+                        new Utils().Embedify("+invite", "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).", false)
+                    },
                     LogStatement = "+invite"
                 };
             }

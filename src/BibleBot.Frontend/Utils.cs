@@ -11,12 +11,13 @@ namespace BibleBot.Frontend
             ERROR_COLOR = 16723502
         }
 
+        public static string Version = "9.1-beta";
+
         public DiscordEmbed Embed2Embed(InternalEmbed embed)
         {
             var builder = new DiscordEmbedBuilder();
 
             builder.WithTitle(embed.Title);
-            builder.WithDescription(embed.Description);
             builder.WithColor(new DiscordColor(embed.Color));
             builder.WithFooter(embed.Footer.Text, "https://i.imgur.com/hr4RXpy.png");
             
@@ -25,11 +26,21 @@ namespace BibleBot.Frontend
                 builder.WithAuthor(embed.Author.Name, null, null);
             }
 
+            if (embed.Description != null)
+            {
+                builder.WithDescription(embed.Description);
+            }
+
             if (embed.Fields != null)
             {
                 foreach (EmbedField field in embed.Fields) {
                     builder.AddField(field.Name, field.Value, field.Inline);
                 }
+            }
+
+            if (embed.Thumbnail != null)
+            {
+                builder.WithThumbnail(embed.Thumbnail.URL);
             }
 
             return builder.Build();
@@ -43,8 +54,7 @@ namespace BibleBot.Frontend
 
         public DiscordEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
-            // TODO: Do not use hard-coded version tags.
-            string footerText = "BibleBot v9.1-beta by Kerygma Digital";
+            string footerText = $"BibleBot v{Utils.Version} by Kerygma Digital";
 
             var builder = new DiscordEmbedBuilder();
             builder.WithTitle(title);
