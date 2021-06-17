@@ -82,7 +82,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**Guild Preference Count**: {guildPrefs.Count}\n" +
                 $"**Version Count**: {versions.Count}\n\n" +
                 $"**__Metadata__**\n" +
-                $"**BibleBot**: v9.1 ([{ThisAssembly.Git.Commit}](https://github.com/BibleBot/BibleBot/commit/{ThisAssembly.Git.Sha}))\n" +
+                $"**BibleBot**: v{Utils.Version} ([{ThisAssembly.Git.Commit}](https://github.com/BibleBot/BibleBot/commit/{ThisAssembly.Git.Sha}))\n" +
                 $"**BibleBot.Lib**: v{typeof(ThisAssembly).Assembly.GetReferencedAssemblies().Where((asm) => asm.Name == "BibleBot.Lib").First().Version.ToString(3)}";
 
 
@@ -123,8 +123,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             {
                 var embed = new InternalEmbed
                 {
-                    Title = "BibleBot v9.1",
-                    Description = "The premier Discord bot for Christians.",
+                    Title = $"BibleBot v{Utils.Version}",
+                    Description = "Scripture from your Discord client to your heart.",
                     Color = 6709986,
                     Footer = new Footer
                     {
@@ -158,7 +158,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new EmbedField
                         {
                             Name = "🔔 News",
-                            Value = "**June 4th** - [v9.1-beta has been released! Read more about the changes.](https://biblebot.xyz/2021/06/04/release-v9-1-beta)",
+                            Value = "**June 17th - [Update: v9.1-beta](https://biblebot.xyz/2021/06/17/update-v9-1-beta/)\n" +
+                            "**June 4th** - [Release: v9.1-beta](https://biblebot.xyz/2021/06/04/release-v9-1-beta)",
                             Inline = false,
                         }
                     }

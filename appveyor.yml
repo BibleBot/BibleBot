@@ -1,4 +1,4 @@
-version: '{build}'
+version: '9.1-beta-{build}'
 image: Visual Studio 2019
 
 clone_depth: 1

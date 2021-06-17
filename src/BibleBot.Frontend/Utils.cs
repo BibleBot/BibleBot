@@ -11,6 +11,8 @@ namespace BibleBot.Frontend
             ERROR_COLOR = 16723502
         }
 
+        public static string Version = "9.1-beta";
+
         public DiscordEmbed Embed2Embed(InternalEmbed embed)
         {
             var builder = new DiscordEmbedBuilder();
@@ -52,8 +54,7 @@ namespace BibleBot.Frontend
 
         public DiscordEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
-            // TODO: Do not use hard-coded version tags.
-            string footerText = "BibleBot v9.1 by Kerygma Digital";
+            string footerText = $"BibleBot v{Utils.Version} by Kerygma Digital";
 
             var builder = new DiscordEmbedBuilder();
             builder.WithTitle(title);

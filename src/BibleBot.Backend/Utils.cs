@@ -16,6 +16,8 @@ namespace BibleBot.Backend
             ERROR_COLOR = 16723502
         }
 
+        public static string Version = "9.1-beta";
+
         public InternalEmbed Embedify(string title, string description, bool isError)
         {
             return Embedify(null, title, description, isError, null);
@@ -23,8 +25,7 @@ namespace BibleBot.Backend
 
         public InternalEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
-            // TODO: Do not use hard-coded version tags.
-            string footerText = "BibleBot v9.1 by Kerygma Digital";
+            string footerText = $"BibleBot v{Utils.Version} by Kerygma Digital";
 
             var embed = new InternalEmbed();
             embed.Title = title;

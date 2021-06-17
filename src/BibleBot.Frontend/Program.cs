@@ -29,7 +29,7 @@ namespace BibleBot.Frontend
                 .WriteTo.Console(outputTemplate: "[{Level:w4}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 
-            Log.Information("BibleBot v9.1 (Frontend) by Kerygma Digital");
+            Log.Information($"BibleBot v{Utils.Version} (Frontend) by Kerygma Digital");
             
             MainAsync().GetAwaiter().GetResult();
         }
@@ -69,7 +69,7 @@ namespace BibleBot.Frontend
             {
                 await s.UpdateStatusAsync(new DiscordActivity
                 {
-                    Name = $"+biblebot v9.1 | Shard {s.ShardId + 1} / {s.ShardCount}",
+                    Name = $"+biblebot v{Utils.Version} | Shard {s.ShardId + 1} / {s.ShardCount}",
                     ActivityType = ActivityType.Playing
                 });
             });
