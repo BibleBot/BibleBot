@@ -81,16 +81,6 @@ namespace BibleBot.Frontend
         {
             _ = Task.Run(async () =>
             {
-                var cli = new RestClient("https://top.gg/api");
-                var req = new RestRequest($"bots/{bot.CurrentUser.Id}/stats");
-                req.AddHeader("Authorization", Environment.GetEnvironmentVariable("TOPGG_TOKEN"));
-                req.AddJsonBody(new TopggStats
-                {
-                    ServerCount = s.Guilds.Count()
-                });
-
-                await cli.PostAsync<IRestResponse>(req);
-
                 int shardCount = bot.ShardClients.Count();
                 int guildCount = 0;
                 int userCount = 0;
@@ -110,6 +100,17 @@ namespace BibleBot.Frontend
                         channelCount += count;
                     }
                 }
+
+                var cli = new RestClient("https://top.gg/api");
+                var req = new RestRequest($"bots/{bot.CurrentUser.Id}/stats");
+                req.AddHeader("Authorization", Environment.GetEnvironmentVariable("TOPGG_TOKEN"));
+                req.AddJsonBody(new TopggStats
+                {
+                    ServerCount = guildCount
+                });
+
+                await cli.ExecuteAsync(req, Method.POST);
+
                 
                 cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
                 req = new RestRequest("stats/process");
