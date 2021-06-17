@@ -143,6 +143,11 @@ namespace BibleBot.Backend.Controllers
                         }
 
                         result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
+                        
+                        if (result == null)
+                        {
+                            break;
+                        }
 
                         if (result.Text == null)
                         {

@@ -101,7 +101,6 @@ namespace BibleBot.Backend.Services
                     }
 
                     string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
-
                     IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
                     if (provider != null)
@@ -126,9 +125,9 @@ namespace BibleBot.Backend.Services
                             count += 1;
                         }
                     }
-                }
 
-                guildsCleared.Add(guild.Id);
+                    guildsCleared.Add(guild.Id);
+                }
             }
 
             Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) at {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
