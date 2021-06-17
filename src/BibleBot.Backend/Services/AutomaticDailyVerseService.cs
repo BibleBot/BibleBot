@@ -60,6 +60,7 @@ namespace BibleBot.Backend.Services
         {
             var count = 0;
             var idealCount = 0;
+            var guildsCleared = new List<string>();
 
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
             ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["America/Detroit"]);
@@ -89,41 +90,45 @@ namespace BibleBot.Backend.Services
 
             foreach (Guild guild in matches)
             {
-                var version = guild.Version != null ? guild.Version : "RSV";
-                var idealVersion = _versionService.Get(version);
-
-                if (idealVersion == null)
+                if (!guildsCleared.Contains(guild.GuildId))
                 {
-                    idealVersion = _versionService.Get("RSV");
-                }
+                    var version = guild.Version != null ? guild.Version : "RSV";
+                    var idealVersion = _versionService.Get(version);
 
-                string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
-
-                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
-
-                if (provider != null)
-                {
-                    Verse verse = provider.GetVerse(votdRef, true, true, idealVersion).GetAwaiter().GetResult();
-
-                    var embed = new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
-                    var webhookRequestBody = new WebhookRequestBody
+                    if (idealVersion == null)
                     {
-                        Content = "Here is the daily verse:",
-                        Username = "BibleBot Automatic Daily Verses",
-                        AvatarURL = embed.Footer.IconURL,
-                        Embeds = new List<InternalEmbed> { embed }
-                    };
+                        idealVersion = _versionService.Get("RSV");
+                    }
 
-                    var request = new RestRequest(guild.DailyVerseWebhook);
-                    request.AddJsonBody(webhookRequestBody);
+                    string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
 
-                    var resp = await _restClient.ExecuteAsync(request, Method.POST);
-                    if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+
+                    if (provider != null)
                     {
-                        count += 1;
+                        Verse verse = provider.GetVerse(votdRef, true, true, idealVersion).GetAwaiter().GetResult();
+
+                        var embed = new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
+                        var webhookRequestBody = new WebhookRequestBody
+                        {
+                            Content = "Here is the daily verse:",
+                            Username = "BibleBot Automatic Daily Verses",
+                            AvatarURL = embed.Footer.IconURL,
+                            Embeds = new List<InternalEmbed> { embed }
+                        };
+
+                        var request = new RestRequest(guild.DailyVerseWebhook);
+                        request.AddJsonBody(webhookRequestBody);
+
+                        var resp = await _restClient.ExecuteAsync(request, Method.POST);
+                        if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
+                        {
+                            count += 1;
+                        }
                     }
                 }
 
+                guildsCleared.Add(guild.Id);
             }
 
             Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) at {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
