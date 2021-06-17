@@ -158,7 +158,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new EmbedField
                         {
                             Name = "🔔 News",
-                            Value = "**June 17th - [Update: v9.1-beta](https://biblebot.xyz/2021/06/17/update-v9-1-beta/)\n" +
+                            Value = "**June 17th** - [Update: v9.1-beta](https://biblebot.xyz/2021/06/17/update-v9-1-beta/)\n" +
                             "**June 4th** - [Release: v9.1-beta](https://biblebot.xyz/2021/06/04/release-v9-1-beta)",
                             Inline = false,
                         }
