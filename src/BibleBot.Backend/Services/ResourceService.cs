@@ -34,6 +34,15 @@ namespace BibleBot.Backend.Services
             };
 
             _resources = new List<IResource>();
+            foreach (var catechismData in _catechismData)
+            {
+                _resources.Add(GetResource(ResourceType.CATECHISM, catechismData.Key));
+            }
+
+            foreach (var creed in _creeds)
+            {
+                _resources.Add(GetResource(ResourceType.CREED, creed));
+            }
 
             _jsonSerializerOptions = new JsonSerializerOptions
             {
@@ -44,21 +53,6 @@ namespace BibleBot.Backend.Services
 
         public List<IResource> GetAllResources()
         {
-            if (_resources.Count == 0)
-            {
-                foreach (var catechismData in _catechismData)
-                {
-                    _resources.Add(GetResource(ResourceType.CATECHISM, catechismData.Key));
-                }
-
-                foreach (var creed in _creeds)
-                {
-                    _resources.Add(GetResource(ResourceType.CREED, creed));
-                }
-
-                return _resources;
-            }
-
             return _resources;
         }
 
