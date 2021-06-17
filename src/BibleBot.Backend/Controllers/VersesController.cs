@@ -107,6 +107,11 @@ namespace BibleBot.Backend.Controllers
                             case "bg":
                                 Verse result = await _bgProvider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
+                                if (result == null)
+                                {
+                                    break;
+                                }
+
                                 if (result.Text == null)
                                 {
                                     break;
