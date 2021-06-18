@@ -23,7 +23,7 @@
     <br>
 </p>
 <p align="center">
-    The premier Discord bot for Christians.
+    Scripture from your Discord client to your heart.
 </p>
 
 ## Internal Organization
