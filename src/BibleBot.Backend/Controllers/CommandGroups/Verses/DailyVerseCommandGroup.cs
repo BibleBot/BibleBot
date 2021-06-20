@@ -144,6 +144,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
+                if (req.IsDM)
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages = new List<InternalEmbed>
+                        {
+                            new Utils().Embedify("+dailyverse set", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
+                        },
+                        LogStatement = "+dailyverse set"
+                    };
+                }
+
                 if (args.Count == 2)
                 {
                     var timeSplit = args[0].Split(":");
