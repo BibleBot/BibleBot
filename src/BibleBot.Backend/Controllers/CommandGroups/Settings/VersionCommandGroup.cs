@@ -288,7 +288,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             {
                 if (args.Count > 0)
                 {
-                    var idealVersion = _versionService.Get(args[0]);
+                    var idealVersion = _versionService.Get(args[0].ToUpperInvariant());
 
                     if (idealVersion != null)
                     {
