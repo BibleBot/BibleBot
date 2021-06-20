@@ -261,7 +261,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-         public class VersionInfo : ICommand
+        public class VersionInfo : ICommand
         {
             public string Name { get; set; }
             public string ArgumentsError { get; set; }
