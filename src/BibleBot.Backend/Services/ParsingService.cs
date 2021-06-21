@@ -180,7 +180,7 @@ namespace BibleBot.Backend.Services
 
                     if (tokens.Length > tokenIdxAfterSpan)
                     {
-                        string lastToken = tokens[tokenIdxAfterSpan].ToUpper();
+                        string lastToken = RemovePunctuation(tokens[tokenIdxAfterSpan].ToUpper());
 
                         var idealVersion = _versionService.Get(lastToken);
 
