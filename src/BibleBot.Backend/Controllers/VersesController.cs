@@ -135,7 +135,7 @@ namespace BibleBot.Backend.Controllers
                         }
 
                         Verse result = new Verse();
-                        IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+                        IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == reference.Version.Source).FirstOrDefault();
 
                         if (provider == null)
                         {
