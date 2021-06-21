@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help BibleBot improve
-title: "[BUG]"
+title: ""
 labels: bug
 assignees: SeraphimRP
 
