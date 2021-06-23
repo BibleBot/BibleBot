@@ -6,21 +6,20 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System.Linq;
-using System.IO;
-using System.Text.Json;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
-
-using BibleBot.Lib;
 using BibleBot.Backend.Models;
+using BibleBot.Lib;
 
 namespace BibleBot.Backend.Services
 {
     public class ParsingService
     {
         private readonly VersionService _versionService;
-        
+
         public ParsingService(VersionService versionService)
         {
             _versionService = versionService;
@@ -33,7 +32,8 @@ namespace BibleBot.Backend.Services
             // We want to iterate twice through the booknames
             // in order to skip Ezra in the first iteration,
             // otherwise 1/2/3 Esdras will collide with Ezra.
-            for (int i = 1; i < 2; i++) {
+            for (int i = 1; i < 2; i++)
+            {
                 foreach (var bookName in bookNames)
                 {
                     foreach (string item in bookName.Value)
@@ -56,7 +56,7 @@ namespace BibleBot.Backend.Services
                 {
                     if (tokens[i] == bookName)
                     {
-                        results.Add(new BookSearchResult{ Name = bookName, Index = i });
+                        results.Add(new BookSearchResult { Name = bookName, Index = i });
                     }
                 }
             }
@@ -100,7 +100,7 @@ namespace BibleBot.Backend.Services
                             {
                                 pairStringSplit[System.Array.IndexOf(pairStringSplit, pairValue)] = RemovePunctuation(pairValue);
                             }
-                                
+
                             try
                             {
                                 int firstNum = int.Parse(pairStringSplit[0]);
@@ -223,7 +223,7 @@ namespace BibleBot.Backend.Services
             {
                 isNT = true;
                 book = bookMap["nt"][book];
-            } 
+            }
             else if (bookMap["deu"].ContainsKey(book))
             {
                 isDEU = true;

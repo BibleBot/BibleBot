@@ -6,16 +6,14 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
-
-using NodaTime;
-
-using BibleBot.Lib;
+using System.Globalization;
+using System.Linq;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Lib;
+using NodaTime;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
@@ -125,7 +123,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     var maxResultsPerPage = 6;
                     var referencesUsed = new List<string>();
 
-                    var totalPages = (int) System.Math.Ceiling((decimal) (searchResults.Count / maxResultsPerPage));
+                    var totalPages = (int)System.Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
                     totalPages++;
 
                     if (totalPages > 100)

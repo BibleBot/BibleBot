@@ -6,13 +6,12 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using BibleBot.Lib;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
+using BibleBot.Lib;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
@@ -87,20 +86,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 if (idealUser != null)
                 {
                     var idealUserVersion = _versionService.Get(idealUser.Version);
-                    
+
                     if (idealUserVersion != null)
                     {
-                        response = response.Replace("<version>", idealUserVersion.Name);   
+                        response = response.Replace("<version>", idealUserVersion.Name);
                     }
                 }
 
                 if (idealGuild != null)
                 {
                     var idealGuildVersion = _versionService.Get(idealGuild.Version);
-                    
+
                     if (idealGuildVersion != null)
                     {
-                        response = response.Replace("<gversion>", idealGuildVersion.Name);   
+                        response = response.Replace("<gversion>", idealGuildVersion.Name);
                     }
                 }
 
@@ -361,7 +360,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 var pages = new List<InternalEmbed>();
                 var maxResultsPerPage = 25;
-                var totalPages = (int) System.Math.Ceiling((decimal) (versions.Count / maxResultsPerPage));
+                var totalPages = (int)System.Math.Ceiling((decimal)(versions.Count / maxResultsPerPage));
                 totalPages++;
 
                 for (int i = 0; i < totalPages; i++)

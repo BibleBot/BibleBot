@@ -7,23 +7,20 @@
 */
 
 using System;
-using System.Linq;
-using System.Threading;
-using System.Text.Json;
-using System.Globalization;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using BibleBot.Backend.Models;
+using BibleBot.Backend.Services.Providers;
+using BibleBot.Lib;
 using Microsoft.Extensions.Hosting;
-
-using Serilog;
-
 using NodaTime;
 using RestSharp;
 using RestSharp.Serializers.SystemTextJson;
-
-using BibleBot.Lib;
-using BibleBot.Backend.Models;
-using BibleBot.Backend.Services.Providers;
+using Serilog;
 
 namespace BibleBot.Backend.Services
 {
@@ -31,7 +28,7 @@ namespace BibleBot.Backend.Services
     {
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
-        
+
         private readonly SpecialVerseProvider _spProvider;
         private readonly List<IBibleProvider> _bibleProviders;
 
@@ -44,7 +41,7 @@ namespace BibleBot.Backend.Services
             _guildService = guildService;
             _versionService = versionService;
             _spProvider = spProvider;
-            
+
             _bibleProviders = new List<IBibleProvider>
             {
                 bgProvider,

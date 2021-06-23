@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-
 using BibleBot.Lib;
 
 namespace BibleBot.Backend.Models

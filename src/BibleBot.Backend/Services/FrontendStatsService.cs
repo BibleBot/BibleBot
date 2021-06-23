@@ -6,18 +6,18 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using BibleBot.Backend.Models;
-using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using BibleBot.Backend.Models;
+using MongoDB.Driver;
 
 namespace BibleBot.Backend.Services
 {
     public class FrontendStatsService
     {
         private readonly IMongoCollection<FrontendStats> _frontendStats;
-        
+
         public FrontendStatsService(IDatabaseSettings settings)
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONN"));
@@ -28,7 +28,7 @@ namespace BibleBot.Backend.Services
 
         public FrontendStats Get() => _frontendStats.Find(frontendStats => true).FirstOrDefault();
 
-        public FrontendStats Create(FrontendStats frontendStats) 
+        public FrontendStats Create(FrontendStats frontendStats)
         {
             _frontendStats.InsertOne(frontendStats);
             return frontendStats;

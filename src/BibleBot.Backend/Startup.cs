@@ -7,24 +7,22 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
+using BibleBot.Backend.Models;
+using BibleBot.Backend.Services;
+using BibleBot.Backend.Services.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
-
-using Serilog;
+using Microsoft.OpenApi.Models;
 using Prometheus;
-
-using BibleBot.Backend.Models;
-using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
+using Serilog;
 
 namespace BibleBot.Backend
 {
@@ -68,7 +66,7 @@ namespace BibleBot.Backend
 
             // Run the NameFetchingService on startup without async.
             nameFetchingService.FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo

@@ -6,16 +6,14 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
-
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
-
-using BibleBot.Lib;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Lib;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 {
@@ -76,7 +74,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
-                if (args.Count > 0) {
+                if (args.Count > 0)
+                {
                     var matchingResource = _resources.Where(resource => resource.CommandReference == args[0]).FirstOrDefault();
 
                     if (matchingResource != null)

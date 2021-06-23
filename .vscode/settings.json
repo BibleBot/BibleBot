@@ -1,0 +1,8 @@
+{
+    "editor.formatOnSave": true,
+    "omnisharp.organizeImportsOnFormat": true,
+    "editor.codeLens": false,
+    "editor.rulers": [
+        120
+    ]
+}

@@ -6,17 +6,15 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-
-using BibleBot.Lib;
-
+using System.Threading.Tasks;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Lib;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -57,7 +55,7 @@ namespace BibleBot.Backend.Controllers
             if (idealGuild != null)
             {
                 var fields = req.Body.Split("||");
-                
+
                 idealGuild.DailyVerseWebhook = fields[0];
                 idealGuild.DailyVerseChannelId = fields[1];
                 _guildService.Update(req.GuildId, idealGuild);

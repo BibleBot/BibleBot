@@ -6,16 +6,14 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
-
-using NodaTime;
-
-using BibleBot.Lib;
+using System.Globalization;
+using System.Linq;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Lib;
+using NodaTime;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
@@ -112,7 +110,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 if (provider != null)
                 {
                     Verse verse = provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
-                
+
                     return new CommandResponse
                     {
                         OK = true,
@@ -268,7 +266,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     {
                         var preferredTimeZone = DateTimeZoneProviders.Tzdb[idealGuild.DailyVerseTimeZone];
                         var currentTime = SystemClock.Instance.GetCurrentInstant().InZone(preferredTimeZone);
-                        
+
                         var preferredHour = int.Parse(idealGuild.DailyVerseTime.Split(":")[0]);
                         var preferredMinute = int.Parse(idealGuild.DailyVerseTime.Split(":")[1]);
 
@@ -309,7 +307,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         var timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
 
                         var resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone.ToString()}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>. It will use this server's preferred version, which you can find by using **`+version`**.\n\nUse **`+dailyverse set`** to set a new time or channel.\nUse **`+dailyverse clear`** to clear automatic daily verse settings.";
-                    
+
                         return new CommandResponse
                         {
                             OK = true,

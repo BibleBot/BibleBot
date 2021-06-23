@@ -11,7 +11,7 @@ namespace BibleBot.Lib
     public class Reference
     {
         public string Book { get; set; }
-        
+
         public int StartingChapter { get; set; }
         public int StartingVerse { get; set; }
         public int EndingChapter { get; set; }

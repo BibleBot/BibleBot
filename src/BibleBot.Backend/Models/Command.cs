@@ -6,12 +6,11 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-
-using BibleBot.Lib;
+using System.Threading.Tasks;
 using BibleBot.Backend.Services;
+using BibleBot.Lib;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BibleBot.Backend.Models
 {

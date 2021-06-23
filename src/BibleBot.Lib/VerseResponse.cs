@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace BibleBot.Lib
 {
-    public class VerseResponse: IResponse
+    public class VerseResponse : IResponse
     {
         public bool OK { get; set; }
         public string LogStatement { get; set; }

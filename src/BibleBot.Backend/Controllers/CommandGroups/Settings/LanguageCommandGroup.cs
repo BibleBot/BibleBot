@@ -6,13 +6,12 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using BibleBot.Lib;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
+using BibleBot.Lib;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
@@ -85,20 +84,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 if (idealUser != null)
                 {
                     var idealUserLanguage = _languageService.Get(idealUser.Language);
-                    
+
                     if (idealUserLanguage != null)
                     {
-                        response = response.Replace("<language>", idealUserLanguage.Name);   
+                        response = response.Replace("<language>", idealUserLanguage.Name);
                     }
                 }
 
                 if (idealGuild != null)
                 {
                     var idealGuildLanguage = _languageService.Get(idealGuild.Language);
-                    
+
                     if (idealGuildLanguage != null)
                     {
-                        response = response.Replace("<glanguage>", idealGuildLanguage.Name);   
+                        response = response.Replace("<glanguage>", idealGuildLanguage.Name);
                     }
                 }
 

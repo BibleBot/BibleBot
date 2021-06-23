@@ -15,14 +15,14 @@ namespace BibleBot.Lib
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set;}
+        public string Id { get; set; }
 
         [BsonElement("Name")]
         public string Name { get; set; }
 
         [BsonElement("Abbreviation")]
         public string Abbreviation { get; set; }
-        
+
         [BsonElement("Source")]
         public string Source { get; set; }
 

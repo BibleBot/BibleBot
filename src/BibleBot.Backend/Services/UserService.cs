@@ -6,18 +6,18 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using BibleBot.Backend.Models;
-using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using BibleBot.Backend.Models;
+using MongoDB.Driver;
 
 namespace BibleBot.Backend.Services
 {
     public class UserService
     {
         private readonly IMongoCollection<User> _users;
-        
+
         public UserService(IDatabaseSettings settings)
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONN"));
@@ -29,7 +29,7 @@ namespace BibleBot.Backend.Services
         public List<User> Get() => _users.Find(user => true).ToList();
         public User Get(string userId) => _users.Find<User>(user => user.UserId == userId).FirstOrDefault();
 
-        public User Create(User user) 
+        public User Create(User user)
         {
             _users.InsertOne(user);
             return user;

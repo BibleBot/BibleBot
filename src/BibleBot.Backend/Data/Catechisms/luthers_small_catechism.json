@@ -7,7 +7,9 @@
     "sections": [
         {
             "title": "Preface",
-            "slugs": ["preface"],
+            "slugs": [
+                "preface"
+            ],
             "pages": [
                 "Martin Luther, to all faithful and godly pastors and preachers: grace, mercy, and peace be yours in Jesus Christ, our Lord.\n\nThe deplorable, miserable conditions which I recently observed when visiting the parishes have constrained and pressed me to put this catechism of Christian doctrine into this brief, plain, and simple form. How pitiable, so help me God, were the things I saw: the common man, especially in the villages, knows practically nothing of Christian doctrine, and many of the pastors are almost entirely incompetent and unable to teach. Yet all the people are supposed to be Christians, have been baptized, and receive the Holy Sacrament even though they do not know the Lord's Prayer, the Creed, or the Ten Commandments and live like poor animals of the barnyard and pigpen. What these people have mastered, however, is the fine art of tearing all Christian liberty to shreds.\n\nOh, you bishops! How will you ever answer to Christ for letting the people carry on so disgracefully and not attending to the duties of your office even for a moment? One can only hope judgment does not strike you! You command the Sacrament in one kind only, insist on the observance of your human ways, and yet are unconcerned whether the people know the Lord's Prayer, the Creed, the Ten Commandments, or indeed any of God's Word. Woe, woe to you forever!\n\nTherefore dear brothers, for God's sake I beg all of you who are pastors and preachers to devote yourselves sincerely to the duties of your office, that you feel compassion for the people entrusted to your care, and that you help us accordingly to inculcate this catechism in the people, especially the young. If you cannot do more, at least take the tables and charts for catechism instruction and drill the people in them word for word, in the following way:",
                 "*First*, the pastor should most carefully avoid teaching the Ten Commandments, the Lord's Prayer, the Creed, the sacraments, etc., according to various texts and differing forms. Let him adopt one version, stay with it, and from one year to the next keep using it unchanged. Young and inexperienced persons must be taught a single fixed form or they will easily become confused, and the result will be that all previous effort and labor will be lost. There should be no change, even though one may wish to improve the text.\n\nThe honored fathers understood this well, and therefore they all consistently used one form of the Lord's Prayer, the Creed, and the Ten Commandments. We should do as they did by teaching these materials to the young and the common man without altering a single syllable and by never varying their wording when presenting or quoting them year after year.\n\nSo adopt whatever form you wish, and then stick with it at all times. If, however, you happen to be preaching to some sophisticated, learned audience, then you certainly may demonstrate your skill with words by turning phrases as colorfully and masterfully as you can. But with young persons keep to a single, fixed, and permanent form and wording, and teach them first of all the Ten Commandments, the Creed, the Lord's Prayer, etc., according to the text, word for word, so that they can repeat it after you and commit it to memory.\n\nBut those who refuse to learn are to be told that they are denying Christ and do not belong to Him. They are not to be admitted to the Sacrament, accepted as sponsors at Baptism, or allowed to exercise Christian liberty in any way. They should instead be simply directed back to the pope and his functionaries, yes, even to Satan himself. Moreover, their parents and superiors should refuse them food and drink, telling them that the prince is of a mind to expel such rude persons from his realm, and so on.",
@@ -18,7 +20,9 @@
         },
         {
             "title": "The Ten Commandments",
-            "slugs": ["10c"],
+            "slugs": [
+                "10c"
+            ],
             "pages": [
                 "*As the head of the family should teach them in a simple way to his household:*\n\n**The First Commandment**\nYou shall have no other gods.\n\n**What does this mean?**\nWe should fear, love, and trust in God above all things.",
                 "**The Second Commandment**\nYou shall not misuse the name of the LORD your God.\n\n**What does this mean?**\nWe should fear and love God so that we do not curse, swear, use satanic arts, lie, or deceive by His name, but call upon it in every trouble, pray, praise, and give thanks.",
@@ -34,7 +38,9 @@
         },
         {
             "title": "The Creed",
-            "slugs": ["creed"],
+            "slugs": [
+                "creed"
+            ],
             "pages": [
                 "*As the head of the family should teach it in a simple way to his household:*\n\n**The First Article: Creation**\nI believe in God, the Father Almighty, Maker of heaven and earth.\n\n**What does this mean?**\nI believe that God has made me and all creatures; that He has given me my body and soul, eyes, ears, and all my members, my reason and all my senses, and still takes care of them. He also gives me clothing and shoes, food and drink, house and home, wife and children, land, animals, and all I have. He richly and daily provides me with all that I need to support this body and life. He defends me against all danger and guards and protects me from all evil. All this He does only out of fatherly, divine goodness and mercy, without any merit or worthiness in me. For all this it is my duty to thank and praise, serve and obey Him.\n\nThis is most certainly true.",
                 "**The Second Article: Redemption**\nAnd in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried. He descended into hell. The third day He rose again from the dead. He ascended into heaven and sits at the right hand of God, the Father Almighty. From thence He will come to judge the living and the dead.\n\n**What does this mean?**\nI believe that Jesus Christ, true God, begotten of the Father from eternity, and also true man, born of the Virgin Mary, is my Lord, who has redeemed me, a lost and condemned person, purchased and won me from all sins, from death, and from the power of the devil; not with gold or silver, but with His holy, precious blood and with His innocent suffering and death, that I may be His own and live under Him in His kingdom and serve Him in everlasting righteousness, innocence, and blessedness, just as He is risen from the dead, lives and reigns to all eternity.\n\nThis is most certainly true.",
@@ -43,7 +49,9 @@
         },
         {
             "title": "The Lord's Prayer",
-            "slugs": ["lords-prayer"],
+            "slugs": [
+                "lords-prayer"
+            ],
             "pages": [
                 "*As the head of the family should teach it in a simple way to his household:*\n\nOur Father who art in heaven, hallowed be Thy name, Thy kingdom come, Thy will be done on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. For Thine is the kingdom and the power and the glory forever and ever. Amen.",
                 "**The Introduction**\n**Our Father who art in heaven.\n\n**What does this mean?**\nWith these words God tenderly invites us to believe that He is our true Father and that we are His true children, so that with all boldness and confidence we may ask Him as dear children ask their dear father.",
@@ -59,7 +67,9 @@
         },
         {
             "title": "The Sacrament of Holy Baptism",
-            "slugs": ["baptism"],
+            "slugs": [
+                "baptism"
+            ],
             "pages": [
                 "*As the head of the family should teach it in a simple way to his household:*\n\nFirst\n**What is Baptism?**\n\nBaptism is not just plain water, but it is the water included in God's command and combined with God's word.\n\n**Which is that word of God?**\n\nChrist our Lord says in the last chapter of Matthew: \"Therefore go and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit.\" (Matt. 28:19)",
                 "Second\n**What benefits does Baptism give?**\n\nIt works forgiveness of sins, rescues from death and the devil, and gives eternal salvation to all who believe this, as the words and promises of God declare.\n\n**Which are these words and promises of God?**\n\nChrist our Lord says in the last chapter of Mark: \"Whoever believes and is baptized will be saved, but whoever does not believe will be condemned.\" (Mark 16:16)",
@@ -69,7 +79,9 @@
         },
         {
             "title": "Confession",
-            "slugs": ["confession"],
+            "slugs": [
+                "confession"
+            ],
             "pages": [
                 "**How Christians should be taught to confess:**\n\n**What is Confession?**\n\nConfession has two parts. First, that we confess our sins, and second, that we receive absolution, that is, forgiveness, from the pastor as from God Himself, not doubting, but firmly believing that by it our sins are forgiven before God in heaven.\n\n**What sins should we confess?**\n\nBefore God we should plead guilty of all sins, even those we are not aware of, as we do in the Lord's Prayer; but before the pastor we should confess only those sins which we know and feel in our hearts.\n\n**Which are these?**\n\nConsider your place in life according to the Ten Commandments: Are you a father, mother, son, daughter, husband, wife, or worker? Have you been disobedient, unfaithful, or lazy? Have you been hot-tempered, rude, or quarrelsome? Have you hurt someone by your words or deeds? Have you stolen, been negligent, wasted anything, or done any harm?",
                 "**A Short Form of Confession**\n\n[Luther intended the following form to serve only as an example of private confession for Christians of his time. For a contemporary form of individual confession, see Lutheran Worship, pp. 310-11; see Lutheran Service Book, pp. 292-93.]\n\n**The penitent says:**\n\nDear confessor, I ask you please to hear my confession and to pronounce forgiveness in order to fulfill God's will.\n\nI, a poor sinner, plead guilty before God of all sins. In particular I confess before you that as a servant, maid, etc., I, sad to say, serve my master unfaithfully, for in this and that I have not done what I was told to do. I have made him angry and caused him to curse. I have been negligent and allowed damage to be done. I have also been offensive in words and deeds. I have quarreled with my peers. I have grumbled about the lady of the house and cursed her. I am sorry for all of this and I ask for grace. I want to do better.\n\n**A master or lady of the house may say:**\n\nIn particular I confess before you that I have not faithfully guided my children, servants, and wife to the glory of God. I have cursed. I have set a bad example by indecent words and deeds. I have hurt my neighbor and spoken evil of him. I have overcharged, sold inferior merchandise, and given less than was paid for.\n\n*[Let the penitent confess whatever else he has done against God's commandments and his own position.]*\n\nIf, however, someone does not find himself burdened with these or greater sins, he should not trouble himself or search for or invent other sins, and thereby make confession a torture. Instead, he should mention one or two that he knows: In particular I confess that I have cursed; I have used improper words; I have neglected this or that, etc. Let that be enough.\n\nBut if you know of none at all (which hardly seems possible), then mention none in particular, but receive the forgiveness upon the general confession which you make to God before the confessor.",
@@ -79,14 +91,18 @@
         },
         {
             "title": "The Sacrament of the Altar",
-            "slugs": ["sacrament"],
+            "slugs": [
+                "sacrament"
+            ],
             "pages": [
                 "*As the head of the family should teach it in a simple way to his household:*\n\n**What is the Sacrament of the Altar?**\n\nIt is the true body and blood of our Lord Jesus Christ under the bread and wine, instituted by Christ Himself for us Christians to eat and to drink.\n\n**Where is this written?**\n\nThe holy Evangelists Matthew, Mark, Luke, and St. Paul write: Our Lord Jesus Christ, on the night when He was betrayed, took bread, and when He had given thanks, He broke it and gave it to the disciples and said: \"Take, eat; this is My body, which is given for you. This do in remembrance of Me.\"\n\nIn the same way also He took the cup after supper, and when He had given thanks, He gave it to them, saying, \"Drink of it, all of you; this cup is the new testament in My blood, which is shed for you for the forgiveness of sins. This do, as often as you drink it, in remembrance of Me.\"\n\n**What is the benefit of this eating and drinking?**\n\nThese words, \"Given and shed for you for the forgiveness of sins,\" show us that in the Sacrament forgiveness of sins, life, and salvation are given us through these words. For where there is forgiveness of sins, there is also life and salvation.\n\n**How can bodily eating and drinking do such great things?**\n\nCertainly not just eating and drinking do these things, but the words written here: \"Given and shed for you for the forgiveness of sins.\" These words, along with the bodily eating and drinking, are the main thing in the Sacrament. Whoever believes these words has exactly what they say: \"forgiveness of sins.\"\n\n**Who receives this sacrament worthily?**\n\nFasting and bodily preparation are certainly fine outward training. But that person is truly worthy and well prepared who has faith in these words: \"Given and shed for you for the forgiveness of sins.\"\n\nBut anyone who does not believe these words or doubts them is unworthy and unprepared, for the words \"for you\" require all hearts to believe."
             ]
         },
         {
             "title": "Daily Prayers",
-            "slugs": ["prayers"],
+            "slugs": [
+                "prayers"
+            ],
             "pages": [
                 "*How the head of the family should teach his household to pray morning and evening:*\n\n**Morning Prayer**\n\n*In the morning when you get up, make the sign of the holy cross and say:*\n\nIn the name of the Father and of the + Son and of the Holy Spirit. Amen.\n\n*Then, kneeling or standing, repeat the Creed and the Lord's Prayer. If you choose, you may also say this little prayer:*\n\nI thank You, my heavenly Father, through Jesus Christ, Your dear Son, that You have kept me this night from all harm and danger; and I pray that You would keep me this day also from sin and every evil, that all my doings and life may please You. For into Your hands I commend myself, my body and soul, and all things. Let Your holy angel be with me, that the evil foe may have no power over me. Amen.\n\n*Then go joyfully to your work, singing a hymn, like that of the Ten Commandments, or whatever your devotion may suggest.*\n\n**Evening Prayer**\n\n*In the evening when you go to bed, make the sign of the holy cross and say:*\n\nIn the name of the Father and of the + Son and of the Holy Spirit. Amen.\n\n*Then kneeling or standing, repeat the Creed and the Lord's Prayer. If you choose, you may also say this little prayer:*\n\nI thank You, my heavenly Father, through Jesus Christ, Your dear Son, that You have graciously kept me this day; and I pray that You would forgive me all my sins where I have done wrong, and graciously keep me this night. For into Your hands I commend myself, my body and soul, and all things. Let Your holy angel be with me, that the evil foe may have no power over me. Amen.\n\n*Then go to sleep at once and in good cheer.*",
                 "*How the head of the family should teach his household to ask a blessing and return thanks:*\n\n**Asking a Blessing**\n\n*The children and members of the household shall go to the table reverently, fold their hands, and say:*\n\nThe eyes of all look to You, [O LORD,] and You give them their food at the proper time. You open Your hand and satisfy the desires of every living thing. (Ps. 145: 15-16)\n\n*Then shall be said the Lord's Prayer and the following:*\n\nLord God, heavenly Father, bless us and these Your gifts which we receive from Your bountiful goodness, through Jesus Christ, our Lord. Amen.\n\n**Returning Thanks**\n\n*Also, after eating, they shall, in like manner, reverently and with folded hands say:*\n\nGive thanks to the LORD, for He is good. His love endures forever. [He] gives food to every creature. He provides food for the cattle and for the young ravens when they call. His pleasure is not in the strength of the horse, nor His delight in the legs of a man; the LORD delights in those who fear Him, who put their hope in His unfailing love. (Ps. 136:1, 25; 147:9-11)\n\n*Then shall be said the Lord's Prayer and the following:*\n\nWe thank You, Lord God, heavenly Father, for all Your benefits, through Jesus Christ, our Lord, who lives and reigns with You and the Holy Spirit forever and ever. Amen."
@@ -94,7 +110,9 @@
         },
         {
             "title": "Table of Duties",
-            "slugs": ["duties"],
+            "slugs": [
+                "duties"
+            ],
             "pages": [
                 "*Certain passages of Scripture for various holy orders and positions, admonishing them about their duties and responsibilities:*\n\n**To Bishops, Pastors, and Preachers**\n\nThe overseer must be above reproach, the husband of but one wife, temperate, self-controlled, respectable, hospitable, able to teach, not given to drunkenness, not violent but gentle, not quarrelsome, not a lover of money. He must manage his own family well and see that his children obey him with proper respect. 1 Tim. 3:2-4\n\nHe must not be a recent convert, or he may become conceited and fall under the same judgment as the devil. 1 Tim. 3:6\n\nHe must hold firmly to the trustworthy message as it has been taught, so that he can encourage others by sound doctrine and refute those who oppose it. Titus 1:9",
                 "**What the Hearers Owe Their Pastors**\n\nThe Lord has commanded that those who preach the gospel should receive their living from the gospel. 1 Cor. 9:14\n\nAnyone who receives instruction in the word must share all good things with his instructor. Do not be deceived: God cannot be mocked. A man reaps what he sows. Gal. 6:6-7\n\nThe elders who direct the affairs of the church well are worthy of double honor, especially those whose work is preaching and teaching. For the Scripture says, \"Do not muzzle the ox while it is treading out the grain,\" and \"The worker deserves his wages.\" 1 Tim. 5:17-18\n\nWe ask you, brothers, to respect those who work hard among you, who are over you in the Lord and who admonish you. Hold them in the highest regard in love because of their work. Live in peace with each other. 1 Thess. 5:12-13\n\nObey your leaders and submit to their authority. They keep watch over you as men who must give an account. Obey them so that their work will be a joy, not a burden, for that would be of no advantage to you. Heb. 13:17",
@@ -109,7 +127,9 @@
         },
         {
             "title": "Christian Questions With Their Answers",
-            "slugs": ["questions"],
+            "slugs": [
+                "questions"
+            ],
             "pages": [
                 "*Prepared by Dr. Martin Luther for those who intend to go to the Sacrament:*\n\nAfter confession and instruction in the Ten Commandments, the Creed, the Lord's Prayer, and the Sacraments of Baptism and the Lord's Supper, the pastor may ask, or Christians may ask themselves these questions:\n\n**1. Do you believe that you are a sinner?**\n\nYes, I believe it. I am a sinner.",
                 "**2. How do you know this?**\n\nFrom the Ten Commandments, which I have not kept.",

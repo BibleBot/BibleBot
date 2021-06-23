@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 
 namespace BibleBot.Lib
 {
-    public class InternalEmbed 
+    public class InternalEmbed
     {
         [JsonPropertyName("title")]
         public string Title { get; set; }
@@ -61,7 +61,7 @@ namespace BibleBot.Lib
         [JsonPropertyName("proxy_icon_url")]
         public string ProxyIconURL { get; set; }
     }
-    
+
     public class Media
     {
         [JsonPropertyName("url")]

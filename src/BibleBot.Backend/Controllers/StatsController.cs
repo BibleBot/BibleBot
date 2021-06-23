@@ -6,17 +6,15 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-
-using BibleBot.Lib;
-
+using System.Threading.Tasks;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Lib;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -61,7 +59,7 @@ namespace BibleBot.Backend.Controllers
                 stats.ServerCount = int.Parse(fields[1]);
                 stats.UserCount = int.Parse(fields[2]);
                 stats.ChannelCount = int.Parse(fields[3]);
-                
+
                 _frontendStatsService.Update(stats);
             }
             else

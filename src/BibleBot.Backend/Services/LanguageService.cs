@@ -6,18 +6,18 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using BibleBot.Backend.Models;
-using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using BibleBot.Backend.Models;
+using MongoDB.Driver;
 
 namespace BibleBot.Backend.Services
 {
     public class LanguageService
     {
         private readonly IMongoCollection<Language> _languages;
-        
+
         public LanguageService(IDatabaseSettings settings)
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONN"));
@@ -29,7 +29,7 @@ namespace BibleBot.Backend.Services
         public List<Language> Get() => _languages.Find(language => true).ToList();
         public Language Get(string objectName) => _languages.Find<Language>(language => language.ObjectName == objectName).FirstOrDefault();
 
-        public Language Create(Language language) 
+        public Language Create(Language language)
         {
             _languages.InsertOne(language);
             return language;

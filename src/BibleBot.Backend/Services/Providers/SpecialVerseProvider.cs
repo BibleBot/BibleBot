@@ -6,13 +6,12 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-
 using AngleSharp.Html.Parser;
 
 namespace BibleBot.Backend.Services.Providers
@@ -35,7 +34,7 @@ namespace BibleBot.Backend.Services.Providers
         public async Task<string> GetDailyVerse()
         {
             string url = "https://www.biblegateway.com/reading-plans/verse-of-the-day/next";
-            
+
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
@@ -44,14 +43,14 @@ namespace BibleBot.Backend.Services.Providers
 
             var document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
-            
+
             return document.GetElementsByClassName("rp-passage-display").FirstOrDefault().TextContent;
         }
 
         public async Task<string> GetRandomVerse()
         {
             string url = "https://dailyverses.net/random-bible-verse";
-            
+
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
@@ -60,7 +59,7 @@ namespace BibleBot.Backend.Services.Providers
 
             var document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
-            
+
             return document.GetElementsByClassName("b1").FirstOrDefault().GetElementsByClassName("vr").FirstOrDefault().GetElementsByClassName("vc").FirstOrDefault().TextContent;
         }
 
@@ -68,7 +67,7 @@ namespace BibleBot.Backend.Services.Providers
         {
             var verseNumber = _random.Next(0, 31102);
             string url = $"https://biblebot.github.io/RandomVersesData/{verseNumber}.txt";
-            
+
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 

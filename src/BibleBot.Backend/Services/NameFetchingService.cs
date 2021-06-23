@@ -7,18 +7,16 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using Serilog;
-using RestSharp;
 using AngleSharp;
-
 using BibleBot.Backend.Models;
+using RestSharp;
+using Serilog;
 
 namespace BibleBot.Backend.Services
 {
@@ -104,10 +102,10 @@ namespace BibleBot.Backend.Services
                 Log.Information("NameFetchingService: Removed old names file...");
             }
 
-            var completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>>{bgNames, abNames, _abbreviations});
+            var completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>> { bgNames, abNames, _abbreviations });
 
             Log.Information("NameFetchingService: Serializing and writing to file...");
-            string serializedNames = JsonSerializer.Serialize(completedNames, new JsonSerializerOptions{ PropertyNameCaseInsensitive = false });
+            string serializedNames = JsonSerializer.Serialize(completedNames, new JsonSerializerOptions { PropertyNameCaseInsensitive = false });
             File.WriteAllText("./Data/NameFetching/book_names.json", serializedNames);
 
             Log.Information("NameFetchingService: Finished.");
@@ -119,7 +117,7 @@ namespace BibleBot.Backend.Services
 
             string resp = _webClient.DownloadString("https://www.biblegateway.com/versions/");
             var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
-            
+
             var translationElements = document.All.Where(el => el.ClassList.Contains("translation-name"));
             foreach (var el in translationElements)
             {
@@ -141,10 +139,10 @@ namespace BibleBot.Backend.Services
         {
             Dictionary<string, List<string>> names = new Dictionary<string, List<string>>();
 
-            List<string> threeMaccVariants = new List<string>{"3macc", "3m"};
-            List<string> fourMaccVariants = new List<string>{"4macc", "4m"};
-            List<string> greekEstherVariants = new List<string>{"gkesth", "adest", "addesth", "gkes"};
-            List<string> prayerAzariahVariants = new List<string>{"sgthree", "sgthr", "prazar"};
+            List<string> threeMaccVariants = new List<string> { "3macc", "3m" };
+            List<string> fourMaccVariants = new List<string> { "4macc", "4m" };
+            List<string> greekEstherVariants = new List<string> { "gkesth", "adest", "addesth", "gkes" };
+            List<string> prayerAzariahVariants = new List<string> { "sgthree", "sgthr", "prazar" };
 
             foreach (KeyValuePair<string, string> version in versions)
             {
@@ -196,7 +194,7 @@ namespace BibleBot.Backend.Services
                             }
                             else
                             {
-                                names[dataName] = new List<string>{bookName};
+                                names[dataName] = new List<string> { bookName };
                             }
                         }
                     }
@@ -209,7 +207,7 @@ namespace BibleBot.Backend.Services
         private async Task<Dictionary<string, string>> GetAPIBibleVersions()
         {
             Dictionary<string, string> versions = new Dictionary<string, string>();
-            
+
             var req = new RestRequest("bibles");
             req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
@@ -227,7 +225,7 @@ namespace BibleBot.Backend.Services
         {
             Dictionary<string, List<string>> names = new Dictionary<string, List<string>>();
 
-            List<string> latterKings = new List<string>{"3 Kings", "4 Kings"};
+            List<string> latterKings = new List<string> { "3 Kings", "4 Kings" };
 
             foreach (var version in versions)
             {

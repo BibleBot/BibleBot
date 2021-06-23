@@ -6,12 +6,10 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
-
+using System.Globalization;
+using System.Linq;
 using BibleBot.Backend.Models;
-
 using BibleBot.Lib;
 
 namespace BibleBot.Backend
@@ -37,7 +35,7 @@ namespace BibleBot.Backend
 
             var embed = new InternalEmbed();
             embed.Title = title;
-            embed.Color = isError ? (int) Colors.ERROR_COLOR : (int) Colors.NORMAL_COLOR;
+            embed.Color = isError ? (int)Colors.ERROR_COLOR : (int)Colors.NORMAL_COLOR;
 
             embed.Footer = new Footer();
             embed.Footer.Text = copyright != null ? $"{copyright}\n{footerText}" : footerText;
@@ -47,7 +45,7 @@ namespace BibleBot.Backend
             {
                 embed.Description = description;
             }
-            
+
             if (author != null)
             {
                 embed.Author = new Author
@@ -55,7 +53,7 @@ namespace BibleBot.Backend
                     Name = author
                 };
             }
-            
+
 
             return embed;
         }
@@ -69,7 +67,7 @@ namespace BibleBot.Backend
                     var creedResource = resource as CreedResource;
                     string copyright = null;
 
-                    if ((new string[] {"apostles", "nicene"}).Contains(creedResource.CommandReference))
+                    if ((new string[] { "apostles", "nicene" }).Contains(creedResource.CommandReference))
                     {
                         copyright = "© 1998 English Language Liturgical Consultation (ELLC)";
                     }
@@ -225,7 +223,7 @@ namespace BibleBot.Backend
                         var results = new List<InternalEmbed>();
 
                         for (int i = 0; i < matchingSection.Pages.Count; i++)
-                        { 
+                        {
                             results.Add(Embedify(sResource.Title, $"{title} (Page {i + 1} of {matchingSection.Pages.Count})", matchingSection.Pages.ElementAt(i), false, sResource.Copyright));
                         }
 

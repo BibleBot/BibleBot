@@ -28,7 +28,7 @@ namespace BibleBot.Frontend
             builder.WithTitle(embed.Title);
             builder.WithColor(new DiscordColor(embed.Color));
             builder.WithFooter(embed.Footer.Text, "https://i.imgur.com/hr4RXpy.png");
-            
+
             if (embed.Author != null)
             {
                 builder.WithAuthor(embed.Author.Name, null, null);
@@ -41,7 +41,8 @@ namespace BibleBot.Frontend
 
             if (embed.Fields != null)
             {
-                foreach (EmbedField field in embed.Fields) {
+                foreach (EmbedField field in embed.Fields)
+                {
                     builder.AddField(field.Name, field.Value, field.Inline);
                 }
             }
@@ -67,7 +68,7 @@ namespace BibleBot.Frontend
             var builder = new DiscordEmbedBuilder();
             builder.WithTitle(title);
             builder.WithDescription(description);
-            builder.WithColor(isError ? (int) Colors.ERROR_COLOR : (int) Colors.NORMAL_COLOR);
+            builder.WithColor(isError ? (int)Colors.ERROR_COLOR : (int)Colors.NORMAL_COLOR);
 
             builder.WithFooter(footerText, "https://i.imgur.com/hr4RXpy.png");
 

@@ -6,14 +6,12 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
-
+using BibleBot.Lib;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-
-using BibleBot.Lib;
 
 
 namespace BibleBot.Backend.Models
@@ -40,7 +38,7 @@ namespace BibleBot.Backend.Models
         {
             try
             {
-                return (string) RawLanguage.GetType().GetProperty(key).GetValue(RawLanguage, null);
+                return (string)RawLanguage.GetType().GetProperty(key).GetValue(RawLanguage, null);
             }
             catch
             {
@@ -51,40 +49,40 @@ namespace BibleBot.Backend.Models
         public string GetCommand(string key)
         {
             var commands = RawLanguage.GetType().GetProperty("Commands").GetValue(RawLanguage.Commands, null);
-            var possibleCommand = (string) commands.GetType().GetProperty(key).GetValue(commands, null);
+            var possibleCommand = (string)commands.GetType().GetProperty(key).GetValue(commands, null);
 
             if (possibleCommand == null)
             {
                 throw new StringNotFoundException();
             }
-            
+
             return possibleCommand;
         }
 
         public string GetArgument(string key)
         {
             var arguments = RawLanguage.GetType().GetProperty("Arguments").GetValue(RawLanguage.Arguments, null);
-            var possibleArgument = (string) arguments.GetType().GetProperty(key).GetValue(arguments, null);
+            var possibleArgument = (string)arguments.GetType().GetProperty(key).GetValue(arguments, null);
 
             if (possibleArgument == null)
             {
                 throw new StringNotFoundException();
             }
-            
+
             return possibleArgument;
         }
 
         public string GetCommandKey(string value)
         {
             var commands = RawLanguage.GetType().GetProperty("Commands").GetValue(RawLanguage.Commands, null);
-            
+
             foreach (var possibleCommandKey in commands.GetType().GetProperties())
             {
-                var commandValue = (string) possibleCommandKey.GetValue(commands);
+                var commandValue = (string)possibleCommandKey.GetValue(commands);
 
                 if (value == commandValue)
                 {
-                    return (string) possibleCommandKey.Name;
+                    return (string)possibleCommandKey.Name;
                 }
             }
 
@@ -100,7 +98,7 @@ namespace BibleBot.Backend.Models
         [BsonElement("Credit")]
         public string Credit { get; set; }
 
-        
+
         public RawCommands Commands { get; set; }
         public RawArguments Arguments { get; set; }
     }

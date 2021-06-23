@@ -7,16 +7,14 @@
 */
 
 using System;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-
-using BibleBot.Lib;
-
+using System.Linq;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Lib;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -86,7 +84,7 @@ namespace BibleBot.Backend.Controllers
             }
 
             var tokenizedBody = req.Body.Split(" ");
-            
+
             if (tokenizedBody.Length > 0)
             {
                 var potentialCommand = tokenizedBody[0];
@@ -127,7 +125,7 @@ namespace BibleBot.Backend.Controllers
                                 {
                                     foreach (var permission in idealCommand.PermissionsRequired)
                                     {
-                                        if ((req.UserPermissions & (long) permission) != (long) permission)
+                                        if ((req.UserPermissions & (long)permission) != (long)permission)
                                         {
                                             return new CommandResponse
                                             {
@@ -156,7 +154,7 @@ namespace BibleBot.Backend.Controllers
                                         LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
                                     };
                                 }
-                                
+
                                 return idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
                             }
                             else if (grp.Name == "resource" || grp.Name == "search")
@@ -170,14 +168,15 @@ namespace BibleBot.Backend.Controllers
                     else
                     {
                         var cmd = _commandGroups.Where(grp => grp.Name == "info").FirstOrDefault().Commands.Where(cmd => cmd.Name == potentialCommand.Substring(1)).FirstOrDefault();
-                        
+
                         if (cmd != null)
                         {
                             if (cmd.Name == "biblebot")
                             {
                                 var args = tokenizedBody.Skip(1).ToList();
 
-                                if (args.Count < 1) {
+                                if (args.Count < 1)
+                                {
                                     return cmd.ProcessCommand(req, new List<string>());
                                 }
 
@@ -185,7 +184,8 @@ namespace BibleBot.Backend.Controllers
 
                                 if (potentialRescue != null)
                                 {
-                                    if (args.Count > 1) {
+                                    if (args.Count > 1)
+                                    {
                                         var idealCommand = potentialRescue.Commands.Where(cmd => cmd.Name == args[1]).FirstOrDefault();
 
                                         if (idealCommand != null)
@@ -194,7 +194,7 @@ namespace BibleBot.Backend.Controllers
                                             {
                                                 foreach (var permission in idealCommand.PermissionsRequired)
                                                 {
-                                                    if ((req.UserPermissions & (long) permission) != (long) permission)
+                                                    if ((req.UserPermissions & (long)permission) != (long)permission)
                                                     {
                                                         return new CommandResponse
                                                         {
@@ -223,7 +223,7 @@ namespace BibleBot.Backend.Controllers
                                                     LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
                                                 };
                                             }
-                                            
+
                                             return idealCommand.ProcessCommand(req, commandArgs);
                                         }
                                     }

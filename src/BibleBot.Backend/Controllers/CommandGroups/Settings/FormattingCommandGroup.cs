@@ -6,13 +6,12 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using BibleBot.Lib;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
+using BibleBot.Lib;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
@@ -347,7 +346,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
-                var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
+                var acceptablePrefixes = new List<string> { "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
 
                 if (args[0].Length != 1)
                 {
@@ -433,7 +432,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
-                var acceptableBrackets = new List<string>{ "<>", "[]", "{}", "()" };
+                var acceptableBrackets = new List<string> { "<>", "[]", "{}", "()" };
 
                 if (args[0].Length != 2)
                 {

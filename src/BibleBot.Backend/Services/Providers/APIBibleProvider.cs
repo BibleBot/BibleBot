@@ -6,19 +6,17 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
-using Serilog;
+using System.Threading.Tasks;
+using AngleSharp.Html.Parser;
+using BibleBot.Backend.Models;
+using BibleBot.Lib;
 using RestSharp;
 using RestSharp.Serializers.SystemTextJson;
-using AngleSharp.Html.Parser;
-
-using BibleBot.Lib;
-using BibleBot.Backend.Models;
+using Serilog;
 
 namespace BibleBot.Backend.Services.Providers
 {
@@ -58,7 +56,7 @@ namespace BibleBot.Backend.Services.Providers
             }
 
             string url = System.String.Format(_getURI, _versionTable[reference.Version.Abbreviation], reference.AsString);
-            
+
             var req = new RestRequest(url);
             req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
@@ -107,16 +105,16 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version)
         {
-            return await GetVerse(new Reference{ Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+            return await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
         }
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
             string url = System.String.Format(_searchURI, _versionTable[version.Abbreviation], query);
-            
+
             var req = new RestRequest(url);
             req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-            
+
             ABSearchResponse resp = await _restClient.GetAsync<ABSearchResponse>(req);
 
             var results = new List<SearchResult>();
@@ -140,18 +138,18 @@ namespace BibleBot.Backend.Services.Providers
         {
             Dictionary<string, string> nuisances = new Dictionary<string, string>
             {
-		        { "“",     "\"" },
-		        { "”",     "\"" },
-		        { "\n",    " " },
+                { "“",     "\"" },
+                { "”",     "\"" },
+                { "\n",    " " },
                 { "\t",    " " },
                 { "\v",    " " },
                 { "\f",    " " },
                 { "\r",    " " },
-		        { "¶ ",    "" },
-		        { " , ",   ", " },
-		        { " .",    "." },
-		        { "′",     "'" },
-		        { " . ",   " " },
+                { "¶ ",    "" },
+                { " , ",   ", " },
+                { " .",    "." },
+                { "′",     "'" },
+                { " . ",   " " },
             };
 
             if (text.Contains("Selah."))

@@ -6,18 +6,16 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
 using AngleSharp.Html.Parser;
-
-using BibleBot.Lib;
 using BibleBot.Backend.Models;
+using BibleBot.Lib;
 
 namespace BibleBot.Backend.Services.Providers
 {
@@ -48,7 +46,7 @@ namespace BibleBot.Backend.Services.Providers
             }
 
             string url = _baseURL + System.String.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
-            
+
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
@@ -68,13 +66,13 @@ namespace BibleBot.Backend.Services.Providers
             var chapterNumbers = container.QuerySelectorAll(".chapternum");
             var verseNumbers = container.QuerySelectorAll(".versenum");
 
-            foreach (var el in chapterNumbers) 
+            foreach (var el in chapterNumbers)
             {
                 if (verseNumbersEnabled)
                 {
                     el.TextContent = " <**1**> ";
                 }
-                else 
+                else
                 {
                     el.Remove();
                 }
@@ -136,7 +134,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version)
         {
-            return await GetVerse(new Reference{ Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+            return await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
         }
 
         public async Task<List<SearchResult>> Search(string query, Version version)
@@ -186,18 +184,18 @@ namespace BibleBot.Backend.Services.Providers
         {
             Dictionary<string, string> nuisances = new Dictionary<string, string>
             {
-		        { "“",     "\"" },
-		        { "”",     "\"" },
-		        { "\n",    " " },
+                { "“",     "\"" },
+                { "”",     "\"" },
+                { "\n",    " " },
                 { "\t",    " " },
                 { "\v",    " " },
                 { "\f",    " " },
                 { "\r",    " " },
-		        { "¶ ",    "" },
-		        { " , ",   ", " },
-		        { " .",    "." },
-		        { "′",     "'" },
-		        { " . ",   " " },
+                { "¶ ",    "" },
+                { " , ",   ", " },
+                { " .",    "." },
+                { "′",     "'" },
+                { " . ",   " " },
             };
 
             if (text.Contains("Selah."))

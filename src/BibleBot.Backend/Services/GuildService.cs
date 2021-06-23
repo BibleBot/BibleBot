@@ -6,18 +6,18 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using BibleBot.Backend.Models;
-using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using BibleBot.Backend.Models;
+using MongoDB.Driver;
 
 namespace BibleBot.Backend.Services
 {
     public class GuildService
     {
         private readonly IMongoCollection<Guild> _guilds;
-        
+
         public GuildService(IDatabaseSettings settings)
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONN"));
@@ -29,7 +29,7 @@ namespace BibleBot.Backend.Services
         public List<Guild> Get() => _guilds.Find(guild => true).ToList();
         public Guild Get(string guildId) => _guilds.Find<Guild>(guild => guild.GuildId == guildId).FirstOrDefault();
 
-        public Guild Create(Guild guild) 
+        public Guild Create(Guild guild)
         {
             _guilds.InsertOne(guild);
             return guild;

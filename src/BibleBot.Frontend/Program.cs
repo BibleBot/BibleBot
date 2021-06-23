@@ -7,23 +7,21 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using Serilog;
-using Serilog.Extensions.Logging;
-using Serilog.Sinks.SystemConsole.Themes;
-using RestSharp;
+using BibleBot.Frontend.Models;
+using BibleBot.Lib;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
-
-using BibleBot.Lib;
-using BibleBot.Frontend.Models;
+using RestSharp;
+using Serilog;
+using Serilog.Extensions.Logging;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace BibleBot.Frontend
 {
@@ -38,7 +36,7 @@ namespace BibleBot.Frontend
                 .CreateLogger();
 
             Log.Information($"BibleBot v{Utils.Version} (Frontend) by Kerygma Digital");
-            
+
             MainAsync().GetAwaiter().GetResult();
         }
 
@@ -51,7 +49,7 @@ namespace BibleBot.Frontend
                 Intents = DiscordIntents.AllUnprivileged,
                 MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Error
             });
-            
+
             await bot.UseInteractivityAsync();
 
             bot.SocketOpened += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} is connecting"); return Task.CompletedTask; };
@@ -119,7 +117,7 @@ namespace BibleBot.Frontend
 
                 await cli.ExecuteAsync(req, Method.POST);
 
-                
+
                 cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
                 req = new RestRequest("stats/process");
                 req.AddJsonBody(new BibleBot.Lib.Request
@@ -142,7 +140,7 @@ namespace BibleBot.Frontend
                 var utils = new Utils();
                 var cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
 
-                var acceptablePrefixes = new List<string>{ "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
+                var acceptablePrefixes = new List<string> { "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
 
                 if (e.Author == s.CurrentUser)
                 {
@@ -168,7 +166,7 @@ namespace BibleBot.Frontend
                 var requestObj = new BibleBot.Lib.Request
                 {
                     UserId = e.Author.Id.ToString(),
-                    UserPermissions = (long) permissions,
+                    UserPermissions = (long)permissions,
                     GuildId = guildId,
                     IsDM = isDM,
                     Body = e.Message.Content,
@@ -200,7 +198,7 @@ namespace BibleBot.Frontend
                                 channelCount += count;
                             }
                         }
-                        
+
 
                         var req = new RestRequest("stats/process");
                         req.AddJsonBody(new BibleBot.Lib.Request
@@ -258,7 +256,7 @@ namespace BibleBot.Frontend
                             await e.Channel.SendMessageAsync(
                                 utils.Embedify("+dailyverse set", "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.", false)
                             );
-                        }	
+                        }
                     }
 
                     if (commandResp.CreateWebhook)
@@ -280,7 +278,7 @@ namespace BibleBot.Frontend
                             await e.Channel.SendMessageAsync(
                                 utils.Embedify("+dailyverse set", "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.", false)
                             );
-                        }							
+                        }
                     }
                     else if (commandResp.Pages != null)
                     {
@@ -300,7 +298,7 @@ namespace BibleBot.Frontend
                                 paginationEmojis.SkipLeft = DiscordEmoji.FromUnicode("⏪");
                                 paginationEmojis.SkipRight = DiscordEmoji.FromUnicode("⏩");
                             }
-                            
+
                             foreach (var page in commandResp.Pages)
                             {
                                 properPages.Add(new Page

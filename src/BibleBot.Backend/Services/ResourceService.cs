@@ -7,10 +7,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using System.Collections.Generic;
-
 using BibleBot.Backend.Models;
 
 namespace BibleBot.Backend.Services
@@ -42,13 +41,13 @@ namespace BibleBot.Backend.Services
             };
 
             _resources = new List<IResource>();
-            
+
             _jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
                 IgnoreNullValues = true
             };
-            
+
             foreach (var catechismData in _catechismData)
             {
                 _resources.Add(GetResource(ResourceType.CATECHISM, catechismData.Key));
@@ -73,7 +72,7 @@ namespace BibleBot.Backend.Services
                 if (_creeds.Contains(name))
                 {
                     var creedFile = File.ReadAllText($"./Data/Creeds/english.json");
-                    
+
                     var creedFileObj = JsonSerializer.Deserialize<CreedFile>(creedFile, _jsonSerializerOptions);
 
                     CreedResource resource;
