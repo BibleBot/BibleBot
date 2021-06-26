@@ -26,7 +26,6 @@ skip_commits:
 install:
   - cmd: dotnet nuget add source https://nuget.emzi0767.com/api/v3/index.json
   - cmd: dotnet restore --verbosity q
-  - cmd: nuget install -Verbosity quiet
 
 branches:
   only:
