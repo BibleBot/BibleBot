@@ -55,7 +55,7 @@ after_test:
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
       $env:APPVEYOR="true"
       $env:CI="true"
-      bash codecov.sh -f "coverage.xml" 2>&1
+  - cmd: bash codecov.sh -f "coverage.xml"
 deploy:
   - provider: NuGet
     api_key:
