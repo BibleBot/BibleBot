@@ -8,7 +8,7 @@ services:
 
 environment:
   APPVEYOR_RDP_PASSWORD:
-    secure: va0KnzzQfHykGjtJxl8Ncw==
+    secure: a7SvdRBVGHnQE6JCvLQFWg==
   ASPNETCORE_ENVIRONMENT: Development
   MONGODB_CONN: mongodb://localhost:27017/BibleBotBackend
   APIBIBLE_TOKEN:
