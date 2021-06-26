@@ -36,7 +36,6 @@ namespace BibleBot.Backend.Tests
         private Mock<APIBibleProvider> abProviderMock;
 
         private IDatabaseSettings databaseSettings;
-        private Lib.Version testVersion;
 
         [SetUp]
         public void Setup()
@@ -60,13 +59,6 @@ namespace BibleBot.Backend.Tests
             bgProviderMock = new Mock<BibleGatewayProvider>();
             abProviderMock = new Mock<APIBibleProvider>();
 
-            testVersion = versionService.Get("RSV");
-
-            if (testVersion == null)
-            {
-                testVersion = versionService.Create(new MockVersion());
-            }
-
             versesController = new VersesController(userServiceMock.Object, guildServiceMock.Object,
                                                     parsingServiceMock.Object, versionService,
                                                     nameFetchingServiceMock.Object, bgProviderMock.Object,
@@ -74,9 +66,60 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void BibleGatewayVerses()
+        public void BibleGatewayVersesShouldProcess()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1 RSV")).GetAwaiter().GetResult();
+            var testVersion = versionService.Get("NTE");
+
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockNTE());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:1 NTE")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Matthew 1:1",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "Jesus’ Genealogy",
+                        PsalmTitle = "",
+                        Text = "<**1**> The book of the family tree of Jesus the Messiah, the son of David, the son of Abraham.",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = testVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void APIBibleVersesShouldProcess()
+        {
+            var testVersion = versionService.Get("KJVA");
+
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockKJVA());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJVA")).GetAwaiter().GetResult();
 
             var expected = new VerseResponse
             {
@@ -87,9 +130,9 @@ namespace BibleBot.Backend.Tests
                 {
                     new Verse
                     {
-                        Title = "Six Days of Creation and the Sabbath",
+                        Title = "",
                         PsalmTitle = "",
-                        Text = "<**1**> In the beginning God created the heavens and the earth.",
+                        Text = "<**1**> In the beginning God created the heaven and the earth.",
                         Reference = new Reference
                         {
                             Book = "Genesis",
@@ -105,6 +148,104 @@ namespace BibleBot.Backend.Tests
                         }
                     }
                 }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ReferencingDeuterocanonInProtestantBibleShouldFail()
+        {
+            var testVersion = versionService.Get("NTE");
+
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockNTE());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTE")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = "New Testament for Everyone (NTE) does not support the Apocrypha/Deuterocanon."
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ReferencingOldTestamentInNewTestamentOnlyBibleShouldFail()
+        {
+            var testVersion = versionService.Get("NTE");
+
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockNTE());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTE")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = "New Testament for Everyone (NTE) does not support the Old Testament."
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldIgnoreVerseReferenceInBrackets()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 > ipsum")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldIgnoreVerseReferenceWithVersionInBrackets()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTE > ipsum")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldIgnoreMultipleVerseReferencesInBrackets()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 / Matthew 1:1 / John 1:1 > ipsum")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldIgnoreMultipleVerseReferencesWithVersionInBrackets()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTE / Matthew 1:1 NTE / John 1:1 NTE > ipsum")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
             };
 
             resp.Should().BeEquivalentTo(expected);
