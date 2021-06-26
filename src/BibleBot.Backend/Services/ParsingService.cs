@@ -253,12 +253,7 @@ namespace BibleBot.Backend.Services
 
         public string RemoveContentInBrackets(string brackets, string str)
         {
-            while (str.Contains(brackets[0]) && str.Contains(brackets[1]))
-            {
-                str = (new Regex(@"\" + brackets[0] + @"[^" + brackets[1] + @"]*\" + brackets[1]).Replace(str, ""));
-            }
-
-            return str;
+            return (new Regex(@"\" + brackets[0] + @"[^" + brackets[1] + @"]*\" + brackets[1]).Replace(str, ""));
         }
 
         private bool IsValueInString(string str, string val)
