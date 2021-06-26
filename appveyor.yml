@@ -24,8 +24,7 @@ skip_commits:
 install:
   - cmd: dotnet nuget add source https://nuget.emzi0767.com/api/v3/index.json
   - cmd: dotnet restore --verbosity q
-  - cmd: dotnet tool restore --verbosity q
-  - cmd: nuget restore -Verbosity quiet
+  - cmd: nuget install -Verbosity quiet
 
 branches:
   only:
@@ -52,7 +51,7 @@ artifacts:
     type: ElasticBeanstalkPackage
 
 test_script:
-  - .\packages\opencover\4.7.1221\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test" -output:"coverage.xml" -oldStyle -filter:"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*"
+  - "%USERPROFILE%\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*\""
 
 after_test:
  - ps: |
