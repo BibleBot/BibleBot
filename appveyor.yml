@@ -51,7 +51,7 @@ artifacts:
     type: ElasticBeanstalkPackage
 
 test_script:
-  - "%USERPROFILE%\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*\""
+  - "%USERPROFILE%\\.nuget\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*\""
 
 after_test:
  - ps: |
