@@ -7,6 +7,8 @@ services:
   - mongodb
 
 environment:
+  APPVEYOR_RDP_PASSWORD:
+    secure: va0KnzzQfHykGjtJxl8Ncw==
   ASPNETCORE_ENVIRONMENT: Development
   MONGODB_CONN: mongodb://localhost:27017/BibleBotBackend
   APIBIBLE_TOKEN:
@@ -70,3 +72,6 @@ on_success:
 on_failure:
   - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
   - ps: ./send.ps1 failure $env:discord_webhook
+
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
