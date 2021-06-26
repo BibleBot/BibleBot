@@ -57,7 +57,7 @@ after_test:
   - cmd: bash codecov.sh -f "coverage.xml"
   - ps: |
       $wc = New-Object 'System.Net.WebClient'
-      $wc.UploadFile("https://ci.appveyor.com/api/testresults/mstest/$($env:APPVEYOR_JOB_ID)", Resolve-Path .\TestResults.xml)
+      $wc.UploadFile("https://ci.appveyor.com/api/testresults/mstest/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResults.xml))
 
 deploy:
   - provider: NuGet
