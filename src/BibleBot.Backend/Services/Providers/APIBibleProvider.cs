@@ -100,7 +100,7 @@ namespace BibleBot.Backend.Services.Providers
             // As the verse reference could have a non-English name...
             reference.AsString = resp.Data.Passages[0].Reference;
 
-            return new Verse { Reference = reference, Title = title, PsalmTitle = "", Text = PurifyVerseText(text) };
+            return new Verse { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
         }
 
         public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version)
@@ -126,7 +126,7 @@ namespace BibleBot.Backend.Services.Providers
                     results.Add(new SearchResult
                     {
                         Reference = verse.Reference,
-                        Text = PurifyVerseText(verse.Text)
+                        Text = PurifyText(verse.Text)
                     });
                 }
             }
@@ -134,7 +134,7 @@ namespace BibleBot.Backend.Services.Providers
             return results;
         }
 
-        private string PurifyVerseText(string text)
+        private string PurifyText(string text)
         {
             Dictionary<string, string> nuisances = new Dictionary<string, string>
             {

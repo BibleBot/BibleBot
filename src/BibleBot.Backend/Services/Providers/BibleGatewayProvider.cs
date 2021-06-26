@@ -129,7 +129,7 @@ namespace BibleBot.Backend.Services.Providers
             // As the verse reference could have a non-English name...
             reference.AsString = document.GetElementsByClassName("bcv").FirstOrDefault().TextContent.Trim();
 
-            return new Verse { Reference = reference, Title = title, PsalmTitle = psalmTitle, Text = PurifyVerseText(text) };
+            return new Verse { Reference = reference, Title = PurifyText(title), PsalmTitle = PurifyText(psalmTitle), Text = PurifyText(text) };
         }
 
         public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version)
@@ -172,7 +172,7 @@ namespace BibleBot.Backend.Services.Providers
                     results.Add(new SearchResult
                     {
                         Reference = referenceElement.TextContent,
-                        Text = PurifyVerseText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1))
+                        Text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1))
                     });
                 }
             }
@@ -180,7 +180,7 @@ namespace BibleBot.Backend.Services.Providers
             return results;
         }
 
-        private string PurifyVerseText(string text)
+        private string PurifyText(string text)
         {
             Dictionary<string, string> nuisances = new Dictionary<string, string>
             {
@@ -195,6 +195,7 @@ namespace BibleBot.Backend.Services.Providers
                 { " , ",   ", " },
                 { " .",    "." },
                 { "′",     "'" },
+                { "’",     "'" }, // Fonts may make it look like this is no different than the line above, but it's a different codepoint in Unicode.
                 { " . ",   " " },
             };
 
