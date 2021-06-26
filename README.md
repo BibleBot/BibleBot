@@ -23,7 +23,9 @@
     <a href="https://github.com/BibleBot/BibleBot/blob/master/LICENSE">
         <img alt="MPL-2.0" src="https://img.shields.io/github/license/BibleBot/BibleBot?style=flat-square">
     </a>
-    <img alt="Total Lines of Code" src="https://img.shields.io/tokei/lines/github/BibleBot/BibleBot?style=flat-square">
+    <a href="#">
+        <img alt="Total Lines of Code" src="https://img.shields.io/tokei/lines/github/BibleBot/BibleBot?style=flat-square">
+    </a>
     <br>
 </p>
 <p align="center">
