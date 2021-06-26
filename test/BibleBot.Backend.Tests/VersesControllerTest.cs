@@ -1,10 +1,20 @@
+/*
+* Copyright (C) 2016-2021 Kerygma Digital Co.
+*
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this file,
+* You can obtain one at https://mozilla.org/MPL/2.0/.
+*/
+
 using System;
 using System.Collections.Generic;
 using BibleBot.Backend.Controllers;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Backend.Tests.Mocks;
 using BibleBot.Lib;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 
@@ -26,6 +36,7 @@ namespace BibleBot.Backend.Tests
         private Mock<APIBibleProvider> abProviderMock;
 
         private IDatabaseSettings databaseSettings;
+        private Lib.Version testVersion;
 
         [SetUp]
         public void Setup()
@@ -49,6 +60,13 @@ namespace BibleBot.Backend.Tests
             bgProviderMock = new Mock<BibleGatewayProvider>();
             abProviderMock = new Mock<APIBibleProvider>();
 
+            testVersion = versionService.Get("RSV");
+
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockVersion());
+            }
+
             versesController = new VersesController(userServiceMock.Object, guildServiceMock.Object,
                                                     parsingServiceMock.Object, versionService,
                                                     nameFetchingServiceMock.Object, bgProviderMock.Object,
@@ -58,17 +76,9 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void BibleGatewayVerses()
         {
-            var resp = versesController.ProcessMessage(new Request
-            {
-                UserId = "000000",
-                UserPermissions = 8589934591,
-                GuildId = "000000",
-                IsDM = false,
-                Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"),
-                Body = "Genesis 1:1 RSV"
-            });
+            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1 RSV")).GetAwaiter().GetResult();
 
-            var expectedResult = new VerseResponse
+            var expected = new VerseResponse
             {
                 OK = true,
                 LogStatement = "Genesis 1:1",
@@ -87,21 +97,17 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = new Lib.Version
-                            {
-                                Name = "Revised Standard Version (RSV)",
-                                Abbreviation = "RSV",
-                                Source = "bg",
-                                SupportsOldTestament = true,
-                                SupportsNewTestament = true,
-                                SupportsDeuterocanon = true
-                            }
+                            Version = testVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Genesis 1:1"
                         }
                     }
                 }
             };
 
-            Assert.AreEqual(expectedResult, resp);
+            resp.Should().BeEquivalentTo(expected);
         }
     }
 }

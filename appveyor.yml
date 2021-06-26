@@ -13,8 +13,8 @@ environment:
     secure: NoI3xBuwnbCU1KkhhZCHqtuups493tGwfNZlBNtXvCw8cNuuTvwZZwMYm2V12EvA
   ENDPOINT_TOKEN:
     secure: iHQQcLiFJcSErA/ZLVm5WEaX8kuTrMiZ5Y28JFnmZkY=
-  COVERALLS_REPO_TOKEN:
-    secure: bbp4RMA6lCInKRc0at1AV2EW8dSpYVR4QqoUjOT6eOUdA5uV9vXvXb0GJoSEpe2R
+  CODECOV_TOKEN:
+    secure: mw4C/cMToMbDVC70XLv8l0LKniMJBzYUKqB10hVwGssOCS+/w0r5/lT/zs562LTF
   discord_webhook:
     secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3vLH5eSf3G0pawFOhwJEj0cPqoqiGh1v95sc23adle9F6sYA+LCTdHYtiyL3Cz5traiteg2vQavv5pzPuWjxShv7PVsRsF4P77VDIBxthK5Z0ypG6K/A4gKOT3lijFv6oE=
 
@@ -25,6 +25,7 @@ install:
   - cmd: dotnet nuget add source https://nuget.emzi0767.com/api/v3/index.json
   - cmd: dotnet restore --verbosity q
   - cmd: dotnet tool restore --verbosity q
+  - cmd: nuget restore -Verbosity quiet
 
 branches:
   only:
@@ -51,10 +52,13 @@ artifacts:
     type: ElasticBeanstalkPackage
 
 test_script:
-  - cmd: dotnet test --verbosity q /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+  - .\packages\opencover\4.7.1221\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test" -output:"coverage.xml" -oldStyle -filter:"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*"
 
 after_test:
- - cmd: dotnet tool run csmacnz.Coveralls --opencover -i test\BibleBot.Backend.Tests\coverage.opencover.xml
+ - ps: |
+    $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
+    Invoke-WebRequest -Uri "https://codecov.io/bash" -OutFile codecov.sh
+    bash codecov.sh -f "coverage.xml" -t $CODECOV_TOKEN
 
 deploy:
   - provider: NuGet
