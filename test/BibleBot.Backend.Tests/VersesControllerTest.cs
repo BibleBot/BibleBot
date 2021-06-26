@@ -66,7 +66,7 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void BibleGatewayVersesShouldProcess()
+        public void ShouldProcessBibleGatewayReference()
         {
             var testVersion = versionService.Get("NTE");
 
@@ -110,7 +110,7 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void APIBibleVersesShouldProcess()
+        public void ShouldProcessAPIBibleReference()
         {
             var testVersion = versionService.Get("KJVA");
 
@@ -154,7 +154,7 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ReferencingDeuterocanonInProtestantBibleShouldFail()
+        public void ShouldFailWhenReferencingDeuterocanonInProtestantBible()
         {
             var testVersion = versionService.Get("NTE");
 
@@ -175,7 +175,7 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ReferencingOldTestamentInNewTestamentOnlyBibleShouldFail()
+        public void ShouldFailWhenReferencingOldTestamentInNewTestamentOnlyBible()
         {
             var testVersion = versionService.Get("NTE");
 
