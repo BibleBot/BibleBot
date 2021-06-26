@@ -26,7 +26,6 @@ install:
 branches:
   only:
     - master
-    - srp/tests
 
 build_script:
   - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj -c Release --verbosity q
