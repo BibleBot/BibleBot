@@ -13,8 +13,6 @@ environment:
     secure: NoI3xBuwnbCU1KkhhZCHqtuups493tGwfNZlBNtXvCw8cNuuTvwZZwMYm2V12EvA
   ENDPOINT_TOKEN:
     secure: iHQQcLiFJcSErA/ZLVm5WEaX8kuTrMiZ5Y28JFnmZkY=
-  CODECOV_TOKEN:
-    secure: mw4C/cMToMbDVC70XLv8l0LKniMJBzYUKqB10hVwGssOCS+/w0r5/lT/zs562LTF
   discord_webhook:
     secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3vLH5eSf3G0pawFOhwJEj0cPqoqiGh1v95sc23adle9F6sYA+LCTdHYtiyL3Cz5traiteg2vQavv5pzPuWjxShv7PVsRsF4P77VDIBxthK5Z0ypG6K/A4gKOT3lijFv6oE=
 
@@ -57,7 +55,7 @@ after_test:
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
       $env:APPVEYOR="true"
       $env:CI="true"
-      bash codecov.sh -f "coverage.xml"
+      bash codecov.sh -f "coverage.xml" 2>&1
 deploy:
   - provider: NuGet
     api_key:
