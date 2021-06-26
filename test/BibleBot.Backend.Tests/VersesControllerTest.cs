@@ -91,7 +91,7 @@ namespace BibleBot.Backend.Tests
                 {
                     new Verse
                     {
-                        Title = "Jesus’ Genealogy",
+                        Title = "Jesus' Genealogy",
                         PsalmTitle = "",
                         Text = "<**1**> The book of the family tree of Jesus the Messiah, the son of David, the son of Abraham.",
                         Reference = new Reference
