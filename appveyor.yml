@@ -47,14 +47,14 @@ artifacts:
     type: ElasticBeanstalkPackage
 
 test_script:
-  - "%USERPROFILE%\\.nuget\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test --verbosity q --logger:\\\"trx;LogFileName=..\\..\\..\\TestResults.xml\\\"\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*\""
+  - "%USERPROFILE%\\.nuget\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test --verbosity q --logger:\\\"trx;LogFileName=..\\..\\..\\TestResults.xml\\\"\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*\" >nul"
 
 after_test:
   - ps: |
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
       $env:APPVEYOR="true"
       $env:CI="true"
-  - cmd: bash codecov.sh -f "coverage.xml" >nul 2>&1
+  - cmd: bash codecov.sh -f "coverage.xml" >nul
   - ps: |
       $wc = New-Object 'System.Net.WebClient'
       $wc.UploadFile("https://ci.appveyor.com/api/testresults/mstest/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResults.xml))
