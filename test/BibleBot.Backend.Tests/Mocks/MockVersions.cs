@@ -10,6 +10,19 @@ using BibleBot.Lib;
 
 namespace BibleBot.Backend.Tests.Mocks
 {
+    public class MockRSV : Version
+    {
+        public MockRSV()
+        {
+            this.Name = "Revised Standard Version (RSV)";
+            this.Abbreviation = "RSV";
+            this.Source = "bg";
+            this.SupportsOldTestament = true;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = true;
+        }
+    }
+
     public class MockNTE : Version
     {
         public MockNTE()
@@ -35,5 +48,4 @@ namespace BibleBot.Backend.Tests.Mocks
             this.SupportsDeuterocanon = true;
         }
     }
-
 }

@@ -59,6 +59,11 @@ namespace BibleBot.Backend.Tests
             bgProviderMock = new Mock<BibleGatewayProvider>();
             abProviderMock = new Mock<APIBibleProvider>();
 
+            if (versionService.Get("RSV") == null)
+            {
+                versionService.Create(new MockRSV());
+            }
+
             versesController = new VersesController(userServiceMock.Object, guildServiceMock.Object,
                                                     parsingServiceMock.Object, versionService,
                                                     nameFetchingServiceMock.Object, bgProviderMock.Object,
