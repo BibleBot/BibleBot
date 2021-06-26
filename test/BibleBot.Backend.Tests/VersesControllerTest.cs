@@ -37,7 +37,8 @@ namespace BibleBot.Backend.Tests
 
         private IDatabaseSettings databaseSettings;
 
-        private Lib.Version defaultVersion;
+        private Lib.Version defaultBibleGatewayVersion;
+        private Lib.Version defaultAPIBibleVersion;
 
         [SetUp]
         public void Setup()
@@ -61,10 +62,16 @@ namespace BibleBot.Backend.Tests
             bgProviderMock = new Mock<BibleGatewayProvider>();
             abProviderMock = new Mock<APIBibleProvider>();
 
-            defaultVersion = versionService.Get("RSV");
-            if (defaultVersion == null)
+            defaultBibleGatewayVersion = versionService.Get("RSV");
+            if (defaultBibleGatewayVersion == null)
             {
-                defaultVersion = versionService.Create(new MockRSV());
+                defaultBibleGatewayVersion = versionService.Create(new MockRSV());
+            }
+
+            defaultAPIBibleVersion = versionService.Get("KJVA");
+            if (defaultAPIBibleVersion == null)
+            {
+                defaultAPIBibleVersion = versionService.Create(new MockKJVA());
             }
 
             versesController = new VersesController(userServiceMock.Object, guildServiceMock.Object,
@@ -107,14 +114,7 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessBibleGatewayReference()
         {
-            var testVersion = versionService.Get("NTE");
-
-            if (testVersion == null)
-            {
-                testVersion = versionService.Create(new MockNTE());
-            }
-
-            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:1 NTE")).GetAwaiter().GetResult();
+            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:1")).GetAwaiter().GetResult();
 
             var expected = new VerseResponse
             {
@@ -125,9 +125,9 @@ namespace BibleBot.Backend.Tests
                 {
                     new Verse
                     {
-                        Title = "Jesus' Genealogy",
+                        Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
-                        Text = "<**1**> The book of the family tree of Jesus the Messiah, the son of David, the son of Abraham.",
+                        Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham.",
                         Reference = new Reference
                         {
                             Book = "Matthew",
@@ -135,7 +135,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = testVersion,
+                            Version = defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -151,13 +151,6 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessAPIBibleReference()
         {
-            var testVersion = versionService.Get("KJVA");
-
-            if (testVersion == null)
-            {
-                testVersion = versionService.Create(new MockKJVA());
-            }
-
             var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJVA")).GetAwaiter().GetResult();
 
             var expected = new VerseResponse
@@ -179,7 +172,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = testVersion,
+                            Version = defaultAPIBibleVersion,
                             IsOT = true,
                             IsNT = false,
                             IsDEU = false,
@@ -258,7 +251,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultVersion,
+                            Version = defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -295,7 +288,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultVersion,
+                            Version = defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -332,7 +325,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultVersion,
+                            Version = defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -369,7 +362,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultVersion,
+                            Version = defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -377,6 +370,204 @@ namespace BibleBot.Backend.Tests
                         }
                     }
                 }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldProcessBibleGatewaySpannedReference()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:1-2")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Matthew 1:1-2",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Genealogy of Jesus the Messiah",
+                        PsalmTitle = "",
+                        Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham. <**2**> Abraham was the father of Isaac, and Isaac the father of Jacob, and Jacob the father of Judah and his brothers,",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 2,
+                            Version = defaultBibleGatewayVersion,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:1-2"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldProcessAPIBibleSpannedReference()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJVA")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Genesis 1:1-2",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**1**> In the beginning God created the heaven and the earth. <**2**> And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.",
+                        Reference = new Reference
+                        {
+                            Book = "Genesis",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 2,
+                            Version = defaultAPIBibleVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Genesis 1:1-2"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldProcessBibleGatewaySpannedChapterReference()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:25-2:1")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Matthew 1:25-2:1",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Visit of the Wise Men",
+                        PsalmTitle = "",
+                        Text = "<**25**> but knew her not until she had borne a son; and he called his name Jesus. <**1**> Now when Jesus was born in Bethlehem of Judea in the days of Herod the king, behold, wise men from the East came to Jerusalem, saying,",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 25,
+                            EndingChapter = 2,
+                            EndingVerse = 1,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:25-2:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldProcessAPIBibleSpannedChapterReference()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJVA")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Genesis 1:31-2:1",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**31**> And God saw every thing that he had made, and, behold, it was very good. And the evening and the morning were the sixth day. <**1**> Thus the heavens and the earth were finished, and all the host of them.",
+                        Reference = new Reference
+                        {
+                            Book = "Genesis",
+                            StartingChapter = 1,
+                            StartingVerse = 31,
+                            EndingChapter = 2,
+                            EndingVerse = 1,
+                            Version = defaultAPIBibleVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Genesis 1:31-2:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldProcessBibleGatewayExpandedReference()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:24-")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Matthew 1:24-",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**24**> When Joseph woke from sleep, he did as the angel of the Lord commanded him; he took his wife, <**25**> but knew her not until she had borne a son; and he called his name Jesus.",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 24,
+                            EndingChapter = 1,
+                            EndingVerse = 0,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:24-25"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldIgnoreAPIBibleExpandedReference()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJVA")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
             };
 
             resp.Should().BeEquivalentTo(expected);
