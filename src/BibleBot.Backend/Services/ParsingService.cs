@@ -85,6 +85,21 @@ namespace BibleBot.Backend.Services
                 {
                     tokenIdxAfterSpan = bookSearchResult.Index + 2;
 
+                    if (tokens.Length > tokenIdxAfterSpan)
+                    {
+                        string lastToken = RemovePunctuation(tokens[tokenIdxAfterSpan].ToUpper());
+
+                        var idealVersion = _versionService.Get(lastToken);
+
+                        if (idealVersion != null)
+                        {
+                            if (idealVersion.Abbreviation == lastToken)
+                            {
+                                version = idealVersion;
+                            }
+                        }
+                    }
+
                     var colonRegex = new Regex(@":", RegexOptions.Compiled);
                     var colonQuantity = colonRegex.Matches(relevantToken).Count();
 
@@ -169,10 +184,12 @@ namespace BibleBot.Backend.Services
                                 // but for other sources this is likely not available.
                                 if (version.Source == "bg")
                                 {
-                                    // Instead of returning nil, we'll break out of the loop
+                                    // Instead of returning null here, we'll break out of the loop
                                     // in the event that the span exists to extend to the end of a chapter.
                                     break;
                                 }
+
+                                return null;
                             }
                         }
 
@@ -185,21 +202,10 @@ namespace BibleBot.Backend.Services
                     {
                         return null;
                     }
-
-                    if (tokens.Length > tokenIdxAfterSpan)
-                    {
-                        string lastToken = RemovePunctuation(tokens[tokenIdxAfterSpan].ToUpper());
-
-                        var idealVersion = _versionService.Get(lastToken);
-
-                        if (idealVersion != null)
-                        {
-                            if (idealVersion.Abbreviation == lastToken)
-                            {
-                                version = idealVersion;
-                            }
-                        }
-                    }
+                }
+                else
+                {
+                    return null;
                 }
             }
             else
