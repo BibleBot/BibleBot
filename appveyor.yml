@@ -53,10 +53,7 @@ test_script:
   - "%USERPROFILE%\\.nuget\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*\""
 
 after_test:
- - ps: |
-    $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
-    Invoke-WebRequest -Uri "https://codecov.io/bash" -OutFile codecov.sh
-    bash codecov.sh -f "coverage.xml" -t $env:CODECOV_TOKEN
+ - sh: curl -fsSL https://codecov.io/bash > codecov.sh && codecov.sh -f "coverage.xml" -t $CODECOV_TOKEN
 
 deploy:
   - provider: NuGet
