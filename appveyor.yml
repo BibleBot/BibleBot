@@ -3,7 +3,16 @@ image: Visual Studio 2019
 
 clone_depth: 1
 
+services:
+  - mongodb
+
 environment:
+  ASPNETCORE_ENVIRONMENT: Development
+  MONGODB_CONN: mongodb://localhost:27017/BibleBotBackend
+  APIBIBLE_TOKEN:
+    secure: NoI3xBuwnbCU1KkhhZCHqtuups493tGwfNZlBNtXvCw8cNuuTvwZZwMYm2V12EvA
+  ENDPOINT_TOKEN:
+    secure: iHQQcLiFJcSErA/ZLVm5WEaX8kuTrMiZ5Y28JFnmZkY=
   COVERALLS_REPO_TOKEN:
     secure: bbp4RMA6lCInKRc0at1AV2EW8dSpYVR4QqoUjOT6eOUdA5uV9vXvXb0GJoSEpe2R
   discord_webhook:
@@ -20,6 +29,7 @@ install:
 branches:
   only:
     - master
+    - srp/tests
 
 build_script:
   - cmd: dotnet publish ./src/BibleBot.Backend/BibleBot.Backend.csproj -c Release --verbosity q
