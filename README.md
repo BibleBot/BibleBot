@@ -4,24 +4,26 @@
     </a>
     <br>
     <br>
-    <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot">
-        <img alt="AppVeyor Build Status" src="https://ci.appveyor.com/api/projects/status/x6pdy1e2aw1vstru?svg=true">
-    </a>
-    <a href->
-    <img alt="AppVeyor tests" src="https://img.shields.io/appveyor/tests/BibleBot/BibleBot">
     <a href="https://codecov.io/gh/BibleBot/BibleBot">
-        <img alt="Codecov Coverage Status" src="https://codecov.io/gh/BibleBot/BibleBot/branch/master/graph/badge.svg?token=Z0bU0yHqEN"/>
+        <img alt="Codecov Coverage Status" src="https://img.shields.io/codecov/c/github/BibleBot/BibleBot?token=Z0bU0yHqEN&style=flat-square">
     </a>
     <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard">
-        <img alt="Codacy Quality Status" src="https://app.codacy.com/project/badge/Grade/0ebeb56c612a4643851d9beb1003a1de">
+        <img alt="Codacy Quality Status" src="https://img.shields.io/codacy/grade/0ebeb56c612a4643851d9beb1003a1de?style=flat-square">
+    </a>
+    <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot">
+        <img alt="AppVeyor Build Status" src="https://img.shields.io/appveyor/build/SeraphimRP/BibleBot?style=flat-square">
+    </a>
+    <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot/build/tests">
+        <img alt="AppVeyor Test Status" src="https://img.shields.io/appveyor/tests/SeraphimRP/BibleBot?style=flat-square">
     </a>
     <br>
     <a alt="Discord" href="https://discord.gg/H7ZyHqE">
-        <img alt="Discord" src="https://img.shields.io/discord/362503610006765568?label=discord">
+        <img alt="Discord" src="https://img.shields.io/discord/362503610006765568?label=discord&style=flat-square">
     </a>
     <a href="https://github.com/BibleBot/BibleBot/blob/master/LICENSE">
-        <img alt="MPL-2.0" src="https://img.shields.io/github/license/BibleBot/BibleBot">
+        <img alt="MPL-2.0" src="https://img.shields.io/github/license/BibleBot/BibleBot?style=flat-square">
     </a>
+    <img alt="Total Lines of Code" src="https://img.shields.io/tokei/lines/github/BibleBot/BibleBot?style=flat-square">
     <br>
 </p>
 <p align="center">
