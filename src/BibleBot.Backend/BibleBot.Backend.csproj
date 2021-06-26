@@ -15,10 +15,6 @@
     </PackageReference>
     <PackageReference Include="MongoDB.Driver" Version="2.12.3" />
     <PackageReference Include="NodaTime" Version="3.0.5" />
-    <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit.Console" Version="3.12.0" />
-    <PackageReference Include="NUnit.Runners" Version="3.12.0" />
-    <PackageReference Include="opencover" Version="4.7.1189" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="4.1.1" />
     <PackageReference Include="RestSharp" Version="106.11.7" />
     <PackageReference Include="RestSharp.Serializers.SystemTextJson" Version="106.11.7" />
