@@ -56,6 +56,7 @@ after_test:
       $env:APPVEYOR="true"
       $env:CI="true"
   - cmd: bash codecov.sh -f "coverage.xml"
+
 deploy:
   - provider: NuGet
     api_key:
