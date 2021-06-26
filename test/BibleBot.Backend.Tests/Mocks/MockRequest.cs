@@ -22,5 +22,15 @@ namespace BibleBot.Backend.Tests.Mocks
             this.Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN");
             this.Body = body;
         }
+
+        public MockRequest()
+        {
+            this.UserId = "000000";
+            this.UserPermissions = 8589934591;
+            this.GuildId = "000000";
+            this.IsDM = false;
+            this.Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN");
+            this.Body = "";
+        }
     }
 }

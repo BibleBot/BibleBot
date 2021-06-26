@@ -74,6 +74,37 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
+        public void ShouldFailWhenTokenIsInvalid()
+        {
+            var req = new MockRequest();
+            req.Token = "meowmix";
+
+            var resp = versesController.ProcessMessage(req).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldFailWhenBodyIsEmpty()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest()).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
         public void ShouldProcessBibleGatewayReference()
         {
             var testVersion = versionService.Get("NTE");
