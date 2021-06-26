@@ -4,11 +4,13 @@
     </a>
     <br>
     <br>
-    <a href="https://codecov.io/gh/BibleBot/BibleBot">
-        <img alt="Codecov Coverage Status" src="https://codecov.io/gh/BibleBot/BibleBot/branch/master/graph/badge.svg?token=Z0bU0yHqEN"/>
-    </a>
     <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot">
         <img alt="AppVeyor Build Status" src="https://ci.appveyor.com/api/projects/status/x6pdy1e2aw1vstru?svg=true">
+    </a>
+    <a href->
+    <img alt="AppVeyor tests" src="https://img.shields.io/appveyor/tests/BibleBot/BibleBot">
+    <a href="https://codecov.io/gh/BibleBot/BibleBot">
+        <img alt="Codecov Coverage Status" src="https://codecov.io/gh/BibleBot/BibleBot/branch/master/graph/badge.svg?token=Z0bU0yHqEN"/>
     </a>
     <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard">
         <img alt="Codacy Quality Status" src="https://app.codacy.com/project/badge/Grade/0ebeb56c612a4643851d9beb1003a1de">
