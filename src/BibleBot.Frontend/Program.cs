@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BibleBot.Frontend.Models;
 using BibleBot.Lib;
@@ -163,21 +164,23 @@ namespace BibleBot.Frontend
                     guildId = e.Guild.Id.ToString();
                 }
 
+                var msg = (new Regex(@"https?:")).Replace(e.Message.Content, "");
                 var requestObj = new BibleBot.Lib.Request
                 {
                     UserId = e.Author.Id.ToString(),
                     UserPermissions = (long)permissions,
                     GuildId = guildId,
                     IsDM = isDM,
-                    Body = e.Message.Content,
+                    Body = msg,
                     Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
                 };
 
                 IResponse response = null;
 
-                if (acceptablePrefixes.Contains(e.Message.Content.ElementAtOrDefault(0).ToString()))
+
+                if (acceptablePrefixes.Contains(msg.ElementAtOrDefault(0).ToString()))
                 {
-                    if (e.Message.Content.StartsWith("+stats"))
+                    if (msg.StartsWith("+stats"))
                     {
                         int shardCount = bot.ShardClients.Count();
                         int guildCount = 0;
@@ -215,7 +218,7 @@ namespace BibleBot.Frontend
 
                     response = await cli.PostAsync<CommandResponse>(request);
                 }
-                else if (e.Message.Content.Contains(":"))
+                else if (msg.Contains(":"))
                 {
                     var request = new RestRequest("verses/process");
                     request.AddJsonBody(requestObj);
