@@ -4,17 +4,17 @@
     </a>
     <br>
     <br>
-    <a href="https://codecov.io/gh/BibleBot/BibleBot">
-        <img alt="Codecov Coverage Status" src="https://img.shields.io/codecov/c/github/BibleBot/BibleBot?token=Z0bU0yHqEN&style=flat-square">
-    </a>
-    <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard">
-        <img alt="Codacy Quality Status" src="https://img.shields.io/codacy/grade/0ebeb56c612a4643851d9beb1003a1de?style=flat-square">
-    </a>
     <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot">
         <img alt="AppVeyor Build Status" src="https://img.shields.io/appveyor/build/SeraphimRP/BibleBot?style=flat-square">
     </a>
     <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot/build/tests">
         <img alt="AppVeyor Test Status" src="https://img.shields.io/appveyor/tests/SeraphimRP/BibleBot?style=flat-square">
+    </a>
+    <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard">
+        <img alt="Codacy Coverage Status" src="https://img.shields.io/codacy/coverage/0ebeb56c612a4643851d9beb1003a1de?style=flat-square">
+    </a>
+    <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard">
+        <img alt="Codacy Quality Status" src="https://img.shields.io/codacy/grade/0ebeb56c612a4643851d9beb1003a1de?style=flat-square">
     </a>
     <br>
     <a alt="Discord" href="https://discord.gg/H7ZyHqE">

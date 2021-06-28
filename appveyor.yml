@@ -13,7 +13,9 @@ environment:
     secure: NoI3xBuwnbCU1KkhhZCHqtuups493tGwfNZlBNtXvCw8cNuuTvwZZwMYm2V12EvA
   ENDPOINT_TOKEN:
     secure: iHQQcLiFJcSErA/ZLVm5WEaX8kuTrMiZ5Y28JFnmZkY=
-  discord_webhook:
+  CODACY_PROJECT_TOKEN:
+    secure: OzycgsRcoQBRFwoPdQpsV4HiGZazulGy2xMZAK0P3e+ZIL9dW4igdTmUpM3ZCXrf
+  DISCORD_WEBHOOK:
     secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3vLH5eSf3G0pawFOhwJEj0cPqoqiGh1v95sc23adle9F6sYA+LCTdHYtiyL3Cz5traiteg2vQavv5pzPuWjxShv7PVsRsF4P77VDIBxthK5Z0ypG6K/A4gKOT3lijFv6oE=
 
 skip_commits:
@@ -51,10 +53,8 @@ test_script:
 
 after_test:
   - ps: |
-      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      $env:APPVEYOR="true"
-      $env:CI="true"
-  - cmd: bash codecov.sh -f "coverage.xml" >nul
+      Invoke-WebRequest -Uri 'https://coverage.codacy.com/get.sh' -OutFile codacy.sh
+  - cmd: bash codacy.sh report -r "coverage.xml" >nul
   - ps: |
       $wc = New-Object 'System.Net.WebClient'
       $wc.UploadFile("https://ci.appveyor.com/api/testresults/mstest/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResults.xml))
@@ -66,7 +66,7 @@ deploy:
 
 on_success:
   - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
-  - ps: .\send.ps1 success $env:discord_webhook
+  - ps: .\send.ps1 success $env:DISCORD_WEBHOOK
 on_failure:
   - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
-  - ps: .\send.ps1 failure $env:discord_webhook
+  - ps: .\send.ps1 failure $env:DISCORD_WEBHOOK
