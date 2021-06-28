@@ -17,6 +17,8 @@ environment:
     secure: OzycgsRcoQBRFwoPdQpsV4HiGZazulGy2xMZAK0P3e+ZIL9dW4igdTmUpM3ZCXrf
   DISCORD_WEBHOOK:
     secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3vLH5eSf3G0pawFOhwJEj0cPqoqiGh1v95sc23adle9F6sYA+LCTdHYtiyL3Cz5traiteg2vQavv5pzPuWjxShv7PVsRsF4P77VDIBxthK5Z0ypG6K/A4gKOT3lijFv6oE=
+  WEBHOOK_SCRIPT:
+    secure: https://raw.githubusercontent.com/BibleBot/appveyor-discord-webhook/master/send.ps1
 
 skip_commits:
   message: /.*\[ci skip\].*/
@@ -65,8 +67,8 @@ deploy:
       secure: 3ldSZooGg5G90viYmQhqpQtGqTftoapjkaoGSim3tB7AmBlRIc/G3IqxAxcksdsP
 
 on_success:
-  - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+  - ps: Invoke-RestMethod $env:WEBHOOK_SCRIPT -o send.ps1
   - ps: .\send.ps1 success $env:DISCORD_WEBHOOK
 on_failure:
-  - ps: Invoke-RestMethod https://raw.githubusercontent.com/DiscordHooks/appveyor-discord-webhook/master/send.ps1 -o send.ps1
+  - ps: Invoke-RestMethod $env:WEBHOOK_SCRIPT -o send.ps1
   - ps: .\send.ps1 failure $env:DISCORD_WEBHOOK
