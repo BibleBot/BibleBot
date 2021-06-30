@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BibleBot.Lib" Version="1.0.0" />
+    <PackageReference Include="BibleBot.Lib" Version="1.0.1" />
     <PackageReference Include="DSharpPlus" Version="4.1.0-nightly-00879" />
     <PackageReference Include="DSharpPlus.Interactivity" Version="4.1.0-nightly-00879" />
     <PackageReference Include="Emzi0767.Common" Version="2.6.2" />
