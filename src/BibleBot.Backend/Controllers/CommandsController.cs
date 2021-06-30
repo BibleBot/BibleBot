@@ -79,7 +79,9 @@ namespace BibleBot.Backend.Controllers
             {
                 return new CommandResponse
                 {
-                    OK = false
+                    OK = false,
+                    Pages = null,
+                    LogStatement = null
                 };
             }
 
