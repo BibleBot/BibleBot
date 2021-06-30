@@ -67,34 +67,15 @@ namespace BibleBot.Backend.Controllers
                 return new VerseResponse
                 {
                     OK = false,
+                    Verses = null,
                     LogStatement = null
                 };
             }
 
-            var version = "RSV";
-            var verseNumbersEnabled = true;
-            var titlesEnabled = true;
-            var ignoringBrackets = "<>";
             var displayStyle = "embed";
+            var ignoringBrackets = "<>";
 
-            var idealUser = _userService.Get(req.UserId);
             var idealGuild = _guildService.Get(req.GuildId);
-
-            if (idealUser != null)
-            {
-                version = idealUser.Version;
-                verseNumbersEnabled = idealUser.VerseNumbersEnabled;
-                titlesEnabled = idealUser.TitlesEnabled;
-                displayStyle = idealUser.DisplayStyle;
-            }
-            else if (idealGuild != null)
-            {
-                // As much as I hate the duplication, we have to check independently of the previous
-                // otherwise the guild default won't be a default.
-
-                version = idealGuild.Version;
-            }
-
             if (idealGuild != null)
             {
                 ignoringBrackets = idealGuild.IgnoringBrackets;
@@ -107,6 +88,27 @@ namespace BibleBot.Backend.Controllers
 
             foreach (var bsr in tuple.Item2)
             {
+                var version = "RSV";
+                var verseNumbersEnabled = true;
+                var titlesEnabled = true;
+
+                var idealUser = _userService.Get(req.UserId);
+
+                if (idealUser != null)
+                {
+                    version = idealUser.Version;
+                    verseNumbersEnabled = idealUser.VerseNumbersEnabled;
+                    titlesEnabled = idealUser.TitlesEnabled;
+                    displayStyle = idealUser.DisplayStyle;
+                }
+                else if (idealGuild != null)
+                {
+                    // As much as I hate the duplication, we have to check independently of the previous
+                    // otherwise the guild default won't be a default.
+
+                    version = idealGuild.Version;
+                }
+
                 var idealVersion = _versionService.Get(version);
                 var reference = _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
 
@@ -149,12 +151,12 @@ namespace BibleBot.Backend.Controllers
 
                     if (result == null)
                     {
-                        break;
+                        continue;
                     }
 
                     if (result.Text == null)
                     {
-                        break;
+                        continue;
                     }
 
                     if (displayStyle == "embed" && result.Text.Length > 2048)
@@ -192,6 +194,7 @@ namespace BibleBot.Backend.Controllers
                 return new VerseResponse
                 {
                     OK = false,
+                    Verses = null,
                     LogStatement = null
                 };
             }
