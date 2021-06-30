@@ -81,7 +81,7 @@ namespace BibleBot.Backend.Controllers
                 ignoringBrackets = idealGuild.IgnoringBrackets;
             }
 
-            var body = _parsingService.RemoveContentInBrackets(ignoringBrackets, req.Body.ToLower().Replace("\r", " ").Replace("\n", " "));
+            var body = _parsingService.PurifyBody(ignoringBrackets, req.Body);
             var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), body);
 
             List<Verse> results = new List<Verse>();

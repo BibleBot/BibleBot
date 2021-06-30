@@ -228,120 +228,46 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ShouldIgnoreVerseReferenceInBrackets()
-        {
-            var resp = versesController.ProcessMessage(new MockRequest("lorem < Matthew 1:1 > ipsum John 1:1 dolor < Genesis 1:1 > sit")).GetAwaiter().GetResult();
-
-            var expected = new VerseResponse
-            {
-                OK = true,
-                LogStatement = "John 1:1",
-                DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
-                    new Verse
-                    {
-                        Title = "The Word Became Flesh",
-                        PsalmTitle = "",
-                        Text = "<**1**> In the beginning was the Word, and the Word was with God, and the Word was God.",
-                        Reference = new Reference
-                        {
-                            Book = "John",
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = true,
-                            IsDEU = false,
-                            AsString = "John 1:1"
-                        }
-                    }
-                }
-            };
-
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldIgnoreVerseReferenceWithVersionInBrackets()
-        {
-            var resp = versesController.ProcessMessage(new MockRequest("lorem < Matthew 1:1 NTE > ipsum John 1:1 dolor < Genesis 1:1 NTE > sit")).GetAwaiter().GetResult();
-
-            var expected = new VerseResponse
-            {
-                OK = true,
-                LogStatement = "John 1:1",
-                DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
-                    new Verse
-                    {
-                        Title = "The Word Became Flesh",
-                        PsalmTitle = "",
-                        Text = "<**1**> In the beginning was the Word, and the Word was with God, and the Word was God.",
-                        Reference = new Reference
-                        {
-                            Book = "John",
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = true,
-                            IsDEU = false,
-                            AsString = "John 1:1"
-                        }
-                    }
-                }
-            };
-
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldIgnoreMultipleVerseReferencesInBrackets()
-        {
-            var resp = versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 / Matthew 1:1 / Acts 1:1 > ipsum John 1:1 dolor < Genesis 1:1 > sit")).GetAwaiter().GetResult();
-
-            var expected = new VerseResponse
-            {
-                OK = true,
-                LogStatement = "John 1:1",
-                DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
-                    new Verse
-                    {
-                        Title = "The Word Became Flesh",
-                        PsalmTitle = "",
-                        Text = "<**1**> In the beginning was the Word, and the Word was with God, and the Word was God.",
-                        Reference = new Reference
-                        {
-                            Book = "John",
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = true,
-                            IsDEU = false,
-                            AsString = "John 1:1"
-                        }
-                    }
-                }
-            };
-
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldIgnoreMultipleVerseReferencesWithVersionInBrackets()
+        public void ShouldIgnoreMultipleVerseReferencesInIgnoringBrackets()
         {
             var resp = versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTE / Matthew 1:1 NTE / Acts 1:1 NTE > ipsum John 1:1 dolor < Genesis 1:1 NTE > sit")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "John 1:1",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Word Became Flesh",
+                        PsalmTitle = "",
+                        Text = "<**1**> In the beginning was the Word, and the Word was with God, and the Word was God.",
+                        Reference = new Reference
+                        {
+                            Book = "John",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "John 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldProcessVerseInNonIgnoringBrackets()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("(John 1:1)")).GetAwaiter().GetResult();
 
             var expected = new VerseResponse
             {
