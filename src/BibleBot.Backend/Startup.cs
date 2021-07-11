@@ -44,6 +44,7 @@ namespace BibleBot.Backend
 
             // Add background services.
             services.AddHostedService<AutomaticDailyVerseService>();
+            services.AddHostedService<VersionStatsService>();
 
             // Instantiate the various services.
             services.AddSingleton<UserService>();
