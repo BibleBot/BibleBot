@@ -12,8 +12,6 @@ If you're looking to introduce a feature, create a Feature Request issue or disc
 
 ## Pull Request Guidelines
 
-We strictly do development on the `develop` branch. Your PR should only be going into that branch.
-
 Your commits should not be monolithic, containing multiple major changes in one commit. In your PR description, you do not need to provide change details, **your commit message log should be self-explanatory**.
 
 ## Versioning
