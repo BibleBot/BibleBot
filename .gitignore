@@ -278,3 +278,4 @@ coverage.json
 coverage.xml
 
 .db/
+.envrc
