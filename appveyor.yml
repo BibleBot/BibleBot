@@ -63,7 +63,7 @@ after_test:
 deploy:
   - provider: NuGet
     api_key:
-      secure: 3ldSZooGg5G90viYmQhqpQtGqTftoapjkaoGSim3tB7AmBlRIc/G3IqxAxcksdsP
+      secure: PE2CHCU0HAnC6+phzPCvz2Igcnyxmx7TT8BQvPyYD6VVrJJQ04imhJ0+VLf6bosc
 
 on_success:
   - ps: Invoke-RestMethod $env:WEBHOOK_SCRIPT -o send.ps1
