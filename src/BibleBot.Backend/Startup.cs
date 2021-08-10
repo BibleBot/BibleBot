@@ -73,7 +73,7 @@ namespace BibleBot.Backend
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "BibleBot.Backend",
-                    Version = "v1",
+                    Version = "1",
                     Description = "The Backend of BibleBot",
                     Contact = new OpenApiContact
                     {
@@ -101,7 +101,7 @@ namespace BibleBot.Backend
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BibleBot.Backend v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BibleBot.Backend"));
             }
             else
             {
