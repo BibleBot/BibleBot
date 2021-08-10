@@ -44,6 +44,9 @@ namespace BibleBot.Backend.Models
         [BsonElement("DailyVerseTimeZone")]
         public string DailyVerseTimeZone { get; set; }
 
+        [BsonElement("DailyVerseLastSentDate")]
+        public string DailyVerseLastSentDate { get; set; }
+
         [BsonElement("IsDM")]
         public bool IsDM { get; set; }
     }

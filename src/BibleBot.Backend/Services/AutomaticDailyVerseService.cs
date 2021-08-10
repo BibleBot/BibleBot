@@ -80,7 +80,9 @@ namespace BibleBot.Backend.Services
 
                     try
                     {
-                        return (dateTimeInPreferredTz.Hour == int.Parse(guildTime[0]) && dateTimeInPreferredTz.Minute == int.Parse(guildTime[1]));
+                        return dateTimeInPreferredTz.Hour == int.Parse(guildTime[0])
+                               && dateTimeInPreferredTz.Minute == int.Parse(guildTime[1])
+                               && guild.DailyVerseLastSentDate != dateTimeInStandardTz.ToString("MM/dd/yyyy", null);
                     }
                     catch
                     {
@@ -128,6 +130,9 @@ namespace BibleBot.Backend.Services
                         if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
                         {
                             count += 1;
+
+                            guild.DailyVerseLastSentDate = dateTimeInStandardTz.ToString("MM/dd/yyyy", null);
+                            _guildService.Update(guild.GuildId, guild);
                         }
                     }
 
