@@ -1,6 +1,5 @@
 name: Content Request
 description: Request a catechism, confession, or historical document to be added to BibleBot!
-title: ""
 labels: [content]
 assignees:
   - seraphimrp
@@ -15,7 +14,6 @@ body:
       label: What would you like to see implemented in BibleBot?
       description: "**This is not for translations or language requests.**"
       placeholder: I want the bestest catechism evar!
-      value: ""
     validations:
       required: true
   - type: checkboxes
