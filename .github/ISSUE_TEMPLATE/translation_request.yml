@@ -1,0 +1,28 @@
+name: Bible Translation Request
+description: Request a Bible translation to be added to BibleBot!
+title: ""
+labels: [translation]
+assignees:
+  - seraphimrp
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this translation request!
+  - type: textarea
+    id: details
+    attributes:
+      label: What Bible version would you like to see added in BibleBot?
+      description: **This is not for languages or content requests.**
+      placeholder: I want the New King James Version! (we all do, promise)
+      value: ""
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/BibleBot/BibleBot/blob/master/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
