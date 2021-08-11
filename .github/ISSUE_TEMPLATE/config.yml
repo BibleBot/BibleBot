@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discord Support
+    url: https://biblebot.xyz/discord
+    about: Join our support Discord to follow along to status updates.
+  - name: Email
+    url: mailto:team@kerygma.digital
+    about: Send us an email!
