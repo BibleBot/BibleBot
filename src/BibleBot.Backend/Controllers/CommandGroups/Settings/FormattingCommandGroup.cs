@@ -72,12 +72,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 var response = "Verse numbers are **<verseNumbers>**.\n" +
                                "Titles are **<titles>**.\n" +
+                               "Verse pagination is **<pagination>**.\n" +
                                "Your display style is set to **`<displayStyle>`**.\n\n" +
                                "The bot's prefix for this server is **`<prefix>`**.\n" +
                                "This bot will ignore verses in this server surrounded by **`<ignoringBrackets>`**.\n\n" +
                                "__**Subcommands**__\n" +
                                "**setversenumbers** - enable or disable verse numbers\n" +
                                "**settitles** - enable or disable titles\n" +
+                               "**setpagination** - enable or disable verse pagination\n" +
                                "**setdisplay** - set your preferred display style\n" +
                                "**setprefix** - set the bot's command prefix for this server (staff only)\n" +
                                "**setbrackets** - set the bot's ignoring brackets for this server (staff only)";
@@ -86,6 +88,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 {
                     response = response.Replace("<verseNumbers>", idealUser.VerseNumbersEnabled ? "enabled" : "disabled");
                     response = response.Replace("<titles>", idealUser.TitlesEnabled ? "enabled" : "disabled");
+                    response = response.Replace("<pagination>", idealUser.PaginationEnabled ? "enabled" : "disabled");
                     response = response.Replace("<displayStyle>", idealUser.DisplayStyle);
                 }
 
@@ -97,6 +100,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 response = response.Replace("<verseNumbers>", "enabled");
                 response = response.Replace("<titles>", "enabled");
+                response = response.Replace("<pagination>", "enabled");
                 response = response.Replace("<displayStyle>", "embed");
                 response = response.Replace("<prefix>", "+");
                 response = response.Replace("<ignoringBrackets>", "<>");
