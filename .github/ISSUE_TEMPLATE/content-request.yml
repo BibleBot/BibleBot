@@ -1,5 +1,5 @@
 name: Content Request
-description: Request a catechism, confession, or historical document to be added to BibleBot!
+description: Request a catechism, confession, or historical document to be added
 labels: [content]
 assignees:
   - seraphimrp

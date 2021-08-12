@@ -1,5 +1,5 @@
 name: Bible Translation Request
-description: Request a Bible translation to be added to BibleBot!
+description: Request a Bible translation to be added
 labels: [translation]
 assignees:
   - seraphimrp
