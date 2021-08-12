@@ -37,6 +37,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new FormattingUsage(_userService, _guildService),
                 new FormattingSetVerseNumbers(_userService, _guildService),
                 new FormattingSetTitles(_userService, _guildService),
+                new FormattingSetPagination(_userService, _guildService),
                 new FormattingSetDisplayStyle(_userService, _guildService),
                 new FormattingSetPrefix(_userService, _guildService),
                 new FormattingSetIgnoringBrackets(_userService, _guildService)
