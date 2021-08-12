@@ -35,6 +35,9 @@ namespace BibleBot.Backend.Models
         [BsonElement("VerseNumbersEnabled")]
         public bool VerseNumbersEnabled { get; set; }
 
+        [BsonElement("PaginationEnabled")]
+        public bool PaginationEnabled { get; set; }
+
         [BsonElement("DisplayStyle")]
         public string DisplayStyle { get; set; }
     }

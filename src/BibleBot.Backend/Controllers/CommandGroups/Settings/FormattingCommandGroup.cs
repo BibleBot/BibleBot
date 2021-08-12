@@ -153,7 +153,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    idealUser.VerseNumbersEnabled = args[0] == "enable";
+                    idealUser.VerseNumbersEnabled = (args[0] == "enable" && args[0] != "disable");
                     _userService.Update(req.UserId, idealUser);
                 }
                 else
@@ -165,7 +165,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         InputMethod = "default",
                         Language = "english",
                         TitlesEnabled = true,
-                        VerseNumbersEnabled = args[0] == "enable",
+                        VerseNumbersEnabled = (args[0] == "enable" && args[0] != "disable"),
+                        PaginationEnabled = false,
                         DisplayStyle = "embed"
                     });
                 }
@@ -222,7 +223,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    idealUser.TitlesEnabled = args[0] == "enable";
+                    idealUser.TitlesEnabled = (args[0] == "enable" && args[0] != "disable");
                     _userService.Update(req.UserId, idealUser);
                 }
                 else
@@ -233,8 +234,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Version = "RSV",
                         InputMethod = "default",
                         Language = "english",
-                        TitlesEnabled = args[0] == "enable",
+                        TitlesEnabled = (args[0] == "enable" && args[0] != "disable"),
                         VerseNumbersEnabled = true,
+                        PaginationEnabled = false,
                         DisplayStyle = "embed"
                     });
                 }
@@ -247,6 +249,76 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("+formatting settitles", "Set titles successfully.", false)
                     },
                     LogStatement = $"+formatting settitles {args[0]}"
+                };
+            }
+        }
+
+        public class FormattingSetPagination : ICommand
+        {
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+
+            private readonly UserService _userService;
+            private readonly GuildService _guildService;
+
+            public FormattingSetPagination(UserService userService, GuildService guildService)
+            {
+                Name = "setpagination";
+                ArgumentsError = "Expected an `enable` or `disable` parameter.";
+                ExpectedArguments = 1;
+                PermissionsRequired = null;
+
+                _userService = userService;
+                _guildService = guildService;
+            }
+
+            public IResponse ProcessCommand(Request req, List<string> args)
+            {
+                if (args[0] != "enable" && args[0] != "disable")
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages = new List<InternalEmbed>
+                        {
+                            new Utils().Embedify("+formatting setpagination", "Expected an `enable` or `disable` parameter.", true)
+                        },
+                        LogStatement = "+formatting setpagination"
+                    };
+                }
+
+                var idealUser = _userService.Get(req.UserId);
+
+                if (idealUser != null)
+                {
+                    idealUser.PaginationEnabled = (args[0] == "enable" && args[0] != "disable");
+                    _userService.Update(req.UserId, idealUser);
+                }
+                else
+                {
+                    _userService.Create(new User
+                    {
+                        UserId = req.UserId,
+                        Version = "RSV",
+                        InputMethod = "default",
+                        Language = "english",
+                        TitlesEnabled = true,
+                        VerseNumbersEnabled = true,
+                        PaginationEnabled = (args[0] == "enable" && args[0] != "disable"),
+                        DisplayStyle = "embed"
+                    });
+                }
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = new List<InternalEmbed>
+                    {
+                        new Utils().Embedify("+formatting setpagination", "Set titles successfully.", false)
+                    },
+                    LogStatement = $"+formatting setpagination {args[0]}"
                 };
             }
         }
@@ -304,6 +376,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Language = "english",
                         TitlesEnabled = true,
                         VerseNumbersEnabled = true,
+                        PaginationEnabled = false,
                         DisplayStyle = args[0]
                     });
                 }

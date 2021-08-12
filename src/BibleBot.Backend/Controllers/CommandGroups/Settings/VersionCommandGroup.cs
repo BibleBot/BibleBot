@@ -165,6 +165,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             Language = "english",
                             TitlesEnabled = true,
                             VerseNumbersEnabled = true,
+                            PaginationEnabled = false,
                             DisplayStyle = "embed"
                         });
                     }

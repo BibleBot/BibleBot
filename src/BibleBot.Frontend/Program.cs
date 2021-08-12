@@ -322,7 +322,7 @@ namespace BibleBot.Frontend
                 {
                     var verseResp = response as VerseResponse;
 
-                    if (verseResp.Verses.Count() > 1)
+                    if (verseResp.Verses.Count() > 1 && verseResp.Paginate)
                     {
                         var properPages = new List<Page>();
 
@@ -362,6 +362,28 @@ namespace BibleBot.Frontend
                         }
 
                         await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.WrapAround, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(120));
+                    }
+                    else if (verseResp.Verses.Count > 1 && !verseResp.Paginate)
+                    {
+                        foreach (Verse verse in verseResp.Verses)
+                        {
+                            var referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
+
+                            if (verseResp.DisplayStyle == "embed")
+                            {
+                                var embed = utils.Embedify(referenceTitle, verse.Title, verse.Text, false, null);
+                                await e.Channel.SendMessageAsync(embed);
+                            }
+                            else if (verseResp.DisplayStyle == "code")
+                            {
+                                verse.Text = verse.Text.Replace("*", "");
+                                await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```");
+                            }
+                            else if (verseResp.DisplayStyle == "blockquote")
+                            {
+                                await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
+                            }
+                        }
                     }
                     else if (verseResp.Verses.Count == 1)
                     {

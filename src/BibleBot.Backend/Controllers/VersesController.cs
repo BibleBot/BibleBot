@@ -74,6 +74,7 @@ namespace BibleBot.Backend.Controllers
 
             var displayStyle = "embed";
             var ignoringBrackets = "<>";
+            var paginateVerses = false;
 
             var idealGuild = _guildService.Get(req.GuildId);
             if (idealGuild != null)
@@ -100,6 +101,7 @@ namespace BibleBot.Backend.Controllers
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
                     displayStyle = idealUser.DisplayStyle;
+                    paginateVerses = idealUser.PaginationEnabled;
                 }
                 else if (idealGuild != null)
                 {
@@ -186,6 +188,7 @@ namespace BibleBot.Backend.Controllers
                     OK = true,
                     Verses = results,
                     DisplayStyle = displayStyle,
+                    Paginate = paginateVerses,
                     LogStatement = String.Join(" / ", results.Select(verse => verse.Reference.ToString()))
                 };
             }
