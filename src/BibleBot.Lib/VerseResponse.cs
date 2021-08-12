@@ -16,5 +16,6 @@ namespace BibleBot.Lib
         public string LogStatement { get; set; }
         public List<Verse> Verses { get; set; }
         public string DisplayStyle { get; set; }
+        public bool Paginate { get; set; }
     }
 }
