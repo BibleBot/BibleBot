@@ -12,5 +12,6 @@ namespace BibleBot.Lib
     {
         bool OK { get; set; }
         string LogStatement { get; set; }
+        string Type { get; set; }
     }
 }

@@ -14,8 +14,14 @@ namespace BibleBot.Lib
     {
         public bool OK { get; set; }
         public string LogStatement { get; set; }
+        public string Type { get; set; }
         public List<Verse> Verses { get; set; }
         public string DisplayStyle { get; set; }
         public bool Paginate { get; set; }
+
+        public VerseResponse()
+        {
+            this.Type = "verse";
+        }
     }
 }

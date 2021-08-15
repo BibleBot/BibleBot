@@ -14,8 +14,14 @@ namespace BibleBot.Lib
     {
         public bool OK { get; set; }
         public string LogStatement { get; set; }
+        public string Type { get; set; }
         public List<InternalEmbed> Pages { get; set; }
         public bool CreateWebhook { get; set; }
         public bool RemoveWebhook { get; set; }
+
+        public CommandResponse()
+        {
+            this.Type = "cmd";
+        }
     }
 }
