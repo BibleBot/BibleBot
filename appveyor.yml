@@ -50,7 +50,7 @@ artifacts:
     type: ElasticBeanstalkPackage
 
 test_script:
-  - "%USERPROFILE%\\.nuget\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test --verbosity q --logger:\\\"trx;LogFileName=..\\..\\..\\TestResults.xml\\\"\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]*\" >nul"
+  - "%USERPROFILE%\\.nuget\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test --verbosity q --logger:\\\"trx;LogFileName=..\\..\\..\\TestResults.xml\\\"\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]* -[BibleBot.Frontend*]*\" >nul"
 
 after_test:
   - ps: |
