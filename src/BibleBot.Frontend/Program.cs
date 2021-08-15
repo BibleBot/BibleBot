@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BibleBot.Frontend.Models;
@@ -175,6 +176,7 @@ namespace BibleBot.Frontend
                     Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
                 };
 
+                IRestResponse restResponse = null;
                 IResponse response = null;
 
 
@@ -210,20 +212,37 @@ namespace BibleBot.Frontend
                             Body = $"{shardCount}||{guildCount}||{userCount}||{channelCount}"
                         });
 
-                        await cli.PostAsync<CommandResponse>(req);
+                        restResponse = await cli.ExecuteAsync(req, Method.POST);
                     }
 
                     var request = new RestRequest("commands/process");
                     request.AddJsonBody(requestObj);
 
-                    response = await cli.PostAsync<CommandResponse>(request);
+                    restResponse = await cli.ExecuteAsync(request, Method.POST);
                 }
                 else if (msg.Contains(":"))
                 {
                     var request = new RestRequest("verses/process");
                     request.AddJsonBody(requestObj);
 
-                    response = await cli.PostAsync<VerseResponse>(request);
+                    restResponse = await cli.ExecuteAsync(request, Method.POST);
+                }
+
+                if (restResponse.Content.Contains(",\"type\":\"verse\","))
+                {
+                    response = JsonSerializer.Deserialize<VerseResponse>(restResponse.Content,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    response = JsonSerializer.Deserialize<CommandResponse>(restResponse.Content,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
                 }
 
                 var logStatement = $"[{s.ShardId + 1}] <{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}";
@@ -236,7 +255,7 @@ namespace BibleBot.Frontend
                     Log.Error(logStatement);
                 }
 
-                if (response.GetType().Equals(typeof(CommandResponse)))
+                if (response.Type == "cmd")
                 {
                     var commandResp = response as CommandResponse;
 
@@ -318,7 +337,7 @@ namespace BibleBot.Frontend
                         }
                     }
                 }
-                else if (response.GetType().Equals(typeof(VerseResponse)))
+                else if (response.Type == "verse")
                 {
                     var verseResp = response as VerseResponse;
 

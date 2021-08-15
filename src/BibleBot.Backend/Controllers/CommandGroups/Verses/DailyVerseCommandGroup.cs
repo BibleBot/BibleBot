@@ -91,12 +91,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 var version = "RSV";
                 var verseNumbersEnabled = true;
                 var titlesEnabled = true;
+                var displayStyle = "embed";
 
                 if (idealUser != null)
                 {
                     version = idealUser.Version;
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
+                    displayStyle = idealUser.DisplayStyle;
                 }
                 else if (idealGuild != null)
                 {
@@ -109,15 +111,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                 if (provider != null)
                 {
-                    Verse verse = provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
-
-                    return new CommandResponse
+                    return new VerseResponse
                     {
                         OK = true,
-                        Pages = new List<InternalEmbed>
+                        Verses = new List<Verse>
                         {
-                            new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null)
+                            provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult()
                         },
+                        DisplayStyle = displayStyle,
                         LogStatement = "+dailyverse"
                     };
                 }
