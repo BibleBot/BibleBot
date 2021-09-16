@@ -29,7 +29,7 @@ namespace BibleBot.Backend.Services.Providers
         private readonly Dictionary<string, string> _versionTable;
 
         private readonly string _baseURL = "https://api.scripture.api.bible/v1";
-        private readonly string _getURI = "bibles/{0}/search?query={1}&limit=1";
+        private readonly string _getURI = "bibles/{0}/search?query={1}&limit=100";
         private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=100&sort=relevance";
 
         public APIBibleProvider()
