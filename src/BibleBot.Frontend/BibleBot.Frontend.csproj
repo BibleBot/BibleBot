@@ -7,8 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="BibleBot.Lib" Version="1.2.5" />
-    <PackageReference Include="DSharpPlus" Version="4.1.0-nightly-*" />
-    <PackageReference Include="DSharpPlus.Interactivity" Version="4.1.0-nightly-*" />
+    <PackageReference Include="DSharpPlus" Version="4.2.0-nightly-*" />
+    <PackageReference Include="DSharpPlus.Interactivity" Version="4.2.0-nightly-*" />
     <PackageReference Include="Emzi0767.Common" Version="2.6.2" />
     <PackageReference Include="GitInfo" Version="2.1.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
