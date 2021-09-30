@@ -83,8 +83,22 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
+                if (req.GuildId == "238001909716353025")
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages = new List<InternalEmbed>
+                        {
+                            new Utils().Embedify("+random", "This server has personally required that this command be only used in DMs to avoid spam.", true)
+                        },
+                        LogStatement = "+random"
+                    };
+                }
+
                 var idealUser = _userService.Get(req.UserId);
                 var idealGuild = _guildService.Get(req.GuildId);
+
 
                 var version = "RSV";
                 var verseNumbersEnabled = true;
@@ -157,6 +171,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
+                if (req.GuildId == "238001909716353025")
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages = new List<InternalEmbed>
+                        {
+                            new Utils().Embedify("+random", "This server has personally required that this command be only used in DMs to avoid spam.", true)
+                        },
+                        LogStatement = "+random"
+                    };
+                }
+
                 var idealUser = _userService.Get(req.UserId);
                 var idealGuild = _guildService.Get(req.GuildId);
 
