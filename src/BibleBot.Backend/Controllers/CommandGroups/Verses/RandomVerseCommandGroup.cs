@@ -178,9 +178,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+random", "This server has personally required that this command be only used in DMs to avoid spam.", true)
+                            new Utils().Embedify("+random true", "This server has personally required that this command be only used in DMs to avoid spam.", true)
                         },
-                        LogStatement = "+random"
+                        LogStatement = "+random true"
                     };
                 }
 
