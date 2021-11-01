@@ -87,19 +87,6 @@ namespace BibleBot.Backend.Controllers
 
             List<Verse> results = new List<Verse>();
 
-            if (results.Count() > 6)
-            {
-                return new CommandResponse
-                {
-                    OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
-                        new Utils().Embedify("Too Many References", "There are too many references, the maximum amount of references is 6.", true)
-                    },
-                    LogStatement = "too many verses"
-                };
-            }
-
             foreach (var bsr in tuple.Item2)
             {
                 var version = "RSV";
@@ -194,7 +181,19 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            if (results.Count() > 0)
+            if (results.Count() > 6)
+            {
+                return new CommandResponse
+                {
+                    OK = false,
+                    Pages = new List<InternalEmbed>
+                    {
+                        new Utils().Embedify("Too Many References", "There are too many references, the maximum amount of references you can do in one message is 6.", true)
+                    },
+                    LogStatement = "too many verses"
+                };
+            }
+            else if (results.Count() > 0)
             {
                 return new VerseResponse
                 {
