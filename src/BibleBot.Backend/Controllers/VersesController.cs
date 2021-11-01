@@ -60,7 +60,7 @@ namespace BibleBot.Backend.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<VerseResponse> ProcessMessage([FromBody] Request req)
+        public async Task<IResponse> ProcessMessage([FromBody] Request req)
         {
             if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
             {
@@ -86,6 +86,19 @@ namespace BibleBot.Backend.Controllers
             var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), body);
 
             List<Verse> results = new List<Verse>();
+
+            if (results.Count() > 6)
+            {
+                return new CommandResponse
+                {
+                    OK = false,
+                    Pages = new List<InternalEmbed>
+                    {
+                        new Utils().Embedify("Too Many References", "There are too many references, the maximum amount of references is 6.", true)
+                    },
+                    LogStatement = "too many verses"
+                };
+            }
 
             foreach (var bsr in tuple.Item2)
             {
