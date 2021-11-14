@@ -26,10 +26,6 @@ install:
   - cmd: dotnet nuget add source https://nuget.emzi0767.com/api/v3/index.json
   - cmd: dotnet restore --verbosity q
 
-branches:
-  only:
-    - master
-
 build_script:
   - cmd: dotnet publish .\src\BibleBot.Backend\BibleBot.Backend.csproj -c Release --verbosity q
   - cmd: dotnet build .\src\BibleBot.Lib\BibleBot.Lib.csproj -c Release --verbosity q
