@@ -6,13 +6,20 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
+using System.Threading.Tasks;
 using BibleBot.Lib;
+using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
+using RestSharp;
 
 namespace BibleBot.Frontend
 {
     public class Utils
     {
+        private RestClient cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
+
         public enum Colors
         {
             NORMAL_COLOR = 6709986,
@@ -21,7 +28,7 @@ namespace BibleBot.Frontend
 
         public static string Version = "9.1-beta";
 
-        public DiscordEmbed Embed2Embed(InternalEmbed embed)
+        public static DiscordEmbed Embed2Embed(InternalEmbed embed)
         {
             var builder = new DiscordEmbedBuilder();
 
@@ -56,12 +63,12 @@ namespace BibleBot.Frontend
         }
 
 
-        public DiscordEmbed Embedify(string title, string description, bool isError)
+        public static DiscordEmbed Embedify(string title, string description, bool isError)
         {
             return Embedify(null, title, description, isError, null);
         }
 
-        public DiscordEmbed Embedify(string author, string title, string description, bool isError, string copyright)
+        public static DiscordEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
             string footerText = $"BibleBot v{Utils.Version} by Kerygma Digital";
 
@@ -78,6 +85,33 @@ namespace BibleBot.Frontend
             }
 
             return builder.Build();
+        }
+
+        private static Request CreateRequest(InteractionContext ctx, string body)
+        {
+            bool isDM = ctx.Channel.IsPrivate;
+            string guildId = (isDM ? ctx.Channel.Id : ctx.Guild.Id).ToString();
+            Permissions permissions = isDM ? Permissions.Administrator : ctx.Member.PermissionsIn(ctx.Channel);
+
+            return new BibleBot.Lib.Request
+            {
+                UserId = ctx.User.Id.ToString(),
+                UserPermissions = (long)permissions,
+                GuildId = guildId,
+                IsDM = isDM,
+                Body = body,
+                Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
+            };
+        }
+
+        public static async Task<CommandResponse> SubmitCommand(InteractionContext ctx, string body)
+        {
+            var req = Utils.CreateRequest(ctx, body);
+            var restRequest = new RestRequest("commands/process");
+            restRequest.AddJsonBody(req);
+
+            RestClient cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
+            return await cli.PostAsync<CommandResponse>(restRequest);
         }
     }
 }
