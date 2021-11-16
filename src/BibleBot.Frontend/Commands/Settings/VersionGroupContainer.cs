@@ -50,7 +50,6 @@ public class VersionGroupContainer : ApplicationCommandModule
     [SlashCommand("list", "List all available versions.")]
     public async Task ListCommand(InteractionContext ctx)
     {
-        // This sends a request to backend - only takes about 20ms.
         CommandResponse resp = await Utils.SubmitCommand(ctx, "+version list");
 
         if (resp.Pages.Count() > 1)
