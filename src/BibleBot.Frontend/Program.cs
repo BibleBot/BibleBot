@@ -110,8 +110,9 @@ namespace BibleBot.Frontend
                 }
 
                 var cli = new RestClient("https://top.gg/api");
-                var req = new RestRequest($"bots/{bot.CurrentUser.Id}/stats");
+                var req = new RestRequest($"bots/361033318273384449/stats");
                 req.AddHeader("Authorization", Environment.GetEnvironmentVariable("TOPGG_TOKEN"));
+                req.AddHeader("Content-Type", "application/json");
                 req.AddJsonBody(new TopggStats
                 {
                     ServerCount = guildCount
