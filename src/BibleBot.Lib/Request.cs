@@ -24,6 +24,9 @@ namespace BibleBot.Lib
         [JsonPropertyName("isDM")]
         public bool IsDM { get; set; }
 
+        [JsonPropertyName("isBot")]
+        public bool IsBot { get; set; }
+
         [JsonPropertyName("token")]
         public string Token { get; set; }
 

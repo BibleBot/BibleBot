@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <PackageId>BibleBot.Lib</PackageId>
-    <Version>1.2.5</Version>
+    <Version>1.2.6</Version>
     <Authors>Kerygma Digital Co.</Authors>
     <Description>A shared library between various aspects of BibleBot's stack.</Description>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
