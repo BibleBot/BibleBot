@@ -142,6 +142,19 @@ namespace BibleBot.Backend.Controllers
                                     }
                                 }
 
+                                if (req.IsBot && !idealCommand.BotAllowed)
+                                {
+                                    return new CommandResponse
+                                    {
+                                        OK = false,
+                                        Pages = new List<InternalEmbed>
+                                            {
+                                                new Utils().Embedify("Insufficient Permissions", "Bots are not permitted to use this command, please inform your nearest human.", true)
+                                            },
+                                        LogStatement = $"Bot can't use +{grp.Name} {idealCommand.Name}."
+                                    };
+                                }
+
                                 var commandArgs = tokenizedBody.Skip(2).ToList();
 
                                 if (commandArgs.Count() < idealCommand.ExpectedArguments)
@@ -209,6 +222,19 @@ namespace BibleBot.Backend.Controllers
                                                         };
                                                     }
                                                 }
+                                            }
+
+                                            if (req.IsBot && !idealCommand.BotAllowed)
+                                            {
+                                                return new CommandResponse
+                                                {
+                                                    OK = false,
+                                                    Pages = new List<InternalEmbed>
+                                                    {
+                                                        new Utils().Embedify("Insufficient Permissions", "Bots are not permitted to use this command, please inform your nearest human.", true)
+                                                    },
+                                                    LogStatement = $"Bot can't use +{grp.Name} {idealCommand.Name}."
+                                                };
                                             }
 
                                             var commandArgs = args.Skip(2).ToList();

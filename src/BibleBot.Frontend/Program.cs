@@ -173,6 +173,7 @@ namespace BibleBot.Frontend
                     UserPermissions = (long)permissions,
                     GuildId = guildId,
                     IsDM = isDM,
+                    IsBot = e.Author.IsBot,
                     Body = msg,
                     Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
                 };

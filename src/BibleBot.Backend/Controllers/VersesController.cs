@@ -95,7 +95,7 @@ namespace BibleBot.Backend.Controllers
 
                 var idealUser = _userService.Get(req.UserId);
 
-                if (idealUser != null)
+                if (idealUser != null && !req.IsBot)
                 {
                     version = idealUser.Version;
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
@@ -105,7 +105,7 @@ namespace BibleBot.Backend.Controllers
                 }
                 else if (idealGuild != null)
                 {
-                    // As much as I hate the duplication, we have to check independently of the previous
+                    // As much as I hate the if-duplication, we have to check independently of the previous
                     // otherwise the guild default won't be a default.
 
                     version = idealGuild.Version;

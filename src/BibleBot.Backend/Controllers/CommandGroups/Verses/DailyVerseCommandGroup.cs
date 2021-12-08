@@ -59,6 +59,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
+            public bool BotAllowed { get; set; }
 
             private readonly UserService _userService;
             private readonly GuildService _guildService;
@@ -74,6 +75,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 ArgumentsError = null;
                 ExpectedArguments = 0;
                 PermissionsRequired = null;
+                BotAllowed = true;
 
                 _userService = userService;
                 _guildService = guildService;
@@ -93,7 +95,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 var titlesEnabled = true;
                 var displayStyle = "embed";
 
-                if (idealUser != null)
+                if (idealUser != null && !req.IsBot)
                 {
                     version = idealUser.Version;
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
@@ -133,6 +135,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
+            public bool BotAllowed { get; set; }
 
             private readonly GuildService _guildService;
 
@@ -145,6 +148,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 {
                     Permissions.MANAGE_GUILD
                 };
+                BotAllowed = false;
 
                 _guildService = guildService;
             }
@@ -243,6 +247,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
+            public bool BotAllowed { get; set; }
 
             private readonly GuildService _guildService;
 
@@ -252,6 +257,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 ArgumentsError = null;
                 ExpectedArguments = 0;
                 PermissionsRequired = null;
+                BotAllowed = true;
 
                 _guildService = guildService;
             }
@@ -339,6 +345,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
+            public bool BotAllowed { get; set; }
 
             private readonly GuildService _guildService;
 
@@ -351,6 +358,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 {
                     Permissions.MANAGE_GUILD
                 };
+                BotAllowed = false;
 
                 _guildService = guildService;
             }

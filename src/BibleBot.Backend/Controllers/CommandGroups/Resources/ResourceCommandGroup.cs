@@ -41,8 +41,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             Commands = new List<ICommand>
             {
                 new ResourceUsage(_userService, _guildService, _resources),
-                //new InfoBibleBot(_userService, _guildService),
-                //new InfoInvite()
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
@@ -53,6 +51,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             public string ArgumentsError { get; set; }
             public int ExpectedArguments { get; set; }
             public List<Permissions> PermissionsRequired { get; set; }
+            public bool BotAllowed { get; set; }
 
             private readonly UserService _userService;
             private readonly GuildService _guildService;
@@ -65,6 +64,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 ArgumentsError = null;
                 ExpectedArguments = 0;
                 PermissionsRequired = null;
+                BotAllowed = true;
 
                 _userService = userService;
                 _guildService = guildService;
@@ -109,6 +109,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     }
                 }
 
+                // TODO(SeraphimRP): Use a proper fallback if possible.
                 var creeds = _resources.Where(res => res.Type == ResourceType.CREED);
                 var creedsList = "";
 
