@@ -117,6 +117,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 else if (idealGuild != null)
                 {
                     version = idealGuild.Version;
+                    displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
                 }
 
                 var idealVersion = _versionService.Get(version);
@@ -194,6 +195,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 var version = "RSV";
                 var verseNumbersEnabled = true;
                 var titlesEnabled = true;
+                var displayStyle = "embed";
 
                 if (idealUser != null && !req.IsBot)
                 {
@@ -204,6 +206,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 else if (idealGuild != null)
                 {
                     version = idealGuild.Version;
+                    displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
                 }
 
                 var idealVersion = _versionService.Get(version);
@@ -212,15 +215,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                 if (provider != null)
                 {
-                    Verse verse = provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult();
-
-                    return new CommandResponse
+                    return new VerseResponse
                     {
                         OK = true,
-                        Pages = new List<InternalEmbed>
+                        Verses = new List<Verse>
                         {
-                            new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null)
+                            provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult()
                         },
+                        DisplayStyle = displayStyle,
                         LogStatement = "+random true"
                     };
                 }

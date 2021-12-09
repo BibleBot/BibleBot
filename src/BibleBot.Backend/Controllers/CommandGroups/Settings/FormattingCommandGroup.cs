@@ -39,6 +39,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new FormattingSetTitles(_userService, _guildService),
                 new FormattingSetPagination(_userService, _guildService),
                 new FormattingSetDisplayStyle(_userService, _guildService),
+                new FormattingSetServerDisplayStyle(_userService, _guildService),
                 new FormattingSetPrefix(_userService, _guildService),
                 new FormattingSetIgnoringBrackets(_userService, _guildService)
             };
@@ -76,14 +77,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 var response = "Verse numbers are **<verseNumbers>**.\n" +
                                "Titles are **<titles>**.\n" +
                                "Verse pagination is **<pagination>**.\n" +
-                               "Your display style is set to **`<displayStyle>`**.\n\n" +
+                               "Your preferred display style is set to **`<displayStyle>`**.\n\n" +
                                "The bot's prefix for this server is **`<prefix>`**.\n" +
+                               "The server's preferred display style is set to **`<serverDisplayStyle>`**.\n" +
                                "This bot will ignore verses in this server surrounded by **`<ignoringBrackets>`**.\n\n" +
                                "__**Subcommands**__\n" +
                                "**setversenumbers** - enable or disable verse numbers\n" +
                                "**settitles** - enable or disable titles\n" +
                                "**setpagination** - enable or disable verse pagination\n" +
                                "**setdisplay** - set your preferred display style\n" +
+                               "**setserverdisplay** - set the server's preferred display style (staff only)\n" +
                                "**setprefix** - set the bot's command prefix for this server (staff only)\n" +
                                "**setbrackets** - set the bot's ignoring brackets for this server (staff only)";
 
@@ -98,6 +101,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 if (idealGuild != null)
                 {
                     response = response.Replace("<prefix>", idealGuild.Prefix);
+                    response = response.Replace("<serverDisplayStyle>", idealGuild.DisplayStyle == null ? "embed" : idealGuild.DisplayStyle);
                     response = response.Replace("<ignoringBrackets>", idealGuild.IgnoringBrackets);
                 }
 
@@ -106,6 +110,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 response = response.Replace("<pagination>", "enabled");
                 response = response.Replace("<displayStyle>", "embed");
                 response = response.Replace("<prefix>", "+");
+                response = response.Replace("<serverDisplayStyle>", "embed");
                 response = response.Replace("<ignoringBrackets>", "<>");
 
                 return new CommandResponse
@@ -408,6 +413,80 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
+        public class FormattingSetServerDisplayStyle : ICommand
+        {
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+            public bool BotAllowed { get; set; }
+
+            private readonly UserService _userService;
+            private readonly GuildService _guildService;
+
+            public FormattingSetServerDisplayStyle(UserService userService, GuildService guildService)
+            {
+                Name = "setserverdisplay";
+                ArgumentsError = "Expected a parameter of `embed`, `code`, or `blockquote`.";
+                ExpectedArguments = 1;
+                PermissionsRequired = new List<Permissions>
+                {
+                    Permissions.MANAGE_GUILD
+                };
+                BotAllowed = false;
+
+                _userService = userService;
+                _guildService = guildService;
+            }
+
+            public IResponse ProcessCommand(Request req, List<string> args)
+            {
+                if (!(args[0] == "embed" || args[0] == "code" || args[0] == "blockquote"))
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages = new List<InternalEmbed>
+                        {
+                            new Utils().Embedify("+formatting setserverdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
+                        },
+                        LogStatement = "+formatting setserverdisplay"
+                    };
+                }
+
+                var idealGuild = _guildService.Get(req.GuildId);
+
+                if (idealGuild != null)
+                {
+                    idealGuild.DisplayStyle = args[0];
+                    _guildService.Update(req.GuildId, idealGuild);
+                }
+                else
+                {
+                    _guildService.Create(new Guild
+                    {
+                        GuildId = req.GuildId,
+                        Version = "RSV",
+                        Language = "english",
+                        Prefix = "+",
+                        DisplayStyle = args[0],
+                        IgnoringBrackets = "<>",
+                        IsDM = req.IsDM
+                    });
+                }
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages = new List<InternalEmbed>
+                    {
+                        new Utils().Embedify("+formatting setserverdisplay", "Set server display style successfully.", false)
+                    },
+                    LogStatement = $"+formatting setserverdisplay {args[0]}"
+                };
+            }
+        }
+
         public class FormattingSetPrefix : ICommand
         {
             public string Name { get; set; }
@@ -479,6 +558,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Version = "RSV",
                         Language = "english",
                         Prefix = args[0],
+                        DisplayStyle = "embed",
                         IgnoringBrackets = "<>",
                         IsDM = req.IsDM
                     });
@@ -567,6 +647,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Version = "RSV",
                         Language = "english",
                         Prefix = "+",
+                        DisplayStyle = "embed",
                         IgnoringBrackets = args[0],
                         IsDM = req.IsDM
                     });

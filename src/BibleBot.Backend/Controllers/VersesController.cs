@@ -79,6 +79,7 @@ namespace BibleBot.Backend.Controllers
             var idealGuild = _guildService.Get(req.GuildId);
             if (idealGuild != null)
             {
+                displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
                 ignoringBrackets = idealGuild.IgnoringBrackets;
             }
 

@@ -247,6 +247,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             Version = idealVersion.Abbreviation,
                             Language = "english",
                             Prefix = "+",
+                            DisplayStyle = "embed",
                             IgnoringBrackets = "<>",
                             IsDM = req.IsDM
                         });

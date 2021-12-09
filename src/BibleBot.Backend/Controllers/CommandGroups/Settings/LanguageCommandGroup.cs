@@ -245,6 +245,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             Version = "RSV",
                             Language = idealLanguage.ObjectName,
                             Prefix = "+",
+                            DisplayStyle = "embed",
                             IgnoringBrackets = "<>",
                             IsDM = req.IsDM
                         });

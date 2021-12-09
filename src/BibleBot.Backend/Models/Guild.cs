@@ -29,6 +29,9 @@ namespace BibleBot.Backend.Models
         [BsonElement("Prefix")]
         public string Prefix { get; set; }
 
+        [BsonElement("DisplayStyle")]
+        public string DisplayStyle { get; set; }
+
         [BsonElement("IgnoringBrackets")]
         public string IgnoringBrackets { get; set; }
 

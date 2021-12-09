@@ -105,6 +105,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 else if (idealGuild != null)
                 {
                     version = idealGuild.Version;
+                    displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
                 }
 
                 var idealVersion = _versionService.Get(version);
@@ -185,6 +186,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             {
                                 idealGuild.DailyVerseTime = args[0];
                                 idealGuild.DailyVerseTimeZone = args[1];
+                                idealGuild.DailyVerseLastSentDate = null;
                                 _guildService.Update(req.GuildId, idealGuild);
                             }
                             else
@@ -195,10 +197,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                     Version = "RSV",
                                     Language = "english",
                                     Prefix = "+",
+                                    DisplayStyle = "embed",
                                     IgnoringBrackets = "<>",
                                     IsDM = req.IsDM,
                                     DailyVerseTime = args[0],
-                                    DailyVerseTimeZone = args[1]
+                                    DailyVerseTimeZone = args[1],
                                 });
                             }
 
