@@ -52,6 +52,10 @@ namespace BibleBot.Backend.Services.Providers
         {
             if (reference.Book != "str")
             {
+                if (reference.Version.Abbreviation == "KJVA" && reference.Book == "Song of Songs")
+                {
+                    reference.Book = "Song of Solomon";
+                }
                 reference.AsString = reference.ToString();
             }
 
