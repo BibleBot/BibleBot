@@ -167,6 +167,12 @@ namespace BibleBot.Frontend
                 }
 
                 var msg = (new Regex(@"https?:")).Replace(e.Message.Content, "");
+
+                if (e.Author.Id.ToString() == "186046294286925824")
+                {
+                    msg = e.Message.Content;
+                }
+
                 var requestObj = new BibleBot.Lib.Request
                 {
                     UserId = e.Author.Id.ToString(),
@@ -302,6 +308,50 @@ namespace BibleBot.Frontend
                             await e.Channel.SendMessageAsync(
                                 utils.Embedify("+dailyverse set", "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.", false)
                             );
+                        }
+                    }
+                    else if (commandResp.SendAnnouncement)
+                    {
+                        var guilds = new List<DiscordGuild>();
+                        var guildsToIgnore = new List<string> { "Discord Bots", "Top.gg", "Discords.com" };
+                        var preferredChannels = new List<string> { "misc", "bots", "meta", "hangout", "fellowship", "lounge", "congregation", "general", "bot-spam", "botspam", "staff" };
+                        var count = 0;
+
+                        await e.Channel.SendMessageAsync(utils.Embed2Embed(commandResp.Pages[0]));
+
+                        foreach (var client in bot.ShardClients)
+                        {
+                            foreach (var kvp in client.Value.Guilds)
+                            {
+                                guilds.Add(kvp.Value);
+                            }
+                        }
+
+                        foreach (var guild in guilds)
+                        {
+                            if (guildsToIgnore.Contains(guild.Name))
+                            {
+                                continue;
+                            }
+
+                            var sent = false;
+
+                            foreach (var ch in guild.Channels)
+                            {
+                                if (!sent && preferredChannels.Contains(ch.Value.Name))
+                                {
+                                    var perms = ch.Value.PermissionsFor(guild.CurrentMember);
+
+                                    if (perms.HasPermission(Permissions.SendMessages) && perms.HasPermission(Permissions.EmbedLinks))
+                                    {
+                                        await ch.Value.SendMessageAsync(utils.Embed2Embed(commandResp.Pages[0]));
+                                        sent = true;
+                                    }
+                                }
+                            }
+
+                            count += 1;
+                            await e.Channel.SendMessageAsync($"{count}/{guilds.Count()} - {guild.Name}");
                         }
                     }
                     else if (commandResp.Pages != null)

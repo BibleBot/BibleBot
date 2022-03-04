@@ -58,7 +58,8 @@ namespace BibleBot.Backend.Controllers
                 new CommandGroups.Resources.ResourceCommandGroup(_userService, _guildService, _resourceService.GetAllResources()),
                 new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
-                new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bibleProviders)
+                new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bibleProviders),
+                new CommandGroups.Owner.OwnerOnlyCommandGroup(_userService, _guildService, _versionService, _frontendStatsService)
             };
         }
 
