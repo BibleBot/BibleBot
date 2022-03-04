@@ -112,32 +112,6 @@ namespace BibleBot.AutomaticServices.Services.Providers
             return await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
         }
 
-        public async Task<List<SearchResult>> Search(string query, Version version)
-        {
-            string url = System.String.Format(_searchURI, _versionTable[version.Abbreviation], query);
-
-            var req = new RestRequest(url);
-            req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-
-            ABSearchResponse resp = await _restClient.GetAsync<ABSearchResponse>(req);
-
-            var results = new List<SearchResult>();
-
-            if (resp.Data != null)
-            {
-                foreach (var verse in resp.Data.Verses)
-                {
-                    results.Add(new SearchResult
-                    {
-                        Reference = verse.Reference,
-                        Text = PurifyText(verse.Text)
-                    });
-                }
-            }
-
-            return results;
-        }
-
         private string PurifyText(string text)
         {
             Dictionary<string, string> nuisances = new Dictionary<string, string>

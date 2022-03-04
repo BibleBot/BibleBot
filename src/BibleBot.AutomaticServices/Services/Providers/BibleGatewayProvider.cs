@@ -137,49 +137,6 @@ namespace BibleBot.AutomaticServices.Services.Providers
             return await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
         }
 
-        public async Task<List<SearchResult>> Search(string query, Version version)
-        {
-            string url = _baseURL + System.String.Format(_searchURI, query, version.Abbreviation);
-
-            HttpResponseMessage req = await _httpClient.GetAsync(url);
-            _cancellationToken.Token.ThrowIfCancellationRequested();
-
-            Stream resp = await req.Content.ReadAsStreamAsync();
-            _cancellationToken.Token.ThrowIfCancellationRequested();
-
-            var document = await _htmlParser.ParseDocumentAsync(resp);
-            _cancellationToken.Token.ThrowIfCancellationRequested();
-
-            var results = new List<SearchResult>();
-
-            foreach (var row in document.QuerySelectorAll(".row"))
-            {
-                foreach (var el in row.GetElementsByClassName("bible-item-extras"))
-                {
-                    el.Remove();
-                }
-
-                foreach (var el in row.GetElementsByTagName("h3"))
-                {
-                    el.Remove();
-                }
-
-                var referenceElement = row.GetElementsByClassName("bible-item-title").FirstOrDefault();
-                var textElement = row.GetElementsByClassName("bible-item-text").FirstOrDefault();
-
-                if (referenceElement != null && textElement != null)
-                {
-                    results.Add(new SearchResult
-                    {
-                        Reference = referenceElement.TextContent,
-                        Text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1))
-                    });
-                }
-            }
-
-            return results;
-        }
-
         private string PurifyText(string text)
         {
             Dictionary<string, string> nuisances = new Dictionary<string, string>
