@@ -11,9 +11,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using BibleBot.Backend.Models;
-using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
+using BibleBot.AutomaticServices.Models;
+using BibleBot.AutomaticServices.Services;
+using BibleBot.AutomaticServices.Services.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +24,7 @@ using Microsoft.OpenApi.Models;
 using Prometheus;
 using Serilog;
 
-namespace BibleBot.Backend
+namespace BibleBot.AutomaticServices
 {
     public class Startup
     {
@@ -42,35 +42,29 @@ namespace BibleBot.Backend
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
+            // Add background services.
+            services.AddHostedService<AutomaticDailyVerseService>();
+            services.AddHostedService<VersionStatsService>();
+
             // Instantiate the various services.
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();
-            services.AddSingleton<ParsingService>();
             services.AddSingleton<VersionService>();
-            services.AddSingleton<ResourceService>();
-            services.AddSingleton<FrontendStatsService>();
 
             // Instantiate the various providers, which are just services.
             services.AddSingleton<SpecialVerseProvider>();
             services.AddSingleton<BibleGatewayProvider>();
             services.AddSingleton<APIBibleProvider>();
 
-            // Add the name fetching service with a predefined instance, since we'll use it later in this function.
-            var nameFetchingService = new NameFetchingService();
-            services.AddSingleton<NameFetchingService>(nameFetchingService);
-
             services.AddControllers();
-
-            // Run the NameFetchingService on startup without async.
-            nameFetchingService.FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "BibleBot.Backend",
+                    Title = "BibleBot.AutomaticServices",
                     Version = "1",
-                    Description = "The Backend of BibleBot",
+                    Description = "The AutomaticServices of BibleBot",
                     Contact = new OpenApiContact
                     {
                         Name = "Seraphim R.P.",
@@ -97,7 +91,7 @@ namespace BibleBot.Backend
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BibleBot.Backend"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BibleBot.AutomaticServices"));
             }
             else
             {
@@ -118,7 +112,7 @@ namespace BibleBot.Backend
                 endpoints.MapMetrics();
             });
 
-            Log.Information("Backend is ready.");
+            Log.Information("AutomaticServices is ready.");
         }
     }
 }

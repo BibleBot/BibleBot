@@ -13,8 +13,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using BibleBot.Backend.Models;
-using BibleBot.Backend.Services.Providers;
+using BibleBot.AutomaticServices.Models;
+using BibleBot.AutomaticServices.Services.Providers;
 using BibleBot.Lib;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
@@ -22,7 +22,7 @@ using RestSharp;
 using RestSharp.Serializers.SystemTextJson;
 using Serilog;
 
-namespace BibleBot.Backend.Services
+namespace BibleBot.AutomaticServices.Services
 {
     public class AutomaticDailyVerseService : IHostedService, IDisposable
     {

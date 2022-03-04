@@ -33,12 +33,17 @@ branches:
 build_script:
   - cmd: dotnet publish .\src\BibleBot.Backend\BibleBot.Backend.csproj -c Release --verbosity q
   - cmd: dotnet build .\src\BibleBot.Lib\BibleBot.Lib.csproj -c Release --verbosity q
+  - cmd: dotnet publish .\src\BibleBot.AutomaticServices\BibleBot.AutomaticServices.csproj -c Release --verbosity q
   - cmd: dotnet publish .\src\BibleBot.Frontend\BibleBot.Frontend.csproj -c Release --verbosity q
   - cmd: dotnet pack .\src\BibleBot.Lib -o . -c Release --verbosity q
 
 artifacts:
   - path: .\src\BibleBot.Backend\bin\Release\net5.0\publish
     name: BibleBot.Backend
+    type: ElasticBeanstalkPackage
+
+  - path: .\src\BibleBot.AutomaticServices\bin\Release\net5.0\publish
+    name: BibleBot.AutomaticServices
     type: ElasticBeanstalkPackage
   
   - path: '*.nupkg'
