@@ -27,7 +27,6 @@ namespace BibleBot.AutomaticServices.Services.Providers
         private readonly HtmlParser _htmlParser;
         private readonly string _baseURL = "https://www.biblegateway.com";
         private readonly string _getURI = "/passage/?search={0}&version={1}&interface=print";
-        private readonly string _searchURI = "/quicksearch/?search={0}&version={1}&searchtype=all&limit=50000&interface=print";
 
         public BibleGatewayProvider()
         {
