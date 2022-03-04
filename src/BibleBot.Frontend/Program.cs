@@ -351,6 +351,7 @@ namespace BibleBot.Frontend
                             }
 
                             count += 1;
+                            Log.Information($"Announcement {count}/{guilds.Count()} - {guild.Name}");
                             await e.Channel.SendMessageAsync($"{count}/{guilds.Count()} - {guild.Name}");
                         }
                     }
