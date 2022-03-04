@@ -24,5 +24,6 @@ namespace BibleBot.Lib
         public List<InternalEmbed> Pages { get; set; }
         public bool CreateWebhook { get; set; }
         public bool RemoveWebhook { get; set; }
+        public bool SendAnnouncement { get; set; }
     }
 }
