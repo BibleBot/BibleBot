@@ -373,7 +373,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 var pages = new List<InternalEmbed>();
                 var maxResultsPerPage = 25;
                 var totalPages = (int)System.Math.Ceiling((decimal)(versions.Count / maxResultsPerPage));
-                totalPages++;
 
                 for (int i = 0; i < totalPages; i++)
                 {

@@ -312,6 +312,8 @@ namespace BibleBot.Frontend
                     }
                     else if (commandResp.SendAnnouncement)
                     {
+                        // TODO(srp): This is basically broken beyond the first 25 servers in client.Value.Guilds.
+
                         var guilds = new List<DiscordGuild>();
                         var guildsToIgnore = new List<string> { "Discord Bots", "Top.gg", "Discords.com" };
                         var preferredChannels = new List<string> { "misc", "bots", "meta", "hangout", "fellowship", "lounge", "congregation", "general", "bot-spam", "botspam", "staff" };

@@ -126,7 +126,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     var referencesUsed = new List<string>();
 
                     var totalPages = (int)System.Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
-                    totalPages++;
 
                     if (totalPages > 100)
                     {
