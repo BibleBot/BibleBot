@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Frontend;
 using BibleBot.Lib;
-using DSharpPlus;
+/*using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Enums;
@@ -72,4 +72,4 @@ public class VersionGroupContainer : ApplicationCommandModule
                 new DiscordInteractionResponseBuilder().AddEmbed(Utils.Embed2Embed(resp.Pages[0])));
         }
     }
-}
+}*/
