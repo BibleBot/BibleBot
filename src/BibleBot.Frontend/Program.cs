@@ -9,20 +9,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BibleBot.Frontend.Models;
 using BibleBot.Lib;
-using DSharpPlus;
-using DSharpPlus.Entities;
-using DSharpPlus.EventArgs;
-using DSharpPlus.Interactivity;
-using DSharpPlus.Interactivity.Enums;
-using DSharpPlus.Interactivity.Extensions;
-using DSharpPlus.SlashCommands;
+using Discord;
+using Discord.Commands;
+using Discord.Interactions;
+using Discord.WebSocket;
 using RestSharp;
 using Serilog;
+using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -31,10 +30,12 @@ namespace BibleBot.Frontend
     class Program
     {
         static DiscordShardedClient bot;
+        static InteractionService interactionService;
 
         static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
                 .WriteTo.Console(outputTemplate: "[{Level:w4}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 
@@ -45,79 +46,71 @@ namespace BibleBot.Frontend
 
         static async Task MainAsync()
         {
-            bot = new DiscordShardedClient(new DiscordConfiguration
+            bot = new DiscordShardedClient(new DiscordSocketConfig
             {
-                Token = Environment.GetEnvironmentVariable("DISCORD_TOKEN"),
-                TokenType = TokenType.Bot,
-                Intents = DiscordIntents.AllUnprivileged,
-                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Error
+                GatewayIntents = GatewayIntents.AllUnprivileged,
+                LogLevel = LogSeverity.Error
             });
+            interactionService = new InteractionService(bot.Rest);
 
-            var slashCommandRegistrars = await bot.UseSlashCommandsAsync();
-            await bot.UseInteractivityAsync(new InteractivityConfiguration()
+            bot.Log += LogAsync;
+
+            /*await bot.UseInteractivityAsync(new InteractivityConfiguration()
             {
                 AckPaginationButtons = true,
                 ButtonBehavior = ButtonPaginationBehavior.DeleteButtons,
                 PaginationBehaviour = PaginationBehaviour.Ignore,
                 PaginationDeletion = PaginationDeletion.DeleteEmojis,
                 Timeout = TimeSpan.FromMinutes(2)
-            });
+            });*/
 
-            bot.SocketOpened += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} is connecting"); return Task.CompletedTask; };
-            bot.SocketClosed += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} disconnected"); return Task.CompletedTask; };
+            bot.ShardConnected += (s) => { Log.Information($"<global> shard {s.ShardId + 1} is connecting"); return Task.CompletedTask; };
+            bot.ShardDisconnected += (e, s) => { Log.Information($"<global> shard {s.ShardId + 1} disconnected"); return Task.CompletedTask; };
 
-            bot.Ready += UpdateStatus;
-            bot.Ready += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} is ready"); return Task.CompletedTask; };
+            bot.ShardReady += UpdateStatus;
+            bot.ShardReady += (s) => { Log.Information($"<global> shard {s.ShardId + 1} is ready"); return Task.CompletedTask; };
 
-            bot.Resumed += (s, e) => { Log.Information($"<global> shard {s.ShardId + 1} resumed"); return Task.CompletedTask; };
+            bot.MessageReceived += MessageCreatedHandler;
+            await interactionService.AddModulesAsync(Assembly.GetCallingAssembly(), null);
+            await interactionService.RegisterCommandsGloballyAsync();
 
-            bot.MessageCreated += MessageCreatedHandler;
-            foreach (KeyValuePair<int, SlashCommandsExtension> registrar in slashCommandRegistrars)
-            {
-                Log.Information("registering commands");
-                registrar.Value.RegisterCommands<VersionGroupContainer>(362503610006765568);
-            }
+            bot.JoinedGuild += UpdateTopggStats;
+            bot.LeftGuild += UpdateTopggStats;
 
-            bot.GuildCreated += UpdateTopggStats;
-            bot.GuildDeleted += UpdateTopggStats;
-
+            await bot.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DISCORD_TOKEN"));
             await bot.StartAsync();
             await Task.Delay(-1);
         }
 
-        static Task UpdateStatus(DiscordClient s, DiscordEventArgs e)
+        static Task UpdateStatus(DiscordSocketClient s)
         {
             _ = Task.Run(async () =>
             {
-                await s.UpdateStatusAsync(new DiscordActivity
-                {
-                    Name = $"+biblebot v{Utils.Version} | Shard {s.ShardId + 1} / {s.ShardCount}",
-                    ActivityType = ActivityType.Playing
-                });
+                await s.SetActivityAsync(new Game($"+biblebot v{Utils.Version} | Shard {s.ShardId + 1} / {bot.Shards.Count()}"));
             });
 
             return Task.CompletedTask;
         }
 
-        static Task UpdateTopggStats(DiscordClient s, DiscordEventArgs e)
+        static Task UpdateTopggStats(SocketGuild s)
         {
             _ = Task.Run(async () =>
             {
-                int shardCount = bot.ShardClients.Count();
+                int shardCount = bot.Shards.Count();
                 int guildCount = 0;
                 int userCount = 0;
                 int channelCount = 0;
 
-                foreach (var client in bot.ShardClients)
+                foreach (var client in bot.Shards)
                 {
-                    guildCount += client.Value.Guilds.Count();
+                    guildCount += client.Guilds.Count();
 
-                    foreach (var count in client.Value.Guilds.Select((guild) => { return guild.Value.MemberCount; }))
+                    foreach (var count in client.Guilds.Select((guild) => { return guild.MemberCount; }))
                     {
                         userCount += count;
                     }
 
-                    foreach (var count in client.Value.Guilds.Select((guild) => { return guild.Value.Channels.Count(); }))
+                    foreach (var count in client.Guilds.Select((guild) => { return guild.Channels.Count(); }))
                     {
                         channelCount += count;
                     }
@@ -150,266 +143,217 @@ namespace BibleBot.Frontend
             return Task.CompletedTask;
         }
 
-        static Task MessageCreatedHandler(DiscordClient s, MessageCreateEventArgs e)
+        static Task MessageCreatedHandler(SocketMessage s)
         {
             _ = Task.Run(async () =>
             {
+                if (s.GetType() != typeof(SocketUserMessage)) { return; }
+
+                var m = s as SocketUserMessage;
+                var e = new SocketCommandContext(bot.GetShardFor(bot.GetGuild(m.Reference.GuildId.Value)), m);
                 var cli = new RestClient(Environment.GetEnvironmentVariable("ENDPOINT"));
 
-                var acceptablePrefixes = new List<string> { "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
+                if (e.User.Id == bot.CurrentUser.Id) { return; }
 
-                if (e.Author == s.CurrentUser)
-                {
-                    return;
-                }
-
-                Permissions permissions = Permissions.None;
                 string guildId;
                 bool isDM = false;
 
-                if (e.Channel.IsPrivate)
-                {
-                    permissions = Permissions.Administrator;
-                    guildId = e.Channel.Id.ToString();
-                    isDM = true;
-                }
-                else
-                {
-                    permissions = (await e.Guild.GetMemberAsync(e.Author.Id)).PermissionsIn(e.Channel);
-                    guildId = e.Guild.Id.ToString();
-                }
+                if (e.Channel.GetChannelType() == ChannelType.DM) { guildId = e.Channel.Id.ToString(); isDM = true; }
+                else { guildId = e.Guild.Id.ToString(); }
 
-                var msg = (new Regex(@"https?:")).Replace(e.Message.Content, "");
-
-                if (e.Author.Id.ToString() == "186046294286925824")
-                {
-                    msg = e.Message.Content;
-                }
+                var msg = (new Regex(@"https?:")).Replace(e.Message.CleanContent, "");
+                if (e.User.Id.ToString() == "186046294286925824") { msg = e.Message.CleanContent; }
 
                 var requestObj = new BibleBot.Lib.Request
                 {
-                    UserId = e.Author.Id.ToString(),
-                    UserPermissions = (long)permissions,
+                    UserId = e.User.Id.ToString(),
                     GuildId = guildId,
                     IsDM = isDM,
-                    IsBot = e.Author.IsBot,
+                    IsBot = e.User.IsBot,
                     Body = msg,
                     Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN")
                 };
 
                 IRestResponse restResponse = null;
-                IResponse response = null;
+                VerseResponse response = null;
 
-
-                if (acceptablePrefixes.Contains(msg.ElementAtOrDefault(0).ToString()))
+                /* if (msg.StartsWith("+stats"))
                 {
-                    if (msg.StartsWith("+stats"))
+                    int shardCount = bot.Shards.Count();
+                    int guildCount = 0;
+                    int userCount = 0;
+                    int channelCount = 0;
+
+                    foreach (var client in bot.Shards)
                     {
-                        int shardCount = bot.ShardClients.Count();
-                        int guildCount = 0;
-                        int userCount = 0;
-                        int channelCount = 0;
+                        guildCount += client.Guilds.Count();
 
-                        foreach (var client in bot.ShardClients)
+                        foreach (var count in client.Guilds.Select((guild) => { return guild.MemberCount; }))
                         {
-                            guildCount += client.Value.Guilds.Count();
-
-                            foreach (var count in client.Value.Guilds.Select((guild) => { return guild.Value.MemberCount; }))
-                            {
-                                userCount += count;
-                            }
-
-                            foreach (var count in client.Value.Guilds.Select((guild) => { return guild.Value.Channels.Count(); }))
-                            {
-                                channelCount += count;
-                            }
+                            userCount += count;
                         }
 
-
-                        var req = new RestRequest("stats/process");
-                        req.AddJsonBody(new BibleBot.Lib.Request
+                        foreach (var count in client.Guilds.Select((guild) => { return guild.Channels.Count(); }))
                         {
-                            Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"),
-                            Body = $"{shardCount}||{guildCount}||{userCount}||{channelCount}"
-                        });
-
-                        restResponse = await cli.ExecuteAsync(req, Method.POST);
+                            channelCount += count;
+                        }
                     }
 
-                    var request = new RestRequest("commands/process");
-                    request.AddJsonBody(requestObj);
 
-                    restResponse = await cli.ExecuteAsync(request, Method.POST);
-                }
-                else if (msg.Contains(":"))
+                    var req = new RestRequest("stats/process");
+                    req.AddJsonBody(new BibleBot.Lib.Request
+                    {
+                        Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"),
+                        Body = $"{shardCount}||{guildCount}||{userCount}||{channelCount}"
+                    });
+
+                    restResponse = await cli.ExecuteAsync(req, Method.POST);
+                } */
+
+                if (msg.Contains(":"))
                 {
                     var request = new RestRequest("verses/process");
                     request.AddJsonBody(requestObj);
 
                     restResponse = await cli.ExecuteAsync(request, Method.POST);
-                }
 
-                if (restResponse.Content.Contains(",\"type\":\"verse\","))
-                {
+
                     response = JsonSerializer.Deserialize<VerseResponse>(restResponse.Content,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                }
-                else
-                {
-                    response = JsonSerializer.Deserialize<CommandResponse>(restResponse.Content,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                }
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                var logStatement = $"[{s.ShardId + 1}] <{e.Author.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}";
-                if (response.OK)
-                {
-                    Log.Information(logStatement);
-                }
-                else if (response.LogStatement != null)
-                {
-                    Log.Error(logStatement);
-                }
-
-                if (response.Type == "cmd")
-                {
-                    var commandResp = response as CommandResponse;
-
-                    if (commandResp.RemoveWebhook)
+                    var logStatement = $"[{e.Client.ShardId + 1}] <{e.User.Id}@{(requestObj.IsDM ? "Direct Messages" : e.Guild.Id)}#{e.Channel.Id}> {response.LogStatement}";
+                    if (response.OK)
                     {
-                        try
+                        Log.Information(logStatement);
+                    }
+                    else if (response.LogStatement != null)
+                    {
+                        Log.Error(logStatement);
+                    }
+
+                    /* if (response.Type == "cmd")
+                    {
+                        var commandResp = response as CommandResponse;
+
+                        if (commandResp.RemoveWebhook)
                         {
-                            var webhooks = await e.Guild.GetWebhooksAsync();
-
-                            foreach (var webhook in webhooks)
+                            try
                             {
-                                if (webhook.User.Id == s.CurrentUser.Id)
+                                var ch = e.Channel as SocketTextChannel;
+                                var webhooks = await ch.GetWebhooksAsync();
+
+                                foreach (var webhook in webhooks)
                                 {
-                                    await webhook.DeleteAsync();
+                                    if (webhook.Creator.Id == bot.CurrentUser.Id) { await webhook.DeleteAsync(); }
                                 }
                             }
+                            catch
+                            {
+                                await e.Channel.SendMessageAsync(
+                                    Utils.Embedify("+dailyverse set", "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.", false)
+                                );
+                            }
                         }
-                        catch
+
+                        if (commandResp.CreateWebhook)
                         {
-                            await e.Channel.SendMessageAsync(
-                                Utils.Embedify("+dailyverse set", "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.", false)
-                            );
+                            var request = new RestRequest("webhooks/process");
+
+                            try
+                            {
+                                var ch = e.Channel as SocketTextChannel;
+                                var webhook = await ch.CreateWebhookAsync("BibleBot Automatic Daily Verses");
+
+                                requestObj.Body = $"{webhook.Id}/{webhook.Token}||{e.Channel.Id}";
+                                request.AddJsonBody(requestObj);
+
+                                await cli.PostAsync<CommandResponse>(request);
+                                await e.Channel.SendMessageAsync(Utils.Embed2Embed(commandResp.Pages[0]));
+                            }
+                            catch
+                            {
+                                await e.Channel.SendMessageAsync(
+                                    Utils.Embedify("+dailyverse set", "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.", false)
+                                );
+                            }
                         }
-                    }
-
-                    if (commandResp.CreateWebhook)
-                    {
-                        var request = new RestRequest("webhooks/process");
-
-                        try
+                        else if (commandResp.SendAnnouncement)
                         {
-                            var webhook = await e.Channel.CreateWebhookAsync("BibleBot Automatic Daily Verses", default, "For automatic daily verses from BibleBot.");
+                            // TODO(srp): This is basically broken beyond the first 25 servers in client.Value.Guilds.
+                            var guilds = new List<SocketGuild>();
+                            var guildsToIgnore = new List<string> { "Discord Bots", "Top.gg", "Discords.com" };
+                            var preferredChannels = new List<string> { "misc", "bots", "meta", "hangout", "fellowship", "lounge", "congregation", "general", "bot-spam", "botspam", "staff" };
+                            var count = 0;
 
-                            requestObj.Body = $"{webhook.Id}/{webhook.Token}||{e.Channel.Id}";
-                            request.AddJsonBody(requestObj);
-
-                            await cli.PostAsync<CommandResponse>(request);
                             await e.Channel.SendMessageAsync(Utils.Embed2Embed(commandResp.Pages[0]));
-                        }
-                        catch
-                        {
-                            await e.Channel.SendMessageAsync(
-                                Utils.Embedify("+dailyverse set", "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.", false)
-                            );
-                        }
-                    }
-                    else if (commandResp.SendAnnouncement)
-                    {
-                        // TODO(srp): This is basically broken beyond the first 25 servers in client.Value.Guilds.
 
-                        var guilds = new List<DiscordGuild>();
-                        var guildsToIgnore = new List<string> { "Discord Bots", "Top.gg", "Discords.com" };
-                        var preferredChannels = new List<string> { "misc", "bots", "meta", "hangout", "fellowship", "lounge", "congregation", "general", "bot-spam", "botspam", "staff" };
-                        var count = 0;
-
-                        await e.Channel.SendMessageAsync(utils.Embed2Embed(commandResp.Pages[0]));
-
-                        foreach (var client in bot.ShardClients)
-                        {
-                            foreach (var kvp in client.Value.Guilds)
+                            foreach (var client in bot.Shards)
                             {
-                                guilds.Add(kvp.Value);
-                            }
-                        }
-
-                        foreach (var guild in guilds)
-                        {
-                            if (guildsToIgnore.Contains(guild.Name))
-                            {
-                                continue;
+                                foreach (var guild in client.Guilds) { guilds.Add(guild); }
                             }
 
-                            var sent = false;
-
-                            foreach (var ch in guild.Channels)
+                            foreach (var guild in guilds)
                             {
-                                if (!sent && preferredChannels.Contains(ch.Value.Name))
+                                if (guildsToIgnore.Contains(guild.Name)) { continue; }
+
+                                var sent = false;
+
+                                foreach (var ch in guild.Channels)
                                 {
-                                    var perms = ch.Value.PermissionsFor(guild.CurrentMember);
-
-                                    if (perms.HasPermission(Permissions.SendMessages) && perms.HasPermission(Permissions.EmbedLinks))
+                                    if (!sent && preferredChannels.Contains(ch.Name))
                                     {
-                                        await ch.Value.SendMessageAsync(utils.Embed2Embed(commandResp.Pages[0]));
-                                        sent = true;
+                                        var perms = ch.GetPermissionOverwrite(bot.CurrentUser).Value.ToAllowList();
+
+                                        if (perms.Contains(ChannelPermission.SendMessages) && perms.Contains(ChannelPermission.EmbedLinks))
+                                        {
+                                            await ch.SendMessageAsync(Utils.Embed2Embed(commandResp.Pages[0]));
+                                            sent = true;
+                                        }
                                     }
                                 }
-                            }
 
-                            count += 1;
-                            Log.Information($"Announcement {count}/{guilds.Count()} - {guild.Name}");
-                            await e.Channel.SendMessageAsync($"{count}/{guilds.Count()} - {guild.Name}");
+                                count += 1;
+                                Log.Information($"Announcement {count}/{guilds.Count()} - {guild.Name}");
+                                await e.Channel.SendMessageAsync($"{count}/{guilds.Count()} - {guild.Name}");
+                            }
                         }
-                    }
-                    else if (commandResp.Pages != null)
-                    {
-                        if (commandResp.Pages.Count() > 1)
+                        else if (commandResp.Pages != null)
                         {
-                            var properPages = new List<Page>();
-
-                            var paginationEmojis = new PaginationEmojis();
-                            paginationEmojis.SkipLeft = null;
-                            paginationEmojis.SkipRight = null;
-                            paginationEmojis.Left = DiscordEmoji.FromUnicode("⬅");
-                            paginationEmojis.Right = DiscordEmoji.FromUnicode("➡");
-                            paginationEmojis.Stop = DiscordEmoji.FromUnicode("❌");
-
-                            if (commandResp.LogStatement.StartsWith("+resource"))
+                            if (commandResp.Pages.Count() > 1)
                             {
-                                paginationEmojis.SkipLeft = DiscordEmoji.FromUnicode("⏪");
-                                paginationEmojis.SkipRight = DiscordEmoji.FromUnicode("⏩");
-                            }
+                                var properPages = new List<Page>();
 
-                            foreach (var page in commandResp.Pages)
-                            {
-                                properPages.Add(new Page
+                                var paginationEmojis = new PaginationEmojis();
+                                paginationEmojis.SkipLeft = null;
+                                paginationEmojis.SkipRight = null;
+                                paginationEmojis.Left = DiscordEmoji.FromUnicode("⬅");
+                                paginationEmojis.Right = DiscordEmoji.FromUnicode("➡");
+                                paginationEmojis.Stop = DiscordEmoji.FromUnicode("❌");
+
+                                if (commandResp.LogStatement.StartsWith("+resource"))
                                 {
-                                    Embed = Utils.Embed2Embed(page)
-                                });
-                            }
+                                    paginationEmojis.SkipLeft = DiscordEmoji.FromUnicode("⏪");
+                                    paginationEmojis.SkipRight = DiscordEmoji.FromUnicode("⏩");
+                                }
 
-                            await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.Ignore, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(180));
-                        }
-                        else
-                        {
-                            await e.Channel.SendMessageAsync(Utils.Embed2Embed(commandResp.Pages[0]));
+                                foreach (var page in commandResp.Pages)
+                                {
+                                    properPages.Add(new Page
+                                    {
+                                        Embed = Utils.Embed2Embed(page)
+                                    });
+                                }
+
+                                await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.Ignore, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(180));
+                            }
+                            else
+                            {
+                                await e.Channel.SendMessageAsync(Utils.Embed2Embed(commandResp.Pages[0]));
+                            }
                         }
                     }
-                }
-                else if (response.Type == "verse")
-                {
-                    var verseResp = response as VerseResponse;
-
-                    if (verseResp.Verses.Count() > 1 && verseResp.Paginate)
+                    else  */
+                    /*if (response.Verses.Count() > 1 && response.Paginate)
                     {
                         var properPages = new List<Page>();
 
@@ -420,18 +364,18 @@ namespace BibleBot.Frontend
                         paginationEmojis.Right = DiscordEmoji.FromUnicode("➡");
                         paginationEmojis.Stop = DiscordEmoji.FromUnicode("❌");
 
-                        foreach (Verse verse in verseResp.Verses)
+                        foreach (Verse verse in response.Verses)
                         {
                             var referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
 
-                            if (verseResp.DisplayStyle == "embed")
+                            if (response.DisplayStyle == "embed")
                             {
                                 properPages.Add(new Page
                                 {
                                     Embed = Utils.Embedify(referenceTitle, verse.Title, verse.Text, false, null)
                                 });
                             }
-                            else if (verseResp.DisplayStyle == "code")
+                            else if (response.DisplayStyle == "code")
                             {
                                 verse.Text = verse.Text.Replace("*", "");
                                 properPages.Add(new Page
@@ -439,7 +383,7 @@ namespace BibleBot.Frontend
                                     Content = $"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```"
                                 });
                             }
-                            else if (verseResp.DisplayStyle == "blockquote")
+                            else if (response.DisplayStyle == "blockquote")
                             {
                                 properPages.Add(new Page
                                 {
@@ -450,56 +394,74 @@ namespace BibleBot.Frontend
 
                         await e.Channel.SendPaginatedMessageAsync(e.Author, properPages, paginationEmojis, PaginationBehaviour.WrapAround, PaginationDeletion.DeleteEmojis, TimeSpan.FromSeconds(120));
                     }
-                    else if (verseResp.Verses.Count > 1 && !verseResp.Paginate)
+                    else if (response.Verses.Count > 1 && !response.Paginate)
                     {
-                        foreach (Verse verse in verseResp.Verses)
+                        foreach (Verse verse in response.Verses)
                         {
                             var referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
 
-                            if (verseResp.DisplayStyle == "embed")
+                            if (response.DisplayStyle == "embed")
                             {
                                 var embed = Utils.Embedify(referenceTitle, verse.Title, verse.Text, false, null);
                                 await e.Channel.SendMessageAsync(embed);
                             }
-                            else if (verseResp.DisplayStyle == "code")
+                            else if (response.DisplayStyle == "code")
                             {
                                 verse.Text = verse.Text.Replace("*", "");
                                 await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```");
                             }
-                            else if (verseResp.DisplayStyle == "blockquote")
+                            else if (response.DisplayStyle == "blockquote")
                             {
                                 await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
                             }
                         }
                     }
-                    else if (verseResp.Verses.Count == 1)
+                    else if (response.Verses.Count == 1)
                     {
-                        var verse = verseResp.Verses[0];
+                        var verse = response.Verses[0];
                         var referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
 
-                        if (verseResp.DisplayStyle == "embed")
+                        if (response.DisplayStyle == "embed")
                         {
                             var embed = Utils.Embedify(referenceTitle, verse.Title, verse.Text, false, null);
-                            await e.Channel.SendMessageAsync(embed);
+                            await e.Channel.SendMessageAsync(embed: embed);
                         }
-                        else if (verseResp.DisplayStyle == "code")
+                        else if (response.DisplayStyle == "code")
                         {
                             verse.Text = verse.Text.Replace("*", "");
                             await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n```json\n{(verse.Title.Length > 0 ? $"{verse.Title}\n\n" : "")} {verse.Text}```");
                         }
-                        else if (verseResp.DisplayStyle == "blockquote")
+                        else if (response.DisplayStyle == "blockquote")
                         {
                             await e.Channel.SendMessageAsync($"**{referenceTitle}**\n\n> {(verse.Title.Length > 0 ? $"**{verse.Title}**\n> \n> " : "")}{verse.Text}");
                         }
                     }
-                    else if (verseResp.LogStatement.Contains("does not support the"))
+                    else if (response.LogStatement.Contains("does not support the"))
                     {
-                        await e.Channel.SendMessageAsync(Utils.Embedify("Verse Error", verseResp.LogStatement, true));
-                    }
+                        await e.Channel.SendMessageAsync(embed: Utils.Embedify("Verse Error", response.LogStatement, true));
+                    }*/
                 }
             });
 
             return Task.CompletedTask;
+        }
+
+        static async Task LogAsync(LogMessage msg)
+        {
+            var severity = msg.Severity switch
+            {
+                LogSeverity.Critical => LogEventLevel.Fatal,
+                LogSeverity.Error => LogEventLevel.Error,
+                LogSeverity.Warning => LogEventLevel.Warning,
+                LogSeverity.Info => LogEventLevel.Information,
+                LogSeverity.Verbose => LogEventLevel.Verbose,
+                LogSeverity.Debug => LogEventLevel.Debug,
+                _ => LogEventLevel.Information
+            };
+
+            Log.Write(severity, msg.Exception, "({Source}) {Message:lj}{NewLine}{Exception}", msg.Source, msg.Message);
+
+            await Task.CompletedTask;
         }
     }
 }

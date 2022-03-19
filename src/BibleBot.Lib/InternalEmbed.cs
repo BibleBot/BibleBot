@@ -26,7 +26,7 @@ namespace BibleBot.Lib
         public string URL { get; set; }
 
         [JsonPropertyName("color")]
-        public int Color { get; set; }
+        public uint Color { get; set; }
 
         [JsonPropertyName("footer")]
         public Footer Footer { get; set; }
