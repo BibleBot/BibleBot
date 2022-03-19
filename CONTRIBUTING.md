@@ -16,7 +16,7 @@ Your commits should not be monolithic, containing multiple major changes in one 
 
 ## Versioning
 
-This project generally follows [Semantic Versioning](https://semver.org/), which we will be more strictly following after v9.1's release. Make sure your commits are SemVer-friendly. **Do not change any version numbers in your PR**, this will be handled by the project maintainers.
+This project generally follows [Semantic Versioning](https://semver.org/), which we will be more strictly following after v9.2's release. Make sure your commits are SemVer-friendly. **Do not change any version numbers in your PR**, this will be handled by the project maintainers.
 
 We follow the .NET Foundation's [Breaking Change Rules](https://github.com/dotnet/corefx/blob/master/Documentation/coding-guidelines/breaking-change-rules.md) for SemVer compliance.
 

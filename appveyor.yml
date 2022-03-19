@@ -1,5 +1,5 @@
-version: '9.1-beta-{build}'
-image: Visual Studio 2019
+version: '9.2-beta-{build}'
+image: Visual Studio 2022
 
 clone_depth: 1
 
@@ -23,32 +23,26 @@ skip_commits:
   message: /.*\[ci skip\].*/
 
 install:
-  - cmd: dotnet nuget add source https://nuget.emzi0767.com/api/v3/index.json
   - cmd: dotnet restore --verbosity q
 
 build_script:
   - cmd: dotnet publish .\src\BibleBot.Backend\BibleBot.Backend.csproj -c Release --verbosity q
   - cmd: dotnet build .\src\BibleBot.Lib\BibleBot.Lib.csproj -c Release --verbosity q
   - cmd: dotnet publish .\src\BibleBot.AutomaticServices\BibleBot.AutomaticServices.csproj -c Release --verbosity q
-  - cmd: dotnet publish .\src\BibleBot.Frontend\BibleBot.Frontend.csproj -c Release --verbosity q
   - cmd: dotnet pack .\src\BibleBot.Lib -o . -c Release --verbosity q
 
 artifacts:
-  - path: .\src\BibleBot.Backend\bin\Release\net5.0\publish
+  - path: .\src\BibleBot.Backend\bin\Release\net6.0\publish
     name: BibleBot.Backend
     type: ElasticBeanstalkPackage
 
-  - path: .\src\BibleBot.AutomaticServices\bin\Release\net5.0\publish
+  - path: .\src\BibleBot.AutomaticServices\bin\Release\net6.0\publish
     name: BibleBot.AutomaticServices
     type: ElasticBeanstalkPackage
   
   - path: '*.nupkg'
     name: BibleBot.Lib
     type: NuGetPackage
-
-  - path: .\src\BibleBot.Frontend\bin\Release\net5.0\publish
-    name: BibleBot.Frontend
-    type: ElasticBeanstalkPackage
 
 test_script:
   - "%USERPROFILE%\\.nuget\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test --verbosity q --logger:\\\"trx;LogFileName=..\\..\\..\\TestResults.xml\\\"\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]* -[BibleBot.Frontend*]*\" >nul"

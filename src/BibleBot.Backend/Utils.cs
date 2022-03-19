@@ -22,7 +22,7 @@ namespace BibleBot.Backend
             ERROR_COLOR = 16723502
         }
 
-        public static string Version = "9.1-beta";
+        public static string Version = "9.2-beta";
 
         public InternalEmbed Embedify(string title, string description, bool isError)
         {
@@ -35,7 +35,7 @@ namespace BibleBot.Backend
 
             var embed = new InternalEmbed();
             embed.Title = title;
-            embed.Color = isError ? (int)Colors.ERROR_COLOR : (int)Colors.NORMAL_COLOR;
+            embed.Color = isError ? (uint)Colors.ERROR_COLOR : (uint)Colors.NORMAL_COLOR;
 
             embed.Footer = new Footer();
             embed.Footer.Text = copyright != null ? $"{copyright}\n{footerText}" : footerText;

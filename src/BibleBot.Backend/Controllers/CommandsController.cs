@@ -128,18 +128,18 @@ namespace BibleBot.Backend.Controllers
                                 {
                                     foreach (var permission in idealCommand.PermissionsRequired)
                                     {
-                                        if ((req.UserPermissions & (long)permission) != (long)permission)
-                                        {
-                                            return new CommandResponse
-                                            {
-                                                OK = false,
-                                                Pages = new List<InternalEmbed>
-                                                {
-                                                    new Utils().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
-                                                },
-                                                LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
-                                            };
-                                        }
+                                        // if ((req.UserPermissions & (long)permission) != (long)permission)
+                                        // {
+                                        //     return new CommandResponse
+                                        //     {
+                                        //         OK = false,
+                                        //         Pages = new List<InternalEmbed>
+                                        //         {
+                                        //             new Utils().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
+                                        //         },
+                                        //         LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
+                                        //     };
+                                        // }
                                     }
                                 }
 
@@ -210,18 +210,18 @@ namespace BibleBot.Backend.Controllers
                                             {
                                                 foreach (var permission in idealCommand.PermissionsRequired)
                                                 {
-                                                    if ((req.UserPermissions & (long)permission) != (long)permission)
-                                                    {
-                                                        return new CommandResponse
-                                                        {
-                                                            OK = false,
-                                                            Pages = new List<InternalEmbed>
-                                                            {
-                                                                new Utils().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
-                                                            },
-                                                            LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
-                                                        };
-                                                    }
+                                                    // if ((req.UserPermissions & (long)permission) != (long)permission)
+                                                    // {
+                                                    //     return new CommandResponse
+                                                    //     {
+                                                    //         OK = false,
+                                                    //         Pages = new List<InternalEmbed>
+                                                    //         {
+                                                    //             new Utils().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
+                                                    //         },
+                                                    //         LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
+                                                    //     };
+                                                    // }
                                                 }
                                             }
 
