@@ -9,9 +9,8 @@
 using System;
 using System.Threading.Tasks;
 using BibleBot.Lib;
-using DSharpPlus;
-using DSharpPlus.Entities;
-using DSharpPlus.SlashCommands;
+using Discord;
+using Discord.Interactions;
 using RestSharp;
 
 namespace BibleBot.Frontend
@@ -28,12 +27,12 @@ namespace BibleBot.Frontend
 
         public static string Version = "9.1-beta";
 
-        public static DiscordEmbed Embed2Embed(InternalEmbed embed)
+        public static Embed Embed2Embed(InternalEmbed embed)
         {
-            var builder = new DiscordEmbedBuilder();
+            var builder = new EmbedBuilder();
 
             builder.WithTitle(embed.Title);
-            builder.WithColor(new DiscordColor(embed.Color));
+            //builder.WithColor(new Color(embed.Color));
             builder.WithFooter(embed.Footer.Text, "https://i.imgur.com/hr4RXpy.png");
 
             if (embed.Author != null)
@@ -48,7 +47,7 @@ namespace BibleBot.Frontend
 
             if (embed.Fields != null)
             {
-                foreach (EmbedField field in embed.Fields)
+                foreach (var field in embed.Fields)
                 {
                     builder.AddField(field.Name, field.Value, field.Inline);
                 }
@@ -56,26 +55,26 @@ namespace BibleBot.Frontend
 
             if (embed.Thumbnail != null)
             {
-                builder.WithThumbnail(embed.Thumbnail.URL);
+                builder.WithThumbnailUrl(embed.Thumbnail.URL);
             }
 
             return builder.Build();
         }
 
 
-        public static DiscordEmbed Embedify(string title, string description, bool isError)
+        public static Embed Embedify(string title, string description, bool isError)
         {
             return Embedify(null, title, description, isError, null);
         }
 
-        public static DiscordEmbed Embedify(string author, string title, string description, bool isError, string copyright)
+        public static Embed Embedify(string author, string title, string description, bool isError, string copyright)
         {
             string footerText = $"BibleBot v{Utils.Version} by Kerygma Digital";
 
-            var builder = new DiscordEmbedBuilder();
+            var builder = new EmbedBuilder();
             builder.WithTitle(title);
             builder.WithDescription(description);
-            builder.WithColor(isError ? (int)Colors.ERROR_COLOR : (int)Colors.NORMAL_COLOR);
+            builder.WithColor(isError ? (uint)Colors.ERROR_COLOR : (uint)Colors.NORMAL_COLOR);
 
             builder.WithFooter(footerText, "https://i.imgur.com/hr4RXpy.png");
 
@@ -89,14 +88,14 @@ namespace BibleBot.Frontend
 
         private static Request CreateRequest(InteractionContext ctx, string body)
         {
-            bool isDM = ctx.Channel.IsPrivate;
+            bool isDM = ctx.Channel.GetChannelType() == ChannelType.DM;
             string guildId = (isDM ? ctx.Channel.Id : ctx.Guild.Id).ToString();
-            Permissions permissions = isDM ? Permissions.Administrator : ctx.Member.PermissionsIn(ctx.Channel);
+            //Permissions permissions = isDM ? Permissions.Administrator : ctx.Member.PermissionsIn(ctx.Channel);
 
             return new BibleBot.Lib.Request
             {
                 UserId = ctx.User.Id.ToString(),
-                UserPermissions = (long)permissions,
+                //UserPermissions = (long)permissions,
                 GuildId = guildId,
                 IsDM = isDM,
                 Body = body,
