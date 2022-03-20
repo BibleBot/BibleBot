@@ -212,7 +212,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 {
                                     new Utils().Embedify("+dailyverse set", "Set automatic daily verse successfully.", false)
                                 },
-                                LogStatement = $"+dailyverse set {args[0]} {args[0]}",
+                                LogStatement = $"+dailyverse set {args[0]} {args[1]}",
                                 CreateWebhook = true,
                                 RemoveWebhook = true
                             };
