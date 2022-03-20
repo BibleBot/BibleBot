@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using BibleBot.AutomaticServices.Models;
@@ -40,7 +41,7 @@ namespace BibleBot.AutomaticServices.Services
             _versionService = versionService;
 
             _restClient = new RestClient("https://discord.com/api/webhooks");
-            _restClient.UseSystemTextJson(new JsonSerializerOptions { IgnoreNullValues = true });
+            _restClient.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
         }
 
         public Task StartAsync(CancellationToken stoppingToken)

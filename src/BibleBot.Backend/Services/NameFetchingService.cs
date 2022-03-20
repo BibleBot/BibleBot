@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AngleSharp;
@@ -28,7 +28,7 @@ namespace BibleBot.Backend.Services
         private List<string> _defaultNames;
         private readonly List<string> _nuisances;
 
-        private readonly WebClient _webClient;
+        private readonly HttpClient _httpClient;
         private readonly RestClient _restClient;
 
         public NameFetchingService()
@@ -45,7 +45,7 @@ namespace BibleBot.Backend.Services
             string nuisancesText = File.ReadAllText("./Data/NameFetching/nuisances.json");
             _nuisances = JsonSerializer.Deserialize<List<string>>(nuisancesText);
 
-            _webClient = new WebClient();
+            _httpClient = new HttpClient();
             _restClient = new RestClient("https://api.scripture.api.bible/v1");
         }
 
@@ -115,7 +115,7 @@ namespace BibleBot.Backend.Services
         {
             Dictionary<string, string> versions = new Dictionary<string, string>();
 
-            string resp = _webClient.DownloadString("https://www.biblegateway.com/versions/");
+            string resp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
             var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
 
             var translationElements = document.All.Where(el => el.ClassList.Contains("translation-name"));
@@ -146,7 +146,7 @@ namespace BibleBot.Backend.Services
 
             foreach (KeyValuePair<string, string> version in versions)
             {
-                string resp = _webClient.DownloadString(version.Value);
+                string resp = await _httpClient.GetStringAsync(version.Value);
                 var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
 
                 var bookNames = document.All.Where(el => el.ClassList.Contains("book-name"));

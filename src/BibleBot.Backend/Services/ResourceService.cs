@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using BibleBot.Backend.Models;
 
 namespace BibleBot.Backend.Services
@@ -45,7 +46,7 @@ namespace BibleBot.Backend.Services
             _jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
-                IgnoreNullValues = true
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
 
             foreach (var catechismData in _catechismData)
