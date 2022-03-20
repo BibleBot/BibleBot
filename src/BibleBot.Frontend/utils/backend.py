@@ -7,7 +7,6 @@
 """
 
 import os
-import asyncio
 import requests
 import disnake
 from logger import VyLogger

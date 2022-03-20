@@ -35,7 +35,7 @@ class EventListeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info(f"biblebot ready")
+        logger.info("biblebot ready")
 
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):

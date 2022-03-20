@@ -6,12 +6,10 @@
     You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-import disnake
-from disnake import AppCommandInteraction, CommandInter, CommandInteraction
+from disnake import CommandInteraction
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend
-import asyncio
 
 logger = VyLogger("default")
 
