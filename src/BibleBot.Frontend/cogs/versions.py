@@ -11,45 +11,53 @@ from disnake import CommandInteraction
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend
+from Paginator import CreatePaginator
+
+import os
 
 logger = VyLogger("default")
 
-
-class VersionListSelect(disnake.ui.Select):
-    def __init__(self, author_id: int, is_server: bool) -> None:
-        self.author_id = author_id
-        self.custom_id = "version " + ("setserver" if is_server else "set")
-        options = [
-            # todo: populate this programatically
-            disnake.SelectOption(label="King James Version (KJV)", value="KJV"),
-            disnake.SelectOption(
-                label="Revised Standard Version (RSV)",
-                value="RSV",
-            ),
-        ]
-        super().__init__(
-            custom_id=self.custom_id, placeholder="Select a version...", options=options
-        )
-
-    async def callback(self, inter: disnake.MessageInteraction) -> None:
-        if inter.author.id != self.author_id:
-            return
-
-        value = inter.values[0]
-
-        resp = await backend.submit_command(
-            inter.channel, inter.author, f"+{self.custom_id} {value}"
-        )
-
-        await inter.message.edit(embed=resp, components=None, content=None)
-
-    async def on_error(
-        self, error: Exception, inter: disnake.MessageInteraction
-    ) -> None:
-        await inter.message.edit(
-            content="Error occurred, version settings have not changed.",
-            components=None,
-        )
+# -- This is all commented out since select menus can only have 25 options, sadly. -- #
+#
+# import pymongo
+# _mongocli = pymongo.MongoClient(os.environ.get("MONGODB_CONN"))
+# _vdb = _mongocli.BibleBotBackend
+# _versions = _vdb.Versions.find().sort("Name", pymongo.ASCENDING)
+# versions = [
+#     disnake.SelectOption(label=x["Name"], value=x["Abbreviation"]) for x in _versions
+# ]
+#
+#
+# class VersionListSelect(disnake.ui.Select):
+#     def __init__(self, author_id: int, is_server: bool) -> None:
+#         self.author_id = author_id
+#         self.custom_id = "version " + ("setserver" if is_server else "set")
+#
+#         super().__init__(
+#             custom_id=self.custom_id,
+#             placeholder="Select a version...",
+#             options=versions,
+#         )
+#
+#     async def callback(self, inter: disnake.MessageInteraction) -> None:
+#         if inter.author.id != self.author_id:
+#             return
+#
+#         value = inter.values[0]
+#
+#         resp = await backend.submit_command(
+#             inter.channel, inter.author, f"+{self.custom_id} {value}"
+#         )
+#
+#         await inter.message.edit(embed=resp, components=None, content=None)
+#
+#     async def on_error(
+#         self, error: Exception, inter: disnake.MessageInteraction
+#     ) -> None:
+#         await inter.message.edit(
+#             content="Error occurred, version settings have not changed.",
+#             components=None,
+#         )
 
 
 class Versions(commands.Cog):
@@ -62,38 +70,72 @@ class Versions(commands.Cog):
         await inter.response.send_message(embed=resp)
 
     @commands.slash_command(description="Set your preferred version.")
-    async def setversion(self, inter: CommandInteraction):
-        select_menu_view = disnake.ui.View(timeout=180)
-        select_menu_view.add_item(VersionListSelect(inter.author.id, False))
-
-        await inter.response.send_message(
-            content="Select your preferred version.",
-            view=select_menu_view,
+    async def setversion(
+        self,
+        inter: CommandInteraction,
+        abbreviation: str = commands.Param(
+            description="The abbreviation of the version."
+        ),
+    ):
+        resp = await backend.submit_command(
+            inter.channel, inter.author, f"+version set {abbreviation}"
         )
+        await inter.response.send_message(embed=resp)
 
     @commands.slash_command(description="Set your server's preferred version.")
     @commands.has_permissions(manage_guild=True)
-    async def setserverversion(self, inter: CommandInteraction):
-        select_menu_view = disnake.ui.View(timeout=180)
-        select_menu_view.add_item(VersionListSelect(inter.author.id, True))
-
-        await inter.response.send_message(
-            content="Select your server's preferred version.",
-            view=select_menu_view,
+    async def setserverversion(
+        self,
+        inter: CommandInteraction,
+        abbreviation: str = commands.Param(
+            description="The abbreviation of the version."
+        ),
+    ):
+        resp = await backend.submit_command(
+            inter.channel, inter.author, f"+version setserver {abbreviation}"
         )
+        await inter.response.send_message(embed=resp)
 
     @commands.slash_command(description="See information on a version.")
     async def versioninfo(
         self,
         inter: CommandInteraction,
-        abbv: str = commands.Param(description="The abbreviation of the version."),
+        abbreviation: str = commands.Param(
+            description="The abbreviation of the version."
+        ),
     ):
         resp = await backend.submit_command(
-            inter.channel, inter.author, f"+version info {abbv}"
+            inter.channel, inter.author, f"+version info {abbreviation}"
         )
         await inter.response.send_message(embed=resp)
 
     @commands.slash_command(description="List all available versions.")
     async def listversions(self, inter: CommandInteraction):
-        # todo: get all versions and format them
-        await inter.response.send_message(content="<version list here>")
+        resp = await backend.submit_command_raw(
+            inter.channel, inter.author, "+version list"
+        )
+
+        embeds = []
+        starting_page = None
+
+        # For whatever reason, the paginator library has the buttons
+        # performing the opposite effect, "next" goes to the previous
+        # page and vice versa. This reverses the array and makes sure
+        # the first page is properly the first embed, which is still a
+        # requirement despite the paginator working backwards.
+        #
+        # I could fix this myself by forking the library
+        # (it's a two-line fix), but I'm too lazy for that.
+        for page in resp["pages"][::-1]:
+            page_embed = backend.convert_embed(page)
+
+            if f"Page 1 of" in page_embed.title:
+                starting_page = page_embed
+            else:
+                embeds.append(page_embed)
+
+        embeds.insert(0, starting_page)
+
+        await inter.response.send_message(
+            embed=embeds[0], view=CreatePaginator(embeds, inter.author.id, 180)
+        )

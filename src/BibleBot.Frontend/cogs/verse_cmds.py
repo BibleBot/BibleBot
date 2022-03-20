@@ -8,8 +8,10 @@
 
 from disnake import CommandInteraction
 from disnake.ext import commands
+from setuptools import Command
 from logger import VyLogger
 from utils import backend
+from Paginator import CreatePaginator
 
 logger = VyLogger("default")
 
@@ -19,6 +21,37 @@ class VerseCommands(commands.Cog):
         self.bot = bot
 
     # todo: all of these commands need to account for display style
+
+    @commands.slash_command(description="Search for verses by keyword.")
+    async def search(self, inter: CommandInteraction, query: str):
+        resp = await backend.submit_command_raw(
+            inter.channel, inter.author, f"+search {query}"
+        )
+
+        embeds = []
+        starting_page = None
+
+        # For whatever reason, the paginator library has the buttons
+        # performing the opposite effect, "next" goes to the previous
+        # page and vice versa. This reverses the array and makes sure
+        # the first page is properly the first embed, which is still a
+        # requirement despite the paginator working backwards.
+        #
+        # I could fix this myself by forking the library
+        # (it's a two-line fix), but I'm too lazy for that.
+        for page in resp["pages"][::-1]:
+            page_embed = backend.convert_embed(page)
+
+            if f"Page 1 of" in page_embed.description:
+                starting_page = page_embed
+            else:
+                embeds.append(page_embed)
+
+        embeds.insert(0, starting_page)
+
+        await inter.response.send_message(
+            embed=embeds[0], view=CreatePaginator(embeds, inter.author.id, 180)
+        )
 
     @commands.slash_command(
         description="Display a random verse from a predetermined pool."
