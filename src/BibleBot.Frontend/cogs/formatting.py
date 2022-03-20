@@ -23,7 +23,6 @@ class DisplayStyleSelect(disnake.ui.Select):
             "setserverdisplay" if is_server else "setdisplay"
         )
         options = [
-            # todo: populate this programatically
             disnake.SelectOption(
                 label="Embed Blocks",
                 value="embed",
@@ -72,7 +71,6 @@ class BracketsSelect(disnake.ui.Select):
         self.author_id = author_id
         self.custom_id = "formatting setbrackets"
         options = [
-            # todo: populate this programatically
             disnake.SelectOption(
                 label="Angle Brackets <>",
                 value="<>",

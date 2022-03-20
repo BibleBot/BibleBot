@@ -7,7 +7,7 @@
 """
 
 import os
-from sys import intern
+import asyncio
 import requests
 import disnake
 from logger import VyLogger
@@ -39,6 +39,48 @@ async def submit_command(
 
     if resp.json()["type"] == "cmd":
         if len(resp.json()["pages"]) == 1:
+            # todo: webhook stuff should not be dailyverse-specific
+            if resp.json()["removeWebhook"] and not isDM:
+                try:
+                    webhooks = await ch.guild.webhooks()
+
+                    for webhook in webhooks:
+                        if webhook.user.id == ch.guild.me.id:
+                            await webhook.delete(
+                                reason=f"User ID {user.id} performed a command that removes BibleBot-related webhooks."
+                            )
+                except disnake.errors.Forbidden:
+                    await ch.send(
+                        embed=create_error_embed(
+                            "/autodailyverse",
+                            "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.",
+                        )
+                    )
+
+            if resp.json()["createWebhook"] and not isDM:
+                try:
+                    # Unlike other libraries, we have to convert an
+                    # image into bytes to pass as the webhook avatar.
+                    with open("./data/avatar.png", "rb") as image:
+                        webhook = await ch.create_webhook(
+                            name="BibleBot Automatic Daily Verses",
+                            avatar=bytearray(image.read()),
+                            reason="For automatic daily verses from BibleBot.",
+                        )
+
+                    # Send a request to the webhook controller, which will update the DB.
+                    reqbody["Body"] = f"{webhook.id}/{webhook.token}||{ch.id}"
+                    requests.post(f"{endpoint}/webhooks/process", json=reqbody)
+
+                    return convert_embed(resp.json()["pages"][0])
+                except disnake.errors.Forbidden:
+                    await ch.send(
+                        embed=create_error_embed(
+                            "/autodailyverse",
+                            "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.",
+                        )
+                    )
+
             return convert_embed(resp.json()["pages"][0])
         else:
             # todo
@@ -107,6 +149,21 @@ def create_embed_from_verse(verse):
     embed.title = verse["title"]
     embed.description = verse["text"]
     embed.color = 6709986
+
+    embed.set_footer(
+        text="BibleBot v9.2-beta by Kerygma Digital",
+        icon_url="https://i.imgur.com/hr4RXpy.png",
+    )
+
+    return embed
+
+
+def create_error_embed(title, description):
+    embed = disnake.Embed()
+
+    embed.title = title
+    embed.description = description
+    embed.color = 16723502
 
     embed.set_footer(
         text="BibleBot v9.2-beta by Kerygma Digital",
