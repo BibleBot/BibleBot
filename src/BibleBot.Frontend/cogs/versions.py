@@ -111,31 +111,10 @@ class Versions(commands.Cog):
 
     @commands.slash_command(description="List all available versions.")
     async def listversions(self, inter: CommandInteraction):
-        resp = await backend.submit_command_raw(
+        resp = await backend.submit_command(
             inter.channel, inter.author, "+version list"
         )
 
-        embeds = []
-        starting_page = None
-
-        # For whatever reason, the paginator library has the buttons
-        # performing the opposite effect, "next" goes to the previous
-        # page and vice versa. This reverses the array and makes sure
-        # the first page is properly the first embed, which is still a
-        # requirement despite the paginator working backwards.
-        #
-        # I could fix this myself by forking the library
-        # (it's a two-line fix), but I'm too lazy for that.
-        for page in resp["pages"][::-1]:
-            page_embed = backend.convert_embed(page)
-
-            if f"Page 1 of" in page_embed.title:
-                starting_page = page_embed
-            else:
-                embeds.append(page_embed)
-
-        embeds.insert(0, starting_page)
-
         await inter.response.send_message(
-            embed=embeds[0], view=CreatePaginator(embeds, inter.author.id, 180)
+            embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
         )
