@@ -104,9 +104,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+search", "Your search query needs to be at least 4 characters.", true)
+                            new Utils().Embedify("/search", "Your search query needs to be at least 4 characters.", true)
                         },
-                        LogStatement = "+search"
+                        LogStatement = "/search"
                     };
                 }
 
@@ -168,7 +168,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     {
                         OK = true,
                         Pages = pages,
-                        LogStatement = $"+search {query}"
+                        LogStatement = $"/search {query}"
                     };
                 }
                 else
@@ -178,9 +178,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+search", "Your search query produced no results.", true)
+                            new Utils().Embedify("/search", "Your search query produced no results.", true)
                         },
-                        LogStatement = "+search"
+                        LogStatement = "/search"
                     };
                 }
             }

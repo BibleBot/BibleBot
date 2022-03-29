@@ -92,9 +92,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+random", "This server has personally requested that this command be only used in DMs to avoid spam.", true)
+                            new Utils().Embedify("/random", "This server has personally requested that this command be only used in DMs to avoid spam.", true)
                         },
-                        LogStatement = "+random"
+                        LogStatement = "/random"
                     };
                 }
 
@@ -134,7 +134,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult()
                         },
                         DisplayStyle = displayStyle,
-                        LogStatement = "+random"
+                        LogStatement = "/random"
                     };
                 }
 
@@ -183,9 +183,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+random true", "This server has personally requested that this command be only used in DMs to avoid spam.", true)
+                            new Utils().Embedify("/truerandom", "This server has personally requested that this command be only used in DMs to avoid spam.", true)
                         },
-                        LogStatement = "+random true"
+                        LogStatement = "/truerandom"
                     };
                 }
 
@@ -223,7 +223,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult()
                         },
                         DisplayStyle = displayStyle,
-                        LogStatement = "+random true"
+                        LogStatement = "/truerandom"
                     };
                 }
 

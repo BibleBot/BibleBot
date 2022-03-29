@@ -122,7 +122,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult()
                         },
                         DisplayStyle = displayStyle,
-                        LogStatement = "+dailyverse"
+                        LogStatement = "/setautodailyverse"
                     };
                 }
 
@@ -163,9 +163,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+dailyverse set", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
+                            new Utils().Embedify("/setautodailyverse", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
                         },
-                        LogStatement = "+dailyverse set"
+                        LogStatement = "/setautodailyverse"
                     };
                 }
 
@@ -210,9 +210,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 OK = true,
                                 Pages = new List<InternalEmbed>
                                 {
-                                    new Utils().Embedify("+dailyverse set", "Set automatic daily verse successfully.", false)
+                                    new Utils().Embedify("/setautodailyverse", "Set automatic daily verse successfully.", false)
                                 },
-                                LogStatement = $"+dailyverse set {args[0]} {args[1]}",
+                                LogStatement = $"/setautodailyverse {args[0]} {args[1]}",
                                 CreateWebhook = true,
                                 RemoveWebhook = true
                             };
@@ -225,9 +225,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             OK = false,
                             Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify("+dailyverse set", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
+                                new Utils().Embedify("/setautodailyverse", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
                             },
-                            LogStatement = "+dailyverse set"
+                            LogStatement = "/setautodailyverse"
                         };
                     }
                 }
@@ -237,9 +237,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+dailyverse set", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
+                        new Utils().Embedify("/setautodailyverse", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
                     },
-                    LogStatement = "+dailyverse set"
+                    LogStatement = "/setautodailyverse"
                 };
             }
         }
@@ -323,9 +323,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             OK = true,
                             Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify("+dailyverse status", resp, false)
+                                new Utils().Embedify("/autodailyverse", resp, false)
                             },
-                            LogStatement = "+dailyverse status"
+                            LogStatement = "/autodailyverse"
                         };
                     }
                 }
@@ -335,9 +335,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+dailyverse status", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `+dailyverse set` to setup the automatic daily verse.", true)
+                        new Utils().Embedify("/autodailyverse", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `+dailyverse set` to setup the automatic daily verse.", true)
                     },
-                    LogStatement = "+dailyverse status"
+                    LogStatement = "/autodailyverse"
                 };
             }
         }
@@ -385,9 +385,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+dailyverse clear", "Cleared all daily verse webhooks successfully.", false)
+                        new Utils().Embedify("/clearautodailyverse", "Cleared all daily verse webhooks successfully.", false)
                     },
-                    LogStatement = "+dailyverse clear",
+                    LogStatement = "/clearautodailyverse",
                     RemoveWebhook = true
                 };
             }

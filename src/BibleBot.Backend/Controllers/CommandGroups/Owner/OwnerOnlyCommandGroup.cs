@@ -71,7 +71,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
                     {
                         new Utils().Embedify("BibleBot Announcement", string.Join(" ", args), false)
                     },
-                    LogStatement = "+owner announce",
+                    LogStatement = "/announce",
                     SendAnnouncement = true
                 };
             }

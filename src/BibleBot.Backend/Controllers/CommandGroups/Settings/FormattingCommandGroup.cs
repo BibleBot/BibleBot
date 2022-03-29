@@ -118,9 +118,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+formatting", response, false)
+                        new Utils().Embedify("/formatting", response, false)
                     },
-                    LogStatement = "+formatting"
+                    LogStatement = "/formatting"
                 };
             }
         }
@@ -157,9 +157,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setversenumbers", "Expected an `enable` or `disable` parameter.", true)
+                            new Utils().Embedify("/setversenumbers", "Expected an `enable` or `disable` parameter.", true)
                         },
-                        LogStatement = "+formatting setversenumbers"
+                        LogStatement = "/setversenumbers"
                     };
                 }
 
@@ -190,9 +190,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+formatting setversenumbers", "Set verse numbers successfully.", false)
+                        new Utils().Embedify("/setversenumbers", "Set verse numbers successfully.", false)
                     },
-                    LogStatement = $"+formatting setversenumbers {args[0]}"
+                    LogStatement = $"/setversenumbers {args[0]}"
                 };
             }
         }
@@ -229,9 +229,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting settitles", "Expected an `enable` or `disable` parameter.", true)
+                            new Utils().Embedify("/settitles", "Expected an `enable` or `disable` parameter.", true)
                         },
-                        LogStatement = "+formatting settitles"
+                        LogStatement = "/settitles"
                     };
                 }
 
@@ -262,9 +262,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+formatting settitles", "Set titles successfully.", false)
+                        new Utils().Embedify("/settitles", "Set titles successfully.", false)
                     },
-                    LogStatement = $"+formatting settitles {args[0]}"
+                    LogStatement = $"/settitles {args[0]}"
                 };
             }
         }
@@ -301,9 +301,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setpagination", "Expected an `enable` or `disable` parameter.", true)
+                            new Utils().Embedify("/setpagination", "Expected an `enable` or `disable` parameter.", true)
                         },
-                        LogStatement = "+formatting setpagination"
+                        LogStatement = "/setpagination"
                     };
                 }
 
@@ -334,9 +334,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+formatting setpagination", "Set titles successfully.", false)
+                        new Utils().Embedify("/setpagination", "Set titles successfully.", false)
                     },
-                    LogStatement = $"+formatting setpagination {args[0]}"
+                    LogStatement = $"/setpagination {args[0]}"
                 };
             }
         }
@@ -373,9 +373,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
+                            new Utils().Embedify("/setdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
                         },
-                        LogStatement = "+formatting setdisplay"
+                        LogStatement = "/setdisplay"
                     };
                 }
 
@@ -406,9 +406,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+formatting setdisplay", "Set display style successfully.", false)
+                        new Utils().Embedify("/setdisplay", "Set display style successfully.", false)
                     },
-                    LogStatement = $"+formatting setdisplay {args[0]}"
+                    LogStatement = $"/setdisplay {args[0]}"
                 };
             }
         }
@@ -448,9 +448,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setserverdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
+                            new Utils().Embedify("/setserverdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
                         },
-                        LogStatement = "+formatting setserverdisplay"
+                        LogStatement = "/setserverdisplay"
                     };
                 }
 
@@ -480,9 +480,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+formatting setserverdisplay", "Set server display style successfully.", false)
+                        new Utils().Embedify("/setserverdisplay", "Set server display style successfully.", false)
                     },
-                    LogStatement = $"+formatting setserverdisplay {args[0]}"
+                    LogStatement = $"/setserverdisplay {args[0]}"
                 };
             }
         }
@@ -524,9 +524,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setprefix", "The prefix can only be one character.", true)
+                            new Utils().Embedify("/setprefix", "The prefix can only be one character.", true)
                         },
-                        LogStatement = "+formatting setprefix"
+                        LogStatement = "/setprefix"
                     };
                 }
                 else if (!acceptablePrefixes.Contains(args[0]))
@@ -536,9 +536,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setprefix", "The prefix can only be set to `+`, `-`, `!`, `=`, `$`, `%`, `^`, `*`, `.`, `,`, `?`, `~`, or `|`.", true)
+                            new Utils().Embedify("/setprefix", "The prefix can only be set to `+`, `-`, `!`, `=`, `$`, `%`, `^`, `*`, `.`, `,`, `?`, `~`, or `|`.", true)
                         },
-                        LogStatement = "+formatting setprefix"
+                        LogStatement = "/setprefix"
                     };
                 }
 
@@ -569,9 +569,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+formatting setprefix", "Set prefix successfully.", false)
+                        new Utils().Embedify("/setprefix", "Set prefix successfully.", false)
                     },
-                    LogStatement = $"+formatting setprefix {args[0]}"
+                    LogStatement = $"/setprefix {args[0]}"
                 };
             }
         }
@@ -613,9 +613,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setbrackets", "The brackets can only be two characters.", true)
+                            new Utils().Embedify("/setbrackets", "The brackets can only be two characters.", true)
                         },
-                        LogStatement = "+formatting setbrackets"
+                        LogStatement = "/setbrackets"
                     };
                 }
                 else if (!acceptableBrackets.Contains(args[0]))
@@ -625,9 +625,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+formatting setbrackets", "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.", true)
+                            new Utils().Embedify("/setbrackets", "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.", true)
                         },
-                        LogStatement = "+formatting setbrackets"
+                        LogStatement = "/setbrackets"
                     };
                 }
 
@@ -658,9 +658,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+formatting setbrackets", "Set brackets successfully.", false)
+                        new Utils().Embedify("/setbrackets", "Set brackets successfully.", false)
                     },
-                    LogStatement = $"+formatting setbrackets {args[0]}"
+                    LogStatement = $"/setbrackets {args[0]}"
                 };
             }
         }
