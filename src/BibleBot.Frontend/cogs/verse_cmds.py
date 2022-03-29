@@ -36,6 +36,15 @@ class VerseCommands(commands.Cog):
         description="Display a random verse from a predetermined pool."
     )
     async def random(self, inter: CommandInteraction):
+        # /r/Catholicism has personally requested that random commands be used in DMs.
+        if inter.guild_id == 238001909716353025:
+            err = backend.create_error_embed(
+                "/random",
+                "This server has personally requested that this command be only used in DMs to avoid spam.",
+            )
+            await inter.response.send_message(embed=err)
+            return
+
         resp = await backend.submit_command(inter.channel, inter.author, "+random")
         await inter.response.send_message(embed=resp)
 
@@ -43,6 +52,15 @@ class VerseCommands(commands.Cog):
         description="Display a random verse based on random number generation."
     )
     async def truerandom(self, inter: CommandInteraction):
+        # /r/Catholicism has personally requested that random commands be used in DMs.
+        if inter.guild_id == 238001909716353025:
+            err = backend.create_error_embed(
+                "/random",
+                "This server has personally requested that this command be only used in DMs to avoid spam.",
+            )
+            await inter.response.send_message(embed=err)
+            return
+
         resp = await backend.submit_command(inter.channel, inter.author, "+random true")
         await inter.response.send_message(embed=resp)
 
