@@ -95,12 +95,7 @@ namespace BibleBot.Backend.Controllers
                 var idealGuild = _guildService.Get(req.GuildId);
                 var prefix = "+";
 
-                if (idealGuild != null)
-                {
-                    prefix = idealGuild.Prefix;
-                }
-
-                if (potentialCommand.StartsWith(prefix) || (potentialCommand.Substring(1) == "biblebot" && potentialCommand.ElementAt(0) == '+'))
+                if (potentialCommand.StartsWith(prefix))
                 {
                     var grp = _commandGroups.Where(grp => grp.Name == potentialCommand.Substring(1)).FirstOrDefault();
 
@@ -187,87 +182,7 @@ namespace BibleBot.Backend.Controllers
 
                         if (cmd != null)
                         {
-                            if (cmd.Name == "biblebot")
-                            {
-                                var args = tokenizedBody.Skip(1).ToList();
-
-                                if (args.Count < 1)
-                                {
-                                    return cmd.ProcessCommand(req, new List<string>());
-                                }
-
-                                var potentialRescue = _commandGroups.Where(grp => grp.Name == args[0]).FirstOrDefault();
-
-                                if (potentialRescue != null)
-                                {
-                                    if (args.Count > 1)
-                                    {
-                                        var idealCommand = potentialRescue.Commands.Where(cmd => cmd.Name == args[1]).FirstOrDefault();
-
-                                        if (idealCommand != null)
-                                        {
-                                            if (idealCommand.PermissionsRequired != null)
-                                            {
-                                                foreach (var permission in idealCommand.PermissionsRequired)
-                                                {
-                                                    // if ((req.UserPermissions & (long)permission) != (long)permission)
-                                                    // {
-                                                    //     return new CommandResponse
-                                                    //     {
-                                                    //         OK = false,
-                                                    //         Pages = new List<InternalEmbed>
-                                                    //         {
-                                                    //             new Utils().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
-                                                    //         },
-                                                    //         LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
-                                                    //     };
-                                                    // }
-                                                }
-                                            }
-
-                                            if (req.IsBot && !idealCommand.BotAllowed)
-                                            {
-                                                return new CommandResponse
-                                                {
-                                                    OK = false,
-                                                    Pages = new List<InternalEmbed>
-                                                    {
-                                                        new Utils().Embedify("Insufficient Permissions", "Bots are not permitted to use this command, please inform your nearest human.", true)
-                                                    },
-                                                    LogStatement = $"Bot can't use +{grp.Name} {idealCommand.Name}."
-                                                };
-                                            }
-
-                                            var commandArgs = args.Skip(2).ToList();
-
-                                            if (commandArgs.Count() < idealCommand.ExpectedArguments)
-                                            {
-                                                return new CommandResponse
-                                                {
-                                                    OK = false,
-                                                    Pages = new List<InternalEmbed>
-                                                    {
-                                                        new Utils().Embedify("Insufficient Parameters", idealCommand.ArgumentsError, true)
-                                                    },
-                                                    LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
-                                                };
-                                            }
-
-                                            return idealCommand.ProcessCommand(req, commandArgs);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return potentialRescue.DefaultCommand.ProcessCommand(req, new List<string>());
-                                    }
-                                }
-
-                                return cmd.ProcessCommand(req, new List<string>());
-                            }
-                            else
-                            {
-                                return cmd.ProcessCommand(req, new List<string>());
-                            }
+                            return cmd.ProcessCommand(req, new List<string>());
                         }
                     }
                 }

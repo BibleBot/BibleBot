@@ -71,7 +71,7 @@ class VerseCommands(commands.Cog):
 
     @commands.slash_command(description="Setup automatic daily verses on this channel.")
     @commands.has_permissions(manage_guild=True)
-    async def setautodailyverse(
+    async def dailyverseset(
         self, inter: CommandInteraction, time: str = None, tz: str = None
     ):
         resp = None
@@ -80,7 +80,6 @@ class VerseCommands(commands.Cog):
                 inter.channel, inter.author, "+dailyverse set"
             )
         else:
-            # todo: webhooks et al
             resp = await backend.submit_command(
                 inter.channel, inter.author, f"+dailyverse set {time} {tz}"
             )
@@ -90,7 +89,7 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(
         description="See automatic daily verse status for this server."
     )
-    async def autodailyversestatus(self, inter: CommandInteraction):
+    async def dailyversestatus(self, inter: CommandInteraction):
         resp = await backend.submit_command(
             inter.channel, inter.author, "+dailyverse status"
         )
@@ -101,8 +100,7 @@ class VerseCommands(commands.Cog):
         description="Clear all automatic daily verse preferences for this server."
     )
     @commands.has_permissions(manage_guild=True)
-    async def clearautodailyverse(self, inter: CommandInteraction):
-        # todo: webhooks et al
+    async def dailyverseclear(self, inter: CommandInteraction):
         resp = await backend.submit_command(
             inter.channel, inter.author, "+dailyverse clear"
         )

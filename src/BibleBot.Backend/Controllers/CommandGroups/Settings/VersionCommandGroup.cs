@@ -79,11 +79,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 var response = "Your preferred version is set to **<version>**.\n" +
                                "The server's preferred version is set to **<gversion>**.\n\n" +
-                               "__**Subcommands**__\n" +
-                               "**set** - set your preferred version\n" +
-                               "**setserver** - set the server's default version (staff only)\n" +
-                               "**info** - get information on a version\n" +
-                               "**list** - list all available versions";
+                               "__**Related Commands**__\n" +
+                               "**/setversion** - set your preferred version\n" +
+                               "**/setserverversion** - set the server's default version (staff only)\n" +
+                               "**/versioninfo** - get information on a version\n" +
+                               "**/listversions** - list all available versions";
 
                 if (idealUser != null)
                 {

@@ -40,7 +40,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new FormattingSetPagination(_userService, _guildService),
                 new FormattingSetDisplayStyle(_userService, _guildService),
                 new FormattingSetServerDisplayStyle(_userService, _guildService),
-                new FormattingSetPrefix(_userService, _guildService),
                 new FormattingSetIgnoringBrackets(_userService, _guildService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
@@ -81,14 +80,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                                "The bot's prefix for this server is **`<prefix>`**.\n" +
                                "The server's preferred display style is set to **`<serverDisplayStyle>`**.\n" +
                                "This bot will ignore verses in this server surrounded by **`<ignoringBrackets>`**.\n\n" +
-                               "__**Subcommands**__\n" +
-                               "**setversenumbers** - enable or disable verse numbers\n" +
-                               "**settitles** - enable or disable titles\n" +
-                               "**setpagination** - enable or disable verse pagination\n" +
-                               "**setdisplay** - set your preferred display style\n" +
-                               "**setserverdisplay** - set the server's preferred display style (staff only)\n" +
-                               "**setprefix** - set the bot's command prefix for this server (staff only)\n" +
-                               "**setbrackets** - set the bot's ignoring brackets for this server (staff only)";
+                               "__**Related Commands**__\n" +
+                               "**/setversenumbers** - enable or disable verse numbers\n" +
+                               "**/settitles** - enable or disable titles\n" +
+                               "**/setpagination** - enable or disable verse pagination\n" +
+                               "**/setdisplay** - set your preferred display style\n" +
+                               "**/setserverdisplay** - set the server's preferred display style (staff only)\n" +
+                               "**/setbrackets** - set the bot's ignoring brackets for this server (staff only)";
 
                 if (idealUser != null)
                 {
@@ -334,7 +332,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/setpagination", "Set titles successfully.", false)
+                        new Utils().Embedify("/setpagination", "Set pagination successfully.", false)
                     },
                     LogStatement = $"/setpagination {args[0]}"
                 };
@@ -483,95 +481,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/setserverdisplay", "Set server display style successfully.", false)
                     },
                     LogStatement = $"/setserverdisplay {args[0]}"
-                };
-            }
-        }
-
-        public class FormattingSetPrefix : ICommand
-        {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-
-            public FormattingSetPrefix(UserService userService, GuildService guildService)
-            {
-                Name = "setprefix";
-                ArgumentsError = "Expected a parameter with a single character, that must be `+`, `-`, `!`, `=`, `$`, `%`, `^`, `*`, `.`, `,`, `?`, `~`, or `|`.";
-                ExpectedArguments = 1;
-                PermissionsRequired = new List<Permissions>
-                {
-                    Permissions.MANAGE_GUILD
-                };
-                BotAllowed = false;
-
-                _userService = userService;
-                _guildService = guildService;
-            }
-
-            public IResponse ProcessCommand(Request req, List<string> args)
-            {
-                var acceptablePrefixes = new List<string> { "+", "-", "!", "=", "$", "%", "^", "*", ".", ",", "?", "~", "|" };
-
-                if (args[0].Length != 1)
-                {
-                    return new CommandResponse
-                    {
-                        OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
-                            new Utils().Embedify("/setprefix", "The prefix can only be one character.", true)
-                        },
-                        LogStatement = "/setprefix"
-                    };
-                }
-                else if (!acceptablePrefixes.Contains(args[0]))
-                {
-                    return new CommandResponse
-                    {
-                        OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
-                            new Utils().Embedify("/setprefix", "The prefix can only be set to `+`, `-`, `!`, `=`, `$`, `%`, `^`, `*`, `.`, `,`, `?`, `~`, or `|`.", true)
-                        },
-                        LogStatement = "/setprefix"
-                    };
-                }
-
-
-                var idealGuild = _guildService.Get(req.GuildId);
-
-                if (idealGuild != null)
-                {
-                    idealGuild.Prefix = args[0];
-                    _guildService.Update(req.GuildId, idealGuild);
-                }
-                else
-                {
-                    _guildService.Create(new Guild
-                    {
-                        GuildId = req.GuildId,
-                        Version = "RSV",
-                        Language = "english",
-                        Prefix = args[0],
-                        DisplayStyle = "embed",
-                        IgnoringBrackets = "<>",
-                        IsDM = req.IsDM
-                    });
-                }
-
-                return new CommandResponse
-                {
-                    OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
-                        new Utils().Embedify("/setprefix", "Set prefix successfully.", false)
-                    },
-                    LogStatement = $"/setprefix {args[0]}"
                 };
             }
         }

@@ -11,6 +11,8 @@ import requests
 import disnake
 from logger import VyLogger
 
+from Paginator import CreatePaginator
+
 logger = VyLogger("default")
 
 
@@ -33,10 +35,14 @@ async def submit_command(
     endpoint = os.environ.get("ENDPOINT")
     resp = requests.post(f"{endpoint}/commands/process", json=reqbody)
 
-    print(reqbody)
-    print(resp.json())
-
     if resp.json()["type"] == "cmd":
+        if resp.json()["ok"]:
+            logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
+        else:
+            logger.error(
+                f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"]
+            )
+
         if len(resp.json()["pages"]) == 1:
             # todo: webhook stuff should not be dailyverse-specific
             if resp.json()["removeWebhook"] and not isDM:
@@ -51,7 +57,7 @@ async def submit_command(
                 except disnake.errors.Forbidden:
                     await ch.send(
                         embed=create_error_embed(
-                            "/autodailyverse",
+                            "/dailyverseset",
                             "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.",
                         )
                     )
@@ -75,7 +81,7 @@ async def submit_command(
                 except disnake.errors.Forbidden:
                     await ch.send(
                         embed=create_error_embed(
-                            "/autodailyverse",
+                            "/dailyverseset",
                             "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.",
                         )
                     )
@@ -84,12 +90,46 @@ async def submit_command(
         else:
             return create_pagination_embeds_from_pages(resp.json()["pages"])
     elif resp.json()["type"] == "verse":
-        if not resp.json()["paginate"] and resp.json()["displayStyle"] == "embed":
-            if len(resp.json()["verses"]) == 1:
-                return create_embed_from_verse(resp.json()["verses"][0])
-            else:
-                # todo
-                pass
+        if "does not support the" in resp.json()["logStatement"]:
+            await ch.send(
+                embed=create_error_embed("Verse Error", resp.json()["logStatement"])
+            )
+            return
+
+        display_style = resp.json()["displayStyle"]
+        if display_style == "embed":
+            for verse in resp.json()["verses"]:
+                await ch.send(embed=create_embed_from_verse(verse))
+        elif display_style == "blockquote":
+            for verse in resp.json()["verses"]:
+                reference_title = (
+                    verse["reference"]["asString"]
+                    + " - "
+                    + verse["reference"]["version"]["name"]
+                )
+                verse_title = (
+                    ("**" + verse["title"] + "**\n> \n> ")
+                    if len(verse["title"]) > 0
+                    else ""
+                )
+                verse_text = verse["text"]
+
+                await ch.send(f"**{reference_title}**\n\n> {verse_title}{verse_text}")
+        elif display_style == "code":
+            for verse in resp.json()["verses"]:
+                reference_title = (
+                    verse["reference"]["asString"]
+                    + " - "
+                    + verse["reference"]["version"]["name"]
+                )
+                verse_title = (
+                    (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
+                )
+                verse_text = verse["text"].replace("*", "")
+
+                await ch.send(
+                    f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+                )
 
 
 async def submit_command_raw(
@@ -112,6 +152,71 @@ async def submit_command_raw(
     resp = requests.post(f"{endpoint}/commands/process", json=reqbody)
 
     return resp.json()
+
+
+async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, body: str):
+    ch = await rch._get_channel()
+
+    isDM = ch.type == disnake.ChannelType.private
+    guildId = ch.id if isDM else user.id
+
+    reqbody = {
+        "UserId": str(user.id),
+        "GuildId": str(guildId),
+        "IsDM": isDM,
+        "Body": body,
+        "Token": os.environ.get("ENDPOINT_TOKEN"),
+    }
+
+    endpoint = os.environ.get("ENDPOINT")
+    resp = requests.post(f"{endpoint}/verses/process", json=reqbody)
+
+    logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
+
+    if "does not support the" in resp.json()["logStatement"]:
+        await ch.send(
+            embed=create_error_embed("Verse Error", resp.json()["logStatement"])
+        )
+        return
+
+    display_style = resp.json()["displayStyle"]
+    if display_style == "embed":
+        if resp.json()["paginate"] and len(resp.json()["verses"]) > 1:
+            embeds = create_pagination_embeds_from_verses(resp.json()["verses"])
+            paginator = CreatePaginator(embeds, user.id, 180)
+
+            await ch.send(embed=embeds[0], view=paginator)
+        else:
+            for verse in resp.json()["verses"]:
+                await ch.send(embed=create_embed_from_verse(verse))
+    elif display_style == "blockquote":
+        for verse in resp.json()["verses"]:
+            reference_title = (
+                verse["reference"]["asString"]
+                + " - "
+                + verse["reference"]["version"]["name"]
+            )
+            verse_title = (
+                ("**" + verse["title"] + "**\n> \n> ")
+                if len(verse["title"]) > 0
+                else ""
+            )
+            verse_text = verse["text"]
+
+            await ch.send(f"**{reference_title}**\n\n> {verse_title}{verse_text}")
+    elif display_style == "code":
+        for verse in resp.json()["verses"]:
+            reference_title = (
+                verse["reference"]["asString"]
+                + " - "
+                + verse["reference"]["version"]["name"]
+            )
+            verse_title = (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
+            verse_text = verse["text"].replace("*", "")
+
+            await ch.send(
+                f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+            )
 
 
 def convert_embed(internal_embed):
@@ -192,5 +297,30 @@ def create_pagination_embeds_from_pages(pages):
             embeds.append(page_embed)
 
     embeds.insert(0, starting_page)
+
+    return embeds
+
+
+def create_pagination_embeds_from_verses(verses):
+    embeds = []
+    starting_verse = None
+
+    # For whatever reason, the paginator library has the buttons
+    # performing the opposite effect, "next" goes to the previous
+    # page and vice versa. This reverses the array and makes sure
+    # the first page is properly the first embed, which is still a
+    # requirement despite the paginator working backwards.
+    #
+    # I could fix this myself by forking the library
+    # (it's a two-line fix), but I'm too lazy for that.
+    for verse in verses[::-1]:
+        verse_embed = create_embed_from_verse(verse)
+
+        if verse == verses[-1]:
+            starting_verse = verse_embed
+        else:
+            embeds.append(verse_embed)
+
+    embeds.insert(0, starting_verse)
 
     return embeds

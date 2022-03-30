@@ -84,6 +84,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 var resp = $"**__Frontend Stats__**\n" +
                 $"**Shard Count**: {frontendStats.ShardCount}\n" +
                 $"**Server Count**: {frontendStats.ServerCount}\n" +
+                $"**User Count**: {frontendStats.UserCount}\n" +
                 $"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
                 $"**__Backend Stats__**\n" +
                 $"**User Preference Count**: {userPrefs.Count}\n" +
@@ -146,14 +147,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new EmbedField
                         {
                             Name = "📖 Commands",
-                            Value = "`+search` - search for verses by keyword\n" +
-                            "`+version` - version preferences and information\n" +
-                            "`+formatting` - preferences for verse styles and bot behavior\n" +
-                            "`+dailyverse` - daily verses and automation\n" +
-                            "`+random` - get a random Bible verse\n" +
-                            "`+resource` - creeds, catechisms, confessions, and historical documents\n" +
-                            "`+stats` - view bot statistics\n" +
-                            "`+invite` - get the invite link for BibleBot\n\n─────────────",
+                            Value = "`/search` - search for verses by keyword\n" +
+                            "`/version` - version preferences and information\n" +
+                            "`/formatting` - preferences for verse styles and bot behavior\n" +
+                            "`/dailyverse` - daily verses and automation\n" +
+                            "`/random` - get a random Bible verse\n" +
+                            "`/resource` - creeds, catechisms, confessions, and historical documents\n" +
+                            "`/stats` - view bot statistics\n" +
+                            "`/invite` - get the invite link for BibleBot\n\n─────────────",
                             Inline = false
                         },
                         new EmbedField
