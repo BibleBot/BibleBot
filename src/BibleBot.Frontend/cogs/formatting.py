@@ -139,7 +139,7 @@ class Formatting(commands.Cog):
 
         await inter.response.send_message(embed=resp)
 
-    @commands.slash_command(description="Enable or disable verse numbers.")
+    @commands.slash_command(description="Enable or disable headings.")
     async def settitles(
         self,
         inter: CommandInteraction,
