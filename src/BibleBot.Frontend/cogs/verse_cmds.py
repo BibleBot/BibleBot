@@ -20,8 +20,6 @@ class VerseCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # todo: all of these commands need to account for display style
-
     @commands.slash_command(description="Search for verses by keyword.")
     async def search(self, inter: CommandInteraction, query: str):
         resp = await backend.submit_command(
