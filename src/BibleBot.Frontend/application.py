@@ -18,8 +18,6 @@ intents.message_content = True
 bot = commands.AutoShardedBot(
     command_prefix=commands.when_mentioned,
     intents=intents,
-    test_guilds=[362503610006765568],
-    sync_commands_debug=True,
 )
 
 bot.load_extension("cogs")
