@@ -39,6 +39,10 @@ artifacts:
   - path: .\src\BibleBot.AutomaticServices\bin\Release\net6.0\publish
     name: BibleBot.AutomaticServices
     type: ElasticBeanstalkPackage
+
+  - path: .\src\BibleBot.Frontend
+    name: BibleBot.Frontend
+    type: ElasticBeanstalkPackage
   
   - path: '*.nupkg'
     name: BibleBot.Lib
