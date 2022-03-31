@@ -91,15 +91,12 @@ async def submit_command(
             return create_pagination_embeds_from_pages(resp.json()["pages"])
     elif resp.json()["type"] == "verse":
         if "does not support the" in resp.json()["logStatement"]:
-            await ch.send(
-                embed=create_error_embed("Verse Error", resp.json()["logStatement"])
-            )
-            return
+            return create_error_embed("Verse Error", resp.json()["logStatement"])
 
         display_style = resp.json()["displayStyle"]
         if display_style == "embed":
             for verse in resp.json()["verses"]:
-                await ch.send(embed=create_embed_from_verse(verse))
+                return create_embed_from_verse(verse)
         elif display_style == "blockquote":
             for verse in resp.json()["verses"]:
                 reference_title = (
@@ -114,7 +111,7 @@ async def submit_command(
                 )
                 verse_text = verse["text"]
 
-                await ch.send(f"**{reference_title}**\n\n> {verse_title}{verse_text}")
+                return f"**{reference_title}**\n\n> {verse_title}{verse_text}"
         elif display_style == "code":
             for verse in resp.json()["verses"]:
                 reference_title = (
@@ -127,7 +124,7 @@ async def submit_command(
                 )
                 verse_text = verse["text"].replace("*", "")
 
-                await ch.send(
+                return (
                     f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
                 )
 
@@ -295,6 +292,9 @@ def create_pagination_embeds_from_pages(pages):
             starting_page = page_embed
         else:
             embeds.append(page_embed)
+
+    if starting_page == None:
+        starting_page = embeds.pop()
 
     embeds.insert(0, starting_page)
 

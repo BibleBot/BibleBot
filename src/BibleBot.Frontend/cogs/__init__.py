@@ -12,6 +12,7 @@ from cogs import versions
 from cogs import formatting
 from cogs import info
 from cogs import verse_cmds
+from cogs import resources
 
 
 def setup(bot: commands.Bot):
@@ -20,3 +21,4 @@ def setup(bot: commands.Bot):
     bot.add_cog(formatting.Formatting(bot))
     bot.add_cog(info.Information(bot))
     bot.add_cog(verse_cmds.VerseCommands(bot))
+    bot.add_cog(resources.Resources(bot))

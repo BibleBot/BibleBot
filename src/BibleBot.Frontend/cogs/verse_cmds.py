@@ -46,7 +46,11 @@ class VerseCommands(commands.Cog):
             return
 
         resp = await backend.submit_command(inter.channel, inter.author, "+random")
-        await inter.response.send_message(embed=resp)
+
+        if isinstance(resp, str):
+            await inter.response.send_message(content=resp)
+        else:
+            await inter.response.send_message(embed=resp)
 
     @commands.slash_command(
         description="Display a random verse based on random number generation."
@@ -62,12 +66,20 @@ class VerseCommands(commands.Cog):
             return
 
         resp = await backend.submit_command(inter.channel, inter.author, "+random true")
-        await inter.response.send_message(embed=resp)
+
+        if isinstance(resp, str):
+            await inter.response.send_message(content=resp)
+        else:
+            await inter.response.send_message(embed=resp)
 
     @commands.slash_command(description="Display the verse of the day.")
     async def dailyverse(self, inter: CommandInteraction):
         resp = await backend.submit_command(inter.channel, inter.author, "+dailyverse")
-        await inter.response.send_message(embed=resp)
+
+        if isinstance(resp, str):
+            await inter.response.send_message(content=resp)
+        else:
+            await inter.response.send_message(embed=resp)
 
     @commands.slash_command(description="Setup automatic daily verses on this channel.")
     @commands.has_permissions(manage_guild=True)

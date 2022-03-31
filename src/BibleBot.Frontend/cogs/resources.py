@@ -20,14 +20,25 @@ class Resources(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # todo: this
+    @commands.slash_command(description="See all available resources.")
+    async def resources(self, inter: CommandInteraction):
+        resp = await backend.submit_command(inter.channel, inter.author, f"+resource")
+        await inter.response.send_message(embed=resp)
 
-    @commands.slash_command(description="Search for verses by keyword.")
-    async def search(self, inter: CommandInteraction, query: str):
-        resp = await backend.submit_command(
-            inter.channel, inter.author, f"+search {query}"
-        )
+    @commands.slash_command(description="Use a resource.")
+    async def resource(
+        self, inter: CommandInteraction, resource: str, range: str = None
+    ):
+        cmd = f"+resource {resource}"
 
-        await inter.response.send_message(
-            embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
-        )
+        if range:
+            cmd += f" {range}"
+
+        resp = await backend.submit_command(inter.channel, inter.author, cmd)
+
+        if isinstance(resp, list):
+            await inter.response.send_message(
+                embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
+            )
+        else:
+            await inter.response.send_message(embed=resp)
