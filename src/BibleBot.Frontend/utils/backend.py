@@ -18,6 +18,7 @@ from Paginator import CreatePaginator
 logger = VyLogger("default")
 logging.getLogger("urllib3").setLevel(logging.CRITICAL)
 logging.getLogger("requests").setLevel(logging.CRITICAL)
+HTTPConnection.debuglevel = 0
 
 
 async def submit_command(
@@ -175,11 +176,12 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
     if resp.json()["logStatement"]:
         logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
 
-    if "does not support the" in resp.json()["logStatement"]:
-        await ch.send(
-            embed=create_error_embed("Verse Error", resp.json()["logStatement"])
-        )
-        return
+    if resp.json()["logStatement"]:
+        if "does not support the" in resp.json()["logStatement"]:
+            await ch.send(
+                embed=create_error_embed("Verse Error", resp.json()["logStatement"])
+            )
+            return
 
     display_style = resp.json()["displayStyle"]
     if display_style == "embed":
