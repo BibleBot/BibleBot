@@ -77,7 +77,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                                "Titles are **<titles>**.\n" +
                                "Verse pagination is **<pagination>**.\n" +
                                "Your preferred display style is set to **`<displayStyle>`**.\n\n" +
-                               "The bot's prefix for this server is **`<prefix>`**.\n" +
                                "The server's preferred display style is set to **`<serverDisplayStyle>`**.\n" +
                                "This bot will ignore verses in this server surrounded by **`<ignoringBrackets>`**.\n\n" +
                                "__**Related Commands**__\n" +
