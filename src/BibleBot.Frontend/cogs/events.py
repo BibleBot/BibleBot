@@ -47,13 +47,11 @@ class EventListeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: disnake.Guild):
-        await self.bot.wait_for_ready()
         update_topgg(self.bot)
         update_discordbotlist(self.bot)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: disnake.Guild):
-        await self.bot.wait_for_ready()
         update_topgg(self.bot)
         update_discordbotlist(self.bot)
 
