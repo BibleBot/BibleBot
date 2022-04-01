@@ -97,7 +97,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealGuild != null)
                 {
-                    response = response.Replace("<prefix>", idealGuild.Prefix);
                     response = response.Replace("<serverDisplayStyle>", idealGuild.DisplayStyle == null ? "embed" : idealGuild.DisplayStyle);
                     response = response.Replace("<ignoringBrackets>", idealGuild.IgnoringBrackets);
                 }
@@ -106,7 +105,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 response = response.Replace("<titles>", "enabled");
                 response = response.Replace("<pagination>", "enabled");
                 response = response.Replace("<displayStyle>", "embed");
-                response = response.Replace("<prefix>", "+");
                 response = response.Replace("<serverDisplayStyle>", "embed");
                 response = response.Replace("<ignoringBrackets>", "<>");
 
