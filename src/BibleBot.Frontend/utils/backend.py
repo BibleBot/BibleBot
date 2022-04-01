@@ -15,6 +15,7 @@ import logging
 from Paginator import CreatePaginator
 
 logger = VyLogger("default")
+logger.setLevel(logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").propagate = False
