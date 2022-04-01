@@ -26,9 +26,12 @@ class VerseCommands(commands.Cog):
             inter.channel, inter.author, f"+search {query}"
         )
 
-        await inter.response.send_message(
-            embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
-        )
+        if isinstance(resp, list):
+            await inter.response.send_message(
+                embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
+            )
+        else:
+            await inter.response.send_message(embed=resp)
 
     @commands.slash_command(
         description="Display a random verse from a predetermined pool."

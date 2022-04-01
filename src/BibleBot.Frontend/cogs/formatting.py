@@ -78,7 +78,7 @@ class BracketsSelect(disnake.ui.Select):
             disnake.SelectOption(
                 label="Square Brackets []",
                 value="[]",
-                description="References like [Genesis 1:1] will be ignored. If the server uses Erasmus, this will cause duplication.",
+                description="References like [Genesis 1:1] will be ignored.",
             ),
             disnake.SelectOption(
                 label="Curly Brackets {}",
