@@ -168,7 +168,8 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
     endpoint = os.environ.get("ENDPOINT")
     resp = requests.post(f"{endpoint}/verses/process", json=reqbody)
 
-    logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
+    if resp.json()["logStatement"]:
+        logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
 
     if "does not support the" in resp.json()["logStatement"]:
         await ch.send(
