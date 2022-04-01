@@ -10,10 +10,14 @@ import os
 import requests
 import disnake
 from logger import VyLogger
+from http.client import HTTPConnection
+import logging
 
 from Paginator import CreatePaginator
 
 logger = VyLogger("default")
+logging.getLogger("urllib3").setLevel(logging.CRITICAL)
+logging.getLogger("requests").setLevel(logging.CRITICAL)
 
 
 async def submit_command(
