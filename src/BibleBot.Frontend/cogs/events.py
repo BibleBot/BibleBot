@@ -34,6 +34,11 @@ class EventListeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_shard_ready(self, shard_id):
+        await self.bot.change_presence(
+            status=disnake.Status.online,
+            activity=disnake.Game(f"/biblebot v9.2-beta - shard {shard_id + 1}"),
+            shard_id=shard_id,
+        )
         logger.info(f"shard {shard_id + 1} ready")
 
     @commands.Cog.listener()
