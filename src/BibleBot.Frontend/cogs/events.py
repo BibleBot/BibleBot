@@ -47,11 +47,15 @@ class EventListeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: disnake.Guild):
+        await self.bot.wait_for_ready()
         update_topgg(self.bot)
+        update_discordbotlist(self.bot)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: disnake.Guild):
+        await self.bot.wait_for_ready()
         update_topgg(self.bot)
+        update_discordbotlist(self.bot)
 
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):
@@ -76,3 +80,20 @@ def update_topgg(bot: disnake.AutoShardedClient):
         )
 
         logger.info("submitted stats to top.gg")
+
+
+def update_discordbotlist(bot: disnake.AutoShardedClient):
+    discordbotlist_auth = os.environ.get("DISCORDBOTLIST_TOKEN")
+
+    if discordbotlist_auth:
+        body = {
+            "users": sum([x.member_count for x in bot.guilds]),
+            "guilds": len(bot.guilds),
+        }
+        requests.post(
+            f"https://discordbotlist.com/api/v1/{bot.user.id}/stats",
+            json=body,
+            headers={"Authorization": discordbotlist_auth},
+        )
+
+        logger.info("submitted stats to discordbotlist.com")
