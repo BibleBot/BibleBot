@@ -184,6 +184,9 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
             )
             return
 
+    if resp.json()["verses"] is None:
+        return
+
     verses = list(
         OrderedDict.fromkeys(resp.json()["verses"])  # remove duplicate verses
     )
