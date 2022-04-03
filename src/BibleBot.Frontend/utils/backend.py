@@ -187,9 +187,7 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
     if resp.json()["verses"] is None:
         return
 
-    verses = list(
-        OrderedDict.fromkeys(resp.json()["verses"])  # remove duplicate verses
-    )
+    verses = resp.json()["verses"]  # todo: remove duplicate verses
 
     display_style = resp.json()["displayStyle"]
     if display_style == "embed":
