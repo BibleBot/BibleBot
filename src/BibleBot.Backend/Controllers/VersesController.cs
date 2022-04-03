@@ -182,6 +182,8 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
+            results = results.Distinct().ToList();
+
             if (results.Count() > 6)
             {
                 return new CommandResponse
