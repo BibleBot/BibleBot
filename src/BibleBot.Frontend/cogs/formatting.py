@@ -7,7 +7,7 @@
 """
 
 import disnake
-from disnake import CommandInteraction
+from disnake import CommandInteraction, Permissions
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend
@@ -174,8 +174,17 @@ class Formatting(commands.Cog):
         )
 
     @commands.slash_command(description="Set your server's preferred display style.")
-    @commands.has_permissions(manage_guild=True)
     async def setserverdisplay(self, inter: CommandInteraction):
+        if not inter.channel.permissions_for(inter.author).manage_guild:
+            await inter.response.send_message(
+                embed=backend.create_error_embed(
+                    "Permissions Error",
+                    "You must have the `Manage Server` permission to use this command.",
+                ),
+                ephemeral=True,
+            )
+            return
+
         select_menu_view = disnake.ui.View(timeout=180)
         select_menu_view.add_item(DisplayStyleSelect(inter.author.id, True))
 
@@ -187,8 +196,17 @@ class Formatting(commands.Cog):
     @commands.slash_command(
         description="Set the bot's ignoring brackets for this server."
     )
-    @commands.has_permissions(manage_guild=True)
     async def setbrackets(self, inter: CommandInteraction):
+        if not inter.channel.permissions_for(inter.author).manage_guild:
+            await inter.response.send_message(
+                embed=backend.create_error_embed(
+                    "Permissions Error",
+                    "You must have the `Manage Server` permission to use this command.",
+                ),
+                ephemeral=True,
+            )
+            return
+
         select_menu_view = disnake.ui.View(timeout=180)
         select_menu_view.add_item(BracketsSelect(inter.author.id))
 

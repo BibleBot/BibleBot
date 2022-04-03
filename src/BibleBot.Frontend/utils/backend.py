@@ -9,6 +9,7 @@
 import os
 import requests
 import disnake
+from collections import OrderedDict
 from logger import VyLogger
 import logging
 
@@ -27,7 +28,7 @@ async def submit_command(
     ch = await rch._get_channel()
 
     isDM = ch.type == disnake.ChannelType.private
-    guildId = ch.id if isDM else user.id
+    guildId = ch.id if isDM else ch.guild.id
 
     reqbody = {
         "UserId": str(user.id),
@@ -140,7 +141,7 @@ async def submit_command_raw(
     ch = await rch._get_channel()
 
     isDM = ch.type == disnake.ChannelType.private
-    guildId = ch.id if isDM else user.id
+    guildId = ch.id if isDM else ch.guild.id
 
     reqbody = {
         "UserId": str(user.id),
@@ -160,7 +161,7 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
     ch = await rch._get_channel()
 
     isDM = ch.type == disnake.ChannelType.private
-    guildId = ch.id if isDM else user.id
+    guildId = ch.id if isDM else ch.guild.id
 
     reqbody = {
         "UserId": str(user.id),
@@ -183,18 +184,22 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
             )
             return
 
+    verses = list(
+        OrderedDict.fromkeys(resp.json()["verses"])  # remove duplicate verses
+    )
+
     display_style = resp.json()["displayStyle"]
     if display_style == "embed":
-        if resp.json()["paginate"] and len(resp.json()["verses"]) > 1:
-            embeds = create_pagination_embeds_from_verses(resp.json()["verses"])
+        if resp.json()["paginate"] and len(verses) > 1:
+            embeds = create_pagination_embeds_from_verses(verses)
             paginator = CreatePaginator(embeds, user.id, 180)
 
             await ch.send(embed=embeds[0], view=paginator)
         else:
-            for verse in resp.json()["verses"]:
+            for verse in verses:
                 await ch.send(embed=create_embed_from_verse(verse))
     elif display_style == "blockquote":
-        for verse in resp.json()["verses"]:
+        for verse in verses:
             reference_title = (
                 verse["reference"]["asString"]
                 + " - "
@@ -209,7 +214,7 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
 
             await ch.send(f"**{reference_title}**\n\n> {verse_title}{verse_text}")
     elif display_style == "code":
-        for verse in resp.json()["verses"]:
+        for verse in verses:
             reference_title = (
                 verse["reference"]["asString"]
                 + " - "

@@ -83,10 +83,19 @@ class VerseCommands(commands.Cog):
             await inter.response.send_message(embed=resp)
 
     @commands.slash_command(description="Setup automatic daily verses on this channel.")
-    @commands.has_permissions(manage_guild=True)
     async def dailyverseset(
         self, inter: CommandInteraction, time: str = None, tz: str = None
     ):
+        if not inter.channel.permissions_for(inter.author).manage_guild:
+            await inter.response.send_message(
+                embed=backend.create_error_embed(
+                    "Permissions Error",
+                    "You must have the `Manage Server` permission to use this command.",
+                ),
+                ephemeral=True,
+            )
+            return
+
         resp = None
         if time is None or tz is None:
             resp = await backend.submit_command(
@@ -112,8 +121,17 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(
         description="Clear all automatic daily verse preferences for this server."
     )
-    @commands.has_permissions(manage_guild=True)
     async def dailyverseclear(self, inter: CommandInteraction):
+        if not inter.channel.permissions_for(inter.author).manage_guild:
+            await inter.response.send_message(
+                embed=backend.create_error_embed(
+                    "Permissions Error",
+                    "You must have the `Manage Server` permission to use this command.",
+                ),
+                ephemeral=True,
+            )
+            return
+
         resp = await backend.submit_command(
             inter.channel, inter.author, "+dailyverse clear"
         )

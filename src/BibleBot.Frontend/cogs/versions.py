@@ -83,7 +83,6 @@ class Versions(commands.Cog):
         await inter.response.send_message(embed=resp)
 
     @commands.slash_command(description="Set your server's preferred version.")
-    @commands.has_permissions(manage_guild=True)
     async def setserverversion(
         self,
         inter: CommandInteraction,
@@ -91,6 +90,16 @@ class Versions(commands.Cog):
             description="The abbreviation of the version."
         ),
     ):
+        if not inter.channel.permissions_for(inter.author).manage_guild:
+            await inter.response.send_message(
+                embed=backend.create_error_embed(
+                    "Permissions Error",
+                    "You must have the `Manage Server` permission to use this command.",
+                ),
+                ephemeral=True,
+            )
+            return
+
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+version setserver {abbreviation}"
         )

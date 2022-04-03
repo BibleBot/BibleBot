@@ -60,7 +60,7 @@ class EventListeners(commands.Cog):
         if msg.author == self.bot.user:
             return
 
-        clean_msg = msg.clean_content.replace("http:", "").replace("https:", "")
+        clean_msg = msg.content.replace("http:", "").replace("https:", "")
 
         if ":" in clean_msg:
             await backend.submit_verse(msg.channel, msg.author, clean_msg)
