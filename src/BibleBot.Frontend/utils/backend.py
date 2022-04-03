@@ -167,6 +167,7 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
         "UserId": str(user.id),
         "GuildId": str(guildId),
         "IsDM": isDM,
+        "IsBot": user.bot,
         "Body": body,
         "Token": os.environ.get("ENDPOINT_TOKEN"),
     }
