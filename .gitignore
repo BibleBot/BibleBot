@@ -279,3 +279,5 @@ coverage.xml
 
 .db/
 .envrc
+
+.DS_Store

@@ -129,7 +129,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
                 var resp = $"**__Creeds__**\n" + creedsList.Substring(0, creedsList.Length - 1) +
                 "\n\n**__Catechisms__**\n" + catechismsList.Substring(0, catechismsList.Length - 1) +
-                "\n\nTo use a resource, do `/resource <name>`.\nFor example, `/resource nicene` or `/resource ccc 1`.";
+                "\n\nTo use a resource, do `/resource resource: <name>`.\nFor example, `/resource resource: nicene` or `/resource resource: ccc range: 1`.";
 
 
                 return new CommandResponse
