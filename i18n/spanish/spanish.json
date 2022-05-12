@@ -33,7 +33,7 @@
     "setversionsuccess": "Versión establecida correctamente.",
     "setversionfail": "Error al establecer la versión, vea `<+><version> <list>`.",
     "versionused": "Su versión preferida está establecida en <version>.",
-    "guildversionused": "La versión preferida del servidor está establecida en <version>",
+    "guildversionused": "La versión preferida del servidor está establecida en <version>.",
     "setversionusage": "establecer su versión preferida",
     "setserverversionusage": "establecer la versión predeterminada del servidor (sólo personal autorizado)",
     "infousage": "obtener información sobre una versión",
