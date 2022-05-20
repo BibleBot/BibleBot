@@ -35,7 +35,7 @@ namespace BibleBot.AutomaticServices
 
             var embed = new InternalEmbed();
             embed.Title = title;
-            embed.Color = isError ? (int)Colors.ERROR_COLOR : (int)Colors.NORMAL_COLOR;
+            embed.Color = isError ? (uint)Colors.ERROR_COLOR : (uint)Colors.NORMAL_COLOR;
 
             embed.Footer = new Footer();
             embed.Footer.Text = copyright != null ? $"{copyright}\n{footerText}" : footerText;
