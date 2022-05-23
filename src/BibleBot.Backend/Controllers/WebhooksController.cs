@@ -54,16 +54,29 @@ namespace BibleBot.Backend.Controllers
 
             if (idealGuild != null)
             {
-                var fields = req.Body.Split("||");
-
-                idealGuild.DailyVerseWebhook = fields[0];
-                idealGuild.DailyVerseChannelId = fields[1];
-                _guildService.Update(req.GuildId, idealGuild);
-
-                return new CommandResponse
+                if (req.Body == "delete")
                 {
-                    OK = true
-                };
+                    idealGuild.DailyVerseWebhook = null;
+                    idealGuild.DailyVerseChannelId = null;
+                    idealGuild.DailyVerseTime = null;
+                    idealGuild.DailyVerseTimeZone = null;
+                    idealGuild.DailyVerseLastSentDate = null;
+
+                    _guildService.Update(req.GuildId, idealGuild);
+                }
+                else
+                {
+                    var fields = req.Body.Split("||");
+
+                    idealGuild.DailyVerseWebhook = fields[0];
+                    idealGuild.DailyVerseChannelId = fields[1];
+                    _guildService.Update(req.GuildId, idealGuild);
+
+                    return new CommandResponse
+                    {
+                        OK = true
+                    };
+                }
             }
 
             return new CommandResponse

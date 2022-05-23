@@ -55,6 +55,16 @@ class EventListeners(commands.Cog):
         update_topgg(self.bot)
         update_discordbotlist(self.bot)
 
+        # yeet the webhook from the database, if applicable
+        reqbody = {
+            "GuildId": str(guild.id),
+            "Body": "delete",
+            "Token": os.environ.get("ENDPOINT_TOKEN"),
+        }
+
+        endpoint = os.environ.get("ENDPOINT")
+        requests.post(f"{endpoint}/webhooks/process", json=reqbody)
+
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):
         if msg.author == self.bot.user:
