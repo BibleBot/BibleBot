@@ -316,7 +316,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                         var timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
 
-                        var resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone.ToString()}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>. It will use this server's preferred version, which you can find by using **`+version`**.\n\nUse **`+dailyverse set`** to set a new time or channel.\nUse **`+dailyverse clear`** to clear automatic daily verse settings.";
+                        var resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone.ToString()}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>. It will use this server's preferred version, which you can find by using **`/version`**.\n\nUse **`/dailyverseset`** to set a new time or channel.\nUse **`/dailyverseclear`** to clear automatic daily verse settings.";
 
                         return new CommandResponse
                         {
@@ -335,7 +335,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/dailyversestatus", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `+dailyverse set` to setup the automatic daily verse.", true)
+                        new Utils().Embedify("/dailyversestatus", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/dailyverseset` to setup the automatic daily verse.", true)
                     },
                     LogStatement = "/dailyversestatus"
                 };
