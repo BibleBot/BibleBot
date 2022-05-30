@@ -99,7 +99,7 @@ def update_discordbotlist(bot: disnake.AutoShardedClient):
             "guilds": len(bot.guilds),
         }
         requests.post(
-            f"https://discordbotlist.com/api/v1/{bot.user.id}/stats",
+            f"https://discordbotlist.com/api/v1/bots/{bot.user.id}/stats",
             json=body,
             headers={"Authorization": discordbotlist_auth},
         )
