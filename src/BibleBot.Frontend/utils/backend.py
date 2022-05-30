@@ -13,7 +13,7 @@ from collections import OrderedDict
 from logger import VyLogger
 import logging
 
-from Paginator import CreatePaginator
+from utils.paginator import CreatePaginator
 
 logger = VyLogger("default")
 logger.setLevel(logging.INFO)

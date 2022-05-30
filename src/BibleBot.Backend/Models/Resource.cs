@@ -85,6 +85,7 @@ namespace BibleBot.Backend.Models
     {
         CREED = 0,
         CATECHISM = 1,
+        CANONS = 2
     }
 
     public enum ResourceStyle

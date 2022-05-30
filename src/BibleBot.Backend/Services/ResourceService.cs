@@ -18,6 +18,7 @@ namespace BibleBot.Backend.Services
 
     public class ResourceService
     {
+        private readonly Dictionary<string, Tuple<ResourceStyle, string>> _canonData;
         private readonly Dictionary<string, Tuple<ResourceStyle, string>> _catechismData;
         private readonly List<string> _creeds;
 
@@ -27,6 +28,12 @@ namespace BibleBot.Backend.Services
 
         public ResourceService()
         {
+            _canonData = new Dictionary<string, Tuple<ResourceStyle, string>>
+            {
+                { "cic", new Tuple<ResourceStyle, string>(ResourceStyle.PARAGRAPHED, "code_of_canon_law") },
+                { "cceo" , new Tuple<ResourceStyle, string>(ResourceStyle.PARAGRAPHED,  "eastern_code") }
+            };
+
             _catechismData = new Dictionary<string, Tuple<ResourceStyle, string>>
             {
                 { "ccc", new Tuple<ResourceStyle, string>(ResourceStyle.PARAGRAPHED, "catechism_of_the_catholic_church") },
@@ -48,6 +55,11 @@ namespace BibleBot.Backend.Services
                 PropertyNameCaseInsensitive = true,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
+
+            foreach (var canonData in _canonData)
+            {
+                _resources.Add(GetResource(ResourceType.CANONS, canonData.Key));
+            }
 
             foreach (var catechismData in _catechismData)
             {
@@ -124,6 +136,32 @@ namespace BibleBot.Backend.Services
                         var resource = JsonSerializer.Deserialize<SectionedResource>(catechismFile, _jsonSerializerOptions);
                         resource.CommandReference = name;
                         resource.Type = ResourceType.CATECHISM;
+                        resource.Style = ResourceStyle.SECTIONED;
+                        return resource;
+                    }
+                }
+            }
+            else if (type == ResourceType.CANONS)
+            {
+                if (_canonData.ContainsKey(name))
+                {
+                    var idealCanons = _canonData[name];
+
+                    var canonsFile = File.ReadAllText($"./Data/Canons/{idealCanons.Item2}.json");
+
+                    if (idealCanons.Item1 == ResourceStyle.PARAGRAPHED)
+                    {
+                        var resource = JsonSerializer.Deserialize<ParagraphedResource>(canonsFile, _jsonSerializerOptions);
+                        resource.CommandReference = name;
+                        resource.Type = ResourceType.CANONS;
+                        resource.Style = ResourceStyle.PARAGRAPHED;
+                        return resource;
+                    }
+                    else if (idealCanons.Item1 == ResourceStyle.SECTIONED)
+                    {
+                        var resource = JsonSerializer.Deserialize<SectionedResource>(canonsFile, _jsonSerializerOptions);
+                        resource.CommandReference = name;
+                        resource.Type = ResourceType.CANONS;
                         resource.Style = ResourceStyle.SECTIONED;
                         return resource;
                     }

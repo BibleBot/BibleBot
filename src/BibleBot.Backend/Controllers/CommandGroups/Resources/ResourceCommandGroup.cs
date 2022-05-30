@@ -126,9 +126,18 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     catechismsList += $"**{catechism.CommandReference}** - {catechism.Title}\n";
                 }
 
+                var canons = _resources.Where(res => res.Type == ResourceType.CANONS);
+                var canonsList = "";
+
+                foreach (var canon in canons)
+                {
+                    canonsList += $"**{canon.CommandReference}** - {canon.Title}\n";
+                }
+
 
                 var resp = $"**__Creeds__**\n" + creedsList.Substring(0, creedsList.Length - 1) +
                 "\n\n**__Catechisms__**\n" + catechismsList.Substring(0, catechismsList.Length - 1) +
+                "\n\n**__Canon Laws__**\n" + canonsList.Substring(0, catechismsList.Length - 1) +
                 "\n\nTo use a resource, do `/resource resource: <name>`.\nFor example, `/resource resource: nicene` or `/resource resource: ccc range: 1`.";
 
 
