@@ -13,9 +13,10 @@ import disnake
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend
+import patreon
 
 logger = VyLogger("default")
-
+patreon_api = patreon.API(os.environ.get("PATREON_TOKEN"))
 
 class Information(commands.Cog):
     def __init__(self, bot):
@@ -38,6 +39,35 @@ class Information(commands.Cog):
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
         await inter.response.send_message(embed=resp)
 
+    @commands.slash_command(description="View all Patreon supporters.")
+    async def supporters(self, inter: CommandInteraction):
+        campaigns = patreon_api.fetch_campaign()
+        print(campaigns)
+        campaign = campaigns.data()[0].id()
+        pledges = []
+        names = []
+        cursor = None
+
+        while True:
+            pledges_resp = patreon_api.fetch_page_of_pledges(campaign, 25, cursor=cursor)
+            pledges += pledges_resp.data()
+            cursor = patreon_api.extract_cursor(pledges_resp)
+            if not cursor:
+                break
+        
+        names = [x.relationship('patron').attribute('full_name').strip() for x in pledges]
+
+        embed = disnake.Embed()
+
+        embed.title = "Patreon Supporters"
+        embed.description = "Many thanks to our Patreon supporters:\n\n**" + "**\n**".join(names) + "**"
+        embed.color = 6709986
+
+        embed.set_footer(
+            text="BibleBot v9.2-beta by Kerygma Digital",
+            icon_url="https://i.imgur.com/hr4RXpy.png",
+        )
+        await inter.response.send_message(embed=embed)
 
 def send_stats(bot: disnake.AutoShardedClient):
     endpoint = os.environ.get("ENDPOINT")
