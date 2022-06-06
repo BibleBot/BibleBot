@@ -44,7 +44,8 @@ namespace BibleBot.Backend.Services.Providers
             _versionTable = new Dictionary<string, string>
             {
                 { "KJVA", "de4e12af7f28f599-01" }, // King James Version with Apocrypha
-                { "FBV", "65eec8e0b60e656b-01" } // Free Bible Version
+                { "FBV", "65eec8e0b60e656b-01" }, // Free Bible Version
+                { "WEB", "9879dbb7cfe39e4d-01" } // World English Bible (includes Apocrypha)
             };
         }
 
