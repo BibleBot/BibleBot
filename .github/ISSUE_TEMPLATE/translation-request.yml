@@ -1,8 +1,6 @@
 name: Bible Translation Request
 description: Request a Bible translation to be added
 labels: ['translation::request']
-assignees:
-  - seraphimrp
 body:
   - type: markdown
     attributes:
