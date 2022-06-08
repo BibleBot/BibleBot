@@ -33,9 +33,9 @@
                 "value": "blockquote",
                 "label": "Blockquotes",
                 "description": "See an example by saying `> test`."
-            },
-            "placeholder": "Select a display style..."
+            }
         },
+        "placeholder": "Select a display style...",
         "discordError": "Error occurred, display style settings have not been changed."
     },
     "bracketsView": {
@@ -55,9 +55,9 @@
             "parentheses": {
                 "label": "Parentheses ()",
                 "description": "References like (Genesis 1:1) will be ignored."
-            },
-            "placeholder": "Select a pair of brackets..."
+            }
         },
+        "placeholder": "Select a pair of brackets...",
         "discordError": "Error occurred, bracket settings have not been changed."
     },
     "commands": {
@@ -196,8 +196,8 @@
             "success": "Set language successfully.",
             "fail": "Failed to set language, see `/{listlanguages}`.",
             "parameters": {
-                "abbreviation": "objectName",
-                "abbreviationDesc": "The object name of the language."
+                "objectName": "objectName",
+                "objectNameDesc": "The object name of the language."
             }
         },
         "setserverlanguage": {
@@ -207,8 +207,8 @@
             "success": "Set server language successfully.",
             "fail": "Failed to set server language, see `/{listlanguages}`.",
             "parameters": {
-                "abbreviation": "objectName",
-                "abbreviationDesc": "The object name of the language."
+                "objectName": "objectName",
+                "objectNameDesc": "The object name of the language."
             }
         },
         "listlanguages": {
