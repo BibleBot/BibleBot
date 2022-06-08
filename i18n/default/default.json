@@ -32,7 +32,7 @@
             "blockquote": {
                 "value": "blockquote",
                 "label": "Blockquotes",
-                "description": "See an example by saying `} test`."
+                "description": "See an example by saying `> test`."
             },
             "placeholder": "Select a display style..."
         },
