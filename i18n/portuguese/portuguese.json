@@ -1,161 +1,309 @@
 {
-    "biblebot": "BibleBot <version>",
-    "credit": "Made with ❤️ by Kerygma Digital",
-    "commandlist": "`<+><search>` - search using keywords\n`<+><version>` - version preferences and information\n`<+><random>` - get a random Bible verse\n`<+><truerandom>` - get a truly random Bible verse\n`<+><dailyverse>` - daily verses and automation\n`<+><formatting>` - formatting preferences for verse styles\n`<+><language>` - language preferences and information\n`<+><misc>` - miscellaneous server settings\n`<+><stats>` - view bot statistics\n`<+><invite>` - get the invite link for BibleBot\n\n`<+><creeds>` - ecumenical creeds (contains further commands)",
-    "usage": "To use the bot, just say a Bible verse. I'll handle the rest.",
-    "commandlistName": "Comandos",
-    "links": "Links",
-    "website": "**Website**: <website>",
-    "copyrights": "**Copyrights**: <copyrights>",
-    "code": "**Source Code**: <repository>",
-    "server": "**Official Discord Server**: <invite>",
-    "terms": "**Terms and Conditions**: <terms>",
-    "creeds_text": "These are the creeds available in BibleBot:\n\n",
-    "apostles_name": "The Apostles' Creed",
-    "nicene325_name": "The Nicene Creed (325)",
-    "nicene_name": "The Nicene-Constantinopolitan Creed (381)",
-    "chalcedon_name": "The Chalcedonian Definition (451)",
-    "catechisms_text": "These are the catechisms available in BibleBot:\n\n",
-    "catechisms": "Catechisms",
-    "confessions": "Confessions",
-    "protestant": "Protestant",
-    "lutheran": "Lutheran",
-    "reformed": "Reformed",
-    "baptist": "Baptist",
-    "catholic": "Catholic",
-    "eastern_orthodox": "Eastern Orthodox",
-    "oriental_orthodox": "Oriental Orthodox",
-    "pubdomain": "Public Domain",
-    "invalidrange": "Invalid range.",
-    "error": "Error",
-    "passagetoolong": "This passage is too long. Try again or use a different display style (`<+><formatting> <setdisplay>`).",
-    "subcommands": "Subcommands",
-    "setversionsuccess": "Defina a versão com sucesso.",
-    "setversionfail": "Failed to set version, see `<+><version> <list>`.",
-    "versionused": "Your preferred version is set to <version>.",
-    "guildversionused": "The server's preferred version is set to <version>.",
-    "setversionusage": "set your preferred version",
-    "setserverversionusage": "set the server's default version (staff only)",
-    "infousage": "get information on a version",
-    "listversionusage": "list all available versions",
-    "setlanguagesuccess": "Defina a língua com sucesso.",
-    "setlanguagefail": "Failed to set language, see `<+><language> <list>`.",
-    "languageused": "Your preferred language is **Replace_With_Language_Name**.",
-    "setlanguageusage": "set your preferred language",
-    "setserverlanguageusage": "set the server's default language (staff only)",
-    "listlanguageusage": "list all available languages",
-    "prefixonechar": "The prefix must be a single character.",
-    "prefixsuccess": "Set server prefix successfully.",
-    "guildprefixused": "The server's command prefix is set to <prefix>.",
-    "guildbracketsused": "The server's ignoring brackets are set to <brackets>.",
-    "setprefixusage": "set the server's command prefix",
-    "setbracketsusage": "set the server's ignoring brackets",
-    "setversenumbersusage": "enable or disable verse numbers",
-    "setheadingsusage": "enable or disable headings",
-    "setdisplayusage": "set your preferred display style",
-    "versenumbers": "Verse numbers are <status>.",
-    "versenumberssuccess": "Set verse numbers successfully.",
-    "headings": "Headings are <status>.",
-    "headingssuccess": "Set headings successfully.",
-    "otherformatfail": "Invalid parameter. Expected 'true' or 'enable', 'false' or 'disable'.",
-    "formatting": "Your display style is set to <value>.",
-    "formattingsuccess": "Set display style successfully.",
-    "formattingfail": "Use `<+><formatting> <setdisplay>` with one of the following parameters: `default, embed, blockquote, code`",
-    "noguildperm": "You must have the 'Manage Server' permission to modify this setting.",
-    "failedsearch": "You may have to try a different query.",
-    "failedpreference": "Failed to set preference. This is likely a database error and should be reported to the support server. See +biblebot for the invite.",
-    "setguildversionsuccess": "Set server version successfully.",
-    "setguildversionfail": "Failed to set server version, see `<+><version> <list>`.",
-    "setguildlanguagesuccess": "Set server language successfully.",
-    "setguildlanguagefail": "Failed to set server language, see `<+><language> <list>`.",
-    "guildlanguageused": "This server's preferred language is **Replace_With_Language_Name**.",
-    "setguildbracketssuccess": "Set ignoring brackets successfully.",
-    "guildbracketsfail": "Failed to set ignoring brackets, the supported options are `<>`, `[]`, `()`, `{}`.",
-    "setvotdtimeusage": "To setup the automatic daily verse, go to <https://biblebot.xyz/dailyversesetup>.",
-    "setvotdtimesuccess": "Set automatic daily verse successfully.",
-    "votdtimeused": "The daily verse will be sent at `<time>` in the <tz> timezone and will be published in <channel>.\n\nIt will use <version>.",
-    "novotdtimeused": "The automatic daily verse has not been set for this server.",
-    "clearvotdtimesuccess": "The automatic daily verse successfully cleared.",
-    "votd": "Here is the daily verse:",
-    "votdcantprocess": "The daily verse can't be processed, see <https://www.biblegateway.com/>.",
-    "versioninfo": "**<versionname>**\n\nContains Old Testament: <hasOT>\nContains New Testament: <hasNT>\nContains Apocrypha/Deuterocanon: <hasDEU>",
-    "versioninfofailed": "I couldn't find that version, are you sure you used the right acronym?",
-    "expectedparameter": "This command requires a parameter.",
-    "donutspam": "Please don't spam me.",
-    "shardcount": "Shard Count: ",
-    "cachedguilds": "Server Count: ",
-    "cachedchannels": "Channel Count: ",
-    "cachedusers": "User Count: ",
-    "preferencecount": "Preference Count: ",
-    "guildprefcount": "GuildPreference Count: ",
-    "versioncount": "Version Count: ",
-    "languagecount": "Language Count: ",
-    "runningon": "This instance is running on <platform>.",
-    "queryTooShort": "Your search query must be longer than 3 characters.",
-    "searchResults": "Search results for",
-    "nothingFound": "Nothing found for \"<query>\".",
-    "pageOf": "Page <num> of <total>",
-    "searchNotSupported": "<+><search> is not supported by this version.",
-    "plswait": "Please wait for your existing command to finish before starting another.",
-    "supporters": "A special thank you to the following contributors:",
-    "anonymousDonors": "Anonymous Donors",
-    "donorsNotListed": "And those not listed!",
-    "addversionsuccess": "Versão adivionado com sucesso.",
-    "verseerror": "Processing Error",
-    "invalidsection": "The version you are using does not support this section of the Bible.",
+    "versionString": "BibleBot <version> by Kerygma Digital",
+    "relatedCommands": "Related Commands",
+    "permissionsError": "Permissions Error",
+    "permissionsErrorUser": "You do not have the required permissions to use this command.",
+    "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
+    "needsManageServer": "You must have the `Manage Server` permission to use this command.",
+    "argumentsError": "Insufficient Parameters",
+    "versionNoOT": "<version> does not support the Old Testament.",
+    "versionNoNT": "<version> does not support the New Testament.",
+    "versionNoDEU": "<version> does not support the Apocrypha/Deuterocanon.",
+    "tmrError": "Too Many References",
+    "tmrErrorExp": "There are too many references, the maximum amount of references you can do in one message is 6.",
+    "verseError": "Verse Error",
+    "buttonFail": "You cannot interact with these buttons.",
+    "enable": "Enable",
+    "disable": "Disable",
     "enabled": "ativada",
     "disabled": "desactivada",
-    "author": "by <author>\n\n",
-    "singlePage": "1 page",
-    "pages": "<num> pages",
-    "category": "**Category**:\n",
-    "section": "**Section**:\n",
-    "sections": "**Sections**:\n",
-    "commands": {
-        "search": "pesquisar",
-        "version": "versao",
-        "set": "set",
-        "setserver": "setserver",
-        "setup": "setup",
-        "list": "list",
-        "info": "info",
-        "status": "status",
-        "dailyverse": "dailyverse",
-        "random": "random",
-        "truerandom": "truerandom",
-        "formatting": "formatting",
-        "stats": "stats",
-        "biblebot": "biblebot",
-        "addversion": "addversao",
-        "rmversion": "rmversion",
-        "setversenumbers": "setversenumbers",
-        "setheadings": "setheadings",
-        "setdisplay": "setdisplay",
-        "echo": "echo",
-        "leave": "sair",
-        "language": "lingua",
-        "setprefix": "setprefix",
-        "setbrackets": "setbrackets",
-        "settime": "settime",
-        "clear": "clear",
-        "nicene": "nicene",
-        "nicene325": "nicene325",
-        "apostles": "apostles",
-        "chalcedon": "chalcedon",
-        "creeds": "creeds",
-        "resources": "resources",
-        "announcements": "announcements",
-        "announce": "aviso",
-        "misc": "misc",
-        "invite": "convite",
-        "supporters": "suporte"
+    "setDisplayView": {
+        "selections": {
+            "embed": {
+                "value": "embed",
+                "label": "Embed Blocks",
+                "description": "The fancy blocks that our command output comes in."
+            },
+            "code": {
+                "value": "code",
+                "label": "Code Blocks",
+                "description": "See an example by saying ```test```."
+            },
+            "blockquote": {
+                "value": "blockquote",
+                "label": "Blockquotes",
+                "description": "See an example by saying `> test`."
+            },
+            "placeholder": "Select a display style..."
+        },
+        "discordError": "Error occurred, display style settings have not been changed."
     },
-    "arguments": {
-        "yes": "Sim",
-        "no": "Não",
-        "enable": "ativar",
-        "disable": "desativar",
-        "true": "true",
-        "false": "false"
+    "bracketsView": {
+        "selections": {
+            "angleBrackets": {
+                "label": "Angle Brackets <>",
+                "description": "References like <Genesis 1:1> will be ignored."
+            },
+            "squareBrackets": {
+                "label": "Square Brackets []",
+                "description": "References like [Genesis 1:1] will be ignored."
+            },
+            "curlyBrackets": {
+                "label": "Curly Brackets {}",
+                "description": "References like {Genesis 1:1} will be ignored."
+            },
+            "parentheses": {
+                "label": "Parentheses ()",
+                "description": "References like (Genesis 1:1) will be ignored."
+            },
+            "placeholder": "Select a pair of brackets..."
+        },
+        "discordError": "Error occurred, bracket settings have not been changed."
+    },
+    "commands": {
+        "biblebot": {
+            "cmd": "biblebot",
+            "description": "The help command.",
+            "biblebot": "BibleBot <version>",
+            "slogan": "Scripture from your Discord client to your heart.",
+            "credit": "Made with ❤️ by Kerygma Digital",
+            "commands": "📖 Commands",
+            "commandList": "`/<search>` - search for verses by keywords\n`/<version>` - version preferences and information\n`/<language>` - language preferences and information\n`/<formatting>` - preferences for verse styles and bot behavior\n`/<dailyverse>` - daily verses and automation\n`/<random>` - get a random Bible verse\n`/<resource>` - creeds, catechisms, confessions, and historical documents\n`/<stats>` - view bot statistics\n`/<invite>` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
+            "links": "🔗 Links",
+            "website": "**Website**: <website>",
+            "copyrights": "**Copyrights**: <copyrights>",
+            "code": "**GitHub**: <repository>",
+            "terms": "**Terms and Conditions**: <terms>",
+            "news": "🔔 News"
+        },
+        "stats": {
+            "cmd": "stats",
+            "description": "Statistics on the bot.",
+            "frontendStats": "Frontend Stats",
+            "shardCount": "Shard Count",
+            "serverCount": "Server Count",
+            "userCount": "User Count",
+            "channelCount": "Channel Count",
+            "backendStats": "Backend Stats",
+            "userPrefsCount": "User Preference Count",
+            "guildPrefsCount": "Guild Preference Count",
+            "versionCount": "Version Count",
+            "metadata": "Metadata"
+        },
+        "invite": {
+            "cmd": "invite",
+            "description": "See bot and support server invites.",
+            "usage": "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/)."
+        },
+        "announce": {
+            "cmd": "announce",
+            "description": "Announce something to all servers. (owner only)",
+            "announcementHeader": "BibleBot Announcement",
+            "parameters": {
+                "content": "content",
+                "contentDesc": "The content of the announcement."
+            }
+        },
+        "supporters": {
+            "cmd": "supporters",
+            "description": "View all Patreon supporters.",
+            "title": "Patreon Supporters",
+            "listStart": "Many thanks to our Patreon supporters"
+        },
+        "resources": {
+            "cmd": "resources",
+            "description": "See all available resources."
+        },
+        "resource": {
+            "cmd": "resource",
+            "description": "Use a resource.",
+            "creeds": "Creeds",
+            "catechisms": "Catechisms",
+            "canonLaws": "Canon Laws",
+            "usage": "To use a resource, do `/<resource> <resource>: <name>`.\nFor example, `/<resource> <resource>: nicene` or `/<resource> <resource>: ccc <range>: 1`.",
+            "parameters": {
+                "resource": "resource",
+                "resourceDesc": "The resource you wish to use.",
+                "range": "range",
+                "rangeDesc": "The range of pages/sections you want to view, for example `1` or `1-5`."
+            }
+        },
+        "formatting": {
+            "cmd": "formatting",
+            "description": "See your formatting preferences.",
+            "verseNumbersStatus": "Verse numbers are <enabled/disabled>.",
+            "titlesStatus": "Titles are <enabled/disabled>.",
+            "versePaginationStatus": "Verse pagination is <enabled/disabled>.",
+            "displayStyleStatus": "Your preferred display style is set to <displayStyle>.",
+            "serverDisplayStyleStatus": "The server's preferred display style is set to <serverDisplayStyle>.",
+            "bracketsStatus": "The bot will ignore verses in this server surrounded by <ignoringBrackets>.",
+            "relatedCommands": "**/<setversenumbers>** - enable or disable verse numbers\n**/<settitles>** - enable or disable titles\n**/<setpagination>** - enable or disable verse pagination\n**/<setdisplay>** - set your preferred display style\n**/<setserverdisplay>** - set the server's preferred display style (staff only)\n**/<setbrackets>** - set the bot's ignoring brackets for this server (staff only)"
+        },
+        "setversenumbers": {
+            "cmd": "setversenumbers",
+            "description": "Enable or disable verse numbers.",
+            "argumentsError": "Expected an `<enable>` or `<disable>` parameter.",
+            "success": "Set verse numbers successfully."
+        },
+        "settitles": {
+            "cmd": "settitles",
+            "description": "Enable or disable headings.",
+            "argumentsError": "Expected an `<enable>` or `<disable>` parameter.",
+            "success": "Set titles successfully."
+        },
+        "setpagination": {
+            "cmd": "setpagination",
+            "description": "Enable or disable verse pagination.",
+            "argumentsError": "Expected an `<enable>` or `<disable>` parameter.",
+            "success": "Set pagination successfully."
+        },
+        "setdisplay": {
+            "cmd": "setdisplay",
+            "description": "Set your preferred display style.",
+            "cta": "Select your preferred display style.",
+            "argumentsError": "Expected a parameter of `<embed>`, `<code>`, or `<blockquote>`.",
+            "argumentsError2": "You may choose between `<embed>`, `<code>`, or `<blockquote>`.",
+            "success": "Set display style successfully."
+        },
+        "setserverdisplay": {
+            "cmd": "setserverdisplay",
+            "description": "Set your server's preferred display style.",
+            "cta": "Select your server's preferred display style.",
+            "argumentsError": "Expected a parameter of `<embed>`, `<code>`, or `<blockquote>`.",
+            "argumentsError2": "You may choose between `<embed>`, `<code>`, or `<blockquote>`.",
+            "success": "Set server display style successfully."
+        },
+        "setbrackets": {
+            "cmd": "setbrackets",
+            "description": "Set the bot's ignoring brackets for this server.",
+            "cta": "Select a pair of brackets.",
+            "argumentsError": "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.",
+            "argumentsError2": "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.",
+            "characterIssue": "The brackets can only be two characters.",
+            "success": "Set brackets successfully."
+        },
+        "language": {
+            "cmd": "language",
+            "description": "See your language preferences.",
+            "status": "Your preferred language is set to <language>.",
+            "serverStatus": "The server's preferred language is set to <serverLanguage>.",
+            "relatedCommands": "**/<setlanguage>** - set your preferred language\n**/<setserverlanguage>** - set the server's default language (staff only)\n**/<listlanguages>** - list all available languages"
+        },
+        "setlanguage": {
+            "cmd": "setlanguage",
+            "description": "Set your preferred language.",
+            "argumentsError": "Expected a language parameter, like `<english>` or `<german>`.",
+            "success": "Set language successfully.",
+            "fail": "Failed to set language, see `/<listlanguages>`.",
+            "parameters": {
+                "abbreviation": "objectName",
+                "abbreviationDesc": "The object name of the language."
+            }
+        },
+        "setserverlanguage": {
+            "cmd": "setserverlanguage",
+            "description": "Set your server's preferred language.",
+            "argumentsError": "Expected a language parameter, like `<english>` or `<german>`.",
+            "success": "Set server language successfully.",
+            "fail": "Failed to set server language, see `/<listlanguages>`.",
+            "parameters": {
+                "abbreviation": "objectName",
+                "abbreviationDesc": "The object name of the language."
+            }
+        },
+        "listlanguages": {
+            "cmd": "listlanguages",
+            "description": "List all available languages."
+        },
+        "version": {
+            "cmd": "version",
+            "description": "See your version preferences.",
+            "status": "Your preferred version is set to <version>.",
+            "serverStatus": "The server's preferred version is set to <serverVersion>.",
+            "relatedCommands": "**/<setversion>** - set your preferred version\n**/<setserverversion> - set the server's default version (staff only)\n**/<versioninfo>** - get information on a version\n**/<listversions>** - list all available versions"
+        },
+        "setversion": {
+            "cmd": "setversion",
+            "description": "Set your preferred version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `<RSV>` or `<KJV>`.",
+            "success": "Set version successfully.",
+            "fail": "Failed to set version, set `/<listversions>`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "setserverversion": {
+            "cmd": "setserverversion",
+            "description": "Set your server's preferred version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `<RSV>` or `<KJV>`.",
+            "success": "Set server version successfully.",
+            "fail": "Failed to set server version, see `/<listversions>`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "versioninfo": {
+            "cmd": "versioninfo",
+            "description": "See information on a version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `<RSV>` or `<KJV>`.",
+            "containsOT": "Contains Old Testament",
+            "containtsNT": "Contains New Testament",
+            "containsDEU": "Contains Apocrypha/Deuterocanon",
+            "fail": "I couldn't find that version, see `/<listversions>`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "listversions": {
+            "cmd": "listversions",
+            "description": "List all available versions.",
+            "title": "/<listversions> - Page <currentPage> of <totalPages>"
+        },
+        "dailyverse": {
+            "cmd": "dailyverse",
+            "description": "Display the verse of the day."
+        },
+        "dailyverseset": {
+            "cmd": "dailyverseset",
+            "description": "Setup automatic daily verses on this channel.",
+            "success": "Set automatic daily verse successfully.",
+            "fail": "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.",
+            "failDM": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks."
+        },
+        "dailyversestatus": {
+            "cmd": "dailyversestatus",
+            "description": "See automatic daily verse status for this server.",
+            "status": "The daily verse will be sent at `<time>`, in the **<tz>** time zone, and will be published in <#<channelId>>. It will use this server's preferred version, which you can find by using **`/<version>`**.",
+            "relatedCommands": "Use **`/<dailyverseset>`** to set a new time or channel.\nUse **`/<dailyverseclear>`** to clear automatic daily verse settings.",
+            "fail": "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/<dailyverseset>` to setup the automatic daily verse."
+        },
+        "dailyverseclear": {
+            "cmd": "dailyverseclear",
+            "description": "Clear all automatic daily verse preferences for this server.",
+            "success": "Cleared all daily verse webhooks successfully."
+        },
+        "random": {
+            "cmd": "random",
+            "description": "Display a random verse from a predetermined pool.",
+            "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
+            "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
+        },
+        "truerandom": {
+            "cmd": "truerandom",
+            "description": "Display a random verse based on random number generation.",
+            "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
+            "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
+        },
+        "search": {
+            "cmd": "search",
+            "description": "Search for verses by keyword.",
+            "queryTooShort": "Your search query needs to be at least 4 characters.",
+            "noResults": "Your search query produced no results.",
+            "searchHeader": "Search results for \"<query>\"",
+            "paginator": "Page <currentPage> of <totalPages>"
+        }
     }
 }
