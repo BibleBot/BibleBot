@@ -1,20 +1,20 @@
 {
-    "versionString": "BibleBot {version} by Kerygma Digital",
-    "relatedCommands": "Related Commands",
-    "permissionsError": "Permissions Error",
-    "permissionsErrorUser": "You do not have the required permissions to use this command.",
-    "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
+    "versionString": "BibleBot {version} de Kerygma Digital",
+    "relatedCommands": "Comandos Relacionados",
+    "permissionsError": "Erro nas permissões",
+    "permissionsErrorUser": "Não tem as permissões necessárias para utilizar este comando.",
+    "permissionsErrorBot": "Os “Bots” não têm permissão para usar este comando, por favor, informe o seu humano mais próximo.",
     "needsManageServer": "You must have the `Manage Server` permission to use this command.",
     "argumentsError": "Insufficient Parameters",
     "versionNoOT": "{version} does not support the Old Testament.",
     "versionNoNT": "{version} does not support the New Testament.",
     "versionNoDEU": "{version} does not support the Apocrypha/Deuterocanon.",
-    "tmrError": "Too Many References",
+    "tmrError": "Demasiadas Referências",
     "tmrErrorExp": "There are too many references, the maximum amount of references you can do in one message is 6.",
     "verseError": "Verse Error",
-    "buttonFail": "You cannot interact with these buttons.",
-    "enable": "Enable",
-    "disable": "Disable",
+    "buttonFail": "Não pode interagir com estes botões.",
+    "enable": "Ativar",
+    "disable": "Desativar",
     "enabled": "ativada",
     "disabled": "desactivada",
     "setDisplayView": {
@@ -41,22 +41,22 @@
     "bracketsView": {
         "selections": {
             "angleBrackets": {
-                "label": "Angle Brackets <>",
-                "description": "References like <Genesis 1:1> will be ignored."
+                "label": "Parênteses Angulares <>",
+                "description": "Referências como <Genesis 1:1> serão ignoradas."
             },
             "squareBrackets": {
-                "label": "Square Brackets []",
-                "description": "References like [Genesis 1:1] will be ignored."
+                "label": "Parênteses Retos []",
+                "description": "Referências como [Génesis 1:1] serão ignoradas."
             },
             "curlyBrackets": {
-                "label": "Curly Brackets {}",
-                "description": "References like {Genesis 1:1} will be ignored."
+                "label": "Colchetes {}",
+                "description": "Referências como {Genesis 1:1} serão ignoradas."
             },
             "parentheses": {
-                "label": "Parentheses ()",
+                "label": "Parênteses ()",
                 "description": "References like (Genesis 1:1) will be ignored."
             },
-            "placeholder": "Select a pair of brackets..."
+            "placeholder": "Selecione um par de parênteses..."
         },
         "discordError": "Error occurred, bracket settings have not been changed."
     },
@@ -65,8 +65,8 @@
             "cmd": "biblebot",
             "description": "The help command.",
             "biblebot": "BibleBot {version}",
-            "slogan": "Scripture from your Discord client to your heart.",
-            "credit": "Made with ❤️ by Kerygma Digital",
+            "slogan": "Escrituras, diretamente do seu cliente Discord, para o seu coração.",
+            "credit": "Feito com ❤️ pela Kerygma Digital",
             "commands": "📖 Commands",
             "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
             "links": "🔗 Links",
