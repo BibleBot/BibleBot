@@ -4,14 +4,14 @@
     "permissionsError": "Erro nas permissões",
     "permissionsErrorUser": "Não tem as permissões necessárias para utilizar este comando.",
     "permissionsErrorBot": "Os “Bots” não têm permissão para usar este comando, por favor, informe o seu humano mais próximo.",
-    "needsManageServer": "You must have the `Manage Server` permission to use this command.",
-    "argumentsError": "Insufficient Parameters",
-    "versionNoOT": "{version} does not support the Old Testament.",
-    "versionNoNT": "{version} does not support the New Testament.",
-    "versionNoDEU": "{version} does not support the Apocrypha/Deuterocanon.",
+    "needsManageServer": "Necessitará da permissão `Manage Server` para usar este comando.",
+    "argumentsError": "Parâmetros insuficientes",
+    "versionNoOT": "{version} não suporta o Antigo Testamento.",
+    "versionNoNT": "{version} não suporta o Novo Testamento.",
+    "versionNoDEU": "{version} não suporta o Apócrifo nem os Deuterocanônicos.",
     "tmrError": "Demasiadas Referências",
-    "tmrErrorExp": "There are too many references, the maximum amount of references you can do in one message is 6.",
-    "verseError": "Verse Error",
+    "tmrErrorExp": "Há muitas referências, a quantidade máxima de referências, que pode fazer numa mensagem, é 6.",
+    "verseError": "Erro de Versículo",
     "buttonFail": "Não pode interagir com estes botões.",
     "enable": "Ativar",
     "disable": "Desativar",
@@ -20,12 +20,12 @@
     "setDisplayView": {
         "selections": {
             "embed": {
-                "value": "embed",
+                "value": "incorporar",
                 "label": "Embed Blocks",
                 "description": "The fancy blocks that our command output comes in."
             },
             "code": {
-                "value": "code",
+                "value": "código",
                 "label": "Code Blocks",
                 "description": "See an example by saying ```test```."
             },
@@ -67,18 +67,18 @@
             "biblebot": "BibleBot {version}",
             "slogan": "Escrituras, diretamente do seu cliente Discord, para o seu coração.",
             "credit": "Feito com ❤️ pela Kerygma Digital",
-            "commands": "📖 Commands",
-            "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
+            "commands": "📖 Comandos",
+            "commandList": "`/{search}` - procure versículos por palavras-chave\n`/{version}` - preferências de versão e informações\n`/{language}` - preferências de idioma e informações\n`/{formatting}` - preferências para estilos de versículos e comportamento do \"bot\"\n`/{dailyverse}` - versículos diários e automação\n`/{random}` - obter um versículo bíblico aleatório\n`/{resource}` - crenças, catecismos, confissões, e documentos históricos\n`/{stats}` - exibir as estatísticas do \"bot\"\n`/{invite}` - links de convite para o \"bot\" e servidor de suporte\n\nVeja <https://biblebot.xyz/usage-and-commands> para mais comandos.",
             "links": "🔗 Links",
-            "website": "**Website**: {website}",
-            "copyrights": "**Copyrights**: {copyrights}",
+            "website": "**Site**: {website}",
+            "copyrights": "**Direitos de Autor**: {copyrights}",
             "code": "**GitHub**: {repository}",
-            "terms": "**Terms and Conditions**: {terms}",
-            "news": "🔔 News"
+            "terms": "**Termos e condições**: {terms}",
+            "news": "🔔 Notícias"
         },
         "stats": {
             "cmd": "stats",
-            "description": "Statistics on the bot.",
+            "description": "Estatísticas sobre o \"bot\".",
             "frontendStats": "Frontend Stats",
             "shardCount": "Shard Count",
             "serverCount": "Server Count",
@@ -91,23 +91,23 @@
             "metadata": "Metadata"
         },
         "invite": {
-            "cmd": "invite",
+            "cmd": "convidar",
             "description": "See bot and support server invites.",
             "usage": "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/)."
         },
         "announce": {
-            "cmd": "announce",
+            "cmd": "anunciar",
             "description": "Announce something to all servers. (owner only)",
-            "announcementHeader": "BibleBot Announcement",
+            "announcementHeader": "Anúncio BibleBot",
             "parameters": {
                 "content": "content",
                 "contentDesc": "The content of the announcement."
             }
         },
         "supporters": {
-            "cmd": "supporters",
+            "cmd": "apoiantes",
             "description": "View all Patreon supporters.",
-            "title": "Patreon Supporters",
+            "title": "Apoiantes do Patreon",
             "listStart": "Many thanks to our Patreon supporters"
         },
         "resources": {
@@ -119,10 +119,10 @@
             "description": "Use a resource.",
             "creeds": "Creeds",
             "catechisms": "Catechisms",
-            "canonLaws": "Canon Laws",
+            "canonLaws": "Leis Cânone",
             "usage": "To use a resource, do `/{resource} {resource}: {name}`.\nFor example, `/{resource} {resource}: nicene` or `/{resource} {resource}: ccc {range}: 1`.",
             "parameters": {
-                "resource": "resource",
+                "resource": "recurso",
                 "resourceDesc": "The resource you wish to use.",
                 "range": "range",
                 "rangeDesc": "The range of pages/sections you want to view, for example `1` or `1-5`."
