@@ -177,8 +177,8 @@
             "cmd": "setbrackets",
             "description": "Set the bot's ignoring brackets for this server.",
             "cta": "Select a pair of brackets.",
-            "argumentsError": "Expected a parameter with two characters, that must be `{}`, `[]`, `{}`, or `()`.",
-            "argumentsError2": "The brackets can only be set to `{}`, `[]`, `{}`, or `()`.",
+            "argumentsError": "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.",
+            "argumentsError2": "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.",
             "characterIssue": "The brackets can only be two characters.",
             "success": "Set brackets successfully."
         },
