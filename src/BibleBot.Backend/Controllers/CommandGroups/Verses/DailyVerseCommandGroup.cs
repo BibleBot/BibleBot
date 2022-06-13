@@ -195,7 +195,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 {
                                     GuildId = req.GuildId,
                                     Version = "RSV",
-                                    Language = "english",
+                                    Language = "english_us",
                                     Prefix = "+",
                                     DisplayStyle = "embed",
                                     IgnoringBrackets = "<>",

@@ -166,7 +166,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             UserId = req.UserId,
                             Version = idealVersion.Abbreviation,
                             InputMethod = "default",
-                            Language = "english",
+                            Language = "english_us",
                             TitlesEnabled = true,
                             VerseNumbersEnabled = true,
                             PaginationEnabled = false,
@@ -245,7 +245,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         {
                             GuildId = req.GuildId,
                             Version = idealVersion.Abbreviation,
-                            Language = "english",
+                            Language = "english_us",
                             Prefix = "+",
                             DisplayStyle = "embed",
                             IgnoringBrackets = "<>",
