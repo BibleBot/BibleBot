@@ -34,48 +34,6 @@ namespace BibleBot.Backend.Models
 
         [BsonElement("RawLanguage")]
         public RawLanguage RawLanguage { get; set; }
-
-        public string GetString(string key)
-        {
-            try
-            {
-                return (string)RawLanguage.GetType().GetProperty(key).GetValue(RawLanguage, null);
-            }
-            catch
-            {
-                throw new StringNotFoundException();
-            }
-        }
-
-        public string GetCommand(string key)
-        {
-            var commands = RawLanguage.GetType().GetProperty("Commands").GetValue(RawLanguage.Commands, null);
-            var possibleCommand = (string)commands.GetType().GetProperty(key).GetValue(commands, null);
-
-            if (possibleCommand == null)
-            {
-                throw new StringNotFoundException();
-            }
-
-            return possibleCommand;
-        }
-
-        public string GetCommandKey(string value)
-        {
-            var commands = RawLanguage.GetType().GetProperty("Commands").GetValue(RawLanguage.Commands, null);
-
-            foreach (var possibleCommandKey in commands.GetType().GetProperties())
-            {
-                var commandValue = (string)possibleCommandKey.GetValue(commands);
-
-                if (value == commandValue)
-                {
-                    return (string)possibleCommandKey.Name;
-                }
-            }
-
-            throw new StringNotFoundException();
-        }
     }
 
     /*
