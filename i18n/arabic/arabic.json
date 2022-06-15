@@ -1,9 +1,9 @@
 {
     "versionString": "BibleBot {version} by Kerygma Digital",
-    "relatedCommands": "Related Commands",
-    "permissionsError": "Permissions Error",
-    "permissionsErrorUser": "You do not have the required permissions to use this command.",
-    "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
+    "relatedCommands": "الأوامر ذات الصلة",
+    "permissionsError": "خطأ في الإذن",
+    "permissionsErrorUser": "ليس لديك الصلاحيات المطلوبة لاستخدام هذا الأمر.",
+    "permissionsErrorBot": "لا يسمح الروبوتات باستخدام هذا الأمر، يرجى إبلاغ أقرب شخص لديك.",
     "needsManageServer": "You must have the `Manage Server` permission to use this command.",
     "argumentsError": "Insufficient Parameters",
     "versionNoOT": "{version} does not support the Old Testament.",
