@@ -227,7 +227,7 @@
             "description": "Set your preferred version.",
             "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
             "success": "Set version successfully.",
-            "fail": "Failed to set version, set `/{listversions}`.",
+            "fail": "Failed to set version, see `/{listversions}`.",
             "parameters": {
                 "abbreviation": "abbreviation",
                 "abbreviationDesc": "The abbreviation of the version."
