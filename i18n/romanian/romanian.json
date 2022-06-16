@@ -1,166 +1,309 @@
 {
-    "biblebot": "BibleBot <version> realizat de Elliott Pardee (vypr)",
-    "code": "Cod: <repositoryLink>",
-    "commandlist": "* `+<search> Întrebare` - caută folosind cuvinte cheie (doar în versiunile Bible Gateway)\n* `+<setversion> ABRV` - setează versiunea preferată în ABRV\n* `+<version>` - vezi ce versiune ai setat\n* `+<versions>` - vezi versiunile existente\n* `+<versioninfo> VER` - citește informații despre o versiune anume, folosind prescurtarea sa\n* `+<random>` - primiți un verset biblic la întâmplare\n* `+<verseoftheday>` (`+<votd>`) - afișați versetul zilei\n* `+<setheadings> <enable>/<disable>` - vezi (activează) sau nu (dezactivează) titlurile capitolelor\n* `+<headings>` - vezi preferința ta în cazul titlurilor de capitole\n* `+<setmode> mod` - setează modul tău preferat (nu scrie nimic după comandă pentru a putea vedea modurile existente)\n* `+<mode>` - vezi preferința ta în cazul modurilor\n* `+<setversenumbers> <enable>/<disable>` - folosește (activează) sau nu (dezactivează) numerotarea versetelor\n* `+<versenumbers>` - vezi preferința ta în cazul numerotării versetelor\n* `+<setlanguage> LANG` - setează limba ta (folosind acronimul)\n* `+<language>` - vezi limba folosită, dacă ai ales una (standard: engleză)\n* `+<languages>` - vezi limbile existente\n* `+<users>` - compune o listă a tuturor utilizatorilor din toate serverele (nu se trec in considerare utilizatori duplicați sau boți)\n* `+<servers>` - vezi câte servere folosesc BibleBot\n* `+<invite>` - vezi link-ul de invitație a BibleBot-ului\n* `+<supporters>` - susținătorii BibleBot",
-    "commandlist2": "* `+<creeds>` - Crezurile (conține mai multe comenzi la rândul său)\n* `+<catechisms>` - catehismele diferitelor denominații (conține mai multe comenzi la rândul său)",
-    "guildcommandlist": "* `+<setguildversion> ABRV` - setează versiunea standard a grupului ca ABRV\n* `+<guildversion>` - vezi versiunea standard a grupului\n* `+<setguildlanguage> LANG` - setează limba standard a grupului în LANG\n* `+<guildlanguage>` - vezi limba standard a grupului, dacă a fost alesă una (standard: engleză)\n* `+<setvotdtime> TIMP` - setează ca VZ să fie programat la TIMP (TIMP trebuie să fie în format de 24 de ore și UTC)\n* `+<clearvotdtime>` - șterge programarea VZ\n* `+<votdtime>` - vezi timpul la care este programat VZ și canalul folosit\n* `+<setannouncements> <enable>/<disable>` - activează sau dezactivează anunțurile\n* `+<announcements>` - vezi preferința grupului în cazul anunțurilor",
-    "usage": "Pentru a-l folosi nu trebuie decât să scrii un verset din Biblie, de restul mă ocup eu.",
-    "commandlistName": "Comenzi",
-    "extrabiblicalcommandlistName": "Comenzi extra-biblice",
-    "guildcommandlistName": "Comenzi de grup",
-    "links": "Link-uri",
-    "website": "Pagină web: <websiteLink>",
-    "joinserver": "Serverul oficial de Discord: <inviteLink>",
-    "terms": "Termeni și condiții: <termsLink>",
-    "apostles_name": "Crezul Apostolic",
-    "apostles_text": "Cred în Dumnezeu, Tatăl atotputernicul, creatorul cerului și al pământului.\nȘi în Iisus Hristos, fiul său unic, Domnul nostru:\n\nCare s-a zămislit de la Duhul Sfânt, s-a născut din Fecioara Maria, a pătimit sub Ponțiu Pilat, s-a răstignit, a murit și s-a îngropat; a coborât in iad. A treia zi a înviat din morți, S-a suit la ceruri, Șade de-a dreapta lui Dumnezeu, Tatăl atotputernicul, De unde are să vie să judece pe vii și pe morți.\n\nCred în Duhul Sfânt, sfânta Biserică Sobornicească, împărtășirea sfinților, Iertarea păcatelor, Învierea morților, și viața veșnică. Amin.",
-    "nicene325_name": "Crezul de la Niceea (325)",
-    "nicene325_text": "Credem într-Unul Dumnezeu, Tatăl Atotțiitorul, Făcătorul tuturor celor văzute și nevăzute;\n\nȘi întru Unul Domn Iisus Hristos, Fiul lui Dumnezeu, născut din Tatăl, Unul Născut, adică, din ființa Tatălui, Dumnezeu din Dumnezeu, lumină din lumină, Dumnezeu adevărat din Dumnezeu adevărat, născut (iar) nu făcut, de-o-ființă cu Tatăl, prin Carele toate s-au făcut, cele din cer și cele de pe pământ, Care pentru noi oamenii și pentru a noastră mântuire s-a pogorât și s-a întrupat, om făcându-se, și a suferit și iarăși S-a ridicat a treia zi, S-a înălțat la Ceruri și iarăși va să vie să judece viii și morții;\n\nȘi întru Duhul Sfânt.\n\n(Iar pe cei ce spun „a fost cândva când nu era” și „înainte de a se fi născut nu era” și s-a făcut „din cele ce nu sunt” sau spun că Fiul lui Dumnezeu este „din altă ipostază” sau „ființă” sau că e „creat”, „schimbător” sau „transformabil”, Sfânta Biserica sobornicească și apostolească îi anatemizează.)",
-    "nicene_name": "Crezul Niceo-Constantinopolitan (381)",
-    "nicene_text": "Cred într-Unul Dumnezeu, Tatăl Atoțiitorul,\nFăcătorul cerului și al pământului, văzutelor tuturor și nevăzutelor.\nȘi întru Unul Domn Iisus Hristos, Fiul lui Dumnezeu,\nUnul-Născut, Care din Tatăl S-a născut, mai înainte de toți vecii.\nLumină din Lumină, Dumnezeu adevărat din Dumnezeu adevărat,\nNăscut, iar nu făcut, Cel de o ființă cu Tatăl, prin Care toate s-au făcut.\nCare pentru noi oamenii și pentru a noastră mântuire\nS-a pogorât din ceruri\nȘi S-a întrupat de la Duhul Sfânt și din Maria Fecioara\nȘi S-a făcut om.\nȘi S-a răstignit pentru noi în zilele lui Pilat din Pont,\nȘi a pătimit și S-a îngropat.\nȘi a înviat a treia zi, după Sfintele Scripturi.\nȘi S-a suit la ceruri și șade de-a dreapta Tatălui.\nȘi iarăși va să vină cu slavă, să judece viii și morții,\nA Cărui Împărăție nu va avea sfârșit.\nȘi întru unul Duhul Sfânt, Domnul de viață făcătorul,\nCarele din Tatăl purcede,*\nCela ce împreună cu Tatăl și cu Fiul este închinat și slăvit,\nCare a grăit prin prooroci.\nÎntru una, sfântă, sobornicească și apostolească Biserică,\nMărturisesc un Botez întru iertarea păcatelor,\nAștept învierea morților și viața veacului ce va să fie.\nAmin!\n\n* - unele Biserici adaugă „și de la Fiul”",
-    "chalcedon_name": "Crezul Calcedonian",
-    "chalcedon_text": "Urmând aşadar Sfinţilor Părinţi, noi învăţăm într-un glas că mărturisim pe Unul şi acelaşi Fiu, Domnul nostru Iisus Hristos, Însuşi desăvârşit întru dumnezeire cât şi întru omenitate, Însuşi Dumnezeu adevărat şi om adevărat din suflet raţional şi din trup, de-ofiinţă cu Tatăl după dumnezeire şi de-o-fiinţă cu noi după omenitate, întru toate asemenea nouă afară de păcat, născut din Tatăl mai înainte de veci după dumnezeire şi, la plinirea vremii, Acelaşi născut pentru noi şi pentru a noastră mântuire din Fecioara Maria, Născătoarea de Dumnezeu, după omenitate, Unul şi Acelaşi Hristos, Fiul, Domnul, Unul Născut, cunoscându-se în două firi, fără amestecare, fără schimbare, fără împărţire, fără despărţire, deosebirea firilor nefiind nicidecum stricată din pricina unimii, ci mai degrabă păstrându-se însuşirile fiecărei firi într-o singură persoană şi într-un singur ipostas, nu împărţindu-se sau despărţindu-se în două feţe, ci Unul şi Acelaşi Fiu, Unul Născut, Dumnezeu Cuvântul, Domnul Iisus Hristos, precum [au vestit] de la început proorocii, precum El însuşi ne-a învăţat despre Sine şi precum ne-a predanisit nouă Crezul Părinţilor.",
-    "creeds": "Crezurile",
-    "creeds_text": "Următoarele Crezuri sunt accesibile în BibleBot:\n\n",
-    "catechisms": "Catehisme",
-    "catechisms_text": "Următoarele catehisme sunt accesibile în BibleBot:\n\n",
-    "protestant": "Protestant",
-    "lutheran": "Luteran",
-    "reformed": "Reformat",
-    "baptist": "Baptist",
-    "catholic": "Catolic",
-    "eastern_orthodox": "Ortodox",
-    "oriental_orthodox": "Vechi-Oriental",
-    "pubdomain": "Domeniu Public",
-    "rangeError": "Raza aleasă nu este validă, asigurați-vă că primul număr este mai mic decât al doilea. Raza de căutare nu poate depăși 15 paragrafe.",
-    "error": "Eroare",
-    "versions": "Eu susțin",
-    "setversionsuccess": "Versiunea a fost setată cu succes.",
-    "setversionfail": "Versiunea nu a putut fi setată, vezi `+<versions>`.",
-    "versionused": "Acum folosiți <version>. Folosește `+<setversion>` pentru a seta o versiune diferită.",
-    "noversionused": "Nu v-am putut găsi numele în baza de date, ați folosit `+<setversion>`?",
-    "addversionsuccess": "Versiune adăugată cu succes.",
-    "versenumbers": "Numerotarea versetelor este <enabled/disabled>. Folosește `+<setversenumbers>` pentru a seta preferința în cazul numerotării versetelor.",
-    "versenumberssuccess": "Numerotarea versetelor a fost setată cu succes.",
-    "versenumbersfail": "Folosește `+<setversenumbers> <enable>` sau `+<setversenumbers> <disable>`.",
-    "headings": "Titlurile de capitol sunt <enabled/disabled>. Folosește `+<setheadings>` pentru a schimba preferințele tale.",
-    "headingssuccess": "Titlurile de capitol au fost setate cu succes.",
-    "headingsfail": "Folosește `+<setheadings> <enable>` sau `+<setheadings> <disable>`.",
-    "mode": "Modul setat este `<value>`. Folosește `+<setmode>` pentru a-l schimba.",
-    "modesuccess": "Modul a fost setat cu succes.",
-    "modefail": "Foloseste `+<setmode>` cu unul dintre următoarele date: `default, embed, blockquote, code`",
-    "setlanguagesuccess": "Limba a fost setată cu succes.",
-    "setlanguagefail": "Nu am reușit să setăm limba, vezi `+<languages>`.",
-    "languageused": "Folosești limba română. Folosește comanda `+<setlanguage>` pentru a seta altă limbă.",
-    "languages": "Susțin",
-    "otnotsupported": "Versiunea <version> nu are acces la Vechiul Testament.",
-    "ntnotsupported": "Versiunea <version> nu are acces la Noul Testament.",
-    "deunotsupported": "Versiunea <version> nu are acces la Apocrife/Deuterocanonice.",
-    "otnotsupported2": "Dacă vrei să folosești Vechiul Testament, `+<setversion>` pentru a alege o versiune care îl prezintă.",
-    "ntnotsupported2": "Dacă vrei să folosești Noul Testament, `+<setversion>` pentru a alege o versiune care îl prezintă.",
-    "deunotsupported2": "Dacă vrei să folosești Apocrife/Deuterocanonice, `+<setversion>` pentru a alege o versiune care le prezintă.",
-    "setguildversionsuccess": "Versiune grupului a fost setată cu succes.",
-    "setguildversionnoperm": "Trebuie să ai permisiunea 'Manage Server' pentru a modifica versiunea grupului!",
-    "setguildversionfail": "Nu am reușit să setăm versiunea grupului, vezi `+<versions>`.",
-    "guildversionused": "Acest grupul folosește versiunea <version>. Cineva cu permisiunea 'Manage Server' poate folosi `+<setguildversion>` pentru a alege altă versiune.",
-    "noguildversionused": "Nu am putut găsi acest grup în baza mea de date, cineva cu permisiunea 'Manage Server' a folosit comanda `+<setguildversion>`?",
-    "setguildlanguagesuccess": "Limba versiuni acestui grup a fost setată cu succes.",
-    "setguildlanguagenoperm": "Trebuie să ai permisiunea 'Manage Server' pentru a modifica limba grupului!",
-    "setguildlanguagefail": "Nu am reușit să setăm limba grupului, vezi `+<languages>`.",
-    "guildlanguageused": "Acest grup folosește limba română. Cineva cu permisiunea 'Manage Server' poate folosi comanda  `+<setguildlanguage>` pentru a alege altă limbă.",
-    "setguildbracketssuccess": "Parantezele grupului au fost setate cu succes.",
-    "setguildbracketsnoperm": "Trebuie să ai permisiunea 'Manage Server' pentru a modifica parantezele grupului!",
-    "setguildbracketsfail": "Nu am reușit să setăm parantezele grupului, parantezele care pot fi folosite sunt: `<>`, `[]`, `()`, `{}`.",
-    "guildbracketsused": "Parantezele acestui grup sunt: `<brackets>`.\n\nCineva cu permisiunea 'Manage Server' poate folosi comanda `+<setguildbrackets>` pentru a alege alte paranteze.",
-    "setvotdtimesuccess": "Timpul pentru VZ a fost setat cu succes.",
-    "setvotdtimenoperm": "Trebuie să ai permisiunea 'Manage Server' pentru a modifica timpul programat pentru VZ al grupului!",
-    "setvotdtimefail": "Nu am putut seta timpul programat pentru VZ, timpul trebuie să fie în format de 24 de ore precum „01:00” sau „13:00”.",
-    "votdtimeused": "Timpul programat pentru VOTD al acestui grup este `<time>` și va fi publicat în `#<channel>`.\n\nCineva cu permisiunea 'Manage Server' poate folosi comanda +<setvotdtime>` pentru a seta un alt timp programat pentru VOTD sau `+<clearvotdtime>` pentru a șterge programarea pentru VOTD.",
-    "novotdtimeused": "Nu am putut găsi grupul acesta în baza mea de date, cineva cu permisiunea 'Manage Server' a folosit comanda `+<setvotdtime>`?",
-    "clearvotdtimesuccess": "Timpul programat pentru VZ a fost șters cu succes.",
-    "clearvotdtimenoperm": "Trebuie să ai permisiunea 'Manage Server' pentru a șterge timpul programat pentru VZ a grupului!",
-    "votd": "Acesta este Versetul Zilei:",
-    "passagetoolong": "Acest pasaj este prea lung, îmi pare rău.",
-    "votdcantprocess": "Versetul Zilei nu a putut fi procesa, vezi <https://www.biblegateway.com/> pentru Versetul Zilei.",
-    "versioninfo": "\n**<versionname>**\n\nConține Vechiul Testament: <hasOT>\nConține Noul Testament: <hasNT>\nConține Apocrife/Deuterocanonice: <hasDEU>",
-    "versioninfofailed": "Nu am putut găsi versiunea, sunteți sigur că folosiți acronimul corect?",
-    "setannouncementssuccess": "Anunțurile grupului au fost setate cu succes.",
-    "setannouncementsnoperm": "Trebuie să ai permisiunea 'Manage Server' pentru a modifica anunțurile grupului!",
-    "setannouncementsfail": "Folosește `+<setannouncements> <enable>` sau `+<setannouncements> <disable>`.",
-    "announcementsenabled": "Anunțurile pentru acest grup sunt **activate** și vor fi publicate în `#<channel>`.\n\nCineva cu permisiunea 'Manage Server' poate folosi comanda `+<setannouncements>` pentru a edita anunțurile.",
-    "announcementsdisabled": "Anunțurile pentru acest grup sunt **dezactivate**.\n\nCineva cu permisiunea 'Manage Server' poate folosi comanda `+<setannouncements>` pentru a edita anunțurile.",
-    "noannouncements": "Nu am putut găsi acest grup în baza mea de date, cineva cu permisiunea 'Manage Server' a folosit comanda `+<setannouncements>`?",
-    "users": "Numărul utilizatorilor de pe toate serverele în care BibleBot este prezent (fără utilizatori duplicat)",
-    "servers": "BibleBot este în <count> servere.",
-    "argumentCountError": "+<command> necesită <count> argumente.",
-    "argumentCountErrorAL": "+<command> necesită cel puțin <count> argumente.",
-    "queryTooShort": "Cuvântul folosit la căutare trebuie să fie mai lung de 3 litere.",
-    "searchResults": "Rezultate pentru",
-    "nothingFound": "Niciun rezultat găsit pentru \"<query>\"",
-    "pageOf": "Pagina <num> din <total>",
-    "searchNotSupported": "+<search> folosește doar versiunile de pe Bible Gateway",
-    "supporters": "Mulțumiri următorilor contribuitori:",
-    "anonymousDonors": "Binefăcători anonimi",
-    "donorsNotListed": "Și aceia care nu sunt listați!",
-    "zeroOrOne": "0 sau 1",
+    "versionString": "BibleBot {version} by Kerygma Digital",
+    "relatedCommands": "Related Commands",
+    "permissionsError": "Permissions Error",
+    "permissionsErrorUser": "You do not have the required permissions to use this command.",
+    "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
+    "needsManageServer": "You must have the `Manage Server` permission to use this command.",
+    "argumentsError": "Insufficient Parameters",
+    "versionNoOT": "{version} does not support the Old Testament.",
+    "versionNoNT": "{version} does not support the New Testament.",
+    "versionNoDEU": "{version} does not support the Apocrypha/Deuterocanon.",
+    "tmrError": "Too Many References",
+    "tmrErrorExp": "There are too many references, the maximum amount of references you can do in one message is 6.",
+    "verseError": "Verse Error",
+    "buttonFail": "You cannot interact with these buttons.",
+    "enable": "Enable",
+    "disable": "Disable",
     "enabled": "activat",
     "disabled": "dezactivat",
-    "author": "de <author>\n\n",
-    "singlePage": "1 pagină",
-    "pages": "<num> pagini",
-    "category": "**Categorie**:\n",
-    "section": "**Secțiune**:\n",
-    "sections": "**Secțiuni**:\n",
-    "commands": {
-        "search": "caută",
-        "setversion": "seteazaversiunea",
-        "setguildversion": "steazaversiuneagrup",
-        "version": "versiune",
-        "guildversion": "versiuneagrupului",
-        "versions": "versiuni",
-        "votd": "vz",
-        "verseoftheday": "versetulzilei",
-        "random": "aleatoriu",
-        "biblebot": "biblebot",
-        "addversion": "adaugaversiune",
-        "rmversion": "stergeversiune",
-        "versioninfo": "infoversiune",
-        "setversenumbers": "seteazanumverset",
-        "versenumbers": "numverset",
-        "setheadings": "seteazatitluri",
-        "headings": "titluri",
-        "setmode": "seteazamod",
-        "mode": "modul",
-        "puppet": "puppet",
-        "leave": "iesi",
-        "setlanguage": "seteazalimba",
-        "setguildlanguage": "steazalimbagrup",
-        "language": "limba",
-        "guildlanguage": "limbagrup",
-        "languages": "limbile",
-        "setguildbrackets": "seteazaparantezegrup",
-        "guildbrackets": "parantezegrup",
-        "setvotdtime": "seteazavotdtimp",
-        "clearvotdtime": "stergevotdtimp",
-        "votdtime": "votdtimp",
-        "nicene": "nicenian",
-        "nicene325": "niceanian325",
-        "apostles": "apostolic",
-        "chalcedon": "calcedonian",
-        "creeds": "crezuri",
-        "catechisms": "catehisme",
-        "setannouncements": "seteazaanunturi",
-        "announcements": "anunturi",
-        "users": "utilizatori",
-        "servers": "servere",
-        "announce": "anunta",
-        "invite": "invita",
-        "supporters": "susținători"
+    "setDisplayView": {
+        "selections": {
+            "embed": {
+                "value": "embed",
+                "label": "Embed Blocks",
+                "description": "The fancy blocks that our command output comes in."
+            },
+            "code": {
+                "value": "code",
+                "label": "Code Blocks",
+                "description": "See an example by saying ```test```."
+            },
+            "blockquote": {
+                "value": "blockquote",
+                "label": "Blockquotes",
+                "description": "See an example by saying `> test`."
+            }
+        },
+        "placeholder": "Select a display style...",
+        "discordError": "Error occurred, display style settings have not been changed."
     },
-    "arguments": {
-        "yes": "Da",
-        "no": "Nu",
-        "enable": "activeaza",
-        "disable": "dezactiveaza"
+    "bracketsView": {
+        "selections": {
+            "angleBrackets": {
+                "label": "Angle Brackets <>",
+                "description": "References like <Genesis 1:1> will be ignored."
+            },
+            "squareBrackets": {
+                "label": "Square Brackets []",
+                "description": "References like [Genesis 1:1] will be ignored."
+            },
+            "curlyBrackets": {
+                "label": "Curly Brackets {}",
+                "description": "References like {Genesis 1:1} will be ignored."
+            },
+            "parentheses": {
+                "label": "Parentheses ()",
+                "description": "References like (Genesis 1:1) will be ignored."
+            }
+        },
+        "placeholder": "Select a pair of brackets...",
+        "discordError": "Error occurred, bracket settings have not been changed."
+    },
+    "commands": {
+        "biblebot": {
+            "cmd": "biblebot",
+            "description": "The help command.",
+            "biblebot": "BibleBot {version}",
+            "slogan": "Scripture from your Discord client to your heart.",
+            "credit": "Made with ❤️ by Kerygma Digital",
+            "commands": "📖 Commands",
+            "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
+            "links": "🔗 Links",
+            "website": "**Website**: {website}",
+            "copyrights": "**Copyrights**: {copyrights}",
+            "code": "**GitHub**: {repository}",
+            "terms": "**Terms and Conditions**: {terms}",
+            "news": "🔔 News"
+        },
+        "stats": {
+            "cmd": "stats",
+            "description": "Statistics on the bot.",
+            "frontendStats": "Frontend Stats",
+            "shardCount": "Shard Count",
+            "serverCount": "Server Count",
+            "userCount": "User Count",
+            "channelCount": "Channel Count",
+            "backendStats": "Backend Stats",
+            "userPrefsCount": "User Preference Count",
+            "guildPrefsCount": "Guild Preference Count",
+            "versionCount": "Version Count",
+            "metadata": "Metadata"
+        },
+        "invite": {
+            "cmd": "invite",
+            "description": "See bot and support server invites.",
+            "usage": "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/)."
+        },
+        "announce": {
+            "cmd": "announce",
+            "description": "Announce something to all servers. (owner only)",
+            "announcementHeader": "BibleBot Announcement",
+            "parameters": {
+                "content": "content",
+                "contentDesc": "The content of the announcement."
+            }
+        },
+        "supporters": {
+            "cmd": "supporters",
+            "description": "View all Patreon supporters.",
+            "title": "Patreon Supporters",
+            "listStart": "Many thanks to our Patreon supporters"
+        },
+        "resources": {
+            "cmd": "resources",
+            "description": "See all available resources."
+        },
+        "resource": {
+            "cmd": "resource",
+            "description": "Use a resource.",
+            "creeds": "Creeds",
+            "catechisms": "Catechisms",
+            "canonLaws": "Canon Laws",
+            "usage": "To use a resource, do `/{resource} {resource}: {name}`.\nFor example, `/{resource} {resource}: nicene` or `/{resource} {resource}: ccc {range}: 1`.",
+            "parameters": {
+                "resource": "resource",
+                "resourceDesc": "The resource you wish to use.",
+                "range": "range",
+                "rangeDesc": "The range of pages/sections you want to view, for example `1` or `1-5`."
+            }
+        },
+        "formatting": {
+            "cmd": "formatting",
+            "description": "See your formatting preferences.",
+            "verseNumbersStatus": "Verse numbers are {enabled/disabled}.",
+            "titlesStatus": "Titles are {enabled/disabled}.",
+            "versePaginationStatus": "Verse pagination is {enabled/disabled}.",
+            "displayStyleStatus": "Your preferred display style is set to {displayStyle}.",
+            "serverDisplayStyleStatus": "The server's preferred display style is set to {serverDisplayStyle}.",
+            "bracketsStatus": "The bot will ignore verses in this server surrounded by {ignoringBrackets}.",
+            "relatedCommands": "**/{setversenumbers}** - enable or disable verse numbers\n**/{settitles}** - enable or disable titles\n**/{setpagination}** - enable or disable verse pagination\n**/{setdisplay}** - set your preferred display style\n**/{setserverdisplay}** - set the server's preferred display style (staff only)\n**/{setbrackets}** - set the bot's ignoring brackets for this server (staff only)"
+        },
+        "setversenumbers": {
+            "cmd": "setversenumbers",
+            "description": "Enable or disable verse numbers.",
+            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
+            "success": "Set verse numbers successfully."
+        },
+        "settitles": {
+            "cmd": "settitles",
+            "description": "Enable or disable headings.",
+            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
+            "success": "Set titles successfully."
+        },
+        "setpagination": {
+            "cmd": "setpagination",
+            "description": "Enable or disable verse pagination.",
+            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
+            "success": "Set pagination successfully."
+        },
+        "setdisplay": {
+            "cmd": "setdisplay",
+            "description": "Set your preferred display style.",
+            "cta": "Select your preferred display style.",
+            "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
+            "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
+            "success": "Set display style successfully."
+        },
+        "setserverdisplay": {
+            "cmd": "setserverdisplay",
+            "description": "Set your server's preferred display style.",
+            "cta": "Select your server's preferred display style.",
+            "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
+            "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
+            "success": "Set server display style successfully."
+        },
+        "setbrackets": {
+            "cmd": "setbrackets",
+            "description": "Set the bot's ignoring brackets for this server.",
+            "cta": "Select a pair of brackets.",
+            "argumentsError": "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.",
+            "argumentsError2": "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.",
+            "characterIssue": "The brackets can only be two characters.",
+            "success": "Set brackets successfully."
+        },
+        "language": {
+            "cmd": "language",
+            "description": "See your language preferences.",
+            "status": "Your preferred language is set to {language}.",
+            "serverStatus": "The server's preferred language is set to {serverLanguage}.",
+            "relatedCommands": "**/{setlanguage}** - set your preferred language\n**/{setserverlanguage}** - set the server's default language (staff only)\n**/{listlanguages}** - list all available languages"
+        },
+        "setlanguage": {
+            "cmd": "setlanguage",
+            "description": "Set your preferred language.",
+            "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
+            "success": "Set language successfully.",
+            "fail": "Failed to set language, see `/{listlanguages}`.",
+            "parameters": {
+                "objectName": "objectName",
+                "objectNameDesc": "The object name of the language."
+            }
+        },
+        "setserverlanguage": {
+            "cmd": "setserverlanguage",
+            "description": "Set your server's preferred language.",
+            "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
+            "success": "Set server language successfully.",
+            "fail": "Failed to set server language, see `/{listlanguages}`.",
+            "parameters": {
+                "objectName": "objectName",
+                "objectNameDesc": "The object name of the language."
+            }
+        },
+        "listlanguages": {
+            "cmd": "listlanguages",
+            "description": "List all available languages."
+        },
+        "version": {
+            "cmd": "version",
+            "description": "See your version preferences.",
+            "status": "Your preferred version is set to {version}.",
+            "serverStatus": "The server's preferred version is set to {serverVersion}.",
+            "relatedCommands": "**/{setversion}** - set your preferred version\n**/{setserverversion} - set the server's default version (staff only)\n**/{versioninfo}** - get information on a version\n**/{listversions}** - list all available versions"
+        },
+        "setversion": {
+            "cmd": "setversion",
+            "description": "Set your preferred version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
+            "success": "Set version successfully.",
+            "fail": "Failed to set version, set `/{listversions}`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "setserverversion": {
+            "cmd": "setserverversion",
+            "description": "Set your server's preferred version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
+            "success": "Set server version successfully.",
+            "fail": "Failed to set server version, see `/{listversions}`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "versioninfo": {
+            "cmd": "versioninfo",
+            "description": "See information on a version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
+            "containsOT": "Contains Old Testament",
+            "containtsNT": "Contains New Testament",
+            "containsDEU": "Contains Apocrypha/Deuterocanon",
+            "fail": "I couldn't find that version, see `/{listversions}`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "listversions": {
+            "cmd": "listversions",
+            "description": "List all available versions.",
+            "title": "/{listversions} - Page {currentPage} of {totalPages}"
+        },
+        "dailyverse": {
+            "cmd": "dailyverse",
+            "description": "Display the verse of the day."
+        },
+        "dailyverseset": {
+            "cmd": "dailyverseset",
+            "description": "Setup automatic daily verses on this channel.",
+            "success": "Set automatic daily verse successfully.",
+            "fail": "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.",
+            "failDM": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks."
+        },
+        "dailyversestatus": {
+            "cmd": "dailyversestatus",
+            "description": "See automatic daily verse status for this server.",
+            "status": "The daily verse will be sent at `{time}`, in the **{tz}** time zone, and will be published in {#{channelId}}. It will use this server's preferred version, which you can find by using **`/{version}`**.",
+            "relatedCommands": "Use **`/{dailyverseset}`** to set a new time or channel.\nUse **`/{dailyverseclear}`** to clear automatic daily verse settings.",
+            "fail": "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/{dailyverseset}` to setup the automatic daily verse."
+        },
+        "dailyverseclear": {
+            "cmd": "dailyverseclear",
+            "description": "Clear all automatic daily verse preferences for this server.",
+            "success": "Cleared all daily verse webhooks successfully."
+        },
+        "random": {
+            "cmd": "random",
+            "description": "Display a random verse from a predetermined pool.",
+            "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
+            "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
+        },
+        "truerandom": {
+            "cmd": "truerandom",
+            "description": "Display a random verse based on random number generation.",
+            "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
+            "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
+        },
+        "search": {
+            "cmd": "search",
+            "description": "Search for verses by keyword.",
+            "queryTooShort": "Your search query needs to be at least 4 characters.",
+            "noResults": "Your search query produced no results.",
+            "searchHeader": "Search results for \"{query}\"",
+            "paginator": "Page {currentPage} of {totalPages}"
+        }
     }
 }
