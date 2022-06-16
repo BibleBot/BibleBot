@@ -85,9 +85,9 @@
             "userCount": "Àireamh luchd-cleachdaidh",
             "channelCount": "Àireamh sianalan",
             "backendStats": "Stadastaigean cùlaibh",
-            "userPrefsCount": "User Preference Count",
-            "guildPrefsCount": "Guild Preference Count",
-            "versionCount": "Version Count",
+            "userPrefsCount": "Àireamh roghainn neach-cleachdaidh",
+            "guildPrefsCount": "Àireamh roghainn an fhrithealaiche",
+            "versionCount": "Àireamh tionndaidhean",
             "metadata": "Meata-dàta"
         },
         "invite": {
@@ -97,7 +97,7 @@
         },
         "announce": {
             "cmd": "èigheach",
-            "description": "Èigheach rud ri gach frithealaiche. (neach-seilbhe a-mhàin)",
+            "description": "Èigheach rud ri gach frithealaiche. (rìgh a' bhoit a-mhàin)",
             "announcementHeader": "Èigheachd BibleBot",
             "parameters": {
                 "content": "susbaint",
@@ -137,173 +137,173 @@
             "displayStyleStatus": "Tha an roghainn stoidhle-taisbeanaidh agad air an stèidheachadh mar {displayStyle}.",
             "serverDisplayStyleStatus": "Tha roghainn stoidhle-taisbeanaidh an fhrithealaiche air an stèidheachadh mar {serverDisplayStyle}.",
             "bracketsStatus": "Leigidh am bot seachad san fhrithealaiche seo rannan a tha eadar {ignoringBrackets}.",
-            "relatedCommands": "**/{setversenumbers}** - enable or disable verse numbers\n**/{settitles}** - enable or disable titles\n**/{setpagination}** - enable or disable verse pagination\n**/{setdisplay}** - set your preferred display style\n**/{setserverdisplay}** - set the server's preferred display style (staff only)\n**/{setbrackets}** - set the bot's ignoring brackets for this server (staff only)"
+            "relatedCommands": "**/{setversenumbers}** - cuir àireamhan rainn air neo dheth\n**/{settitles}** - cuir tìotalan air neo dheth\n**/{setpagination}** - cuir duilleagachadh-rainn air neo dheth\n**/{setdisplay}** - stèidhich do roghainn stoidhle-taisbeanaidh\n**/{setserverdisplay}** - stèidhich roghainn stoidhle-taisbeanaidh an fhrithealaiche (tàinistich is rìghrean a-mhàin)\n**/{setbrackets}** - stèidhich na camagan a leigeas am bot seachad san fhrithealaiche (tàinistich is rìghrean a-mhàin)"
         },
         "setversenumbers": {
-            "cmd": "setversenumbers",
-            "description": "Enable or disable verse numbers.",
-            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
+            "cmd": "stèidhichàireamhanrainn",
+            "description": "Cuir àireamhan rainn air neo dheth.",
+            "argumentsError": "Bha dùil ann air paramadair `{enable}` neo `{disable}`.",
             "success": "Stèidhich àireamhan nan rannan gu soirbheachail."
         },
         "settitles": {
-            "cmd": "settitles",
-            "description": "Enable or disable headings.",
-            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
-            "success": "Set titles successfully."
+            "cmd": "stèidhichtìotalan",
+            "description": "Cuir cinn-sgrìobhaidh air neo dheth.",
+            "argumentsError": "Bha dùil ann air paramadair `{enable}` neo `{disable}`.",
+            "success": "Chaidh tìotalan a stèidheachadh."
         },
         "setpagination": {
-            "cmd": "setpagination",
-            "description": "Enable or disable verse pagination.",
-            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
-            "success": "Set pagination successfully."
+            "cmd": "stèidhichduilleagachadh",
+            "description": "Cuir duilleagachadh rainn air neo dheth.",
+            "argumentsError": "Bha dùil ann air paramadair `{enable}` neo `{disable}`.",
+            "success": "Chaidh duilleagachadh a stèidheachadh gu soirbheachail."
         },
         "setdisplay": {
-            "cmd": "setdisplay",
-            "description": "Set your preferred display style.",
-            "cta": "Select your preferred display style.",
-            "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
-            "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
-            "success": "Set display style successfully."
+            "cmd": "stèidhichtaisbeanadh",
+            "description": "Stèidhich do roghainn stoidhle-taisbeanaidh.",
+            "cta": "Roghnich an stoidhle taisbeanaidh a's fheàrr leat.",
+            "argumentsError": "Bha dùil ann air paramadair `{embed}`, `{code}`, neo `{blockquote}`.",
+            "argumentsError2": "Faodaidh tu roghnachadh eadar `{embed}`, `{code}`, neo `{blockquote}`.",
+            "success": "Chaidh stoidhle-taisbeanaidh a stèidheachadh gu soirbheachail."
         },
         "setserverdisplay": {
-            "cmd": "setserverdisplay",
-            "description": "Set your server's preferred display style.",
-            "cta": "Select your server's preferred display style.",
-            "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
-            "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
-            "success": "Set server display style successfully."
+            "cmd": "stèidhichtaisbeanadhfrithealaiche",
+            "description": "Stèidhich roghainn stoidhle-taisbeanaidh an fhrithealaiche agad.",
+            "cta": "Roghnaich an stoidhle-taisbeanaidh a dh'iarras tu anns an fhrithealaiche agad.",
+            "argumentsError": "Bha dùil ann air paramadair `{embed}`, `{code}`, neo `{blockquote}`.",
+            "argumentsError2": "Faodaidh tu roghnachadh eadar `{embed}`, `{code}`, neo `{blockquote}`.",
+            "success": "Chaidh stoidhle-taisbeanaidh an fhrithealaiche a stèidheachadh gu soirbheachail."
         },
         "setbrackets": {
-            "cmd": "setbrackets",
-            "description": "Set the bot's ignoring brackets for this server.",
-            "cta": "Select a pair of brackets.",
-            "argumentsError": "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.",
-            "argumentsError2": "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.",
-            "characterIssue": "The brackets can only be two characters.",
-            "success": "Set brackets successfully."
+            "cmd": "stèidhichcamagan",
+            "description": "Stèidhich na camagan a leigeas an bot seachad san fhrithealaiche seo.",
+            "cta": "Roghnaich camagan.",
+            "argumentsError": "Bha dùil ann air paramadair le dà charactar, feumaidh seo a bhith `<>`, `[]`, `{}`, neo `()`.",
+            "argumentsError2": "Chan tèid na camagan an stèidheachadh ach mar `<>`, `[]`, `{}`, neo `()`.",
+            "characterIssue": "Feumaidh na camagan a bhith dà charactar a-mhàin.",
+            "success": "Chaidh na camagan a stèidheachadh gu soirbheachail."
         },
         "language": {
-            "cmd": "language",
-            "description": "See your language preferences.",
-            "status": "Your preferred language is set to {language}.",
-            "serverStatus": "The server's preferred language is set to {serverLanguage}.",
-            "relatedCommands": "**/{setlanguage}** - set your preferred language\n**/{setserverlanguage}** - set the server's default language (staff only)\n**/{listlanguages}** - list all available languages"
+            "cmd": "cànan",
+            "description": "Faic na roghainnean cànain agad.",
+            "status": "Tha do roghainn cànain air a stèidheachadh mar {language}.",
+            "serverStatus": "Tha roghainn cànan an fhrithealaiche air a stèidheachadh mar {serverLanguage}.",
+            "relatedCommands": "**/{setlanguage}** - stèidhich do roghainn cànain\n**/{setserverlanguage}** - stèidhich roghainn cànan an fhrithealaiche (tàinistich neo rìghrean a-mhàin)\n**/{listlanguages}** - faic liosta nan cànain ri làimh"
         },
         "setlanguage": {
-            "cmd": "setlanguage",
-            "description": "Set your preferred language.",
-            "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
-            "success": "Set language successfully.",
-            "fail": "Failed to set language, see `/{listlanguages}`.",
+            "cmd": "stèidhichcànan",
+            "description": "Stèidhich do roghainn cànain.",
+            "argumentsError": "Bha dùil ann air paramadair cànain, mar eisimpleir `{english}` neo `{german}`.",
+            "success": "Chaidh an cànan a stèidheachadh gu soirbheachail.",
+            "fail": "Cha deach an cànan a stèidheachadh, faic `/{listlanguages}`.",
             "parameters": {
-                "objectName": "objectName",
-                "objectNameDesc": "The object name of the language."
+                "objectName": "ainmOibseict",
+                "objectNameDesc": "Ainm oibseict a' chànain."
             }
         },
         "setserverlanguage": {
-            "cmd": "setserverlanguage",
-            "description": "Set your server's preferred language.",
-            "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
-            "success": "Set server language successfully.",
-            "fail": "Failed to set server language, see `/{listlanguages}`.",
+            "cmd": "stèidhichcànanfrithealaiche",
+            "description": "Stèidhich roghainn cànan an fhrithealaiche agad.",
+            "argumentsError": "Bha dùil ann air paramadair cànain, mar eisimpleir `{english}` neo `{german}`.",
+            "success": "Chaidh cànan an fhrithealaiche a stèidheachadh gu soirbheachail.",
+            "fail": "Cha deach cànan an fhrithealaiche a stèidheachadh, faic `/{listlanguages}`.",
             "parameters": {
-                "objectName": "objectName",
-                "objectNameDesc": "The object name of the language."
+                "objectName": "ainmOibseict",
+                "objectNameDesc": "Ainm oibseict a' chànain."
             }
         },
         "listlanguages": {
-            "cmd": "listlanguages",
-            "description": "List all available languages."
+            "cmd": "liostacànanan",
+            "description": "Faic liosta nan cànanan ri làimh."
         },
         "version": {
-            "cmd": "version",
-            "description": "See your version preferences.",
-            "status": "Your preferred version is set to {version}.",
-            "serverStatus": "The server's preferred version is set to {serverVersion}.",
-            "relatedCommands": "**/{setversion}** - set your preferred version\n**/{setserverversion} - set the server's default version (staff only)\n**/{versioninfo}** - get information on a version\n**/{listversions}** - list all available versions"
+            "cmd": "tionndadh",
+            "description": "Faic do roghainnean tionndaidh.",
+            "status": "Tha an roghainn tionndaidh agad air a stèidheachadh mar {version}.",
+            "serverStatus": "Tha roghainn tionndaidh an fhrithealaiche air a stèidheachadh mar {serverVersion}.",
+            "relatedCommands": "**/{setversion}** - stèidhich do roghainn tionndaidh\n**/{setserverversion} - stèidhich roghainn tionndaidh an fhrithealaiche (tàinisich is rìghrean a-mhàin)\n**/{versioninfo}** - faigh fiosrachadh air tionndadh\n**/{listversions}** - faic liosta nan tionndaidhean ri làimh"
         },
         "setversion": {
-            "cmd": "setversion",
-            "description": "Set your preferred version.",
-            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
-            "success": "Set version successfully.",
-            "fail": "Failed to set version, set `/{listversions}`.",
+            "cmd": "stèidhichtionndadh",
+            "description": "Stèidhich do roghainn tionndaidh.",
+            "argumentsError": "Bha dùil ann air paramadair aithghearradh tionndaidh, mar eisimpleir `{RSV}` neo `{KJV}`.",
+            "success": "Chaidh tionndadh a stèidheachadh gu soirbheachail.",
+            "fail": "Cha deach an tionndadh a stèidheachadh, faic `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
-                "abbreviationDesc": "The abbreviation of the version."
+                "abbreviation": "aithghearradh",
+                "abbreviationDesc": "Aithghearradh an tionndaidh."
             }
         },
         "setserverversion": {
-            "cmd": "setserverversion",
-            "description": "Set your server's preferred version.",
-            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
-            "success": "Set server version successfully.",
-            "fail": "Failed to set server version, see `/{listversions}`.",
+            "cmd": "stèidhichtionndadhfrithealaiche",
+            "description": "Stèidhich roghainn tionndaidh an fhrithealaiche agad.",
+            "argumentsError": "Bha dùil ann air paramadair aithghearradh tionndaidh, mar eisimpleir `{RSV}` neo `{KJV}`.",
+            "success": "Chaidh tionndadh an fhrithealaiche a stèidheachadh gu soirbheachail.",
+            "fail": "Cha deach tionndadh an fhrithealaiche a stèidheachadh, faic `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
-                "abbreviationDesc": "The abbreviation of the version."
+                "abbreviation": "aithghearradh",
+                "abbreviationDesc": "Aithghearradh an tionndaidh."
             }
         },
         "versioninfo": {
-            "cmd": "versioninfo",
-            "description": "See information on a version.",
-            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
-            "containsOT": "Contains Old Testament",
-            "containtsNT": "Contains New Testament",
-            "containsDEU": "Contains Apocrypha/Deuterocanon",
-            "fail": "I couldn't find that version, see `/{listversions}`.",
+            "cmd": "fiosrachadhtionndaidh",
+            "description": "Faic fiosrachadh mu dheidhinn tionndaidh.",
+            "argumentsError": "Bha dùil ann air paramadair aithghearradh tionndaidh, mar eisimpleir `{RSV}` neo `{KJV}`.",
+            "containsOT": "Tha 'n Seann-Tiomnadh ann",
+            "containtsNT": "Tha 'n Tiomnadh Nuadh ann",
+            "containsDEU": "Tha Apocripha/Dàrnacanan ann",
+            "fail": "Cha do lorg mi an tionndadh sin, faic `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
-                "abbreviationDesc": "The abbreviation of the version."
+                "abbreviation": "aithghearradh",
+                "abbreviationDesc": "Aithghearradh an tionndaidh."
             }
         },
         "listversions": {
-            "cmd": "listversions",
-            "description": "List all available versions.",
-            "title": "/{listversions} - Page {currentPage} of {totalPages}"
+            "cmd": "liostationndaidhean",
+            "description": "Faic liosta nan tionndaidhean ri làimh.",
+            "title": "/{listversions} - Duilleag {currentPage} de {totalPages}"
         },
         "dailyverse": {
-            "cmd": "dailyverse",
-            "description": "Display the verse of the day."
+            "cmd": "rannlàitheil",
+            "description": "Faic rann an latha."
         },
         "dailyverseset": {
-            "cmd": "dailyverseset",
-            "description": "Setup automatic daily verses on this channel.",
-            "success": "Set automatic daily verse successfully.",
-            "fail": "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.",
-            "failDM": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks."
+            "cmd": "stèidhichrannlàitheil",
+            "description": "Cuir rannan làitheil anns an t-sianal seo gu fèin-obrachail.",
+            "success": "Chaidh rann an latha fèin-obrachail a stèidheachadh gu soirbheachail.",
+            "fail": "Rach gu https://biblebot.xyz/daily-verse-setup/ gus tuilleadh a dhèanamh air a' phròiseis stèidhichidh.",
+            "failDM": "Chan oibrich rann an latha gu fèin-obraicheal ann an DMs, leis nach eil DMs a' ceadachadh webhooks."
         },
         "dailyversestatus": {
-            "cmd": "dailyversestatus",
-            "description": "See automatic daily verse status for this server.",
-            "status": "The daily verse will be sent at `{time}`, in the **{tz}** time zone, and will be published in {#{channelId}}. It will use this server's preferred version, which you can find by using **`/{version}`**.",
-            "relatedCommands": "Use **`/{dailyverseset}`** to set a new time or channel.\nUse **`/{dailyverseclear}`** to clear automatic daily verse settings.",
-            "fail": "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/{dailyverseset}` to setup the automatic daily verse."
+            "cmd": "inbherannlàitheil",
+            "description": "Faic inbhe rann fèin-obrachail an latha anns an fhrithealaiche seo.",
+            "status": "Thèid rann an latha a chur ann aig `{time}`, anns an roinn-àma **{tz}**, agus thèid seo a dhèanamh ann an {#{channelId}}. Cleachdaidh seo roghainn tionndaidh an fhrithealaiche seo, a lorgas tu le **`/{version}`**.",
+            "relatedCommands": "Cleachd **`/{dailyverseset}`** gus àm neo sianal ùr a stèidheachadh.\nCleachd **`/{dailyverseclear}`** gus roghainnean rann fèin-obrachail an latha a sguabachadh.",
+            "fail": "Chan eil rann fèin-obrachail an latha air a stèidheachadh anns an frithealaiche seo, neo chaidh e a rèiteachadh gu ceàrr. Cleachd `/{dailyverseset}` gus rann fèin-obrachail an latha a stèidheachadh."
         },
         "dailyverseclear": {
-            "cmd": "dailyverseclear",
-            "description": "Clear all automatic daily verse preferences for this server.",
-            "success": "Cleared all daily verse webhooks successfully."
+            "cmd": "sguabrannlàitheil",
+            "description": "Sguabaich às gach roghainn a th' ann anns an fhrithealaiche seo a thaobh rann fèin-obrachail an latha.",
+            "success": "Chaidh gach webhook rann an latha a sguabachadh às gu soirbheachail."
         },
         "random": {
-            "cmd": "random",
-            "description": "Display a random verse from a predetermined pool.",
-            "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
-            "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
+            "cmd": "tuaireamach",
+            "description": "Faic rann tuaireamach a thigeas à liosta ro-rùnaichte.",
+            "bibliomancyWarning": "Cha bu chòir dhuit an òrdugh seo a chleachdadh airson geaslanachd - na smaoinich gu bheil luachd spioradail ann an tuaireamachd a' choimpiùtair.",
+            "useInDMs": "Dh'iarr am frithealaiche seo nach tèid an òrdugh seo a chleachadh ach ann an DMs, gus spam a sheachnachadh."
         },
         "truerandom": {
-            "cmd": "truerandom",
-            "description": "Display a random verse based on random number generation.",
-            "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
-            "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
+            "cmd": "tuaireamachgufìor",
+            "description": "Faic rann tuaireamach a rèir gineadair àireamhan tuaireamach.",
+            "bibliomancyWarning": "Cha bu chòir dhuit an òrdugh seo a chleachdadh airson geaslanachd - na smaoinich gu bheil luachd spioradail ann an tuaireamachd a' choimpiùtair.",
+            "useInDMs": "Dh'iarr am frithealaiche seo nach tèid an òrdugh seo a chleachadh ach ann an DMs, gus spam a sheachnachadh."
         },
         "search": {
-            "cmd": "search",
-            "description": "Search for verses by keyword.",
-            "queryTooShort": "Your search query needs to be at least 4 characters.",
-            "noResults": "Your search query produced no results.",
-            "searchHeader": "Search results for \"{query}\"",
-            "paginator": "Page {currentPage} of {totalPages}"
+            "cmd": "rannsaich",
+            "description": "Rannsaich rannan le facal-luirg.",
+            "queryTooShort": "Feumaidh do chuid rannsachaidh a bhith thar 4 caractaran a dh'fhaide.",
+            "noResults": "Cha do lorg do chuid rannsachaidh air toradh sam bith.",
+            "searchHeader": "Toraidhean rannsachaidh air \"{query}\"",
+            "paginator": "Duilleag {currentPage} de {totalPages}"
         }
     }
 }
