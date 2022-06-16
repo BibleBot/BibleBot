@@ -13,15 +13,15 @@
     "tmrErrorExp": "Tha cus iomraidhean ann, chan fhaod tu ach sia ann an teachdaireachd a-mhàin.",
     "verseError": "Mearachd rainn",
     "buttonFail": "Chan urrainn dhuit na putanan seo a chleachdadh.",
-    "enable": "Dèan comasach",
-    "disable": "Thoir air falbh comasachd",
+    "enable": "Cuir air",
+    "disable": "Cuir dheth",
     "enabled": "comasach",
     "disabled": "ciorramach",
     "setDisplayView": {
         "selections": {
             "embed": {
-                "value": "embed",
-                "label": "Embed Blocks",
+                "value": "rud leabaichte",
+                "label": "Blocaichean leabaichte",
                 "description": "Na blocaichean spaiteil anns a bhitheas ar cuid às-chuir òrdugh a' tighinn."
             },
             "code": {
@@ -77,66 +77,66 @@
             "news": "🔔 Naidheachd"
         },
         "stats": {
-            "cmd": "stats",
-            "description": "Statistics on the bot.",
-            "frontendStats": "Frontend Stats",
-            "shardCount": "Shard Count",
-            "serverCount": "Server Count",
-            "userCount": "User Count",
-            "channelCount": "Channel Count",
-            "backendStats": "Backend Stats",
+            "cmd": "stadastaigean",
+            "description": "Stadastaigean a' bhoit.",
+            "frontendStats": "Stadastaigean beulaibh",
+            "shardCount": "Àireamh spreadhan",
+            "serverCount": "Àireamh frithealaichean",
+            "userCount": "Àireamh luchd-cleachdaidh",
+            "channelCount": "Àireamh sianalan",
+            "backendStats": "Stadastaigean cùlaibh",
             "userPrefsCount": "User Preference Count",
             "guildPrefsCount": "Guild Preference Count",
             "versionCount": "Version Count",
-            "metadata": "Metadata"
+            "metadata": "Meata-dàta"
         },
         "invite": {
-            "cmd": "invite",
-            "description": "See bot and support server invites.",
-            "usage": "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/)."
+            "cmd": "cuireadh",
+            "description": "Faic cuiridhean a' bhoit is an fhrithealaiche tacais.",
+            "usage": "Cliog [here](https://biblebot.xyz/invite) gus cuireadh a thoirt dhan bhot dhan fhrithealaiche agad.\nCliog [here](https://biblebot.xyz/discord) gus pàirt a ghabhail anns an fhrithealaiche oifigeil Discord.\n\nCliog [here](https://biblebot.xyz/permissions/) gus fiosrachadh fhaighinn air na ceadan a dh'iarras sinn."
         },
         "announce": {
-            "cmd": "announce",
-            "description": "Announce something to all servers. (owner only)",
-            "announcementHeader": "BibleBot Announcement",
+            "cmd": "èigheach",
+            "description": "Èigheach rud ri gach frithealaiche. (neach-seilbhe a-mhàin)",
+            "announcementHeader": "Èigheachd BibleBot",
             "parameters": {
-                "content": "content",
-                "contentDesc": "The content of the announcement."
+                "content": "susbaint",
+                "contentDesc": "Susbaint an èigheachd."
             }
         },
         "supporters": {
-            "cmd": "supporters",
-            "description": "View all Patreon supporters.",
-            "title": "Patreon Supporters",
-            "listStart": "Many thanks to our Patreon supporters"
+            "cmd": "luchd-taice",
+            "description": "Faic gach neach-taice Patreon.",
+            "title": "Luchd-taice Patreon",
+            "listStart": "Mòran taing dhan luchd-taice Patreon againn"
         },
         "resources": {
-            "cmd": "resources",
-            "description": "See all available resources."
+            "cmd": "goireasan",
+            "description": "Faic gach goireas ri làimh."
         },
         "resource": {
-            "cmd": "resource",
-            "description": "Use a resource.",
-            "creeds": "Creeds",
-            "catechisms": "Catechisms",
-            "canonLaws": "Canon Laws",
-            "usage": "To use a resource, do `/{resource} {resource}: {name}`.\nFor example, `/{resource} {resource}: nicene` or `/{resource} {resource}: ccc {range}: 1`.",
+            "cmd": "goireas",
+            "description": "Cleachd goireas.",
+            "creeds": "Aideachaidhean",
+            "catechisms": "Ceistneachain",
+            "canonLaws": "Clèir-laghan",
+            "usage": "Gus goireas a chleachdadh, dèan `/{resource} {resource}: {name}`.\nMar eisimpleir, `/{resource} {resource}: nicene` neo `/{resource} {resource}: ccc {range} 1`.",
             "parameters": {
-                "resource": "resource",
-                "resourceDesc": "The resource you wish to use.",
-                "range": "range",
-                "rangeDesc": "The range of pages/sections you want to view, for example `1` or `1-5`."
+                "resource": "goireas",
+                "resourceDesc": "An goireas a tha thu airson cleachdadh.",
+                "range": "rainse",
+                "rangeDesc": "Rainse nan duilleagan/roinntean a tha thu airson fhaicinn, mar eisimplir `1`neo `1-5`."
             }
         },
         "formatting": {
-            "cmd": "formatting",
-            "description": "See your formatting preferences.",
-            "verseNumbersStatus": "Verse numbers are {enabled/disabled}.",
-            "titlesStatus": "Titles are {enabled/disabled}.",
-            "versePaginationStatus": "Verse pagination is {enabled/disabled}.",
-            "displayStyleStatus": "Your preferred display style is set to {displayStyle}.",
-            "serverDisplayStyleStatus": "The server's preferred display style is set to {serverDisplayStyle}.",
-            "bracketsStatus": "The bot will ignore verses in this server surrounded by {ignoringBrackets}.",
+            "cmd": "fòrmatadh",
+            "description": "Faic do roghainnean fòrmataidh.",
+            "verseNumbersStatus": "Tha àireamhan rainn {air/dheth}.",
+            "titlesStatus": "Tha tìotalan {air/dheth}.",
+            "versePaginationStatus": "Tha duilleagachadh-rainn {air/dheth}.",
+            "displayStyleStatus": "Tha an roghainn stoidhle-taisbeanaidh agad air an stèidheachadh mar {displayStyle}.",
+            "serverDisplayStyleStatus": "Tha roghainn stoidhle-taisbeanaidh an fhrithealaiche air an stèidheachadh mar {serverDisplayStyle}.",
+            "bracketsStatus": "Leigidh am bot seachad san fhrithealaiche seo rannan a tha eadar {ignoringBrackets}.",
             "relatedCommands": "**/{setversenumbers}** - enable or disable verse numbers\n**/{settitles}** - enable or disable titles\n**/{setpagination}** - enable or disable verse pagination\n**/{setdisplay}** - set your preferred display style\n**/{setserverdisplay}** - set the server's preferred display style (staff only)\n**/{setbrackets}** - set the bot's ignoring brackets for this server (staff only)"
         },
         "setversenumbers": {
