@@ -227,7 +227,7 @@
             "description": "Stèidhich do roghainn tionndaidh.",
             "argumentsError": "Bha dùil ann air paramadair aithghearradh tionndaidh, mar eisimpleir `{RSV}` neo `{KJV}`.",
             "success": "Chaidh tionndadh a stèidheachadh gu soirbheachail.",
-            "fail": "Cha deach an tionndadh a stèidheachadh, faic `/{listversions}`.",
+            "fail": "Failed to set version, see `/{listversions}`.",
             "parameters": {
                 "abbreviation": "aithghearradh",
                 "abbreviationDesc": "Aithghearradh an tionndaidh."
