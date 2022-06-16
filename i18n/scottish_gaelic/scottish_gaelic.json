@@ -125,15 +125,15 @@
                 "resource": "goireas",
                 "resourceDesc": "An goireas a tha thu airson cleachdadh.",
                 "range": "rainse",
-                "rangeDesc": "Rainse nan duilleagan/roinntean a tha thu airson fhaicinn, mar eisimplir `1`neo `1-5`."
+                "rangeDesc": "Rainse nan duilleagan/roinntean a tha thu airson fhaicinn, mar eisimplir `1` neo `1-5`."
             }
         },
         "formatting": {
             "cmd": "fòrmatadh",
             "description": "Faic do roghainnean fòrmataidh.",
             "verseNumbersStatus": "Tha àireamhan rainn {air/dheth}.",
-            "titlesStatus": "Tha tìotalan {air/dheth}.",
-            "versePaginationStatus": "Tha duilleagachadh-rainn {air/dheth}.",
+            "titlesStatus": "Tha tìotalan {enabled/disabled}.",
+            "versePaginationStatus": "Tha duilleagachadh-rainn {enabled/disabled}.",
             "displayStyleStatus": "Tha an roghainn stoidhle-taisbeanaidh agad air an stèidheachadh mar {displayStyle}.",
             "serverDisplayStyleStatus": "Tha roghainn stoidhle-taisbeanaidh an fhrithealaiche air an stèidheachadh mar {serverDisplayStyle}.",
             "bracketsStatus": "Leigidh am bot seachad san fhrithealaiche seo rannan a tha eadar {ignoringBrackets}.",
@@ -227,7 +227,7 @@
             "description": "Stèidhich do roghainn tionndaidh.",
             "argumentsError": "Bha dùil ann air paramadair aithghearradh tionndaidh, mar eisimpleir `{RSV}` neo `{KJV}`.",
             "success": "Chaidh tionndadh a stèidheachadh gu soirbheachail.",
-            "fail": "Failed to set version, see `/{listversions}`.",
+            "fail": "Cha deach an tionndadh a stèidheachadh, faic `/{listversions}`.",
             "parameters": {
                 "abbreviation": "aithghearradh",
                 "abbreviationDesc": "Aithghearradh an tionndaidh."
