@@ -1,166 +1,309 @@
 {
-    "biblebot": "BibleBot <version> от Elliott Pardee (vypr)",
-    "code": "Код: <repositoryLink>",
-    "commandlist": "* `+<search> СЛОВО` - искать СЛОВО в Библии (только в версиях Bible Gateway)\n* `+<setversion> ВЕРСИЯ` - установка указанной версии Библии\n* `+<version>` - какая версия Библии установлена\n* `+<versions>` - все доступные версии Библии\n* `+<versioninfo> ВЕРСИЯ` - информация о версии, использование сокращений\n* `+<random>` - случайный стих из Библии\n* `+<verseoftheday>` (`+<votd>`) - \"Стих дня\", стих Библии на каждый день\n* `+<setheadings> <enable>/<disable>` - включение или отключение заголовков темы/главы\n* `+<headings>` - состояние заголовков темы/главы\n* `+<setmode> mode` - установка режима (пустая команда для просмотра опций)\n* `+<mode>` - текущий режим\n* `+<setversenumbers> <enable>/<disable>` - включение или отключение нумерации стихов\n* `+<versenumbers>` - состояние нумерации стихов\n* `+<setlanguage> ЯЗЫК` - установка языка ЯЗЫК\n* `+<language>` - текущий язык, если он установлен (по умолчанию: английский)\n* `+<languages>` - все доступные языки\n* `+<users>` - список всех пользователей на всех серверах (не считая дубликатов и ботов)\n* `+<servers>` - сколько серверов используют BibleBot\n* `+<invite>` - получить ссылку приглашение для BibleBot\n* `+<supporters>` - кто финансово поддерживает BibleBot",
-    "commandlist2": "* `+<creeds>` - Символы Веры (включает дополнительные параметры)\n* `+<catechisms>` - катехезисы различных конфессий (включает дополнительные параметры)",
-    "guildcommandlist": "* `+<setguildversion> ВЕРСИЯ` - установка на сервере ВЕРСИИ Библии по умолчанию\n* `+<guildversion>` - какая версия Библии установлена по умолчанию\n* `+<setguildlanguage> ЯЗЫК` - устанавливает на сервере ЯЗЫК по умолчанию\n* `+<guildlanguage>` - какой язык установлен по умолчанию, если он установлен (по умолчанию: английский)\n* `+<setvotdtime> ВРЕМЯ` - установка ВРЕМЕНИ показа \"Стиха дня\" (ВРЕМЯ должно быть задано в 24-х часовом формате и UTC)\n* `+<clearvotdtime>` - очистка времени показа \"Стиха дня\" \n* `+<votdtime>` - время и канал показа \"Стиха дня\"\n* `+<setannouncements> <enable>/<disable>` - включение и отключение оповещений\n* `+<announcements>` - состояние оповещений на сервере",
-    "usage": "Для использования просто укажите  стих из Библии. Я сделаю все остальное.",
-    "commandlistName": "Команды",
-    "extrabiblicalcommandlistName": "Команды не относящиеся к Библии",
-    "guildcommandlistName": "Команды для всего сервера",
-    "links": "Ссылки",
-    "website": "Сайт: <websiteLink>",
-    "joinserver": "Официальный сервер Discord: <inviteLink>",
-    "terms": "Условия использования: <termsLink>",
-    "apostles_name": "Апостольский символ веры",
-    "apostles_text": "Верую в Бога, Отца Всемогущего, Творца неба и земли.\n\nИ в Иисуса Христа, Единственного Его Сына, Господа нашего, Который был зачат Святым Духом, рождён Девой Марией, страдал при Понтии Пилате, был распят, умер и погребён, сошёл в ад, в третий день воскрес из мёртвых, восшёл на небеса и восседает одесную Бога Отца Всемогущего, оттуда придёт судить живых и мёртвых.\n\nВерую в Святого Духа, Святую Вселенскую Церковь, общение святых, прощение грехов, воскресение тела, жизнь вечную. Аминь.",
-    "nicene325_name": "Никейский символ веры (325 год)",
-    "nicene325_text": "Веруем во Единого Бога Отца, Вседержителя, Творца всего видимого и невидимого. И во Единого Господа Иисуса Христа, Сына Божия, рождённого от Отца, Единородного, то есть из сущности Отца, Бога от Бога, Света от Света, Бога истинного от Бога истинного, рождённого, несотворённого, единосущного Отцу, через Которого [а именно Сына] всё произошло как на небе, так и на земле. Нас ради человеков и нашего ради спасения сошедшего и воплотившегося, вочеловечившегося, страдавшего и воскресшего в третий день, восшедшего на небеса и грядущего судить живых и мёртвых. И в Святого Духа. \n\n[А говорящих, что было время, когда не было Сына, или что Он не был прежде рождения и произошёл из несущего, или утверждающих, что Сын Божий из иной ипостаси или сущности, или создан, или изменяем — таковых анафематствует кафолическая [и апостольская] церковь.]",
-    "nicene_name": "Никео-Цареградский Символ веры (381 год)",
-    "nicene_text": "Верую во единого Бога Отца Вседержителя, Творца неба и земли, всего видимого и невидимого.\n\nИ во единого Господа Иисуса Христа, Сына Божия, единородного, рождённого от Отца прежде всех веков, Света от Света, Бога истинного от Бога истинного, рождённого, не сотворённого, одного существа со Отцом, через Которого всё сотворено; для нас людей и для нашего спасения сошедшего с небес, принявшего плоть от Духа Святого и Марии Девы и сделавшегося человеком, распятого за нас при Понтии Пилате, страдавшего и погребённого, воскресшего в третий день согласно с Писаниями (пророческими), восшедшего на небеса и сидящего одесную Отца, и снова грядущего со славою судить живых и мёртвых, Царству Его не будет конца.\n\nИ в Святого Духа, Господа, дающего жизнь, исходящего от Отца, поклоняемого и прославляемого равночестно с Отцем и Сыном, говорившего чрез пророков. И во единую, Святую, Вселенскую и Апостольскую Церковь. Исповедую единое крещение во оставление грехов. Ожидаю воскресения мёртвых и жизнь будущую. Аминь.",
-    "chalcedon_name": "Халкидонский Символ веры (451 год)",
-    "chalcedon_text": "Итак, следуя за божественными отцами, мы все единогласно учим исповедовать Одного и Того же Сына, Господа нашего Иисуса Христа, Совершенным по Божеству и Его же Самого Совершенным по человечеству; Подлинно Бога и Его же Самого подлинно человека: из разумной души и тела. Единосущным Отцу по Божеству и Его же Самого единосущным нам по человечеству. Подобным нам во всем, кроме греха (Евр. 4:15). Прежде веков рождённым из Отца по Божеству, а в последние дни Его же Самого для нас и для нашего спасения (рождённого) по человечеству из Марии Девы Богородицы. Одного и Того же Христа, Сына, Господа, Единородного, познаваемым в двух природах неслитно, непревращенно, неразделимо, неразлучимо. (При этом) разница природ не исчезает через соединение, а ещё более сохраняется особенность каждой природы, сходящейся в одно Лицо и в одну Ипостась. (Учим исповедовать) не рассекаемым или различаемым на два лица, но Одним и Тем же Сыном Единородным, Богом-Словом, Господом Иисусом Христом. Как изначала о Нем (изрекли) пророки и наставил нас Сам Господь Иисус Христос и как предал нам символ отцов наших.",
-    "creeds": "Символы Веры",
-    "creeds_text": "Эти Символы Веры доступны в BibleBot:\n\n",
-    "catechisms": "Катехезисы",
-    "catechisms_text": "Эти Катехезисы доступны в BibleBot:\n\n",
-    "protestant": "Протестантизм",
-    "lutheran": "Лютеранство",
-    "reformed": "Реформизм",
-    "baptist": "Баптизм",
-    "catholic": "Католичество",
-    "eastern_orthodox": "Восточное Православие",
-    "oriental_orthodox": "Древние восточные церкви",
-    "pubdomain": "Общественное достояние",
-    "rangeError": "Неверный диапазон, убедитесь, что первый номер меньше второго. Диапазон не может превышать 15.",
-    "error": "Ошибка",
-    "versions": "Поддерживаю",
-    "setversionsuccess": "Версия Библии успешно установлена.",
-    "setversionfail": "Не удалось установить версию Библии, см. `+<versions>`.",
-    "versionused": "Сейчас используется <version>. Используйте `+<setversion>`, чтобы установить другую версию Библии.",
-    "noversionused": "Ваше имя не найдено в базе данных, вы уже использовали `+<setversion>`?",
-    "addversionsuccess": "Версия Библии успешно добавлена.",
-    "versenumbers": "Нумерация стихов <enabled/disabled>. Используйте `<setversenumbers>` для изменения.",
-    "versenumberssuccess": "Нумерация стихов успешно установлена.",
-    "versenumbersfail": "Используйте `+<setversenumbers> <enable>` или `+<setversenumbers> <disable>`.",
-    "headings": "Сейчас заголовки <enabled/disabled>. Используйте `+<setheadings>` для изменения.",
-    "headingssuccess": "Заголовки успешно установлены.",
-    "headingsfail": "Используйте `+<setheadings> <enable>` или `+<setheadings> <disable>`.",
-    "mode": "Установлен режим `<value>`. Используйте `+<setmode>` для изменения.",
-    "modesuccess": "Режим успешно установлен.",
-    "modefail": "Используйте `+<setmode>` с одним из следующих параметров: `default, embed, blockquote, code`",
-    "setlanguagesuccess": "Язык успешно установлен.",
-    "setlanguagefail": "Не удалось установить язык, см. `+<languages>`.",
-    "languageused": "Вы используете Replace_With_Language_Name. Используйте `+<setlanguage>`, чтобы установить другой язык.",
-    "languages": "Поддерживаю",
-    "otnotsupported": "Версия <version> не поддерживает Ветхий Завет.",
-    "ntnotsupported": "Версия <version> не поддерживает Новый Завет.",
-    "deunotsupported": "Версия <version> не поддерживает Апокрифы/Второканон. книги.",
-    "otnotsupported2": "Если вы хотите использовать Ветхий Завет, с помощью `+<setversion>` - установите версию, в которой он есть.",
-    "ntnotsupported2": "Если вы хотите использовать Новый Завет, с помощью `+<setversion>` установите версию, в которой он есть.",
-    "deunotsupported2": "Если вы хотите использовать Апокрифы/Второканонические книги, с помощью `+<setversion>` установите версию, в которой они есть.",
-    "setguildversionsuccess": "Версия для сервера успешно установлена.",
-    "setguildversionnoperm": "Вы должны управлять сервером, для изменения версии Библии на сервере!",
-    "setguildversionfail": "Не удалось установить версию Библии для всего сервера, см. `+<versions>`.",
-    "guildversionused": "Сервер использует <version>. Если вы управляете сервером, используйте `+<setguildversion>` для установки другой версии Библии.",
-    "noguildversionused": "Не могу найти этот сервер в моей базе данных, возможно кто то еще использовал `+<setguildversion>`?",
-    "setguildlanguagesuccess": "Язык сервера успешно установлен.",
-    "setguildlanguagenoperm": "Вы должны управлять сервером, чтобы изменить язык сервера!",
-    "setguildlanguagefail": "Не удалось установить язык сервера, см. `+<languages>`.",
-    "guildlanguageused": "Сервер использует Replace_With_Language_Name. Если вы управляете сервером используйте `+<setguildlanguage>` для установки другого языка.",
-    "setguildbracketssuccess": "Скобки сервера успешно установлены.",
-    "setguildbracketsnoperm": "Вы должны управлять сервером, чтобы изменить скобки сервера!",
-    "setguildbracketsfail": "Не удалось установить скобки сервера, поддерживаются только `<>`, `[]`, `()`, `{}`.",
-    "guildbracketsused": "Скобки для этого сервера `<brackets>`.\n\nЕсли Вы управляете сервером, используйте `+<setguildbrackets>`, чтобы установить другие скобки.",
-    "setvotdtimesuccess": "Время для \"Стих дня\" успешно установлено.",
-    "setvotdtimenoperm": "Вы должны управлять сервером, для изменения времени \"Стиха дня\" сервера!",
-    "setvotdtimefail": "Не удалось задать время \"Стиха дня\", оно должно быть указано в 24-х часовом формате, как `01:00` или `13:00`.",
-    "votdtimeused": "Время \"Стиха дня\" для этого сервера - `<time>` и будет опубликовано в `#<channel>`.\n\nЕсли вы управляете сервером, используйте `+<setvotdtime>`, для установки другого времени \"Стих дня\" или `+<clearvotdtime>`, для очистки.",
-    "novotdtimeused": "Не могу найти этот сервер в моей базе данных, возможно кто то еще использовал `+<setvotdtime>`?",
-    "clearvotdtimesuccess": "Время \"Стих дня\" успешно очищено.",
-    "clearvotdtimenoperm": "Вы должны управлять сервером, для очистки времени \"Стиха дня\" сервера!",
-    "votd": "Стих дня:",
-    "passagetoolong": "Простите, слишком длинный отрывок.",
-    "votdcantprocess": "Стих дня не может быть выведен, обратитесь к <https://www.biblegateway.com/>",
-    "versioninfo": "\n**<versionname>**\n\nСодержит Ветхий Завет: <hasOT>\nСодержит Новый Завет: <hasNT>\nСодержит Апокрифы/Второканон. книги: <hasDEU>",
-    "versioninfofailed": "Не могу найти эту версию, вы уверены, что использовали правильную аббревиатуру?",
-    "setannouncementssuccess": "Оповещения сервера успешно установлены.",
-    "setannouncementsnoperm": "Вы должны управлять сервером для изменения настроек оповещения сервера!",
-    "setannouncementsfail": "Используйте `+<setannouncements> <enable>` или `+<setannouncements> <disable>`.",
-    "announcementsenabled": "Объявления для этого сервера **включены** и будут опубликованы в `#<channel>`.\n\nЕсли Вы управляете сервером, используйте `+<setannouncements>`, чтобы установить другие настройки.",
-    "announcementsdisabled": "Объявления для этого сервера **выключены**.\n\nЕсли Вы управляете сервером, используйте `+<setannouncements>`, чтобы установить другие настройки.",
-    "noannouncements": "Этот сервер не найден в базе данных, возможно кто то еще использовал `+<setannouncements>`?",
-    "users": "Количество пользователей всех серверов, где работает BibleBot (без дубликатов)",
-    "servers": "BibleBot используется на <count> серверах.",
-    "argumentCountError": "+<command> требует  <count> аргумента.",
-    "argumentCountErrorAL": "+<command> требует не менее <count> аргумента.",
-    "queryTooShort": "Запрос должен быть длиннее 3 символов!",
-    "searchResults": "Результаты поиска",
-    "nothingFound": "Ничего не найдено для \"<query>\"",
-    "pageOf": "Стр <num> из <total>",
-    "searchNotSupported": "+<search> поддерживает только версии Bible Gateway",
-    "supporters": "Особая благодарность следующим участникам:",
-    "anonymousDonors": "Анонимные инвесторы",
-    "donorsNotListed": "И те, кто не в списке!",
-    "zeroOrOne": "0 или 1",
+    "versionString": "BibleBot {version} by Kerygma Digital",
+    "relatedCommands": "Related Commands",
+    "permissionsError": "Permissions Error",
+    "permissionsErrorUser": "You do not have the required permissions to use this command.",
+    "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
+    "needsManageServer": "You must have the `Manage Server` permission to use this command.",
+    "argumentsError": "Insufficient Parameters",
+    "versionNoOT": "{version} does not support the Old Testament.",
+    "versionNoNT": "{version} does not support the New Testament.",
+    "versionNoDEU": "{version} does not support the Apocrypha/Deuterocanon.",
+    "tmrError": "Too Many References",
+    "tmrErrorExp": "There are too many references, the maximum amount of references you can do in one message is 6.",
+    "verseError": "Verse Error",
+    "buttonFail": "You cannot interact with these buttons.",
+    "enable": "Enable",
+    "disable": "Disable",
     "enabled": "включено",
     "disabled": "выключено",
-    "author": "от <author>",
-    "singlePage": "1 стр",
-    "pages": "<num> стр",
-    "category": "**Категория**:\n",
-    "section": "**Раздел**:\n",
-    "sections": "**Разделы**:\n",
-    "commands": {
-        "search": "search",
-        "setversion": "setversion",
-        "setguildversion": "setguildversion",
-        "version": "version",
-        "guildversion": "guildversion",
-        "versions": "versions",
-        "votd": "votd",
-        "verseoftheday": "verseoftheday",
-        "random": "random",
-        "biblebot": "biblebot",
-        "addversion": "addversion",
-        "rmversion": "rmversion",
-        "versioninfo": "versioninfo",
-        "setversenumbers": "setversenumbers",
-        "versenumbers": "versenumbers",
-        "setheadings": "setheadings",
-        "headings": "headings",
-        "setmode": "setmode",
-        "mode": "mode",
-        "puppet": "puppet",
-        "leave": "leave",
-        "setlanguage": "setlanguage",
-        "setguildlanguage": "setguildlanguage",
-        "language": "language",
-        "guildlanguage": "guildlanguage",
-        "languages": "languages",
-        "setguildbrackets": "setguildbrackets",
-        "guildbrackets": "guildbrackets",
-        "setvotdtime": "setvotdtime",
-        "clearvotdtime": "clearvotdtime",
-        "votdtime": "votdtime",
-        "nicene": "nicene",
-        "nicene325": "nicene325",
-        "apostles": "apostles",
-        "chalcedon": "chalcedon",
-        "creeds": "creeds",
-        "catechisms": "catechisms",
-        "setannouncements": "setannouncements",
-        "announcements": "announcements",
-        "users": "users",
-        "servers": "servers",
-        "announce": "announce",
-        "invite": "invite",
-        "supporters": "supporters"
+    "setDisplayView": {
+        "selections": {
+            "embed": {
+                "value": "embed",
+                "label": "Embed Blocks",
+                "description": "The fancy blocks that our command output comes in."
+            },
+            "code": {
+                "value": "code",
+                "label": "Code Blocks",
+                "description": "See an example by saying ```test```."
+            },
+            "blockquote": {
+                "value": "blockquote",
+                "label": "Blockquotes",
+                "description": "See an example by saying `> test`."
+            }
+        },
+        "placeholder": "Select a display style...",
+        "discordError": "Error occurred, display style settings have not been changed."
     },
-    "arguments": {
-        "yes": "Да",
-        "no": "Нет",
-        "enable": "вкл",
-        "disable": "откл"
+    "bracketsView": {
+        "selections": {
+            "angleBrackets": {
+                "label": "Angle Brackets <>",
+                "description": "References like <Genesis 1:1> will be ignored."
+            },
+            "squareBrackets": {
+                "label": "Square Brackets []",
+                "description": "References like [Genesis 1:1] will be ignored."
+            },
+            "curlyBrackets": {
+                "label": "Curly Brackets {}",
+                "description": "References like {Genesis 1:1} will be ignored."
+            },
+            "parentheses": {
+                "label": "Parentheses ()",
+                "description": "References like (Genesis 1:1) will be ignored."
+            }
+        },
+        "placeholder": "Select a pair of brackets...",
+        "discordError": "Error occurred, bracket settings have not been changed."
+    },
+    "commands": {
+        "biblebot": {
+            "cmd": "biblebot",
+            "description": "The help command.",
+            "biblebot": "BibleBot {version}",
+            "slogan": "Scripture from your Discord client to your heart.",
+            "credit": "Made with ❤️ by Kerygma Digital",
+            "commands": "📖 Commands",
+            "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
+            "links": "🔗 Links",
+            "website": "**Website**: {website}",
+            "copyrights": "**Copyrights**: {copyrights}",
+            "code": "**GitHub**: {repository}",
+            "terms": "**Terms and Conditions**: {terms}",
+            "news": "🔔 News"
+        },
+        "stats": {
+            "cmd": "stats",
+            "description": "Statistics on the bot.",
+            "frontendStats": "Frontend Stats",
+            "shardCount": "Shard Count",
+            "serverCount": "Server Count",
+            "userCount": "User Count",
+            "channelCount": "Channel Count",
+            "backendStats": "Backend Stats",
+            "userPrefsCount": "User Preference Count",
+            "guildPrefsCount": "Guild Preference Count",
+            "versionCount": "Version Count",
+            "metadata": "Metadata"
+        },
+        "invite": {
+            "cmd": "invite",
+            "description": "See bot and support server invites.",
+            "usage": "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/)."
+        },
+        "announce": {
+            "cmd": "announce",
+            "description": "Announce something to all servers. (owner only)",
+            "announcementHeader": "BibleBot Announcement",
+            "parameters": {
+                "content": "content",
+                "contentDesc": "The content of the announcement."
+            }
+        },
+        "supporters": {
+            "cmd": "supporters",
+            "description": "View all Patreon supporters.",
+            "title": "Patreon Supporters",
+            "listStart": "Many thanks to our Patreon supporters"
+        },
+        "resources": {
+            "cmd": "resources",
+            "description": "See all available resources."
+        },
+        "resource": {
+            "cmd": "resource",
+            "description": "Use a resource.",
+            "creeds": "Creeds",
+            "catechisms": "Catechisms",
+            "canonLaws": "Canon Laws",
+            "usage": "To use a resource, do `/{resource} {resource}: {name}`.\nFor example, `/{resource} {resource}: nicene` or `/{resource} {resource}: ccc {range}: 1`.",
+            "parameters": {
+                "resource": "resource",
+                "resourceDesc": "The resource you wish to use.",
+                "range": "range",
+                "rangeDesc": "The range of pages/sections you want to view, for example `1` or `1-5`."
+            }
+        },
+        "formatting": {
+            "cmd": "formatting",
+            "description": "See your formatting preferences.",
+            "verseNumbersStatus": "Verse numbers are {enabled/disabled}.",
+            "titlesStatus": "Titles are {enabled/disabled}.",
+            "versePaginationStatus": "Verse pagination is {enabled/disabled}.",
+            "displayStyleStatus": "Your preferred display style is set to {displayStyle}.",
+            "serverDisplayStyleStatus": "The server's preferred display style is set to {serverDisplayStyle}.",
+            "bracketsStatus": "The bot will ignore verses in this server surrounded by {ignoringBrackets}.",
+            "relatedCommands": "**/{setversenumbers}** - enable or disable verse numbers\n**/{settitles}** - enable or disable titles\n**/{setpagination}** - enable or disable verse pagination\n**/{setdisplay}** - set your preferred display style\n**/{setserverdisplay}** - set the server's preferred display style (staff only)\n**/{setbrackets}** - set the bot's ignoring brackets for this server (staff only)"
+        },
+        "setversenumbers": {
+            "cmd": "setversenumbers",
+            "description": "Enable or disable verse numbers.",
+            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
+            "success": "Set verse numbers successfully."
+        },
+        "settitles": {
+            "cmd": "settitles",
+            "description": "Enable or disable headings.",
+            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
+            "success": "Set titles successfully."
+        },
+        "setpagination": {
+            "cmd": "setpagination",
+            "description": "Enable or disable verse pagination.",
+            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
+            "success": "Set pagination successfully."
+        },
+        "setdisplay": {
+            "cmd": "setdisplay",
+            "description": "Set your preferred display style.",
+            "cta": "Select your preferred display style.",
+            "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
+            "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
+            "success": "Set display style successfully."
+        },
+        "setserverdisplay": {
+            "cmd": "setserverdisplay",
+            "description": "Set your server's preferred display style.",
+            "cta": "Select your server's preferred display style.",
+            "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
+            "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
+            "success": "Set server display style successfully."
+        },
+        "setbrackets": {
+            "cmd": "setbrackets",
+            "description": "Set the bot's ignoring brackets for this server.",
+            "cta": "Select a pair of brackets.",
+            "argumentsError": "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.",
+            "argumentsError2": "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.",
+            "characterIssue": "The brackets can only be two characters.",
+            "success": "Set brackets successfully."
+        },
+        "language": {
+            "cmd": "language",
+            "description": "See your language preferences.",
+            "status": "Your preferred language is set to {language}.",
+            "serverStatus": "The server's preferred language is set to {serverLanguage}.",
+            "relatedCommands": "**/{setlanguage}** - set your preferred language\n**/{setserverlanguage}** - set the server's default language (staff only)\n**/{listlanguages}** - list all available languages"
+        },
+        "setlanguage": {
+            "cmd": "setlanguage",
+            "description": "Set your preferred language.",
+            "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
+            "success": "Set language successfully.",
+            "fail": "Failed to set language, see `/{listlanguages}`.",
+            "parameters": {
+                "objectName": "objectName",
+                "objectNameDesc": "The object name of the language."
+            }
+        },
+        "setserverlanguage": {
+            "cmd": "setserverlanguage",
+            "description": "Set your server's preferred language.",
+            "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
+            "success": "Set server language successfully.",
+            "fail": "Failed to set server language, see `/{listlanguages}`.",
+            "parameters": {
+                "objectName": "objectName",
+                "objectNameDesc": "The object name of the language."
+            }
+        },
+        "listlanguages": {
+            "cmd": "listlanguages",
+            "description": "List all available languages."
+        },
+        "version": {
+            "cmd": "version",
+            "description": "See your version preferences.",
+            "status": "Your preferred version is set to {version}.",
+            "serverStatus": "The server's preferred version is set to {serverVersion}.",
+            "relatedCommands": "**/{setversion}** - set your preferred version\n**/{setserverversion} - set the server's default version (staff only)\n**/{versioninfo}** - get information on a version\n**/{listversions}** - list all available versions"
+        },
+        "setversion": {
+            "cmd": "setversion",
+            "description": "Set your preferred version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
+            "success": "Set version successfully.",
+            "fail": "Failed to set version, set `/{listversions}`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "setserverversion": {
+            "cmd": "setserverversion",
+            "description": "Set your server's preferred version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
+            "success": "Set server version successfully.",
+            "fail": "Failed to set server version, see `/{listversions}`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "versioninfo": {
+            "cmd": "versioninfo",
+            "description": "See information on a version.",
+            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
+            "containsOT": "Contains Old Testament",
+            "containtsNT": "Contains New Testament",
+            "containsDEU": "Contains Apocrypha/Deuterocanon",
+            "fail": "I couldn't find that version, see `/{listversions}`.",
+            "parameters": {
+                "abbreviation": "abbreviation",
+                "abbreviationDesc": "The abbreviation of the version."
+            }
+        },
+        "listversions": {
+            "cmd": "listversions",
+            "description": "List all available versions.",
+            "title": "/{listversions} - Page {currentPage} of {totalPages}"
+        },
+        "dailyverse": {
+            "cmd": "dailyverse",
+            "description": "Display the verse of the day."
+        },
+        "dailyverseset": {
+            "cmd": "dailyverseset",
+            "description": "Setup automatic daily verses on this channel.",
+            "success": "Set automatic daily verse successfully.",
+            "fail": "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.",
+            "failDM": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks."
+        },
+        "dailyversestatus": {
+            "cmd": "dailyversestatus",
+            "description": "See automatic daily verse status for this server.",
+            "status": "The daily verse will be sent at `{time}`, in the **{tz}** time zone, and will be published in {#{channelId}}. It will use this server's preferred version, which you can find by using **`/{version}`**.",
+            "relatedCommands": "Use **`/{dailyverseset}`** to set a new time or channel.\nUse **`/{dailyverseclear}`** to clear automatic daily verse settings.",
+            "fail": "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/{dailyverseset}` to setup the automatic daily verse."
+        },
+        "dailyverseclear": {
+            "cmd": "dailyverseclear",
+            "description": "Clear all automatic daily verse preferences for this server.",
+            "success": "Cleared all daily verse webhooks successfully."
+        },
+        "random": {
+            "cmd": "random",
+            "description": "Display a random verse from a predetermined pool.",
+            "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
+            "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
+        },
+        "truerandom": {
+            "cmd": "truerandom",
+            "description": "Display a random verse based on random number generation.",
+            "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
+            "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
+        },
+        "search": {
+            "cmd": "search",
+            "description": "Search for verses by keyword.",
+            "queryTooShort": "Your search query needs to be at least 4 characters.",
+            "noResults": "Your search query produced no results.",
+            "searchHeader": "Search results for \"{query}\"",
+            "paginator": "Page {currentPage} of {totalPages}"
+        }
     }
 }
