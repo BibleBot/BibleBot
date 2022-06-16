@@ -1,20 +1,20 @@
 {
-    "versionString": "BibleBot {version} by Kerygma Digital",
-    "relatedCommands": "Related Commands",
-    "permissionsError": "Permissions Error",
-    "permissionsErrorUser": "You do not have the required permissions to use this command.",
-    "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
-    "needsManageServer": "You must have the `Manage Server` permission to use this command.",
-    "argumentsError": "Insufficient Parameters",
-    "versionNoOT": "{version} does not support the Old Testament.",
-    "versionNoNT": "{version} does not support the New Testament.",
-    "versionNoDEU": "{version} does not support the Apocrypha/Deuterocanon.",
-    "tmrError": "Too Many References",
-    "tmrErrorExp": "There are too many references, the maximum amount of references you can do in one message is 6.",
-    "verseError": "Verse Error",
-    "buttonFail": "You cannot interact with these buttons.",
-    "enable": "Enable",
-    "disable": "Disable",
+    "versionString": "BibleBot {version} le Kerygma Digital",
+    "relatedCommands": "Òrdughan dàimheil",
+    "permissionsError": "Mearachd ceadan",
+    "permissionsErrorUser": "Chan eil na ceadan agad a dh'fheumas tu gus an òrdugh seo a chleachdadh.",
+    "permissionsErrorBot": "Chan eil cead aig botaichean an òrdugh seo a chleachdadh, leig fios dhan mhac-màthar as fhaisge dhuit le do thoil.",
+    "needsManageServer": "Feumaidh tu an cead 'Manage Server' gus an òrdugh seo a chleachdadh.",
+    "argumentsError": "Ganntas Paramadairean",
+    "versionNoOT": "Chan eil comas an t-Seann Tiomnadh aig {version}.",
+    "versionNoNT": "Chan eil comas an Tiomadh Nuadh aig {version}.",
+    "versionNoDEU": "Chan eil comas an Apocripha/an Dàrnachanan aig {version}.",
+    "tmrError": "Cus iomraidhean",
+    "tmrErrorExp": "Tha cus iomraidhean ann, chan fhaod tu ach sia ann an teachdaireachd a-mhàin.",
+    "verseError": "Mearachd rainn",
+    "buttonFail": "Chan urrainn dhuit na putanan seo a chleachdadh.",
+    "enable": "Dèan comasach",
+    "disable": "Thoir air falbh comasachd",
     "enabled": "comasach",
     "disabled": "ciorramach",
     "setDisplayView": {
@@ -22,59 +22,59 @@
             "embed": {
                 "value": "embed",
                 "label": "Embed Blocks",
-                "description": "The fancy blocks that our command output comes in."
+                "description": "Na blocaichean spaiteil anns a bhitheas ar cuid às-chuir òrdugh a' tighinn."
             },
             "code": {
-                "value": "code",
-                "label": "Code Blocks",
-                "description": "See an example by saying ```test```."
+                "value": "còd",
+                "label": "Blocaichean còid",
+                "description": "Can ```test``` gus eisimpleir fhaicinn."
             },
             "blockquote": {
-                "value": "blockquote",
-                "label": "Blockquotes",
-                "description": "See an example by saying `> test`."
+                "value": "bloc-iomradh",
+                "label": "Bloc-iomraidhean",
+                "description": "Can `> test` gus eisimpleir fhaicinn."
             }
         },
-        "placeholder": "Select a display style...",
-        "discordError": "Error occurred, display style settings have not been changed."
+        "placeholder": "Roghnaich stoidhle taisbeanaidh...",
+        "discordError": "Thachair mearachd, cha deach roghainnean stoidhle taisbeanaidh an atharrachadh."
     },
     "bracketsView": {
         "selections": {
             "angleBrackets": {
-                "label": "Angle Brackets <>",
-                "description": "References like <Genesis 1:1> will be ignored."
+                "label": "Camagan biorach <>",
+                "description": "Thèid iomraidhean mar <Genesis 1:1> an leigeil seachad."
             },
             "squareBrackets": {
-                "label": "Square Brackets []",
-                "description": "References like [Genesis 1:1] will be ignored."
+                "label": "Camagan ceàrnach []",
+                "description": "Thèid iomraidhean mar [Genesis 1:1] an leigeil seachad."
             },
             "curlyBrackets": {
-                "label": "Curly Brackets {}",
-                "description": "References like {Genesis 1:1} will be ignored."
+                "label": "Camagan dualach {}",
+                "description": "Thèid iomraidhean mar {Genesis 1:1} an leigeil seachad."
             },
             "parentheses": {
-                "label": "Parentheses ()",
-                "description": "References like (Genesis 1:1) will be ignored."
+                "label": "Camagan cruinn ()",
+                "description": "Thèid iomraidhean mar (Genesis 1:1) an leigeil seachad."
             }
         },
-        "placeholder": "Select a pair of brackets...",
-        "discordError": "Error occurred, bracket settings have not been changed."
+        "placeholder": "Roghnaich camagan...",
+        "discordError": "Thachair mearachd, cha deach roghainnean camaige an atharrachadh."
     },
     "commands": {
         "biblebot": {
             "cmd": "biblebot",
-            "description": "The help command.",
+            "description": "An òrdugh cuideachais.",
             "biblebot": "BibleBot {version}",
-            "slogan": "Scripture from your Discord client to your heart.",
-            "credit": "Made with ❤️ by Kerygma Digital",
-            "commands": "📖 Commands",
-            "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
-            "links": "🔗 Links",
-            "website": "**Website**: {website}",
-            "copyrights": "**Copyrights**: {copyrights}",
+            "slogan": "Scrioptar bho'n dèiligear Discord agad dhad' chrìdhe.",
+            "credit": "Dèanta le ❤️ le Kerygma Digital",
+            "commands": "📖 Òrduighean",
+            "commandList": "`/{search}` - rannsaich rannan le faclan-luirg\n`/{version}` - roghainnean is fiosrachadh tionndaidhean\n`/{language}` - roghainnean is fiosrachaidh cànain\n`/{formatting}` - roghainnean stoidhlichean rannan is dòigh-ghiùlain a' bhoit\n`/{dailyverse}` - rannan làitheil agus fèin-obrachas\n`/{random}` - faigh rann Bìobuill tuaireamach\n`/{resource}` - aideachaidhean, ceistneachain, aidmheilean-chreideimh, agus sgrìobhanan eachdraidheil\n`/{stats}` - faic stadastaigean a' bhoit\n`/{invite}` - ceanglaichean cuiridh a' bhoit agus an fhrithealaiche tacais\n\nFaic <https://biblebot.xyz/usage-and-commands> gus barrachd òrduighean fhaighinn.",
+            "links": "🔗 Ceanglaichean",
+            "website": "**Làrach-lìn**: {website}",
+            "copyrights": "**Còir-lethbhreac**: {copyrights}",
             "code": "**GitHub**: {repository}",
-            "terms": "**Terms and Conditions**: {terms}",
-            "news": "🔔 News"
+            "terms": "**Teirmichean is cumhaichean**: {terms}",
+            "news": "🔔 Naidheachd"
         },
         "stats": {
             "cmd": "stats",
@@ -143,7 +143,7 @@
             "cmd": "setversenumbers",
             "description": "Enable or disable verse numbers.",
             "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
-            "success": "Set verse numbers successfully."
+            "success": "Stèidhich àireamhan nan rannan gu soirbheachail."
         },
         "settitles": {
             "cmd": "settitles",
