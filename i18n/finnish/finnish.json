@@ -69,16 +69,16 @@
             "credit": "Made with ❤️ by Kerygma Digital",
             "commands": "📖 Komennot",
             "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
-            "links": "🔗 Links",
-            "website": "**Website**: {website}",
-            "copyrights": "**Copyrights**: {copyrights}",
+            "links": "🔗 Linkit",
+            "website": "**Verkkosivusto**: {website}",
+            "copyrights": "**Tekijänoikeudet**: {copyrights}",
             "code": "**GitHub**: {repository}",
             "terms": "**Terms and Conditions**: {terms}",
             "news": "🔔 Uutiset"
         },
         "stats": {
-            "cmd": "stats",
-            "description": "Statistics on the bot.",
+            "cmd": "tilastot",
+            "description": "Bottia koskevat tilastot.",
             "frontendStats": "Frontend Stats",
             "shardCount": "Shard Count",
             "serverCount": "Server Count",
@@ -117,7 +117,7 @@
         "resource": {
             "cmd": "resource",
             "description": "Use a resource.",
-            "creeds": "Creeds",
+            "creeds": "Uskontunnustukset",
             "catechisms": "Catechisms",
             "canonLaws": "Canon Laws",
             "usage": "To use a resource, do `/{resource} {resource}: {name}`.\nFor example, `/{resource} {resource}: nicene` or `/{resource} {resource}: ccc {range}: 1`.",
@@ -158,7 +158,7 @@
             "success": "Set pagination successfully."
         },
         "setdisplay": {
-            "cmd": "setdisplay",
+            "cmd": "asetanäyttö",
             "description": "Set your preferred display style.",
             "cta": "Select your preferred display style.",
             "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
@@ -174,7 +174,7 @@
             "success": "Set server display style successfully."
         },
         "setbrackets": {
-            "cmd": "setbrackets",
+            "cmd": "asetasulkeet",
             "description": "Set the bot's ignoring brackets for this server.",
             "cta": "Select a pair of brackets.",
             "argumentsError": "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.",
@@ -190,7 +190,7 @@
             "relatedCommands": "**/{setlanguage}** - set your preferred language\n**/{setserverlanguage}** - set the server's default language (staff only)\n**/{listlanguages}** - list all available languages"
         },
         "setlanguage": {
-            "cmd": "setlanguage",
+            "cmd": "asetakieli",
             "description": "Set your preferred language.",
             "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
             "success": "Set language successfully.",
@@ -216,14 +216,14 @@
             "description": "List all available languages."
         },
         "version": {
-            "cmd": "version",
+            "cmd": "käännös",
             "description": "See your version preferences.",
             "status": "Your preferred version is set to {version}.",
             "serverStatus": "The server's preferred version is set to {serverVersion}.",
             "relatedCommands": "**/{setversion}** - set your preferred version\n**/{setserverversion} - set the server's default version (staff only)\n**/{versioninfo}** - get information on a version\n**/{listversions}** - list all available versions"
         },
         "setversion": {
-            "cmd": "setversion",
+            "cmd": "asetakäännös",
             "description": "Set your preferred version.",
             "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
             "success": "Set version successfully.",
