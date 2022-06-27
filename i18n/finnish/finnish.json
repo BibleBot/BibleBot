@@ -183,7 +183,7 @@
             "success": "Set brackets successfully."
         },
         "language": {
-            "cmd": "language",
+            "cmd": "kieli",
             "description": "See your language preferences.",
             "status": "Your preferred language is set to {language}.",
             "serverStatus": "The server's preferred language is set to {serverLanguage}.",
@@ -245,11 +245,11 @@
             }
         },
         "versioninfo": {
-            "cmd": "versioninfo",
+            "cmd": "käännöstiedot",
             "description": "See information on a version.",
             "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
-            "containsOT": "Contains Old Testament",
-            "containtsNT": "Contains New Testament",
+            "containsOT": "Sisältää Vanhan Testamentin",
+            "containtsNT": "Sisältää Uuden Testamentin",
             "containsDEU": "Contains Apocrypha/Deuterocanon",
             "fail": "I couldn't find that version, see `/{listversions}`.",
             "parameters": {
@@ -286,7 +286,7 @@
             "success": "Cleared all daily verse webhooks successfully."
         },
         "random": {
-            "cmd": "random",
+            "cmd": "satunnainen",
             "description": "Display a random verse from a predetermined pool.",
             "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
             "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
