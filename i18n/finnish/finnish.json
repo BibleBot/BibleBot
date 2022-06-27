@@ -67,14 +67,14 @@
             "biblebot": "BibleBot {version}",
             "slogan": "Scripture from your Discord client to your heart.",
             "credit": "Made with ❤️ by Kerygma Digital",
-            "commands": "📖 Commands",
+            "commands": "📖 Komennot",
             "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
             "links": "🔗 Links",
             "website": "**Website**: {website}",
             "copyrights": "**Copyrights**: {copyrights}",
             "code": "**GitHub**: {repository}",
             "terms": "**Terms and Conditions**: {terms}",
-            "news": "🔔 News"
+            "news": "🔔 Uutiset"
         },
         "stats": {
             "cmd": "stats",
