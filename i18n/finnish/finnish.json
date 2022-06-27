@@ -300,10 +300,10 @@
         "search": {
             "cmd": "search",
             "description": "Search for verses by keyword.",
-            "queryTooShort": "Your search query needs to be at least 4 characters.",
-            "noResults": "Your search query produced no results.",
+            "queryTooShort": "Hakusi tulee olla vähintään 4 merkkiä pitkä.",
+            "noResults": "Hakusi ei tuottanut tuloksia.",
             "searchHeader": "Search results for \"{query}\"",
-            "paginator": "Page {currentPage} of {totalPages}"
+            "paginator": "Sivu {currentPage}/{totalPages}"
         }
     }
 }
