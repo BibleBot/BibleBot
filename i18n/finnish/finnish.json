@@ -66,7 +66,7 @@
             "description": "The help command.",
             "biblebot": "BibleBot {version}",
             "slogan": "Scripture from your Discord client to your heart.",
-            "credit": "Made with ❤️ by Kerygma Digital",
+            "credit": "Tehnyt ❤️ Kerygma Digital",
             "commands": "📖 Komennot",
             "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
             "links": "🔗 Linkit",
@@ -91,14 +91,14 @@
             "metadata": "Metadata"
         },
         "invite": {
-            "cmd": "invite",
+            "cmd": "kutsu",
             "description": "See bot and support server invites.",
             "usage": "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/)."
         },
         "announce": {
             "cmd": "announce",
             "description": "Announce something to all servers. (owner only)",
-            "announcementHeader": "BibleBot Announcement",
+            "announcementHeader": "BibleBotin Ilmoitus",
             "parameters": {
                 "content": "content",
                 "contentDesc": "The content of the announcement."
@@ -118,8 +118,8 @@
             "cmd": "resource",
             "description": "Use a resource.",
             "creeds": "Uskontunnustukset",
-            "catechisms": "Catechisms",
-            "canonLaws": "Canon Laws",
+            "catechisms": "Katekismukset",
+            "canonLaws": "Kaanon laki",
             "usage": "To use a resource, do `/{resource} {resource}: {name}`.\nFor example, `/{resource} {resource}: nicene` or `/{resource} {resource}: ccc {range}: 1`.",
             "parameters": {
                 "resource": "resource",
@@ -140,8 +140,8 @@
             "relatedCommands": "**/{setversenumbers}** - enable or disable verse numbers\n**/{settitles}** - enable or disable titles\n**/{setpagination}** - enable or disable verse pagination\n**/{setdisplay}** - set your preferred display style\n**/{setserverdisplay}** - set the server's preferred display style (staff only)\n**/{setbrackets}** - set the bot's ignoring brackets for this server (staff only)"
         },
         "setversenumbers": {
-            "cmd": "setversenumbers",
-            "description": "Enable or disable verse numbers.",
+            "cmd": "asetajaenumerot",
+            "description": "Ota jaenumerot käyttöön tai poista käytöstä.",
             "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
             "success": "Set verse numbers successfully."
         },
@@ -159,7 +159,7 @@
         },
         "setdisplay": {
             "cmd": "asetanäyttö",
-            "description": "Set your preferred display style.",
+            "description": "Aseta ensisijainen näyttötyylisi.",
             "cta": "Select your preferred display style.",
             "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
             "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
@@ -264,14 +264,14 @@
         },
         "dailyverse": {
             "cmd": "päivittäinenjae",
-            "description": "Display the verse of the day."
+            "description": "Näytä päivän jae."
         },
         "dailyverseset": {
-            "cmd": "dailyverseset",
+            "cmd": "asetapäivittäinenjae",
             "description": "Setup automatic daily verses on this channel.",
-            "success": "Set automatic daily verse successfully.",
+            "success": "Automaattinen päivittäinen jae asetettu onnistuneesti.",
             "fail": "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.",
-            "failDM": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks."
+            "failDM": "Automaattista päivittäistä jaetta ei voida käyttää yksityisviesteissä, koska yksityisviestit eivät salli webhookeja."
         },
         "dailyversestatus": {
             "cmd": "dailyversestatus",
@@ -281,7 +281,7 @@
             "fail": "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/{dailyverseset}` to setup the automatic daily verse."
         },
         "dailyverseclear": {
-            "cmd": "dailyverseclear",
+            "cmd": "tyhjennäpäivittäinenjae",
             "description": "Clear all automatic daily verse preferences for this server.",
             "success": "Cleared all daily verse webhooks successfully."
         },
