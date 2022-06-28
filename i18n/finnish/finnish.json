@@ -263,7 +263,7 @@
             "title": "/{listversions} - Page {currentPage} of {totalPages}"
         },
         "dailyverse": {
-            "cmd": "dailyverse",
+            "cmd": "päivittäinenjae",
             "description": "Display the verse of the day."
         },
         "dailyverseset": {
