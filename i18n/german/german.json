@@ -1,8 +1,8 @@
 {
-    "versionString": "BibleBot {version} by Kerygma Digital",
-    "relatedCommands": "Related Commands",
-    "permissionsError": "Permissions Error",
-    "permissionsErrorUser": "You do not have the required permissions to use this command.",
+    "versionString": "BibleBot {version} von Kerygma Digital",
+    "relatedCommands": "Zusammenhängende Befehle",
+    "permissionsError": "Berechtigungsfehler",
+    "permissionsErrorUser": "Du besitzt nicht die erforderlichen Berechtigungen, um diesen Befehl zu benutzen.",
     "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
     "needsManageServer": "You must have the `Manage Server` permission to use this command.",
     "argumentsError": "Insufficient Parameters",
