@@ -147,8 +147,8 @@
         },
         "settitles": {
             "cmd": "asetaotsikot",
-            "description": "Enable or disable headings.",
-            "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
+            "description": "Ota otsikot käyttöön tai poista käytöstä.",
+            "argumentsError": "Odotettiin `{enable}` tai `{disable}` -parametria.",
             "success": "Otsikot asetettu onnistuneesti."
         },
         "setpagination": {
@@ -171,7 +171,7 @@
             "cta": "Select your server's preferred display style.",
             "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
             "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
-            "success": "Serverin näyttötyyli asetettu onnistuneesti."
+            "success": "Palvelimen näyttötyyli asetettu onnistuneesti."
         },
         "setbrackets": {
             "cmd": "asetasulkeet",
@@ -213,7 +213,7 @@
         },
         "listlanguages": {
             "cmd": "listlanguages",
-            "description": "List all available languages."
+            "description": "Listaa kaikki saatavilla olevat kielet."
         },
         "version": {
             "cmd": "käännös",
@@ -229,28 +229,28 @@
             "success": "Käännös asetettu onnistuneesti.",
             "fail": "Käännöksen asettaminen epäonnistui, katso `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
-                "abbreviationDesc": "The abbreviation of the version."
+                "abbreviation": "lyhenne",
+                "abbreviationDesc": "Käännöksen lyhenne."
             }
         },
         "setserverversion": {
             "cmd": "asetapalvelimenkäännös",
-            "description": "Set your server's preferred version.",
-            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
-            "success": "Set server version successfully.",
-            "fail": "Failed to set server version, see `/{listversions}`.",
+            "description": "Aseta palvelimesi ensisijainen käännös.",
+            "argumentsError": "Odotettiin käännöksen lyhenneparametria, kuten `{RSV}` tai `{KJV}`.",
+            "success": "Palvelimen käännös asetettu onnistuneesti.",
+            "fail": "Palvelimen käännöksen asettaminen epäonnistui, katso `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
-                "abbreviationDesc": "The abbreviation of the version."
+                "abbreviation": "lyhenne",
+                "abbreviationDesc": "Käännöksen lyhenne."
             }
         },
         "versioninfo": {
             "cmd": "käännöstiedot",
-            "description": "See information on a version.",
-            "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
+            "description": "Katso tietoja käännöksestä.",
+            "argumentsError": "Odotettiin käännöksen lyhenneparametria, kuten `{RSV}` tai `{KJV}`.",
             "containsOT": "Sisältää Vanhan Testamentin",
             "containtsNT": "Sisältää Uuden Testamentin",
-            "containsDEU": "Contains Apocrypha/Deuterocanon",
+            "containsDEU": "Sisältää apokryfisiä tai deuterokanonisia kirjoja",
             "fail": "I couldn't find that version, see `/{listversions}`.",
             "parameters": {
                 "abbreviation": "abbreviation",
