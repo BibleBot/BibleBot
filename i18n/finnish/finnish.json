@@ -32,38 +32,38 @@
             "blockquote": {
                 "value": "blockquote",
                 "label": "Blockquotes",
-                "description": "See an example by saying `> test`."
+                "description": "Katso esimerkki sanomalla `> test`."
             }
         },
-        "placeholder": "Select a display style...",
+        "placeholder": "Valitse näyttötyyli...",
         "discordError": "Error occurred, display style settings have not been changed."
     },
     "bracketsView": {
         "selections": {
             "angleBrackets": {
                 "label": "Angle Brackets <>",
-                "description": "References like <Genesis 1:1> will be ignored."
+                "description": "Viittaukset kuten <Genesis 1:1> jätetään huomiotta."
             },
             "squareBrackets": {
-                "label": "Square Brackets []",
-                "description": "References like [Genesis 1:1] will be ignored."
+                "label": "Neliösulut []",
+                "description": "Viittaukset kuten [Genesis 1:1] jätetään huomiotta."
             },
             "curlyBrackets": {
                 "label": "Curly Brackets {}",
-                "description": "References like {Genesis 1:1} will be ignored."
+                "description": "Viittaukset kuten {Genesis 1:1} jätetään huomiotta."
             },
             "parentheses": {
-                "label": "Parentheses ()",
-                "description": "References like (Genesis 1:1) will be ignored."
+                "label": "Sulut ()",
+                "description": "Viittaukset kuten (Genesis 1:1) jätetään huomiotta."
             }
         },
-        "placeholder": "Select a pair of brackets...",
-        "discordError": "Error occurred, bracket settings have not been changed."
+        "placeholder": "Valitse sulkupari...",
+        "discordError": "Tapahtui virhe, sulkuasetuksia ei ole muutettu."
     },
     "commands": {
         "biblebot": {
             "cmd": "biblebot",
-            "description": "The help command.",
+            "description": "Apukomento.",
             "biblebot": "BibleBot {version}",
             "slogan": "Scripture from your Discord client to your heart.",
             "credit": "Tehnyt ❤️ Kerygma Digital",
@@ -73,20 +73,20 @@
             "website": "**Verkkosivusto**: {website}",
             "copyrights": "**Tekijänoikeudet**: {copyrights}",
             "code": "**GitHub**: {repository}",
-            "terms": "**Terms and Conditions**: {terms}",
+            "terms": "**Ehdot ja edellytykset**: {terms}",
             "news": "🔔 Uutiset"
         },
         "stats": {
             "cmd": "tilastot",
             "description": "Bottia koskevat tilastot.",
-            "frontendStats": "Frontend Stats",
-            "shardCount": "Shard Count",
-            "serverCount": "Server Count",
-            "userCount": "User Count",
-            "channelCount": "Channel Count",
-            "backendStats": "Backend Stats",
-            "userPrefsCount": "User Preference Count",
-            "guildPrefsCount": "Guild Preference Count",
+            "frontendStats": "Käyttöliittymän tilastot",
+            "shardCount": "Sirpaleiden määrä",
+            "serverCount": "Palvelimien määrä",
+            "userCount": "Käyttäjien määrä",
+            "channelCount": "Kanavien määrä",
+            "backendStats": "Taustatilastot",
+            "userPrefsCount": "Käyttäjäasetusten määrä",
+            "guildPrefsCount": "Kilta-asetusten määrä",
             "versionCount": "Version Count",
             "metadata": "Metadata"
         },
@@ -143,19 +143,19 @@
             "cmd": "asetajaenumerot",
             "description": "Ota jaenumerot käyttöön tai poista käytöstä.",
             "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
-            "success": "Set verse numbers successfully."
+            "success": "Jaenumerot asetettu onnistuneesti."
         },
         "settitles": {
-            "cmd": "settitles",
+            "cmd": "asetaotsikot",
             "description": "Enable or disable headings.",
             "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
-            "success": "Set titles successfully."
+            "success": "Otsikot asetettu onnistuneesti."
         },
         "setpagination": {
-            "cmd": "setpagination",
+            "cmd": "asetasivunumerointi",
             "description": "Enable or disable verse pagination.",
             "argumentsError": "Expected an `{enable}` or `{disable}` parameter.",
-            "success": "Set pagination successfully."
+            "success": "Sivununerointi asetettu onnistuneesti."
         },
         "setdisplay": {
             "cmd": "asetanäyttö",
@@ -163,15 +163,15 @@
             "cta": "Select your preferred display style.",
             "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
             "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
-            "success": "Set display style successfully."
+            "success": "Näyttötyyli asetettu onnistuneesti."
         },
         "setserverdisplay": {
             "cmd": "setserverdisplay",
-            "description": "Set your server's preferred display style.",
+            "description": "Aseta palvelimesi ensisijainen näyttötyyli.",
             "cta": "Select your server's preferred display style.",
             "argumentsError": "Expected a parameter of `{embed}`, `{code}`, or `{blockquote}`.",
             "argumentsError2": "You may choose between `{embed}`, `{code}`, or `{blockquote}`.",
-            "success": "Set server display style successfully."
+            "success": "Serverin näyttötyyli asetettu onnistuneesti."
         },
         "setbrackets": {
             "cmd": "asetasulkeet",
@@ -180,7 +180,7 @@
             "argumentsError": "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.",
             "argumentsError2": "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.",
             "characterIssue": "The brackets can only be two characters.",
-            "success": "Set brackets successfully."
+            "success": "Sulkeet asetettu onnistuneesti."
         },
         "language": {
             "cmd": "kieli",
@@ -191,21 +191,21 @@
         },
         "setlanguage": {
             "cmd": "asetakieli",
-            "description": "Set your preferred language.",
+            "description": "Aseta ensisijainen kielesi.",
             "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
-            "success": "Set language successfully.",
-            "fail": "Failed to set language, see `/{listlanguages}`.",
+            "success": "Kieli asetettu onnistuneesti.",
+            "fail": "Kielen asettaminen epäonnistui, katso `/{listlanguages}`.",
             "parameters": {
                 "objectName": "objectName",
                 "objectNameDesc": "The object name of the language."
             }
         },
         "setserverlanguage": {
-            "cmd": "setserverlanguage",
-            "description": "Set your server's preferred language.",
+            "cmd": "asetapalvelimenkieli",
+            "description": "Aseta palvelimesi ensisijainen kieli.",
             "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
-            "success": "Set server language successfully.",
-            "fail": "Failed to set server language, see `/{listlanguages}`.",
+            "success": "Palvelimen kieli asetettu onnistuneesti.",
+            "fail": "Palvelimen kielen asettaminen epäonnistui, katso `/{listlanguages}`.",
             "parameters": {
                 "objectName": "objectName",
                 "objectNameDesc": "The object name of the language."
@@ -219,22 +219,22 @@
             "cmd": "käännös",
             "description": "See your version preferences.",
             "status": "Your preferred version is set to {version}.",
-            "serverStatus": "The server's preferred version is set to {serverVersion}.",
+            "serverStatus": "Palvelimen ensisijaiseksi käännökseksi on asetettu {serverVersion}.",
             "relatedCommands": "**/{setversion}** - set your preferred version\n**/{setserverversion} - set the server's default version (staff only)\n**/{versioninfo}** - get information on a version\n**/{listversions}** - list all available versions"
         },
         "setversion": {
             "cmd": "asetakäännös",
-            "description": "Set your preferred version.",
+            "description": "Aseta haluamasi käännös.",
             "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
-            "success": "Set version successfully.",
-            "fail": "Failed to set version, see `/{listversions}`.",
+            "success": "Käännös asetettu onnistuneesti.",
+            "fail": "Käännöksen asettaminen epäonnistui, katso `/{listversions}`.",
             "parameters": {
                 "abbreviation": "abbreviation",
                 "abbreviationDesc": "The abbreviation of the version."
             }
         },
         "setserverversion": {
-            "cmd": "setserverversion",
+            "cmd": "asetapalvelimenkäännös",
             "description": "Set your server's preferred version.",
             "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
             "success": "Set server version successfully.",
