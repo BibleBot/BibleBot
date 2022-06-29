@@ -1,18 +1,18 @@
 {
-    "versionString": "BibleBot {version} by Kerygma Digital",
-    "relatedCommands": "Related Commands",
-    "permissionsError": "Permissions Error",
-    "permissionsErrorUser": "You do not have the required permissions to use this command.",
+    "versionString": "BibleBot {version}, luonut Kerygma Digital",
+    "relatedCommands": "Olennaiset komennot",
+    "permissionsError": "Käyttöoikeusvirhe",
+    "permissionsErrorUser": "Sinulla ei ole riittäviä oikeuksia tämän komennon käyttämiseen.",
     "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
-    "needsManageServer": "You must have the `Manage Server` permission to use this command.",
+    "needsManageServer": "Sinulla täytyy olla 'Manage Server' -oikeudet käyttääksesi tätä komentoa.",
     "argumentsError": "Insufficient Parameters",
-    "versionNoOT": "{version} does not support the Old Testament.",
-    "versionNoNT": "{version} does not support the New Testament.",
-    "versionNoDEU": "{version} does not support the Apocrypha/Deuterocanon.",
-    "tmrError": "Too Many References",
-    "tmrErrorExp": "There are too many references, the maximum amount of references you can do in one message is 6.",
+    "versionNoOT": "Käännös {version} ei tue Vanhaa Testamenttia.",
+    "versionNoNT": "Käännös {version} ei tue Uutta Testamenttia.",
+    "versionNoDEU": "Käännös {version} ei tue apokryfisiä tai deuterokanonisia kirjoja.",
+    "tmrError": "Liian monia viittauksia",
+    "tmrErrorExp": "Liian monia viittauksia, suurin mahdollinen määrä viittauksia joita voit tehdä yhdessä viestissä on 6.",
     "verseError": "Verse Error",
-    "buttonFail": "You cannot interact with these buttons.",
+    "buttonFail": "Et voi käyttää näitä painikkeita.",
     "enable": "Enable",
     "disable": "Disable",
     "enabled": "päällä",
@@ -25,9 +25,9 @@
                 "description": "The fancy blocks that our command output comes in."
             },
             "code": {
-                "value": "code",
-                "label": "Code Blocks",
-                "description": "See an example by saying ```test```."
+                "value": "koodi",
+                "label": "Koodilohkot",
+                "description": "Katso esimerkki sanomalla ```test``."
             },
             "blockquote": {
                 "value": "blockquote",
