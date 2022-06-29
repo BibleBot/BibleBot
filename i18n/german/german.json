@@ -3,16 +3,16 @@
     "relatedCommands": "Zusammenhängende Befehle",
     "permissionsError": "Berechtigungsfehler",
     "permissionsErrorUser": "Du besitzt nicht die erforderlichen Berechtigungen, um diesen Befehl zu benutzen.",
-    "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
-    "needsManageServer": "You must have the `Manage Server` permission to use this command.",
-    "argumentsError": "Insufficient Parameters",
-    "versionNoOT": "{version} does not support the Old Testament.",
-    "versionNoNT": "{version} does not support the New Testament.",
-    "versionNoDEU": "{version} does not support the Apocrypha/Deuterocanon.",
-    "tmrError": "Too Many References",
-    "tmrErrorExp": "There are too many references, the maximum amount of references you can do in one message is 6.",
-    "verseError": "Verse Error",
-    "buttonFail": "You cannot interact with these buttons.",
+    "permissionsErrorBot": "Bots sind nicht berechtigt, diesen Befehl zu benutzen. Bitte informiere den nächsten Menschen.",
+    "needsManageServer": "Du musst die Berechtigung „Server verwalten\" haben, um diesen Befehl zu benutzen.",
+    "argumentsError": "Unzureichende Parameter",
+    "versionNoOT": "{version} unterstützt das Alte Testament nicht.",
+    "versionNoNT": "{version} unterstützt das Neue Testament nicht.",
+    "versionNoDEU": "{version} unterstützt die Apocryphen/deuterokanonischen Bücher nicht.",
+    "tmrError": "Zu viele Referenzen",
+    "tmrErrorExp": "Das sind zu viele Referenzen, die maximale Anzahl von Referenzen in einer Nachricht ist 6.",
+    "verseError": "Vers-Fehler",
+    "buttonFail": "Du kannst mit diesen Knöpfen nicht interagieren.",
     "enable": "Enable",
     "disable": "Disable",
     "enabled": "aktiviert",
@@ -20,13 +20,13 @@
     "setDisplayView": {
         "selections": {
             "embed": {
-                "value": "embed",
-                "label": "Embed Blocks",
-                "description": "The fancy blocks that our command output comes in."
+                "value": "Einbettung",
+                "label": "Einbettungsblöcke",
+                "description": "Die schicken Blöcke in denen deine Ergebnisse ausgegeben werden."
             },
             "code": {
-                "value": "code",
-                "label": "Code Blocks",
+                "value": "Code",
+                "label": "Code-Blöcke",
                 "description": "See an example by saying ```test```."
             },
             "blockquote": {
