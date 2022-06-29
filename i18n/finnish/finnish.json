@@ -41,15 +41,15 @@
     "bracketsView": {
         "selections": {
             "angleBrackets": {
-                "label": "Angle Brackets <>",
+                "label": "Kulmasulkeet <>",
                 "description": "Viittaukset kuten <Genesis 1:1> jätetään huomiotta."
             },
             "squareBrackets": {
-                "label": "Neliösulut []",
+                "label": "Neliösulkeet []",
                 "description": "Viittaukset kuten [Genesis 1:1] jätetään huomiotta."
             },
             "curlyBrackets": {
-                "label": "Curly Brackets {}",
+                "label": "Aaltosulkeet {}",
                 "description": "Viittaukset kuten {Genesis 1:1} jätetään huomiotta."
             },
             "parentheses": {
@@ -136,7 +136,7 @@
             "versePaginationStatus": "Verse pagination is {enabled/disabled}.",
             "displayStyleStatus": "Your preferred display style is set to {displayStyle}.",
             "serverDisplayStyleStatus": "The server's preferred display style is set to {serverDisplayStyle}.",
-            "bracketsStatus": "The bot will ignore verses in this server surrounded by {ignoringBrackets}.",
+            "bracketsStatus": "Botti jättää tällä palvelimella huomiotta jakeet, joita ympäröi {ignoringBrackets}.",
             "relatedCommands": "**/{setversenumbers}** - enable or disable verse numbers\n**/{settitles}** - enable or disable titles\n**/{setpagination}** - enable or disable verse pagination\n**/{setdisplay}** - set your preferred display style\n**/{setserverdisplay}** - set the server's preferred display style (staff only)\n**/{setbrackets}** - set the bot's ignoring brackets for this server (staff only)"
         },
         "setversenumbers": {
