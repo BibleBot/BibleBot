@@ -11,7 +11,7 @@
     "versionNoDEU": "Käännös {version} ei tue apokryfisiä tai deuterokanonisia kirjoja.",
     "tmrError": "Liian monia viittauksia",
     "tmrErrorExp": "Liian monia viittauksia, suurin mahdollinen määrä viittauksia joita voit tehdä yhdessä viestissä on 6.",
-    "verseError": "Verse Error",
+    "verseError": "Jaevirhe",
     "buttonFail": "Et voi käyttää näitä painikkeita.",
     "enable": "Enable",
     "disable": "Disable",
@@ -53,7 +53,7 @@
                 "description": "Viittaukset kuten {Genesis 1:1} jätetään huomiotta."
             },
             "parentheses": {
-                "label": "Sulut ()",
+                "label": "Sulkeet ()",
                 "description": "Viittaukset kuten (Genesis 1:1) jätetään huomiotta."
             }
         },
@@ -131,13 +131,13 @@
         "formatting": {
             "cmd": "formatting",
             "description": "See your formatting preferences.",
-            "verseNumbersStatus": "Verse numbers are {enabled/disabled}.",
+            "verseNumbersStatus": "Jaenumerot ovat {enabled/disabled}.",
             "titlesStatus": "Titles are {enabled/disabled}.",
             "versePaginationStatus": "Verse pagination is {enabled/disabled}.",
             "displayStyleStatus": "Your preferred display style is set to {displayStyle}.",
             "serverDisplayStyleStatus": "The server's preferred display style is set to {serverDisplayStyle}.",
             "bracketsStatus": "Botti jättää tällä palvelimella huomiotta jakeet, joita ympäröi {ignoringBrackets}.",
-            "relatedCommands": "**/{setversenumbers}** - enable or disable verse numbers\n**/{settitles}** - enable or disable titles\n**/{setpagination}** - enable or disable verse pagination\n**/{setdisplay}** - set your preferred display style\n**/{setserverdisplay}** - set the server's preferred display style (staff only)\n**/{setbrackets}** - set the bot's ignoring brackets for this server (staff only)"
+            "relatedCommands": "**/{setversenumbers}** -ota jaenumerot käyttöön tai poista ne käytöstä\n**/{settitles}** - ota otsikot käyttöön tai poista ne käytöstä\n**/{setpagination}** - ota jakeiden sivunumerointi käyttöön tai poista ne käytöstä\n**/{setdisplay}** - aseta ensisijainen näyttötyyli\n**/{setserverdisplay}** - aseta palvelimen ensisijainen näyttötyyli (vain ylläpito)\n**/{setbrackets}** - aseta botin huomiotta jättävät sulkeet tälle palvelimelle (vain ylläpito)"
         },
         "setversenumbers": {
             "cmd": "asetajaenumerot",
@@ -177,9 +177,9 @@
             "cmd": "asetasulkeet",
             "description": "Set the bot's ignoring brackets for this server.",
             "cta": "Select a pair of brackets.",
-            "argumentsError": "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.",
-            "argumentsError2": "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.",
-            "characterIssue": "The brackets can only be two characters.",
+            "argumentsError": "Odotettiin kahden merkin parametria, sen täytyy olla `<>`, `[]`, `{}`, tai `()`.",
+            "argumentsError2": "Sulkeiksi voidaan asettaa vain `<>`, `[]`, `{}`, tai `()`.",
+            "characterIssue": "Sulkeissa voi olla vain kaksi merkkiä.",
             "success": "Sulkeet asetettu onnistuneesti."
         },
         "language": {
