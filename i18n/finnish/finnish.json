@@ -96,17 +96,17 @@
             "usage": "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/)."
         },
         "announce": {
-            "cmd": "announce",
-            "description": "Announce something to all servers. (owner only)",
+            "cmd": "ilmoitus",
+            "description": "Ilmoita jotain kaikille palvelimille. (vain omistaja)",
             "announcementHeader": "BibleBotin Ilmoitus",
             "parameters": {
-                "content": "content",
+                "content": "sisältö",
                 "contentDesc": "The content of the announcement."
             }
         },
         "supporters": {
-            "cmd": "supporters",
-            "description": "View all Patreon supporters.",
+            "cmd": "tukijat",
+            "description": "Näytä kaikki Patreon-tukijat.",
             "title": "Patreon Supporters",
             "listStart": "Many thanks to our Patreon supporters"
         },
@@ -132,7 +132,7 @@
             "cmd": "formatting",
             "description": "See your formatting preferences.",
             "verseNumbersStatus": "Jaenumerot ovat {enabled/disabled}.",
-            "titlesStatus": "Titles are {enabled/disabled}.",
+            "titlesStatus": "Otsikot ovat {enabled/disabled}.",
             "versePaginationStatus": "Verse pagination is {enabled/disabled}.",
             "displayStyleStatus": "Your preferred display style is set to {displayStyle}.",
             "serverDisplayStyleStatus": "The server's preferred display style is set to {serverDisplayStyle}.",
@@ -218,7 +218,7 @@
         "version": {
             "cmd": "käännös",
             "description": "See your version preferences.",
-            "status": "Your preferred version is set to {version}.",
+            "status": "Ensisijaiseksi käännökseksi on asetettu {version}.",
             "serverStatus": "Palvelimen ensisijaiseksi käännökseksi on asetettu {serverVersion}.",
             "relatedCommands": "**/{setversion}** - set your preferred version\n**/{setserverversion} - set the server's default version (staff only)\n**/{versioninfo}** - get information on a version\n**/{listversions}** - list all available versions"
         },
@@ -251,7 +251,7 @@
             "containsOT": "Sisältää Vanhan Testamentin",
             "containtsNT": "Sisältää Uuden Testamentin",
             "containsDEU": "Sisältää apokryfisiä tai deuterokanonisia kirjoja",
-            "fail": "I couldn't find that version, see `/{listversions}`.",
+            "fail": "En löytänyt tuota käännöstä, katso `/{listversions}`.",
             "parameters": {
                 "abbreviation": "abbreviation",
                 "abbreviationDesc": "The abbreviation of the version."
