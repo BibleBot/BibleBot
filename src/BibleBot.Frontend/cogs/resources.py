@@ -22,13 +22,15 @@ class Resources(commands.Cog):
 
     @commands.slash_command(description="See all available resources.")
     async def resources(self, inter: CommandInteraction):
+        await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, f"+resource")
-        await inter.response.send_message(embed=resp)
+        await inter.followup.send(embed=resp)
 
     @commands.slash_command(description="Use a resource.")
     async def resource(
         self, inter: CommandInteraction, resource: str, range: str = None
     ):
+        await inter.response.defer()
         cmd = f"+resource {resource}"
 
         if range:
@@ -37,8 +39,8 @@ class Resources(commands.Cog):
         resp = await backend.submit_command(inter.channel, inter.author, cmd)
 
         if isinstance(resp, list):
-            await inter.response.send_message(
+            await inter.followup.send(
                 embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
             )
         else:
-            await inter.response.send_message(embed=resp)
+            await inter.followup.send(embed=resp)
