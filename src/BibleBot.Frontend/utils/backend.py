@@ -18,12 +18,12 @@ from utils.paginator import CreatePaginator
 logger = VyLogger("default")
 logger.setLevel(logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").propagate = False
 logging.getLogger("urllib3.connection").setLevel(logging.CRITICAL)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.CRITICAL)
 logging.getLogger("urllib3.response").setLevel(logging.CRITICAL)
 logging.getLogger("urllib3.poolmanager").setLevel(logging.CRITICAL)
-logging.getLogger("requests").setLevel(logging.WARNING)
-logging.getLogger("urllib3").propagate = False
 
 
 async def submit_command(
