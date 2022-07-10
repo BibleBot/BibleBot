@@ -24,23 +24,27 @@ class Information(commands.Cog):
 
     @commands.slash_command(description="The help command.")
     async def biblebot(self, inter: CommandInteraction):
+        await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+biblebot")
-        await inter.response.send_message(embed=resp)
+        await inter.followup.send(embed=resp)
 
     @commands.slash_command(description="Statistics on the bot.")
     async def stats(self, inter: CommandInteraction):
+        await inter.response.defer()
         send_stats(self.bot)
         resp = await backend.submit_command(inter.channel, inter.author, "+stats")
 
-        await inter.response.send_message(embed=resp)
+        await inter.followup.send(embed=resp)
 
     @commands.slash_command(description="See bot and support server invites.")
     async def invite(self, inter: CommandInteraction):
+        await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
-        await inter.response.send_message(embed=resp)
+        await inter.followup.send(embed=resp)
 
     @commands.slash_command(description="View all Patreon supporters.")
     async def supporters(self, inter: CommandInteraction):
+        await inter.response.defer()
         campaigns = patreon_api.fetch_campaign()
         print(campaigns)
         campaign = campaigns.data()[0].id()
@@ -67,7 +71,7 @@ class Information(commands.Cog):
             text="BibleBot v9.2-beta by Kerygma Digital",
             icon_url="https://i.imgur.com/hr4RXpy.png",
         )
-        await inter.response.send_message(embed=embed)
+        await inter.followup.send(embed=embed)
 
 def send_stats(bot: disnake.AutoShardedClient):
     endpoint = os.environ.get("ENDPOINT")

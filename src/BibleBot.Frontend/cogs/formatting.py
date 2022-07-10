@@ -124,8 +124,9 @@ class Formatting(commands.Cog):
 
     @commands.slash_command(description="See your formatting preferences.")
     async def formatting(self, inter: CommandInteraction):
+        await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+formatting")
-        await inter.response.send_message(embed=resp)
+        await inter.followup.send(embed=resp)
 
     @commands.slash_command(description="Enable or disable verse numbers.")
     async def setversenumbers(
@@ -133,11 +134,12 @@ class Formatting(commands.Cog):
         inter: CommandInteraction,
         val: str = commands.Param(choices={"Enable": "enable", "Disable": "disable"}),
     ):
+        await inter.response.defer()
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+formatting setversenumbers {val}"
         )
 
-        await inter.response.send_message(embed=resp)
+        await inter.followup.send(embed=resp)
 
     @commands.slash_command(description="Enable or disable headings.")
     async def settitles(
@@ -145,11 +147,12 @@ class Formatting(commands.Cog):
         inter: CommandInteraction,
         val: str = commands.Param(choices={"Enable": "enable", "Disable": "disable"}),
     ):
+        await inter.response.defer()
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+formatting settitles {val}"
         )
 
-        await inter.response.send_message(embed=resp)
+        await inter.followup.send(embed=resp)
 
     @commands.slash_command(description="Enable or disable verse pagination.")
     async def setpagination(
@@ -157,26 +160,29 @@ class Formatting(commands.Cog):
         inter: CommandInteraction,
         val: str = commands.Param(choices={"Enable": "enable", "Disable": "disable"}),
     ):
+        await inter.response.defer()
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+formatting setpagination {val}"
         )
 
-        await inter.response.send_message(embed=resp)
+        await inter.followup.send(embed=resp)
 
     @commands.slash_command(description="Set your preferred display style.")
     async def setdisplay(self, inter: CommandInteraction):
+        await inter.response.defer()
         select_menu_view = disnake.ui.View(timeout=180)
         select_menu_view.add_item(DisplayStyleSelect(inter.author.id, False))
 
-        await inter.response.send_message(
+        await inter.followup.send(
             content="Select your preferred display style.",
             view=select_menu_view,
         )
 
     @commands.slash_command(description="Set your server's preferred display style.")
     async def setserverdisplay(self, inter: CommandInteraction):
+        await inter.response.defer()
         if not inter.channel.permissions_for(inter.author).manage_guild:
-            await inter.response.send_message(
+            await inter.followup.send(
                 embed=backend.create_error_embed(
                     "Permissions Error",
                     "You must have the `Manage Server` permission to use this command.",
@@ -188,7 +194,7 @@ class Formatting(commands.Cog):
         select_menu_view = disnake.ui.View(timeout=180)
         select_menu_view.add_item(DisplayStyleSelect(inter.author.id, True))
 
-        await inter.response.send_message(
+        await inter.followup.send(
             content="Select your server's preferred display style.",
             view=select_menu_view,
         )
@@ -197,8 +203,9 @@ class Formatting(commands.Cog):
         description="Set the bot's ignoring brackets for this server."
     )
     async def setbrackets(self, inter: CommandInteraction):
+        await inter.response.defer()
         if not inter.channel.permissions_for(inter.author).manage_guild:
-            await inter.response.send_message(
+            await inter.followup.send(
                 embed=backend.create_error_embed(
                     "Permissions Error",
                     "You must have the `Manage Server` permission to use this command.",
@@ -210,7 +217,7 @@ class Formatting(commands.Cog):
         select_menu_view = disnake.ui.View(timeout=180)
         select_menu_view.add_item(BracketsSelect(inter.author.id))
 
-        await inter.response.send_message(
+        await inter.followup.send(
             content="Select a pair of brackets.",
             view=select_menu_view,
         )
