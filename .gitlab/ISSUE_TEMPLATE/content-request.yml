@@ -1,0 +1,22 @@
+name: Content Request
+description: Request a catechism, confession, or historical document to be added
+labels: [content]
+assignees:
+  - seraphimrp
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this content request!
+  - type: textarea
+    id: details
+    attributes:
+      label: What would you like to see implemented in BibleBot?
+      description: "**This is not for translations or language requests.**"
+      placeholder: I want the bestest catechism evar!
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        By submitting this form, you agree to follow our [Code of Conduct](https://github.com/BibleBot/BibleBot/blob/master/CODE_OF_CONDUCT.md).    
