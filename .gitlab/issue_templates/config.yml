@@ -1,8 +1,0 @@
-blank_issues_enabled: true
-contact_links:
-  - name: Discord Support
-    url: https://biblebot.xyz/discord
-    about: Join our support Discord for issues regarding how to use the bot and the service itself.
-  - name: Email
-    url: mailto:team@kerygma.digital
-    about: Send us an email!
