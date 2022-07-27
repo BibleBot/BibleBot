@@ -102,6 +102,8 @@ async def submit_command(
     elif resp.json()["type"] == "verse":
         if "does not support the" in resp.json()["logStatement"]:
             return create_error_embed("Verse Error", resp.json()["logStatement"])
+        elif "too many verses" in resp.json()["logStatement"]:
+            return convert_embed(resp.json()["pages"][0])
 
         display_style = resp.json()["displayStyle"]
         if display_style == "embed":
@@ -186,6 +188,11 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
         if "does not support the" in resp.json()["logStatement"]:
             await ch.send(
                 embed=create_error_embed("Verse Error", resp.json()["logStatement"])
+            )
+            return
+        elif "too many verses" in resp.json()["logStatement"]:
+            await ch.send(
+                embed=convert_embed(resp.json()["pages"][0])
             )
             return
 
