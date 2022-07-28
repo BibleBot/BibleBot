@@ -53,11 +53,6 @@ after_test:
       $wc = New-Object 'System.Net.WebClient'
       $wc.UploadFile("https://ci.appveyor.com/api/testresults/mstest/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResults.xml))
 
-deploy:
-  - provider: NuGet
-    api_key:
-      secure: PE2CHCU0HAnC6+phzPCvz2Igcnyxmx7TT8BQvPyYD6VVrJJQ04imhJ0+VLf6bosc
-
 on_success:
   - ps: Invoke-RestMethod $env:WEBHOOK_SCRIPT -o send.ps1
   - ps: .\send.ps1 success $env:DISCORD_WEBHOOK
