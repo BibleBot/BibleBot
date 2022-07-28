@@ -203,7 +203,7 @@ namespace BibleBot.Backend.Controllers
                     Verses = results,
                     DisplayStyle = displayStyle,
                     Paginate = paginateVerses,
-                    LogStatement = String.Join(" / ", results.Select(verse => verse.Reference.ToString()))
+                    LogStatement = String.Join(" / ", results.Select(verse => $"{verse.Reference.ToString()} {verse.Reference.Version.Abbreviation}"))
                 };
             }
             else
