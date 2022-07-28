@@ -8,9 +8,11 @@
 
 namespace BibleBot.Backend.Models
 {
-    public class SearchResult
+    public class Verse
     {
-        public string Reference { get; set; }
+        public Reference Reference { get; set; }
+        public string Title { get; set; }
+        public string PsalmTitle { get; set; }
         public string Text { get; set; }
     }
 }

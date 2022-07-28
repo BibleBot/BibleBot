@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2021 Kerygma Digital Co.
+* Copyright (C) 2016-2022 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -7,7 +7,7 @@
 */
 
 using System;
-using BibleBot.Lib;
+using BibleBot.Backend.Models;
 
 namespace BibleBot.Backend.Tests.Mocks
 {

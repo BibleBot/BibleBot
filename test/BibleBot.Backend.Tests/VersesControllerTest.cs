@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2021 Kerygma Digital Co.
+* Copyright (C) 2016-2022 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -13,7 +13,6 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Backend.Tests.Mocks;
-using BibleBot.Lib;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -37,8 +36,8 @@ namespace BibleBot.Backend.Tests
 
         private IDatabaseSettings databaseSettings;
 
-        private Lib.Version defaultBibleGatewayVersion;
-        private Lib.Version defaultAPIBibleVersion;
+        private Models.Version defaultBibleGatewayVersion;
+        private Models.Version defaultAPIBibleVersion;
 
         [SetUp]
         public void Setup()

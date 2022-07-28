@@ -27,9 +27,7 @@ install:
 
 build_script:
   - cmd: dotnet publish .\src\BibleBot.Backend\BibleBot.Backend.csproj -c Release --verbosity q
-  - cmd: dotnet build .\src\BibleBot.Lib\BibleBot.Lib.csproj -c Release --verbosity q
   - cmd: dotnet publish .\src\BibleBot.AutomaticServices\BibleBot.AutomaticServices.csproj -c Release --verbosity q
-  - cmd: dotnet pack .\src\BibleBot.Lib -o . -c Release --verbosity q
 
 artifacts:
   - path: .\src\BibleBot.Backend\bin\Release\net6.0\publish
@@ -43,10 +41,6 @@ artifacts:
   - path: .\src\BibleBot.Frontend
     name: BibleBot.Frontend
     type: ElasticBeanstalkPackage
-  
-  - path: '*.nupkg'
-    name: BibleBot.Lib
-    type: NuGetPackage
 
 test_script:
   - "%USERPROFILE%\\.nuget\\packages\\opencover\\4.7.1221\\tools\\OpenCover.Console.exe -register:user -target:\"dotnet.exe\" -targetargs:\"test --verbosity q --logger:\\\"trx;LogFileName=..\\..\\..\\TestResults.xml\\\"\" -output:\"coverage.xml\" -oldStyle -filter:\"+[BibleBot.Backend*]* -[BibleBot.Backend.Tests*]* -[BibleBot.Frontend*]*\" >nul"
