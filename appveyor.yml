@@ -9,7 +9,7 @@ services:
 environment:
   ASPNETCORE_ENVIRONMENT: Development
   MONGODB_CONN: mongodb://localhost:27017/BibleBotBackend
-  WEBHOOK_SCRIPT: https://raw.githubusercontent.com/BibleBot/appveyor-discord-webhook/master/send.ps1
+  WEBHOOK_SCRIPT: https://gitlab.com/kerygmadigital/biblebot/appveyor-discord-webhook/-/raw/master/send.ps1
   APIBIBLE_TOKEN:
     secure: NoI3xBuwnbCU1KkhhZCHqtuups493tGwfNZlBNtXvCw8cNuuTvwZZwMYm2V12EvA
   ENDPOINT_TOKEN:
