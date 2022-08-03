@@ -107,11 +107,11 @@
         "supporters": {
             "cmd": "tukijat",
             "description": "Näytä kaikki Patreon-tukijat.",
-            "title": "Patreon Supporters",
-            "listStart": "Many thanks to our Patreon supporters"
+            "title": "Patreon-tukijat",
+            "listStart": "Paljon kiitoksia Patreon-tukijoillemme"
         },
         "resources": {
-            "cmd": "resources",
+            "cmd": "resurssit",
             "description": "See all available resources."
         },
         "resource": {
@@ -129,7 +129,7 @@
             }
         },
         "formatting": {
-            "cmd": "formatting",
+            "cmd": "muotoilu",
             "description": "See your formatting preferences.",
             "verseNumbersStatus": "Jaenumerot ovat {enabled/disabled}.",
             "titlesStatus": "Otsikot ovat {enabled/disabled}.",
