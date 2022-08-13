@@ -1,11 +1,11 @@
 {
-    "versionString": "BibleBot {version} by Kerygma Digital",
+    "versionString": "BibleBot {version} par Kerygma Digital",
     "relatedCommands": "Related Commands",
     "permissionsError": "Permissions Error",
     "permissionsErrorUser": "You do not have the required permissions to use this command.",
     "permissionsErrorBot": "Bots are not permitted to use this command, please inform your nearest human.",
     "needsManageServer": "You must have the `Manage Server` permission to use this command.",
-    "argumentsError": "Insufficient Parameters",
+    "argumentsError": "Paramètres insuffisants",
     "versionNoOT": "{version} does not support the Old Testament.",
     "versionNoNT": "{version} does not support the New Testament.",
     "versionNoDEU": "{version} does not support the Apocrypha/Deuterocanon.",
@@ -69,34 +69,34 @@
             "credit": "Made with ❤️ by Kerygma Digital",
             "commands": "📖 Commands",
             "commandList": "`/{search}` - search for verses by keywords\n`/{version}` - version preferences and information\n`/{language}` - language preferences and information\n`/{formatting}` - preferences for verse styles and bot behavior\n`/{dailyverse}` - daily verses and automation\n`/{random}` - get a random Bible verse\n`/{resource}` - creeds, catechisms, confessions, and historical documents\n`/{stats}` - view bot statistics\n`/{invite}` - invite links for the bot and support server\n\nSee <https://biblebot.xyz/usage-and-commands> for more commands.",
-            "links": "🔗 Links",
+            "links": "🔗 Liens",
             "website": "**Website**: {website}",
             "copyrights": "**Copyrights**: {copyrights}",
             "code": "**GitHub**: {repository}",
             "terms": "**Terms and Conditions**: {terms}",
-            "news": "🔔 News"
+            "news": "🔔 Nouveautés"
         },
         "stats": {
-            "cmd": "stats",
+            "cmd": "statistiques",
             "description": "Statistics on the bot.",
             "frontendStats": "Frontend Stats",
             "shardCount": "Shard Count",
-            "serverCount": "Server Count",
-            "userCount": "User Count",
-            "channelCount": "Channel Count",
+            "serverCount": "Nombre de serveurs",
+            "userCount": "Nombre d'utilisateurs",
+            "channelCount": "Nombre de salons",
             "backendStats": "Backend Stats",
             "userPrefsCount": "User Preference Count",
             "guildPrefsCount": "Guild Preference Count",
-            "versionCount": "Version Count",
+            "versionCount": "Nombre de versions",
             "metadata": "Metadata"
         },
         "invite": {
-            "cmd": "invite",
+            "cmd": "inviter",
             "description": "See bot and support server invites.",
             "usage": "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/)."
         },
         "announce": {
-            "cmd": "announce",
+            "cmd": "annoncer",
             "description": "Announce something to all servers. (owner only)",
             "announcementHeader": "BibleBot Announcement",
             "parameters": {
@@ -105,24 +105,24 @@
             }
         },
         "supporters": {
-            "cmd": "supporters",
+            "cmd": "contributeurs",
             "description": "View all Patreon supporters.",
-            "title": "Patreon Supporters",
+            "title": "Contributeurs sur Patreon",
             "listStart": "Many thanks to our Patreon supporters"
         },
         "resources": {
-            "cmd": "resources",
+            "cmd": "ressources",
             "description": "See all available resources."
         },
         "resource": {
-            "cmd": "resource",
+            "cmd": "ressource",
             "description": "Use a resource.",
             "creeds": "Creeds",
-            "catechisms": "Catechisms",
+            "catechisms": "Catéchismes",
             "canonLaws": "Canon Laws",
             "usage": "To use a resource, do `/{resource} {resource}: {name}`.\nFor example, `/{resource} {resource}: nicene` or `/{resource} {resource}: ccc {range}: 1`.",
             "parameters": {
-                "resource": "resource",
+                "resource": "ressource",
                 "resourceDesc": "The resource you wish to use.",
                 "range": "range",
                 "rangeDesc": "The range of pages/sections you want to view, for example `1` or `1-5`."
@@ -183,7 +183,7 @@
             "success": "Set brackets successfully."
         },
         "language": {
-            "cmd": "language",
+            "cmd": "langue",
             "description": "See your language preferences.",
             "status": "Your preferred language is set to {language}.",
             "serverStatus": "The server's preferred language is set to {serverLanguage}.",
@@ -201,7 +201,7 @@
             }
         },
         "setserverlanguage": {
-            "cmd": "setserverlanguage",
+            "cmd": "deflangueserveur",
             "description": "Set your server's preferred language.",
             "argumentsError": "Expected a language parameter, like `{english}` or `{german}`.",
             "success": "Set server language successfully.",
@@ -212,7 +212,7 @@
             }
         },
         "listlanguages": {
-            "cmd": "listlanguages",
+            "cmd": "listelangues",
             "description": "List all available languages."
         },
         "version": {
@@ -223,51 +223,51 @@
             "relatedCommands": "**/{setversion}** - set your preferred version\n**/{setserverversion} - set the server's default version (staff only)\n**/{versioninfo}** - get information on a version\n**/{listversions}** - list all available versions"
         },
         "setversion": {
-            "cmd": "setversion",
+            "cmd": "defversion",
             "description": "Set your preferred version.",
             "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
             "success": "Set version successfully.",
             "fail": "Failed to set version, see `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
+                "abbreviation": "abréviation",
                 "abbreviationDesc": "The abbreviation of the version."
             }
         },
         "setserverversion": {
-            "cmd": "setserverversion",
+            "cmd": "defversionserveur",
             "description": "Set your server's preferred version.",
             "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
             "success": "Set server version successfully.",
             "fail": "Failed to set server version, see `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
+                "abbreviation": "abréviation",
                 "abbreviationDesc": "The abbreviation of the version."
             }
         },
         "versioninfo": {
-            "cmd": "versioninfo",
+            "cmd": "infoversion",
             "description": "See information on a version.",
             "argumentsError": "Expected a version abbreviation parameter, like `{RSV}` or `{KJV}`.",
-            "containsOT": "Contains Old Testament",
-            "containtsNT": "Contains New Testament",
+            "containsOT": "Contient l'Ancien Testament",
+            "containtsNT": "Contient le Nouveau Testament",
             "containsDEU": "Contains Apocrypha/Deuterocanon",
             "fail": "I couldn't find that version, see `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
+                "abbreviation": "abréviation",
                 "abbreviationDesc": "The abbreviation of the version."
             }
         },
         "listversions": {
-            "cmd": "listversions",
+            "cmd": "listeversions",
             "description": "List all available versions.",
             "title": "/{listversions} - Page {currentPage} of {totalPages}"
         },
         "dailyverse": {
-            "cmd": "dailyverse",
+            "cmd": "versetdujour",
             "description": "Display the verse of the day."
         },
         "dailyverseset": {
-            "cmd": "dailyverseset",
+            "cmd": "defversetdujour",
             "description": "Setup automatic daily verses on this channel.",
             "success": "Set automatic daily verse successfully.",
             "fail": "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.",
@@ -286,7 +286,7 @@
             "success": "Cleared all daily verse webhooks successfully."
         },
         "random": {
-            "cmd": "random",
+            "cmd": "aléatoire",
             "description": "Display a random verse from a predetermined pool.",
             "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
             "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
