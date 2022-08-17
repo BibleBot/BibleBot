@@ -1,3 +1,5 @@
+commit_message: "[ci skip]"
+append_commit_message: false
 files:
   - source: /i18n/default/default.json
     translation: /i18n/%locale%/%locale%.json
