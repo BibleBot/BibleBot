@@ -118,7 +118,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "Matthew 1:1",
+                LogStatement = "Matthew 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
@@ -155,7 +155,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "Genesis 1:1",
+                LogStatement = "Genesis 1:1 KJVA",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
@@ -234,7 +234,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "John 1:1",
+                LogStatement = "John 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
@@ -271,7 +271,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "John 1:1",
+                LogStatement = "John 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
@@ -308,7 +308,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "Matthew 1:1-2",
+                LogStatement = "Matthew 1:1-2 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
@@ -344,7 +344,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "Genesis 1:1-2",
+                LogStatement = "Genesis 1:1-2 KJVA",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
@@ -381,7 +381,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "Matthew 1:25-2:1",
+                LogStatement = "Matthew 1:25-2:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
@@ -418,7 +418,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "Genesis 1:31-2:1",
+                LogStatement = "Genesis 1:31-2:1 KJVA",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
@@ -455,7 +455,7 @@ namespace BibleBot.Backend.Tests
             var expected = new VerseResponse
             {
                 OK = true,
-                LogStatement = "Matthew 1:24-",
+                LogStatement = "Matthew 1:24- RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
