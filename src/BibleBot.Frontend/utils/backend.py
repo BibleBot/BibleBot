@@ -45,14 +45,12 @@ async def submit_command(
     endpoint = os.environ.get("ENDPOINT")
     resp = requests.post(f"{endpoint}/commands/process", json=reqbody)
 
-    if resp.json()["type"] == "cmd":
-        if resp.json()["ok"]:
-            logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
-        else:
-            logger.error(
-                f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"]
-            )
+    if resp.json()["ok"]:
+        logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
+    else:
+        logger.error(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
 
+    if resp.json()["type"] == "cmd":
         if len(resp.json()["pages"]) == 1:
             # todo: webhook stuff should not be dailyverse-specific
             if resp.json()["removeWebhook"] and not isDM:
@@ -191,9 +189,7 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
             )
             return
         elif "too many verses" in resp.json()["logStatement"]:
-            await ch.send(
-                embed=convert_embed(resp.json()["pages"][0])
-            )
+            await ch.send(embed=convert_embed(resp.json()["pages"][0]))
             return
 
     if resp.json()["verses"] is None:
