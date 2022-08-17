@@ -90,8 +90,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**Guild Preference Count**: {guildPrefs.Count}\n" +
                 $"**Version Count**: {versions.Count}\n\n" +
                 $"**__Metadata__**\n" +
-                $"**BibleBot**: v{Utils.Version} ([{ThisAssembly.Git.Commit}](https://github.com/BibleBot/BibleBot/commit/{ThisAssembly.Git.Sha}))\n" +
-                $"**BibleBot.Lib**: v{typeof(ThisAssembly).Assembly.GetReferencedAssemblies().Where((asm) => asm.Name == "BibleBot.Lib").First().Version.ToString(3)}";
+                $"**BibleBot**: v{Utils.Version} ([{ThisAssembly.Git.Commit}](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/{ThisAssembly.Git.Sha}))\n";
 
 
                 return new CommandResponse
