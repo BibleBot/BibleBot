@@ -47,7 +47,7 @@ namespace BibleBot.AutomaticServices.Services
         {
             Log.Information("VersionStatsService: Starting service...");
 
-            _timer = new Timer(RunVersionStats, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+            _timer = new Timer(RunVersionStats, null, TimeSpan.Zero, TimeSpan.FromHours(1));
 
             return Task.CompletedTask;
         }
@@ -59,7 +59,7 @@ namespace BibleBot.AutomaticServices.Services
 
             bool sentStats = false;
 
-            if (dateTimeInStandardTz.Day == 11 && dateTimeInStandardTz.Hour == 11 && dateTimeInStandardTz.Minute == 0)
+            if (dateTimeInStandardTz.Day == 11 && dateTimeInStandardTz.Hour == 11)
             {
                 var preferences = _userService.Get().Concat<IPreference>(_guildService.Get()).ToList();
                 var versions = _versionService.Get();
@@ -98,7 +98,7 @@ namespace BibleBot.AutomaticServices.Services
 
                 var webhookRequestBody = new WebhookRequestBody
                 {
-                    Content = $"henlo mr. <@304602975446499329>, here are those version stats you asked for:\n\n```\n{fileContents}\n```\n\nthese will be sent out on the 11th day of every month at 11am in ur time zone, mr. <@304602975446499329>. ty have good day",
+                    Content = $"henlo mr. <@304602975446499329>, here are those version stats you asked for:\n\n```\n{fileContents}\n```\n\nthese will be sent out on the 11th day of every month at the 11th hour in ur time zone, mr. <@304602975446499329>. ty have good day",
                     Username = "BibleBot Version Stats",
                     AvatarURL = "https://i.imgur.com/hr4RXpy.png"
                 };
