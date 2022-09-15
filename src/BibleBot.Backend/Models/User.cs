@@ -11,6 +11,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace BibleBot.Backend.Models
 {
+    [BsonIgnoreExtraElements]
     public class User : IPreference
     {
         [BsonId]
