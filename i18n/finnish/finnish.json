@@ -253,13 +253,13 @@
             "containsDEU": "Sisältää apokryfisiä tai deuterokanonisia kirjoja",
             "fail": "En löytänyt tuota käännöstä, katso `/{listversions}`.",
             "parameters": {
-                "abbreviation": "abbreviation",
-                "abbreviationDesc": "The abbreviation of the version."
+                "abbreviation": "lyhenne",
+                "abbreviationDesc": "Käännöksen lyhenne."
             }
         },
         "listversions": {
             "cmd": "listversions",
-            "description": "List all available versions.",
+            "description": "Listaa kaikki saatavilla olevat käännökset.",
             "title": "/{listversions} - Page {currentPage} of {totalPages}"
         },
         "dailyverse": {
@@ -292,13 +292,13 @@
             "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
         },
         "truerandom": {
-            "cmd": "truerandom",
+            "cmd": "tosisatunnainen",
             "description": "Display a random verse based on random number generation.",
             "bibliomancyWarning": "This command should not be used for bibliomancy - do not ascribe spiritual value to computer-generated randomness.",
             "useInDMs": "This server has personally requested that this command be only used in DMs to avoid spam."
         },
         "search": {
-            "cmd": "search",
+            "cmd": "hae",
             "description": "Search for verses by keyword.",
             "queryTooShort": "Hakusi tulee olla vähintään 4 merkkiä pitkä.",
             "noResults": "Hakusi ei tuottanut tuloksia.",
