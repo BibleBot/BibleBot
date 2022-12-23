@@ -32,8 +32,8 @@ namespace BibleBot.Backend.Controllers
         /// <summary>
         /// Processes a message to update stats from frontend.
         /// </summary>
-        /// <param name="req">A BibleBot.Lib.Request object</param>
-        /// <response code="200">Returns BibleBot.Lib.CommandResponse</response>
+        /// <param name="req">A BibleBot.Backend.Request object</param>
+        /// <response code="200">Returns BibleBot.Backend.CommandResponse</response>
         /// <response code="400">If req is invalid</response>
         [Route("process")]
         [HttpPost]

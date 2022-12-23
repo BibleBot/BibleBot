@@ -52,7 +52,7 @@ namespace BibleBot.Backend.Controllers
         /// Processes a message to locate verse references, outputting
         /// the corresponding text.
         /// </summary>
-        /// <param name="req">A BibleBot.Lib.Request object</param>
+        /// <param name="req">A BibleBot.Backend.Request object</param>
         /// <response code="200">Returns the corresponding text</response>
         /// <response code="400">If req is invalid</response>
         [Route("process")]
