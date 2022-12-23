@@ -131,6 +131,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         totalPages = 100;
                     }
 
+                    if (totalPages == 0)
+                    {
+                        totalPages = 1;
+                    }
+
                     var title = "Search results for \"{0}\"";
                     var pageCounter = "Page {0} of {1}";
 

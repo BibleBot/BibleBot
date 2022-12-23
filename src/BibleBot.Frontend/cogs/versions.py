@@ -129,6 +129,10 @@ class Versions(commands.Cog):
             inter.channel, inter.author, "+version list"
         )
 
-        await inter.followup.send(
-            embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
-        )
+
+        if isinstance(resp, list):
+            await inter.followup.send(
+                embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
+            )
+        else:
+            await inter.followup.send(embed=resp)
