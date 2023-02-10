@@ -31,7 +31,7 @@ class Information(commands.Cog):
     @commands.slash_command(description="Statistics on the bot.")
     async def stats(self, inter: CommandInteraction):
         await inter.response.defer()
-        send_stats(self.bot)
+        await send_stats(self.bot)
         resp = await backend.submit_command(inter.channel, inter.author, "+stats")
 
         await inter.followup.send(embed=resp)
@@ -73,7 +73,7 @@ class Information(commands.Cog):
         )
         await inter.followup.send(embed=embed)
 
-def send_stats(bot: disnake.AutoShardedClient):
+async def send_stats(bot: disnake.AutoShardedClient):
     endpoint = os.environ.get("ENDPOINT")
     token = os.environ.get("ENDPOINT_TOKEN")
 
