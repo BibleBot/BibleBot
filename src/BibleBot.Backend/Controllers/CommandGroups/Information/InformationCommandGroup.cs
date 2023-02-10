@@ -75,9 +75,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
             public IResponse ProcessCommand(Request req, List<string> args)
             {
-                var userPrefs = _userService.Get();
-                var guildPrefs = _guildService.Get();
-                var versions = _versionService.Get();
+                var userPrefs = _userService.GetCount();
+                var guildPrefs = _guildService.GetCount();
+                var versions = _versionService.GetCount();
                 var frontendStats = _frontendStatsService.Get();
 
                 var resp = $"**__Frontend Stats__**\n" +
@@ -85,10 +85,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**Server Count**: {frontendStats.ServerCount}\n" +
                 $"**User Count**: {frontendStats.UserCount}\n" +
                 $"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
-                $"**__Backend Stats__**\n" +
-                $"**User Preference Count**: {userPrefs.Count}\n" +
-                $"**Guild Preference Count**: {guildPrefs.Count}\n" +
-                $"**Version Count**: {versions.Count}\n\n" +
+                $"**__Backend Stats (estimated)__**\n" +
+                $"**User Preference Count**: {userPrefs}\n" +
+                $"**Guild Preference Count**: {guildPrefs}\n" +
+                $"**Version Count**: {versions}\n\n" +
                 $"**__Metadata__**\n" +
                 $"**BibleBot**: v{Utils.Version} ([{ThisAssembly.Git.Commit}](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/{ThisAssembly.Git.Sha}))\n";
 

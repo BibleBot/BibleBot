@@ -28,6 +28,7 @@ namespace BibleBot.Backend.Services
 
         public List<Guild> Get() => _guilds.Find(guild => true).ToList();
         public Guild Get(string guildId) => _guilds.Find<Guild>(guild => guild.GuildId == guildId).FirstOrDefault();
+        public long GetCount() => _guilds.EstimatedDocumentCount();
 
         public Guild Create(Guild guild)
         {
