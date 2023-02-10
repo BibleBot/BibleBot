@@ -28,6 +28,7 @@ namespace BibleBot.Backend.Services
 
         public List<User> Get() => _users.Find(user => true).ToList();
         public User Get(string userId) => _users.Find<User>(user => user.UserId == userId).FirstOrDefault();
+        public long GetCount() => _users.EstimatedDocumentCount();
 
         public User Create(User user)
         {

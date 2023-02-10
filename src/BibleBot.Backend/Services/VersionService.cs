@@ -27,6 +27,7 @@ namespace BibleBot.Backend.Services
 
         public List<Version> Get() => _versions.Find(version => true).ToList();
         public Version Get(string abbv) => _versions.Find<Version>(version => version.Abbreviation == abbv).FirstOrDefault();
+        public long GetCount() => _versions.EstimatedDocumentCount();
 
         public Version Create(Version version)
         {
