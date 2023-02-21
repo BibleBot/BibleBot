@@ -9,7 +9,7 @@
 import os
 import disnake
 from utils import backend
-import requests
+import aiohttp
 from disnake.ext import commands
 from logger import VyLogger
 
@@ -47,13 +47,13 @@ class EventListeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: disnake.Guild):
-        update_topgg(self.bot)
-        update_discordbotlist(self.bot)
+        await update_topgg(self.bot)
+        await update_discordbotlist(self.bot)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: disnake.Guild):
-        update_topgg(self.bot)
-        update_discordbotlist(self.bot)
+        await update_topgg(self.bot)
+        await update_discordbotlist(self.bot)
 
         # yeet the webhook from the database, if applicable
         reqbody = {
@@ -63,7 +63,11 @@ class EventListeners(commands.Cog):
         }
 
         endpoint = os.environ.get("ENDPOINT")
-        requests.post(f"{endpoint}/webhooks/process", json=reqbody)
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{endpoint}/webhooks/process", json=reqbody) as resp:
+                if resp.status != 200:
+                    logger.error("on_guild_remove: unable to send delete event to webhook endpoint")
 
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):
@@ -76,21 +80,24 @@ class EventListeners(commands.Cog):
             await backend.submit_verse(msg.channel, msg.author, clean_msg)
 
 
-def update_topgg(bot: disnake.AutoShardedClient):
+async def update_topgg(bot: disnake.AutoShardedClient):
     topgg_auth = os.environ.get("TOPGG_TOKEN")
 
     if topgg_auth:
         body = {"server_count": len(bot.guilds)}
-        requests.post(
-            f"https://top.gg/api/bots/{bot.user.id}/stats",
-            json=body,
-            headers={"Authorization": topgg_auth},
-        )
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                f"https://top.gg/api/bots/{bot.user.id}/stats",
+                json=body,
+                headers={"Authorization": topgg_auth},
+            ) as resp:
+                if resp.status != 200:
+                    logger.warning("couldn't submit stats to top.gg, it may be offline")
+                else:
+                    logger.info("submitted stats to top.gg")
 
-        logger.info("submitted stats to top.gg")
 
-
-def update_discordbotlist(bot: disnake.AutoShardedClient):
+async def update_discordbotlist(bot: disnake.AutoShardedClient):
     discordbotlist_auth = os.environ.get("DISCORDBOTLIST_TOKEN")
 
     if discordbotlist_auth:
@@ -98,10 +105,13 @@ def update_discordbotlist(bot: disnake.AutoShardedClient):
             "users": sum([x.member_count for x in bot.guilds]),
             "guilds": len(bot.guilds),
         }
-        requests.post(
-            f"https://discordbotlist.com/api/v1/bots/{bot.user.id}/stats",
-            json=body,
-            headers={"Authorization": discordbotlist_auth},
-        )
-
-        logger.info("submitted stats to discordbotlist.com")
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                f"https://discordbotlist.com/api/v1/bots/{bot.user.id}/stats",
+                json=body,
+                headers={"Authorization": discordbotlist_auth},
+            ) as resp:
+                if resp.status != 200:
+                    logger.warning("couldn't submit stats to discordbotlist.com, it may be offline")
+                else:
+                    logger.info("submitted stats to discordbotlist.com")
