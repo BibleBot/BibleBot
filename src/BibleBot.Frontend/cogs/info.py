@@ -7,7 +7,7 @@
 """
 
 import os
-import requests
+import aiohttp
 from disnake import CommandInteraction
 import disnake
 from disnake.ext import commands
@@ -82,10 +82,13 @@ async def send_stats(bot: disnake.AutoShardedClient):
     user_count = sum([x.member_count for x in bot.guilds])
     channel_count = sum([len(x.channels) for x in bot.guilds])
 
-    requests.post(
-        f"{endpoint}/stats/process",
-        json={
-            "Token": token,
-            "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}",
-        },
-    )
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            f"{endpoint}/stats/process",
+            json={
+                "Token": token,
+                "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}",
+            }
+        ) as resp:
+            if resp.status != 200:
+                logger.error("couldn't submit stats to backend")
