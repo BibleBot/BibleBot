@@ -7,24 +7,13 @@
 """
 
 import os
-import requests
+import aiohttp
 import disnake
-from collections import OrderedDict
 from logger import VyLogger
-import logging
 
 from utils.paginator import CreatePaginator
 
 logger = VyLogger("default")
-logger.setLevel(logging.INFO)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-logging.getLogger("requests").setLevel(logging.WARNING)
-logging.getLogger("urllib3").propagate = False
-logging.getLogger("urllib3.connection").setLevel(logging.CRITICAL)
-logging.getLogger("urllib3.connectionpool").setLevel(logging.CRITICAL)
-logging.getLogger("urllib3.response").setLevel(logging.CRITICAL)
-logging.getLogger("urllib3.poolmanager").setLevel(logging.CRITICAL)
-
 
 async def submit_command(
     rch: disnake.abc.Messageable, user: disnake.abc.User, body: str
@@ -43,100 +32,106 @@ async def submit_command(
     }
 
     endpoint = os.environ.get("ENDPOINT")
-    resp = requests.post(f"{endpoint}/commands/process", json=reqbody)
 
-    if resp.json()["ok"]:
-        logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
-    else:
-        logger.error(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{endpoint}/commands/process", json=reqbody) as resp:
+            respBody = await resp.json()
 
-    if resp.json()["type"] == "cmd":
-        if len(resp.json()["pages"]) == 1:
-            # todo: webhook stuff should not be dailyverse-specific
-            if resp.json()["removeWebhook"] and not isDM:
-                try:
-                    webhooks = await ch.guild.webhooks()
+            if respBody["ok"]:
+                logger.info(f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"])
+            else:
+                logger.error(f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"])
 
-                    for webhook in webhooks:
-                        if webhook.user.id == ch.guild.me.id:
-                            await webhook.delete(
-                                reason=f"User ID {user.id} performed a command that removes BibleBot-related webhooks."
+            if respBody["type"] == "cmd":
+                if len(respBody["pages"]) == 1:
+                    # todo: webhook stuff should not be dailyverse-specific
+                    if respBody["removeWebhook"] and not isDM:
+                        try:
+                            webhooks = await ch.guild.webhooks()
+
+                            for webhook in webhooks:
+                                if webhook.user.id == ch.guild.me.id:
+                                    await webhook.delete(
+                                        reason=f"User ID {user.id} performed a command that removes BibleBot-related webhooks."
+                                    )
+                        except disnake.errors.Forbidden:
+                            await ch.send(
+                                embed=create_error_embed(
+                                    "/dailyverseset",
+                                    "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.",
+                                )
                             )
-                except disnake.errors.Forbidden:
-                    await ch.send(
-                        embed=create_error_embed(
-                            "/dailyverseset",
-                            "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.",
+
+                    if respBody["createWebhook"] and not isDM:
+                        try:
+                            # Unlike other libraries, we have to convert an
+                            # image into bytes to pass as the webhook avatar.
+                            with open("./data/avatar.png", "rb") as image:
+                                webhook = await ch.create_webhook(
+                                    name="BibleBot Automatic Daily Verses",
+                                    avatar=bytearray(image.read()),
+                                    reason="For automatic daily verses from BibleBot.",
+                                )
+
+                            # Send a request to the webhook controller, which will update the DB.
+                            reqbody["Body"] = f"{webhook.id}/{webhook.token}||{ch.id}"
+                            async with aiohttp.ClientSession() as subsession:
+                                async with subsession.post(f"{endpoint}/webhooks/process", json=reqbody) as subresp:
+                                    if subresp.status != 200:
+                                        logger.error("couldn't submit webhook")
+                                    else:
+                                        return convert_embed(respBody["pages"][0])
+                        except disnake.errors.Forbidden:
+                            await ch.send(
+                                embed=create_error_embed(
+                                    "/dailyverseset",
+                                    "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.",
+                                )
+                            )
+
+                    return convert_embed(respBody["pages"][0])
+                else:
+                    return create_pagination_embeds_from_pages(respBody["pages"])
+            elif respBody["type"] == "verse":
+                if "does not support the" in respBody["logStatement"]:
+                    return create_error_embed("Verse Error", respBody["logStatement"])
+                elif "too many verses" in respBody["logStatement"]:
+                    return convert_embed(respBody["pages"][0])
+
+                display_style = respBody["displayStyle"]
+                if display_style == "embed":
+                    for verse in respBody["verses"]:
+                        return create_embed_from_verse(verse)
+                elif display_style == "blockquote":
+                    for verse in respBody["verses"]:
+                        reference_title = (
+                            verse["reference"]["asString"]
+                            + " - "
+                            + verse["reference"]["version"]["name"]
                         )
-                    )
-
-            if resp.json()["createWebhook"] and not isDM:
-                try:
-                    # Unlike other libraries, we have to convert an
-                    # image into bytes to pass as the webhook avatar.
-                    with open("./data/avatar.png", "rb") as image:
-                        webhook = await ch.create_webhook(
-                            name="BibleBot Automatic Daily Verses",
-                            avatar=bytearray(image.read()),
-                            reason="For automatic daily verses from BibleBot.",
+                        verse_title = (
+                            ("**" + verse["title"] + "**\n> \n> ")
+                            if len(verse["title"]) > 0
+                            else ""
                         )
+                        verse_text = verse["text"]
 
-                    # Send a request to the webhook controller, which will update the DB.
-                    reqbody["Body"] = f"{webhook.id}/{webhook.token}||{ch.id}"
-                    requests.post(f"{endpoint}/webhooks/process", json=reqbody)
-
-                    return convert_embed(resp.json()["pages"][0])
-                except disnake.errors.Forbidden:
-                    await ch.send(
-                        embed=create_error_embed(
-                            "/dailyverseset",
-                            "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.",
+                        return f"**{reference_title}**\n\n> {verse_title}{verse_text}"
+                elif display_style == "code":
+                    for verse in respBody["verses"]:
+                        reference_title = (
+                            verse["reference"]["asString"]
+                            + " - "
+                            + verse["reference"]["version"]["name"]
                         )
-                    )
+                        verse_title = (
+                            (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
+                        )
+                        verse_text = verse["text"].replace("*", "")
 
-            return convert_embed(resp.json()["pages"][0])
-        else:
-            return create_pagination_embeds_from_pages(resp.json()["pages"])
-    elif resp.json()["type"] == "verse":
-        if "does not support the" in resp.json()["logStatement"]:
-            return create_error_embed("Verse Error", resp.json()["logStatement"])
-        elif "too many verses" in resp.json()["logStatement"]:
-            return convert_embed(resp.json()["pages"][0])
-
-        display_style = resp.json()["displayStyle"]
-        if display_style == "embed":
-            for verse in resp.json()["verses"]:
-                return create_embed_from_verse(verse)
-        elif display_style == "blockquote":
-            for verse in resp.json()["verses"]:
-                reference_title = (
-                    verse["reference"]["asString"]
-                    + " - "
-                    + verse["reference"]["version"]["name"]
-                )
-                verse_title = (
-                    ("**" + verse["title"] + "**\n> \n> ")
-                    if len(verse["title"]) > 0
-                    else ""
-                )
-                verse_text = verse["text"]
-
-                return f"**{reference_title}**\n\n> {verse_title}{verse_text}"
-        elif display_style == "code":
-            for verse in resp.json()["verses"]:
-                reference_title = (
-                    verse["reference"]["asString"]
-                    + " - "
-                    + verse["reference"]["version"]["name"]
-                )
-                verse_title = (
-                    (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
-                )
-                verse_text = verse["text"].replace("*", "")
-
-                return (
-                    f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
-                )
+                        return (
+                            f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+                        )
 
 
 async def submit_command_raw(
@@ -156,9 +151,11 @@ async def submit_command_raw(
     }
 
     endpoint = os.environ.get("ENDPOINT")
-    resp = requests.post(f"{endpoint}/commands/process", json=reqbody)
-
-    return resp.json()
+    
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{endpoint}/commands/process", json=reqbody) as resp:
+            respBody = await resp.json()
+            return respBody
 
 
 async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, body: str):
@@ -177,64 +174,67 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
     }
 
     endpoint = os.environ.get("ENDPOINT")
-    resp = requests.post(f"{endpoint}/verses/process", json=reqbody)
 
-    if resp.json()["logStatement"]:
-        logger.info(f"<{user.id}#{ch.id}@{guildId}> " + resp.json()["logStatement"])
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{endpoint}/verses/process", json=reqbody) as resp:
+            respBody = await resp.json()
+            
+            if respBody["logStatement"]:
+                logger.info(f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"])
 
-    if resp.json()["logStatement"]:
-        if "does not support the" in resp.json()["logStatement"]:
-            await ch.send(
-                embed=create_error_embed("Verse Error", resp.json()["logStatement"])
-            )
-            return
-        elif "too many verses" in resp.json()["logStatement"]:
-            await ch.send(embed=convert_embed(resp.json()["pages"][0]))
-            return
+            if respBody["logStatement"]:
+                if "does not support the" in respBody["logStatement"]:
+                    await ch.send(
+                        embed=create_error_embed("Verse Error", respBody["logStatement"])
+                    )
+                    return
+                elif "too many verses" in respBody["logStatement"]:
+                    await ch.send(embed=convert_embed(respBody["pages"][0]))
+                    return
 
-    if resp.json()["verses"] is None:
-        return
+            if respBody["verses"] is None:
+                return
 
-    verses = resp.json()["verses"]  # todo: remove duplicate verses
+            verses = respBody["verses"]  # todo: remove duplicate verses
 
-    display_style = resp.json()["displayStyle"]
-    if display_style == "embed":
-        if resp.json()["paginate"] and len(verses) > 1:
-            embeds = create_pagination_embeds_from_verses(verses)
-            paginator = CreatePaginator(embeds, user.id, 180)
+            display_style = respBody["displayStyle"]
+            if display_style == "embed":
+                if respBody["paginate"] and len(verses) > 1:
+                    embeds = create_pagination_embeds_from_verses(verses)
+                    paginator = CreatePaginator(embeds, user.id, 180)
 
-            await ch.send(embed=embeds[0], view=paginator)
-        else:
-            for verse in verses:
-                await ch.send(embed=create_embed_from_verse(verse))
-    elif display_style == "blockquote":
-        for verse in verses:
-            reference_title = (
-                verse["reference"]["asString"]
-                + " - "
-                + verse["reference"]["version"]["name"]
-            )
-            verse_title = (
-                ("**" + verse["title"] + "**\n> \n> ")
-                if len(verse["title"]) > 0
-                else ""
-            )
-            verse_text = verse["text"]
+                    await ch.send(embed=embeds[0], view=paginator)
+                else:
+                    for verse in verses:
+                        await ch.send(embed=create_embed_from_verse(verse))
+            elif display_style == "blockquote":
+                for verse in verses:
+                    reference_title = (
+                        verse["reference"]["asString"]
+                        + " - "
+                        + verse["reference"]["version"]["name"]
+                    )
+                    verse_title = (
+                        ("**" + verse["title"] + "**\n> \n> ")
+                        if len(verse["title"]) > 0
+                        else ""
+                    )
+                    verse_text = verse["text"]
 
-            await ch.send(f"**{reference_title}**\n\n> {verse_title}{verse_text}")
-    elif display_style == "code":
-        for verse in verses:
-            reference_title = (
-                verse["reference"]["asString"]
-                + " - "
-                + verse["reference"]["version"]["name"]
-            )
-            verse_title = (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
-            verse_text = verse["text"].replace("*", "")
+                    await ch.send(f"**{reference_title}**\n\n> {verse_title}{verse_text}")
+            elif display_style == "code":
+                for verse in verses:
+                    reference_title = (
+                        verse["reference"]["asString"]
+                        + " - "
+                        + verse["reference"]["version"]["name"]
+                    )
+                    verse_title = (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
+                    verse_text = verse["text"].replace("*", "")
 
-            await ch.send(
-                f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
-            )
+                    await ch.send(
+                        f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+                    )
 
 
 def convert_embed(internal_embed):
