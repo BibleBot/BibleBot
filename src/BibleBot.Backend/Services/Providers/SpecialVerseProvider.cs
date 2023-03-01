@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
@@ -21,8 +22,6 @@ namespace BibleBot.Backend.Services.Providers
         private readonly CancellationTokenSource _cancellationToken;
         private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
-
-        private static readonly System.Random _random = new System.Random();
 
         public SpecialVerseProvider()
         {
@@ -65,7 +64,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<string> GetTrulyRandomVerse()
         {
-            var verseNumber = _random.Next(0, 31102);
+            var verseNumber = RandomNumberGenerator.GetInt32(0, 31102);
             string url = $"https://biblebot.github.io/RandomVersesData/{verseNumber}.txt";
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
