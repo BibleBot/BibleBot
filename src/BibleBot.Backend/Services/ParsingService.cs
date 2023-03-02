@@ -250,10 +250,14 @@ namespace BibleBot.Backend.Services
             };
         }
 
-        public string PurifyBody(string brackets, string str)
+        public string PurifyBody(List<string> ignoringBrackets, string str)
         {
             str = str.ToLower().Replace("\r", " ").Replace("\n", " ");
-            str = new Regex(@"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1]).Replace(str, "");
+
+            foreach (var brackets in ignoringBrackets)
+            {
+                str = new Regex(@"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1]).Replace(str, "");
+            }
 
             var punctuationToIgnore = "!\"#$%&'()*+,./;<=>?@[\\]^_`{|}~";
             foreach (var character in punctuationToIgnore)
