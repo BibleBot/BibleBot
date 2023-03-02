@@ -72,14 +72,18 @@ namespace BibleBot.Backend.Controllers
             }
 
             var displayStyle = "embed";
-            var ignoringBrackets = "<>";
+            var ignoringBrackets = new List<string> { "<>" };
             var paginateVerses = false;
 
             var idealGuild = _guildService.Get(req.GuildId);
             if (idealGuild != null)
             {
                 displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
-                ignoringBrackets = idealGuild.IgnoringBrackets == null ? ignoringBrackets : idealGuild.IgnoringBrackets;
+
+                if (idealGuild.IgnoringBrackets != null)
+                {
+                    ignoringBrackets.Add(idealGuild.IgnoringBrackets);
+                }
             }
 
             var body = _parsingService.PurifyBody(ignoringBrackets, req.Body);
