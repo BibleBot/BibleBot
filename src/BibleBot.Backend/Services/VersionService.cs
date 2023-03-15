@@ -26,7 +26,7 @@ namespace BibleBot.Backend.Services
         }
 
         public List<Version> Get() => _versions.Find(version => true).ToList();
-        public Version Get(string abbv) => _versions.Find<Version>(version => version.Abbreviation == abbv).FirstOrDefault();
+        public Version Get(string abbv) => _versions.Find<Version>(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant()).FirstOrDefault();
         public long GetCount() => _versions.EstimatedDocumentCount();
 
         public Version Create(Version version)
@@ -35,8 +35,8 @@ namespace BibleBot.Backend.Services
             return version;
         }
 
-        public void Update(string abbv, Version newVersion) => _versions.ReplaceOne(version => version.Abbreviation == abbv, newVersion);
+        public void Update(string abbv, Version newVersion) => _versions.ReplaceOne(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant(), newVersion);
         public void Remove(Version idealVersion) => _versions.DeleteOne(version => version.Id == idealVersion.Id);
-        public void Remove(string abbv) => _versions.DeleteOne(version => version.Abbreviation == abbv);
+        public void Remove(string abbv) => _versions.DeleteOne(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant());
     }
 }
