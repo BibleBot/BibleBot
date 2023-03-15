@@ -92,10 +92,7 @@ namespace BibleBot.Backend.Services
 
                         if (idealVersion != null)
                         {
-                            if (idealVersion.Abbreviation == lastToken)
-                            {
-                                version = idealVersion;
-                            }
+                            version = idealVersion;
                         }
                     }
 
