@@ -98,7 +98,7 @@ namespace BibleBot.AutomaticServices.Services
 
                 var webhookRequestBody = new WebhookRequestBody
                 {
-                    Content = $"henlo mr. <@304602975446499329>, here are those version stats you asked for:\n\n```\n{fileContents}\n```\n\nthese will be sent out on the 11th day of every month at the 11th hour in ur time zone, mr. <@304602975446499329>. ty have good day",
+                    Content = $"henlo <@304602975446499329>, here are those version stats you asked for:\n\n```\n{fileContents}\n```\n\nthese will be sent out on the 11th day of every month at the 11th hour in ur time zone, <@304602975446499329>. ty have good day",
                     Username = "BibleBot Version Stats",
                     AvatarURL = "https://i.imgur.com/hr4RXpy.png"
                 };
