@@ -82,9 +82,8 @@ class EventListeners(commands.Cog):
 
         if ":" in clean_msg:
             await backend.submit_verse(msg.channel, msg.author, clean_msg)
-        elif (
-            "<@361033318273384449>" in clean_msg and msg.author.id == 186046294286925824
-        ):
+        elif self.bot.user in msg.mentions and msg.author.id == 186046294286925824:
+            logger.log(clean_msg)
             await backend.submit_command(
                 msg.channel, msg.author, clean_msg.replace("<@361033318273384449> ", "")
             )
