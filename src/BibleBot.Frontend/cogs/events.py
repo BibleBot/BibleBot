@@ -65,9 +65,13 @@ class EventListeners(commands.Cog):
         endpoint = os.environ.get("ENDPOINT")
 
         async with aiohttp.ClientSession() as session:
-            async with session.post(f"{endpoint}/webhooks/process", json=reqbody) as resp:
+            async with session.post(
+                f"{endpoint}/webhooks/process", json=reqbody
+            ) as resp:
                 if resp.status != 200:
-                    logger.error("on_guild_remove: unable to send delete event to webhook endpoint")
+                    logger.error(
+                        "on_guild_remove: unable to send delete event to webhook endpoint"
+                    )
 
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):
@@ -78,6 +82,12 @@ class EventListeners(commands.Cog):
 
         if ":" in clean_msg:
             await backend.submit_verse(msg.channel, msg.author, clean_msg)
+        elif (
+            "<@361033318273384449>" in clean_msg and msg.author.id == 186046294286925824
+        ):
+            await backend.submit_command(
+                msg.channel, msg.author, clean_msg.replace("<@361033318273384449> ", "")
+            )
 
 
 async def update_topgg(bot: disnake.AutoShardedClient):
@@ -112,6 +122,8 @@ async def update_discordbotlist(bot: disnake.AutoShardedClient):
                 headers={"Authorization": discordbotlist_auth},
             ) as resp:
                 if resp.status != 200:
-                    logger.warning("couldn't submit stats to discordbotlist.com, it may be offline")
+                    logger.warning(
+                        "couldn't submit stats to discordbotlist.com, it may be offline"
+                    )
                 else:
                     logger.info("submitted stats to discordbotlist.com")
