@@ -16,8 +16,7 @@ logger = VyLogger("default")
 intents = disnake.Intents.default()
 intents.message_content = True
 bot = commands.AutoShardedBot(
-    command_prefix=commands.when_mentioned,
-    intents=intents,
+    command_prefix=commands.when_mentioned, intents=intents, help_command=None
 )
 
 bot.load_extension("cogs")
