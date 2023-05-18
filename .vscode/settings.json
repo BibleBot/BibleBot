@@ -6,6 +6,9 @@
     "editor.rulers": [
         120
     ],
-    "python.formatting.provider": "black",
-    "markdownlint.ignore": "*"
+    "python.formatting.provider": "none",
+    "markdownlint.ignore": "*",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
 }
