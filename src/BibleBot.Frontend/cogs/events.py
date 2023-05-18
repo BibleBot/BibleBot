@@ -81,7 +81,10 @@ class EventListeners(commands.Cog):
         clean_msg = msg.content.replace("http:", "").replace("https:", "")
 
         if ":" in clean_msg:
-            await backend.submit_verse(msg.channel, msg.author, clean_msg)
+            try:
+                await backend.submit_verse(msg.channel, msg.author, clean_msg)
+            except disnake.errors.Forbidden:
+                logger.error("received 403 from Discord, unable to send previous verse")
 
 
 async def update_topgg(bot: disnake.AutoShardedClient):
@@ -96,7 +99,7 @@ async def update_topgg(bot: disnake.AutoShardedClient):
                 headers={"Authorization": topgg_auth},
             ) as resp:
                 if resp.status != 200:
-                    logger.warning("couldn't submit stats to top.gg, it may be offline")
+                    logger.warn("couldn't submit stats to top.gg, it may be offline")
                 else:
                     logger.info("submitted stats to top.gg")
 
@@ -116,7 +119,7 @@ async def update_discordbotlist(bot: disnake.AutoShardedClient):
                 headers={"Authorization": discordbotlist_auth},
             ) as resp:
                 if resp.status != 200:
-                    logger.warning(
+                    logger.warn(
                         "couldn't submit stats to discordbotlist.com, it may be offline"
                     )
                 else:
