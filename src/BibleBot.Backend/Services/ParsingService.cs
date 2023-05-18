@@ -209,6 +209,14 @@ namespace BibleBot.Backend.Services
                 return null;
             }
 
+            // Fixes #237: Parser detects a reference despite space between chapter and verse.
+            // Without this, the parsing thinks of any verse like "Genesis 1: 1-5" as "Genesis 1:0-".
+            // We wouldn't want users trying to start verse referencing with a 0-based index anyway.
+            if (startingVerse == 0)
+            {
+                return null;
+            }
+
             bool isOT = false;
             bool isNT = false;
             bool isDEU = false;
