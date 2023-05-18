@@ -28,15 +28,5 @@ namespace BibleBot.AutomaticServices.Services
 
         public List<Language> Get() => _languages.Find(language => true).ToList();
         public Language Get(string objectName) => _languages.Find<Language>(language => language.ObjectName == objectName).FirstOrDefault();
-
-        public Language Create(Language language)
-        {
-            _languages.InsertOne(language);
-            return language;
-        }
-
-        public void Update(string objectName, Language newLanguage) => _languages.ReplaceOne(language => language.ObjectName == objectName, newLanguage);
-        public void Remove(Language idealLanguage) => _languages.DeleteOne(language => language.Id == idealLanguage.Id);
-        public void Remove(string objectName) => _languages.DeleteOne(language => language.ObjectName == objectName);
     }
 }
