@@ -29,14 +29,6 @@ namespace BibleBot.AutomaticServices.Services
         public List<Guild> Get() => _guilds.Find(guild => true).ToList();
         public Guild Get(string guildId) => _guilds.Find<Guild>(guild => guild.GuildId == guildId).FirstOrDefault();
 
-        public Guild Create(Guild guild)
-        {
-            _guilds.InsertOne(guild);
-            return guild;
-        }
-
         public void Update(string guildId, Guild newGuild) => _guilds.ReplaceOne(guild => guild.GuildId == guildId, newGuild);
-        public void Remove(Guild idealGuild) => _guilds.DeleteOne(guild => guild.Id == idealGuild.Id);
-        public void Remove(string guildId) => _guilds.DeleteOne(guild => guild.GuildId == guildId);
     }
 }
