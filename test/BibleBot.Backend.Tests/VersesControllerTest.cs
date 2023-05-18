@@ -497,5 +497,33 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldNotProcessReferenceStartingWithVerseZero()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:0")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldNotProcessReferenceWithSpaceBetweenColonAndVerseNumbers()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1: 1-5")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                LogStatement = null
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }
