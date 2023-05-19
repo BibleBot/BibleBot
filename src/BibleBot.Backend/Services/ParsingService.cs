@@ -73,6 +73,7 @@ namespace BibleBot.Backend.Services
             int endingChapter = 0;
             int endingVerse = 0;
             int tokenIdxAfterSpan = 0;
+            bool expandoVerseUsed = false;
 
             var tokens = str.Split(" ");
 
@@ -183,6 +184,7 @@ namespace BibleBot.Backend.Services
                                 {
                                     // Instead of returning null here, we'll break out of the loop
                                     // in the event that the span exists to extend to the end of a chapter.
+                                    expandoVerseUsed = true;
                                     break;
                                 }
 
@@ -190,7 +192,7 @@ namespace BibleBot.Backend.Services
                             }
                         }
 
-                        if (endingVerse == 0 && spanQuantity == 0)
+                        if (endingVerse == 0 && (spanQuantity == 0 || !expandoVerseUsed))
                         {
                             endingVerse = startingVerse;
                         }
