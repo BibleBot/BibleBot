@@ -525,5 +525,42 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldProcessReferenceWithFullWidthColon()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1：1-2")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Matthew 1:1-2 RSV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Genealogy of Jesus the Messiah",
+                        PsalmTitle = "",
+                        Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham. <**2**> Abraham was the father of Isaac, and Isaac the father of Jacob, and Jacob the father of Judah and his brothers,",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 2,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:1-2"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }
