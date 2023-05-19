@@ -79,7 +79,8 @@ namespace BibleBot.Backend.Services.Providers
 
             foreach (var el in verseNumbers)
             {
-                if (verseNumbersEnabled)
+                var verseNumber = el.TextContent.Substring(0, el.TextContent.Length - 1);
+                if (verseNumbersEnabled && verseNumber != "1")
                 {
                     el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
                 }
