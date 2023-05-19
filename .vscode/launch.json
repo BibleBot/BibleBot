@@ -15,9 +15,7 @@
             "cwd": "${workspaceFolder}/src/BibleBot.Frontend",
             "stopAtEntry": false,
             "requireExactSource": false,
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
+            "envFile": "${workspaceFolder}/src/BibleBot.Frontend/.env"
         },
         {
             // Use IntelliSense to find out which attributes exist for C# debugging
@@ -33,9 +31,7 @@
             "cwd": "${workspaceFolder}/src/BibleBot.Backend",
             "stopAtEntry": false,
             "requireExactSource": false,
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
+            "envFile": "${workspaceFolder}/src/BibleBot.Backend/.env"
         },
         {
             // Use IntelliSense to find out which attributes exist for C# debugging
@@ -51,9 +47,7 @@
             "cwd": "${workspaceFolder}/src/BibleBot.AutomaticServices",
             "stopAtEntry": false,
             "requireExactSource": false,
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
+            "envFile": "${workspaceFolder}/src/BibleBot.Backend/.env"
         },
         {
             "name": ".NET Core Attach",
