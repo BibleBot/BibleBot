@@ -80,7 +80,10 @@ namespace BibleBot.Backend.Services
             {
                 var relevantToken = tokens.Skip(bookSearchResult.Index + 1).First();
 
-                if (relevantToken.Contains(":"))
+                var colonRegex = new Regex(@"[:：]", RegexOptions.Compiled);
+                var colonMatches = colonRegex.Matches(relevantToken);
+
+                if (colonMatches.Count() != 0)
                 {
                     tokenIdxAfterSpan = bookSearchResult.Index + 2;
 
@@ -96,16 +99,14 @@ namespace BibleBot.Backend.Services
                         }
                     }
 
-                    var colonRegex = new Regex(@":", RegexOptions.Compiled);
-                    var colonQuantity = colonRegex.Matches(relevantToken).Count();
 
-                    if (colonQuantity == 2)
+                    if (colonMatches.Count() == 2)
                     {
                         var span = relevantToken.Split("-");
 
                         foreach (var pairString in span)
                         {
-                            var pairStringSplit = pairString.Split(":");
+                            var pairStringSplit = pairString.Split(colonMatches.First().Value);
 
                             foreach (var pairValue in pairStringSplit)
                             {
@@ -134,9 +135,9 @@ namespace BibleBot.Backend.Services
                             }
                         }
                     }
-                    else if (colonQuantity == 1)
+                    else if (colonMatches.Count() == 1)
                     {
-                        var pair = relevantToken.Split(":");
+                        var pair = relevantToken.Split(colonMatches.First().Value);
 
                         try
                         {
