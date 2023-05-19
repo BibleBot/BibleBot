@@ -562,5 +562,42 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldNotProcessSameVerseSpannedReferenceAsExpando()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:1-1")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Matthew 1:1 RSV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Genealogy of Jesus the Messiah",
+                        PsalmTitle = "",
+                        Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham.",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }
