@@ -80,7 +80,7 @@ class EventListeners(commands.Cog):
 
         clean_msg = msg.content.replace("http:", "").replace("https:", "")
 
-        if ":" in clean_msg:
+        if ":" in clean_msg or "：" in clean_msg:
             try:
                 await backend.submit_verse(msg.channel, msg.author, clean_msg)
             except disnake.errors.Forbidden:
