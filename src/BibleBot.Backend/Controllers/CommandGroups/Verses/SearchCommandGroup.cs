@@ -96,19 +96,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 var idealVersion = _versionService.Get(version);
                 var query = System.String.Join(" ", args);
 
-                if (query.Length < 4)
-                {
-                    return new CommandResponse
-                    {
-                        OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
-                            new Utils().Embedify("/search", "Your search query needs to be at least 4 characters.", true)
-                        },
-                        LogStatement = "/search"
-                    };
-                }
-
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
                 if (provider == null)
