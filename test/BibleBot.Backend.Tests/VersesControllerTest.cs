@@ -67,13 +67,13 @@ namespace BibleBot.Backend.Tests
             defaultBibleGatewayVersion = versionService.Get("RSV");
             if (defaultBibleGatewayVersion == null)
             {
-                defaultBibleGatewayVersion = new MockRSV();
+                defaultBibleGatewayVersion = versionService.Create(new MockRSV());
             }
 
             defaultAPIBibleVersion = versionService.Get("KJVA");
             if (defaultAPIBibleVersion == null)
             {
-                defaultAPIBibleVersion = new MockKJVA();
+                defaultAPIBibleVersion = versionService.Create(new MockKJVA());
             }
 
             septuagintVersion = versionService.Get("LXX");
