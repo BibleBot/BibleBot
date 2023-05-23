@@ -57,7 +57,7 @@ namespace BibleBot.Backend.Tests.Mocks
             this.Abbreviation = "LXX";
             this.Source = "ab";
             this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
+            this.SupportsNewTestament = false;
             this.SupportsDeuterocanon = true;
         }
     }
@@ -70,7 +70,7 @@ namespace BibleBot.Backend.Tests.Mocks
             this.Abbreviation = "ELXX";
             this.Source = "ab";
             this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
+            this.SupportsNewTestament = false;
             this.SupportsDeuterocanon = true;
         }
     }
