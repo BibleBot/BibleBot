@@ -44,7 +44,10 @@ namespace BibleBot.Backend.Services.Providers
             {
                 { "KJVA", "de4e12af7f28f599-01" }, // King James Version with Apocrypha
                 { "FBV", "65eec8e0b60e656b-01" }, // Free Bible Version
-                { "WEB", "9879dbb7cfe39e4d-01" } // World English Bible (includes Apocrypha)
+                { "WEB", "9879dbb7cfe39e4d-01" }, // World English Bible (includes Apocrypha)
+                { "LXX", "c114c33098c4fef1-01" }, // Brenton's Greek Septuagint
+                { "ELXX", "6bab4d6c61b31b80-01" }, // Brenton's English Septuagint
+                { "PAT1904", "901dcd9744e1bf69-01" } // Patriarchal Text of 1904
             };
         }
 
@@ -56,6 +59,15 @@ namespace BibleBot.Backend.Services.Providers
                 {
                     reference.Book = "Song of Solomon";
                 }
+
+                if (reference.Version.Abbreviation == "ELXX" || reference.Version.Abbreviation == "LXX")
+                {
+                    if (reference.Book == "Daniel")
+                    {
+                        reference.Book = "DAG";
+                    }
+                }
+
                 reference.AsString = reference.ToString();
             }
 
@@ -71,9 +83,15 @@ namespace BibleBot.Backend.Services.Providers
                 return null;
             }
 
-            if (resp.Data.Passages[0].BibleId != _versionTable[reference.Version.Abbreviation])
+            if (resp.Data.Passages.Count() == 0)
             {
                 Log.Error($"{reference.Version.Abbreviation} machine broke");
+                return null;
+            }
+
+            if (resp.Data.Passages[0].BibleId != _versionTable[reference.Version.Abbreviation])
+            {
+                Log.Error($"{reference.Version.Abbreviation} machine broke - version no longer available");
                 return null;
             }
 
@@ -103,6 +121,12 @@ namespace BibleBot.Backend.Services.Providers
 
             // As the verse reference could have a non-English name...
             reference.AsString = resp.Data.Passages[0].Reference;
+
+            if (reference.AsString.Contains("Daniel (Greek)") || reference.AsString.Contains("ΔΑΝΙΗΛ (Ελληνικά)"))
+            {
+                reference.Book = "Daniel";
+                reference.AsString = reference.ToString();
+            }
 
             return new Verse { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
         }

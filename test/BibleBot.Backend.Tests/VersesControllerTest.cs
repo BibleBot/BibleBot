@@ -38,6 +38,9 @@ namespace BibleBot.Backend.Tests
 
         private Models.Version defaultBibleGatewayVersion;
         private Models.Version defaultAPIBibleVersion;
+        private Models.Version septuagintVersion;
+        private Models.Version englishSeptuagintVersion;
+        // private Models.Version patriarchalTextVersion;
 
         [SetUp]
         public void Setup()
@@ -64,14 +67,32 @@ namespace BibleBot.Backend.Tests
             defaultBibleGatewayVersion = versionService.Get("RSV");
             if (defaultBibleGatewayVersion == null)
             {
-                defaultBibleGatewayVersion = versionService.Create(new MockRSV());
+                defaultBibleGatewayVersion = new MockRSV();
             }
 
             defaultAPIBibleVersion = versionService.Get("KJVA");
             if (defaultAPIBibleVersion == null)
             {
-                defaultAPIBibleVersion = versionService.Create(new MockKJVA());
+                defaultAPIBibleVersion = new MockKJVA();
             }
+
+            septuagintVersion = versionService.Get("LXX");
+            if (septuagintVersion == null)
+            {
+                septuagintVersion = versionService.Create(new MockLXX());
+            }
+
+            englishSeptuagintVersion = versionService.Get("ELXX");
+            if (englishSeptuagintVersion == null)
+            {
+                englishSeptuagintVersion = versionService.Create(new MockELXX());
+            }
+
+            // patriarchalTextVersion = versionService.Get("PAT1904");
+            // if (patriarchalTextVersion == null)
+            // {
+            //     patriarchalTextVersion = versionService.Create(new MockPAT1904());
+            // }
 
             versesController = new VersesController(userServiceMock.Object, guildServiceMock.Object,
                                                     parsingServiceMock.Object, versionService,
@@ -599,5 +620,116 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldProcessDanielInEnglishSeptuagint()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 ELXX")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Daniel 1:1-2 ELXX",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**1**> In the third year of the reign of Joakim king of Judah, came Nebuchadnezzar king of Babylon to Jerusalem, and besieged it. <**2**> And the Lord gave into his hand Joakim king of Judah, and part of the vessels of the house of God: and he brought them into the land of Shinar to the house of his god; and he brought the vessels into the treasure house of his god.",
+                        Reference = new Reference
+                        {
+                            Book = "Daniel",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 2,
+                            Version = englishSeptuagintVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Daniel 1:1-2"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldProcessDanielInSeptuagint()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 LXX")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Daniel 1:1-2 LXX",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**1**> ἘΝ ἔτει τρίτῳ τῆς βασιλείας Ἰωακεὶμ βασιλέως Ἰούδα, ἦλθε Ναβουχοδονόσορ ὁ βασιλεὺς Βαβυλῶνος εἰς Ἱερουσαλὴμ, καὶ ἐπολιόρκει αὐτήν. <**2**> Καὶ ἔδωκε Κύριος ἐν χειρὶ αὐτοῦ τὸν Ἰωακεὶμ βασιλέα Ἰούδα, καὶ ἀπὸ μέρους τῶν σκευῶν οἴκου τοῦ Θεοῦ· καὶ ἤνεγκεν αὐτὰ εἰς γῆν Σενναὰρ οἴκου τοῦ θεοῦ αὐτοῦ, καὶ τὰ σκεύη εἰσήνεγκεν εἰς τὸν οἶκον θησαυροῦ τοῦ θεοῦ αὐτοῦ.",
+                        Reference = new Reference
+                        {
+                            Book = "Daniel",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 2,
+                            Version = septuagintVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Daniel 1:1-2"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        // [Test]
+        // public void ShouldProcessJohnInPatriarchalText()
+        // {
+        //     var resp = versesController.ProcessMessage(new MockRequest("John 1:1-2 PAT1904")).GetAwaiter().GetResult();
+
+        //     var expected = new VerseResponse
+        //     {
+        //         OK = true,
+        //         LogStatement = "John 1:1-2 PAT1904",
+        //         DisplayStyle = "embed",
+        //         Verses = new List<Verse>
+        //         {
+        //             new Verse
+        //             {
+        //                 Title = "",
+        //                 PsalmTitle = "",
+        //                 Text = "<**1**> Ἐν ἀρχῇ ἦν ὁ Λόγος, καὶ ὁ Λόγος ἦν πρὸς τὸν Θεόν, καὶ Θεὸς ἦν ὁ Λόγος. <**2**> Οὗτος ἦν ἐν ἀρχῇ πρὸς τὸν Θεόν.",
+        //                 Reference = new Reference
+        //                 {
+        //                     Book = "John",
+        //                     StartingChapter = 1,
+        //                     StartingVerse = 1,
+        //                     EndingChapter = 1,
+        //                     EndingVerse = 2,
+        //                     Version = patriarchalTextVersion,
+        //                     IsOT = false,
+        //                     IsNT = true,
+        //                     IsDEU = false,
+        //                     AsString = "John 1:1-2"
+        //                 }
+        //             }
+        //         }
+        //     };
+
+        //     resp.Should().BeEquivalentTo(expected);
+        // }
     }
 }
