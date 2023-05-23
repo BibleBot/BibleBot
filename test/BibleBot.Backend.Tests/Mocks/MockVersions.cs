@@ -48,4 +48,43 @@ namespace BibleBot.Backend.Tests.Mocks
             this.SupportsDeuterocanon = true;
         }
     }
+
+    public class MockLXX : Version
+    {
+        public MockLXX()
+        {
+            this.Name = "Septuagint (LXX)";
+            this.Abbreviation = "LXX";
+            this.Source = "ab";
+            this.SupportsOldTestament = true;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = true;
+        }
+    }
+
+    public class MockELXX : Version
+    {
+        public MockELXX()
+        {
+            this.Name = "Brenton's Septuagint (ELXX)";
+            this.Abbreviation = "ELXX";
+            this.Source = "ab";
+            this.SupportsOldTestament = true;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = true;
+        }
+    }
+
+    public class MockPAT1904 : Version
+    {
+        public MockPAT1904()
+        {
+            this.Name = "Patriarchal Text of 1904 (PAT1904)";
+            this.Abbreviation = "PAT1904";
+            this.Source = "ab";
+            this.SupportsOldTestament = false;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = false;
+        }
+    }
 }
