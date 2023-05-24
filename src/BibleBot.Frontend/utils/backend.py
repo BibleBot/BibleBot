@@ -22,11 +22,10 @@ async def submit_command(
     try:
         ch = await rch._get_channel()
     except AttributeError:
-        # This happens for StageChannels, which is odd
-        # but we can't treat them as a thread or a
-        # channel. We'll have to ignore them until
-        # disnake umbrella's it in abc.Messageable.
-        return
+        if not isinstance(rch, disnake.StageChannel):
+            return
+        else:
+            ch = rch
 
     isDM = ch.type == disnake.ChannelType.private
     guildId = ch.id if isDM else ch.guild.id
@@ -152,11 +151,10 @@ async def submit_command_raw(
     try:
         ch = await rch._get_channel()
     except AttributeError:
-        # This happens for StageChannels, which is odd
-        # but we can't treat them as a thread or a
-        # channel. We'll have to ignore them until
-        # disnake umbrella's it in abc.Messageable.
-        return
+        if not isinstance(rch, disnake.StageChannel):
+            return
+        else:
+            ch = rch
 
     isDM = ch.type == disnake.ChannelType.private
     guildId = ch.id if isDM else ch.guild.id
@@ -178,7 +176,13 @@ async def submit_command_raw(
 
 
 async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, body: str):
-    ch = await rch._get_channel()
+    try:
+        ch = await rch._get_channel()
+    except AttributeError:
+        if not isinstance(rch, disnake.StageChannel):
+            return
+        else:
+            ch = rch
 
     isDM = ch.type == disnake.ChannelType.private
     guildId = ch.id if isDM else ch.guild.id
