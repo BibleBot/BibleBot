@@ -28,6 +28,7 @@ from logger import VyLogger
 
 logger = VyLogger("default")
 
+
 class CreatePaginator(ui.View):
     """
     Paginator for Embeds.
@@ -41,12 +42,15 @@ class CreatePaginator(ui.View):
         How long the Paginator should timeout in, after the last interaction.
 
     """
+
     def __init__(self, embeds: list, author: int = 123, timeout: float = None):
         if not timeout:
             super().__init__()
         else:
             super().__init__(timeout=timeout)
-        self.embeds = embeds # honestly, this whole embeds-being-backward logic is confusing
+        self.embeds = (
+            embeds  # honestly, this whole embeds-being-backward logic is confusing
+        )
         self.author = author
         self.CurrentEmbed = 0
 
@@ -54,12 +58,14 @@ class CreatePaginator(ui.View):
     async def next(self, button, inter):
         try:
             if inter.author.id != self.author:
-                return await inter.send("You cannot interact with these buttons.", ephemeral=True)
-                
+                return await inter.send(
+                    "You cannot interact with these buttons.", ephemeral=True
+                )
+
             potential_page = self.CurrentEmbed - 1
             if potential_page < 0:
                 potential_page = len(self.embeds) - 1
-                
+
             await inter.response.edit_message(embed=self.embeds[potential_page])
             self.CurrentEmbed = potential_page
         except:
@@ -69,8 +75,10 @@ class CreatePaginator(ui.View):
     async def previous(self, button, inter):
         try:
             if inter.author.id != self.author:
-                return await inter.send("You cannot interact with these buttons.", ephemeral=True)
-            
+                return await inter.send(
+                    "You cannot interact with these buttons.", ephemeral=True
+                )
+
             potential_page = self.CurrentEmbed + 1
             if potential_page > len(self.embeds) - 1:
                 potential_page = 0
@@ -79,4 +87,3 @@ class CreatePaginator(ui.View):
             self.CurrentEmbed = potential_page
         except:
             pass
-            

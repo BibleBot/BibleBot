@@ -15,6 +15,7 @@ from utils.paginator import CreatePaginator
 
 logger = VyLogger("default")
 
+
 async def submit_command(
     rch: disnake.abc.Messageable, user: disnake.abc.User, body: str
 ):
@@ -38,9 +39,13 @@ async def submit_command(
             respBody = await resp.json()
 
             if respBody["ok"]:
-                logger.info(f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"])
+                logger.info(
+                    f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"]
+                )
             else:
-                logger.error(f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"])
+                logger.error(
+                    f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"]
+                )
 
             if respBody["type"] == "cmd":
                 if len(respBody["pages"]) == 1:
@@ -76,7 +81,9 @@ async def submit_command(
                             # Send a request to the webhook controller, which will update the DB.
                             reqbody["Body"] = f"{webhook.id}/{webhook.token}||{ch.id}"
                             async with aiohttp.ClientSession() as subsession:
-                                async with subsession.post(f"{endpoint}/webhooks/process", json=reqbody) as subresp:
+                                async with subsession.post(
+                                    f"{endpoint}/webhooks/process", json=reqbody
+                                ) as subresp:
                                     if subresp.status != 200:
                                         logger.error("couldn't submit webhook")
                                     else:
@@ -129,9 +136,7 @@ async def submit_command(
                         )
                         verse_text = verse["text"].replace("*", "")
 
-                        return (
-                            f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
-                        )
+                        return f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
 
 
 async def submit_command_raw(
@@ -151,7 +156,7 @@ async def submit_command_raw(
     }
 
     endpoint = os.environ.get("ENDPOINT")
-    
+
     async with aiohttp.ClientSession() as session:
         async with session.post(f"{endpoint}/commands/process", json=reqbody) as resp:
             respBody = await resp.json()
@@ -178,14 +183,18 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
     async with aiohttp.ClientSession() as session:
         async with session.post(f"{endpoint}/verses/process", json=reqbody) as resp:
             respBody = await resp.json()
-            
+
             if respBody["logStatement"]:
-                logger.info(f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"])
+                logger.info(
+                    f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"]
+                )
 
             if respBody["logStatement"]:
                 if "does not support the" in respBody["logStatement"]:
                     await ch.send(
-                        embed=create_error_embed("Verse Error", respBody["logStatement"])
+                        embed=create_error_embed(
+                            "Verse Error", respBody["logStatement"]
+                        )
                     )
                     return
                 elif "too many verses" in respBody["logStatement"]:
@@ -221,7 +230,9 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
                     )
                     verse_text = verse["text"]
 
-                    await ch.send(f"**{reference_title}**\n\n> {verse_title}{verse_text}")
+                    await ch.send(
+                        f"**{reference_title}**\n\n> {verse_title}{verse_text}"
+                    )
             elif display_style == "code":
                 for verse in verses:
                     reference_title = (
@@ -229,7 +240,9 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
                         + " - "
                         + verse["reference"]["version"]["name"]
                     )
-                    verse_title = (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
+                    verse_title = (
+                        (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
+                    )
                     verse_text = verse["text"].replace("*", "")
 
                     await ch.send(
