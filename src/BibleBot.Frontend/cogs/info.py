@@ -18,6 +18,7 @@ import patreon
 logger = VyLogger("default")
 patreon_api = patreon.API(os.environ.get("PATREON_TOKEN"))
 
+
 class Information(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -53,18 +54,24 @@ class Information(commands.Cog):
         cursor = None
 
         while True:
-            pledges_resp = patreon_api.fetch_page_of_pledges(campaign, 25, cursor=cursor)
+            pledges_resp = patreon_api.fetch_page_of_pledges(
+                campaign, 25, cursor=cursor
+            )
             pledges += pledges_resp.data()
             cursor = patreon_api.extract_cursor(pledges_resp)
             if not cursor:
                 break
-        
-        names = [x.relationship('patron').attribute('full_name').strip() for x in pledges]
+
+        names = [
+            x.relationship("patron").attribute("full_name").strip() for x in pledges
+        ]
 
         embed = disnake.Embed()
 
         embed.title = "Patreon Supporters"
-        embed.description = "Many thanks to our Patreon supporters:\n\n**" + "**\n**".join(names) + "**"
+        embed.description = (
+            "Many thanks to our Patreon supporters:\n\n**" + "**\n**".join(names) + "**"
+        )
         embed.color = 6709986
 
         embed.set_footer(
@@ -72,6 +79,7 @@ class Information(commands.Cog):
             icon_url="https://i.imgur.com/hr4RXpy.png",
         )
         await inter.followup.send(embed=embed)
+
 
 async def send_stats(bot: disnake.AutoShardedClient):
     endpoint = os.environ.get("ENDPOINT")
@@ -88,7 +96,7 @@ async def send_stats(bot: disnake.AutoShardedClient):
             json={
                 "Token": token,
                 "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}",
-            }
+            },
         ) as resp:
             if resp.status != 200:
                 logger.error("couldn't submit stats to backend")
