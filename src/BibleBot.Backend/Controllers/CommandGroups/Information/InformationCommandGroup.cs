@@ -90,7 +90,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**Guild Preference Count**: {guildPrefs}\n" +
                 $"**Version Count**: {versions}\n\n" +
                 $"**__Metadata__**\n" +
-                $"**Frontend**: v{Utils.Version} ([{frontendStats.FrontendRepoCommitHash.Substring(0, 7)}](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/{frontendStats.FrontendRepoCommitHash}))\n" +
+                $"**Frontend**: v{Utils.Version} ([{frontendStats.FrontendRepoCommitHash.Substring(0, 8)}](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/{frontendStats.FrontendRepoCommitHash}))\n" +
                 $"**Backend**: v{Utils.Version} ([{ThisAssembly.Git.Commit}](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/{ThisAssembly.Git.Sha}))\n";
 
 
