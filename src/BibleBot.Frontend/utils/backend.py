@@ -9,6 +9,7 @@
 import os
 import aiohttp
 import disnake
+from disnake.ext import commands
 from logger import VyLogger
 
 from utils.paginator import CreatePaginator
@@ -22,10 +23,10 @@ async def submit_command(
     try:
         ch = await rch._get_channel()
     except AttributeError:
-        if not isinstance(rch, disnake.StageChannel):
-            return
-        else:
-            ch = rch
+        # In this scenario, we've got something that
+        # should inherit Messageable in disnake but
+        # has not been implemented.
+        return
 
     isDM = ch.type == disnake.ChannelType.private
     guildId = ch.id if isDM else ch.guild.id
@@ -151,10 +152,10 @@ async def submit_command_raw(
     try:
         ch = await rch._get_channel()
     except AttributeError:
-        if not isinstance(rch, disnake.StageChannel):
-            return
-        else:
-            ch = rch
+        # In this scenario, we've got something that
+        # should inherit Messageable in disnake but
+        # has not been implemented.
+        return
 
     isDM = ch.type == disnake.ChannelType.private
     guildId = ch.id if isDM else ch.guild.id
@@ -179,10 +180,10 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
     try:
         ch = await rch._get_channel()
     except AttributeError:
-        if not isinstance(rch, disnake.StageChannel):
-            return
-        else:
-            ch = rch
+        # In this scenario, we've got something that
+        # should inherit Messageable in disnake but
+        # has not been implemented.
+        return
 
     isDM = ch.type == disnake.ChannelType.private
     guildId = ch.id if isDM else ch.guild.id
