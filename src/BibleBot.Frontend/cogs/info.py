@@ -14,6 +14,7 @@ from disnake.ext import commands
 from logger import VyLogger
 from utils import backend
 import patreon
+import subprocess
 
 logger = VyLogger("default")
 patreon_api = patreon.API(os.environ.get("PATREON_TOKEN"))
@@ -89,13 +90,16 @@ async def send_stats(bot: disnake.AutoShardedClient):
     guild_count = len(bot.guilds)
     user_count = sum([x.member_count for x in bot.guilds])
     channel_count = sum([len(x.channels) for x in bot.guilds])
+    repo_sha = (
+        subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+    )
 
     async with aiohttp.ClientSession() as session:
         async with session.post(
             f"{endpoint}/stats/process",
             json={
                 "Token": token,
-                "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}",
+                "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}||{repo_sha}",
             },
         ) as resp:
             if resp.status != 200:

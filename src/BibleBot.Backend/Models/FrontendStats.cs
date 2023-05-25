@@ -28,5 +28,8 @@ namespace BibleBot.Backend.Models
 
         [BsonElement("ChannelCount")]
         public int ChannelCount { get; set; }
+
+        [BsonElement("FrontendRepoCommitHash")]
+        public string FrontendRepoCommitHash { get; set; }
     }
 }

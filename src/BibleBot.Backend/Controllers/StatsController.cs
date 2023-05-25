@@ -58,6 +58,7 @@ namespace BibleBot.Backend.Controllers
                 stats.ServerCount = int.Parse(fields[1]);
                 stats.UserCount = int.Parse(fields[2]);
                 stats.ChannelCount = int.Parse(fields[3]);
+                stats.FrontendRepoCommitHash = fields[4];
 
                 _frontendStatsService.Update(stats);
             }
@@ -68,7 +69,8 @@ namespace BibleBot.Backend.Controllers
                     ShardCount = int.Parse(fields[0]),
                     ServerCount = int.Parse(fields[1]),
                     UserCount = int.Parse(fields[2]),
-                    ChannelCount = int.Parse(fields[3])
+                    ChannelCount = int.Parse(fields[3]),
+                    FrontendRepoCommitHash = fields[4]
                 });
             }
 
