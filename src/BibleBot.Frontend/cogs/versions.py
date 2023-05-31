@@ -10,7 +10,7 @@ import disnake
 from disnake import CommandInteraction
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend
+from utils import backend, sending
 from utils.paginator import CreatePaginator
 
 import os
@@ -68,7 +68,7 @@ class Versions(commands.Cog):
     async def version(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+version")
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Set your preferred version.")
     async def setversion(
@@ -82,7 +82,7 @@ class Versions(commands.Cog):
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+version set {abbreviation}"
         )
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Set your server's preferred version.")
     async def setserverversion(
@@ -94,7 +94,8 @@ class Versions(commands.Cog):
     ):
         await inter.response.defer()
         if not inter.channel.permissions_for(inter.author).manage_guild:
-            await inter.followup.send(
+            await sending.safe_send_interaction(
+                inter.followup,
                 embed=backend.create_error_embed(
                     "Permissions Error",
                     "You must have the `Manage Server` permission to use this command.",
@@ -106,7 +107,7 @@ class Versions(commands.Cog):
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+version setserver {abbreviation}"
         )
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="See information on a version.")
     async def versioninfo(
@@ -120,7 +121,7 @@ class Versions(commands.Cog):
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+version info {abbreviation}"
         )
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="List all available versions.")
     async def listversions(self, inter: CommandInteraction):
@@ -130,8 +131,10 @@ class Versions(commands.Cog):
         )
 
         if isinstance(resp, list):
-            await inter.followup.send(
-                embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
+            await sending.safe_send_interaction(
+                inter.followup,
+                embed=resp[0],
+                view=CreatePaginator(resp, inter.author.id, 180),
             )
         else:
-            await inter.followup.send(embed=resp)
+            await sending.safe_send_interaction(inter.followup, embed=resp)

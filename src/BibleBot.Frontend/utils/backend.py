@@ -11,6 +11,7 @@ import aiohttp
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
+from utils import sending
 
 from utils.paginator import CreatePaginator
 
@@ -47,11 +48,11 @@ async def submit_command(
 
             if respBody["ok"]:
                 logger.info(
-                    f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"]
+                    f"<{user.id}@{guildId}#{ch.id}> " + respBody["logStatement"]
                 )
             else:
                 logger.error(
-                    f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"]
+                    f"<{user.id}@{guildId}#{ch.id}> " + respBody["logStatement"]
                 )
 
             if respBody["type"] == "cmd":
@@ -67,11 +68,12 @@ async def submit_command(
                                         reason=f"User ID {user.id} performed a command that removes BibleBot-related webhooks."
                                     )
                         except disnake.errors.Forbidden:
-                            await ch.send(
+                            await sending.safe_send_channel(
+                                ch,
                                 embed=create_error_embed(
                                     "/dailyverseset",
                                     "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.",
-                                )
+                                ),
                             )
 
                     if respBody["createWebhook"] and not isDM:
@@ -96,12 +98,18 @@ async def submit_command(
                                     else:
                                         return convert_embed(respBody["pages"][0])
                         except disnake.errors.Forbidden:
-                            await ch.send(
-                                embed=create_error_embed(
-                                    "/dailyverseset",
-                                    "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.",
+                            try:
+                                await sending.safe_send_channel(
+                                    ch,
+                                    embed=create_error_embed(
+                                        "/dailyverseset",
+                                        "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.",
+                                    ),
                                 )
-                            )
+                            except disnake.errors.Forbidden:
+                                logger.error(
+                                    f"unable to add webhook for <{user.id}@{guildId}#{ch.id}>"
+                                )
 
                     return convert_embed(respBody["pages"][0])
                 else:
@@ -205,19 +213,22 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
 
             if respBody["logStatement"]:
                 logger.info(
-                    f"<{user.id}#{ch.id}@{guildId}> " + respBody["logStatement"]
+                    f"<{user.id}@{guildId}#{ch.id}> " + respBody["logStatement"]
                 )
 
             if respBody["logStatement"]:
                 if "does not support the" in respBody["logStatement"]:
-                    await ch.send(
+                    await sending.safe_send_channel(
+                        ch,
                         embed=create_error_embed(
                             "Verse Error", respBody["logStatement"]
-                        )
+                        ),
                     )
                     return
                 elif "too many verses" in respBody["logStatement"]:
-                    await ch.send(embed=convert_embed(respBody["pages"][0]))
+                    await sending.safe_send_channel(
+                        ch, embed=convert_embed(respBody["pages"][0])
+                    )
                     return
 
             if respBody["verses"] is None:
@@ -231,10 +242,12 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
                     embeds = create_pagination_embeds_from_verses(verses)
                     paginator = CreatePaginator(embeds, user.id, 180)
 
-                    await ch.send(embed=embeds[0], view=paginator)
+                    await sending.safe_send_channel(ch, embed=embeds[0], view=paginator)
                 else:
                     for verse in verses:
-                        await ch.send(embed=create_embed_from_verse(verse))
+                        await sending.safe_send_channel(
+                            ch, embed=create_embed_from_verse(verse)
+                        )
             elif display_style == "blockquote":
                 for verse in verses:
                     reference_title = (
@@ -249,8 +262,9 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
                     )
                     verse_text = verse["text"]
 
-                    await ch.send(
-                        f"**{reference_title}**\n\n> {verse_title}{verse_text}"
+                    await sending.safe_send_channel(
+                        ch,
+                        f"**{reference_title}**\n\n> {verse_title}{verse_text}",
                     )
             elif display_style == "code":
                 for verse in verses:
@@ -264,8 +278,9 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
                     )
                     verse_text = verse["text"].replace("*", "")
 
-                    await ch.send(
-                        f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+                    await sending.safe_send_channel(
+                        ch,
+                        f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```",
                     )
 
 
