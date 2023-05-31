@@ -12,7 +12,7 @@ from disnake import CommandInteraction
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend
+from utils import backend, sending
 import patreon
 import subprocess
 
@@ -28,7 +28,7 @@ class Information(commands.Cog):
     async def biblebot(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+biblebot")
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Statistics on the bot.")
     async def stats(self, inter: CommandInteraction):
@@ -36,13 +36,13 @@ class Information(commands.Cog):
         await send_stats(self.bot)
         resp = await backend.submit_command(inter.channel, inter.author, "+stats")
 
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="See bot and support server invites.")
     async def invite(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="View all Patreon supporters.")
     async def supporters(self, inter: CommandInteraction):
@@ -79,7 +79,7 @@ class Information(commands.Cog):
             text="BibleBot v9.2-beta by Kerygma Digital",
             icon_url="https://i.imgur.com/hr4RXpy.png",
         )
-        await inter.followup.send(embed=embed)
+        await sending.safe_send_interaction(inter.followup, embed=embed)
 
 
 async def send_stats(bot: disnake.AutoShardedClient):

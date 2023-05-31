@@ -10,7 +10,7 @@ from disnake import CommandInteraction
 from disnake.ext import commands
 from setuptools import Command
 from logger import VyLogger
-from utils import backend
+from utils import backend, sending
 from utils.paginator import CreatePaginator
 
 logger = VyLogger("default")
@@ -28,11 +28,13 @@ class VerseCommands(commands.Cog):
         )
 
         if isinstance(resp, list):
-            await inter.followup.send(
-                embed=resp[0], view=CreatePaginator(resp, inter.author.id, 180)
+            await sending.safe_send_interaction(
+                inter.followup,
+                embed=resp[0],
+                view=CreatePaginator(resp, inter.author.id, 180),
             )
         else:
-            await inter.followup.send(embed=resp)
+            await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(
         description="Display a random verse from a predetermined pool."
@@ -46,15 +48,15 @@ class VerseCommands(commands.Cog):
                 "/random",
                 "This server has personally requested that this command be only used in DMs to avoid spam.",
             )
-            await inter.followup.send(embed=err)
+            await sending.safe_send_interaction(inter.followup, embed=err)
             return
 
         resp = await backend.submit_command(inter.channel, inter.author, "+random")
 
         if isinstance(resp, str):
-            await inter.followup.send(content=resp)
+            await sending.safe_send_interaction(inter.followup, content=resp)
         else:
-            await inter.followup.send(embed=resp)
+            await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(
         description="Display a random verse based on random number generation."
@@ -68,15 +70,15 @@ class VerseCommands(commands.Cog):
                 "/random",
                 "This server has personally requested that this command be only used in DMs to avoid spam.",
             )
-            await inter.followup.send(embed=err)
+            await sending.safe_send_interaction(inter.followup, embed=err)
             return
 
         resp = await backend.submit_command(inter.channel, inter.author, "+random true")
 
         if isinstance(resp, str):
-            await inter.followup.send(content=resp)
+            await sending.safe_send_interaction(inter.followup, content=resp)
         else:
-            await inter.followup.send(embed=resp)
+            await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Display the verse of the day.")
     async def dailyverse(self, inter: CommandInteraction):
@@ -84,9 +86,9 @@ class VerseCommands(commands.Cog):
         resp = await backend.submit_command(inter.channel, inter.author, "+dailyverse")
 
         if isinstance(resp, str):
-            await inter.followup.send(content=resp)
+            await sending.safe_send_interaction(inter.followup, content=resp)
         else:
-            await inter.followup.send(embed=resp)
+            await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Setup automatic daily verses on this channel.")
     async def dailyverseset(
@@ -94,7 +96,8 @@ class VerseCommands(commands.Cog):
     ):
         await inter.response.defer()
         if not inter.channel.permissions_for(inter.author).manage_guild:
-            await inter.followup.send(
+            await sending.safe_send_interaction(
+                inter.followup,
                 embed=backend.create_error_embed(
                     "Permissions Error",
                     "You must have the `Manage Server` permission to use this command.",
@@ -113,7 +116,7 @@ class VerseCommands(commands.Cog):
                 inter.channel, inter.author, f"+dailyverse set {time} {tz}"
             )
 
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(
         description="See automatic daily verse status for this server."
@@ -124,7 +127,7 @@ class VerseCommands(commands.Cog):
             inter.channel, inter.author, "+dailyverse status"
         )
 
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(
         description="Clear all automatic daily verse preferences for this server."
@@ -132,7 +135,8 @@ class VerseCommands(commands.Cog):
     async def dailyverseclear(self, inter: CommandInteraction):
         await inter.response.defer()
         if not inter.channel.permissions_for(inter.author).manage_guild:
-            await inter.followup.send(
+            await sending.safe_send_interaction(
+                inter.followup,
                 embed=backend.create_error_embed(
                     "Permissions Error",
                     "You must have the `Manage Server` permission to use this command.",
@@ -145,4 +149,4 @@ class VerseCommands(commands.Cog):
             inter.channel, inter.author, "+dailyverse clear"
         )
 
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)

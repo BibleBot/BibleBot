@@ -10,7 +10,7 @@ import disnake
 from disnake import CommandInteraction, Permissions
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend
+from utils import backend, sending
 
 logger = VyLogger("default")
 
@@ -126,7 +126,7 @@ class Formatting(commands.Cog):
     async def formatting(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+formatting")
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Enable or disable verse numbers.")
     async def setversenumbers(
@@ -139,7 +139,7 @@ class Formatting(commands.Cog):
             inter.channel, inter.author, f"+formatting setversenumbers {val}"
         )
 
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Enable or disable headings.")
     async def settitles(
@@ -152,7 +152,7 @@ class Formatting(commands.Cog):
             inter.channel, inter.author, f"+formatting settitles {val}"
         )
 
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Enable or disable verse pagination.")
     async def setpagination(
@@ -165,7 +165,7 @@ class Formatting(commands.Cog):
             inter.channel, inter.author, f"+formatting setpagination {val}"
         )
 
-        await inter.followup.send(embed=resp)
+        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Set your preferred display style.")
     async def setdisplay(self, inter: CommandInteraction):
@@ -173,7 +173,8 @@ class Formatting(commands.Cog):
         select_menu_view = disnake.ui.View(timeout=180)
         select_menu_view.add_item(DisplayStyleSelect(inter.author.id, False))
 
-        await inter.followup.send(
+        await sending.safe_send_interaction(
+            inter.followup,
             content="Select your preferred display style.",
             view=select_menu_view,
         )
@@ -182,7 +183,8 @@ class Formatting(commands.Cog):
     async def setserverdisplay(self, inter: CommandInteraction):
         await inter.response.defer()
         if not inter.channel.permissions_for(inter.author).manage_guild:
-            await inter.followup.send(
+            await sending.safe_send_interaction(
+                inter.followup,
                 embed=backend.create_error_embed(
                     "Permissions Error",
                     "You must have the `Manage Server` permission to use this command.",
@@ -194,7 +196,8 @@ class Formatting(commands.Cog):
         select_menu_view = disnake.ui.View(timeout=180)
         select_menu_view.add_item(DisplayStyleSelect(inter.author.id, True))
 
-        await inter.followup.send(
+        await sending.safe_send_interaction(
+            inter.followup,
             content="Select your server's preferred display style.",
             view=select_menu_view,
         )
@@ -205,7 +208,8 @@ class Formatting(commands.Cog):
     async def setbrackets(self, inter: CommandInteraction):
         await inter.response.defer()
         if not inter.channel.permissions_for(inter.author).manage_guild:
-            await inter.followup.send(
+            await sending.safe_send_interaction(
+                inter.followup,
                 embed=backend.create_error_embed(
                     "Permissions Error",
                     "You must have the `Manage Server` permission to use this command.",
@@ -217,7 +221,8 @@ class Formatting(commands.Cog):
         select_menu_view = disnake.ui.View(timeout=180)
         select_menu_view.add_item(BracketsSelect(inter.author.id))
 
-        await inter.followup.send(
+        await sending.safe_send_interaction(
+            inter.followup,
             content="Select a pair of brackets.",
             view=select_menu_view,
         )
