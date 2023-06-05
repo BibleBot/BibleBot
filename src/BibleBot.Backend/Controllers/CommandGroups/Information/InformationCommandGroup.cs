@@ -80,6 +80,18 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 var versions = _versionService.GetCount();
                 var frontendStats = _frontendStatsService.Get();
 
+                var version = Utils.Version;
+
+                var commitBaseEndpoint = $"https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit";
+
+                var frontendShortHash = frontendStats.FrontendRepoCommitHash.Substring(0, 8);
+                var frontendLongHash = frontendStats.FrontendRepoCommitHash;
+                var frontendCommitURL = $"{commitBaseEndpoint}/{frontendLongHash}";
+
+                var backendShortHash = ThisAssembly.Git.Commit;
+                var backendLongHash = ThisAssembly.Git.Sha;
+                var backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
+
                 var resp = $"**__Frontend Stats__**\n" +
                 $"**Shard Count**: {frontendStats.ShardCount}\n" +
                 $"**Server Count**: {frontendStats.ServerCount}\n" +
@@ -90,8 +102,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**Guild Preference Count**: {guildPrefs}\n" +
                 $"**Version Count**: {versions}\n\n" +
                 $"**__Metadata__**\n" +
-                $"**Frontend**: v{Utils.Version} ([{frontendStats.FrontendRepoCommitHash.Substring(0, 8)}](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/{frontendStats.FrontendRepoCommitHash}))\n" +
-                $"**Backend**: v{Utils.Version} ([{ThisAssembly.Git.Commit}](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/{ThisAssembly.Git.Sha}))\n";
+                $"**Frontend**: v{version} ([{frontendShortHash}]({frontendCommitURL}))\n" +
+                $"**Backend**: v{version} ([{backendShortHash}]({backendCommitURL}))\n";
 
 
                 return new CommandResponse
