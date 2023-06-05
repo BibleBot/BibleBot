@@ -33,9 +33,10 @@ class Information(commands.Cog):
     @commands.slash_command(description="Statistics on the bot.")
     async def stats(self, inter: CommandInteraction):
         await inter.response.defer()
-        await send_stats(self.bot)
-        resp = await backend.submit_command(inter.channel, inter.author, "+stats")
+        if not inter.author.bot:
+            await send_stats(self.bot)
 
+        resp = await backend.submit_command(inter.channel, inter.author, "+stats")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="See bot and support server invites.")
