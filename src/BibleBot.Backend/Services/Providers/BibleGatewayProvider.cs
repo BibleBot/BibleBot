@@ -122,14 +122,25 @@ namespace BibleBot.Backend.Services.Providers
                 el.TextContent = $" {el.TextContent} ";
             }
 
-            string title = titlesEnabled ? System.String.Join(" / ", container.GetElementsByTagName("h3").Select(el => el.TextContent.Trim())) : "";
-            string text = System.String.Join("\n", container.GetElementsByTagName("p").Select(el => el.TextContent.Trim()));
+            string title = "";
+
+            if (titlesEnabled)
+            {
+                title = System.String.Join(" / ", container.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
+                foreach (var el in container.GetElementsByTagName("h3"))
+                {
+                    el.Remove();
+                }
+            }
+
+            string text = System.String.Join(" \n", container.GetElementsByTagName("span").Select(el => el.TextContent.Trim()));
             string psalmTitle = titlesEnabled ? System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim())) : "";
 
             // As the verse reference could have a non-English name...
             reference.AsString = document.GetElementsByClassName("bcv").FirstOrDefault().TextContent.Trim();
 
-            return new Verse { Reference = reference, Title = PurifyText(title), PsalmTitle = PurifyText(psalmTitle), Text = PurifyText(text) };
+            bool isISV = reference.Version.Abbreviation == "ISV";
+            return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
 
         public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version)
@@ -172,7 +183,7 @@ namespace BibleBot.Backend.Services.Providers
                     results.Add(new SearchResult
                     {
                         Reference = referenceElement.TextContent,
-                        Text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1))
+                        Text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV")
                     });
                 }
             }
@@ -180,7 +191,7 @@ namespace BibleBot.Backend.Services.Providers
             return results;
         }
 
-        private string PurifyText(string text)
+        private string PurifyText(string text, bool isISV)
         {
             Dictionary<string, string> nuisances = new Dictionary<string, string>
             {
@@ -213,6 +224,41 @@ namespace BibleBot.Backend.Services.Providers
                 if (text.Contains(pair.Key))
                 {
                     text = text.Replace(pair.Key, pair.Value);
+                }
+            }
+
+            // I hate that I have to do this, but if I don't then ISV output gets fscked up...
+            //
+            // If you'd believe it, the ISV inserts Hebrew verse numbers into Exodus 20:1-17.
+            // That's fine and all, but for some reason the proceeding verse number is placed
+            // into the *previous* verse. It's not even placed into the .versenum class, they
+            // just append it into the previous verse's text. This is so stupidly hacky that
+            // whoever implemented this needs to relearn HTML.
+            //
+            // The kicker? They use the transliterated name of the Hebrew letters in Psalm
+            // 119 titles...
+            if (isISV)
+            {
+                Dictionary<string, string> hebrewChars = new Dictionary<string, string>
+                {
+                    { "א", "" },
+                    { "ב", "" },
+                    { "ג", "" },
+                    { "ד", "" },
+                    { "ה", "" },
+                    { "ו", "" },
+                    { "ז", "" },
+                    { "ח", "" },
+                    { "ט", "" },
+                    { "י", "" },
+                };
+
+                foreach (var pair in hebrewChars)
+                {
+                    if (text.Contains(pair.Key))
+                    {
+                        text = text.Replace(pair.Key, pair.Value);
+                    }
                 }
             }
 
