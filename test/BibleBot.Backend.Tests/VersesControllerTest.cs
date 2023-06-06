@@ -38,9 +38,6 @@ namespace BibleBot.Backend.Tests
 
         private Models.Version defaultBibleGatewayVersion;
         private Models.Version defaultAPIBibleVersion;
-        private Models.Version septuagintVersion;
-        private Models.Version englishSeptuagintVersion;
-        // private Models.Version patriarchalTextVersion;
 
         [SetUp]
         public void Setup()
@@ -75,24 +72,6 @@ namespace BibleBot.Backend.Tests
             {
                 defaultAPIBibleVersion = versionService.Create(new MockKJVA());
             }
-
-            septuagintVersion = versionService.Get("LXX");
-            if (septuagintVersion == null)
-            {
-                septuagintVersion = versionService.Create(new MockLXX());
-            }
-
-            englishSeptuagintVersion = versionService.Get("ELXX");
-            if (englishSeptuagintVersion == null)
-            {
-                englishSeptuagintVersion = versionService.Create(new MockELXX());
-            }
-
-            // patriarchalTextVersion = versionService.Get("PAT1904");
-            // if (patriarchalTextVersion == null)
-            // {
-            //     patriarchalTextVersion = versionService.Create(new MockPAT1904());
-            // }
 
             versesController = new VersesController(userServiceMock.Object, guildServiceMock.Object,
                                                     parsingServiceMock.Object, versionService,
@@ -624,6 +603,12 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessDanielInEnglishSeptuagint()
         {
+            var testVersion = versionService.Get("ELXX");
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockELXX());
+            }
+
             var resp = versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 ELXX")).GetAwaiter().GetResult();
 
             var expected = new VerseResponse
@@ -645,7 +630,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 2,
-                            Version = englishSeptuagintVersion,
+                            Version = testVersion,
                             IsOT = true,
                             IsNT = false,
                             IsDEU = false,
@@ -661,6 +646,12 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessDanielInSeptuagint()
         {
+            var testVersion = versionService.Get("LXX");
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockLXX());
+            }
+
             var resp = versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 LXX")).GetAwaiter().GetResult();
 
             var expected = new VerseResponse
@@ -682,7 +673,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 2,
-                            Version = septuagintVersion,
+                            Version = testVersion,
                             IsOT = true,
                             IsNT = false,
                             IsDEU = false,
@@ -698,8 +689,14 @@ namespace BibleBot.Backend.Tests
         // [Test]
         // public void ShouldProcessJohnInPatriarchalText()
         // {
+        //     var testVersion = versionService.Get("PAT1904");
+        //     if (testVersion == null)
+        //     {
+        //         testVersion = versionService.Create(new MockPAT1904());
+        //     }
+        //
         //     var resp = versesController.ProcessMessage(new MockRequest("John 1:1-2 PAT1904")).GetAwaiter().GetResult();
-
+        //
         //     var expected = new VerseResponse
         //     {
         //         OK = true,
@@ -719,7 +716,7 @@ namespace BibleBot.Backend.Tests
         //                     StartingVerse = 1,
         //                     EndingChapter = 1,
         //                     EndingVerse = 2,
-        //                     Version = patriarchalTextVersion,
+        //                     Version = testVersion,
         //                     IsOT = false,
         //                     IsNT = true,
         //                     IsDEU = false,
@@ -731,5 +728,134 @@ namespace BibleBot.Backend.Tests
 
         //     resp.Should().BeEquivalentTo(expected);
         // }
+
+        [Test]
+        public void ShouldNotMishandleMultipleSpansInProverbsInNIV()
+        {
+            var testVersion = versionService.Get("NIV");
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockNIV());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Proverbs 25:1-12 NIV")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Proverbs 25:1-12 NIV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "More Proverbs of Solomon",
+                        PsalmTitle = "",
+                        Text = "<**1**> These are more proverbs of Solomon, compiled by the men of Hezekiah king of Judah: <**2**> It is the glory of God to conceal a matter; to search out a matter is the glory of kings. <**3**> As the heavens are high and the earth is deep, so the hearts of kings are unsearchable. <**4**> Remove the dross from the silver, and a silversmith can produce a vessel; <**5**> remove wicked officials from the king's presence, and his throne will be established through righteousness. <**6**> Do not exalt yourself in the king's presence, and do not claim a place among his great men; <**7**> it is better for him to say to you, \"Come up here,\" than for him to humiliate you before his nobles. What you have seen with your eyes <**8**> do not bring hastily to court, for what will you do in the end if your neighbor puts you to shame? <**9**> If you take your neighbor to court, do not betray another's confidence, <**10**> or the one who hears it may shame you and the charge against you will stand. <**11**> Like apples of gold in settings of silver is a ruling rightly given. <**12**> Like an earring of gold or an ornament of fine gold is the rebuke of a wise judge to a listening ear.",
+                        Reference = new Reference
+                        {
+                            Book = "Proverbs",
+                            StartingChapter = 25,
+                            StartingVerse = 1,
+                            EndingChapter = 25,
+                            EndingVerse = 12,
+                            Version = testVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Proverbs 25:1-12"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldWorkAroundHebrewVerseNumbersInExodusInISVPartOne()
+        {
+            var testVersion = versionService.Get("ISV");
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockISV());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Exodus 20:1-7 ISV")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Exodus 20:1-7 ISV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Ten Commandments",
+                        PsalmTitle = "",
+                        Text = "<**1**> Then God spoke all these words: <**2**> \"I am the Lord your God, who brought you out of the land of Egypt— from the house of slavery. <**3**> You are to have no other gods as a substitute for me. <**4**> \"You are not to craft for yourselves an idol or anything resembling what is in the skies above, or on earth beneath, or in the water sources under the earth. <**5**> You are not to bow down to them in worship or serve them, because I, the Lord your God, am a jealous God, visiting the guilt of parents on children, to the third and fourth generation of those who hate me, <**6**> but showing gracious love to the thousands of those who love me and keep my commandments. <**7**> \"You are not to misuse the name of the Lord your God, because the Lord will not leave unpunished the one who misuses his name.",
+                        Reference = new Reference
+                        {
+                            Book = "Exodus",
+                            StartingChapter = 20,
+                            StartingVerse = 1,
+                            EndingChapter = 20,
+                            EndingVerse = 7,
+                            Version = testVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Exodus 20:1-7"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldWorkAroundHebrewVerseNumbersInExodusInISVPartTwo()
+        {
+            var testVersion = versionService.Get("ISV");
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockISV());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Exodus 20:8-17 ISV")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Exodus 20:8-17 ISV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**8**> \"Remember the Sabbath day, maintaining its holiness. <**9**> Six days you are to labor and do all your work, <**10**> but the seventh day is a Sabbath to the Lord your God. You are not to do any work—neither you, nor your son, nor your daughter, nor your male or female servant, nor your livestock, nor any foreigner who lives among you— <**11**> because the Lord made the heavens, the earth, the sea, and everything that is in them in six days. Then he rested on the seventh day. Therefore, the Lord blessed the Sabbath day and made it holy. <**12**> \"Honor your father and your mother, so that you may live long in the land that the Lord your God is giving you. <**13**> \"You are not to commit murder. <**14**> \"You are not to commit adultery. <**15**> \"You are not to steal. <**16**> \"You are not to give false testimony against your neighbor. <**17**> \"You are not to desire your neighbor's house, nor your neighbor's wife, his male or female servant, his ox, his donkey, nor anything else that pertains to your neighbor.\"",
+                        Reference = new Reference
+                        {
+                            Book = "Exodus",
+                            StartingChapter = 20,
+                            StartingVerse = 8,
+                            EndingChapter = 20,
+                            EndingVerse = 17,
+                            Version = testVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Exodus 20:8-17"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }
