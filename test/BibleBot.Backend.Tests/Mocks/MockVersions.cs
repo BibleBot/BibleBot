@@ -87,4 +87,30 @@ namespace BibleBot.Backend.Tests.Mocks
             this.SupportsDeuterocanon = false;
         }
     }
+
+    public class MockISV : Version
+    {
+        public MockISV()
+        {
+            this.Name = "International Standard Version (ISV)";
+            this.Abbreviation = "ISV";
+            this.Source = "bg";
+            this.SupportsOldTestament = true;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = false;
+        }
+    }
+
+    public class MockNIV : Version
+    {
+        public MockNIV()
+        {
+            this.Name = "New International Version (NIV)";
+            this.Abbreviation = "NIV";
+            this.Source = "bg";
+            this.SupportsOldTestament = true;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = false;
+        }
+    }
 }

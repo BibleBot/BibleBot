@@ -123,7 +123,6 @@ namespace BibleBot.Backend.Services.Providers
             }
 
             string title = "";
-
             if (titlesEnabled)
             {
                 title = System.String.Join(" / ", container.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
@@ -133,7 +132,7 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            string text = System.String.Join(" \n", container.GetElementsByTagName("span").Select(el => el.TextContent.Trim()));
+            string text = System.String.Join("\n", container.GetElementsByClassName("text").Select(el => el.TextContent.Trim()));
             string psalmTitle = titlesEnabled ? System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim())) : "";
 
             // As the verse reference could have a non-English name...
