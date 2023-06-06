@@ -230,8 +230,8 @@ namespace BibleBot.Backend.Services.Providers
             // I hate that I have to do this, but if I don't then ISV output gets fscked up...
             //
             // If you'd believe it, the ISV inserts Hebrew verse numbers into Exodus 20:1-17.
-            // That's fine and all, but for some reason the proceeding verse number is placed
-            // into the *previous* verse. It's not even placed into the .versenum class, they
+            // That's fine and all, but for some reason the subsequent verse number is placed
+            // into the *preceding* verse. It's not even placed into the .versenum class, they
             // just append it into the previous verse's text. This is so stupidly hacky that
             // whoever implemented this needs to relearn HTML.
             //
