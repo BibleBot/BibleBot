@@ -931,5 +931,42 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldProcessJeremiah()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Jeremiah 1:1")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Jeremiah 1:1 RSV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**1**> The words of Jeremiah, the son of Hilki'ah, of the priests who were in An'athoth in the land of Benjamin,",
+                        Reference = new Reference
+                        {
+                            Book = "Jeremiah",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Jeremiah 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }

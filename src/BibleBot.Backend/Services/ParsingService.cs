@@ -32,7 +32,7 @@ namespace BibleBot.Backend.Services
             // in order to skip Ezra in the first iteration,
             // otherwise 1/2/3 Esdras will collide with Ezra.
             // Ditto for Jeremiah + Letter/Epistle of Jeremiah.
-            for (int i = 1; i < 2; i++)
+            for (int i = 1; i < 3; i++)
             {
                 foreach (var bookName in bookNames)
                 {
