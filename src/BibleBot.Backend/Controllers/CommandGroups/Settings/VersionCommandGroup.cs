@@ -369,12 +369,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 var pages = new List<InternalEmbed>();
                 var maxResultsPerPage = 25;
-                var totalPages = (int)System.Math.Ceiling((decimal)(versions.Count / maxResultsPerPage));
 
-                if (totalPages == 0)
-                {
-                    totalPages = 1;
-                }
+                // We need to add a page here because the for loop won't hit the last one otherwise.
+                // This also prevents situations where the Ceiling() result might equal 0.
+                var totalPages = (int)System.Math.Ceiling((decimal)(versions.Count / maxResultsPerPage)) + 1;
 
                 for (int i = 0; i < totalPages; i++)
                 {
