@@ -90,11 +90,12 @@ namespace BibleBot.Backend.Services
             Log.Information("NameFetchingService: Getting BibleGateway book names...");
             var bgNames = await GetBibleGatewayNames(bgVersions);
 
-            Log.Information("NameFetchingService: Getting API.Bible versions...");
-            var abVersions = await GetBibleGatewayVersions();
+            // todo: actually get API.Bible Names
+            // Log.Information("NameFetchingService: Getting API.Bible versions...");
+            // var abVersions = await GetBibleGatewayVersions();
 
-            Log.Information("NameFetchingService: Getting API.Bible book names...");
-            var abNames = await GetBibleGatewayNames(abVersions);
+            // Log.Information("NameFetchingService: Getting API.Bible book names...");
+            // var abNames = await GetBibleGatewayNames(abVersions);
 
             if (File.Exists("./Data/NameFetching/book_names.json"))
             {
@@ -102,7 +103,7 @@ namespace BibleBot.Backend.Services
                 Log.Information("NameFetchingService: Removed old names file...");
             }
 
-            var completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>> { bgNames, abNames, _abbreviations });
+            var completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>> { bgNames, /*abNames,*/ _abbreviations });
 
             Log.Information("NameFetchingService: Serializing and writing to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, new JsonSerializerOptions { PropertyNameCaseInsensitive = false });
