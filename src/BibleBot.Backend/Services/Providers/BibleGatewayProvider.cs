@@ -80,7 +80,7 @@ namespace BibleBot.Backend.Services.Providers
             foreach (var el in verseNumbers)
             {
                 var verseNumber = el.TextContent.Substring(0, el.TextContent.Length - 1);
-                if (verseNumbersEnabled && verseNumber != "1")
+                if (verseNumbersEnabled)
                 {
                     el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
                 }
@@ -123,6 +123,7 @@ namespace BibleBot.Backend.Services.Providers
             }
 
             string title = "";
+            string psalmTitle = "";
             if (titlesEnabled)
             {
                 title = System.String.Join(" / ", container.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
@@ -130,10 +131,15 @@ namespace BibleBot.Backend.Services.Providers
                 {
                     el.Remove();
                 }
+
+                psalmTitle = System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
+                foreach (var el in container.GetElementsByClassName("psalm-title"))
+                {
+                    el.Remove();
+                }
             }
 
             string text = System.String.Join("\n", container.GetElementsByClassName("text").Select(el => el.TextContent.Trim()));
-            string psalmTitle = titlesEnabled ? System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim())) : "";
 
             // As the verse reference could have a non-English name...
             reference.AsString = document.GetElementsByClassName("bcv").FirstOrDefault().TextContent.Trim();

@@ -245,6 +245,15 @@ namespace BibleBot.Backend.Services
                 book = bookMap["deu"][book];
             }
 
+            if (book == "Psalm" && startingChapter == 151)
+            {
+                isOT = false;
+                isDEU = true;
+                book = bookMap["deu"]["ps151"];
+                startingChapter = 1;
+                endingChapter = endingChapter - 150;
+            }
+
             return new Reference
             {
                 Book = book,

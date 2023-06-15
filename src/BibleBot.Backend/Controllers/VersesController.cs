@@ -201,13 +201,20 @@ namespace BibleBot.Backend.Controllers
             }
             else if (results.Count() > 0)
             {
+                var logStatement = String.Join(" / ", results.Select(verse => $"{verse.Reference.ToString()} {verse.Reference.Version.Abbreviation}"));
+
+                if (logStatement.Contains("Psalm 151"))
+                {
+                    logStatement = logStatement.Replace("Psalm 151 1", "Psalm 151");
+                }
+
                 return new VerseResponse
                 {
                     OK = true,
                     Verses = results,
                     DisplayStyle = displayStyle,
                     Paginate = paginateVerses,
-                    LogStatement = String.Join(" / ", results.Select(verse => $"{verse.Reference.ToString()} {verse.Reference.Version.Abbreviation}"))
+                    LogStatement = logStatement
                 };
             }
             else
