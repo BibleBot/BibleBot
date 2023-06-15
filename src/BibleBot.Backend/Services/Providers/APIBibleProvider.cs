@@ -53,6 +53,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
+            // todo: handle Psalm 151 properly (if not already usable)
             if (reference.Book != "str")
             {
                 if (reference.Version.Abbreviation == "KJVA" && reference.Book == "Song of Songs")
