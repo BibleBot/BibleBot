@@ -970,5 +970,42 @@ namespace BibleBot.Backend.Tests
         }
 
         // TODO: test 1 Esdras + Ezra, Letter of Jeremiah + Jeremiah in same request
+
+        [Test]
+        public void ShouldProcessPsalm151Properly()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Psalm 151:1")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Psalm 151:1 RSV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "This psalm is ascribed to David as his own composition (though it is outside the number), after he had fought in single combat with Goliath.",
+                        Text = "<**1**> I was small among my brothers, and youngest in my father's house; I tended my father's sheep.",
+                        Reference = new Reference
+                        {
+                            Book = "Psalm 151",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "Psalm 151 1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }
