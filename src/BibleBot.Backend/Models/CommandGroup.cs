@@ -15,7 +15,7 @@ namespace BibleBot.Backend.Models
     {
         string Name { get; set; }
         bool IsOwnerOnly { get; set; }
-        List<ICommand> Commands { get; set; }
-        ICommand DefaultCommand { get; set; }
+        List<ICommandable> Commands { get; set; }
+        ICommandable DefaultCommand { get; set; }
     }
 }

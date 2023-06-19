@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -20,8 +21,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
+        public ICommandable DefaultCommand { get; set; }
+        public List<ICommandable> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
@@ -37,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
             Name = "info";
             IsOwnerOnly = false;
-            Commands = new List<ICommand>
+            Commands = new List<ICommandable>
             {
                 new InfoStats(_userService, _guildService, _versionService, _frontendStatsService),
                 new InfoBibleBot(_userService, _guildService),
@@ -73,7 +74,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 _frontendStatsService = frontendStatsService;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var userPrefs = _userService.GetCount();
                 var guildPrefs = _guildService.GetCount();
@@ -106,7 +107,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**Backend**: v{version} ([{backendShortHash}]({backendCommitURL}))\n";
 
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -114,7 +115,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new Utils().Embedify("/stats", resp, false)
                     },
                     LogStatement = "/stats"
-                };
+                });
             }
         }
 
@@ -141,7 +142,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 _guildService = guildService;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var embed = new InternalEmbed
                 {
@@ -189,7 +190,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 };
 
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -197,7 +198,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         embed
                     },
                     LogStatement = "/biblebot"
-                };
+                });
             }
         }
 
@@ -218,9 +219,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 BotAllowed = true;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -228,7 +229,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new Utils().Embedify("/invite", "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).", false)
                     },
                     LogStatement = "/invite"
-                };
+                });
             }
         }
     }

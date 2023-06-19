@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -20,8 +21,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
+        public ICommandable DefaultCommand { get; set; }
+        public List<ICommandable> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
@@ -37,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
 
             Name = "owner";
             IsOwnerOnly = true;
-            Commands = new List<ICommand>
+            Commands = new List<ICommandable>
             {
                 new OwnerAnnounce()
             };
@@ -61,9 +62,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
                 BotAllowed = false; // anti-spam measure
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -72,7 +73,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
                     },
                     LogStatement = "/announce",
                     SendAnnouncement = true
-                };
+                });
             }
         }
     }
