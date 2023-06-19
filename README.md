@@ -10,10 +10,10 @@
     <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot/build/tests">
         <img alt="AppVeyor Test Status" src="https://img.shields.io/appveyor/tests/SeraphimRP/BibleBot?style=flat-square&logo=appveyor">
     </a>
-    <a href="https://www.codacy.com/gl/BibleBot/BibleBot/dashboard">
+    <a href="https://app.codacy.com/gl/kerygmadigital/BibleBot/dashboard">
         <img alt="Codacy Coverage Status" src="https://img.shields.io/codacy/coverage/2f77eda59dca4477b7b127f94c76db62?style=flat-square&logo=codacy">
     </a>
-    <a href="https://www.codacy.com/gl/BibleBot/BibleBot/dashboard">
+    <a href="https://app.codacy.com/gl/kerygmadigital/BibleBot/dashboard">
         <img alt="Codacy Quality Status" src="https://img.shields.io/codacy/grade/2f77eda59dca4477b7b127f94c76db62?style=flat-square&logo=codacy">
     </a>
     <br>
