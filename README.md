@@ -10,21 +10,18 @@
     <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot/build/tests">
         <img alt="AppVeyor Test Status" src="https://img.shields.io/appveyor/tests/SeraphimRP/BibleBot?style=flat-square&logo=appveyor">
     </a>
-    <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard">
-        <img alt="Codacy Coverage Status" src="https://img.shields.io/codacy/coverage/0ebeb56c612a4643851d9beb1003a1de?style=flat-square&logo=codacy">
+    <a href="https://www.codacy.com/gl/BibleBot/BibleBot/dashboard">
+        <img alt="Codacy Coverage Status" src="https://img.shields.io/codacy/coverage/2f77eda59dca4477b7b127f94c76db62?style=flat-square&logo=codacy">
     </a>
-    <a href="https://www.codacy.com/gh/BibleBot/BibleBot/dashboard">
-        <img alt="Codacy Quality Status" src="https://img.shields.io/codacy/grade/0ebeb56c612a4643851d9beb1003a1de?style=flat-square&logo=codacy">
+    <a href="https://www.codacy.com/gl/BibleBot/BibleBot/dashboard">
+        <img alt="Codacy Quality Status" src="https://img.shields.io/codacy/grade/2f77eda59dca4477b7b127f94c76db62?style=flat-square&logo=codacy">
     </a>
     <br>
-    <a alt="Discord" href="https://discord.gg/H7ZyHqE">
+    <a alt="Discord" href="https://biblebot.xyz/discord">
         <img alt="Discord" src="https://img.shields.io/discord/362503610006765568?label=discord&style=flat-square">
     </a>
-    <a href="https://github.com/BibleBot/BibleBot/blob/master/LICENSE">
-        <img alt="MPL-2.0" src="https://img.shields.io/github/license/BibleBot/BibleBot?style=flat-square">
-    </a>
-    <a href="#">
-        <img alt="Total Lines of Code" src="https://img.shields.io/tokei/lines/github/BibleBot/BibleBot?style=flat-square">
+    <a href="https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/blob/master/LICENSE">
+        <img alt="MPL-2.0" src="https://img.shields.io/gitlab/license/kerygmadigital%2FBibleBot%2Fbiblebot?style=flat-square">
     </a>
     <br>
 </p>
@@ -36,8 +33,9 @@
 
 This repository is a monolith containing subprojects in `src/`. These various projects do as follows:
 
-- `BibleBot.Backend` is our ASP.NET Core backend API, it does most of the heavy lifting of the project.
-- `BibleBot.Frontend` is a Python Discord bot utilizing disnake that acts as a middleman between Discord and BibleBot.Backend.
+-   `BibleBot.Backend` is our ASP.NET Core backend API, it does most of the heavy lifting of the project.
+-   `BibleBot.Frontend` is a Python Discord bot utilizing disnake that acts as a middleman between Discord and BibleBot.Backend.
+-   `BibleBot.AutoServ` is a minimized version of BibleBot.Backend, to handle things like automatic daily verses and sending our version statistics to our community management.
 
 ## Special Thanks
 
