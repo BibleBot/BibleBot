@@ -1,4 +1,4 @@
-version: '9.2-beta-{build}'
+version: "9.2-beta-{build}"
 image: Visual Studio 2022
 
 clone_depth: 1
@@ -15,7 +15,7 @@ environment:
   ENDPOINT_TOKEN:
     secure: iHQQcLiFJcSErA/ZLVm5WEaX8kuTrMiZ5Y28JFnmZkY=
   CODACY_PROJECT_TOKEN:
-    secure: OzycgsRcoQBRFwoPdQpsV4HiGZazulGy2xMZAK0P3e+ZIL9dW4igdTmUpM3ZCXrf
+    secure: LPi3HWIaDkxE+alNCrOW53U96GC0YwDh8SqA6opdsdTCwVZRhHK8nr+TuzW9o4B/
   DISCORD_WEBHOOK:
     secure: c67RyRJkkEc4YgxUskPhCmMtxWdEUsrswCKA2ApLb3vLH5eSf3G0pawFOhwJEj0cPqoqiGh1v95sc23adle9F6sYA+LCTdHYtiyL3Cz5traiteg2vQavv5pzPuWjxShv7PVsRsF4P77VDIBxthK5Z0ypG6K/A4gKOT3lijFv6oE=
 
