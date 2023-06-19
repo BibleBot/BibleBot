@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -20,8 +21,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
+        public ICommandable DefaultCommand { get; set; }
+        public List<ICommandable> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
@@ -37,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
             Name = "resource";
             IsOwnerOnly = false;
-            Commands = new List<ICommand>
+            Commands = new List<ICommandable>
             {
                 new ResourceUsage(_userService, _guildService, _resources),
             };
@@ -71,7 +72,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 _resources = resources;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args.Count > 0)
                 {
@@ -98,12 +99,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
                         if (pages != null)
                         {
-                            return new CommandResponse
+                            return Task.FromResult<IResponse>(new CommandResponse
                             {
                                 OK = true,
                                 Pages = new Utils().EmbedifyResource(matchingResource, section),
                                 LogStatement = $"/resource {matchingResource.CommandReference}{(section.Length > 0 ? $" {section}" : section)}"
-                            };
+                            });
                         }
                     }
                 }
@@ -140,7 +141,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 "\n\nTo use a resource, do `/resource resource: <name>`.\nFor example, `/resource resource: nicene` or `/resource resource: ccc range: 1`.";
 
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -148,7 +149,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                         new Utils().Embedify("/resource", resp, false)
                     },
                     LogStatement = "/resource"
-                };
+                });
             }
         }
     }

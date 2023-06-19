@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -20,8 +21,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
+        public ICommandable DefaultCommand { get; set; }
+        public List<ICommandable> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
@@ -42,7 +43,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             Name = "random";
             IsOwnerOnly = false;
-            Commands = new List<ICommand>
+            Commands = new List<ICommandable>
             {
                 new RandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new TrulyRandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders)
@@ -50,7 +51,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
 
-        public class RandomVerse : ICommand
+        public class RandomVerse : ICommandAsync
         {
             public string Name { get; set; }
             public string ArgumentsError { get; set; }
@@ -62,11 +63,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
-            private readonly SpecialVerseProvider _spProvider;
+            private readonly SpecialVerseProvider _svProvider;
             private readonly List<IBibleProvider> _bibleProviders;
 
             public RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                               SpecialVerseProvider spProvider, List<IBibleProvider> bibleProviders)
+                               SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders)
             {
                 Name = "usage";
                 ArgumentsError = null;
@@ -78,11 +79,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 _guildService = guildService;
                 _versionService = versionService;
 
-                _spProvider = spProvider;
+                _svProvider = svProvider;
                 _bibleProviders = bibleProviders;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (req.GuildId == "238001909716353025")
                 {
@@ -120,7 +121,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 }
 
                 var idealVersion = _versionService.Get(version);
-                string randomRef = _spProvider.GetRandomVerse().GetAwaiter().GetResult();
+                string randomRef = await _svProvider.GetRandomVerse();
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
                 if (provider != null)
@@ -130,7 +131,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = true,
                         Verses = new List<Verse>
                         {
-                            provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult()
+                           await provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
                         },
                         DisplayStyle = displayStyle,
                         LogStatement = "/random"
@@ -141,7 +142,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class TrulyRandomVerse : ICommand
+        public class TrulyRandomVerse : ICommandAsync
         {
             public string Name { get; set; }
             public string ArgumentsError { get; set; }
@@ -153,11 +154,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
-            private readonly SpecialVerseProvider _spProvider;
+            private readonly SpecialVerseProvider _svProvider;
             private readonly List<IBibleProvider> _bibleProviders;
 
             public TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                    SpecialVerseProvider spProvider, List<IBibleProvider> bibleProviders)
+                                    SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders)
             {
                 Name = "true";
                 ArgumentsError = null;
@@ -169,11 +170,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 _guildService = guildService;
                 _versionService = versionService;
 
-                _spProvider = spProvider;
+                _svProvider = svProvider;
                 _bibleProviders = bibleProviders;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (req.GuildId == "238001909716353025")
                 {
@@ -209,7 +210,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 }
 
                 var idealVersion = _versionService.Get(version);
-                string trulyRandomRef = _spProvider.GetTrulyRandomVerse().GetAwaiter().GetResult();
+                string trulyRandomRef = await _svProvider.GetTrulyRandomVerse();
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
                 if (provider != null)
@@ -219,7 +220,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = true,
                         Verses = new List<Verse>
                         {
-                            provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion).GetAwaiter().GetResult()
+                            await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
                         },
                         DisplayStyle = displayStyle,
                         LogStatement = "/truerandom"

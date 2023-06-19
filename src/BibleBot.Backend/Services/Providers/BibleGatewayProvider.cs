@@ -26,7 +26,7 @@ namespace BibleBot.Backend.Services.Providers
         private readonly HtmlParser _htmlParser;
         private readonly string _baseURL = "https://www.biblegateway.com";
         private readonly string _getURI = "/passage/?search={0}&version={1}&interface=print";
-        private readonly string _searchURI = "/quicksearch/?search={0}&version={1}&searchtype=all&limit=50000&interface=print";
+        private readonly string _searchURI = "/quicksearch/?quicksearch={0}&qs_version={1}&resultspp=5000&interface=print";
 
         public BibleGatewayProvider()
         {
@@ -116,6 +116,11 @@ namespace BibleBot.Backend.Services.Providers
                 el.Remove();
             }
 
+            foreach (var el in document.QuerySelectorAll(".inline-h3"))
+            {
+                el.Remove();
+            }
+
             // In the event that the line-break replacements above don't account for everything...
             foreach (var el in document.QuerySelectorAll(".text"))
             {
@@ -185,10 +190,13 @@ namespace BibleBot.Backend.Services.Providers
 
                 if (referenceElement != null && textElement != null)
                 {
+                    var text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
+                    text = text.Replace(query, $"**{query}**");
+
                     results.Add(new SearchResult
                     {
                         Reference = referenceElement.TextContent,
-                        Text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV")
+                        Text = text
                     });
                 }
             }

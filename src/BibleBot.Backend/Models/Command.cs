@@ -8,18 +8,24 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BibleBot.Backend.Services;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BibleBot.Backend.Models
 {
-    public interface ICommand
+    public interface ICommandable
     {
         string Name { get; set; }
         string ArgumentsError { get; set; }
         int ExpectedArguments { get; set; }
         List<Permissions> PermissionsRequired { get; set; }
         bool BotAllowed { get; set; }
-        IResponse ProcessCommand(Request req, List<string> args);
+        Task<IResponse> ProcessCommand(Request req, List<string> list);
+    }
+
+    public interface ICommand : ICommandable
+    {
+    }
+
+    public interface ICommandAsync : ICommandable
+    {
     }
 }

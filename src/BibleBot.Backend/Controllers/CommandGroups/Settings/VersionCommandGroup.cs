@@ -18,8 +18,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
+        public ICommandable DefaultCommand { get; set; }
+        public List<ICommandable> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
@@ -33,7 +33,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             Name = "version";
             IsOwnerOnly = false;
-            Commands = new List<ICommand>
+            Commands = new List<ICommandable>
             {
                 new VersionUsage(_userService, _guildService, _versionService),
                 new VersionSet(_userService, _guildService, _versionService),
@@ -69,7 +69,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
                 var idealGuild = _guildService.Get(req.GuildId);
@@ -107,7 +107,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 response = response.Replace("<version>", defaultVersion.Name);
                 response = response.Replace("<gversion>", defaultVersion.Name);
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -115,7 +115,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/version", response, false)
                     },
                     LogStatement = "/version"
-                };
+                });
             }
         }
 
@@ -144,7 +144,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var idealVersion = _versionService.Get(args[0]);
 
@@ -172,7 +172,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         });
                     }
 
-                    return new CommandResponse
+                    return Task.FromResult<IResponse>(new CommandResponse
                     {
                         OK = true,
                         Pages = new List<InternalEmbed>
@@ -180,10 +180,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/setversion", "Set version successfully.", false)
                         },
                         LogStatement = $"/setversion {args[0]}"
-                    };
+                    });
                 }
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = false,
                     Pages = new List<InternalEmbed>
@@ -191,7 +191,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/setversion", "Failed to set version, see `/listversions`.", true)
                     },
                     LogStatement = "/setversion"
-                };
+                });
             }
         }
 
@@ -223,7 +223,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var idealVersion = _versionService.Get(args[0]);
 
@@ -250,7 +250,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         });
                     }
 
-                    return new CommandResponse
+                    return Task.FromResult<IResponse>(new CommandResponse
                     {
                         OK = true,
                         Pages = new List<InternalEmbed>
@@ -258,10 +258,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/setserverversion", "Set server version successfully.", false)
                         },
                         LogStatement = $"/setserverversion {args[0]}"
-                    };
+                    });
                 }
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = false,
                     Pages = new List<InternalEmbed>
@@ -269,7 +269,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/setserverversion", "Failed to set server version, see `/listversions`.", true)
                     },
                     LogStatement = "/setserverversion"
-                };
+                });
             }
         }
 
@@ -298,7 +298,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args.Count > 0)
                 {
@@ -306,7 +306,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                     if (idealVersion != null)
                     {
-                        return new CommandResponse
+                        return Task.FromResult<IResponse>(new CommandResponse
                         {
                             OK = true,
                             Pages = new List<InternalEmbed>
@@ -319,11 +319,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                                 false)
                             },
                             LogStatement = $"/versioninfo {args[0]}"
-                        };
+                        });
                     }
                 }
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = false,
                     Pages = new List<InternalEmbed>
@@ -331,7 +331,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/versioninfo", "I couldn't find that version, are you sure you used the right acronym?", true)
                     },
                     LogStatement = "/versioninfo"
-                };
+                });
             }
         }
 
@@ -360,7 +360,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _versionService = versionService;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var versions = _versionService.Get();
                 versions.Sort((x, y) => x.Name.CompareTo(y.Name));
@@ -397,12 +397,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     pages.Add(embed);
                 }
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
                     Pages = pages,
                     LogStatement = "/listversions"
-                };
+                });
             }
         }
     }

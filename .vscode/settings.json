@@ -10,5 +10,6 @@
     "markdownlint.ignore": "*",
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
-    }
+    },
+    "editor.suggest.insertMode": "insert"
 }

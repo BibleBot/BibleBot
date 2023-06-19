@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -20,8 +21,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
+        public ICommandable DefaultCommand { get; set; }
+        public List<ICommandable> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
@@ -40,14 +41,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             Name = "search";
             IsOwnerOnly = false;
-            Commands = new List<ICommand>
+            Commands = new List<ICommandable>
             {
                 new Search(_userService, _guildService, _versionService, _bibleProviders)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
 
-        public class Search : ICommand
+        public class Search : ICommandAsync
         {
             public string Name { get; set; }
             public string ArgumentsError { get; set; }
@@ -77,7 +78,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 _bibleProviders = bibleProviders;
             }
 
-            public IResponse ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var idealUser = _userService.Get(req.UserId);
                 var idealGuild = _guildService.Get(req.GuildId);
@@ -103,7 +104,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     throw new ProviderNotFoundException();
                 }
 
-                List<SearchResult> searchResults = provider.Search(System.String.Join(" ", args), idealVersion).GetAwaiter().GetResult();
+                List<SearchResult> searchResults = await provider.Search(query, idealVersion);
 
                 if (searchResults.Count > 1)
                 {

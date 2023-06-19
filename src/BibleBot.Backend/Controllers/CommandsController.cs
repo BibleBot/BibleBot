@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -73,7 +74,7 @@ namespace BibleBot.Backend.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IResponse ProcessMessage([FromBody] Request req)
+        public async Task<IResponse> ProcessMessage([FromBody] Request req)
         {
             if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
             {
@@ -165,15 +166,15 @@ namespace BibleBot.Backend.Controllers
                                     };
                                 }
 
-                                return idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
+                                return await idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
                             }
                             else if (grp.Name == "resource" || grp.Name == "search")
                             {
-                                return grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
+                                return await grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
                             }
                         }
 
-                        return grp.DefaultCommand.ProcessCommand(req, new List<string>());
+                        return await grp.DefaultCommand.ProcessCommand(req, new List<string>());
                     }
                     else
                     {
@@ -181,7 +182,7 @@ namespace BibleBot.Backend.Controllers
 
                         if (cmd != null)
                         {
-                            return cmd.ProcessCommand(req, new List<string>());
+                            return await cmd.ProcessCommand(req, new List<string>());
                         }
                     }
                 }
