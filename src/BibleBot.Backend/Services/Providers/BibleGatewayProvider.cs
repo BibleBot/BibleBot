@@ -121,6 +121,11 @@ namespace BibleBot.Backend.Services.Providers
                 el.Remove();
             }
 
+            foreach (var el in document.QuerySelectorAll("h2"))
+            {
+                el.Remove();
+            }
+
             // In the event that the line-break replacements above don't account for everything...
             foreach (var el in document.QuerySelectorAll(".text"))
             {
