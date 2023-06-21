@@ -188,7 +188,6 @@ namespace BibleBot.Backend.Tests
         public void ShouldFailWhenReferencingDeuterocanonInProtestantBible()
         {
             var testVersion = versionService.Get("NTE");
-
             if (testVersion == null)
             {
                 testVersion = versionService.Create(new MockNTE());
@@ -209,7 +208,6 @@ namespace BibleBot.Backend.Tests
         public void ShouldFailWhenReferencingOldTestamentInNewTestamentOnlyBible()
         {
             var testVersion = versionService.Get("NTE");
-
             if (testVersion == null)
             {
                 testVersion = versionService.Create(new MockNTE());
@@ -1006,6 +1004,27 @@ namespace BibleBot.Backend.Tests
             };
 
             resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldThrowProviderNotFoundException()
+        {
+            var testVersion = versionService.Create(new Models.Version
+            {
+                Name = "A Test Version (TEST)",
+                Abbreviation = "TEST",
+                Source = "test",
+                SupportsOldTestament = true,
+                SupportsNewTestament = true,
+                SupportsDeuterocanon = false
+            });
+
+            versesController
+                .Invoking(c => c.ProcessMessage(new MockRequest("Genesis 1:1 TEST")).GetAwaiter().GetResult())
+                .Should()
+                .Throw<ProviderNotFoundException>();
+
+            versionService.Remove(testVersion);
         }
     }
 }
