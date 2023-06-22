@@ -129,6 +129,7 @@ namespace BibleBot.Backend.Tests
             resp.OK.Should().BeTrue();
             resp.LogStatement.Should().NotBeNullOrEmpty();
             resp.Pages.Should().NotBeNullOrEmpty();
+            resp.Pages[0].Description.Should().Contain("Page 1 of"); // Ensure we're sending back the correct order.
         }
     }
 }
