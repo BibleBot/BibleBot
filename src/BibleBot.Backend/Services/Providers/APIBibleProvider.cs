@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
-using BibleBot.Backend.Models;
+using BibleBot.Models;
 using RestSharp;
 using RestSharp.Serializers.SystemTextJson;
 using Serilog;

@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using BibleBot.Backend.Models;
+using BibleBot.Models;
 
 namespace BibleBot.Backend.Services
 {

@@ -7,13 +7,10 @@
 */
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
-using NodaTime;
+using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
@@ -21,8 +18,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
-        public ICommandable DefaultCommand { get; set; }
-        public List<ICommandable> Commands { get; set; }
+        public ICommand DefaultCommand { get; set; }
+        public List<ICommand> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
@@ -41,14 +38,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             Name = "search";
             IsOwnerOnly = false;
-            Commands = new List<ICommandable>
+            Commands = new List<ICommand>
             {
                 new Search(_userService, _guildService, _versionService, _bibleProviders)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
 
-        public class Search : ICommandAsync
+        public class Search : ICommand
         {
             public string Name { get; set; }
             public string ArgumentsError { get; set; }

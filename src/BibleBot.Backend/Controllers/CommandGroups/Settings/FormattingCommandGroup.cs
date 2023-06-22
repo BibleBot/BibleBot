@@ -9,8 +9,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
+using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
@@ -18,8 +18,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
     {
         public string Name { get; set; }
         public bool IsOwnerOnly { get; set; }
-        public ICommandable DefaultCommand { get; set; }
-        public List<ICommandable> Commands { get; set; }
+        public ICommand DefaultCommand { get; set; }
+        public List<ICommand> Commands { get; set; }
 
         private readonly UserService _userService;
         private readonly GuildService _guildService;
@@ -31,7 +31,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             Name = "formatting";
             IsOwnerOnly = false;
-            Commands = new List<ICommandable>
+            Commands = new List<ICommand>
             {
                 new FormattingUsage(_userService, _guildService),
                 new FormattingSetVerseNumbers(_userService, _guildService),

@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
-using BibleBot.Backend.Models;
+using BibleBot.Models;
 
 namespace BibleBot.Backend.Services.Providers
 {
