@@ -113,7 +113,7 @@ async def submit_command(
 
                     return convert_embed(respBody["pages"][0])
                 else:
-                    return create_pagination_embeds_from_pages(respBody["pages"])
+                    return create_pagination_embeds(respBody["pages"])
             elif respBody["type"] == "verse":
                 if "does not support the" in respBody["logStatement"]:
                     return create_error_embed("Verse Error", respBody["logStatement"])
@@ -239,7 +239,7 @@ async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, bod
             display_style = respBody["displayStyle"]
             if display_style == "embed":
                 if respBody["paginate"] and len(verses) > 1:
-                    embeds = create_pagination_embeds_from_verses(verses)
+                    embeds = create_pagination_embeds(verses, is_verses=True)
                     paginator = CreatePaginator(embeds, user.id, 180)
 
                     await sending.safe_send_channel(ch, embed=embeds[0], view=paginator)
@@ -341,38 +341,13 @@ def create_error_embed(title, description):
     return embed
 
 
-def create_pagination_embeds_from_pages(pages):
+def create_pagination_embeds(pages, is_verses=False):
     embeds = []
-    starting_page = None
 
     for page in pages:
-        page_embed = convert_embed(page)
-
-        if f"Page 1 of" in page_embed.title:
-            starting_page = page_embed
+        if is_verses:
+            embeds.append(create_embed_from_verse(page))
         else:
-            embeds.append(page_embed)
-
-    if starting_page == None:
-        starting_page = embeds.pop()
-
-    embeds.insert(0, starting_page)
-
-    return embeds
-
-
-def create_pagination_embeds_from_verses(verses):
-    embeds = []
-    starting_verse = None
-
-    for verse in verses:
-        verse_embed = create_embed_from_verse(verse)
-
-        if verse == verses[0]:
-            starting_verse = verse_embed
-        else:
-            embeds.append(verse_embed)
-
-    embeds.insert(0, starting_verse)
+            embeds.append(convert_embed(page))
 
     return embeds

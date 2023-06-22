@@ -48,14 +48,12 @@ class CreatePaginator(ui.View):
             super().__init__()
         else:
             super().__init__(timeout=timeout)
-        self.embeds = (
-            embeds  # honestly, this whole embeds-being-backward logic is confusing
-        )
+        self.embeds = embeds
         self.author = author
         self.CurrentEmbed = 0
 
     @ui.button(emoji="⬅️", style=ButtonStyle.grey)
-    async def next(self, button, inter):
+    async def previous(self, button, inter):
         try:
             if inter.author.id != self.author:
                 return await inter.send(
@@ -72,7 +70,7 @@ class CreatePaginator(ui.View):
             pass
 
     @ui.button(emoji="➡️", style=ButtonStyle.grey)
-    async def previous(self, button, inter):
+    async def next(self, button, inter):
         try:
             if inter.author.id != self.author:
                 return await inter.send(
