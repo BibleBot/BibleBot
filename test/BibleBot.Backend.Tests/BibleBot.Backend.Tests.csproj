@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\BibleBot.Backend\BibleBot.Backend.csproj" />
+    <ProjectReference Include="..\..\src\BibleBot.Models\BibleBot.Models.csproj" />
   </ItemGroup>
 
 </Project>

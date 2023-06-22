@@ -7,7 +7,7 @@
 */
 
 using System;
-using BibleBot.Backend.Models;
+using BibleBot.Models;
 
 namespace BibleBot.Backend.Tests.Mocks
 {

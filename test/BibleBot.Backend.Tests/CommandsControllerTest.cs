@@ -6,14 +6,12 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
-using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Backend.Tests.Mocks;
+using BibleBot.Models;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -38,8 +36,8 @@ namespace BibleBot.Backend.Tests
 
         private IDatabaseSettings databaseSettings;
 
-        private Models.Version defaultBibleGatewayVersion;
-        private Models.Version defaultAPIBibleVersion;
+        private BibleBot.Models.Version defaultBibleGatewayVersion;
+        private BibleBot.Models.Version defaultAPIBibleVersion;
 
         [SetUp]
         public void Setup()

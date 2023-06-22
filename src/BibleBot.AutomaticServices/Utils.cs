@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using BibleBot.AutomaticServices.Models;
+using BibleBot.Models;
 
 namespace BibleBot.AutomaticServices
 {
