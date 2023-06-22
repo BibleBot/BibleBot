@@ -2,11 +2,11 @@
 
 BibleBot is an open-source project and open to contributions. Please be sure to follow the guidelines below before submitting a pull request.
 
-*This document is derived from [Discord.Net](https://github.com/discord-net/Discord.Net)'s CONTRIBUTING.md.*
+_This document is derived from [Discord.Net](https://github.com/discord-net/Discord.Net)'s CONTRIBUTING.md._
 
 ## Getting Started
 
-We recommend grabbing one of the "To do" items in our kanban board, instead of coming up with something entirely new. If you're fixing a bug, make an issue first *then* you can make a PR.
+We recommend grabbing one of the "To do" items in our kanban board, instead of coming up with something entirely new. If you're fixing a bug, make an issue first _then_ you can make a PR.
 
 If you're looking to introduce a feature, create a Feature Request issue or discuss it with us on the official support server. We won't implement any feature requests without discussion on the matter.
 
@@ -28,12 +28,12 @@ We generally conform to the .NET Foundation's [Coding Style](https://github.com/
 
 Please ensure new public members have sufficient documentation, including but not limited to:
 
-* `<summary>` summarizing the purpose of the method.
-* `<param>` or `<typeparam>` explaining the parameter.
-* `<return>` explaining the type of the returned member and what it is.
-* `<exception>` if the method directly throws an exception.
+-   `<summary>` summarizing the purpose of the method.
+-   `<param>` or `<typeparam>` explaining the parameter.
+-   `<return>` explaining the type of the returned member and what it is.
+-   `<exception>` if the method directly throws an exception.
 
 #### Recommended Reads
 
-* [Official Microsoft Documentation](https://docs.microsoft.com)
-* [Sandcastle User Manual](https://ewsoftware.github.io/XMLCommentsGuide/html/4268757F-CE8D-4E6D-8502-4F7F2E22DDA3.htm)
+-   [Official Microsoft Documentation](https://docs.microsoft.com)
+-   [Sandcastle User Manual](https://ewsoftware.github.io/XMLCommentsGuide/html/4268757F-CE8D-4E6D-8502-4F7F2E22DDA3.htm)

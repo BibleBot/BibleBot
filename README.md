@@ -35,7 +35,8 @@ This repository is a monolith containing subprojects in `src/`. These various pr
 
 -   `BibleBot.Backend` is our ASP.NET Core backend API, it does most of the heavy lifting of the project.
 -   `BibleBot.Frontend` is a Python Discord bot utilizing disnake that acts as a middleman between Discord and BibleBot.Backend.
--   `BibleBot.AutoServ` is a minimized version of BibleBot.Backend, to handle things like automatic daily verses and sending our version statistics to our community management.
+-   `BibleBot.AutomaticServices` is a minimized version of BibleBot.Backend, to handle things like automatic daily verses and sending our version statistics to our community management.
+-   `BibleBot.Models` is a class library to share models between the projects.
 
 ## Special Thanks
 
