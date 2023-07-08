@@ -171,16 +171,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             Name = "🔗 Links",
                             Value = "**Website**: https://biblebot.xyz\n" +
                             "**Copyrights**: https://biblebot.xyz/copyright\n" +
-                            "**Source Code**: https://github.com/BibleBot/BibleBot\n" +
+                            "**Source Code**: https://gitlab.com/KerygmaDigital/BibleBot/BibleBot\n" +
                             "**Official Discord Server**: https://biblebot.xyz/discord\n" +
                             "**Terms and Conditions**: https://biblebot.xyz/terms\n\n─────────────"
                         },
                         new EmbedField
                         {
                             Name = "🔔 News",
-                            Value = "**June 26th** - [Update: v9.1-beta (build 74)](https://biblebot.xyz/2021/06/26/update-v9-1-beta-74)\n" +
-                            "**June 17th** - [Update: v9.1-beta (build 15)](https://biblebot.xyz/2021/06/17/update-v9-1-beta-15/)\n" +
-                            "**June 4th** - [Release: v9.1-beta](https://biblebot.xyz/2021/06/04/release-v9-1-beta)",
+                            Value = "**21 June 2023** - [Update: v9.2-beta (build 532)](https://biblebot.xyz/2023/06/21/release-v9-2-beta-build-532/)\n" +
+                            "**31 March 2022** - [Release: v9.2-beta](https://biblebot.xyz/2022/03/31/release-v9-2-beta/)\n" +
+                            "**14 March 2022** - [Update: v9.1-beta (build 138)](https://biblebot.xyz/2022/03/14/update-v9-1-beta-build-138/)\n" +
+                            "**15 October 2021** - [Update: v9.1-beta (build 119)](https://biblebot.xyz/2021/10/15/update-v9-1-beta-build-119/)",
                             Inline = false,
                         }
                     }
