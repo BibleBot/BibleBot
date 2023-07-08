@@ -1,4 +1,5 @@
 {
+    "json.schemaDownload.enable": true,
     "editor.formatOnSave": true,
     "omnisharp.organizeImportsOnFormat": true,
     "editor.codeLens": true,
@@ -7,7 +8,8 @@
         120
     ],
     "python.formatting.provider": "none",
-    "markdownlint.ignore": "*",
+    "python.defaultInterpreterPath": "${workspaceFolder}/src/BibleBot.Frontend/venv/bin/python",
+    "python.analysis.typeCheckingMode": "basic",
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
