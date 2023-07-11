@@ -158,7 +158,18 @@ namespace BibleBot.Backend.Controllers
             foreach (var reference in references)
             {
                 Verse result = new Verse();
-                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == reference.Version.Source).FirstOrDefault();
+                IBibleProvider provider = _bibleProviders.Where(pv =>
+                {
+                    if (reference != null)
+                    {
+                        if (reference.Version != null)
+                        {
+                            return pv.Name == reference.Version.Source;
+                        }
+                    }
+
+                    return false;
+                }).FirstOrDefault();
 
                 if (provider == null)
                 {
