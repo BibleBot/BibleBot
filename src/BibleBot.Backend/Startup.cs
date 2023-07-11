@@ -13,7 +13,9 @@ using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -99,7 +101,11 @@ namespace BibleBot.Backend
             }
             else
             {
-                app.UseExceptionHandler("/");
+                app.UseExceptionHandler(c => c.Run(async context =>
+                {
+                    var exception = context.Features.Get<IExceptionHandlerPathFeature>().Error;
+                    await context.Response.WriteAsJsonAsync(new { error = exception.Message });
+                }));
             }
 
             app.UseSerilogRequestLogging();
