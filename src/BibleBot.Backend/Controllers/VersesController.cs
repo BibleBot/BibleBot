@@ -89,33 +89,34 @@ namespace BibleBot.Backend.Controllers
             var body = _parsingService.PurifyBody(ignoringBrackets, req.Body);
             var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), body);
 
-            List<Verse> results = new List<Verse>();
+            var version = "RSV";
+            var verseNumbersEnabled = true;
+            var titlesEnabled = true;
+
+            var idealUser = _userService.Get(req.UserId);
+
+            if (idealUser != null && !req.IsBot)
+            {
+                version = idealUser.Version;
+                verseNumbersEnabled = idealUser.VerseNumbersEnabled;
+                titlesEnabled = idealUser.TitlesEnabled;
+                displayStyle = idealUser.DisplayStyle;
+                paginateVerses = idealUser.PaginationEnabled;
+            }
+            else if (idealGuild != null)
+            {
+                // As much as I hate the if-duplication, we have to check independently of the previous
+                // otherwise the guild default won't be a default.
+
+                version = idealGuild.Version;
+            }
+
+            var idealVersion = _versionService.Get(version);
+
+            List<Reference> references = new List<Reference>();
 
             foreach (var bsr in tuple.Item2)
             {
-                var version = "RSV";
-                var verseNumbersEnabled = true;
-                var titlesEnabled = true;
-
-                var idealUser = _userService.Get(req.UserId);
-
-                if (idealUser != null && !req.IsBot)
-                {
-                    version = idealUser.Version;
-                    verseNumbersEnabled = idealUser.VerseNumbersEnabled;
-                    titlesEnabled = idealUser.TitlesEnabled;
-                    displayStyle = idealUser.DisplayStyle;
-                    paginateVerses = idealUser.PaginationEnabled;
-                }
-                else if (idealGuild != null)
-                {
-                    // As much as I hate the if-duplication, we have to check independently of the previous
-                    // otherwise the guild default won't be a default.
-
-                    version = idealGuild.Version;
-                }
-
-                var idealVersion = _versionService.Get(version);
                 var reference = _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
 
                 if (reference != null)
@@ -144,48 +145,59 @@ namespace BibleBot.Backend.Controllers
                             LogStatement = $"{reference.Version.Name} does not support the Apocrypha/Deuterocanon."
                         };
                     }
+                }
 
-                    Verse result = new Verse();
-                    IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == reference.Version.Source).FirstOrDefault();
-
-                    if (provider == null)
-                    {
-                        throw new ProviderNotFoundException();
-                    }
-
-                    result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
-
-                    if (result == null)
-                    {
-                        continue;
-                    }
-
-                    if (result.Text == null)
-                    {
-                        continue;
-                    }
-
-                    if (displayStyle == "embed" && result.Text.Length > 2048)
-                    {
-                        result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
-                        result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
-                    }
-                    else if (displayStyle != "embed")
-                    {
-                        var combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
-
-                        if (combinedTextLength > 2000)
-                        {
-                            result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
-                            result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
-                        }
-                    }
-
-                    results.Add(result);
+                if (!references.Contains(reference))
+                {
+                    references.Add(reference);
                 }
             }
 
-            results = results.Distinct().ToList();
+            List<Verse> results = new List<Verse>();
+
+            foreach (var reference in references)
+            {
+                Verse result = new Verse();
+                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == reference.Version.Source).FirstOrDefault();
+
+                if (provider == null)
+                {
+                    throw new ProviderNotFoundException();
+                }
+
+                result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
+
+                if (result == null)
+                {
+                    continue;
+                }
+
+                if (result.Text == null)
+                {
+                    continue;
+                }
+
+                if (displayStyle == "embed" && result.Text.Length > 2048)
+                {
+                    result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
+                    result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                }
+                else if (displayStyle != "embed")
+                {
+                    var combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
+
+                    if (combinedTextLength > 2000)
+                    {
+                        result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
+                        result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                    }
+                }
+
+                if (!results.Contains(result))
+                {
+                    results.Add(result);
+                }
+            }
 
             if (results.Count() > 6)
             {
