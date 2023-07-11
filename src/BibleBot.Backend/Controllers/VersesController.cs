@@ -173,7 +173,12 @@ namespace BibleBot.Backend.Controllers
 
                 if (provider == null)
                 {
-                    throw new ProviderNotFoundException();
+                    return new VerseResponse
+                    {
+                        OK = false,
+                        Verses = null,
+                        LogStatement = $"Couldn't find a provider for {reference.ToString()}."
+                    };
                 }
 
                 result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
