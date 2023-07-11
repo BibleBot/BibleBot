@@ -1025,5 +1025,42 @@ namespace BibleBot.Backend.Tests
 
             versionService.Remove(testVersion);
         }
+
+        [Test]
+        public void ShouldNotReturnDuplicates()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("John 1:1 / John 1:1")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "John 1:1 RSV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Word Became Flesh",
+                        PsalmTitle = "",
+                        Text = "<**1**> In the beginning was the Word, and the Word was with God, and the Word was God.",
+                        Reference = new Reference
+                        {
+                            Book = "John",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "John 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }
