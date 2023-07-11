@@ -14,5 +14,23 @@ namespace BibleBot.Models
         public string Title { get; set; }
         public string PsalmTitle { get; set; }
         public string Text { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || !(obj is Verse))
+            {
+                return false;
+            }
+
+            Verse verse = (Verse)obj;
+
+            return (Reference.Equals(verse.Reference)) && (Title.Equals(verse.Title)) &&
+                   (PsalmTitle.Equals(verse.PsalmTitle)) && (Text.Equals(verse.Text));
+        }
+
+        public override int GetHashCode()
+        {
+            return Reference.GetHashCode() ^ Title.GetHashCode() ^ PsalmTitle.GetHashCode() ^ Text.GetHashCode();
+        }
     }
 }

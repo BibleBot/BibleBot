@@ -149,5 +149,22 @@ namespace BibleBot.Models
 
             return result;
         }
+
+        // NOTE: Equals() and GetHashCode() presume version DOES NOT MATTER
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || !(obj is Reference))
+            {
+                return false;
+            }
+
+            return this.ToString().Equals(((Reference)obj).ToString());
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
     }
 }
