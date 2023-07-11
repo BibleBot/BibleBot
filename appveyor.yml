@@ -30,11 +30,11 @@ build_script:
   - cmd: dotnet publish .\src\BibleBot.AutomaticServices\BibleBot.AutomaticServices.csproj -c Release --verbosity q
 
 artifacts:
-  - path: .\src\BibleBot.Backend\bin\Release\net6.0\publish
+  - path: .\src\BibleBot.Backend\bin\Release\net7.0\publish
     name: BibleBot.Backend
     type: ElasticBeanstalkPackage
 
-  - path: .\src\BibleBot.AutomaticServices\bin\Release\net6.0\publish
+  - path: .\src\BibleBot.AutomaticServices\bin\Release\net7.0\publish
     name: BibleBot.AutomaticServices
     type: ElasticBeanstalkPackage
 
