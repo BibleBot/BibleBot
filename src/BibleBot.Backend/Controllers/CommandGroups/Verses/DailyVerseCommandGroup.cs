@@ -126,12 +126,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                return new VerseResponse
-                {
-                    OK = false,
-                    Verses = null,
-                    LogStatement = $"Couldn't find a provider for {votdRef} {idealVersion.Abbreviation}."
-                };
+                throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
             }
         }
 

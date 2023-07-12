@@ -104,7 +104,7 @@ namespace BibleBot.Backend
                 app.UseExceptionHandler(c => c.Run(async context =>
                 {
                     var exception = context.Features.Get<IExceptionHandlerPathFeature>().Error;
-                    await context.Response.WriteAsJsonAsync(new { error = exception.Message });
+                    await context.Response.WriteAsJsonAsync(new { OK = false, logStatement = exception.Message });
                 }));
             }
 

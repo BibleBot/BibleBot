@@ -136,12 +136,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                return new VerseResponse
-                {
-                    OK = false,
-                    Verses = null,
-                    LogStatement = $"Couldn't find a provider for {randomRef} {idealVersion.Abbreviation}."
-                };
+                throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
             }
         }
 
@@ -230,12 +225,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                return new VerseResponse
-                {
-                    OK = false,
-                    Verses = null,
-                    LogStatement = $"Couldn't find a provider for {trulyRandomRef} {idealVersion.Abbreviation}."
-                };
+                throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
             }
         }
     }

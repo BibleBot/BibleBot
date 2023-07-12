@@ -98,12 +98,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                 if (provider == null)
                 {
-                    return new VerseResponse
-                    {
-                        OK = false,
-                        Verses = null,
-                        LogStatement = $"Couldn't find a provider for {idealVersion.Abbreviation}."
-                    };
+                    throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
                 }
 
                 List<SearchResult> searchResults = await provider.Search(query, idealVersion);

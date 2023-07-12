@@ -155,7 +155,7 @@ namespace BibleBot.Backend.Services.Providers
                     results.Add(new SearchResult
                     {
                         Reference = verse.Reference,
-                        Text = PurifyText(verse.Text)
+                        Text = PurifyText(verse.Text).Replace(query, $"**{query}**")
                     });
                 }
             }
