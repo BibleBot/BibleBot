@@ -11,7 +11,7 @@ cffi==1.15.0
 charset-normalizer==2.0.12
 click==8.0.4
 colorama==0.4.4
-disnake @ git+https://github.com/DisnakeDev/disnake@9c083634d5f695fbfb47354489282fc83ab03943
+disnake==2.9.0
 dnspython==2.3.0
 frozenlist==1.3.0
 idna==3.3
