@@ -1127,5 +1127,42 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldNotProcessGreekEstherAsEsther()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Greek Esther 1:1")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Greek Esther 1:1 RSV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "King Ahasu-erus Deposes Queen Vashti",
+                        PsalmTitle = "",
+                        Text = "<**1**> In the days of Ahasu-e'rus, the Ahasu-e'rus who reigned from India to Ethiopia over one hundred and twenty-seven provinces,",
+                        Reference = new Reference
+                        {
+                            Book = "Greek Esther",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "Greek Esther 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }

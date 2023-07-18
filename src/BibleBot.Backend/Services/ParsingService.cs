@@ -29,6 +29,13 @@ namespace BibleBot.Backend.Services
         {
             List<BookSearchResult> results = new List<BookSearchResult>();
 
+            List<string> overlaps = new List<string>
+            {
+                "ezra",
+                "jer",
+                "esth"
+            };
+
             // We want to iterate twice through the booknames
             // in order to skip Ezra in the first iteration,
             // otherwise 1/2/3 Esdras will collide with Ezra.
@@ -41,7 +48,7 @@ namespace BibleBot.Backend.Services
                     {
                         if (IsValueInString(str, item.ToLowerInvariant()))
                         {
-                            if (!(i == 1 && bookName.Key == "ezra") && !(i == 1 && bookName.Key == "jer"))
+                            if (!(i == 1 && overlaps.Contains(bookName.Key)))
                             {
                                 str = str.Replace(item.ToLowerInvariant(), bookName.Key);
                             }
