@@ -77,8 +77,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = _userService.Get(req.UserId);
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealUser = await _userService.Get(req.UserId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
                 var version = "RSV";
 
@@ -91,7 +91,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     version = idealGuild.Version;
                 }
 
-                var idealVersion = _versionService.Get(version);
+                var idealVersion = await _versionService.Get(version);
                 var query = System.String.Join(" ", args);
 
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();

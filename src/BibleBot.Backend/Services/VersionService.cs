@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
 
@@ -25,18 +26,18 @@ namespace BibleBot.Backend.Services
             _versions = database.GetCollection<Version>(settings.VersionCollectionName);
         }
 
-        public List<Version> Get() => _versions.Find(version => true).ToList();
-        public Version Get(string abbv) => _versions.Find<Version>(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant()).FirstOrDefault();
-        public long GetCount() => _versions.EstimatedDocumentCount();
+        public async Task<List<Version>> Get() => (await _versions.FindAsync(version => true)).ToList();
+        public async Task<Version> Get(string abbv) => (await _versions.FindAsync<Version>(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant())).FirstOrDefault();
+        public async Task<long> GetCount() => await _versions.EstimatedDocumentCountAsync();
 
-        public Version Create(Version version)
+        public async Task<Version> Create(Version version)
         {
-            _versions.InsertOne(version);
+            await _versions.InsertOneAsync(version);
             return version;
         }
 
-        public void Update(string abbv, Version newVersion) => _versions.ReplaceOne(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant(), newVersion);
-        public void Remove(Version idealVersion) => _versions.DeleteOne(version => version.Id == idealVersion.Id);
-        public void Remove(string abbv) => _versions.DeleteOne(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant());
+        public async Task Update(string abbv, UpdateDefinition<Version> updateDefinition) => await _versions.UpdateOneAsync(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant(), updateDefinition);
+        public async Task Remove(Version idealVersion) => await this.Remove(idealVersion.Abbreviation);
+        public async Task Remove(string abbv) => await _versions.DeleteOneAsync(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant());
     }
 }

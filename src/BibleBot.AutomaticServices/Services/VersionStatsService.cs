@@ -60,8 +60,8 @@ namespace BibleBot.AutomaticServices.Services
 
             if (dateTimeInStandardTz.Day == 11 && dateTimeInStandardTz.Hour == 11)
             {
-                var preferences = _userService.Get().Concat<IPreference>(_guildService.Get()).ToList();
-                var versions = _versionService.Get();
+                var preferences = (await _userService.Get()).Concat<IPreference>((await _guildService.Get())).ToList();
+                var versions = await _versionService.Get();
 
                 Dictionary<string, int> versionStats = new Dictionary<string, int>();
 

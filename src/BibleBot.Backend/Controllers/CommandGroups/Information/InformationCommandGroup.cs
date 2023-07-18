@@ -71,12 +71,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 _frontendStatsService = frontendStatsService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var userPrefs = _userService.GetCount();
-                var guildPrefs = _guildService.GetCount();
-                var versions = _versionService.GetCount();
-                var frontendStats = _frontendStatsService.Get();
+                var userPrefs = await _userService.GetCount();
+                var guildPrefs = await _guildService.GetCount();
+                var versions = await _versionService.GetCount();
+                var frontendStats = await _frontendStatsService.Get();
 
                 var version = Utils.Version;
 
@@ -104,7 +104,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**Backend**: v{version} ([{backendShortHash}]({backendCommitURL}))\n";
 
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -112,7 +112,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new Utils().Embedify("/stats", resp, false)
                     },
                     LogStatement = "/stats"
-                });
+                };
             }
         }
 

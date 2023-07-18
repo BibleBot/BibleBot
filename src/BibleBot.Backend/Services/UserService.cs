@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
 
@@ -26,18 +27,18 @@ namespace BibleBot.Backend.Services
             _users = database.GetCollection<User>(settings.UserCollectionName);
         }
 
-        public List<User> Get() => _users.Find(user => true).ToList();
-        public User Get(string userId) => _users.Find<User>(user => user.UserId == userId).FirstOrDefault();
-        public long GetCount() => _users.EstimatedDocumentCount();
+        public async Task<List<User>> Get() => (await _users.FindAsync(user => true)).ToList();
+        public async Task<User> Get(string userId) => (await _users.FindAsync<User>(user => user.UserId == userId)).FirstOrDefault();
+        public async Task<long> GetCount() => await _users.EstimatedDocumentCountAsync();
 
-        public User Create(User user)
+        public async Task<User> Create(User user)
         {
-            _users.InsertOne(user);
+            await _users.InsertOneAsync(user);
             return user;
         }
 
-        public void Update(string userId, User newUser) => _users.ReplaceOne(user => user.UserId == userId, newUser);
-        public void Remove(User idealUser) => _users.DeleteOne(user => user.Id == idealUser.Id);
-        public void Remove(string userId) => _users.DeleteOne(user => user.UserId == userId);
+        public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await _users.UpdateOneAsync(user => user.UserId == userId, updateDefinition);
+        public async Task Remove(User idealUser) => await this.Remove(idealUser.UserId);
+        public async Task Remove(string userId) => await _users.DeleteOneAsync(user => user.UserId == userId);
     }
 }

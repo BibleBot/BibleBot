@@ -7,10 +7,12 @@
 */
 
 using System;
+using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -36,7 +38,7 @@ namespace BibleBot.Backend.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public CommandResponse ProcessMessage([FromBody] Request req)
+        public async Task<CommandResponse> ProcessMessage([FromBody] Request req)
         {
             if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
             {
@@ -46,22 +48,23 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var stats = _frontendStatsService.Get();
+            var stats = await _frontendStatsService.Get();
             var fields = req.Body.Split("||");
 
             if (stats != null)
             {
-                stats.ShardCount = int.Parse(fields[0]);
-                stats.ServerCount = int.Parse(fields[1]);
-                stats.UserCount = int.Parse(fields[2]);
-                stats.ChannelCount = int.Parse(fields[3]);
-                stats.FrontendRepoCommitHash = fields[4];
+                var update = Builders<FrontendStats>.Update
+                             .Set(stats => stats.ShardCount, int.Parse(fields[0]))
+                             .Set(stats => stats.ServerCount, int.Parse(fields[1]))
+                             .Set(stats => stats.UserCount, int.Parse(fields[2]))
+                             .Set(stats => stats.ChannelCount, int.Parse(fields[3]))
+                             .Set(stats => stats.FrontendRepoCommitHash, fields[4]);
 
-                _frontendStatsService.Update(stats);
+                await _frontendStatsService.Update(stats, update);
             }
             else
             {
-                _frontendStatsService.Create(new FrontendStats
+                await _frontendStatsService.Create(new FrontendStats
                 {
                     ShardCount = int.Parse(fields[0]),
                     ServerCount = int.Parse(fields[1]),

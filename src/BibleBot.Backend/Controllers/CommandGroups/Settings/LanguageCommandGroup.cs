@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
@@ -68,12 +69,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _languageService = languageService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = _userService.Get(req.UserId);
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealUser = await _userService.Get(req.UserId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
-                var defaultLanguage = _languageService.Get("english");
+                var defaultLanguage = await _languageService.Get("english");
 
                 var response = "Your preferred language is set to **<language>**.\n" +
                                "The server's preferred language is set to **<glanguage>**.\n\n" +
@@ -84,7 +85,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    var idealUserLanguage = _languageService.Get(idealUser.Language);
+                    var idealUserLanguage = await _languageService.Get(idealUser.Language);
 
                     if (idealUserLanguage != null)
                     {
@@ -94,7 +95,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealGuild != null)
                 {
-                    var idealGuildLanguage = _languageService.Get(idealGuild.Language);
+                    var idealGuildLanguage = await _languageService.Get(idealGuild.Language);
 
                     if (idealGuildLanguage != null)
                     {
@@ -105,7 +106,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 response = response.Replace("<language>", defaultLanguage.Name);
                 response = response.Replace("<glanguage>", defaultLanguage.Name);
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -113,7 +114,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("+language", response, false)
                     },
                     LogStatement = "+language"
-                });
+                };
             }
         }
 
@@ -142,23 +143,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _languageService = languageService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var newLanguage = args[0].ToUpperInvariant();
-                var idealLanguage = _languageService.Get(newLanguage);
+                var idealLanguage = await _languageService.Get(newLanguage);
 
                 if (idealLanguage != null)
                 {
-                    var idealUser = _userService.Get(req.UserId);
+                    var idealUser = await _userService.Get(req.UserId);
 
                     if (idealUser != null)
                     {
-                        idealUser.Language = idealLanguage.ObjectName;
-                        _userService.Update(req.UserId, idealUser);
+                        var update = Builders<User>.Update
+                                     .Set(user => user.Language, idealLanguage.ObjectName);
+
+                        await _userService.Update(req.UserId, update);
                     }
                     else
                     {
-                        _userService.Create(new User
+                        await _userService.Create(new User
                         {
                             UserId = req.UserId,
                             Version = "RSV",
@@ -171,7 +174,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         });
                     }
 
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = true,
                         Pages = new List<InternalEmbed>
@@ -179,10 +182,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("+language set", "Set language successfully.", false)
                         },
                         LogStatement = $"+language set {args[0]}"
-                    });
+                    };
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = false,
                     Pages = new List<InternalEmbed>
@@ -190,7 +193,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("+language set", "Failed to set language, see `+language list`.", true)
                     },
                     LogStatement = "+language set"
-                });
+                };
             }
         }
 
@@ -222,23 +225,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _languageService = languageService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var newLanguage = args[0].ToUpperInvariant();
-                var idealLanguage = _languageService.Get(newLanguage);
+                var idealLanguage = await _languageService.Get(newLanguage);
 
                 if (idealLanguage != null)
                 {
-                    var idealGuild = _guildService.Get(req.GuildId);
+                    var idealGuild = await _guildService.Get(req.GuildId);
 
                     if (idealGuild != null)
                     {
-                        idealGuild.Language = idealLanguage.ObjectName;
-                        _guildService.Update(req.GuildId, idealGuild);
+                        var update = Builders<Guild>.Update
+                                     .Set(guild => guild.Language, idealLanguage.ObjectName);
+
+                        await _guildService.Update(req.GuildId, update);
                     }
                     else
                     {
-                        _guildService.Create(new Guild
+                        await _guildService.Create(new Guild
                         {
                             GuildId = req.GuildId,
                             Version = "RSV",
@@ -250,7 +255,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         });
                     }
 
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = true,
                         Pages = new List<InternalEmbed>
@@ -258,10 +263,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("+language setserver", "Set server language successfully.", false)
                         },
                         LogStatement = $"+language setserver {args[0]}"
-                    });
+                    };
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = false,
                     Pages = new List<InternalEmbed>
@@ -269,7 +274,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("+language setserver", "Failed to set server language, see `+language list`.", true)
                     },
                     LogStatement = "+language setserver"
-                });
+                };
             }
         }
 
@@ -298,9 +303,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _languageService = languageService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var languages = _languageService.Get();
+                var languages = await _languageService.Get();
                 languages.Sort((x, y) => x.Name.CompareTo(y.Name));
 
                 var content = "";
@@ -310,7 +315,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     content += $"{lang.Name} `[{lang.ObjectName}]`\n";
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -318,7 +323,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("+language list", content, false)
                     },
                     LogStatement = "+language list"
-                });
+                };
             }
         }
     }

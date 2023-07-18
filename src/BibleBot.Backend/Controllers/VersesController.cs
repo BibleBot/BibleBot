@@ -75,7 +75,7 @@ namespace BibleBot.Backend.Controllers
             var ignoringBrackets = new List<string> { "<>" };
             var paginateVerses = false;
 
-            var idealGuild = _guildService.Get(req.GuildId);
+            var idealGuild = await _guildService.Get(req.GuildId);
             if (idealGuild != null)
             {
                 displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
@@ -93,7 +93,7 @@ namespace BibleBot.Backend.Controllers
             var verseNumbersEnabled = true;
             var titlesEnabled = true;
 
-            var idealUser = _userService.Get(req.UserId);
+            var idealUser = await _userService.Get(req.UserId);
 
             if (idealUser != null && !req.IsBot)
             {
@@ -111,13 +111,13 @@ namespace BibleBot.Backend.Controllers
                 version = idealGuild.Version;
             }
 
-            var idealVersion = _versionService.Get(version);
+            var idealVersion = await _versionService.Get(version);
 
             List<Reference> references = new List<Reference>();
 
             foreach (var bsr in tuple.Item2)
             {
-                var reference = _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
+                var reference = await _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
 
                 if (reference == null)
                 {

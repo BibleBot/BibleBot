@@ -7,10 +7,12 @@
 */
 
 using System;
+using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -36,7 +38,7 @@ namespace BibleBot.Backend.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public CommandResponse ProcessMessage([FromBody] Request req)
+        public async Task<CommandResponse> ProcessMessage([FromBody] Request req)
         {
             if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
             {
@@ -46,27 +48,29 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var idealGuild = _guildService.Get(req.GuildId);
+            var idealGuild = await _guildService.Get(req.GuildId);
 
             if (idealGuild != null)
             {
                 if (req.Body == "delete")
                 {
-                    idealGuild.DailyVerseWebhook = null;
-                    idealGuild.DailyVerseChannelId = null;
-                    idealGuild.DailyVerseTime = null;
-                    idealGuild.DailyVerseTimeZone = null;
-                    idealGuild.DailyVerseLastSentDate = null;
+                    var update = Builders<Guild>.Update
+                                 .Set(guild => guild.DailyVerseWebhook, null)
+                                 .Set(guild => guild.DailyVerseChannelId, null)
+                                 .Set(guild => guild.DailyVerseTime, null)
+                                 .Set(guild => guild.DailyVerseTimeZone, null)
+                                 .Set(guild => guild.DailyVerseLastSentDate, null);
 
-                    _guildService.Update(req.GuildId, idealGuild);
+                    await _guildService.Update(req.GuildId, update);
                 }
                 else
                 {
                     var fields = req.Body.Split("||");
+                    var update = Builders<Guild>.Update
+                                 .Set(guild => guild.DailyVerseWebhook, fields[0])
+                                 .Set(guild => guild.DailyVerseChannelId, fields[1]);
 
-                    idealGuild.DailyVerseWebhook = fields[0];
-                    idealGuild.DailyVerseChannelId = fields[1];
-                    _guildService.Update(req.GuildId, idealGuild);
+                    await _guildService.Update(req.GuildId, update);
 
                     return new CommandResponse
                     {

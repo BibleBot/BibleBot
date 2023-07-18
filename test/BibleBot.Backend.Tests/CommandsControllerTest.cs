@@ -39,8 +39,8 @@ namespace BibleBot.Backend.Tests
         private BibleBot.Models.Version defaultBibleGatewayVersion;
         private BibleBot.Models.Version defaultAPIBibleVersion;
 
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public async Task OneTimeSetup()
         {
             databaseSettings = new DatabaseSettings
             {
@@ -62,16 +62,16 @@ namespace BibleBot.Backend.Tests
             bgProviderMock = new Mock<BibleGatewayProvider>();
             abProviderMock = new Mock<APIBibleProvider>();
 
-            defaultBibleGatewayVersion = versionService.Get("RSV");
+            defaultBibleGatewayVersion = await versionService.Get("RSV");
             if (defaultBibleGatewayVersion == null)
             {
-                defaultBibleGatewayVersion = versionService.Create(new MockRSV());
+                defaultBibleGatewayVersion = await versionService.Create(new MockRSV());
             }
 
-            defaultAPIBibleVersion = versionService.Get("KJVA");
+            defaultAPIBibleVersion = await versionService.Get("KJVA");
             if (defaultAPIBibleVersion == null)
             {
-                defaultAPIBibleVersion = versionService.Create(new MockKJVA());
+                defaultAPIBibleVersion = await versionService.Create(new MockKJVA());
             }
 
             commandsController = new CommandsController(userServiceMock.Object, guildServiceMock.Object,

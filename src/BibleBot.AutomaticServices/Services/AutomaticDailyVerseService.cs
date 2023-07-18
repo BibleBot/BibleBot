@@ -18,6 +18,7 @@ using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Driver;
 using NodaTime;
 using RestSharp;
 using RestSharp.Serializers.SystemTextJson;
@@ -71,7 +72,7 @@ namespace BibleBot.AutomaticServices.Services
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
             ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["America/Detroit"]);
 
-            var matches = _guildService.Get().Where<Guild>((guild) =>
+            var matches = (await _guildService.Get()).Where<Guild>((guild) =>
             {
                 if (guild.DailyVerseTime != null && guild.DailyVerseTimeZone != null && guild.DailyVerseWebhook != null)
                 {
@@ -101,11 +102,11 @@ namespace BibleBot.AutomaticServices.Services
                 if (!guildsCleared.Contains(guild.GuildId))
                 {
                     var version = guild.Version != null ? guild.Version : "RSV";
-                    var idealVersion = _versionService.Get(version);
+                    var idealVersion = await _versionService.Get(version);
 
                     if (idealVersion == null)
                     {
-                        idealVersion = _versionService.Get("RSV");
+                        idealVersion = await _versionService.Get("RSV");
                     }
 
                     string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
@@ -132,8 +133,10 @@ namespace BibleBot.AutomaticServices.Services
                         {
                             count += 1;
 
-                            guild.DailyVerseLastSentDate = dateTimeInStandardTz.ToString("MM/dd/yyyy", null);
-                            _guildService.Update(guild.GuildId, guild);
+                            var update = Builders<Guild>.Update
+                                         .Set(guild => guild.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null));
+
+                            await _guildService.Update(guild.GuildId, update);
                         }
                     }
 

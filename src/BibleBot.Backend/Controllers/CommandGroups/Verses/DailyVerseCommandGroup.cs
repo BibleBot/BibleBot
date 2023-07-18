@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
+using MongoDB.Driver;
 using NodaTime;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
@@ -87,8 +88,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = _userService.Get(req.UserId);
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealUser = await _userService.Get(req.UserId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
                 var version = "RSV";
                 var verseNumbersEnabled = true;
@@ -108,7 +109,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
                 }
 
-                var idealVersion = _versionService.Get(version);
+                var idealVersion = await _versionService.Get(version);
                 string votdRef = await _svProvider.GetDailyVerse();
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
@@ -154,11 +155,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (req.IsDM)
                 {
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = false,
                         Pages = new List<InternalEmbed>
@@ -166,7 +167,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             new Utils().Embedify("/dailyverseset", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
                         },
                         LogStatement = "/dailyverseset"
-                    });
+                    };
                 }
 
                 if (args.Count == 2)
@@ -180,18 +181,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                         if (((hour > -1 && hour < 24) || (minute > -1 && minute < 60)) && DateTimeZoneProviders.Tzdb.GetZoneOrNull(args[1]) != null)
                         {
-                            var idealGuild = _guildService.Get(req.GuildId);
+                            var idealGuild = await _guildService.Get(req.GuildId);
 
                             if (idealGuild != null)
                             {
-                                idealGuild.DailyVerseTime = args[0];
-                                idealGuild.DailyVerseTimeZone = args[1];
-                                idealGuild.DailyVerseLastSentDate = null;
-                                _guildService.Update(req.GuildId, idealGuild);
+                                var update = Builders<Guild>.Update
+                                             .Set(guild => guild.DailyVerseTime, args[0])
+                                             .Set(guild => guild.DailyVerseTimeZone, args[1])
+                                             .Set(guild => guild.DailyVerseLastSentDate, null);
+
+                                await _guildService.Update(req.GuildId, update);
                             }
                             else
                             {
-                                _guildService.Create(new Guild
+                                await _guildService.Create(new Guild
                                 {
                                     GuildId = req.GuildId,
                                     Version = "RSV",
@@ -205,7 +208,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 });
                             }
 
-                            return Task.FromResult<IResponse>(new CommandResponse
+                            return new CommandResponse
                             {
                                 OK = true,
                                 Pages = new List<InternalEmbed>
@@ -215,12 +218,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 LogStatement = $"/dailyverseset {args[0]} {args[1]}",
                                 CreateWebhook = true,
                                 RemoveWebhook = true
-                            });
+                            };
                         }
                     }
                     catch
                     {
-                        return Task.FromResult<IResponse>(new CommandResponse
+                        return new CommandResponse
                         {
                             OK = false,
                             Pages = new List<InternalEmbed>
@@ -228,11 +231,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 new Utils().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
                             },
                             LogStatement = "/dailyverseset"
-                        });
+                        };
                     }
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = false,
                     Pages = new List<InternalEmbed>
@@ -240,7 +243,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         new Utils().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
                     },
                     LogStatement = "/dailyverseset"
-                });
+                };
             }
         }
 
@@ -265,9 +268,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
@@ -318,7 +321,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                         var resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone.ToString()}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>. It will use this server's preferred version, which you can find by using **`/version`**.\n\nUse **`/dailyverseset`** to set a new time or channel.\nUse **`/dailyverseclear`** to clear automatic daily verse settings.";
 
-                        return Task.FromResult<IResponse>(new CommandResponse
+                        return new CommandResponse
                         {
                             OK = true,
                             Pages = new List<InternalEmbed>
@@ -326,11 +329,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 new Utils().Embedify("/dailyversestatus", resp, false)
                             },
                             LogStatement = "/dailyversestatus"
-                        });
+                        };
                     }
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = false,
                     Pages = new List<InternalEmbed>
@@ -338,7 +341,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         new Utils().Embedify("/dailyversestatus", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/dailyverseset` to setup the automatic daily verse.", true)
                     },
                     LogStatement = "/dailyversestatus"
-                });
+                };
             }
         }
 
@@ -366,21 +369,22 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
-                    idealGuild.DailyVerseTime = null;
-                    idealGuild.DailyVerseTimeZone = null;
-                    idealGuild.DailyVerseWebhook = null;
-                    idealGuild.DailyVerseChannelId = null;
+                    var update = Builders<Guild>.Update
+                                 .Set(guild => guild.DailyVerseTime, null)
+                                 .Set(guild => guild.DailyVerseTimeZone, null)
+                                 .Set(guild => guild.DailyVerseWebhook, null)
+                                 .Set(guild => guild.DailyVerseChannelId, null);
 
-                    _guildService.Update(req.GuildId, idealGuild);
+                    await _guildService.Update(req.GuildId, update);
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -389,7 +393,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     },
                     LogStatement = "/dailyverseclear",
                     RemoveWebhook = true
-                });
+                };
             }
         }
     }

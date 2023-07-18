@@ -8,6 +8,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
 
@@ -25,14 +26,14 @@ namespace BibleBot.Backend.Services
             _frontendStats = database.GetCollection<FrontendStats>(settings.FrontendStatsCollectionName);
         }
 
-        public FrontendStats Get() => _frontendStats.Find(frontendStats => true).FirstOrDefault();
+        public async Task<FrontendStats> Get() => (await _frontendStats.FindAsync(frontendStats => true)).FirstOrDefault();
 
-        public FrontendStats Create(FrontendStats frontendStats)
+        public async Task<FrontendStats> Create(FrontendStats frontendStats)
         {
-            _frontendStats.InsertOne(frontendStats);
+            await _frontendStats.InsertOneAsync(frontendStats);
             return frontendStats;
         }
 
-        public void Update(FrontendStats frontendStats) => _frontendStats.ReplaceOne(frontendStats => true, frontendStats);
+        public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _frontendStats.UpdateOneAsync(frontendStats => true, updateDefinition);
     }
 }

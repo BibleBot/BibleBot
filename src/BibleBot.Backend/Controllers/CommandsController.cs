@@ -92,7 +92,7 @@ namespace BibleBot.Backend.Controllers
             {
                 var potentialCommand = tokenizedBody[0];
 
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealGuild = await _guildService.Get(req.GuildId);
                 var prefix = "+";
 
                 if (potentialCommand.StartsWith(prefix))

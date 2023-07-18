@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
@@ -67,10 +68,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = _userService.Get(req.UserId);
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealUser = await _userService.Get(req.UserId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
                 var response = "Verse numbers are **<verseNumbers>**.\n" +
                                "Titles are **<titles>**.\n" +
@@ -107,7 +108,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 response = response.Replace("<serverDisplayStyle>", "embed");
                 response = response.Replace("<ignoringBrackets>", "<>");
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -115,7 +116,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/formatting", response, false)
                     },
                     LogStatement = "/formatting"
-                });
+                };
             }
         }
 
@@ -142,11 +143,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] != "enable" && args[0] != "disable")
                 {
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = false,
                         Pages = new List<InternalEmbed>
@@ -154,19 +155,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/setversenumbers", "Expected an `enable` or `disable` parameter.", true)
                         },
                         LogStatement = "/setversenumbers"
-                    });
+                    };
                 }
 
-                var idealUser = _userService.Get(req.UserId);
+                var idealUser = await _userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
-                    idealUser.VerseNumbersEnabled = (args[0] == "enable" && args[0] != "disable");
-                    _userService.Update(req.UserId, idealUser);
+                    var update = Builders<User>.Update
+                                 .Set(user => user.VerseNumbersEnabled, (args[0] == "enable" && args[0] != "disable"));
+
+                    await _userService.Update(req.UserId, update);
                 }
                 else
                 {
-                    _userService.Create(new User
+                    await _userService.Create(new User
                     {
                         UserId = req.UserId,
                         Version = "RSV",
@@ -179,7 +182,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     });
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -187,7 +190,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/setversenumbers", "Set verse numbers successfully.", false)
                     },
                     LogStatement = $"/setversenumbers {args[0]}"
-                });
+                };
             }
         }
 
@@ -214,11 +217,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] != "enable" && args[0] != "disable")
                 {
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = false,
                         Pages = new List<InternalEmbed>
@@ -226,19 +229,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/settitles", "Expected an `enable` or `disable` parameter.", true)
                         },
                         LogStatement = "/settitles"
-                    });
+                    };
                 }
 
-                var idealUser = _userService.Get(req.UserId);
+                var idealUser = await _userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
-                    idealUser.TitlesEnabled = (args[0] == "enable" && args[0] != "disable");
-                    _userService.Update(req.UserId, idealUser);
+                    var update = Builders<User>.Update
+                                 .Set(user => user.TitlesEnabled, (args[0] == "enable" && args[0] != "disable"));
+
+                    await _userService.Update(req.UserId, update);
                 }
                 else
                 {
-                    _userService.Create(new User
+                    await _userService.Create(new User
                     {
                         UserId = req.UserId,
                         Version = "RSV",
@@ -251,7 +256,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     });
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -259,7 +264,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/settitles", "Set titles successfully.", false)
                     },
                     LogStatement = $"/settitles {args[0]}"
-                });
+                };
             }
         }
 
@@ -286,11 +291,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] != "enable" && args[0] != "disable")
                 {
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = false,
                         Pages = new List<InternalEmbed>
@@ -298,19 +303,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/setpagination", "Expected an `enable` or `disable` parameter.", true)
                         },
                         LogStatement = "/setpagination"
-                    });
+                    };
                 }
 
-                var idealUser = _userService.Get(req.UserId);
+                var idealUser = await _userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
-                    idealUser.PaginationEnabled = (args[0] == "enable" && args[0] != "disable");
-                    _userService.Update(req.UserId, idealUser);
+                    var update = Builders<User>.Update
+                                 .Set(user => user.PaginationEnabled, (args[0] == "enable" && args[0] != "disable"));
+
+                    await _userService.Update(req.UserId, update);
                 }
                 else
                 {
-                    _userService.Create(new User
+                    await _userService.Create(new User
                     {
                         UserId = req.UserId,
                         Version = "RSV",
@@ -323,7 +330,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     });
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -331,7 +338,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/setpagination", "Set pagination successfully.", false)
                     },
                     LogStatement = $"/setpagination {args[0]}"
-                });
+                };
             }
         }
 
@@ -358,11 +365,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (!(args[0] == "embed" || args[0] == "code" || args[0] == "blockquote"))
                 {
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = false,
                         Pages = new List<InternalEmbed>
@@ -370,19 +377,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/setdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
                         },
                         LogStatement = "/setdisplay"
-                    });
+                    };
                 }
 
-                var idealUser = _userService.Get(req.UserId);
+                var idealUser = await _userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
-                    idealUser.DisplayStyle = args[0];
-                    _userService.Update(req.UserId, idealUser);
+                    var update = Builders<User>.Update
+                                 .Set(user => user.DisplayStyle, args[0]);
+
+                    await _userService.Update(req.UserId, update);
                 }
                 else
                 {
-                    _userService.Create(new User
+                    await _userService.Create(new User
                     {
                         UserId = req.UserId,
                         Version = "RSV",
@@ -395,7 +404,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     });
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -403,7 +412,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/setdisplay", "Set display style successfully.", false)
                     },
                     LogStatement = $"/setdisplay {args[0]}"
-                });
+                };
             }
         }
 
@@ -433,11 +442,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (!(args[0] == "embed" || args[0] == "code" || args[0] == "blockquote"))
                 {
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = false,
                         Pages = new List<InternalEmbed>
@@ -445,19 +454,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/setserverdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
                         },
                         LogStatement = "/setserverdisplay"
-                    });
+                    };
                 }
 
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
-                    idealGuild.DisplayStyle = args[0];
-                    _guildService.Update(req.GuildId, idealGuild);
+                    var update = Builders<Guild>.Update
+                                 .Set(guild => guild.DisplayStyle, args[0]);
+
+                    await _guildService.Update(req.GuildId, update);
                 }
                 else
                 {
-                    _guildService.Create(new Guild
+                    await _guildService.Create(new Guild
                     {
                         GuildId = req.GuildId,
                         Version = "RSV",
@@ -469,7 +480,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     });
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -477,7 +488,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/setserverdisplay", "Set server display style successfully.", false)
                     },
                     LogStatement = $"/setserverdisplay {args[0]}"
-                });
+                };
             }
         }
 
@@ -507,13 +518,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 _guildService = guildService;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 var acceptableBrackets = new List<string> { "<>", "[]", "{}", "()" };
 
                 if (args[0].Length != 2)
                 {
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = false,
                         Pages = new List<InternalEmbed>
@@ -521,11 +532,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/setbrackets", "The brackets can only be two characters.", true)
                         },
                         LogStatement = "/setbrackets"
-                    });
+                    };
                 }
                 else if (!acceptableBrackets.Contains(args[0]))
                 {
-                    return Task.FromResult<IResponse>(new CommandResponse
+                    return new CommandResponse
                     {
                         OK = false,
                         Pages = new List<InternalEmbed>
@@ -533,20 +544,22 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             new Utils().Embedify("/setbrackets", "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.", true)
                         },
                         LogStatement = "/setbrackets"
-                    });
+                    };
                 }
 
 
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
-                    idealGuild.IgnoringBrackets = args[0];
-                    _guildService.Update(req.GuildId, idealGuild);
+                    var update = Builders<Guild>.Update
+                                 .Set(guild => guild.IgnoringBrackets, args[0]);
+
+                    await _guildService.Update(req.GuildId, update);
                 }
                 else
                 {
-                    _guildService.Create(new Guild
+                    await _guildService.Create(new Guild
                     {
                         GuildId = req.GuildId,
                         Version = "RSV",
@@ -558,7 +571,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     });
                 }
 
-                return Task.FromResult<IResponse>(new CommandResponse
+                return new CommandResponse
                 {
                     OK = true,
                     Pages = new List<InternalEmbed>
@@ -566,7 +579,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         new Utils().Embedify("/setbrackets", "Set brackets successfully.", false)
                     },
                     LogStatement = $"/setbrackets {args[0]}"
-                });
+                };
             }
         }
     }

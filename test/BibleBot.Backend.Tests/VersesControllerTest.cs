@@ -7,6 +7,7 @@
 */
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -38,8 +39,8 @@ namespace BibleBot.Backend.Tests
         private BibleBot.Models.Version defaultBibleGatewayVersion;
         private BibleBot.Models.Version defaultAPIBibleVersion;
 
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public async Task OneTimeSetup()
         {
             databaseSettings = new DatabaseSettings
             {
@@ -60,16 +61,16 @@ namespace BibleBot.Backend.Tests
             bgProviderMock = new Mock<BibleGatewayProvider>();
             abProviderMock = new Mock<APIBibleProvider>();
 
-            defaultBibleGatewayVersion = versionService.Get("RSV");
+            defaultBibleGatewayVersion = await versionService.Get("RSV");
             if (defaultBibleGatewayVersion == null)
             {
-                defaultBibleGatewayVersion = versionService.Create(new MockRSV());
+                defaultBibleGatewayVersion = await versionService.Create(new MockRSV());
             }
 
-            defaultAPIBibleVersion = versionService.Get("KJVA");
+            defaultAPIBibleVersion = await versionService.Get("KJVA");
             if (defaultAPIBibleVersion == null)
             {
-                defaultAPIBibleVersion = versionService.Create(new MockKJVA());
+                defaultAPIBibleVersion = await versionService.Create(new MockKJVA());
             }
 
             versesController = new VersesController(userServiceMock.Object, guildServiceMock.Object,
@@ -598,12 +599,12 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ShouldProcessDanielInEnglishSeptuagint()
+        public async Task ShouldProcessDanielInEnglishSeptuagint()
         {
-            var testVersion = versionService.Get("ELXX");
+            var testVersion = await versionService.Get("ELXX");
             if (testVersion == null)
             {
-                testVersion = versionService.Create(new MockELXX());
+                testVersion = await versionService.Create(new MockELXX());
             }
 
             var resp = versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 ELXX")).GetAwaiter().GetResult();
@@ -641,12 +642,12 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ShouldProcessDanielInSeptuagint()
+        public async Task ShouldProcessDanielInSeptuagint()
         {
-            var testVersion = versionService.Get("LXX");
+            var testVersion = await versionService.Get("LXX");
             if (testVersion == null)
             {
-                testVersion = versionService.Create(new MockLXX());
+                testVersion = await versionService.Create(new MockLXX());
             }
 
             var resp = versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 LXX")).GetAwaiter().GetResult();
@@ -684,12 +685,12 @@ namespace BibleBot.Backend.Tests
         }
 
         // [Test]
-        // public void ShouldProcessJohnInPatriarchalText()
+        // public async Task ShouldProcessJohnInPatriarchalText()
         // {
-        //     var testVersion = versionService.Get("PAT1904");
+        //     var testVersion = await versionService.Get("PAT1904");
         //     if (testVersion == null)
         //     {
-        //         testVersion = versionService.Create(new MockPAT1904());
+        //         testVersion = await versionService.Create(new MockPAT1904());
         //     }
         //
         //     var resp = versesController.ProcessMessage(new MockRequest("John 1:1-2 PAT1904")).GetAwaiter().GetResult();
@@ -727,12 +728,12 @@ namespace BibleBot.Backend.Tests
         // }
 
         [Test]
-        public void ShouldNotMishandleMultipleSpansInProverbsInNIV()
+        public async Task ShouldNotMishandleMultipleSpansInProverbsInNIV()
         {
-            var testVersion = versionService.Get("NIV");
+            var testVersion = await versionService.Get("NIV");
             if (testVersion == null)
             {
-                testVersion = versionService.Create(new MockNIV());
+                testVersion = await versionService.Create(new MockNIV());
             }
 
             var resp = versesController.ProcessMessage(new MockRequest("Proverbs 25:1-12 NIV")).GetAwaiter().GetResult();
@@ -770,12 +771,12 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ShouldWorkAroundHebrewVerseNumbersInExodusInISVPartOne()
+        public async Task ShouldWorkAroundHebrewVerseNumbersInExodusInISVPartOne()
         {
-            var testVersion = versionService.Get("ISV");
+            var testVersion = await versionService.Get("ISV");
             if (testVersion == null)
             {
-                testVersion = versionService.Create(new MockISV());
+                testVersion = await versionService.Create(new MockISV());
             }
 
             var resp = versesController.ProcessMessage(new MockRequest("Exodus 20:1-7 ISV")).GetAwaiter().GetResult();
@@ -813,12 +814,12 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ShouldWorkAroundHebrewVerseNumbersInExodusInISVPartTwo()
+        public async Task ShouldWorkAroundHebrewVerseNumbersInExodusInISVPartTwo()
         {
-            var testVersion = versionService.Get("ISV");
+            var testVersion = await versionService.Get("ISV");
             if (testVersion == null)
             {
-                testVersion = versionService.Create(new MockISV());
+                testVersion = await versionService.Create(new MockISV());
             }
 
             var resp = versesController.ProcessMessage(new MockRequest("Exodus 20:8-17 ISV")).GetAwaiter().GetResult();
@@ -1006,9 +1007,9 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ShouldThrowProviderNotFoundException()
+        public async Task ShouldThrowProviderNotFoundException()
         {
-            var testVersion = versionService.Create(new BibleBot.Models.Version
+            var testVersion = await versionService.Create(new BibleBot.Models.Version
             {
                 Name = "A Test Version (TEST)",
                 Abbreviation = "TEST",
@@ -1023,7 +1024,7 @@ namespace BibleBot.Backend.Tests
                 .Should()
                 .Throw<ProviderNotFoundException>();
 
-            versionService.Remove(testVersion);
+            await versionService.Remove(testVersion);
         }
 
 
@@ -1065,12 +1066,12 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ShouldReturnDuplicatesWhenVersionsDiffer()
+        public async Task ShouldReturnDuplicatesWhenVersionsDiffer()
         {
-            var testVersion = versionService.Get("NTE");
+            var testVersion = await versionService.Get("NTE");
             if (testVersion == null)
             {
-                testVersion = versionService.Create(new MockNTE());
+                testVersion = await versionService.Create(new MockNTE());
             }
 
             var resp = versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTE")).GetAwaiter().GetResult();

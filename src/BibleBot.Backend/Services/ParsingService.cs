@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using BibleBot.Models;
 
 namespace BibleBot.Backend.Services
@@ -66,7 +67,7 @@ namespace BibleBot.Backend.Services
             return new System.Tuple<string, List<BookSearchResult>>(str, results);
         }
 
-        public Reference GenerateReference(string str, BookSearchResult bookSearchResult, Version version)
+        public async Task<Reference> GenerateReference(string str, BookSearchResult bookSearchResult, Version version)
         {
             string book = bookSearchResult.Name;
             int startingChapter = 0;
@@ -93,7 +94,7 @@ namespace BibleBot.Backend.Services
                     {
                         string lastToken = tokens[tokenIdxAfterSpan].ToUpper();
 
-                        var idealVersion = _versionService.Get(lastToken);
+                        var idealVersion = await _versionService.Get(lastToken);
 
                         if (idealVersion != null)
                         {

@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
 
@@ -26,17 +27,17 @@ namespace BibleBot.Backend.Services
             _languages = database.GetCollection<Language>(settings.LanguageCollectionName);
         }
 
-        public List<Language> Get() => _languages.Find(language => true).ToList();
-        public Language Get(string objectName) => _languages.Find<Language>(language => language.ObjectName == objectName).FirstOrDefault();
+        public async Task<List<Language>> Get() => (await _languages.FindAsync(language => true)).ToList();
+        public async Task<Language> Get(string objectName) => (await _languages.FindAsync<Language>(language => language.ObjectName == objectName)).FirstOrDefault();
 
-        public Language Create(Language language)
+        public async Task<Language> Create(Language language)
         {
-            _languages.InsertOne(language);
+            await _languages.InsertOneAsync(language);
             return language;
         }
 
-        public void Update(string objectName, Language newLanguage) => _languages.ReplaceOne(language => language.ObjectName == objectName, newLanguage);
-        public void Remove(Language idealLanguage) => _languages.DeleteOne(language => language.Id == idealLanguage.Id);
-        public void Remove(string objectName) => _languages.DeleteOne(language => language.ObjectName == objectName);
+        public async Task Update(string objectName, UpdateDefinition<Language> updateDefinition) => await _languages.UpdateOneAsync(language => language.ObjectName == objectName, updateDefinition);
+        public async Task Remove(Language idealLanguage) => await this.Remove(idealLanguage.ObjectName);
+        public async Task Remove(string objectName) => await _languages.DeleteOneAsync(language => language.ObjectName == objectName);
     }
 }

@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
 
@@ -26,18 +27,18 @@ namespace BibleBot.Backend.Services
             _guilds = database.GetCollection<Guild>(settings.GuildCollectionName);
         }
 
-        public List<Guild> Get() => _guilds.Find(guild => true).ToList();
-        public Guild Get(string guildId) => _guilds.Find<Guild>(guild => guild.GuildId == guildId).FirstOrDefault();
-        public long GetCount() => _guilds.EstimatedDocumentCount();
+        public async Task<List<Guild>> Get() => (await _guilds.FindAsync(guild => true)).ToList();
+        public async Task<Guild> Get(string guildId) => (await _guilds.FindAsync<Guild>(guild => guild.GuildId == guildId)).FirstOrDefault();
+        public async Task<long> GetCount() => await _guilds.EstimatedDocumentCountAsync();
 
-        public Guild Create(Guild guild)
+        public async Task<Guild> Create(Guild guild)
         {
-            _guilds.InsertOne(guild);
+            await _guilds.InsertOneAsync(guild);
             return guild;
         }
 
-        public void Update(string guildId, Guild newGuild) => _guilds.ReplaceOne(guild => guild.GuildId == guildId, newGuild);
-        public void Remove(Guild idealGuild) => _guilds.DeleteOne(guild => guild.Id == idealGuild.Id);
-        public void Remove(string guildId) => _guilds.DeleteOne(guild => guild.GuildId == guildId);
+        public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition) => await _guilds.UpdateOneAsync(guild => guild.GuildId == guildId, updateDefinition);
+        public async Task Remove(Guild idealGuild) => await this.Remove(idealGuild.GuildId);
+        public async Task Remove(string guildId) => await _guilds.DeleteOneAsync(guild => guild.GuildId == guildId);
     }
 }

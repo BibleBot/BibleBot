@@ -96,8 +96,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                var idealUser = _userService.Get(req.UserId);
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealUser = await _userService.Get(req.UserId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
 
                 var version = "RSV";
@@ -118,7 +118,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
                 }
 
-                var idealVersion = _versionService.Get(version);
+                var idealVersion = await _versionService.Get(version);
                 string randomRef = await _svProvider.GetRandomVerse();
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
@@ -187,8 +187,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                var idealUser = _userService.Get(req.UserId);
-                var idealGuild = _guildService.Get(req.GuildId);
+                var idealUser = await _userService.Get(req.UserId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
                 var version = "RSV";
                 var verseNumbersEnabled = true;
@@ -207,7 +207,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
                 }
 
-                var idealVersion = _versionService.Get(version);
+                var idealVersion = await _versionService.Get(version);
                 string trulyRandomRef = await _svProvider.GetTrulyRandomVerse();
                 IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
 
