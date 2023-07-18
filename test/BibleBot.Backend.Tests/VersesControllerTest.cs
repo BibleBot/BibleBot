@@ -1063,5 +1063,68 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldReturnDuplicatesWhenVersionsDiffer()
+        {
+            var testVersion = versionService.Get("NTE");
+            if (testVersion == null)
+            {
+                testVersion = versionService.Create(new MockNTE());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTE")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Philippians 1:6 RSV / Philippians 1:6 NTE",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**6**> And I am sure that he who began a good work in you will bring it to completion at the day of Jesus Christ.",
+                        Reference = new Reference
+                        {
+                            Book = "Philippians",
+                            StartingChapter = 1,
+                            StartingVerse = 6,
+                            EndingChapter = 1,
+                            EndingVerse = 6,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Philippians 1:6"
+                        }
+                    },
+
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**6**> Of this I'm convinced: the one who began a good work in you will thoroughly complete it by the day of King Jesus.",
+                        Reference = new Reference
+                        {
+                            Book = "Philippians",
+                            StartingChapter = 1,
+                            StartingVerse = 6,
+                            EndingChapter = 1,
+                            EndingVerse = 6,
+                            Version = testVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Philippians 1:6"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }

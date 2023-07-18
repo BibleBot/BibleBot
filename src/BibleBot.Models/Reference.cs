@@ -159,7 +159,10 @@ namespace BibleBot.Models
                 return false;
             }
 
-            return this.ToString().Equals(((Reference)obj).ToString());
+
+
+            return this.ToString() == ((obj as Reference).ToString()) &&
+                   this.Version.Abbreviation == (obj as Reference).Version.Abbreviation;
         }
 
         public override int GetHashCode()
