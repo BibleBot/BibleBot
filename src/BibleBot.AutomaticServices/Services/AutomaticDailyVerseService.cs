@@ -14,6 +14,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using BibleBot.Backend;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -116,7 +117,7 @@ namespace BibleBot.AutomaticServices.Services
                     {
                         Verse verse = provider.GetVerse(votdRef, true, true, idealVersion).GetAwaiter().GetResult();
 
-                        var embed = new Utils().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
+                        var embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
                         var webhookRequestBody = new WebhookRequestBody
                         {
                             Content = "Here is the daily verse:",

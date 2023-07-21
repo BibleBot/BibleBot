@@ -111,7 +111,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+language", response, false)
+                        Utils.GetInstance().Embedify("+language", response, false)
                     },
                     LogStatement = "+language"
                 };
@@ -179,7 +179,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+language set", "Set language successfully.", false)
+                            Utils.GetInstance().Embedify("+language set", "Set language successfully.", false)
                         },
                         LogStatement = $"+language set {args[0]}"
                     };
@@ -190,7 +190,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+language set", "Failed to set language, see `+language list`.", true)
+                        Utils.GetInstance().Embedify("+language set", "Failed to set language, see `+language list`.", true)
                     },
                     LogStatement = "+language set"
                 };
@@ -260,7 +260,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("+language setserver", "Set server language successfully.", false)
+                            Utils.GetInstance().Embedify("+language setserver", "Set server language successfully.", false)
                         },
                         LogStatement = $"+language setserver {args[0]}"
                     };
@@ -271,7 +271,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+language setserver", "Failed to set server language, see `+language list`.", true)
+                        Utils.GetInstance().Embedify("+language setserver", "Failed to set server language, see `+language list`.", true)
                     },
                     LogStatement = "+language setserver"
                 };
@@ -320,7 +320,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("+language list", content, false)
+                        Utils.GetInstance().Embedify("+language list", content, false)
                     },
                     LogStatement = "+language list"
                 };

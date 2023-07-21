@@ -111,7 +111,7 @@ namespace BibleBot.Backend.Controllers
                                 OK = false,
                                 Pages = new List<InternalEmbed>
                                 {
-                                    new Utils().Embedify("Permissions Error", "You do not have the required permissions to use this command.", true)
+                                    Utils.GetInstance().Embedify("Permissions Error", "You do not have the required permissions to use this command.", true)
                                 }
                             };
                         }
@@ -134,7 +134,7 @@ namespace BibleBot.Backend.Controllers
                                         //         OK = false,
                                         //         Pages = new List<InternalEmbed>
                                         //         {
-                                        //             new Utils().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
+                                        //             Utils.GetInstance().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
                                         //         },
                                         //         LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
                                         //     };
@@ -149,7 +149,7 @@ namespace BibleBot.Backend.Controllers
                                         OK = false,
                                         Pages = new List<InternalEmbed>
                                             {
-                                                new Utils().Embedify("Insufficient Permissions", "Bots are not permitted to use this command, please inform your nearest human.", true)
+                                                Utils.GetInstance().Embedify("Insufficient Permissions", "Bots are not permitted to use this command, please inform your nearest human.", true)
                                             },
                                         LogStatement = $"Bot can't use +{grp.Name} {idealCommand.Name}."
                                     };
@@ -164,7 +164,7 @@ namespace BibleBot.Backend.Controllers
                                         OK = false,
                                         Pages = new List<InternalEmbed>
                                         {
-                                            new Utils().Embedify("Insufficient Parameters", idealCommand.ArgumentsError, true)
+                                            Utils.GetInstance().Embedify("Insufficient Parameters", idealCommand.ArgumentsError, true)
                                         },
                                         LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
                                     };

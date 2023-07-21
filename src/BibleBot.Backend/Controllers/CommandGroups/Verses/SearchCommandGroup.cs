@@ -126,7 +126,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                     for (int i = 0; i < totalPages; i++)
                     {
-                        var embed = new Utils().Embedify(System.String.Format(title, query), System.String.Format(pageCounter, i + 1, totalPages), false);
+                        var embed = Utils.GetInstance().Embedify(System.String.Format(title, query), System.String.Format(pageCounter, i + 1, totalPages), false);
                         embed.Fields = new List<EmbedField>();
 
                         var count = 0;
@@ -167,7 +167,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("/search", "Your search query produced no results.", true)
+                            Utils.GetInstance().Embedify("/search", "Your search query produced no results.", true)
                         },
                         LogStatement = "/search"
                     };

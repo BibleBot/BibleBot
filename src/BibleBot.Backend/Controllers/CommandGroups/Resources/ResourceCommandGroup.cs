@@ -92,14 +92,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                             }
                         }
 
-                        var pages = new Utils().EmbedifyResource(matchingResource, section);
+                        var pages = Utils.GetInstance().EmbedifyResource(matchingResource, section);
 
                         if (pages != null)
                         {
                             return Task.FromResult<IResponse>(new CommandResponse
                             {
                                 OK = true,
-                                Pages = new Utils().EmbedifyResource(matchingResource, section),
+                                Pages = Utils.GetInstance().EmbedifyResource(matchingResource, section),
                                 LogStatement = $"/resource {matchingResource.CommandReference}{(section.Length > 0 ? $" {section}" : section)}"
                             });
                         }
@@ -143,7 +143,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/resource", resp, false)
+                        Utils.GetInstance().Embedify("/resource", resp, false)
                     },
                     LogStatement = "/resource"
                 });

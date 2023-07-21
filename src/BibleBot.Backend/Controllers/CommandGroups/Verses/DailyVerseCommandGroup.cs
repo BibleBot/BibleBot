@@ -164,7 +164,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("/dailyverseset", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
+                            Utils.GetInstance().Embedify("/dailyverseset", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
                         },
                         LogStatement = "/dailyverseset"
                     };
@@ -213,7 +213,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 OK = true,
                                 Pages = new List<InternalEmbed>
                                 {
-                                    new Utils().Embedify("/dailyverseset", "Set automatic daily verse successfully.", false)
+                                    Utils.GetInstance().Embedify("/dailyverseset", "Set automatic daily verse successfully.", false)
                                 },
                                 LogStatement = $"/dailyverseset {args[0]} {args[1]}",
                                 CreateWebhook = true,
@@ -228,7 +228,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             OK = false,
                             Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
+                                Utils.GetInstance().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
                             },
                             LogStatement = "/dailyverseset"
                         };
@@ -240,7 +240,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
+                        Utils.GetInstance().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
                     },
                     LogStatement = "/dailyverseset"
                 };
@@ -326,7 +326,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             OK = true,
                             Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify("/dailyversestatus", resp, false)
+                                Utils.GetInstance().Embedify("/dailyversestatus", resp, false)
                             },
                             LogStatement = "/dailyversestatus"
                         };
@@ -338,7 +338,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/dailyversestatus", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/dailyverseset` to setup the automatic daily verse.", true)
+                        Utils.GetInstance().Embedify("/dailyversestatus", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/dailyverseset` to setup the automatic daily verse.", true)
                     },
                     LogStatement = "/dailyversestatus"
                 };
@@ -389,7 +389,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/dailyverseclear", "Cleared all daily verse webhooks successfully.", false)
+                        Utils.GetInstance().Embedify("/dailyverseclear", "Cleared all daily verse webhooks successfully.", false)
                     },
                     LogStatement = "/dailyverseclear",
                     RemoveWebhook = true

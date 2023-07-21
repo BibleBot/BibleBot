@@ -66,7 +66,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("BibleBot Announcement", string.Join(" ", args), false)
+                        Utils.GetInstance().Embedify("BibleBot Announcement", string.Join(" ", args), false)
                     },
                     LogStatement = "/announce",
                     SendAnnouncement = true

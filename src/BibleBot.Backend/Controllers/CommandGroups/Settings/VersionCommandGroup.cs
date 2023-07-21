@@ -117,7 +117,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/version", response, false)
+                        Utils.GetInstance().Embedify("/version", response, false)
                     },
                     LogStatement = "/version"
                 };
@@ -184,7 +184,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("/setversion", "Set version successfully.", false)
+                            Utils.GetInstance().Embedify("/setversion", "Set version successfully.", false)
                         },
                         LogStatement = $"/setversion {args[0]}"
                     };
@@ -195,7 +195,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/setversion", "Failed to set version, see `/listversions`.", true)
+                        Utils.GetInstance().Embedify("/setversion", "Failed to set version, see `/listversions`.", true)
                     },
                     LogStatement = "/setversion"
                 };
@@ -264,7 +264,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages = new List<InternalEmbed>
                         {
-                            new Utils().Embedify("/setserverversion", "Set server version successfully.", false)
+                            Utils.GetInstance().Embedify("/setserverversion", "Set server version successfully.", false)
                         },
                         LogStatement = $"/setserverversion {args[0]}"
                     };
@@ -275,7 +275,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/setserverversion", "Failed to set server version, see `/listversions`.", true)
+                        Utils.GetInstance().Embedify("/setserverversion", "Failed to set server version, see `/listversions`.", true)
                     },
                     LogStatement = "/setserverversion"
                 };
@@ -352,7 +352,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify("/versioninfo", response, false)
+                                Utils.GetInstance().Embedify("/versioninfo", response, false)
                             },
                         LogStatement = $"/versioninfo {version}"
                     };
@@ -363,7 +363,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/versioninfo", "I couldn't find that version, are you sure you used the right acronym?", true)
+                        Utils.GetInstance().Embedify("/versioninfo", "I couldn't find that version, are you sure you used the right acronym?", true)
                     },
                     LogStatement = "/versioninfo"
                 };
@@ -428,7 +428,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         }
                     }
 
-                    var embed = new Utils().Embedify($"/listversions - Page {i + 1} of {totalPages}", versionList, false);
+                    var embed = Utils.GetInstance().Embedify($"/listversions - Page {i + 1} of {totalPages}", versionList, false);
                     pages.Add(embed);
                 }
 
@@ -504,7 +504,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             OK = false,
                             Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify("/booklist", "This version is not eligible for this command yet. Make sure you're using a version of source `bg` (see `/versioninfo`).", true)
+                                Utils.GetInstance().Embedify("/booklist", "This version is not eligible for this command yet. Make sure you're using a version of source `bg` (see `/versioninfo`).", true)
                             },
                             LogStatement = "/booklist - non-bg source"
                         };
@@ -519,9 +519,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             OK = true,
                             Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false),
-                                new Utils().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false),
-                                new Utils().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false)
+                                Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false),
+                                Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false),
+                                Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false)
                             },
                             LogStatement = "/booklist"
                         };
@@ -537,7 +537,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             OK = false,
                             Pages = new List<InternalEmbed>
                             {
-                                new Utils().Embedify("/booklist", message, true)
+                                Utils.GetInstance().Embedify("/booklist", message, true)
                             },
                             LogStatement = $"/booklist - internal error on {idealVersion.Abbreviation}"
                         };
@@ -549,7 +549,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("/booklist", "I couldn't find that version, are you sure you used the right acronym?", true)
+                        Utils.GetInstance().Embedify("/booklist", "I couldn't find that version, are you sure you used the right acronym?", true)
                     },
                     LogStatement = "/booklist - invalid version"
                 };

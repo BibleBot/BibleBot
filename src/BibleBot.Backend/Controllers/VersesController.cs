@@ -219,7 +219,7 @@ namespace BibleBot.Backend.Controllers
                     OK = false,
                     Pages = new List<InternalEmbed>
                     {
-                        new Utils().Embedify("Too Many References", "There are too many references, the maximum amount of references you can do in one message is 6.", true)
+                        Utils.GetInstance().Embedify("Too Many References", "There are too many references, the maximum amount of references you can do in one message is 6.", true)
                     },
                     LogStatement = "too many verses"
                 };

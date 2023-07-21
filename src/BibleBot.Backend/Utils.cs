@@ -15,6 +15,28 @@ namespace BibleBot.Backend
 {
     public class Utils
     {
+
+        private Utils() { }
+        private static Utils _instance;
+        private static readonly object _lock = new object();
+
+        public static Utils GetInstance()
+        {
+            if (_instance == null)
+            {
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new Utils();
+                    }
+                }
+            }
+
+            return _instance;
+        }
+
+
         public enum Colors
         {
             NORMAL_COLOR = 6709986,
@@ -136,7 +158,7 @@ namespace BibleBot.Backend
                                 for (int i = firstPart; i < secondPart + 1; i++)
                                 {
                                     var title = $"{pgResource.Title} - Paragraph {i}";
-                                    results.Add(Embedify(null, title, pgResource.Paragraphs.ElementAt(i - 1).Text, false, pgResource.Copyright));
+                                    results.Add(Embedify(null, title, $"<**{i}**> {pgResource.Paragraphs.ElementAt(i - 1).Text}", false, pgResource.Copyright));
                                 }
                             }
                             else if (firstPart == secondPart)
