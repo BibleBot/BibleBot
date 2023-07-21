@@ -514,15 +514,27 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                     if (names != null)
                     {
+                        var pages = new List<InternalEmbed>();
+
+                        if (names.ContainsKey(BookCategories.OldTestament))
+                        {
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false);
+                        }
+
+                        if (names.ContainsKey(BookCategories.NewTestament))
+                        {
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false));
+                        }
+
+                        if (names.ContainsKey(BookCategories.Deuterocanon))
+                        {
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false));
+                        }
+
                         return new CommandResponse
                         {
                             OK = true,
-                            Pages = new List<InternalEmbed>
-                            {
-                                Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false),
-                                Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false),
-                                Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false)
-                            },
+                            Pages = pages,
                             LogStatement = "/booklist"
                         };
                     }
