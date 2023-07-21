@@ -164,7 +164,7 @@ namespace BibleBot.Backend
                             else if (firstPart == secondPart)
                             {
                                 var title = $"{pgResource.Title} - Paragraph {firstPart}";
-                                results.Add(Embedify(null, title, pgResource.Paragraphs.ElementAt(firstPart - 1).Text, false, pgResource.Copyright));
+                                results.Add(Embedify(null, title, $"<**{firstPart}**> pgResource.Paragraphs.ElementAt(firstPart - 1).Text", false, pgResource.Copyright));
                             }
                             else
                             {
