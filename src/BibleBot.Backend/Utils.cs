@@ -158,6 +158,7 @@ namespace BibleBot.Backend
                                 for (int i = firstPart; i < secondPart + 1; i++)
                                 {
                                     var title = $"{pgResource.Title} - Paragraph {i}";
+                                    // TODO: should follow verse numbers preference?
                                     results.Add(Embedify(null, title, $"<**{i}**> {pgResource.Paragraphs.ElementAt(i - 1).Text}", false, pgResource.Copyright));
                                 }
                             }
