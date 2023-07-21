@@ -518,7 +518,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                         if (names.ContainsKey(BookCategories.OldTestament))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false);
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false));
                         }
 
                         if (names.ContainsKey(BookCategories.NewTestament))
