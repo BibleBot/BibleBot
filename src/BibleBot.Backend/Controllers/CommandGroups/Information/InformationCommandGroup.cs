@@ -143,7 +143,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             {
                 var embed = new InternalEmbed
                 {
-                    Title = $"BibleBot v{Utils.Version}",
+                    Title = $"<:biblebot:800682801925980260> BibleBot v{Utils.Version}",
                     Description = "Scripture from your Discord client to your heart.",
                     Color = 6709986,
                     Footer = new Footer
@@ -155,7 +155,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                     {
                         new EmbedField
                         {
-                            Name = "📖 Commands",
+                            Name = "<:slashcommand:1132081589313081364> Commands",
                             Value = "`/search` - search for verses by keyword\n" +
                             "`/version` - version preferences and information\n" +
                             "`/formatting` - preferences for verse styles and bot behavior\n" +
@@ -163,25 +163,28 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             "`/random` - get a random Bible verse\n" +
                             "`/resource` - creeds, catechisms, confessions, and historical documents\n" +
                             "`/stats` - view bot statistics\n" +
-                            "`/invite` - get the invite link for BibleBot\n\n─────────────",
+                            "`/invite` - get the invite link for BibleBot\n\n" +
+                            "Look inside these commands for more, or check out our [documentation](https://biblebot.xyz/usage-and-commands/)\n\n" +
+                            "─────────────",
                             Inline = false
                         },
                         new EmbedField
                         {
-                            Name = "🔗 Links",
+                            Name = ":link: Links",
                             Value = "**Website**: https://biblebot.xyz\n" +
                             "**Copyrights**: https://biblebot.xyz/copyright\n" +
                             "**Source Code**: https://gitlab.com/KerygmaDigital/BibleBot/BibleBot\n" +
                             "**Official Discord Server**: https://biblebot.xyz/discord\n" +
-                            "**Terms and Conditions**: https://biblebot.xyz/terms\n\n─────────────"
+                            "**Terms and Conditions**: https://biblebot.xyz/terms\n\n" +
+                            "─────────────"
                         },
                         new EmbedField
                         {
-                            Name = "🔔 News",
-                            Value = "**21 June 2023** - [Update: v9.2-beta (build 532)](https://biblebot.xyz/2023/06/21/release-v9-2-beta-build-532/)\n" +
+                            Name = "<:news:1132081053251686552> News",
+                            Value = "<:newbadge:1132080714343526521> **21 July 2023** - [Update: v9.2-beta (build 559)](https://biblebot.xyz/2023/07/21/update-v9-2-beta-build-559/) <:newbadge:1132080714343526521>\n" +
+                            "**21 June 2023** - [Update: v9.2-beta (build 532)](https://biblebot.xyz/2023/06/21/release-v9-2-beta-build-532/)\n" +
                             "**31 March 2022** - [Release: v9.2-beta](https://biblebot.xyz/2022/03/31/release-v9-2-beta/)\n" +
-                            "**14 March 2022** - [Update: v9.1-beta (build 138)](https://biblebot.xyz/2022/03/14/update-v9-1-beta-build-138/)\n" +
-                            "**15 October 2021** - [Update: v9.1-beta (build 119)](https://biblebot.xyz/2021/10/15/update-v9-1-beta-build-119/)",
+                            "**14 March 2022** - [Update: v9.1-beta (build 138)](https://biblebot.xyz/2022/03/14/update-v9-1-beta-build-138/)",
                             Inline = false,
                         }
                     }

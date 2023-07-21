@@ -73,12 +73,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 var idealUser = await _userService.Get(req.UserId);
                 var idealGuild = await _guildService.Get(req.GuildId);
 
-                var response = "Verse numbers are **<verseNumbers>**.\n" +
-                               "Titles are **<titles>**.\n" +
-                               "Verse pagination is **<pagination>**.\n" +
+                var response = "<vncheck> Verse numbers are **<verseNumbers>**.\n" +
+                               "<titlecheck> Titles are **<titles>**.\n" +
+                               "<vpcheck> Verse pagination is **<pagination>**.\n" +
                                "Your preferred display style is set to **`<displayStyle>`**.\n\n" +
                                "The server's preferred display style is set to **`<serverDisplayStyle>`**.\n" +
-                               "This bot will ignore verses in this server surrounded by **`<ignoringBrackets>`**.\n\n" +
+                               "This bot will ignore verses in this server surrounded by **`<>`**<ignoringBrackets>.\n\n" +
                                "__**Related Commands**__\n" +
                                "**/setversenumbers** - enable or disable verse numbers\n" +
                                "**/settitles** - enable or disable titles\n" +
@@ -89,24 +89,48 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    response = response.Replace("<verseNumbers>", idealUser.VerseNumbersEnabled ? "enabled" : "disabled");
-                    response = response.Replace("<titles>", idealUser.TitlesEnabled ? "enabled" : "disabled");
-                    response = response.Replace("<pagination>", idealUser.PaginationEnabled ? "enabled" : "disabled");
+                    if (idealUser.VerseNumbersEnabled)
+                    {
+                        response = response.Replace("<vncheck>", "<:checkmark:1132080313854603295>").Replace("<verseNumbers>", "enabled");
+                    }
+                    else
+                    {
+                        response = response.Replace("<vncheck>", "<:xmark:1132080327557398599>").Replace("<verseNumbers>", "disabled");
+                    }
+
+                    if (idealUser.TitlesEnabled)
+                    {
+                        response = response.Replace("<titlecheck>", "<:checkmark:1132080313854603295>").Replace("<titles>", "enabled");
+                    }
+                    else
+                    {
+                        response = response.Replace("<titlecheck>", "<:xmark:1132080327557398599>").Replace("<titles>", "disabled");
+                    }
+
+                    if (idealUser.PaginationEnabled)
+                    {
+                        response = response.Replace("<vpcheck>", "<:checkmark:1132080313854603295>").Replace("<pagination>", "enabled");
+                    }
+                    else
+                    {
+                        response = response.Replace("<vpcheck>", "<:xmark:1132080327557398599>").Replace("<pagination>", "disabled");
+                    }
+
                     response = response.Replace("<displayStyle>", idealUser.DisplayStyle);
                 }
 
                 if (idealGuild != null)
                 {
                     response = response.Replace("<serverDisplayStyle>", idealGuild.DisplayStyle == null ? "embed" : idealGuild.DisplayStyle);
-                    response = response.Replace("<ignoringBrackets>", idealGuild.IgnoringBrackets);
+                    response = response.Replace("<ignoringBrackets>", idealGuild.IgnoringBrackets != "<>" ? $" or **`{idealGuild.IgnoringBrackets}`**" : "");
                 }
 
-                response = response.Replace("<verseNumbers>", "enabled");
-                response = response.Replace("<titles>", "enabled");
-                response = response.Replace("<pagination>", "enabled");
+                response = response.Replace("<vncheck>", "<:checkmark:1132080313854603295>").Replace("<verseNumbers>", "enabled");
+                response = response.Replace("<titlecheck>", "<:checkmark:1132080313854603295>").Replace("<titles>", "enabled");
+                response = response.Replace("<vpcheck>", "<:checkmark:1132080313854603295>").Replace("<pagination>", "enabled");
                 response = response.Replace("<displayStyle>", "embed");
                 response = response.Replace("<serverDisplayStyle>", "embed");
-                response = response.Replace("<ignoringBrackets>", "<>");
+                response = response.Replace("<ignoringBrackets>", "");
 
                 return new CommandResponse
                 {
