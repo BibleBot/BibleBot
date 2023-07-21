@@ -164,7 +164,7 @@ namespace BibleBot.Backend
                             else if (firstPart == secondPart)
                             {
                                 var title = $"{pgResource.Title} - Paragraph {firstPart}";
-                                results.Add(Embedify(null, title, $"<**{firstPart}**> pgResource.Paragraphs.ElementAt(firstPart - 1).Text", false, pgResource.Copyright));
+                                results.Add(Embedify(null, title, $"<**{firstPart}**> {pgResource.Paragraphs.ElementAt(firstPart - 1).Text}", false, pgResource.Copyright));
                             }
                             else
                             {
@@ -192,7 +192,7 @@ namespace BibleBot.Backend
 
                     return new List<InternalEmbed>
                     {
-                        Embedify(null, title, pgResource.Paragraphs.ElementAt(sectionAsIndex - 1).Text, false, pgResource.Copyright)
+                        Embedify(null, title, $"<**{sectionAsIndex}**> {pgResource.Paragraphs.ElementAt(sectionAsIndex - 1).Text}", false, pgResource.Copyright)
                     };
                 }
             }
