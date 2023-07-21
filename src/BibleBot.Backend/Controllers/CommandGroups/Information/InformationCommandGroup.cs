@@ -90,16 +90,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 var backendLongHash = ThisAssembly.Git.Sha;
                 var backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
 
-                var resp = $"**__Frontend Stats__**\n" +
+                var resp = $"### Frontend Stats\n" +
                 $"**Shard Count**: {frontendStats.ShardCount}\n" +
                 $"**Server Count**: {frontendStats.ServerCount}\n" +
                 $"**User Count**: {frontendStats.UserCount}\n" +
                 $"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
-                $"**__Backend Stats (estimated)__**\n" +
+                $"### Backend Stats (estimated)\n" +
                 $"**User Preference Count**: {userPrefs}\n" +
                 $"**Guild Preference Count**: {guildPrefs}\n" +
                 $"**Version Count**: {versions}\n\n" +
-                $"**__Metadata__**\n" +
+                $"### Metadata\n" +
                 $"**Frontend**: v{version} ([{frontendShortHash}]({frontendCommitURL}))\n" +
                 $"**Backend**: v{version} ([{backendShortHash}]({backendCommitURL}))\n";
 

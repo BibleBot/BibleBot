@@ -204,6 +204,115 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
+        public async Task<Dictionary<BookCategories, Dictionary<string, string>>> GetBibleGatewayVersionBookList(Version version)
+        {
+            // TODO: We need to find a cleaner solution for these booknames that isn't nested Dictionaries.
+            Dictionary<BookCategories, Dictionary<string, string>> names = new Dictionary<BookCategories, Dictionary<string, string>>();
+
+            List<string> threeMaccVariants = new List<string> { "3macc", "3m" };
+            List<string> fourMaccVariants = new List<string> { "4macc", "4m" };
+            List<string> greekEstherVariants = new List<string> { "gkesth", "adest", "addesth", "gkes" };
+            List<string> prayerAzariahVariants = new List<string> { "sgthree", "sgthr", "prazar" };
+
+            string versionListResp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
+            var versionListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(versionListResp));
+
+            var translationElements = versionListDocument.All.Where(el => el.ClassList.Contains("translation-name"));
+
+            string url = null;
+            foreach (var el in translationElements)
+            {
+                var targets = el.GetElementsByTagName("a");
+
+                if (targets.Length == 1)
+                {
+                    if (targets[0].HasAttribute("href") && targets[0].TextContent == version.Name)
+                    {
+                        url = $"https://www.biblegateway.com{targets[0].GetAttribute("href")}";
+                    }
+                }
+            }
+
+            if (url == null)
+            {
+                return null;
+            }
+
+            string bookListResp = await _httpClient.GetStringAsync(url);
+            var bookListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(bookListResp));
+
+            var bookNames = bookListDocument.All.Where(el => el.ClassList.Contains("book-name"));
+            foreach (var el in bookNames)
+            {
+                foreach (var span in el.GetElementsByTagName("span"))
+                {
+                    span.Remove();
+                }
+
+                if (el.HasAttribute("data-target"))
+                {
+                    string dataName = el.GetAttribute("data-target").Substring(1, el.GetAttribute("data-target").Length - 6);
+                    string bookName = el.TextContent.Trim();
+
+                    if (threeMaccVariants.Contains(dataName))
+                    {
+                        dataName = "3ma";
+                    }
+                    else if (fourMaccVariants.Contains(dataName))
+                    {
+                        dataName = "4ma";
+                    }
+                    else if (greekEstherVariants.Contains(dataName))
+                    {
+                        dataName = "gkest";
+                    }
+                    else if (prayerAzariahVariants.Contains(dataName))
+                    {
+                        dataName = "praz";
+                    }
+                    else if (dataName == "epjer")
+                    {
+                        continue;
+                    }
+
+                    if (!IsNuisance(bookName))
+                    {
+                        string bookMapString = File.ReadAllText("./Data/book_map.json");
+                        var bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapString);
+
+                        BookCategories category = new BookCategories();
+
+                        if (bookMap["ot"].ContainsKey(dataName))
+                        {
+                            category = BookCategories.OldTestament;
+                        }
+                        else if (bookMap["nt"].ContainsKey(dataName))
+                        {
+                            category = BookCategories.NewTestament;
+                        }
+                        else if (bookMap["deu"].ContainsKey(dataName))
+                        {
+                            category = BookCategories.Deuterocanon;
+                        }
+
+                        if (dataName == "ps151")
+                        {
+                            names[BookCategories.OldTestament]["ps"] = $"{names[BookCategories.OldTestament]["ps"]} <151>";
+                        }
+
+                        if (!names.ContainsKey(category))
+                        {
+                            names.Add(category, new Dictionary<string, string>());
+                        }
+
+                        names[category].Add(dataName, bookName);
+                    }
+                }
+            }
+
+            return names;
+        }
+
         private async Task<Dictionary<string, string>> GetAPIBibleVersions()
         {
             Dictionary<string, string> versions = new Dictionary<string, string>();

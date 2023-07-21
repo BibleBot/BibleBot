@@ -25,12 +25,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
         private readonly UserService _userService;
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
+        private readonly NameFetchingService _nameFetchingService;
 
-        public VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService)
+        public VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
+            _nameFetchingService = nameFetchingService;
 
             Name = "version";
             IsOwnerOnly = false;
@@ -40,7 +42,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new VersionSet(_userService, _guildService, _versionService),
                 new VersionSetServer(_userService, _guildService, _versionService),
                 new VersionInfo(_userService, _guildService, _versionService),
-                new VersionList(_userService, _guildService, _versionService)
+                new VersionList(_userService, _guildService, _versionService),
+                new VersionBookList(_userService, _guildService, _versionService, _nameFetchingService)
             };
             DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
         }
@@ -83,7 +86,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                                "**/setversion** - set your preferred version\n" +
                                "**/setserverversion** - set the server's default version (staff only)\n" +
                                "**/versioninfo** - get information on a version\n" +
-                               "**/listversions** - list all available versions";
+                               "**/listversions** - list all available versions\n" +
+                               "**/booklist** - list all available books";
 
                 if (idealUser != null)
                 {
@@ -294,7 +298,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             {
                 Name = "info";
                 ArgumentsError = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
-                ExpectedArguments = 1;
+                ExpectedArguments = 0;
                 PermissionsRequired = null;
                 BotAllowed = true;
 
@@ -305,27 +309,53 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                if (args.Count > 0)
-                {
-                    var idealVersion = await _versionService.Get(args[0]);
+                var idealUser = await _userService.Get(req.UserId);
+                var idealGuild = await _guildService.Get(req.GuildId);
 
-                    if (idealVersion != null)
+                string version = null;
+
+                if (args.Count() > 0)
+                {
+                    version = args[0];
+                }
+                else
+                {
+                    version = "RSV";
+
+                    if (idealUser != null && !req.IsBot)
                     {
-                        return new CommandResponse
-                        {
-                            OK = true,
-                            Pages = new List<InternalEmbed>
-                            {
-                                new Utils().Embedify("/versioninfo",
-                                $"**{idealVersion.Name}**\n\n" +
-                                $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? "Yes" : "No")}\n" +
-                                $"Contains New Testament: {(idealVersion.SupportsNewTestament ? "Yes" : "No")}\n" +
-                                $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? "Yes" : "No")}",
-                                false)
-                            },
-                            LogStatement = $"/versioninfo {args[0]}"
-                        };
+                        version = idealUser.Version;
                     }
+                    else if (idealGuild != null)
+                    {
+                        version = idealGuild.Version;
+                    }
+                }
+
+                var idealVersion = await _versionService.Get(version);
+
+                if (idealVersion != null)
+                {
+                    var response = $"### {idealVersion.Name}\n\n" +
+                                $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":no_entry:")}\n" +
+                                $"Contains New Testament: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":no_entry:")}\n" +
+                                $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":no_entry:")}\n\n" +
+                                $"Source (mainly for developers): `{idealVersion.Source}`";
+
+                    if (idealVersion.Source != "bg")
+                    {
+                        response += "\n\nSee `/booklist` for a list of available books.";
+                    }
+
+                    return new CommandResponse
+                    {
+                        OK = true,
+                        Pages = new List<InternalEmbed>
+                            {
+                                new Utils().Embedify("/versioninfo", response, false)
+                            },
+                        LogStatement = $"/versioninfo {version}"
+                    };
                 }
 
                 return new CommandResponse
@@ -407,6 +437,121 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = pages,
                     LogStatement = "/listversions"
+                };
+            }
+        }
+
+        public class VersionBookList : ICommand
+        {
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+            public bool BotAllowed { get; set; }
+
+            private readonly UserService _userService;
+            private readonly GuildService _guildService;
+            private readonly VersionService _versionService;
+            private readonly NameFetchingService _nameFetchingService;
+
+            public VersionBookList(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService)
+            {
+                Name = "booklist";
+                ArgumentsError = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
+                ExpectedArguments = 0;
+                PermissionsRequired = null;
+                BotAllowed = false;
+
+                _userService = userService;
+                _guildService = guildService;
+                _versionService = versionService;
+                _nameFetchingService = nameFetchingService;
+            }
+
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            {
+                var idealUser = await _userService.Get(req.UserId);
+                var idealGuild = await _guildService.Get(req.GuildId);
+
+                string version = null;
+
+                if (args.Count() > 0)
+                {
+                    version = args[0];
+                }
+                else
+                {
+                    version = "RSV";
+
+                    if (idealUser != null && !req.IsBot)
+                    {
+                        version = idealUser.Version;
+                    }
+                    else if (idealGuild != null)
+                    {
+                        version = idealGuild.Version;
+                    }
+                }
+
+                var idealVersion = await _versionService.Get(version);
+
+                if (idealVersion != null)
+                {
+                    if (idealVersion.Source != "bg")
+                    {
+                        return new CommandResponse
+                        {
+                            OK = false,
+                            Pages = new List<InternalEmbed>
+                            {
+                                new Utils().Embedify("/booklist", "This version is not eligible for this command yet. Make sure you're using a version of source `bg` (see `/versioninfo`).", true)
+                            },
+                            LogStatement = "/booklist - non-bg source"
+                        };
+                    }
+
+                    var names = await _nameFetchingService.GetBibleGatewayVersionBookList(idealVersion);
+
+                    if (names != null)
+                    {
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new List<InternalEmbed>
+                            {
+                                new Utils().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false),
+                                new Utils().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false),
+                                new Utils().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false)
+                            },
+                            LogStatement = "/booklist"
+                        };
+                    }
+                    else
+                    {
+                        var message = "We encountered an internal error. " +
+                        "Please report this to the support server (https://biblebot.xyz/discord) or make a bug report (https://biblebot.xyz/bugreport) with the following information:\n\n" +
+                        $"```\nVersion: {idealVersion.Abbreviation}\n```";
+
+                        return new CommandResponse
+                        {
+                            OK = false,
+                            Pages = new List<InternalEmbed>
+                            {
+                                new Utils().Embedify("/booklist", message, true)
+                            },
+                            LogStatement = $"/booklist - internal error on {idealVersion.Abbreviation}"
+                        };
+                    }
+                }
+
+                return new CommandResponse
+                {
+                    OK = false,
+                    Pages = new List<InternalEmbed>
+                    {
+                        new Utils().Embedify("/booklist", "I couldn't find that version, are you sure you used the right acronym?", true)
+                    },
+                    LogStatement = "/booklist - invalid version"
                 };
             }
         }

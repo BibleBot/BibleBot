@@ -29,6 +29,7 @@ namespace BibleBot.Backend.Tests
         private Mock<GuildService> guildServiceMock;
         private Mock<ResourceService> resourceServiceMock;
         private Mock<FrontendStatsService> frontendStatsServiceMock;
+        private Mock<NameFetchingService> nameFetchingServiceMock;
 
         private Mock<SpecialVerseProvider> spProviderMock;
         private Mock<BibleGatewayProvider> bgProviderMock;
@@ -57,6 +58,7 @@ namespace BibleBot.Backend.Tests
             versionService = new VersionService(databaseSettings);
             resourceServiceMock = new Mock<ResourceService>();
             frontendStatsServiceMock = new Mock<FrontendStatsService>(databaseSettings);
+            nameFetchingServiceMock = new Mock<NameFetchingService>();
 
             spProviderMock = new Mock<SpecialVerseProvider>();
             bgProviderMock = new Mock<BibleGatewayProvider>();
@@ -76,8 +78,8 @@ namespace BibleBot.Backend.Tests
 
             commandsController = new CommandsController(userServiceMock.Object, guildServiceMock.Object,
                                                     versionService, resourceServiceMock.Object,
-                                                    frontendStatsServiceMock.Object, spProviderMock.Object,
-                                                    bgProviderMock.Object, abProviderMock.Object);
+                                                    frontendStatsServiceMock.Object, nameFetchingServiceMock.Object,
+                                                    spProviderMock.Object, bgProviderMock.Object, abProviderMock.Object);
         }
 
         [Test]

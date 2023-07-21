@@ -15,6 +15,7 @@ using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -28,6 +29,7 @@ namespace BibleBot.Backend.Controllers
         private readonly VersionService _versionService;
         private readonly ResourceService _resourceService;
         private readonly FrontendStatsService _frontendStatsService;
+        private readonly NameFetchingService _nameFetchingService;
 
         private readonly List<IBibleProvider> _bibleProviders;
         private readonly SpecialVerseProvider _spProvider;
@@ -35,13 +37,14 @@ namespace BibleBot.Backend.Controllers
         private readonly List<ICommandGroup> _commandGroups;
 
         public CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
-                                  FrontendStatsService frontendStatsService, SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
+                                  FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
         {
             _userService = userService;
             _guildService = guildService;
             _versionService = versionService;
             _resourceService = resourceService;
             _frontendStatsService = frontendStatsService;
+            _nameFetchingService = nameFetchingService;
 
             _spProvider = spProvider;
             _bibleProviders = new List<IBibleProvider>
@@ -54,7 +57,7 @@ namespace BibleBot.Backend.Controllers
             {
                 new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
                 new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
-                new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService),
+                new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService, _nameFetchingService),
                 new CommandGroups.Resources.ResourceCommandGroup(_userService, _guildService, _resourceService.GetAllResources()),
                 new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
@@ -115,6 +118,7 @@ namespace BibleBot.Backend.Controllers
 
                         if (tokenizedBody.Length > 1)
                         {
+
                             var idealCommand = grp.Commands.Where(cmd => cmd.Name == tokenizedBody[1]).FirstOrDefault();
 
                             if (idealCommand != null)

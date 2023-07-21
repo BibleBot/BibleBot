@@ -113,14 +113,16 @@ class Versions(commands.Cog):
     async def versioninfo(
         self,
         inter: CommandInteraction,
-        abbreviation: str = commands.Param(
-            description="The abbreviation of the version."
-        ),
+        abbreviation: str = None,
     ):
         await inter.response.defer()
-        resp = await backend.submit_command(
-            inter.channel, inter.author, f"+version info {abbreviation}"
-        )
+
+        command = "+version info"
+
+        if abbreviation:
+            command += f" {abbreviation}"
+
+        resp = await backend.submit_command(inter.channel, inter.author, command)
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="List all available versions.")
@@ -130,6 +132,29 @@ class Versions(commands.Cog):
             inter.channel, inter.author, "+version list"
         )
 
+        if isinstance(resp, list):
+            await sending.safe_send_interaction(
+                inter.followup,
+                embed=resp[0],
+                view=CreatePaginator(resp, inter.author.id, 180),
+            )
+        else:
+            await sending.safe_send_interaction(inter.followup, embed=resp)
+
+    @commands.slash_command(description="List all available books in a version.")
+    async def booklist(
+        self,
+        inter: CommandInteraction,
+        abbreviation: str = None,
+    ):
+        await inter.response.defer()
+
+        command = "+version booklist"
+
+        if abbreviation:
+            command += f" {abbreviation}"
+
+        resp = await backend.submit_command(inter.channel, inter.author, command)
         if isinstance(resp, list):
             await sending.safe_send_interaction(
                 inter.followup,
