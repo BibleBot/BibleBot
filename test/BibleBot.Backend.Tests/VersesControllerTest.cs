@@ -1164,5 +1164,214 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldProcessVerseWithDataNameSGTHR()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Song of the Three Young Men 1:1 RSV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Prayer of Azariah in the Furnace",
+                        PsalmTitle = "",
+                        Text = "<**1**> And they walked about in the midst of the flames, singing hymns to God and blessing the Lord.",
+                        Reference = new Reference
+                        {
+                            Book = "Song of the Three Young Men",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "Song of the Three Young Men 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public async Task ShouldProcessVerseWithActualDataNameSGTHREE()
+        {
+            var testVersion = await versionService.Get("WYC");
+            if (testVersion == null)
+            {
+                testVersion = await versionService.Create(new MockWYC());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1 WYC")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Song of the Three Young Men 1:1 WYC",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**1**> And they walked in the midst of the flame, and praised God, and blessed the Lord. [And they walked in the middle of the flame, praising God, and blessing the Lord.]",
+                        Reference = new Reference
+                        {
+                            Book = "Song of the Three Young Men",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = testVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "Song of the Three Young Men 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public async Task ShouldProcessVerseWithDataNamePRAZ()
+        {
+            var testVersion = await versionService.Get("NRSVA");
+            if (testVersion == null)
+            {
+                testVersion = await versionService.Create(new MockNRSVA());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 NRSVA")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Prayer of Azariah 1:1 NRSVA",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "The Prayer of Azariah in the Furnace",
+                        PsalmTitle = "(Additions to Daniel, inserted between 3.23 and 3.24)",
+                        Text = "<**1**> They walked around in the midst of the flames, singing hymns to God and blessing the Lord.",
+                        Reference = new Reference
+                        {
+                            Book = "Prayer of Azariah",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = testVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "Prayer of Azariah 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public async Task ShouldProcessVerseWithActualDataNamePRAZAR()
+        {
+            var testVersion = await versionService.Get("CEB");
+            if (testVersion == null)
+            {
+                testVersion = await versionService.Create(new MockCEB());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 CEB")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Prayer of Azariah 1:1 CEB",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "Azariah's prayer for reconciliation",
+                        PsalmTitle = "",
+                        Text = "<**1**> Shadrach, Meshach, and Abednego walked around in the flames, singing hymns to God, blessing the Lord.",
+                        Reference = new Reference
+                        {
+                            Book = "Prayer of Azariah",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = testVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "Prayer of Azariah 1:1"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public async Task ShouldProcessVerseWithDataNameADDESTH()
+        {
+            var testVersion = await versionService.Get("WYC");
+            if (testVersion == null)
+            {
+                testVersion = await versionService.Create(new MockWYC());
+            }
+
+            var resp = versesController.ProcessMessage(new MockRequest("Additions to Esther 10:4 WYC")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = true,
+                LogStatement = "Additions to Esther 10:4 WYC",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new Verse
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**4**> And Mordecai said, These things be done of (or by) God. [And Mordecai said, Of God these things be done.]",
+                        Reference = new Reference
+                        {
+                            Book = "Additions to Esther",
+                            StartingChapter = 10,
+                            StartingVerse = 4,
+                            EndingChapter = 10,
+                            EndingVerse = 4,
+                            Version = testVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "Additions to Esther 10:4"
+                        }
+                    }
+                }
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }

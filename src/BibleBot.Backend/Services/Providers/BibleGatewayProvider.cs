@@ -116,6 +116,11 @@ namespace BibleBot.Backend.Services.Providers
                 el.Remove();
             }
 
+            foreach (var el in document.QuerySelectorAll(".translation-note"))
+            {
+                el.Remove();
+            }
+
             foreach (var el in document.QuerySelectorAll(".inline-h3"))
             {
                 el.Remove();
@@ -225,6 +230,7 @@ namespace BibleBot.Backend.Services.Providers
                 { " .",    "." },
                 { "′",     "'" },
                 { "’",     "'" }, // Fonts may make it look like this is no different than the line above, but it's a different codepoint in Unicode.
+                { "' s",     "'s" },
                 { " . ",   " " },
             };
 

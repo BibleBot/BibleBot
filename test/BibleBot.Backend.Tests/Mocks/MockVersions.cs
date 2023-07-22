@@ -113,4 +113,43 @@ namespace BibleBot.Backend.Tests.Mocks
             this.SupportsDeuterocanon = false;
         }
     }
+
+    public class MockWYC : Version
+    {
+        public MockWYC()
+        {
+            this.Name = "Wycliffe Bible (WYC)";
+            this.Abbreviation = "WYC";
+            this.Source = "bg";
+            this.SupportsOldTestament = true;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = true;
+        }
+    }
+
+    public class MockCEB : Version
+    {
+        public MockCEB()
+        {
+            this.Name = "Common English Bible (CEB)";
+            this.Abbreviation = "CEB";
+            this.Source = "bg";
+            this.SupportsOldTestament = true;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = true;
+        }
+    }
+
+    public class MockNRSVA : Version
+    {
+        public MockNRSVA()
+        {
+            this.Name = "New Revised Standard Version, Anglicised (NRSVA)";
+            this.Abbreviation = "NRSVA";
+            this.Source = "bg";
+            this.SupportsOldTestament = true;
+            this.SupportsNewTestament = true;
+            this.SupportsDeuterocanon = true;
+        }
+    }
 }

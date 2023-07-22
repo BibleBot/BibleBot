@@ -25,6 +25,8 @@ namespace BibleBot.Backend.Services
         private readonly Dictionary<string, List<string>> _abbreviations;
         private Dictionary<string, List<string>> _bookNames = new Dictionary<string, List<string>>();
         private List<string> _defaultNames;
+        private Dictionary<string, Dictionary<string, string>> _bookMap;
+        private List<string> _bookMapDataNames;
         private readonly List<string> _nuisances;
 
         private readonly HttpClient _httpClient;
@@ -43,6 +45,11 @@ namespace BibleBot.Backend.Services
 
             string nuisancesText = File.ReadAllText("./Data/NameFetching/nuisances.json");
             _nuisances = JsonSerializer.Deserialize<List<string>>(nuisancesText);
+
+            string bookMapText = File.ReadAllText("./Data/book_map.json");
+            _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapText);
+
+            _bookMapDataNames = _bookMap.Select(b => b.Value).SelectMany(b => b.Keys).ToList();
 
             _httpClient = new HttpClient();
             _restClient = new RestClient("https://api.scripture.api.bible/v1");
@@ -139,10 +146,12 @@ namespace BibleBot.Backend.Services
         {
             Dictionary<string, List<string>> names = new Dictionary<string, List<string>>();
 
-            List<string> threeMaccVariants = new List<string> { "3macc", "3m" };
-            List<string> fourMaccVariants = new List<string> { "4macc", "4m" };
-            List<string> greekEstherVariants = new List<string> { "gkesth", "adest", "addesth", "gkes" };
-            List<string> prayerAzariahVariants = new List<string> { "sgthree", "sgthr", "prazar" };
+            List<string> threeMaccVariants = new List<string> { "3ma", "3macc", "3m" };
+            List<string> fourMaccVariants = new List<string> { "4ma", "4macc", "4m" };
+            List<string> greekEstherVariants = new List<string> { "gkest", "gkesth", "gkes" };
+            List<string> addEstherVariants = new List<string> { "addesth", "adest" };
+            List<string> prayerAzariahVariants = new List<string> { "praz", "prazar" };
+            List<string> songThreeYouthsVariants = new List<string> { "sgthr", "sgthree" };
 
             foreach (KeyValuePair<string, string> version in versions)
             {
@@ -162,25 +171,62 @@ namespace BibleBot.Backend.Services
                         string dataName = el.GetAttribute("data-target").Substring(1, el.GetAttribute("data-target").Length - 6);
                         string bookName = el.TextContent.Trim();
 
+                        bool usesVariant = false;
+                        string origDataName = "";
+
                         if (threeMaccVariants.Contains(dataName))
                         {
+                            usesVariant = true;
+                            origDataName = dataName;
                             dataName = "3ma";
                         }
                         else if (fourMaccVariants.Contains(dataName))
                         {
+                            usesVariant = true;
+                            origDataName = dataName;
                             dataName = "4ma";
                         }
                         else if (greekEstherVariants.Contains(dataName))
                         {
+                            usesVariant = true;
+                            origDataName = dataName;
                             dataName = "gkest";
+                        }
+                        else if (addEstherVariants.Contains(dataName))
+                        {
+                            usesVariant = true;
+                            origDataName = dataName;
+                            dataName = "addesth";
                         }
                         else if (prayerAzariahVariants.Contains(dataName))
                         {
+                            usesVariant = true;
+                            origDataName = dataName;
                             dataName = "praz";
+                        }
+                        else if (songThreeYouthsVariants.Contains(dataName))
+                        {
+                            usesVariant = true;
+                            origDataName = dataName;
+                            dataName = "sgthr";
                         }
                         else if (dataName == "epjer")
                         {
                             continue;
+                        }
+
+                        if (usesVariant && dataName != origDataName)
+                        {
+                            Log.Warning($"NameFetchingService: \"{version.Key}\" uses variant data name \"{origDataName}\", replaced with \"{dataName}\".");
+                        }
+                        else if (usesVariant)
+                        {
+                            Log.Warning($"NameFetchingService: \"{version.Key}\" uses data name \"{dataName}\".");
+                        }
+
+                        if (!_bookMapDataNames.Contains(dataName))
+                        {
+                            Log.Warning($"NameFetchingService: Data name \"{dataName}\" for \"{version.Key}\" not in book_map.json.");
                         }
 
                         if (!IsNuisance(bookName))
@@ -277,22 +323,24 @@ namespace BibleBot.Backend.Services
 
                     if (!IsNuisance(bookName))
                     {
-                        string bookMapString = File.ReadAllText("./Data/book_map.json");
-                        var bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapString);
-
                         BookCategories category = new BookCategories();
 
-                        if (bookMap["ot"].ContainsKey(dataName))
+                        if (_bookMap["ot"].ContainsKey(dataName))
                         {
                             category = BookCategories.OldTestament;
                         }
-                        else if (bookMap["nt"].ContainsKey(dataName))
+                        else if (_bookMap["nt"].ContainsKey(dataName))
                         {
                             category = BookCategories.NewTestament;
                         }
-                        else if (bookMap["deu"].ContainsKey(dataName))
+                        else if (_bookMap["deu"].ContainsKey(dataName))
                         {
                             category = BookCategories.Deuterocanon;
+                        }
+                        else
+                        {
+                            Log.Warning($"NameFetchingService: Data name \"{dataName}\" for \"{version.Name}\" not in book_map.json.");
+                            continue;
                         }
 
                         if (dataName == "ps151")
