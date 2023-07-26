@@ -181,10 +181,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new EmbedField
                         {
                             Name = "<:news:1132081053251686552> News",
-                            Value = "<:newbadge:1132080714343526521> **21 July 2023** - [Update: v9.2-beta (build 559)](https://biblebot.xyz/2023/07/21/update-v9-2-beta-build-559/) <:newbadge:1132080714343526521>\n" +
+                            Value = "<:newbadge:1132080714343526521> **26 July 2023** - [The NKJV has been restored for use...](https://discord.com/channels/362503610006765568/440313404427730945/1133504754031546380) <:newbadge:1132080714343526521>\n" +
+                            "<:newbadge:1132080714343526521> **21 July 2023** - [Update: v9.2-beta (build 559)](https://biblebot.xyz/2023/07/21/update-v9-2-beta-build-559/) <:newbadge:1132080714343526521>\n" +
                             "**21 June 2023** - [Update: v9.2-beta (build 532)](https://biblebot.xyz/2023/06/21/release-v9-2-beta-build-532/)\n" +
-                            "**31 March 2022** - [Release: v9.2-beta](https://biblebot.xyz/2022/03/31/release-v9-2-beta/)\n" +
-                            "**14 March 2022** - [Update: v9.1-beta (build 138)](https://biblebot.xyz/2022/03/14/update-v9-1-beta-build-138/)",
+                            "**31 March 2022** - [Release: v9.2-beta](https://biblebot.xyz/2022/03/31/release-v9-2-beta/)",
                             Inline = false,
                         }
                     }
