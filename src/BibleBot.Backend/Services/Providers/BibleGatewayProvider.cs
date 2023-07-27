@@ -33,7 +33,7 @@ namespace BibleBot.Backend.Services.Providers
             Name = "bg";
 
             _cancellationToken = new CancellationTokenSource();
-            _httpClient = new HttpClient();
+            _httpClient = CachingClient.GetCachingClient();
             _htmlParser = new HtmlParser();
         }
 
@@ -160,6 +160,12 @@ namespace BibleBot.Backend.Services.Providers
             reference.AsString = document.GetElementsByClassName("bcv").FirstOrDefault().TextContent.Trim();
 
             bool isISV = reference.Version.Abbreviation == "ISV";
+
+            // Benchmarking/Debugging, TODO: remove when ready
+            System.Console.WriteLine("---");
+            System.Console.WriteLine($"{reference}");
+            System.Console.WriteLine("[{0}]", string.Join(", ", req.Headers.GetValues("x-cachecow-client")));
+
             return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
 
