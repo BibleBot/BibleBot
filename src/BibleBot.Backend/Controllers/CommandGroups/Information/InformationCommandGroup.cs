@@ -164,7 +164,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             "`/resource` - creeds, catechisms, confessions, and historical documents\n" +
                             "`/stats` - view bot statistics\n" +
                             "`/invite` - get the invite link for BibleBot\n\n" +
-                            "Look inside these commands for more, or check out our [documentation](https://biblebot.xyz/usage-and-commands/)\n\n" +
+                            "Look inside these commands for more, or check out our [documentation](https://biblebot.xyz/usage-and-commands/).\n\n" +
                             "─────────────",
                             Inline = false
                         },
