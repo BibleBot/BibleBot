@@ -8,13 +8,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using BibleBot.Models;
-using RestSharp;
-using RestSharp.Serializers.SystemTextJson;
 using Serilog;
 
 namespace BibleBot.Backend.Services.Providers
@@ -22,7 +21,9 @@ namespace BibleBot.Backend.Services.Providers
     public class APIBibleProvider : IBibleProvider
     {
         public string Name { get; set; }
-        private readonly RestClient _restClient;
+        private readonly HttpClient _cachingHttpClient;
+        private readonly HttpClient _httpClient;
+        private readonly JsonSerializerOptions _jsonOptions;
         private readonly HtmlParser _htmlParser;
 
         private readonly Dictionary<string, string> _versionTable;
@@ -35,8 +36,12 @@ namespace BibleBot.Backend.Services.Providers
         {
             Name = "ab";
 
-            _restClient = new RestClient(_baseURL);
-            _restClient.UseSystemTextJson(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            _cachingHttpClient = CachingClient.GetCachingClient();
+            _cachingHttpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+
+            _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
             _htmlParser = new HtmlParser();
 
@@ -72,12 +77,15 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString = reference.ToString();
             }
 
-            string url = System.String.Format(_getURI, _versionTable[reference.Version.Abbreviation], reference.AsString);
+            string url = System.String.Format(_baseURL + "/" + _getURI,
+                _versionTable[reference.Version.Abbreviation],
+                reference.AsString);
 
-            var req = new RestRequest(url);
-            req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+            // Benchmarking/Debugging, TODO: remove when ready
+            System.Console.WriteLine("---");
+            System.Console.WriteLine($"{reference}");
 
-            ABSearchResponse resp = await _restClient.GetAsync<ABSearchResponse>(req);
+            var resp = await _cachingHttpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
 
             if (resp.Data == null)
             {
@@ -139,12 +147,9 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = System.String.Format(_searchURI, _versionTable[version.Abbreviation], query);
+            string url = System.String.Format(_baseURL + "/" + _searchURI, _versionTable[version.Abbreviation], query);
 
-            var req = new RestRequest(url);
-            req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-
-            ABSearchResponse resp = await _restClient.GetAsync<ABSearchResponse>(req);
+            ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
 
             var results = new List<SearchResult>();
 
