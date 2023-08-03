@@ -33,7 +33,8 @@ namespace BibleBot.Backend.Services.Providers
             Name = "bg";
 
             _cancellationToken = new CancellationTokenSource();
-            _httpClient = CachingClient.GetCachingClient();
+            // _httpClient = CachingClient.GetCachingClient();
+            _httpClient = CachingClient.GetTrimmedCachingClient();
             _htmlParser = new HtmlParser();
         }
 
@@ -55,7 +56,7 @@ namespace BibleBot.Backend.Services.Providers
             var document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var container = document.QuerySelector(".result-text-style-normal");
+            var container = document;
 
             if (container == null)
             {
@@ -157,7 +158,7 @@ namespace BibleBot.Backend.Services.Providers
             string text = System.String.Join("\n", container.GetElementsByClassName("text").Select(el => el.TextContent.Trim()));
 
             // As the verse reference could have a non-English name...
-            reference.AsString = document.GetElementsByClassName("bcv").FirstOrDefault().TextContent.Trim();
+            reference.AsString = document.GetElementsByClassName("dropdown-display-text").FirstOrDefault().TextContent.Trim();
 
             bool isISV = reference.Version.Abbreviation == "ISV";
 

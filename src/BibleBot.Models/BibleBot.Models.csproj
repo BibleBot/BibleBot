@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="1.0.4" />
     <PackageReference Include="CacheCow.Client" Version="2.12.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.12.3" />
   </ItemGroup>
