@@ -77,7 +77,7 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString = reference.ToString();
             }
 
-            string url = System.String.Format(_baseURL + "/" + _getURI,
+            string url = string.Format(_baseURL + "/" + _getURI,
                 _versionTable[reference.Version.Abbreviation],
                 reference.AsString);
 
@@ -125,8 +125,8 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            string title = titlesEnabled ? System.String.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim())) : "";
-            string text = System.String.Join("\n", document.GetElementsByTagName("p").Select(el => el.TextContent.Trim()));
+            string title = titlesEnabled ? string.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim())) : "";
+            string text = string.Join("\n", document.GetElementsByTagName("p").Select(el => el.TextContent.Trim()));
 
             // As the verse reference could have a non-English name...
             reference.AsString = resp.Data.Passages[0].Reference;
@@ -147,7 +147,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = System.String.Format(_baseURL + "/" + _searchURI, _versionTable[version.Abbreviation], query);
+            string url = string.Format(_baseURL + "/" + _searchURI, _versionTable[version.Abbreviation], query);
 
             ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
 

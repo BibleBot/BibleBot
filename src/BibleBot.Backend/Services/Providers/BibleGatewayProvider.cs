@@ -33,7 +33,6 @@ namespace BibleBot.Backend.Services.Providers
             Name = "bg";
 
             _cancellationToken = new CancellationTokenSource();
-            // _httpClient = CachingClient.GetCachingClient();
             _httpClient = CachingClient.GetTrimmedCachingClient();
             _htmlParser = new HtmlParser();
         }
@@ -45,7 +44,7 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString = reference.ToString();
             }
 
-            string url = _baseURL + System.String.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
+            string url = _baseURL + string.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
@@ -56,18 +55,14 @@ namespace BibleBot.Backend.Services.Providers
             var document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var container = document;
-
-            if (container == null)
+            if (document == null)
             {
                 return null;
             }
 
-            var chapterNumbers = container.QuerySelectorAll(".chapternum");
-            var verseNumbers = container.QuerySelectorAll(".versenum");
-
-            foreach (var el in chapterNumbers)
+            foreach (var el in document.QuerySelectorAll(".chapternum"))
             {
+                var c = el.ClassName;
                 if (verseNumbersEnabled)
                 {
                     el.TextContent = " <**1**> ";
@@ -78,7 +73,7 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            foreach (var el in verseNumbers)
+            foreach (var el in document.QuerySelectorAll(".versenum"))
             {
                 var verseNumber = el.TextContent.Substring(0, el.TextContent.Length - 1);
                 if (verseNumbersEnabled)
@@ -97,37 +92,8 @@ namespace BibleBot.Backend.Services.Providers
                 el.Remove();
             }
 
-            foreach (var el in document.QuerySelectorAll(".crossreference"))
-            {
-                el.Remove();
-            }
-
-            foreach (var el in document.QuerySelectorAll(".footnote"))
-            {
-                el.Remove();
-            }
-
-            foreach (var el in document.QuerySelectorAll(".footnotes"))
-            {
-                el.Remove();
-            }
-
-            foreach (var el in document.QuerySelectorAll(".copyright-table"))
-            {
-                el.Remove();
-            }
-
-            foreach (var el in document.QuerySelectorAll(".translation-note"))
-            {
-                el.Remove();
-            }
-
-            foreach (var el in document.QuerySelectorAll(".inline-h3"))
-            {
-                el.Remove();
-            }
-
-            foreach (var el in document.QuerySelectorAll("h2"))
+            foreach (var el in document.QuerySelectorAll(
+                ".crossreference, .footnote, .footnotes, .copyright-table, .translation-note, .inline-h3, h2"))
             {
                 el.Remove();
             }
@@ -142,20 +108,20 @@ namespace BibleBot.Backend.Services.Providers
             string psalmTitle = "";
             if (titlesEnabled)
             {
-                title = System.String.Join(" / ", container.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
-                foreach (var el in container.GetElementsByTagName("h3"))
+                title = string.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
+                foreach (var el in document.GetElementsByTagName("h3"))
                 {
                     el.Remove();
                 }
 
-                psalmTitle = System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
-                foreach (var el in container.GetElementsByClassName("psalm-title"))
+                psalmTitle = string.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
+                foreach (var el in document.GetElementsByClassName("psalm-title"))
                 {
                     el.Remove();
                 }
             }
 
-            string text = System.String.Join("\n", container.GetElementsByClassName("text").Select(el => el.TextContent.Trim()));
+            string text = string.Join("\n", document.GetElementsByClassName("text").Select(el => el.TextContent.Trim()));
 
             // As the verse reference could have a non-English name...
             reference.AsString = document.GetElementsByClassName("dropdown-display-text").FirstOrDefault().TextContent.Trim();
@@ -177,7 +143,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = _baseURL + System.String.Format(_searchURI, query, version.Abbreviation);
+            string url = _baseURL + string.Format(_searchURI, query, version.Abbreviation);
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
