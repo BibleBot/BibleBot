@@ -24,16 +24,16 @@ namespace BibleBot.Backend.Services.Providers
         private readonly CancellationTokenSource _cancellationToken;
         private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
-        private readonly string _baseURL = "https://www.biblegateway.com";
-        private readonly string _getURI = "/passage/?search={0}&version={1}&interface=print";
-        private readonly string _searchURI = "/quicksearch/?quicksearch={0}&qs_version={1}&resultspp=5000&interface=print";
+        private readonly string _baseURL = "https://www.biblegateway.com/";
+        private readonly string _getURI = "passage/?search={0}&version={1}&interface=print";
+        private readonly string _searchURI = "quicksearch/?quicksearch={0}&qs_version={1}&resultspp=5000&interface=print";
 
         public BibleGatewayProvider()
         {
             Name = "bg";
 
             _cancellationToken = new CancellationTokenSource();
-            _httpClient = CachingClient.GetTrimmedCachingClient();
+            _httpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
             _htmlParser = new HtmlParser();
         }
 
@@ -44,7 +44,7 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString = reference.ToString();
             }
 
-            string url = _baseURL + string.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
+            string url = string.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
@@ -143,7 +143,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = _baseURL + string.Format(_searchURI, query, version.Abbreviation);
+            string url = string.Format(_searchURI, query, version.Abbreviation);
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();

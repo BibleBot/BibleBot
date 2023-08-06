@@ -8,8 +8,8 @@
 
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
@@ -22,20 +22,40 @@ namespace BibleBot.Models
         public static readonly int expiryMins = 120; // Change when data expires & is freed from CacheCow.InMemoryCacheStore
         public static readonly int staleMins = 60; // Change when data becomes stale and needs revalidation
 
-        public static HttpClient GetCachingClient()
+        public static HttpClient GetCachingClient(string baseURL)
         {
-            return HttpClientFactory.Create(
+            HttpClient client = HttpClientFactory.Create(
                 new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
                 new CacheControlHandler());
+
+            client.BaseAddress = new System.Uri(baseURL);
+
+            return client;
         }
 
-        public static HttpClient GetTrimmedCachingClient()
+        public static HttpClient GetTrimmedCachingClient(string baseURL, bool isHtml)
         {
-            return HttpClientFactory.Create(
+            HttpClient client;
+
+            if (isHtml)
+            {
+                client = HttpClientFactory.Create(
                 new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
                 new CacheControlHandler(),
                 new HtmlTrimHandler());
+            }
+            else
+            {
+                client = HttpClientFactory.Create(
+                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
+                new CacheControlHandler(),
+                new JsonTrimHandler());
+            }
+            client.BaseAddress = new System.Uri(baseURL);
+
+            return client;
         }
+
 
         public static async Task<T> GetJsonContentAs<T>(this HttpClient client, string url, JsonSerializerOptions op)
         {
@@ -72,7 +92,7 @@ namespace BibleBot.Models
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // In testing, trimming reduces response time by ~20%
-            // Also reduces each cached response size by ~99% (~130kb less per) which reduces need for request splitting
+            // Reduces cached response size by ~130kb (~99% less on Phil 4:6-7) which reduces need for request splitting
 
             var response = await base.SendAsync(request, cancellationToken);
             var parser = new HtmlParser();
@@ -90,9 +110,13 @@ namespace BibleBot.Models
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            // In testing, trimming's effect is negligible on response time (~10%, <100ms)
+            // Reduces cache response size by ~1kb (~39% less on Phil 4:6-7)
+
             var response = await base.SendAsync(request, cancellationToken);
 
-            // TODO: Implement (also need to change APIBibleProvider to accept trimmed)
+            JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync());
+            response.Content = new StringContent(json["data"].ToJsonString());
 
             return response;
         }

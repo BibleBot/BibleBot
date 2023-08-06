@@ -28,7 +28,7 @@ namespace BibleBot.Backend.Services.Providers
 
         private readonly Dictionary<string, string> _versionTable;
 
-        private readonly string _baseURL = "https://api.scripture.api.bible/v1";
+        private readonly string _baseURL = "https://api.scripture.api.bible/v1/";
         private readonly string _getURI = "bibles/{0}/search?query={1}&limit=100";
         private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=100&sort=relevance";
 
@@ -36,7 +36,7 @@ namespace BibleBot.Backend.Services.Providers
         {
             Name = "ab";
 
-            _cachingHttpClient = CachingClient.GetCachingClient();
+            _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, false);
             _cachingHttpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
@@ -77,39 +77,37 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString = reference.ToString();
             }
 
-            string url = string.Format(_baseURL + "/" + _getURI,
-                _versionTable[reference.Version.Abbreviation],
-                reference.AsString);
+            string url = string.Format(_getURI, _versionTable[reference.Version.Abbreviation], reference.AsString);
 
             // Benchmarking/Debugging, TODO: remove when ready
             System.Console.WriteLine("---");
             System.Console.WriteLine($"{reference}");
 
-            var resp = await _cachingHttpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
+            var resp = await _cachingHttpClient.GetJsonContentAs<ABSearchData>(url, _jsonOptions);
 
-            if (resp.Data == null)
+            if (resp == null)
             {
                 return null;
             }
 
-            if (resp.Data.Passages.Count() == 0)
+            if (resp.Passages.Count() == 0)
             {
                 Log.Error($"{reference.Version.Abbreviation} machine broke");
                 return null;
             }
 
-            if (resp.Data.Passages[0].BibleId != _versionTable[reference.Version.Abbreviation])
+            if (resp.Passages[0].BibleId != _versionTable[reference.Version.Abbreviation])
             {
                 Log.Error($"{reference.Version.Abbreviation} machine broke - version no longer available");
                 return null;
             }
 
-            if (resp.Data.Passages[0].Content.Length < 1)
+            if (resp.Passages[0].Content.Length < 1)
             {
                 return null;
             }
 
-            var document = await _htmlParser.ParseDocumentAsync(resp.Data.Passages[0].Content);
+            var document = await _htmlParser.ParseDocumentAsync(resp.Passages[0].Content);
 
             var numbers = document.QuerySelectorAll(".v");
 
@@ -129,7 +127,7 @@ namespace BibleBot.Backend.Services.Providers
             string text = string.Join("\n", document.GetElementsByTagName("p").Select(el => el.TextContent.Trim()));
 
             // As the verse reference could have a non-English name...
-            reference.AsString = resp.Data.Passages[0].Reference;
+            reference.AsString = resp.Passages[0].Reference;
 
             if (reference.AsString.Contains("Daniel (Greek)") || reference.AsString.Contains("ΔΑΝΙΗΛ (Ελληνικά)"))
             {
@@ -147,13 +145,13 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = string.Format(_baseURL + "/" + _searchURI, _versionTable[version.Abbreviation], query);
+            string url = string.Format(_searchURI, _versionTable[version.Abbreviation], query);
 
             ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
 
             var results = new List<SearchResult>();
 
-            if (resp.Data != null)
+            if (resp != null)
             {
                 foreach (var verse in resp.Data.Verses)
                 {
