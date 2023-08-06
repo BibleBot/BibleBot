@@ -22,6 +22,7 @@ namespace BibleBot.Backend.Services.Providers
     {
         public string Name { get; set; }
         private readonly CancellationTokenSource _cancellationToken;
+        private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
         private readonly string _baseURL = "https://www.biblegateway.com/";
@@ -33,7 +34,9 @@ namespace BibleBot.Backend.Services.Providers
             Name = "bg";
 
             _cancellationToken = new CancellationTokenSource();
-            _httpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
+            _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
+            _httpClient = new HttpClient() { BaseAddress = new System.Uri(_baseURL) };
+
             _htmlParser = new HtmlParser();
         }
 
@@ -46,7 +49,7 @@ namespace BibleBot.Backend.Services.Providers
 
             string url = string.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
 
-            HttpResponseMessage req = await _httpClient.GetAsync(url);
+            HttpResponseMessage req = await _cachingHttpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
             Stream resp = await req.Content.ReadAsStreamAsync();

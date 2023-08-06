@@ -38,7 +38,7 @@ namespace BibleBot.Backend.Services.Providers
 
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, false);
             _cachingHttpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-            _httpClient = new HttpClient();
+            _httpClient = new HttpClient() { BaseAddress = new System.Uri(_baseURL) };
             _httpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -151,7 +151,7 @@ namespace BibleBot.Backend.Services.Providers
 
             var results = new List<SearchResult>();
 
-            if (resp != null)
+            if (resp.Data != null)
             {
                 foreach (var verse in resp.Data.Verses)
                 {

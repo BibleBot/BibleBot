@@ -68,6 +68,11 @@ namespace BibleBot.Models
             }
             catch (System.Exception) { }
 
+            if (resp.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return default;
+            }
+
             return JsonSerializer.Deserialize<T>(await resp.Content.ReadAsStringAsync(), op);
         }
     }
@@ -78,10 +83,13 @@ namespace BibleBot.Models
         {
             var response = await base.SendAsync(request, cancellationToken);
 
-            response.Headers.CacheControl = new()
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                MaxAge = System.TimeSpan.FromMinutes(CachingClient.staleMins)
-            };
+                response.Headers.CacheControl = new()
+                {
+                    MaxAge = System.TimeSpan.FromMinutes(CachingClient.staleMins)
+                };
+            }
 
             return response;
         }
@@ -100,7 +108,7 @@ namespace BibleBot.Models
 
             response.Content = new StringContent(
                 document.GetElementsByClassName("dropdown-display").FirstOrDefault().InnerHtml + // Verse reference
-                document.QuerySelector(".result-text-style-normal p").InnerHtml); // Verse body
+                document.QuerySelector(".result-text-style-normal").InnerHtml); // Verse body
 
             return response;
         }
@@ -116,7 +124,7 @@ namespace BibleBot.Models
             var response = await base.SendAsync(request, cancellationToken);
 
             JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync());
-            response.Content = new StringContent(json["data"].ToJsonString());
+            response.Content = json["data"] != null ? new StringContent(json["data"].ToJsonString()) : null;
 
             return response;
         }
