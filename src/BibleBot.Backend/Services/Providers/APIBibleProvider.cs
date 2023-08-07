@@ -79,9 +79,9 @@ namespace BibleBot.Backend.Services.Providers
 
             string url = string.Format(_getURI, _versionTable[reference.Version.Abbreviation], reference.AsString);
 
-            // Benchmarking/Debugging, TODO: remove when ready
-            System.Console.WriteLine("---");
-            System.Console.WriteLine($"{reference}");
+            // Benchmarking/Debugging
+            // System.Console.WriteLine("---");
+            // System.Console.WriteLine($"{reference}");
 
             var resp = await _cachingHttpClient.GetJsonContentAs<ABSearchData>(url, _jsonOptions);
 

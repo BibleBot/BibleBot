@@ -131,10 +131,10 @@ namespace BibleBot.Backend.Services.Providers
 
             bool isISV = reference.Version.Abbreviation == "ISV";
 
-            // Benchmarking/Debugging, TODO: remove when ready
-            System.Console.WriteLine("---");
-            System.Console.WriteLine($"{reference}");
-            System.Console.WriteLine("[{0}]", string.Join(", ", req.Headers.GetValues("x-cachecow-client")));
+            // Benchmarking/Debugging
+            // System.Console.WriteLine("---");
+            // System.Console.WriteLine($"{reference}");
+            // System.Console.WriteLine("[{0}]", string.Join(", ", req.Headers.GetValues("x-cachecow-client")));
 
             return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }

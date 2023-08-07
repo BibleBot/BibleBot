@@ -19,7 +19,7 @@ namespace BibleBot.Models
 {
     public static class CachingClient
     {
-        public static readonly int expiryMins = 120; // Change when data expires & is freed from CacheCow.InMemoryCacheStore
+        public static readonly int expiryMins = 120; // Change when data expires & is freed from CacheCow.InMemoryCacheStore, min is 60
         public static readonly int staleMins = 60; // Change when data becomes stale and needs revalidation
 
         public static HttpClient GetCachingClient(string baseURL)
@@ -61,12 +61,12 @@ namespace BibleBot.Models
         {
             var resp = await client.GetAsync(url);
 
-            // Benchmarking/Debugging, TODO: remove when ready
-            try
-            {
-                System.Console.WriteLine("[{0}]", string.Join(", ", resp.Headers.GetValues("x-cachecow-client")));
-            }
-            catch (System.Exception) { }
+            // Benchmarking/Debugging
+            // try
+            // {
+            //     System.Console.WriteLine("[{0}]", string.Join(", ", resp.Headers.GetValues("x-cachecow-client")));
+            // }
+            // catch (System.Exception) { }
 
             if (resp.StatusCode != System.Net.HttpStatusCode.OK)
             {
