@@ -61,13 +61,6 @@ namespace BibleBot.Models
         {
             var resp = await client.GetAsync(url);
 
-            // Benchmarking/Debugging
-            // try
-            // {
-            //     System.Console.WriteLine("[{0}]", string.Join(", ", resp.Headers.GetValues("x-cachecow-client")));
-            // }
-            // catch (System.Exception) { }
-
             if (resp.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 return default;

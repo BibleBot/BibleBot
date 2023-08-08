@@ -35,7 +35,7 @@ namespace BibleBot.Backend.Services.Providers
 
             _cancellationToken = new CancellationTokenSource();
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
-            _httpClient = new HttpClient() { BaseAddress = new System.Uri(_baseURL) };
+            _httpClient = new HttpClient { BaseAddress = new System.Uri(_baseURL) };
 
             _htmlParser = new HtmlParser();
         }
@@ -65,7 +65,6 @@ namespace BibleBot.Backend.Services.Providers
 
             foreach (var el in document.QuerySelectorAll(".chapternum"))
             {
-                var c = el.ClassName;
                 if (verseNumbersEnabled)
                 {
                     el.TextContent = " <**1**> ";
@@ -130,11 +129,6 @@ namespace BibleBot.Backend.Services.Providers
             reference.AsString = document.GetElementsByClassName("dropdown-display-text").FirstOrDefault().TextContent.Trim();
 
             bool isISV = reference.Version.Abbreviation == "ISV";
-
-            // Benchmarking/Debugging
-            // System.Console.WriteLine("---");
-            // System.Console.WriteLine($"{reference}");
-            // System.Console.WriteLine("[{0}]", string.Join(", ", req.Headers.GetValues("x-cachecow-client")));
 
             return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
