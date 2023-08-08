@@ -110,16 +110,16 @@ namespace BibleBot.Backend.Services.Providers
             string psalmTitle = "";
             if (titlesEnabled)
             {
-                title = System.String.Join(" / ", container.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
-                psalmTitle = System.String.Join(" / ", container.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
+                title = System.String.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
+                psalmTitle = System.String.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
             }
 
-            foreach (var el in container.GetElementsByTagName("h3"))
+            foreach (var el in document.GetElementsByTagName("h3"))
             {
                 el.Remove();
             }
 
-            foreach (var el in container.GetElementsByClassName("psalm-title"))
+            foreach (var el in document.GetElementsByClassName("psalm-title"))
             {
                 el.Remove();
             }
