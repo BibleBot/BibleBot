@@ -3,12 +3,10 @@ image: Visual Studio 2022
 
 clone_depth: 1
 
-services:
-  - mongodb
-
 environment:
   ASPNETCORE_ENVIRONMENT: Development
-  MONGODB_CONN: mongodb://localhost:27017/BibleBotBackend
+  MONGODB_CONN:
+    secure: coNsjNr2LeBFkdsO4s24WDcGfoYOvkYoGQeV+TIbdmXjOlcSjRpppMr9AeO3JJbCantUQ7PR5gDRMDS1wS68Ip1gWo5cxlckysOTvWuZJVqRw8ldI5ILQnpCMFtQVb12flDIeWyZ8lpO/6RS51ujfj7tBpPQzj4yETBUzkot1YU=
   WEBHOOK_SCRIPT: https://gitlab.com/kerygmadigital/biblebot/appveyor-discord-webhook/-/raw/master/send.ps1
   APIBIBLE_TOKEN:
     secure: NoI3xBuwnbCU1KkhhZCHqtuups493tGwfNZlBNtXvCw8cNuuTvwZZwMYm2V12EvA
