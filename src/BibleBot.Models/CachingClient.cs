@@ -96,6 +96,12 @@ namespace BibleBot.Models
             // Reduces cached response size by ~130kb (~99% less on Phil 4:6-7) which reduces need for request splitting
 
             var response = await base.SendAsync(request, cancellationToken);
+
+            if (response == null)
+            {
+                return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.BadRequest };
+            }
+
             var parser = new HtmlParser();
             var document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync());
 
