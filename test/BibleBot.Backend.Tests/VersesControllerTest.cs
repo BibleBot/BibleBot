@@ -1373,5 +1373,20 @@ namespace BibleBot.Backend.Tests
 
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldNotProcessInvalidVerse()
+        {
+            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:125")).GetAwaiter().GetResult();
+
+            var expected = new VerseResponse
+            {
+                OK = false,
+                Verses = null,
+                LogStatement = null
+            };
+
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }

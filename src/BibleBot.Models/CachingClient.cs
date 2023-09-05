@@ -97,17 +97,18 @@ namespace BibleBot.Models
 
             var response = await base.SendAsync(request, cancellationToken);
 
-            if (response == null)
-            {
-                return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.BadRequest };
-            }
-
             var parser = new HtmlParser();
             var document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync());
 
-            response.Content = new StringContent(
-                document.GetElementsByClassName("dropdown-display").FirstOrDefault().InnerHtml + // Verse reference
-                document.QuerySelector(".result-text-style-normal").InnerHtml); // Verse body
+            var respReference = document.GetElementsByClassName("dropdown-display");
+            var respContent = document.QuerySelector(".result-text-style-normal");
+
+            if (respReference == null || respContent == null)
+            {
+                return new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.BadRequest };
+            }
+
+            response.Content = new StringContent(respReference.FirstOrDefault().InnerHtml + respContent.InnerHtml);
 
             return response;
         }

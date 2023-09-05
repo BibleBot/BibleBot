@@ -52,6 +52,11 @@ namespace BibleBot.Backend.Services.Providers
             HttpResponseMessage req = await _cachingHttpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
+            if (req.StatusCode != System.Net.HttpStatusCode.OK) // bad request or not a verse
+            {
+                return null;
+            }
+
             Stream resp = await req.Content.ReadAsStreamAsync();
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
