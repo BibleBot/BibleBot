@@ -42,10 +42,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new VersionSet(_userService, _guildService, _versionService),
                 new VersionSetServer(_userService, _guildService, _versionService),
                 new VersionInfo(_userService, _guildService, _versionService),
-                new VersionList(_userService, _guildService, _versionService),
+                new VersionList(_versionService),
                 new VersionBookList(_userService, _guildService, _versionService, _nameFetchingService)
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
         public class VersionUsage : ICommand
@@ -75,12 +75,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-                var defaultVersion = await _versionService.Get("RSV");
+                Version defaultVersion = await _versionService.Get("RSV");
 
-                var response = "Your preferred version is set to **<version>**.\n" +
+                string response = "Your preferred version is set to **<version>**.\n" +
                                "The server's preferred version is set to **<gversion>**.\n\n" +
                                "__**Related Commands**__\n" +
                                "**/setversion** - set your preferred version\n" +
@@ -91,7 +91,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    var idealUserVersion = await _versionService.Get(idealUser.Version);
+                    Version idealUserVersion = await _versionService.Get(idealUser.Version);
 
                     if (idealUserVersion != null)
                     {
@@ -101,7 +101,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealGuild != null)
                 {
-                    var idealGuildVersion = await _versionService.Get(idealGuild.Version);
+                    Version idealGuildVersion = await _versionService.Get(idealGuild.Version);
 
                     if (idealGuildVersion != null)
                     {
@@ -151,15 +151,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealVersion = await _versionService.Get(args[0]);
+                Version idealVersion = await _versionService.Get(args[0]);
 
                 if (idealVersion != null)
                 {
-                    var idealUser = await _userService.Get(req.UserId);
+                    User idealUser = await _userService.Get(req.UserId);
 
                     if (idealUser != null)
                     {
-                        var update = Builders<User>.Update
+                        UpdateDefinition<User> update = Builders<User>.Update
                                      .Set(user => user.Version, idealVersion.Abbreviation);
 
                         await _userService.Update(req.UserId, update);
@@ -232,15 +232,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealVersion = await _versionService.Get(args[0]);
+                Version idealVersion = await _versionService.Get(args[0]);
 
                 if (idealVersion != null)
                 {
-                    var idealGuild = await _guildService.Get(req.GuildId);
+                    Guild idealGuild = await _guildService.Get(req.GuildId);
 
                     if (idealGuild != null)
                     {
-                        var update = Builders<Guild>.Update
+                        UpdateDefinition<Guild> update = Builders<Guild>.Update
                                      .Set(guild => guild.Version, idealVersion.Abbreviation);
 
                         await _guildService.Update(req.GuildId, update);
@@ -309,10 +309,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-                string version = null;
+                string version;
 
                 if (args.Count() > 0)
                 {
@@ -332,11 +332,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                 }
 
-                var idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version);
 
                 if (idealVersion != null)
                 {
-                    var response = $"### {idealVersion.Name}\n\n" +
+                    string response = $"### {idealVersion.Name}\n\n" +
                                 $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n" +
                                 $"Contains New Testament: {(idealVersion.SupportsNewTestament ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n" +
                                 $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n\n" +
@@ -378,11 +378,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public List<Permissions> PermissionsRequired { get; set; }
             public bool BotAllowed { get; set; }
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
-            public VersionList(UserService userService, GuildService guildService, VersionService versionService)
+            public VersionList(VersionService versionService)
             {
                 Name = "list";
                 ArgumentsError = null;
@@ -390,31 +388,29 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 PermissionsRequired = null;
                 BotAllowed = false;
 
-                _userService = userService;
-                _guildService = guildService;
                 _versionService = versionService;
             }
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var versions = await _versionService.Get();
+                List<Version> versions = await _versionService.Get();
                 versions.Sort((x, y) => x.Name.CompareTo(y.Name));
 
-                var versionsUsed = new List<string>();
+                List<string> versionsUsed = new();
 
-                var pages = new List<InternalEmbed>();
-                var maxResultsPerPage = 25;
+                List<InternalEmbed> pages = new();
+                int maxResultsPerPage = 25;
 
                 // We need to add a page here because the for loop won't hit the last one otherwise.
                 // This also prevents situations where the Ceiling() result might equal 0.
-                var totalPages = (int)System.Math.Ceiling((decimal)(versions.Count / maxResultsPerPage)) + 1;
+                int totalPages = (int)System.Math.Ceiling((decimal)(versions.Count / maxResultsPerPage)) + 1;
 
                 for (int i = 0; i < totalPages; i++)
                 {
-                    var count = 0;
-                    var versionList = "";
+                    int count = 0;
+                    string versionList = "";
 
-                    foreach (var version in versions)
+                    foreach (Version version in versions)
                     {
                         if (count < maxResultsPerPage)
                         {
@@ -428,7 +424,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         }
                     }
 
-                    var embed = Utils.GetInstance().Embedify($"/listversions - Page {i + 1} of {totalPages}", versionList, false);
+                    InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - Page {i + 1} of {totalPages}", versionList, false);
                     pages.Add(embed);
                 }
 
@@ -470,10 +466,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-                string version = null;
+                string version;
 
                 if (args.Count() > 0)
                 {
@@ -493,7 +489,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                 }
 
-                var idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version);
 
                 if (idealVersion != null)
                 {
@@ -510,11 +506,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         };
                     }
 
-                    var names = await _nameFetchingService.GetBibleGatewayVersionBookList(idealVersion);
+                    Dictionary<BookCategories, Dictionary<string, string>> names = await _nameFetchingService.GetBibleGatewayVersionBookList(idealVersion);
 
                     if (names != null)
                     {
-                        var pages = new List<InternalEmbed>();
+                        List<InternalEmbed> pages = new();
 
                         if (names.ContainsKey(BookCategories.OldTestament))
                         {
@@ -540,7 +536,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                     else
                     {
-                        var message = "We encountered an internal error. " +
+                        string message = "We encountered an internal error. " +
                         "Please report this to the support server (https://biblebot.xyz/discord) or make a bug report (https://biblebot.xyz/bugreport) with the following information:\n\n" +
                         $"```\nVersion: {idealVersion.Abbreviation}\n```";
 

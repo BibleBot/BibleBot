@@ -21,14 +21,14 @@ namespace BibleBot.Backend.Services
 
         public UserService(IDatabaseSettings settings)
         {
-            var client = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONN"));
-            var database = client.GetDatabase(settings.DatabaseName);
+            MongoClient client = new(Environment.GetEnvironmentVariable("MONGODB_CONN"));
+            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
             _users = database.GetCollection<User>(settings.UserCollectionName);
         }
 
         public async Task<List<User>> Get() => (await _users.FindAsync(user => true)).ToList();
-        public async Task<User> Get(string userId) => (await _users.FindAsync<User>(user => user.UserId == userId)).FirstOrDefault();
+        public async Task<User> Get(string userId) => (await _users.FindAsync(user => user.UserId == userId)).FirstOrDefault();
         public async Task<long> GetCount() => await _users.EstimatedDocumentCountAsync();
 
         public async Task<User> Create(User user)
@@ -38,7 +38,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await _users.UpdateOneAsync(user => user.UserId == userId, updateDefinition);
-        public async Task Remove(User idealUser) => await this.Remove(idealUser.UserId);
+        public async Task Remove(User idealUser) => await Remove(idealUser.UserId);
         public async Task Remove(string userId) => await _users.DeleteOneAsync(user => user.UserId == userId);
     }
 }

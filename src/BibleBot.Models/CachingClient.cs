@@ -13,7 +13,9 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using AngleSharp.Dom;
 using CacheCow.Client;
+using AngleSharp.Html.Dom;
 
 namespace BibleBot.Models
 {
@@ -37,6 +39,7 @@ namespace BibleBot.Models
         {
             HttpClient client;
 
+#pragma warning disable IDE0045
             if (isHtml)
             {
                 client = HttpClientFactory.Create(
@@ -51,6 +54,7 @@ namespace BibleBot.Models
                 new CacheControlHandler(),
                 new JsonTrimHandler());
             }
+#pragma warning restore IDE0045
             client.BaseAddress = new System.Uri(baseURL);
 
             return client;
@@ -59,14 +63,8 @@ namespace BibleBot.Models
 
         public static async Task<T> GetJsonContentAs<T>(this HttpClient client, string url, JsonSerializerOptions op)
         {
-            var resp = await client.GetAsync(url);
-
-            if (resp.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return default;
-            }
-
-            return JsonSerializer.Deserialize<T>(await resp.Content.ReadAsStringAsync(), op);
+            HttpResponseMessage resp = await client.GetAsync(url);
+            return resp.StatusCode != System.Net.HttpStatusCode.OK ? default : JsonSerializer.Deserialize<T>(await resp.Content.ReadAsStringAsync(), op);
         }
     }
 
@@ -74,7 +72,7 @@ namespace BibleBot.Models
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var response = await base.SendAsync(request, cancellationToken);
+            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -94,14 +92,13 @@ namespace BibleBot.Models
         {
             // In testing, trimming reduces response time by ~20%
             // Reduces cached response size by ~130kb (~99% less on Phil 4:6-7) which reduces need for request splitting
+            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-            var response = await base.SendAsync(request, cancellationToken);
+            HtmlParser parser = new();
+            IHtmlDocument document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync());
 
-            var parser = new HtmlParser();
-            var document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync());
-
-            var respReference = document.GetElementsByClassName("dropdown-display");
-            var respContent = document.QuerySelector(".result-text-style-normal");
+            IHtmlCollection<IElement> respReference = document.GetElementsByClassName("dropdown-display");
+            IElement respContent = document.QuerySelector(".result-text-style-normal");
 
             if (respReference == null || respContent == null)
             {
@@ -120,8 +117,7 @@ namespace BibleBot.Models
         {
             // In testing, trimming's effect is negligible on response time (~10%, <100ms)
             // Reduces cache response size by ~1kb (~39% less on Phil 4:6-7)
-
-            var response = await base.SendAsync(request, cancellationToken);
+            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
             JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync());
             response.Content = json["data"] != null ? new StringContent(json["data"].ToJsonString()) : null;

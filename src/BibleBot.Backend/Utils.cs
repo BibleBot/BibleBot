@@ -18,7 +18,7 @@ namespace BibleBot.Backend
 
         private Utils() { }
         private static Utils _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static Utils GetInstance()
         {
@@ -26,10 +26,7 @@ namespace BibleBot.Backend
             {
                 lock (_lock)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new Utils();
-                    }
+                    _instance ??= new Utils();
                 }
             }
 
@@ -45,20 +42,20 @@ namespace BibleBot.Backend
 
         public static string Version = "9.2-beta";
 
-        public InternalEmbed Embedify(string title, string description, bool isError)
-        {
-            return Embedify(null, title, description, isError, null);
-        }
+        public InternalEmbed Embedify(string title, string description, bool isError) => Embedify(null, title, description, isError, null);
 
         public InternalEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
-            string footerText = $"BibleBot v{Utils.Version} by Kerygma Digital";
+            string footerText = $"BibleBot v{Version} by Kerygma Digital";
 
-            var embed = new InternalEmbed();
-            embed.Title = title;
-            embed.Color = isError ? (uint)Colors.ERROR_COLOR : (uint)Colors.NORMAL_COLOR;
+            InternalEmbed embed = new()
+            {
+                Title = title,
+                Color = isError ? (uint)Colors.ERROR_COLOR : (uint)Colors.NORMAL_COLOR,
 
-            embed.Footer = new Footer();
+                Footer = new Footer()
+            };
+
             embed.Footer.Text = copyright != null ? $"{copyright}\n{footerText}" : footerText;
             embed.Footer.IconURL = "https://i.imgur.com/hr4RXpy.png";
 
@@ -118,11 +115,11 @@ namespace BibleBot.Backend
                 {
                     if (section.Contains("-"))
                     {
-                        var sectionRange = section.Split("-").Where(item => item.Length > 0).ToArray();
+                        string[] sectionRange = section.Split("-").Where(item => item.Length > 0).ToArray();
                         int firstPart = 0;
                         int secondPart = 0;
 
-                        var results = new List<InternalEmbed>();
+                        List<InternalEmbed> results = new();
 
                         if (sectionRange.Length == 2)
                         {
@@ -157,14 +154,14 @@ namespace BibleBot.Backend
                             {
                                 for (int i = firstPart; i < secondPart + 1; i++)
                                 {
-                                    var title = $"{pgResource.Title} - Paragraph {i}";
+                                    string title = $"{pgResource.Title} - Paragraph {i}";
                                     // TODO: should follow verse numbers preference?
                                     results.Add(Embedify(null, title, $"<**{i}**> {pgResource.Paragraphs.ElementAt(i - 1).Text}", false, pgResource.Copyright));
                                 }
                             }
                             else if (firstPart == secondPart)
                             {
-                                var title = $"{pgResource.Title} - Paragraph {firstPart}";
+                                string title = $"{pgResource.Title} - Paragraph {firstPart}";
                                 results.Add(Embedify(null, title, $"<**{firstPart}**> {pgResource.Paragraphs.ElementAt(firstPart - 1).Text}", false, pgResource.Copyright));
                             }
                             else
@@ -189,7 +186,7 @@ namespace BibleBot.Backend
                 }
                 else
                 {
-                    var title = $"{pgResource.Title} - Paragraph {sectionAsIndex}";
+                    string title = $"{pgResource.Title} - Paragraph {sectionAsIndex}";
 
                     return new List<InternalEmbed>
                     {
@@ -213,12 +210,12 @@ namespace BibleBot.Backend
 
                 if (sectionAsIndex == 0)
                 {
-                    var matchingSection = sResource.Sections.Where(sct => sct.Slugs.Contains(section)).FirstOrDefault();
+                    Section matchingSection = sResource.Sections.FirstOrDefault(sct => sct.Slugs.Contains(section));
 
                     if (matchingSection != null)
                     {
-                        var title = $"{matchingSection.Title}";
-                        var results = new List<InternalEmbed>();
+                        string title = $"{matchingSection.Title}";
+                        List<InternalEmbed> results = new();
 
                         for (int i = 0; i < matchingSection.Pages.Count; i++)
                         {
@@ -237,12 +234,12 @@ namespace BibleBot.Backend
                 }
                 else
                 {
-                    var matchingSection = sResource.Sections.ElementAtOrDefault(sectionAsIndex - 1);
+                    Section matchingSection = sResource.Sections.ElementAtOrDefault(sectionAsIndex - 1);
 
                     if (matchingSection != null)
                     {
-                        var title = $"{matchingSection.Title}";
-                        var results = new List<InternalEmbed>();
+                        string title = $"{matchingSection.Title}";
+                        List<InternalEmbed> results = new();
 
                         for (int i = 0; i < matchingSection.Pages.Count; i++)
                         {
@@ -266,24 +263,24 @@ namespace BibleBot.Backend
 
         private InternalEmbed CreateTitlePage(string author, string title, string category, string copyright, string imageRef, List<Section> sections)
         {
-            var categoryText = "";
+            string categoryText = "";
 
-            foreach (var cat in category.Split("."))
+            foreach (string cat in category.Split("."))
             {
                 categoryText += $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(cat)} > ";
             }
 
-            var embed = Embedify(null, title, null, false, copyright);
+            InternalEmbed embed = Embedify(null, title, null, false, copyright);
 
             embed.Fields = new List<EmbedField>
             {
-                new EmbedField
+                new()
                 {
                     Name = "Author",
                     Value = author,
                     Inline = false
                 },
-                new EmbedField
+                new()
                 {
                     Name = "Category",
                     Value = categoryText.Substring(0, categoryText.Length - 3),

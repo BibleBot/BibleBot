@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BibleBot.Models;
 
 namespace BibleBot.Models
 {

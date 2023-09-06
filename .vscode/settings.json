@@ -3,15 +3,14 @@
     "editor.formatOnSave": true,
     "omnisharp.organizeImportsOnFormat": true,
     "editor.codeLens": true,
-    "csharp.referencesCodeLens.enabled": false,
     "editor.rulers": [
         120
     ],
-    "python.formatting.provider": "none",
     "python.defaultInterpreterPath": "${workspaceFolder}/src/BibleBot.Frontend/venv/bin/python",
     "python.analysis.typeCheckingMode": "basic",
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "editor.suggest.insertMode": "insert"
+    "editor.suggest.insertMode": "insert",
+    "dotnet.codeLens.enableReferencesCodeLens": false
 }

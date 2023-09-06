@@ -60,12 +60,12 @@ namespace BibleBot.AutomaticServices.Services
 
             if (dateTimeInStandardTz.Day == 11 && dateTimeInStandardTz.Hour == 11)
             {
-                var preferences = (await _userService.Get()).Concat<IPreference>((await _guildService.Get())).ToList();
-                var versions = await _versionService.Get();
+                var preferences = (await _userService.Get()).Concat<IPreference>(await _guildService.Get()).ToList();
+                List<Models.Version> versions = await _versionService.Get();
 
-                Dictionary<string, int> versionStats = new Dictionary<string, int>();
+                Dictionary<string, int> versionStats = new();
 
-                foreach (var version in versions)
+                foreach (Models.Version version in versions)
                 {
                     if (!versionStats.ContainsKey(version.Abbreviation))
                     {
@@ -73,7 +73,7 @@ namespace BibleBot.AutomaticServices.Services
                     }
                 }
 
-                foreach (var preference in preferences)
+                foreach (IPreference preference in preferences)
                 {
                     try
                     {
@@ -90,22 +90,22 @@ namespace BibleBot.AutomaticServices.Services
                 var sortedStats = versionStats.ToList();
                 sortedStats.Sort((p1, p2) => p2.Value.CompareTo(p1.Value));
 
-                foreach (var kvp in sortedStats)
+                foreach (KeyValuePair<string, int> kvp in sortedStats)
                 {
                     fileContents += $"{kvp.Key},{kvp.Value}\n";
                 }
 
-                var webhookRequestBody = new WebhookRequestBody
+                WebhookRequestBody webhookRequestBody = new()
                 {
                     Content = $"henlo <@304602975446499329>, here are those version stats you asked for:\n\n```\n{fileContents}\n```\n\nthese will be sent out on the 11th day of every month at the 11th hour in ur time zone, <@304602975446499329>. ty have good day",
                     Username = "BibleBot Version Stats",
                     AvatarURL = "https://i.imgur.com/hr4RXpy.png"
                 };
 
-                var request = new RestRequest(Environment.GetEnvironmentVariable("STATS_WEBHOOK"));
+                RestRequest request = new(Environment.GetEnvironmentVariable("STATS_WEBHOOK"));
                 request.AddJsonBody(webhookRequestBody);
 
-                var resp = await _restClient.ExecuteAsync(request, Method.POST);
+                IRestResponse resp = await _restClient.ExecuteAsync(request, Method.POST);
                 sentStats = resp.StatusCode == System.Net.HttpStatusCode.NoContent;
             }
 
@@ -128,9 +128,6 @@ namespace BibleBot.AutomaticServices.Services
             return Task.CompletedTask;
         }
 
-        public void Dispose()
-        {
-            _timer?.Dispose();
-        }
+        public void Dispose() => _timer?.Dispose();
     }
 }

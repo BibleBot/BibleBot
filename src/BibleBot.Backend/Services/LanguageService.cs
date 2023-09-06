@@ -21,14 +21,14 @@ namespace BibleBot.Backend.Services
 
         public LanguageService(IDatabaseSettings settings)
         {
-            var client = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONN"));
-            var database = client.GetDatabase(settings.DatabaseName);
+            MongoClient client = new(Environment.GetEnvironmentVariable("MONGODB_CONN"));
+            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
             _languages = database.GetCollection<Language>(settings.LanguageCollectionName);
         }
 
         public async Task<List<Language>> Get() => (await _languages.FindAsync(language => true)).ToList();
-        public async Task<Language> Get(string objectName) => (await _languages.FindAsync<Language>(language => language.ObjectName == objectName)).FirstOrDefault();
+        public async Task<Language> Get(string objectName) => (await _languages.FindAsync(language => language.ObjectName == objectName)).FirstOrDefault();
 
         public async Task<Language> Create(Language language)
         {
@@ -37,7 +37,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task Update(string objectName, UpdateDefinition<Language> updateDefinition) => await _languages.UpdateOneAsync(language => language.ObjectName == objectName, updateDefinition);
-        public async Task Remove(Language idealLanguage) => await this.Remove(idealLanguage.ObjectName);
+        public async Task Remove(Language idealLanguage) => await Remove(idealLanguage.ObjectName);
         public async Task Remove(string objectName) => await _languages.DeleteOneAsync(language => language.ObjectName == objectName);
     }
 }

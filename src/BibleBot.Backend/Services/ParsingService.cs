@@ -20,16 +20,13 @@ namespace BibleBot.Backend.Services
     {
         private readonly VersionService _versionService;
 
-        public ParsingService(VersionService versionService)
-        {
-            _versionService = versionService;
-        }
+        public ParsingService(VersionService versionService) => _versionService = versionService;
 
         public System.Tuple<string, List<BookSearchResult>> GetBooksInString(Dictionary<string, List<string>> bookNames, List<string> defaultNames, string str)
         {
-            List<BookSearchResult> results = new List<BookSearchResult>();
+            List<BookSearchResult> results = new();
 
-            List<string> overlaps = new List<string>
+            List<string> overlaps = new()
             {
                 "ezra",
                 "jer",
@@ -42,7 +39,7 @@ namespace BibleBot.Backend.Services
             // Ditto for Jeremiah + Letter/Epistle of Jeremiah.
             for (int i = 1; i < 3; i++)
             {
-                foreach (var bookName in bookNames)
+                foreach (KeyValuePair<string, List<string>> bookName in bookNames)
                 {
                     foreach (string item in bookName.Value)
                     {
@@ -57,8 +54,8 @@ namespace BibleBot.Backend.Services
                 }
             }
 
-            var tokens = str.Split(" ");
-            foreach (var bookName in defaultNames)
+            string[] tokens = str.Split(" ");
+            foreach (string bookName in defaultNames)
             {
                 for (int i = 0; i < tokens.Length; i++)
                 {
@@ -81,27 +78,26 @@ namespace BibleBot.Backend.Services
             int startingVerse = 0;
             int endingChapter = 0;
             int endingVerse = 0;
-            int tokenIdxAfterSpan = 0;
             bool expandoVerseUsed = false;
 
-            var tokens = str.Split(" ");
+            string[] tokens = str.Split(" ");
 
             if (bookSearchResult.Index + 2 <= tokens.Length)
             {
-                var relevantToken = tokens.Skip(bookSearchResult.Index + 1).First();
+                string relevantToken = tokens.Skip(bookSearchResult.Index + 1).First();
 
-                var colonRegex = new Regex(@"[:：]", RegexOptions.Compiled);
-                var colonMatches = colonRegex.Matches(relevantToken);
+                Regex colonRegex = new(@"[:：]", RegexOptions.Compiled);
+                MatchCollection colonMatches = colonRegex.Matches(relevantToken);
 
                 if (colonMatches.Count() != 0)
                 {
-                    tokenIdxAfterSpan = bookSearchResult.Index + 2;
+                    int tokenIdxAfterSpan = bookSearchResult.Index + 2;
 
                     if (tokens.Length > tokenIdxAfterSpan)
                     {
                         string lastToken = tokens[tokenIdxAfterSpan].ToUpper();
 
-                        var idealVersion = await _versionService.Get(lastToken);
+                        Version idealVersion = await _versionService.Get(lastToken);
 
                         if (idealVersion != null)
                         {
@@ -112,13 +108,13 @@ namespace BibleBot.Backend.Services
 
                     if (colonMatches.Count() == 2)
                     {
-                        var span = relevantToken.Split("-");
+                        string[] span = relevantToken.Split("-");
 
-                        foreach (var pairString in span)
+                        foreach (string pairString in span)
                         {
-                            var pairStringSplit = pairString.Split(colonMatches.First().Value);
+                            string[] pairStringSplit = pairString.Split(colonMatches.First().Value);
 
-                            foreach (var pairValue in pairStringSplit)
+                            foreach (string pairValue in pairStringSplit)
                             {
                                 pairStringSplit[System.Array.IndexOf(pairStringSplit, pairValue)] = RemovePunctuation(pairValue);
                             }
@@ -147,7 +143,7 @@ namespace BibleBot.Backend.Services
                     }
                     else if (colonMatches.Count() == 1)
                     {
-                        var pair = relevantToken.Split(colonMatches.First().Value);
+                        string[] pair = relevantToken.Split(colonMatches.First().Value);
 
                         try
                         {
@@ -161,10 +157,10 @@ namespace BibleBot.Backend.Services
                             return null;
                         }
 
-                        var spanRegex = new Regex(@"-", RegexOptions.Compiled);
-                        var spanQuantity = spanRegex.Matches(relevantToken).Count();
+                        Regex spanRegex = new(@"-", RegexOptions.Compiled);
+                        int spanQuantity = spanRegex.Matches(relevantToken).Count();
 
-                        var spanSplit = pair[1].Split("-");
+                        string[] spanSplit = pair[1].Split("-");
                         foreach (string pairValue in spanSplit)
                         {
                             string pairValueCopy = RemovePunctuation(pairValue);
@@ -235,7 +231,7 @@ namespace BibleBot.Backend.Services
             bool isDEU = false;
 
             string bookMapString = File.ReadAllText("./Data/book_map.json");
-            var bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapString);
+            Dictionary<string, Dictionary<string, string>> bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapString);
 
             if (bookMap["ot"].ContainsKey(book))
             {
@@ -259,7 +255,7 @@ namespace BibleBot.Backend.Services
                 isDEU = true;
                 book = bookMap["deu"]["ps151"];
                 startingChapter = 1;
-                endingChapter = endingChapter - 150;
+                endingChapter -= 150;
             }
 
             return new Reference
@@ -281,13 +277,13 @@ namespace BibleBot.Backend.Services
         {
             str = str.ToLower().Replace("\r", " ").Replace("\n", " ");
 
-            foreach (var brackets in ignoringBrackets)
+            foreach (string brackets in ignoringBrackets)
             {
                 str = new Regex(@"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1]).Replace(str, "");
             }
 
-            var punctuationToIgnore = "!\"#$%&'()*+,./;<=>?@[\\]^_`{|}~";
-            foreach (var character in punctuationToIgnore)
+            string punctuationToIgnore = "!\"#$%&'()*+,./;<=>?@[\\]^_`{|}~";
+            foreach (char character in punctuationToIgnore)
             {
                 str = str.Replace(character, ' ');
             }
@@ -295,15 +291,12 @@ namespace BibleBot.Backend.Services
             return str;
         }
 
-        private bool IsValueInString(string str, string val)
-        {
-            return $" {str} ".Contains($" {val} ");
-        }
+        private bool IsValueInString(string str, string val) => $" {str} ".Contains($" {val} ");
 
         private string RemovePunctuation(string str)
         {
-            var noPunctuationRegex = new Regex(@"[^\w\s]|_", RegexOptions.Compiled);
-            var minimizeWhitespaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
+            Regex noPunctuationRegex = new(@"[^\w\s]|_", RegexOptions.Compiled);
+            Regex minimizeWhitespaceRegex = new(@"\s+", RegexOptions.Compiled);
 
             return minimizeWhitespaceRegex.Replace(noPunctuationRegex.Replace(str, ""), " ");
         }

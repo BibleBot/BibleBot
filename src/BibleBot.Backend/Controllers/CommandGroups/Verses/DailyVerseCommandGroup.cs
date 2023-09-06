@@ -51,7 +51,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 new DailyVerseStatus(_guildService),
                 new DailyVerseClear(_guildService)
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
         public class DailyVerseUsage : ICommand
@@ -88,13 +88,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-                var version = "RSV";
-                var verseNumbersEnabled = true;
-                var titlesEnabled = true;
-                var displayStyle = "embed";
+                string version = "RSV";
+                bool verseNumbersEnabled = true;
+                bool titlesEnabled = true;
+                string displayStyle = "embed";
 
                 if (idealUser != null && !req.IsBot)
                 {
@@ -106,28 +106,23 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 else if (idealGuild != null)
                 {
                     version = idealGuild.Version;
-                    displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
+                    displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                var idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version);
                 string votdRef = await _svProvider.GetDailyVerse();
-                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
 
-                if (provider != null)
+                return new VerseResponse
                 {
-                    return new VerseResponse
+                    OK = true,
+                    Verses = new List<Verse>
                     {
-                        OK = true,
-                        Verses = new List<Verse>
-                        {
-                            await provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                        },
-                        DisplayStyle = displayStyle,
-                        LogStatement = "/dailyverse"
-                    };
-                }
-
-                throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
+                        await provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion)
+                    },
+                    DisplayStyle = displayStyle,
+                    LogStatement = "/dailyverse"
+                };
             }
         }
 
@@ -172,20 +167,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                 if (args.Count == 2)
                 {
-                    var timeSplit = args[0].Split(":");
+                    string[] timeSplit = args[0].Split(":");
 
                     try
                     {
-                        var hour = int.Parse(timeSplit[0]);
-                        var minute = int.Parse(timeSplit[1]);
+                        int hour = int.Parse(timeSplit[0]);
+                        int minute = int.Parse(timeSplit[1]);
 
                         if (((hour > -1 && hour < 24) || (minute > -1 && minute < 60)) && DateTimeZoneProviders.Tzdb.GetZoneOrNull(args[1]) != null)
                         {
-                            var idealGuild = await _guildService.Get(req.GuildId);
+                            Guild idealGuild = await _guildService.Get(req.GuildId);
 
                             if (idealGuild != null)
                             {
-                                var update = Builders<Guild>.Update
+                                UpdateDefinition<Guild> update = Builders<Guild>.Update
                                              .Set(guild => guild.DailyVerseTime, args[0])
                                              .Set(guild => guild.DailyVerseTimeZone, args[1])
                                              .Set(guild => guild.DailyVerseLastSentDate, null);
@@ -270,21 +265,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
                     if (idealGuild.DailyVerseChannelId != null && idealGuild.DailyVerseTime != null &&
                         idealGuild.DailyVerseTimeZone != null && idealGuild.DailyVerseWebhook != null)
                     {
-                        var preferredTimeZone = DateTimeZoneProviders.Tzdb[idealGuild.DailyVerseTimeZone];
-                        var currentTime = SystemClock.Instance.GetCurrentInstant().InZone(preferredTimeZone);
+                        DateTimeZone preferredTimeZone = DateTimeZoneProviders.Tzdb[idealGuild.DailyVerseTimeZone];
+                        ZonedDateTime currentTime = SystemClock.Instance.GetCurrentInstant().InZone(preferredTimeZone);
 
-                        var preferredHour = int.Parse(idealGuild.DailyVerseTime.Split(":")[0]);
-                        var preferredMinute = int.Parse(idealGuild.DailyVerseTime.Split(":")[1]);
+                        int preferredHour = int.Parse(idealGuild.DailyVerseTime.Split(":")[0]);
+                        int preferredMinute = int.Parse(idealGuild.DailyVerseTime.Split(":")[1]);
 
-                        var todaysHourPassed = false;
-                        var todaysMinutePassed = false;
+                        bool todaysHourPassed = false;
+                        bool todaysMinutePassed = false;
 
                         if (currentTime.Hour != preferredHour)
                         {
@@ -317,9 +312,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             currentTime = currentTime.Plus(Duration.FromDays(1));
                         }
 
-                        var timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
+                        string timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
 
-                        var resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone.ToString()}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>. It will use this server's preferred version, which you can find by using **`/version`**.\n\nUse **`/dailyverseset`** to set a new time or channel.\nUse **`/dailyverseclear`** to clear automatic daily verse settings.";
+                        string resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>. It will use this server's preferred version, which you can find by using **`/version`**.\n\nUse **`/dailyverseset`** to set a new time or channel.\nUse **`/dailyverseclear`** to clear automatic daily verse settings.";
 
                         return new CommandResponse
                         {
@@ -371,11 +366,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
-                    var update = Builders<Guild>.Update
+                    UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DailyVerseTime, null)
                                  .Set(guild => guild.DailyVerseTimeZone, null)
                                  .Set(guild => guild.DailyVerseWebhook, null)

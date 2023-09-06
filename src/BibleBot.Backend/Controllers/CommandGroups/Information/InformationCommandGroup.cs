@@ -38,10 +38,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             Commands = new List<ICommand>
             {
                 new InfoStats(_userService, _guildService, _versionService, _frontendStatsService),
-                new InfoBibleBot(_userService, _guildService),
+                new InfoBibleBot(),
                 new InfoInvite()
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "biblebot").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "biblebot");
         }
 
         public class InfoStats : ICommand
@@ -73,24 +73,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var userPrefs = await _userService.GetCount();
-                var guildPrefs = await _guildService.GetCount();
-                var versions = await _versionService.GetCount();
-                var frontendStats = await _frontendStatsService.Get();
+                long userPrefs = await _userService.GetCount();
+                long guildPrefs = await _guildService.GetCount();
+                long versions = await _versionService.GetCount();
+                FrontendStats frontendStats = await _frontendStatsService.Get();
 
-                var version = Utils.Version;
+                string version = Utils.Version;
 
-                var commitBaseEndpoint = $"https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit";
+                string commitBaseEndpoint = $"https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit";
 
-                var frontendShortHash = frontendStats.FrontendRepoCommitHash.Substring(0, 8);
-                var frontendLongHash = frontendStats.FrontendRepoCommitHash;
-                var frontendCommitURL = $"{commitBaseEndpoint}/{frontendLongHash}";
+                string frontendShortHash = frontendStats.FrontendRepoCommitHash.Substring(0, 8);
+                string frontendLongHash = frontendStats.FrontendRepoCommitHash;
+                string frontendCommitURL = $"{commitBaseEndpoint}/{frontendLongHash}";
 
-                var backendShortHash = ThisAssembly.Git.Commit;
-                var backendLongHash = ThisAssembly.Git.Sha;
-                var backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
+                string backendShortHash = ThisAssembly.Git.Commit;
+                string backendLongHash = ThisAssembly.Git.Sha;
+                string backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
 
-                var resp = $"### Frontend Stats\n" +
+                string resp = $"### Frontend Stats\n" +
                 $"**Shard Count**: {frontendStats.ShardCount}\n" +
                 $"**Server Count**: {frontendStats.ServerCount}\n" +
                 $"**User Count**: {frontendStats.UserCount}\n" +
@@ -124,24 +124,18 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             public List<Permissions> PermissionsRequired { get; set; }
             public bool BotAllowed { get; set; }
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-
-            public InfoBibleBot(UserService userService, GuildService guildService)
+            public InfoBibleBot()
             {
                 Name = "biblebot";
                 ArgumentsError = null;
                 ExpectedArguments = 0;
                 PermissionsRequired = null;
                 BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
             }
 
             public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var embed = new InternalEmbed
+                InternalEmbed embed = new()
                 {
                     Title = $"<:biblebot:800682801925980260> BibleBot v{Utils.Version}",
                     Description = "Scripture from your Discord client to your heart.",
@@ -153,7 +147,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                     },
                     Fields = new List<EmbedField>
                     {
-                        new EmbedField
+                        new()
                         {
                             Name = "<:slashcommand:1132081589313081364> Commands",
                             Value = "`/search` - search for verses by keyword\n" +
@@ -168,7 +162,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             "─────────────",
                             Inline = false
                         },
-                        new EmbedField
+                        new()
                         {
                             Name = ":link: Links",
                             Value = "**Website**: https://biblebot.xyz\n" +
@@ -178,7 +172,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             "**Terms and Conditions**: https://biblebot.xyz/terms\n\n" +
                             "─────────────"
                         },
-                        new EmbedField
+                        new()
                         {
                             Name = "<:news:1132081053251686552> News",
                             Value = "<:newbadge:1132080714343526521> **26 July 2023** - [The NKJV has been restored for use...](https://discord.com/channels/362503610006765568/440313404427730945/1133504754031546380) <:newbadge:1132080714343526521>\n" +
@@ -220,18 +214,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 BotAllowed = true;
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
             {
-                return Task.FromResult<IResponse>(new CommandResponse
-                {
-                    OK = true,
-                    Pages = new List<InternalEmbed>
+                OK = true,
+                Pages = new List<InternalEmbed>
                     {
                         Utils.GetInstance().Embedify("/invite", "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).", false)
                     },
-                    LogStatement = "/invite"
-                });
-            }
+                LogStatement = "/invite"
+            });
         }
     }
 }

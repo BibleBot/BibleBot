@@ -7,7 +7,6 @@
 */
 
 using System.Collections.Generic;
-using BibleBot.Models;
 
 namespace BibleBot.Models
 {
@@ -15,13 +14,7 @@ namespace BibleBot.Models
     {
         public bool OK { get; set; }
         public string LogStatement { get; set; }
-        public string Type
-        {
-            get
-            {
-                return "verse";
-            }
-        }
+        public string Type => "verse";
         public List<Verse> Verses { get; set; }
         public string DisplayStyle { get; set; }
         public bool Paginate { get; set; }

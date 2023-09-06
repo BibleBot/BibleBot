@@ -39,7 +39,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             {
                 new ResourceUsage(_userService, _guildService, _resources),
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
         public class ResourceUsage : ICommand
@@ -73,11 +73,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             {
                 if (args.Count > 0)
                 {
-                    var matchingResource = _resources.Where(resource => resource.CommandReference == args[0]).FirstOrDefault();
+                    IResource matchingResource = _resources.FirstOrDefault(resource => resource.CommandReference == args[0]);
 
                     if (matchingResource != null)
                     {
-                        string section = args.ElementAtOrDefault(1) == null ? "" : args.ElementAtOrDefault(1);
+                        string section = args.ElementAtOrDefault(1) ?? "";
                         int page = 0;
 
                         if (args.Count > 2)
@@ -92,7 +92,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                             }
                         }
 
-                        var pages = Utils.GetInstance().EmbedifyResource(matchingResource, section);
+                        List<InternalEmbed> pages = Utils.GetInstance().EmbedifyResource(matchingResource, section);
 
                         if (pages != null)
                         {
@@ -107,35 +107,35 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 }
 
                 // TODO(SeraphimRP): Use a proper fallback if possible.
-                var creeds = _resources.Where(res => res.Type == ResourceType.CREED);
-                var creedsList = "";
+                IEnumerable<IResource> creeds = _resources.Where(res => res.Type == ResourceType.CREED);
+                string creedsList = "";
 
-                foreach (var creed in creeds)
+                foreach (IResource creed in creeds)
                 {
                     creedsList += $"**{creed.CommandReference}** - {creed.Title}\n";
                 }
 
-                var catechisms = _resources.Where(res => res.Type == ResourceType.CATECHISM);
-                var catechismsList = "";
+                IEnumerable<IResource> catechisms = _resources.Where(res => res.Type == ResourceType.CATECHISM);
+                string catechismsList = "";
 
-                foreach (var catechism in catechisms)
+                foreach (IResource catechism in catechisms)
                 {
                     catechismsList += $"**{catechism.CommandReference}** - {catechism.Title}\n";
                 }
 
-                var canons = _resources.Where(res => res.Type == ResourceType.CANONS);
-                var canonsList = "";
+                IEnumerable<IResource> canons = _resources.Where(res => res.Type == ResourceType.CANONS);
+                string canonsList = "";
 
-                foreach (var canon in canons)
+                foreach (IResource canon in canons)
                 {
                     canonsList += $"**{canon.CommandReference}** - {canon.Title}\n";
                 }
 
 
-                var resp = $"**__Creeds__**\n" + creedsList.Substring(0, creedsList.Length - 1) +
+                string resp = $"**__Creeds__**\n" + creedsList.Substring(0, creedsList.Length - 1) +
                 "\n\n**__Catechisms__**\n" + catechismsList.Substring(0, catechismsList.Length - 1) +
                 "\n\n**__Canon Laws__**\n" + canonsList.Substring(0, catechismsList.Length - 1) +
-                "\n\nTo use a resource, do `/resource resource: <name>`.\nFor example, `/resource resource: nicene` or `/resource resource: ccc range: 1`.";
+                "\n\nTo use a resource, do `/resource resource:<name>`.\nFor example, `/resource resource:nicene` or `/resource resource:ccc range:1`.";
 
 
                 return Task.FromResult<IResponse>(new CommandResponse

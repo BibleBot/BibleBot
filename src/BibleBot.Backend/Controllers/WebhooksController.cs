@@ -23,10 +23,7 @@ namespace BibleBot.Backend.Controllers
     {
         private readonly GuildService _guildService;
 
-        public WebhooksController(GuildService guildService)
-        {
-            _guildService = guildService;
-        }
+        public WebhooksController(GuildService guildService) => _guildService = guildService;
 
         /// <summary>
         /// Processes a message to add a webhook url to a Guild object.
@@ -48,13 +45,13 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var idealGuild = await _guildService.Get(req.GuildId);
+            Guild idealGuild = await _guildService.Get(req.GuildId);
 
             if (idealGuild != null)
             {
                 if (req.Body == "delete")
                 {
-                    var update = Builders<Guild>.Update
+                    UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DailyVerseWebhook, null)
                                  .Set(guild => guild.DailyVerseChannelId, null)
                                  .Set(guild => guild.DailyVerseTime, null)
@@ -65,8 +62,8 @@ namespace BibleBot.Backend.Controllers
                 }
                 else
                 {
-                    var fields = req.Body.Split("||");
-                    var update = Builders<Guild>.Update
+                    string[] fields = req.Body.Split("||");
+                    UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DailyVerseWebhook, fields[0])
                                  .Set(guild => guild.DailyVerseChannelId, fields[1]);
 

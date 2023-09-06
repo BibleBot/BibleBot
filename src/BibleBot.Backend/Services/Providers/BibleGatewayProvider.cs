@@ -14,6 +14,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using AngleSharp.Html.Dom;
+using AngleSharp.Dom;
 using BibleBot.Models;
 
 namespace BibleBot.Backend.Services.Providers
@@ -60,7 +62,7 @@ namespace BibleBot.Backend.Services.Providers
             Stream resp = await req.Content.ReadAsStreamAsync();
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var document = await _htmlParser.ParseDocumentAsync(resp);
+            IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
             if (document == null)
@@ -68,7 +70,7 @@ namespace BibleBot.Backend.Services.Providers
                 return null;
             }
 
-            foreach (var el in document.QuerySelectorAll(".chapternum"))
+            foreach (IElement el in document.QuerySelectorAll(".chapternum"))
             {
                 if (verseNumbersEnabled)
                 {
@@ -80,9 +82,9 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            foreach (var el in document.QuerySelectorAll(".versenum"))
+            foreach (IElement el in document.QuerySelectorAll(".versenum"))
             {
-                var verseNumber = el.TextContent.Substring(0, el.TextContent.Length - 1);
+                string verseNumber = el.TextContent.Substring(0, el.TextContent.Length - 1);
                 if (verseNumbersEnabled)
                 {
                     el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
@@ -93,20 +95,20 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            foreach (var el in document.QuerySelectorAll("br"))
+            foreach (IElement el in document.QuerySelectorAll("br"))
             {
                 el.Before(document.CreateTextNode("\n"));
                 el.Remove();
             }
 
-            foreach (var el in document.QuerySelectorAll(
+            foreach (IElement el in document.QuerySelectorAll(
                 ".crossreference, .footnote, .footnotes, .copyright-table, .translation-note, .inline-h3, h2"))
             {
                 el.Remove();
             }
 
             // In the event that the line-break replacements above don't account for everything...
-            foreach (var el in document.QuerySelectorAll(".text"))
+            foreach (IElement el in document.QuerySelectorAll(".text"))
             {
                 el.TextContent = $" {el.TextContent} ";
             }
@@ -115,16 +117,16 @@ namespace BibleBot.Backend.Services.Providers
             string psalmTitle = "";
             if (titlesEnabled)
             {
-                title = System.String.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
-                psalmTitle = System.String.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
+                title = string.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
+                psalmTitle = string.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
             }
 
-            foreach (var el in document.GetElementsByTagName("h3"))
+            foreach (IElement el in document.GetElementsByTagName("h3"))
             {
                 el.Remove();
             }
 
-            foreach (var el in document.GetElementsByClassName("psalm-title"))
+            foreach (IElement el in document.GetElementsByClassName("psalm-title"))
             {
                 el.Remove();
             }
@@ -139,10 +141,7 @@ namespace BibleBot.Backend.Services.Providers
             return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
 
-        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version)
-        {
-            return await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
-        }
+        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
@@ -154,29 +153,29 @@ namespace BibleBot.Backend.Services.Providers
             Stream resp = await req.Content.ReadAsStreamAsync();
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var document = await _htmlParser.ParseDocumentAsync(resp);
+            IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var results = new List<SearchResult>();
+            List<SearchResult> results = new();
 
-            foreach (var row in document.QuerySelectorAll(".row"))
+            foreach (IElement row in document.QuerySelectorAll(".row"))
             {
-                foreach (var el in row.GetElementsByClassName("bible-item-extras"))
+                foreach (IElement el in row.GetElementsByClassName("bible-item-extras"))
                 {
                     el.Remove();
                 }
 
-                foreach (var el in row.GetElementsByTagName("h3"))
+                foreach (IElement el in row.GetElementsByTagName("h3"))
                 {
                     el.Remove();
                 }
 
-                var referenceElement = row.GetElementsByClassName("bible-item-title").FirstOrDefault();
-                var textElement = row.GetElementsByClassName("bible-item-text").FirstOrDefault();
+                IElement referenceElement = row.GetElementsByClassName("bible-item-title").FirstOrDefault();
+                IElement textElement = row.GetElementsByClassName("bible-item-text").FirstOrDefault();
 
                 if (referenceElement != null && textElement != null)
                 {
-                    var text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
+                    string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
                     text = text.Replace(query, $"**{query}**");
 
                     results.Add(new SearchResult
@@ -192,7 +191,7 @@ namespace BibleBot.Backend.Services.Providers
 
         private string PurifyText(string text, bool isISV)
         {
-            Dictionary<string, string> nuisances = new Dictionary<string, string>
+            Dictionary<string, string> nuisances = new()
             {
                 { "“",     "\"" },
                 { "”",     "\"" },
@@ -219,7 +218,7 @@ namespace BibleBot.Backend.Services.Providers
                 text = text.Replace("Selah", " *(Selah)* ");
             }
 
-            foreach (var pair in nuisances)
+            foreach (KeyValuePair<string, string> pair in nuisances)
             {
                 if (text.Contains(pair.Key))
                 {
@@ -239,7 +238,7 @@ namespace BibleBot.Backend.Services.Providers
             // 119 titles...
             if (isISV)
             {
-                Dictionary<string, string> hebrewChars = new Dictionary<string, string>
+                Dictionary<string, string> hebrewChars = new()
                 {
                     { "א", "" },
                     { "ב", "" },
@@ -253,7 +252,7 @@ namespace BibleBot.Backend.Services.Providers
                     { "י", "" },
                 };
 
-                foreach (var pair in hebrewChars)
+                foreach (KeyValuePair<string, string> pair in hebrewChars)
                 {
                     if (text.Contains(pair.Key))
                     {

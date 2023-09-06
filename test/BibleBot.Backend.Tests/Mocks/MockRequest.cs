@@ -15,20 +15,20 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockRequest(string body)
         {
-            this.UserId = "000000";
-            this.GuildId = "000000";
-            this.IsDM = false;
-            this.Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN");
-            this.Body = body;
+            UserId = "000000";
+            GuildId = "000000";
+            IsDM = false;
+            Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN");
+            Body = body;
         }
 
         public MockRequest()
         {
-            this.UserId = "000000";
-            this.GuildId = "000000";
-            this.IsDM = false;
-            this.Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN");
-            this.Body = "";
+            UserId = "000000";
+            GuildId = "000000";
+            IsDM = false;
+            Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN");
+            Body = "";
         }
     }
 }

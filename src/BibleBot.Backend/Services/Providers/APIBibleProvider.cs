@@ -13,6 +13,8 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using AngleSharp.Html.Dom;
+using AngleSharp.Dom;
 using BibleBot.Models;
 using Serilog;
 
@@ -66,7 +68,7 @@ namespace BibleBot.Backend.Services.Providers
                     reference.Book = "Song of Solomon";
                 }
 
-                if (reference.Version.Abbreviation == "ELXX" || reference.Version.Abbreviation == "LXX")
+                if (reference.Version.Abbreviation is "ELXX" or "LXX")
                 {
                     if (reference.Book == "Daniel")
                     {
@@ -79,7 +81,7 @@ namespace BibleBot.Backend.Services.Providers
 
             string url = string.Format(_getURI, _versionTable[reference.Version.Abbreviation], reference.AsString);
 
-            var resp = await _cachingHttpClient.GetJsonContentAs<ABSearchData>(url, _jsonOptions);
+            ABSearchData resp = await _cachingHttpClient.GetJsonContentAs<ABSearchData>(url, _jsonOptions);
 
             if (resp == null)
             {
@@ -103,11 +105,11 @@ namespace BibleBot.Backend.Services.Providers
                 return null;
             }
 
-            var document = await _htmlParser.ParseDocumentAsync(resp.Passages[0].Content);
+            IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp.Passages[0].Content);
 
-            var numbers = document.QuerySelectorAll(".v");
+            IHtmlCollection<IElement> numbers = document.QuerySelectorAll(".v");
 
-            foreach (var el in numbers)
+            foreach (IElement el in numbers)
             {
                 if (verseNumbersEnabled)
                 {
@@ -134,10 +136,7 @@ namespace BibleBot.Backend.Services.Providers
             return new Verse { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
         }
 
-        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version)
-        {
-            return await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
-        }
+        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
@@ -145,11 +144,11 @@ namespace BibleBot.Backend.Services.Providers
 
             ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
 
-            var results = new List<SearchResult>();
+            List<SearchResult> results = new();
 
             if (resp.Data != null)
             {
-                foreach (var verse in resp.Data.Verses)
+                foreach (ABVerse verse in resp.Data.Verses)
                 {
                     results.Add(new SearchResult
                     {
@@ -164,7 +163,7 @@ namespace BibleBot.Backend.Services.Providers
 
         private string PurifyText(string text)
         {
-            Dictionary<string, string> nuisances = new Dictionary<string, string>
+            Dictionary<string, string> nuisances = new()
             {
                 { "“",     "\"" },
                 { "”",     "\"" },
@@ -189,7 +188,7 @@ namespace BibleBot.Backend.Services.Providers
                 text = text.Replace("Selah", " *(Selah)* ");
             }
 
-            foreach (var pair in nuisances)
+            foreach (KeyValuePair<string, string> pair in nuisances)
             {
                 if (text.Contains(pair.Key))
                 {

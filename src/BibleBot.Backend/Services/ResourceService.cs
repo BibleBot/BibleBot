@@ -56,26 +56,23 @@ namespace BibleBot.Backend.Services
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
 
-            foreach (var canonData in _canonData)
+            foreach (KeyValuePair<string, Tuple<ResourceStyle, string>> canonData in _canonData)
             {
                 _resources.Add(GetResource(ResourceType.CANONS, canonData.Key));
             }
 
-            foreach (var catechismData in _catechismData)
+            foreach (KeyValuePair<string, Tuple<ResourceStyle, string>> catechismData in _catechismData)
             {
                 _resources.Add(GetResource(ResourceType.CATECHISM, catechismData.Key));
             }
 
-            foreach (var creed in _creeds)
+            foreach (string creed in _creeds)
             {
                 _resources.Add(GetResource(ResourceType.CREED, creed));
             }
         }
 
-        public List<IResource> GetAllResources()
-        {
-            return _resources;
-        }
+        public List<IResource> GetAllResources() => _resources;
 
         public IResource GetResource(ResourceType type, string name)
         {
@@ -84,30 +81,17 @@ namespace BibleBot.Backend.Services
             {
                 if (_creeds.Contains(name))
                 {
-                    var creedFile = File.ReadAllText($"./Data/Creeds/english.json");
+                    string creedFile = File.ReadAllText($"./Data/Creeds/english.json");
 
-                    var creedFileObj = JsonSerializer.Deserialize<CreedFile>(creedFile, _jsonSerializerOptions);
-
-                    CreedResource resource;
-
-                    switch (name)
+                    CreedFile creedFileObj = JsonSerializer.Deserialize<CreedFile>(creedFile, _jsonSerializerOptions);
+                    CreedResource resource = name switch
                     {
-                        case "apostles":
-                            resource = creedFileObj.Apostles;
-                            break;
-                        case "nicene325":
-                            resource = creedFileObj.Nicene325;
-                            break;
-                        case "nicene":
-                            resource = creedFileObj.Nicene;
-                            break;
-                        case "chalcedon":
-                            resource = creedFileObj.Chalcedon;
-                            break;
-                        default:
-                            throw new KeyNotFoundException();
-                    }
-
+                        "apostles" => creedFileObj.Apostles,
+                        "nicene325" => creedFileObj.Nicene325,
+                        "nicene" => creedFileObj.Nicene,
+                        "chalcedon" => creedFileObj.Chalcedon,
+                        _ => throw new KeyNotFoundException(),
+                    };
                     resource.CommandReference = name;
                     resource.Type = ResourceType.CREED;
                     resource.Style = ResourceStyle.FULL_TEXT;
@@ -119,13 +103,13 @@ namespace BibleBot.Backend.Services
             {
                 if (_catechismData.ContainsKey(name))
                 {
-                    var idealCatechism = _catechismData[name];
+                    Tuple<ResourceStyle, string> idealCatechism = _catechismData[name];
 
-                    var catechismFile = File.ReadAllText($"./Data/Catechisms/{idealCatechism.Item2}.json");
+                    string catechismFile = File.ReadAllText($"./Data/Catechisms/{idealCatechism.Item2}.json");
 
                     if (idealCatechism.Item1 == ResourceStyle.PARAGRAPHED)
                     {
-                        var resource = JsonSerializer.Deserialize<ParagraphedResource>(catechismFile, _jsonSerializerOptions);
+                        ParagraphedResource resource = JsonSerializer.Deserialize<ParagraphedResource>(catechismFile, _jsonSerializerOptions);
                         resource.CommandReference = name;
                         resource.Type = ResourceType.CATECHISM;
                         resource.Style = ResourceStyle.PARAGRAPHED;
@@ -133,7 +117,7 @@ namespace BibleBot.Backend.Services
                     }
                     else if (idealCatechism.Item1 == ResourceStyle.SECTIONED)
                     {
-                        var resource = JsonSerializer.Deserialize<SectionedResource>(catechismFile, _jsonSerializerOptions);
+                        SectionedResource resource = JsonSerializer.Deserialize<SectionedResource>(catechismFile, _jsonSerializerOptions);
                         resource.CommandReference = name;
                         resource.Type = ResourceType.CATECHISM;
                         resource.Style = ResourceStyle.SECTIONED;
@@ -145,13 +129,13 @@ namespace BibleBot.Backend.Services
             {
                 if (_canonData.ContainsKey(name))
                 {
-                    var idealCanons = _canonData[name];
+                    Tuple<ResourceStyle, string> idealCanons = _canonData[name];
 
-                    var canonsFile = File.ReadAllText($"./Data/Canons/{idealCanons.Item2}.json");
+                    string canonsFile = File.ReadAllText($"./Data/Canons/{idealCanons.Item2}.json");
 
                     if (idealCanons.Item1 == ResourceStyle.PARAGRAPHED)
                     {
-                        var resource = JsonSerializer.Deserialize<ParagraphedResource>(canonsFile, _jsonSerializerOptions);
+                        ParagraphedResource resource = JsonSerializer.Deserialize<ParagraphedResource>(canonsFile, _jsonSerializerOptions);
                         resource.CommandReference = name;
                         resource.Type = ResourceType.CANONS;
                         resource.Style = ResourceStyle.PARAGRAPHED;
@@ -159,7 +143,7 @@ namespace BibleBot.Backend.Services
                     }
                     else if (idealCanons.Item1 == ResourceStyle.SECTIONED)
                     {
-                        var resource = JsonSerializer.Deserialize<SectionedResource>(canonsFile, _jsonSerializerOptions);
+                        SectionedResource resource = JsonSerializer.Deserialize<SectionedResource>(canonsFile, _jsonSerializerOptions);
                         resource.CommandReference = name;
                         resource.Type = ResourceType.CANONS;
                         resource.Style = ResourceStyle.SECTIONED;

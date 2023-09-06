@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using AngleSharp.Html.Dom;
 
 namespace BibleBot.Backend.Services.Providers
 {
@@ -40,7 +41,7 @@ namespace BibleBot.Backend.Services.Providers
             Stream resp = await req.Content.ReadAsStreamAsync();
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var document = await _htmlParser.ParseDocumentAsync(resp);
+            IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
             return document.GetElementsByClassName("rp-passage-display").FirstOrDefault().TextContent;
@@ -56,7 +57,7 @@ namespace BibleBot.Backend.Services.Providers
             Stream resp = await req.Content.ReadAsStreamAsync();
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var document = await _htmlParser.ParseDocumentAsync(resp);
+            IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
             return document.GetElementsByClassName("b1").FirstOrDefault().GetElementsByClassName("vr").FirstOrDefault().GetElementsByClassName("vc").FirstOrDefault().TextContent;
@@ -64,7 +65,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<string> GetTrulyRandomVerse()
         {
-            var verseNumber = RandomNumberGenerator.GetInt32(0, 31102);
+            int verseNumber = RandomNumberGenerator.GetInt32(0, 31102);
             string url = $"https://biblebot.github.io/RandomVersesData/{verseNumber}.txt";
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
@@ -73,9 +74,9 @@ namespace BibleBot.Backend.Services.Providers
             string resp = await req.Content.ReadAsStringAsync();
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            var verseArray = resp.Split(" ").Take(2);
+            IEnumerable<string> verseArray = resp.Split(" ").Take(2);
 
-            var bookMap = new Dictionary<string, string>
+            Dictionary<string, string> bookMap = new()
             {
                 { "Sa1", "1 Samuel" },
                 { "Sa2", "2 Samuel" },
@@ -96,7 +97,7 @@ namespace BibleBot.Backend.Services.Providers
                 { "Jo3", "3 John" }
             };
 
-            var book = verseArray.ElementAt(0);
+            string book = verseArray.ElementAt(0);
 
             if (bookMap.ContainsKey(book))
             {

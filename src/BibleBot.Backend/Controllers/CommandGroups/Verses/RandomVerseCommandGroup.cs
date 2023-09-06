@@ -46,7 +46,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 new RandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new TrulyRandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders)
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
         public class RandomVerse : ICommand
@@ -96,14 +96,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-
-                var version = "RSV";
-                var verseNumbersEnabled = true;
-                var titlesEnabled = true;
-                var displayStyle = "embed";
+                string version = "RSV";
+                bool verseNumbersEnabled = true;
+                bool titlesEnabled = true;
+                string displayStyle = "embed";
 
                 if (idealUser != null && !req.IsBot)
                 {
@@ -115,28 +114,23 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 else if (idealGuild != null)
                 {
                     version = idealGuild.Version;
-                    displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
+                    displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                var idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version);
                 string randomRef = await _svProvider.GetRandomVerse();
-                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
 
-                if (provider != null)
+                return new VerseResponse
                 {
-                    return new VerseResponse
+                    OK = true,
+                    Verses = new List<Verse>
                     {
-                        OK = true,
-                        Verses = new List<Verse>
-                        {
-                           await provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                        },
-                        DisplayStyle = displayStyle,
-                        LogStatement = "/random"
-                    };
-                }
-
-                throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
+                        await provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
+                    },
+                    DisplayStyle = displayStyle,
+                    LogStatement = "/random"
+                };
             }
         }
 
@@ -187,13 +181,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-                var version = "RSV";
-                var verseNumbersEnabled = true;
-                var titlesEnabled = true;
-                var displayStyle = "embed";
+                string version = "RSV";
+                bool verseNumbersEnabled = true;
+                bool titlesEnabled = true;
+                string displayStyle = "embed";
 
                 if (idealUser != null && !req.IsBot)
                 {
@@ -204,29 +198,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 else if (idealGuild != null)
                 {
                     version = idealGuild.Version;
-                    displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
+                    displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                var idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version);
                 string trulyRandomRef = await _svProvider.GetTrulyRandomVerse();
-                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
 
-                if (provider != null)
+                return new VerseResponse
                 {
-                    return new VerseResponse
+                    OK = true,
+                    Verses = new List<Verse>
                     {
-                        OK = true,
-                        Verses = new List<Verse>
-                        {
-                            await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                        },
-                        DisplayStyle = displayStyle,
-                        LogStatement = "/truerandom"
-                    };
-                }
-
-                throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
+                        await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
+                    },
+                    DisplayStyle = displayStyle,
+                    LogStatement = "/truerandom"
+                };
             }
         }
     }
 }
+

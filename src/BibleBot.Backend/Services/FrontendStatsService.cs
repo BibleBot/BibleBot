@@ -20,8 +20,8 @@ namespace BibleBot.Backend.Services
 
         public FrontendStatsService(IDatabaseSettings settings)
         {
-            var client = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONN"));
-            var database = client.GetDatabase(settings.DatabaseName);
+            MongoClient client = new(Environment.GetEnvironmentVariable("MONGODB_CONN"));
+            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
             _frontendStats = database.GetCollection<FrontendStats>(settings.FrontendStatsCollectionName);
         }

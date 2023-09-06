@@ -23,10 +23,7 @@ namespace BibleBot.Backend.Controllers
     {
         private readonly FrontendStatsService _frontendStatsService;
 
-        public StatsController(FrontendStatsService frontendStatsService)
-        {
-            _frontendStatsService = frontendStatsService;
-        }
+        public StatsController(FrontendStatsService frontendStatsService) => _frontendStatsService = frontendStatsService;
 
         /// <summary>
         /// Processes a message to update stats from frontend.
@@ -48,12 +45,12 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var stats = await _frontendStatsService.Get();
-            var fields = req.Body.Split("||");
+            FrontendStats stats = await _frontendStatsService.Get();
+            string[] fields = req.Body.Split("||");
 
             if (stats != null)
             {
-                var update = Builders<FrontendStats>.Update
+                UpdateDefinition<FrontendStats> update = Builders<FrontendStats>.Update
                              .Set(stats => stats.ShardCount, int.Parse(fields[0]))
                              .Set(stats => stats.ServerCount, int.Parse(fields[1]))
                              .Set(stats => stats.UserCount, int.Parse(fields[2]))

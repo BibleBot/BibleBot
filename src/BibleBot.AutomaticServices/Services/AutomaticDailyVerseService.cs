@@ -66,19 +66,19 @@ namespace BibleBot.AutomaticServices.Services
 
         public async void RunAutomaticDailyVerses(object state)
         {
-            var count = 0;
-            var idealCount = 0;
-            var guildsCleared = new List<string>();
+            int count = 0;
+            int idealCount = 0;
+            List<string> guildsCleared = new();
 
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
             ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["America/Detroit"]);
 
-            var matches = (await _guildService.Get()).Where<Guild>((guild) =>
+            IEnumerable<Guild> matches = (await _guildService.Get()).Where((guild) =>
             {
                 if (guild.DailyVerseTime != null && guild.DailyVerseTimeZone != null && guild.DailyVerseWebhook != null)
                 {
-                    var guildTime = guild.DailyVerseTime.Split(":");
-                    var preferredTimeZone = DateTimeZoneProviders.Tzdb[guild.DailyVerseTimeZone];
+                    string[] guildTime = guild.DailyVerseTime.Split(":");
+                    DateTimeZone preferredTimeZone = DateTimeZoneProviders.Tzdb[guild.DailyVerseTimeZone];
                     ZonedDateTime dateTimeInPreferredTz = currentInstant.InZone(preferredTimeZone);
 
                     try
@@ -102,23 +102,18 @@ namespace BibleBot.AutomaticServices.Services
             {
                 if (!guildsCleared.Contains(guild.GuildId))
                 {
-                    var version = guild.Version != null ? guild.Version : "RSV";
-                    var idealVersion = await _versionService.Get(version);
-
-                    if (idealVersion == null)
-                    {
-                        idealVersion = await _versionService.Get("RSV");
-                    }
+                    string version = guild.Version ?? "RSV";
+                    Models.Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
 
                     string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
-                    IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
+                    IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
 
                     if (provider != null)
                     {
                         Verse verse = provider.GetVerse(votdRef, true, true, idealVersion).GetAwaiter().GetResult();
 
-                        var embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
-                        var webhookRequestBody = new WebhookRequestBody
+                        InternalEmbed embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
+                        WebhookRequestBody webhookRequestBody = new()
                         {
                             Content = "Here is the daily verse:",
                             Username = "BibleBot Automatic Daily Verses",
@@ -126,15 +121,15 @@ namespace BibleBot.AutomaticServices.Services
                             Embeds = new List<InternalEmbed> { embed }
                         };
 
-                        var request = new RestRequest(guild.DailyVerseWebhook);
+                        RestRequest request = new(guild.DailyVerseWebhook);
                         request.AddJsonBody(webhookRequestBody);
 
-                        var resp = await _restClient.ExecuteAsync(request, Method.POST);
+                        IRestResponse resp = await _restClient.ExecuteAsync(request, Method.POST);
                         if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
                         {
                             count += 1;
 
-                            var update = Builders<Guild>.Update
+                            UpdateDefinition<Guild> update = Builders<Guild>.Update
                                          .Set(guild => guild.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null));
 
                             await _guildService.Update(guild.GuildId, update);
@@ -157,9 +152,6 @@ namespace BibleBot.AutomaticServices.Services
             return Task.CompletedTask;
         }
 
-        public void Dispose()
-        {
-            _timer?.Dispose();
-        }
+        public void Dispose() => _timer?.Dispose();
     }
 }

@@ -28,10 +28,7 @@ namespace BibleBot.Backend
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
@@ -56,8 +53,8 @@ namespace BibleBot.Backend
             services.AddSingleton<APIBibleProvider>();
 
             // Add the name fetching service with a predefined instance, since we'll use it later in this function.
-            var nameFetchingService = new NameFetchingService();
-            services.AddSingleton<NameFetchingService>(nameFetchingService);
+            NameFetchingService nameFetchingService = new();
+            services.AddSingleton(nameFetchingService);
 
             services.AddControllers();
 
@@ -84,8 +81,8 @@ namespace BibleBot.Backend
                 });
 
                 // Utilize XML comments in Swagger documentation.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
         }
@@ -103,7 +100,7 @@ namespace BibleBot.Backend
             {
                 app.UseExceptionHandler(c => c.Run(async context =>
                 {
-                    var exception = context.Features.Get<IExceptionHandlerPathFeature>().Error;
+                    Exception exception = context.Features.Get<IExceptionHandlerPathFeature>().Error;
                     await context.Response.WriteAsJsonAsync(new { OK = false, logStatement = exception.Message });
                 }));
             }

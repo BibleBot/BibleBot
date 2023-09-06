@@ -71,14 +71,14 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var displayStyle = "embed";
-            var ignoringBrackets = new List<string> { "<>" };
-            var paginateVerses = false;
+            string displayStyle = "embed";
+            List<string> ignoringBrackets = new() { "<>" };
+            bool paginateVerses = false;
 
-            var idealGuild = await _guildService.Get(req.GuildId);
+            Guild idealGuild = await _guildService.Get(req.GuildId);
             if (idealGuild != null)
             {
-                displayStyle = idealGuild.DisplayStyle == null ? displayStyle : idealGuild.DisplayStyle;
+                displayStyle = idealGuild.DisplayStyle ?? displayStyle;
 
                 if (idealGuild.IgnoringBrackets != null)
                 {
@@ -86,14 +86,14 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            var body = _parsingService.PurifyBody(ignoringBrackets, req.Body);
-            var tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), body);
+            string body = _parsingService.PurifyBody(ignoringBrackets, req.Body);
+            Tuple<string, List<BookSearchResult>> tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), body);
 
-            var version = "RSV";
-            var verseNumbersEnabled = true;
-            var titlesEnabled = true;
+            string version = "RSV";
+            bool verseNumbersEnabled = true;
+            bool titlesEnabled = true;
 
-            var idealUser = await _userService.Get(req.UserId);
+            User idealUser = await _userService.Get(req.UserId);
 
             if (idealUser != null && !req.IsBot)
             {
@@ -111,13 +111,13 @@ namespace BibleBot.Backend.Controllers
                 version = idealGuild.Version;
             }
 
-            var idealVersion = await _versionService.Get(version);
+            Models.Version idealVersion = await _versionService.Get(version);
 
-            List<Reference> references = new List<Reference>();
+            List<Reference> references = new();
 
-            foreach (var bsr in tuple.Item2)
+            foreach (BookSearchResult bsr in tuple.Item2)
             {
-                var reference = await _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
+                Reference reference = await _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
 
                 if (reference == null)
                 {
@@ -155,12 +155,12 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            List<Verse> results = new List<Verse>();
+            List<Verse> results = new();
 
-            foreach (var reference in references)
+            foreach (Reference reference in references)
             {
-                Verse result = new Verse();
-                IBibleProvider provider = _bibleProviders.Where(pv =>
+                Verse result = new();
+                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv =>
                 {
                     if (reference != null)
                     {
@@ -171,12 +171,7 @@ namespace BibleBot.Backend.Controllers
                     }
 
                     return false;
-                }).FirstOrDefault();
-
-                if (provider == null)
-                {
-                    throw new ProviderNotFoundException();
-                }
+                }) ?? throw new ProviderNotFoundException();
 
                 result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
@@ -192,16 +187,16 @@ namespace BibleBot.Backend.Controllers
 
                 if (displayStyle == "embed" && result.Text.Length > 2048)
                 {
-                    result.Text = $"{String.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
+                    result.Text = $"{string.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
                     result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
                 }
                 else if (displayStyle != "embed")
                 {
-                    var combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
+                    int combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
 
                     if (combinedTextLength > 2000)
                     {
-                        result.Text = $"{String.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
+                        result.Text = $"{string.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
                         result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
                     }
                 }
@@ -226,7 +221,7 @@ namespace BibleBot.Backend.Controllers
             }
             else if (results.Count() > 0)
             {
-                var logStatement = String.Join(" / ", results.Select(verse => $"{verse.Reference.ToString()} {verse.Reference.Version.Abbreviation}"));
+                string logStatement = string.Join(" / ", results.Select(verse => $"{verse.Reference} {verse.Reference.Version.Abbreviation}"));
 
                 if (logStatement.Contains("Psalm 151"))
                 {

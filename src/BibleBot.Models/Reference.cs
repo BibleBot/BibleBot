@@ -29,17 +29,17 @@ namespace BibleBot.Models
 
         public override string ToString()
         {
-            string result = $"{this.Book} {this.StartingChapter}:{this.StartingVerse}";
+            string result = $"{Book} {StartingChapter}:{StartingVerse}";
 
-            if (this.EndingChapter > 0 && this.EndingChapter != this.StartingChapter)
+            if (EndingChapter > 0 && EndingChapter != StartingChapter)
             {
-                result += $"-{this.EndingChapter}:{this.EndingVerse}";
+                result += $"-{EndingChapter}:{EndingVerse}";
             }
-            else if (this.EndingVerse > 0 && this.EndingVerse != this.StartingVerse)
+            else if (EndingVerse > 0 && EndingVerse != StartingVerse)
             {
-                result += $"-{this.EndingVerse}";
+                result += $"-{EndingVerse}";
             }
-            else if (this.EndingChapter > 0 && this.EndingVerse == 0)
+            else if (EndingChapter > 0 && EndingVerse == 0)
             {
                 result += "-";
             }
@@ -49,7 +49,7 @@ namespace BibleBot.Models
 
         public string ToAPIBibleString()
         {
-            var nameToId = new Dictionary<string, string>
+            Dictionary<string, string> nameToId = new()
             {
                 { "Genesis", "GEN" },
                 { "Exodus", "EXO" },
@@ -136,38 +136,21 @@ namespace BibleBot.Models
                 { "Revelation", "REV" }
             };
 
-            string result = $"{nameToId[this.Book]}.{this.StartingChapter}.{this.StartingVerse}";
+            string result = $"{nameToId[Book]}.{StartingChapter}.{StartingVerse}";
 
-            if (this.EndingChapter > 0 && this.EndingChapter != this.StartingChapter)
+            if (EndingChapter > 0 && EndingChapter != StartingChapter)
             {
-                result += $"-{nameToId[this.Book]}.{this.EndingChapter}.{this.EndingVerse}";
+                result += $"-{nameToId[Book]}.{EndingChapter}.{EndingVerse}";
             }
-            else if (this.EndingVerse > 0 && this.EndingVerse != this.StartingVerse)
+            else if (EndingVerse > 0 && EndingVerse != StartingVerse)
             {
-                result += $"-{nameToId[this.Book]}.{this.StartingChapter}.{this.EndingVerse}";
+                result += $"-{nameToId[Book]}.{StartingChapter}.{EndingVerse}";
             }
 
             return result;
         }
 
-        // NOTE: Equals() and GetHashCode() presume version DOES NOT MATTER
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null || !(obj is Reference))
-            {
-                return false;
-            }
-
-
-
-            return this.ToString() == ((obj as Reference).ToString()) &&
-                   this.Version.Abbreviation == (obj as Reference).Version.Abbreviation;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ToString().GetHashCode();
-        }
+        public override bool Equals(object obj) => obj is not null and Reference && ToString() == (obj as Reference).ToString() && Version.Abbreviation == (obj as Reference).Version.Abbreviation;
+        public override int GetHashCode() => ToString().GetHashCode();
     }
 }

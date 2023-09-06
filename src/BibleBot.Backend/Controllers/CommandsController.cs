@@ -15,7 +15,6 @@ using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -89,18 +88,18 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            var tokenizedBody = req.Body.Split(" ");
+            string[] tokenizedBody = req.Body.Split(" ");
 
             if (tokenizedBody.Length > 0)
             {
-                var potentialCommand = tokenizedBody[0];
+                string potentialCommand = tokenizedBody[0];
 
-                var idealGuild = await _guildService.Get(req.GuildId);
-                var prefix = "+";
+                Guild idealGuild = await _guildService.Get(req.GuildId);
+                string prefix = "+";
 
                 if (potentialCommand.StartsWith(prefix))
                 {
-                    var grp = _commandGroups.Where(grp => grp.Name == potentialCommand.Substring(1)).FirstOrDefault();
+                    ICommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand.Substring(1));
 
                     if (grp != null)
                     {
@@ -119,13 +118,13 @@ namespace BibleBot.Backend.Controllers
                         if (tokenizedBody.Length > 1)
                         {
 
-                            var idealCommand = grp.Commands.Where(cmd => cmd.Name == tokenizedBody[1]).FirstOrDefault();
+                            ICommand idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
 
                             if (idealCommand != null)
                             {
                                 if (idealCommand.PermissionsRequired != null)
                                 {
-                                    foreach (var permission in idealCommand.PermissionsRequired)
+                                    foreach (Permissions permission in idealCommand.PermissionsRequired)
                                     {
                                         // if ((req.UserPermissions & (long)permission) != (long)permission)
                                         // {
@@ -156,7 +155,7 @@ namespace BibleBot.Backend.Controllers
                                 }
 
                                 var commandArgs = tokenizedBody.Skip(2).ToList();
-
+#pragma warning disable IDE0045
                                 if (commandArgs.Count() < idealCommand.ExpectedArguments)
                                 {
                                     return new CommandResponse
@@ -169,10 +168,10 @@ namespace BibleBot.Backend.Controllers
                                         LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
                                     };
                                 }
-
+#pragma warning restore IDE0045
                                 return await idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
                             }
-                            else if (grp.Name == "resource" || grp.Name == "search")
+                            else if (grp.Name is "resource" or "search")
                             {
                                 return await grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
                             }
@@ -182,7 +181,7 @@ namespace BibleBot.Backend.Controllers
                     }
                     else
                     {
-                        var cmd = _commandGroups.Where(grp => grp.Name == "info").FirstOrDefault().Commands.Where(cmd => cmd.Name == potentialCommand.Substring(1)).FirstOrDefault();
+                        ICommand cmd = _commandGroups.FirstOrDefault(grp => grp.Name == "info").Commands.FirstOrDefault(cmd => cmd.Name == potentialCommand.Substring(1));
 
                         if (cmd != null)
                         {

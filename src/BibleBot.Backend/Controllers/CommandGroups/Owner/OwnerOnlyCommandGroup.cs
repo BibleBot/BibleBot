@@ -39,7 +39,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
             {
                 new OwnerAnnounce()
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "announce").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "announce");
         }
 
         public class OwnerAnnounce : ICommand
@@ -59,19 +59,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
                 BotAllowed = false; // anti-spam measure
             }
 
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
             {
-                return Task.FromResult<IResponse>(new CommandResponse
-                {
-                    OK = true,
-                    Pages = new List<InternalEmbed>
+                OK = true,
+                Pages = new List<InternalEmbed>
                     {
                         Utils.GetInstance().Embedify("BibleBot Announcement", string.Join(" ", args), false)
                     },
-                    LogStatement = "/announce",
-                    SendAnnouncement = true
-                });
-            }
+                LogStatement = "/announce",
+                SendAnnouncement = true
+            });
         }
     }
 }

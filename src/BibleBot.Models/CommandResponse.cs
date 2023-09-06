@@ -7,7 +7,6 @@
 */
 
 using System.Collections.Generic;
-using BibleBot.Models;
 
 namespace BibleBot.Models
 {
@@ -15,13 +14,7 @@ namespace BibleBot.Models
     {
         public bool OK { get; set; }
         public string LogStatement { get; set; }
-        public string Type
-        {
-            get
-            {
-                return "cmd";
-            }
-        }
+        public string Type => "cmd";
         public List<InternalEmbed> Pages { get; set; }
         public bool CreateWebhook { get; set; }
         public bool RemoveWebhook { get; set; }

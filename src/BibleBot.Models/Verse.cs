@@ -17,20 +17,17 @@ namespace BibleBot.Models
 
         public override bool Equals(object obj)
         {
-            if (obj == null || !(obj is Verse))
+            if (obj is null or not Verse)
             {
                 return false;
             }
 
-            Verse verse = (Verse)obj;
+            Verse verse = obj as Verse;
 
-            return (Reference.Equals(verse.Reference)) && (Title.Equals(verse.Title)) &&
-                   (PsalmTitle.Equals(verse.PsalmTitle)) && (Text.Equals(verse.Text));
+            return Reference.Equals(verse.Reference) && Title.Equals(verse.Title) &&
+                   PsalmTitle.Equals(verse.PsalmTitle) && Text.Equals(verse.Text);
         }
 
-        public override int GetHashCode()
-        {
-            return Reference.GetHashCode() ^ Title.GetHashCode() ^ PsalmTitle.GetHashCode() ^ Text.GetHashCode();
-        }
+        public override int GetHashCode() => Reference.GetHashCode() ^ Title.GetHashCode() ^ PsalmTitle.GetHashCode() ^ Text.GetHashCode();
     }
 }

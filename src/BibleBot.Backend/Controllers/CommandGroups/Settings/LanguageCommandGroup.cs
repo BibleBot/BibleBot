@@ -41,7 +41,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new LanguageSetServer(_userService, _guildService, _languageService),
                 new LanguageList(_userService, _guildService, _languageService)
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
         public class LanguageUsage : ICommand
@@ -71,12 +71,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-                var defaultLanguage = await _languageService.Get("english");
+                Language defaultLanguage = await _languageService.Get("english");
 
-                var response = "Your preferred language is set to **<language>**.\n" +
+                string response = "Your preferred language is set to **<language>**.\n" +
                                "The server's preferred language is set to **<glanguage>**.\n\n" +
                                "__**Subcommands**__\n" +
                                "**set** - set your preferred language\n" +
@@ -85,7 +85,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    var idealUserLanguage = await _languageService.Get(idealUser.Language);
+                    Language idealUserLanguage = await _languageService.Get(idealUser.Language);
 
                     if (idealUserLanguage != null)
                     {
@@ -95,7 +95,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealGuild != null)
                 {
-                    var idealGuildLanguage = await _languageService.Get(idealGuild.Language);
+                    Language idealGuildLanguage = await _languageService.Get(idealGuild.Language);
 
                     if (idealGuildLanguage != null)
                     {
@@ -145,16 +145,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var newLanguage = args[0].ToUpperInvariant();
-                var idealLanguage = await _languageService.Get(newLanguage);
+                string newLanguage = args[0].ToUpperInvariant();
+                Language idealLanguage = await _languageService.Get(newLanguage);
 
                 if (idealLanguage != null)
                 {
-                    var idealUser = await _userService.Get(req.UserId);
+                    User idealUser = await _userService.Get(req.UserId);
 
                     if (idealUser != null)
                     {
-                        var update = Builders<User>.Update
+                        UpdateDefinition<User> update = Builders<User>.Update
                                      .Set(user => user.Language, idealLanguage.ObjectName);
 
                         await _userService.Update(req.UserId, update);
@@ -227,16 +227,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var newLanguage = args[0].ToUpperInvariant();
-                var idealLanguage = await _languageService.Get(newLanguage);
+                string newLanguage = args[0].ToUpperInvariant();
+                Language idealLanguage = await _languageService.Get(newLanguage);
 
                 if (idealLanguage != null)
                 {
-                    var idealGuild = await _guildService.Get(req.GuildId);
+                    Guild idealGuild = await _guildService.Get(req.GuildId);
 
                     if (idealGuild != null)
                     {
-                        var update = Builders<Guild>.Update
+                        UpdateDefinition<Guild> update = Builders<Guild>.Update
                                      .Set(guild => guild.Language, idealLanguage.ObjectName);
 
                         await _guildService.Update(req.GuildId, update);
@@ -305,10 +305,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var languages = await _languageService.Get();
+                List<Language> languages = await _languageService.Get();
                 languages.Sort((x, y) => x.Name.CompareTo(y.Name));
 
-                var content = "";
+                string content = "";
 
                 foreach (Language lang in languages)
                 {

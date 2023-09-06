@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AngleSharp;
+using AngleSharp.Dom;
 using BibleBot.Models;
 using RestSharp;
 using Serilog;
@@ -23,10 +24,10 @@ namespace BibleBot.Backend.Services
     {
         private readonly Dictionary<string, string> _apiBibleNames;
         private readonly Dictionary<string, List<string>> _abbreviations;
-        private Dictionary<string, List<string>> _bookNames = new Dictionary<string, List<string>>();
+        private Dictionary<string, List<string>> _bookNames = new();
         private List<string> _defaultNames;
-        private Dictionary<string, Dictionary<string, string>> _bookMap;
-        private List<string> _bookMapDataNames;
+        private readonly Dictionary<string, Dictionary<string, string>> _bookMap;
+        private readonly List<string> _bookMapDataNames;
         private readonly List<string> _nuisances;
 
         private readonly HttpClient _httpClient;
@@ -91,10 +92,10 @@ namespace BibleBot.Backend.Services
             }
 
             Log.Information("NameFetchingService: Getting BibleGateway versions...");
-            var bgVersions = await GetBibleGatewayVersions();
+            Dictionary<string, string> bgVersions = await GetBibleGatewayVersions();
 
             Log.Information("NameFetchingService: Getting BibleGateway book names...");
-            var bgNames = await GetBibleGatewayNames(bgVersions);
+            Dictionary<string, List<string>> bgNames = await GetBibleGatewayNames(bgVersions);
 
             // todo: actually get API.Bible Names
             // Log.Information("NameFetchingService: Getting API.Bible versions...");
@@ -109,7 +110,7 @@ namespace BibleBot.Backend.Services
                 Log.Information("NameFetchingService: Removed old names file...");
             }
 
-            var completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>> { bgNames, /*abNames,*/ _abbreviations });
+            Dictionary<string, List<string>> completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>> { bgNames, /*abNames,*/ _abbreviations });
 
             Log.Information("NameFetchingService: Serializing and writing to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, new JsonSerializerOptions { PropertyNameCaseInsensitive = false });
@@ -120,15 +121,15 @@ namespace BibleBot.Backend.Services
 
         private async Task<Dictionary<string, string>> GetBibleGatewayVersions()
         {
-            Dictionary<string, string> versions = new Dictionary<string, string>();
+            Dictionary<string, string> versions = new();
 
             string resp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
-            var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
+            IDocument document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
 
-            var translationElements = document.All.Where(el => el.ClassList.Contains("translation-name"));
-            foreach (var el in translationElements)
+            IEnumerable<IElement> translationElements = document.All.Where(el => el.ClassList.Contains("translation-name"));
+            foreach (IElement el in translationElements)
             {
-                var targets = el.GetElementsByTagName("a");
+                IHtmlCollection<IElement> targets = el.GetElementsByTagName("a");
 
                 if (targets.Length == 1)
                 {
@@ -144,24 +145,24 @@ namespace BibleBot.Backend.Services
 
         private async Task<Dictionary<string, List<string>>> GetBibleGatewayNames(Dictionary<string, string> versions)
         {
-            Dictionary<string, List<string>> names = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> names = new();
 
-            List<string> threeMaccVariants = new List<string> { "3ma", "3macc", "3m" };
-            List<string> fourMaccVariants = new List<string> { "4ma", "4macc", "4m" };
-            List<string> greekEstherVariants = new List<string> { "gkest", "gkesth", "gkes" };
-            List<string> addEstherVariants = new List<string> { "addesth", "adest" };
-            List<string> prayerAzariahVariants = new List<string> { "praz", "prazar" };
-            List<string> songThreeYouthsVariants = new List<string> { "sgthr", "sgthree" };
+            List<string> threeMaccVariants = new() { "3ma", "3macc", "3m" };
+            List<string> fourMaccVariants = new() { "4ma", "4macc", "4m" };
+            List<string> greekEstherVariants = new() { "gkest", "gkesth", "gkes" };
+            List<string> addEstherVariants = new() { "addesth", "adest" };
+            List<string> prayerAzariahVariants = new() { "praz", "prazar" };
+            List<string> songThreeYouthsVariants = new() { "sgthr", "sgthree" };
 
             foreach (KeyValuePair<string, string> version in versions)
             {
                 string resp = await _httpClient.GetStringAsync(version.Value);
-                var document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
+                IDocument document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
 
-                var bookNames = document.All.Where(el => el.ClassList.Contains("book-name"));
-                foreach (var el in bookNames)
+                IEnumerable<IElement> bookNames = document.All.Where(el => el.ClassList.Contains("book-name"));
+                foreach (IElement el in bookNames)
                 {
-                    foreach (var span in el.GetElementsByTagName("span"))
+                    foreach (IElement span in el.GetElementsByTagName("span"))
                     {
                         span.Remove();
                     }
@@ -253,22 +254,22 @@ namespace BibleBot.Backend.Services
         public async Task<Dictionary<BookCategories, Dictionary<string, string>>> GetBibleGatewayVersionBookList(Version version)
         {
             // TODO: We need to find a cleaner solution for these booknames that isn't nested Dictionaries.
-            Dictionary<BookCategories, Dictionary<string, string>> names = new Dictionary<BookCategories, Dictionary<string, string>>();
+            Dictionary<BookCategories, Dictionary<string, string>> names = new();
 
-            List<string> threeMaccVariants = new List<string> { "3macc", "3m" };
-            List<string> fourMaccVariants = new List<string> { "4macc", "4m" };
-            List<string> greekEstherVariants = new List<string> { "gkesth", "adest", "addesth", "gkes" };
-            List<string> prayerAzariahVariants = new List<string> { "sgthree", "sgthr", "prazar" };
+            List<string> threeMaccVariants = new() { "3macc", "3m" };
+            List<string> fourMaccVariants = new() { "4macc", "4m" };
+            List<string> greekEstherVariants = new() { "gkesth", "adest", "addesth", "gkes" };
+            List<string> prayerAzariahVariants = new() { "sgthree", "sgthr", "prazar" };
 
             string versionListResp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
-            var versionListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(versionListResp));
+            IDocument versionListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(versionListResp));
 
-            var translationElements = versionListDocument.All.Where(el => el.ClassList.Contains("translation-name"));
+            IEnumerable<IElement> translationElements = versionListDocument.All.Where(el => el.ClassList.Contains("translation-name"));
 
             string url = null;
-            foreach (var el in translationElements)
+            foreach (IElement el in translationElements)
             {
-                var targets = el.GetElementsByTagName("a");
+                IHtmlCollection<IElement> targets = el.GetElementsByTagName("a");
 
                 if (targets.Length == 1)
                 {
@@ -285,12 +286,12 @@ namespace BibleBot.Backend.Services
             }
 
             string bookListResp = await _httpClient.GetStringAsync(url);
-            var bookListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(bookListResp));
+            IDocument bookListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(bookListResp));
 
-            var bookNames = bookListDocument.All.Where(el => el.ClassList.Contains("book-name"));
-            foreach (var el in bookNames)
+            IEnumerable<IElement> bookNames = bookListDocument.All.Where(el => el.ClassList.Contains("book-name"));
+            foreach (IElement el in bookNames)
             {
-                foreach (var span in el.GetElementsByTagName("span"))
+                foreach (IElement span in el.GetElementsByTagName("span"))
                 {
                     span.Remove();
                 }
@@ -323,7 +324,7 @@ namespace BibleBot.Backend.Services
 
                     if (!IsNuisance(bookName))
                     {
-                        BookCategories category = new BookCategories();
+                        BookCategories category = new();
 
                         if (_bookMap["ot"].ContainsKey(dataName))
                         {
@@ -361,85 +362,79 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        private async Task<Dictionary<string, string>> GetAPIBibleVersions()
-        {
-            Dictionary<string, string> versions = new Dictionary<string, string>();
+        // private async Task<Dictionary<string, string>> GetAPIBibleVersions()
+        // {
+        //     Dictionary<string, string> versions = new();
+        //
+        //     RestRequest req = new("bibles");
+        //     req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+        //
+        //     ABBibleResponse resp = await _restClient.GetAsync<ABBibleResponse>(req);
+        //
+        //     foreach (ABBibleData version in resp.Data)
+        //     {
+        //         versions.Add(version.Name, $"bibles/{version.Id}/books");
+        //     }
+        //
+        //     return versions;
+        // }
 
-            var req = new RestRequest("bibles");
-            req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+        // private async Task<Dictionary<string, List<string>>> GetAPIBibleNames(Dictionary<string, string> versions)
+        // {
+        //     Dictionary<string, List<string>> names = new();
+        //
+        //     List<string> latterKings = new() { "3 Kings", "4 Kings" };
+        //
+        //     foreach (KeyValuePair<string, string> version in versions)
+        //     {
+        //         RestRequest req = new(version.Value);
+        //         req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+        //
+        //         List<ABBookData> resp = await _restClient.GetAsync<List<ABBookData>>(req);
+        //
+        //         foreach (ABBookData book in resp)
+        //         {
+        //             if (book.Name == null)
+        //             {
+        //                 continue;
+        //             }
+        //
+        //             book.Name = book.Name.Trim();
+        //
+        //             if (!_apiBibleNames.ContainsKey(book.Id))
+        //             {
+        //                 continue;
+        //             }
+        //
+        //             string internalId = _apiBibleNames[book.Id];
+        //
+        //             if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || latterKings.Contains(book.Abbreviation))
+        //             {
+        //                 continue;
+        //             }
+        //
+        //             if (names.ContainsKey(internalId))
+        //             {
+        //                 if (!names[internalId].Contains(book.Name))
+        //                 {
+        //                     names[internalId].Add(book.Name);
+        //                 }
+        //             }
+        //             else
+        //             {
+        //                 names.Add(internalId, new List<string> { book.Name });
+        //             }
+        //         }
+        //     }
+        //
+        //     return names;
+        // }
 
-            ABBibleResponse resp = await _restClient.GetAsync<ABBibleResponse>(req);
+        private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");
 
-            foreach (var version in resp.Data)
-            {
-                versions.Add(version.Name, $"bibles/{version.Id}/books");
-            }
-
-            return versions;
-        }
-
-        private async Task<Dictionary<string, List<string>>> GetAPIBibleNames(Dictionary<string, string> versions)
-        {
-            Dictionary<string, List<string>> names = new Dictionary<string, List<string>>();
-
-            List<string> latterKings = new List<string> { "3 Kings", "4 Kings" };
-
-            foreach (var version in versions)
-            {
-                var req = new RestRequest(version.Value);
-                req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-
-                List<ABBookData> resp = await _restClient.GetAsync<List<ABBookData>>(req);
-
-                foreach (var book in resp)
-                {
-                    if (book.Name == null)
-                    {
-                        continue;
-                    }
-
-                    book.Name = book.Name.Trim();
-
-                    if (!_apiBibleNames.ContainsKey(book.Id))
-                    {
-                        continue;
-                    }
-
-                    var internalId = _apiBibleNames[book.Id];
-
-                    if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || (latterKings.Contains(book.Abbreviation)))
-                    {
-                        continue;
-                    }
-
-                    if (names.ContainsKey(internalId))
-                    {
-                        if (!names[internalId].Contains(book.Name))
-                        {
-                            names[internalId].Add(book.Name);
-                        }
-                    }
-                    else
-                    {
-                        names.Add(internalId, new List<string> { book.Name });
-                    }
-                }
-            }
-
-            return names;
-        }
-
-        private bool IsNuisance(string word)
-        {
-            return _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");
-        }
-
-        private Dictionary<string, List<string>> MergeDictionaries(List<Dictionary<string, List<string>>> dicts)
-        {
-            return dicts.SelectMany(dict => dict)
-                        .ToLookup(pair => pair.Key, pair => pair.Value)
-                        .ToDictionary(group => group.Key,
-                                      group => group.SelectMany(list => list).ToList());
-        }
+        private Dictionary<string, List<string>> MergeDictionaries(List<Dictionary<string, List<string>>> dicts) => dicts.SelectMany(dict => dict)
+                                                                                                                         .ToLookup(pair => pair.Key, pair => pair.Value)
+                                                                                                                         .ToDictionary(group => group.Key,
+                                                                                                                         group => group.SelectMany(list => list).ToList());
     }
 }

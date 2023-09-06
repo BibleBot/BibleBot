@@ -42,7 +42,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new FormattingSetServerDisplayStyle(_userService, _guildService),
                 new FormattingSetIgnoringBrackets(_userService, _guildService)
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
         public class FormattingUsage : ICommand
@@ -70,10 +70,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-                var response = "<vncheck> Verse numbers are **<verseNumbers>**.\n" +
+                string response = "<vncheck> Verse numbers are **<verseNumbers>**.\n" +
                                "<titlecheck> Titles are **<titles>**.\n" +
                                "<vpcheck> Verse pagination is **<pagination>**.\n" +
                                "Your preferred display style is set to **`<displayStyle>`**.\n\n" +
@@ -89,39 +89,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    if (idealUser.VerseNumbersEnabled)
-                    {
-                        response = response.Replace("<vncheck>", "<:checkmark:1132080313854603295>").Replace("<verseNumbers>", "enabled");
-                    }
-                    else
-                    {
-                        response = response.Replace("<vncheck>", "<:xmark:1132080327557398599>").Replace("<verseNumbers>", "disabled");
-                    }
+                    response = idealUser.VerseNumbersEnabled
+                        ? response.Replace("<vncheck>", "<:checkmark:1132080313854603295>").Replace("<verseNumbers>", "enabled")
+                        : response.Replace("<vncheck>", "<:xmark:1132080327557398599>").Replace("<verseNumbers>", "disabled");
 
-                    if (idealUser.TitlesEnabled)
-                    {
-                        response = response.Replace("<titlecheck>", "<:checkmark:1132080313854603295>").Replace("<titles>", "enabled");
-                    }
-                    else
-                    {
-                        response = response.Replace("<titlecheck>", "<:xmark:1132080327557398599>").Replace("<titles>", "disabled");
-                    }
+                    response = idealUser.TitlesEnabled
+                        ? response.Replace("<titlecheck>", "<:checkmark:1132080313854603295>").Replace("<titles>", "enabled")
+                        : response.Replace("<titlecheck>", "<:xmark:1132080327557398599>").Replace("<titles>", "disabled");
 
-                    if (idealUser.PaginationEnabled)
-                    {
-                        response = response.Replace("<vpcheck>", "<:checkmark:1132080313854603295>").Replace("<pagination>", "enabled");
-                    }
-                    else
-                    {
-                        response = response.Replace("<vpcheck>", "<:xmark:1132080327557398599>").Replace("<pagination>", "disabled");
-                    }
+                    response = idealUser.PaginationEnabled
+                        ? response.Replace("<vpcheck>", "<:checkmark:1132080313854603295>").Replace("<pagination>", "enabled")
+                        : response.Replace("<vpcheck>", "<:xmark:1132080327557398599>").Replace("<pagination>", "disabled");
 
                     response = response.Replace("<displayStyle>", idealUser.DisplayStyle);
                 }
 
                 if (idealGuild != null)
                 {
-                    response = response.Replace("<serverDisplayStyle>", idealGuild.DisplayStyle == null ? "embed" : idealGuild.DisplayStyle);
+                    response = response.Replace("<serverDisplayStyle>", idealGuild.DisplayStyle ?? "embed");
                     response = response.Replace("<ignoringBrackets>", idealGuild.IgnoringBrackets != "<>" ? $" or **`{idealGuild.IgnoringBrackets}`**" : "");
                 }
 
@@ -169,7 +154,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                if (args[0] != "enable" && args[0] != "disable")
+                if (args[0] is not "enable" and not "disable")
                 {
                     return new CommandResponse
                     {
@@ -182,12 +167,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                var idealUser = await _userService.Get(req.UserId);
+                User idealUser = await _userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
-                    var update = Builders<User>.Update
-                                 .Set(user => user.VerseNumbersEnabled, (args[0] == "enable" && args[0] != "disable"));
+                    UpdateDefinition<User> update = Builders<User>.Update
+                                 .Set(user => user.VerseNumbersEnabled, args[0] is "enable" and not "disable");
 
                     await _userService.Update(req.UserId, update);
                 }
@@ -200,7 +185,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         InputMethod = "default",
                         Language = "english_us",
                         TitlesEnabled = true,
-                        VerseNumbersEnabled = (args[0] == "enable" && args[0] != "disable"),
+                        VerseNumbersEnabled = args[0] is "enable" and not "disable",
                         PaginationEnabled = false,
                         DisplayStyle = "embed"
                     });
@@ -243,7 +228,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                if (args[0] != "enable" && args[0] != "disable")
+                if (args[0] is not "enable" and not "disable")
                 {
                     return new CommandResponse
                     {
@@ -256,12 +241,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                var idealUser = await _userService.Get(req.UserId);
+                User idealUser = await _userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
-                    var update = Builders<User>.Update
-                                 .Set(user => user.TitlesEnabled, (args[0] == "enable" && args[0] != "disable"));
+                    UpdateDefinition<User> update = Builders<User>.Update
+                                 .Set(user => user.TitlesEnabled, args[0] is "enable" and not "disable");
 
                     await _userService.Update(req.UserId, update);
                 }
@@ -273,7 +258,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Version = "RSV",
                         InputMethod = "default",
                         Language = "english_us",
-                        TitlesEnabled = (args[0] == "enable" && args[0] != "disable"),
+                        TitlesEnabled = args[0] is "enable" and not "disable",
                         VerseNumbersEnabled = true,
                         PaginationEnabled = false,
                         DisplayStyle = "embed"
@@ -317,7 +302,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                if (args[0] != "enable" && args[0] != "disable")
+                if (args[0] is not "enable" and not "disable")
                 {
                     return new CommandResponse
                     {
@@ -330,12 +315,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                var idealUser = await _userService.Get(req.UserId);
+                User idealUser = await _userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
-                    var update = Builders<User>.Update
-                                 .Set(user => user.PaginationEnabled, (args[0] == "enable" && args[0] != "disable"));
+                    UpdateDefinition<User> update = Builders<User>.Update
+                                 .Set(user => user.PaginationEnabled, args[0] is "enable" and not "disable");
 
                     await _userService.Update(req.UserId, update);
                 }
@@ -349,7 +334,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Language = "english_us",
                         TitlesEnabled = true,
                         VerseNumbersEnabled = true,
-                        PaginationEnabled = (args[0] == "enable" && args[0] != "disable"),
+                        PaginationEnabled = args[0] is "enable" and not "disable",
                         DisplayStyle = "embed"
                     });
                 }
@@ -391,7 +376,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                if (!(args[0] == "embed" || args[0] == "code" || args[0] == "blockquote"))
+                if (args[0] is not ("embed" or "code" or "blockquote"))
                 {
                     return new CommandResponse
                     {
@@ -404,11 +389,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                var idealUser = await _userService.Get(req.UserId);
+                User idealUser = await _userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
-                    var update = Builders<User>.Update
+                    UpdateDefinition<User> update = Builders<User>.Update
                                  .Set(user => user.DisplayStyle, args[0]);
 
                     await _userService.Update(req.UserId, update);
@@ -468,7 +453,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                if (!(args[0] == "embed" || args[0] == "code" || args[0] == "blockquote"))
+                if (args[0] is not ("embed" or "code" or "blockquote"))
                 {
                     return new CommandResponse
                     {
@@ -481,11 +466,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                var idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
-                    var update = Builders<Guild>.Update
+                    UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DisplayStyle, args[0]);
 
                     await _guildService.Update(req.GuildId, update);
@@ -544,7 +529,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var acceptableBrackets = new List<string> { "<>", "[]", "{}", "()" };
+                List<string> acceptableBrackets = new() { "<>", "[]", "{}", "()" };
 
                 if (args[0].Length != 2)
                 {
@@ -572,11 +557,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 }
 
 
-                var idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
-                    var update = Builders<Guild>.Update
+                    UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.IgnoringBrackets, args[0]);
 
                     await _guildService.Update(req.GuildId, update);

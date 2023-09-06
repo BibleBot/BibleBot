@@ -42,7 +42,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             {
                 new Search(_userService, _guildService, _versionService, _bibleProviders)
             };
-            DefaultCommand = Commands.Where(cmd => cmd.Name == "usage").FirstOrDefault();
+            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
         public class Search : ICommand
@@ -77,10 +77,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                var idealUser = await _userService.Get(req.UserId);
-                var idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await _userService.Get(req.UserId);
+                Guild idealGuild = await _guildService.Get(req.GuildId);
 
-                var version = "RSV";
+                string version = "RSV";
 
                 if (idealUser != null)
                 {
@@ -91,25 +91,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     version = idealGuild.Version;
                 }
 
-                var idealVersion = await _versionService.Get(version);
-                var query = System.String.Join(" ", args);
+                Version idealVersion = await _versionService.Get(version);
+                string query = string.Join(" ", args);
 
-                IBibleProvider provider = _bibleProviders.Where(pv => pv.Name == idealVersion.Source).FirstOrDefault();
-
-                if (provider == null)
-                {
-                    throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
-                }
-
+                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
                 List<SearchResult> searchResults = await provider.Search(query, idealVersion);
 
                 if (searchResults.Count > 1)
                 {
-                    var pages = new List<InternalEmbed>();
-                    var maxResultsPerPage = 6;
-                    var referencesUsed = new List<string>();
+                    List<InternalEmbed> pages = new();
+                    int maxResultsPerPage = 6;
+                    List<string> referencesUsed = new();
 
-                    var totalPages = (int)System.Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
+                    int totalPages = (int)System.Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
 
                     if (totalPages > 100)
                     {
@@ -121,17 +115,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         totalPages = 1;
                     }
 
-                    var title = "Search results for \"{0}\"";
-                    var pageCounter = "Page {0} of {1}";
+                    string title = "Search results for \"{0}\"";
+                    string pageCounter = "Page {0} of {1}";
 
                     for (int i = 0; i < totalPages; i++)
                     {
-                        var embed = Utils.GetInstance().Embedify(System.String.Format(title, query), System.String.Format(pageCounter, i + 1, totalPages), false);
+                        InternalEmbed embed = Utils.GetInstance().Embedify(string.Format(title, query), string.Format(pageCounter, i + 1, totalPages), false);
                         embed.Fields = new List<EmbedField>();
 
-                        var count = 0;
+                        int count = 0;
 
-                        foreach (var searchResult in searchResults)
+                        foreach (SearchResult searchResult in searchResults)
                         {
                             if (searchResult.Text.Length < 700)
                             {

@@ -14,12 +14,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockRSV()
         {
-            this.Name = "Revised Standard Version (RSV)";
-            this.Abbreviation = "RSV";
-            this.Source = "bg";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = true;
+            Name = "Revised Standard Version (RSV)";
+            Abbreviation = "RSV";
+            Source = "bg";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = true;
         }
     }
 
@@ -27,12 +27,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockNTE()
         {
-            this.Name = "New Testament for Everyone (NTE)";
-            this.Abbreviation = "NTE";
-            this.Source = "bg";
-            this.SupportsOldTestament = false;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = false;
+            Name = "New Testament for Everyone (NTE)";
+            Abbreviation = "NTE";
+            Source = "bg";
+            SupportsOldTestament = false;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = false;
         }
     }
 
@@ -40,12 +40,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockKJVA()
         {
-            this.Name = "King James Version with Apocrypha (KJVA)";
-            this.Abbreviation = "KJVA";
-            this.Source = "ab";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = true;
+            Name = "King James Version with Apocrypha (KJVA)";
+            Abbreviation = "KJVA";
+            Source = "ab";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = true;
         }
     }
 
@@ -53,12 +53,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockLXX()
         {
-            this.Name = "Septuagint (LXX)";
-            this.Abbreviation = "LXX";
-            this.Source = "ab";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = false;
-            this.SupportsDeuterocanon = true;
+            Name = "Septuagint (LXX)";
+            Abbreviation = "LXX";
+            Source = "ab";
+            SupportsOldTestament = true;
+            SupportsNewTestament = false;
+            SupportsDeuterocanon = true;
         }
     }
 
@@ -66,12 +66,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockELXX()
         {
-            this.Name = "Brenton's Septuagint (ELXX)";
-            this.Abbreviation = "ELXX";
-            this.Source = "ab";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = false;
-            this.SupportsDeuterocanon = true;
+            Name = "Brenton's Septuagint (ELXX)";
+            Abbreviation = "ELXX";
+            Source = "ab";
+            SupportsOldTestament = true;
+            SupportsNewTestament = false;
+            SupportsDeuterocanon = true;
         }
     }
 
@@ -79,12 +79,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockPAT1904()
         {
-            this.Name = "Patriarchal Text of 1904 (PAT1904)";
-            this.Abbreviation = "PAT1904";
-            this.Source = "ab";
-            this.SupportsOldTestament = false;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = false;
+            Name = "Patriarchal Text of 1904 (PAT1904)";
+            Abbreviation = "PAT1904";
+            Source = "ab";
+            SupportsOldTestament = false;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = false;
         }
     }
 
@@ -92,12 +92,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockISV()
         {
-            this.Name = "International Standard Version (ISV)";
-            this.Abbreviation = "ISV";
-            this.Source = "bg";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = false;
+            Name = "International Standard Version (ISV)";
+            Abbreviation = "ISV";
+            Source = "bg";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = false;
         }
     }
 
@@ -105,12 +105,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockNIV()
         {
-            this.Name = "New International Version (NIV)";
-            this.Abbreviation = "NIV";
-            this.Source = "bg";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = false;
+            Name = "New International Version (NIV)";
+            Abbreviation = "NIV";
+            Source = "bg";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = false;
         }
     }
 
@@ -118,12 +118,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockWYC()
         {
-            this.Name = "Wycliffe Bible (WYC)";
-            this.Abbreviation = "WYC";
-            this.Source = "bg";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = true;
+            Name = "Wycliffe Bible (WYC)";
+            Abbreviation = "WYC";
+            Source = "bg";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = true;
         }
     }
 
@@ -131,12 +131,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockCEB()
         {
-            this.Name = "Common English Bible (CEB)";
-            this.Abbreviation = "CEB";
-            this.Source = "bg";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = true;
+            Name = "Common English Bible (CEB)";
+            Abbreviation = "CEB";
+            Source = "bg";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = true;
         }
     }
 
@@ -144,12 +144,12 @@ namespace BibleBot.Backend.Tests.Mocks
     {
         public MockNRSVA()
         {
-            this.Name = "New Revised Standard Version, Anglicised (NRSVA)";
-            this.Abbreviation = "NRSVA";
-            this.Source = "bg";
-            this.SupportsOldTestament = true;
-            this.SupportsNewTestament = true;
-            this.SupportsDeuterocanon = true;
+            Name = "New Revised Standard Version, Anglicised (NRSVA)";
+            Abbreviation = "NRSVA";
+            Source = "bg";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = true;
         }
     }
 }

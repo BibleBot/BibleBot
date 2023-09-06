@@ -21,29 +21,29 @@ namespace BibleBot.Backend.Tests
     [TestFixture, Category("CommandsController")]
     public class CommandsControllerTest
     {
-        private CommandsController commandsController;
+        private CommandsController _commandsController;
 
-        private VersionService versionService;
+        private VersionService _versionService;
 
-        private Mock<UserService> userServiceMock;
-        private Mock<GuildService> guildServiceMock;
-        private Mock<ResourceService> resourceServiceMock;
-        private Mock<FrontendStatsService> frontendStatsServiceMock;
-        private Mock<NameFetchingService> nameFetchingServiceMock;
+        private Mock<UserService> _userServiceMock;
+        private Mock<GuildService> _guildServiceMock;
+        private Mock<ResourceService> _resourceServiceMock;
+        private Mock<FrontendStatsService> _frontendStatsServiceMock;
+        private Mock<NameFetchingService> _nameFetchingServiceMock;
 
-        private Mock<SpecialVerseProvider> spProviderMock;
-        private Mock<BibleGatewayProvider> bgProviderMock;
-        private Mock<APIBibleProvider> abProviderMock;
+        private Mock<SpecialVerseProvider> _spProviderMock;
+        private Mock<BibleGatewayProvider> _bgProviderMock;
+        private Mock<APIBibleProvider> _abProviderMock;
 
-        private IDatabaseSettings databaseSettings;
+        private IDatabaseSettings _databaseSettings;
 
-        private BibleBot.Models.Version defaultBibleGatewayVersion;
-        private BibleBot.Models.Version defaultAPIBibleVersion;
+        private Version _defaultBibleGatewayVersion;
+        private Version _defaultAPIBibleVersion;
 
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
-            databaseSettings = new DatabaseSettings
+            _databaseSettings = new DatabaseSettings
             {
                 UserCollectionName = "Users",
                 GuildCollectionName = "Guilds",
@@ -53,44 +53,38 @@ namespace BibleBot.Backend.Tests
                 DatabaseName = "BibleBotBackend"
             };
 
-            userServiceMock = new Mock<UserService>(databaseSettings);
-            guildServiceMock = new Mock<GuildService>(databaseSettings);
-            versionService = new VersionService(databaseSettings);
-            resourceServiceMock = new Mock<ResourceService>();
-            frontendStatsServiceMock = new Mock<FrontendStatsService>(databaseSettings);
-            nameFetchingServiceMock = new Mock<NameFetchingService>();
+            _userServiceMock = new Mock<UserService>(_databaseSettings);
+            _guildServiceMock = new Mock<GuildService>(_databaseSettings);
+            _versionService = new VersionService(_databaseSettings);
+            _resourceServiceMock = new Mock<ResourceService>();
+            _frontendStatsServiceMock = new Mock<FrontendStatsService>(_databaseSettings);
+            _nameFetchingServiceMock = new Mock<NameFetchingService>();
 
-            spProviderMock = new Mock<SpecialVerseProvider>();
-            bgProviderMock = new Mock<BibleGatewayProvider>();
-            abProviderMock = new Mock<APIBibleProvider>();
+            _spProviderMock = new Mock<SpecialVerseProvider>();
+            _bgProviderMock = new Mock<BibleGatewayProvider>();
+            _abProviderMock = new Mock<APIBibleProvider>();
 
-            defaultBibleGatewayVersion = await versionService.Get("RSV");
-            if (defaultBibleGatewayVersion == null)
-            {
-                defaultBibleGatewayVersion = await versionService.Create(new MockRSV());
-            }
+            _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
 
-            defaultAPIBibleVersion = await versionService.Get("KJVA");
-            if (defaultAPIBibleVersion == null)
-            {
-                defaultAPIBibleVersion = await versionService.Create(new MockKJVA());
-            }
+            _defaultAPIBibleVersion = await _versionService.Get("KJVA") ?? await _versionService.Create(new MockKJVA());
 
-            commandsController = new CommandsController(userServiceMock.Object, guildServiceMock.Object,
-                                                    versionService, resourceServiceMock.Object,
-                                                    frontendStatsServiceMock.Object, nameFetchingServiceMock.Object,
-                                                    spProviderMock.Object, bgProviderMock.Object, abProviderMock.Object);
+            _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
+                                                    _versionService, _resourceServiceMock.Object,
+                                                    _frontendStatsServiceMock.Object, _nameFetchingServiceMock.Object,
+                                                    _spProviderMock.Object, _bgProviderMock.Object, _abProviderMock.Object);
         }
 
         [Test]
         public async Task ShouldFailWhenTokenIsInvalid()
         {
-            var req = new MockRequest();
-            req.Token = "meowmix";
+            MockRequest req = new()
+            {
+                Token = "meowmix"
+            };
 
-            var resp = await commandsController.ProcessMessage(req);
+            CommandResponse resp = await _commandsController.ProcessMessage(req) as CommandResponse;
 
-            var expected = new CommandResponse
+            CommandResponse expected = new()
             {
                 OK = false,
                 LogStatement = null,
@@ -106,9 +100,9 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldFailWhenBodyIsEmpty()
         {
-            var resp = await commandsController.ProcessMessage(new MockRequest());
+            CommandResponse resp = await _commandsController.ProcessMessage(new MockRequest()) as CommandResponse;
 
-            var expected = new CommandResponse
+            CommandResponse expected = new()
             {
                 OK = false,
                 LogStatement = null,
@@ -124,7 +118,7 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldProcessSearchQueryWithLargeResults()
         {
-            var resp = await commandsController.ProcessMessage(new MockRequest("+search faith")) as CommandResponse;
+            CommandResponse resp = await _commandsController.ProcessMessage(new MockRequest("+search faith")) as CommandResponse;
 
             resp.OK.Should().BeTrue();
             resp.LogStatement.Should().NotBeNullOrEmpty();

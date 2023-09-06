@@ -22,27 +22,27 @@ namespace BibleBot.Backend.Tests
     [TestFixture, Category("VersesController")]
     public class VersesControllerTest
     {
-        private VersesController versesController;
+        private VersesController _versesController;
 
-        private VersionService versionService;
+        private VersionService _versionService;
 
-        private Mock<UserService> userServiceMock;
-        private Mock<GuildService> guildServiceMock;
-        private Mock<ParsingService> parsingServiceMock;
-        private Mock<NameFetchingService> nameFetchingServiceMock;
+        private Mock<UserService> _userServiceMock;
+        private Mock<GuildService> _guildServiceMock;
+        private Mock<ParsingService> _parsingServiceMock;
+        private Mock<NameFetchingService> _nameFetchingServiceMock;
 
-        private Mock<BibleGatewayProvider> bgProviderMock;
-        private Mock<APIBibleProvider> abProviderMock;
+        private Mock<BibleGatewayProvider> _bgProviderMock;
+        private Mock<APIBibleProvider> _abProviderMock;
 
-        private IDatabaseSettings databaseSettings;
+        private IDatabaseSettings _databaseSettings;
 
-        private BibleBot.Models.Version defaultBibleGatewayVersion;
-        private BibleBot.Models.Version defaultAPIBibleVersion;
+        private Version _defaultBibleGatewayVersion;
+        private Version _defaultAPIBibleVersion;
 
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
-            databaseSettings = new DatabaseSettings
+            _databaseSettings = new DatabaseSettings
             {
                 UserCollectionName = "Users",
                 GuildCollectionName = "Guilds",
@@ -52,42 +52,35 @@ namespace BibleBot.Backend.Tests
                 DatabaseName = "BibleBotBackend"
             };
 
-            userServiceMock = new Mock<UserService>(databaseSettings);
-            guildServiceMock = new Mock<GuildService>(databaseSettings);
-            versionService = new VersionService(databaseSettings);
-            parsingServiceMock = new Mock<ParsingService>(versionService);
-            nameFetchingServiceMock = new Mock<NameFetchingService>();
+            _userServiceMock = new Mock<UserService>(_databaseSettings);
+            _guildServiceMock = new Mock<GuildService>(_databaseSettings);
+            _versionService = new VersionService(_databaseSettings);
+            _parsingServiceMock = new Mock<ParsingService>(_versionService);
+            _nameFetchingServiceMock = new Mock<NameFetchingService>();
 
-            bgProviderMock = new Mock<BibleGatewayProvider>();
-            abProviderMock = new Mock<APIBibleProvider>();
+            _bgProviderMock = new Mock<BibleGatewayProvider>();
+            _abProviderMock = new Mock<APIBibleProvider>();
 
-            defaultBibleGatewayVersion = await versionService.Get("RSV");
-            if (defaultBibleGatewayVersion == null)
-            {
-                defaultBibleGatewayVersion = await versionService.Create(new MockRSV());
-            }
+            _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
+            _defaultAPIBibleVersion = await _versionService.Get("KJVA") ?? await _versionService.Create(new MockKJVA());
 
-            defaultAPIBibleVersion = await versionService.Get("KJVA");
-            if (defaultAPIBibleVersion == null)
-            {
-                defaultAPIBibleVersion = await versionService.Create(new MockKJVA());
-            }
-
-            versesController = new VersesController(userServiceMock.Object, guildServiceMock.Object,
-                                                    parsingServiceMock.Object, versionService,
-                                                    nameFetchingServiceMock.Object, bgProviderMock.Object,
-                                                    abProviderMock.Object);
+            _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
+                                                    _parsingServiceMock.Object, _versionService,
+                                                    _nameFetchingServiceMock.Object, _bgProviderMock.Object,
+                                                    _abProviderMock.Object);
         }
 
         [Test]
         public void ShouldFailWhenTokenIsInvalid()
         {
-            var req = new MockRequest();
-            req.Token = "meowmix";
+            MockRequest req = new()
+            {
+                Token = "meowmix"
+            };
 
-            var resp = versesController.ProcessMessage(req).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(req).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = false,
                 LogStatement = null
@@ -99,9 +92,9 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldFailWhenBodyIsEmpty()
         {
-            var resp = versesController.ProcessMessage(new MockRequest()).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest()).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = false,
                 LogStatement = null
@@ -113,16 +106,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessBibleGatewayReference()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Matthew 1:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Matthew 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -134,7 +127,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -150,16 +143,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessAPIBibleReference()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJVA")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJVA")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Genesis 1:1 KJVA",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -171,7 +164,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultAPIBibleVersion,
+                            Version = _defaultAPIBibleVersion,
                             IsOT = true,
                             IsNT = false,
                             IsDEU = false,
@@ -187,15 +180,10 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldFailWhenReferencingDeuterocanonInProtestantBible()
         {
-            var testVersion = versionService.Get("NTE");
-            if (testVersion == null)
-            {
-                testVersion = versionService.Create(new MockNTE());
-            }
+            _ = _versionService.Get("NTE") ?? _versionService.Create(new MockNTE());
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTE")).GetAwaiter().GetResult() as VerseResponse;
 
-            var resp = versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTE")).GetAwaiter().GetResult();
-
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = false,
                 LogStatement = "New Testament for Everyone (NTE) does not support the Apocrypha/Deuterocanon."
@@ -207,15 +195,10 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldFailWhenReferencingOldTestamentInNewTestamentOnlyBible()
         {
-            var testVersion = versionService.Get("NTE");
-            if (testVersion == null)
-            {
-                testVersion = versionService.Create(new MockNTE());
-            }
+            _ = _versionService.Get("NTE") ?? _versionService.Create(new MockNTE());
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTE")).GetAwaiter().GetResult() as VerseResponse;
 
-            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTE")).GetAwaiter().GetResult();
-
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = false,
                 LogStatement = "New Testament for Everyone (NTE) does not support the Old Testament."
@@ -227,16 +210,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldIgnoreMultipleVerseReferencesInIgnoringBrackets()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTE / Matthew 1:1 NTE / Acts 1:1 NTE > ipsum John 1:1 dolor < Genesis 1:1 NTE > sit")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTE / Matthew 1:1 NTE / Acts 1:1 NTE > ipsum John 1:1 dolor < Genesis 1:1 NTE > sit")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "John 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Word Became Flesh",
                         PsalmTitle = "",
@@ -248,7 +231,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -264,16 +247,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessVerseInNonIgnoringBrackets()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("(John 1:1)")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("(John 1:1)")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "John 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Word Became Flesh",
                         PsalmTitle = "",
@@ -285,7 +268,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -301,16 +284,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessBibleGatewaySpannedReference()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:1-2")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-2")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Matthew 1:1-2 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -322,7 +305,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 2,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsNT = true,
                             IsDEU = false,
                             AsString = "Matthew 1:1-2"
@@ -337,16 +320,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessAPIBibleSpannedReference()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJVA")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJVA")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Genesis 1:1-2 KJVA",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -358,7 +341,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 2,
-                            Version = defaultAPIBibleVersion,
+                            Version = _defaultAPIBibleVersion,
                             IsOT = true,
                             IsNT = false,
                             IsDEU = false,
@@ -374,16 +357,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessBibleGatewaySpannedChapterReference()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:25-2:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Matthew 1:25-2:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Matthew 1:25-2:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Visit of the Wise Men",
                         PsalmTitle = "",
@@ -395,7 +378,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 25,
                             EndingChapter = 2,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -411,16 +394,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessAPIBibleSpannedChapterReference()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJVA")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJVA")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Genesis 1:31-2:1 KJVA",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -432,7 +415,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 31,
                             EndingChapter = 2,
                             EndingVerse = 1,
-                            Version = defaultAPIBibleVersion,
+                            Version = _defaultAPIBibleVersion,
                             IsOT = true,
                             IsNT = false,
                             IsDEU = false,
@@ -448,16 +431,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessBibleGatewayExpandedReference()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:24-")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Matthew 1:24-")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Matthew 1:24- RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -469,7 +452,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 24,
                             EndingChapter = 1,
                             EndingVerse = 0,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -485,9 +468,9 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldIgnoreAPIBibleExpandedReference()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJVA")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJVA")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = false,
                 LogStatement = null
@@ -499,9 +482,9 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldNotProcessReferenceStartingWithVerseZero()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:0")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1:0")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = false,
                 LogStatement = null
@@ -513,9 +496,9 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldNotProcessReferenceWithSpaceBetweenColonAndVerseNumbers()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1: 1-5")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1: 1-5")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = false,
                 LogStatement = null
@@ -527,16 +510,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessReferenceWithFullWidthColon()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1：1-2")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Matthew 1：1-2")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Matthew 1:1-2 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -548,7 +531,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 2,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -564,16 +547,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldNotProcessSameVerseSpannedReferenceAsExpando()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Matthew 1:1-1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Matthew 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -585,7 +568,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -601,22 +584,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldProcessDanielInEnglishSeptuagint()
         {
-            var testVersion = await versionService.Get("ELXX");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockELXX());
-            }
+            Version testVersion = await _versionService.Get("ELXX") ?? await _versionService.Create(new MockELXX());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 ELXX")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 ELXX")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Daniel 1:1-2 ELXX",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -644,22 +623,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldProcessDanielInSeptuagint()
         {
-            var testVersion = await versionService.Get("LXX");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockLXX());
-            }
+            Version testVersion = await _versionService.Get("LXX") ?? await _versionService.Create(new MockLXX());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 LXX")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 LXX")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Daniel 1:1-2 LXX",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -693,16 +668,16 @@ namespace BibleBot.Backend.Tests
         //         testVersion = await versionService.Create(new MockPAT1904());
         //     }
         //
-        //     var resp = versesController.ProcessMessage(new MockRequest("John 1:1-2 PAT1904")).GetAwaiter().GetResult();
+        //     var resp = versesController.ProcessMessage(new MockRequest("John 1:1-2 PAT1904")).GetAwaiter().GetResult() as VerseResponse;
         //
-        //     var expected = new VerseResponse
+        //     VerseResponse expected = new()
         //     {
         //         OK = true,
         //         LogStatement = "John 1:1-2 PAT1904",
         //         DisplayStyle = "embed",
         //         Verses = new List<Verse>
         //         {
-        //             new Verse
+        //             new()
         //             {
         //                 Title = "",
         //                 PsalmTitle = "",
@@ -730,22 +705,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldNotMishandleMultipleSpansInProverbsInNIV()
         {
-            var testVersion = await versionService.Get("NIV");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockNIV());
-            }
+            Version testVersion = await _versionService.Get("NIV") ?? await _versionService.Create(new MockNIV());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Proverbs 25:1-12 NIV")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Proverbs 25:1-12 NIV")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Proverbs 25:1-12 NIV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "More Proverbs of Solomon",
                         PsalmTitle = "",
@@ -773,22 +744,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldWorkAroundHebrewVerseNumbersInExodusInISVPartOne()
         {
-            var testVersion = await versionService.Get("ISV");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockISV());
-            }
+            Version testVersion = await _versionService.Get("ISV") ?? await _versionService.Create(new MockISV());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Exodus 20:1-7 ISV")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Exodus 20:1-7 ISV")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Exodus 20:1-7 ISV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Ten Commandments",
                         PsalmTitle = "",
@@ -816,22 +783,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldWorkAroundHebrewVerseNumbersInExodusInISVPartTwo()
         {
-            var testVersion = await versionService.Get("ISV");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockISV());
-            }
+            Version testVersion = await _versionService.Get("ISV") ?? await _versionService.Create(new MockISV());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Exodus 20:8-17 ISV")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Exodus 20:8-17 ISV")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Exodus 20:8-17 ISV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -859,16 +822,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldNotProcessEsdrasBooksAsEzra()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("1 Esdras 1:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("1 Esdras 1:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "1 Esdras 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "Josiah Celebrates the Passover",
                         PsalmTitle = "",
@@ -880,7 +843,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = false,
                             IsDEU = true,
@@ -896,16 +859,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldNotProcessLetterOfJeremiahAsJeremiah()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Letter of Jeremiah 1:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Letter of Jeremiah 1:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Letter of Jeremiah 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -917,7 +880,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = false,
                             IsDEU = true,
@@ -933,16 +896,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessJeremiah()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Jeremiah 1:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Jeremiah 1:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Jeremiah 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -954,7 +917,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = true,
                             IsNT = false,
                             IsDEU = false,
@@ -972,16 +935,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessPsalm151Properly()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Psalm 151:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Psalm 151:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Psalm 151:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "This psalm is ascribed to David as his own composition (though it is outside the number), after he had fought in single combat with Goliath.",
@@ -993,7 +956,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = false,
                             IsDEU = true,
@@ -1009,7 +972,7 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldThrowProviderNotFoundException()
         {
-            var testVersion = await versionService.Create(new BibleBot.Models.Version
+            Version testVersion = await _versionService.Create(new Version
             {
                 Name = "A Test Version (TEST)",
                 Abbreviation = "TEST",
@@ -1019,28 +982,28 @@ namespace BibleBot.Backend.Tests
                 SupportsDeuterocanon = false
             });
 
-            versesController
+            _ = _versesController
                 .Invoking(c => c.ProcessMessage(new MockRequest("Genesis 1:1 TEST")).GetAwaiter().GetResult())
                 .Should()
                 .Throw<ProviderNotFoundException>();
 
-            await versionService.Remove(testVersion);
+            await _versionService.Remove(testVersion);
         }
 
 
         [Test]
         public void ShouldNotReturnDuplicates()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("John 1:1 / John 1:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("John 1:1 / John 1:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "John 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Word Became Flesh",
                         PsalmTitle = "",
@@ -1052,7 +1015,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
@@ -1068,22 +1031,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldReturnDuplicatesWhenVersionsDiffer()
         {
-            var testVersion = await versionService.Get("NTE");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockNTE());
-            }
+            Version testVersion = await _versionService.Get("NTE") ?? await _versionService.Create(new MockNTE());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTE")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTE")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Philippians 1:6 RSV / Philippians 1:6 NTE",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -1095,15 +1054,14 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 6,
                             EndingChapter = 1,
                             EndingVerse = 6,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = true,
                             IsDEU = false,
                             AsString = "Philippians 1:6"
                         }
                     },
-
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -1131,16 +1089,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldNotProcessGreekEstherAsEsther()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Greek Esther 1:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Greek Esther 1:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Greek Esther 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "King Ahasu-erus Deposes Queen Vashti",
                         PsalmTitle = "",
@@ -1152,7 +1110,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = false,
                             IsDEU = true,
@@ -1168,16 +1126,16 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessVerseWithDataNameSGTHR()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Song of the Three Young Men 1:1 RSV",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Prayer of Azariah in the Furnace",
                         PsalmTitle = "",
@@ -1189,7 +1147,7 @@ namespace BibleBot.Backend.Tests
                             StartingVerse = 1,
                             EndingChapter = 1,
                             EndingVerse = 1,
-                            Version = defaultBibleGatewayVersion,
+                            Version = _defaultBibleGatewayVersion,
                             IsOT = false,
                             IsNT = false,
                             IsDEU = true,
@@ -1205,22 +1163,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldProcessVerseWithActualDataNameSGTHREE()
         {
-            var testVersion = await versionService.Get("WYC");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockWYC());
-            }
+            Version testVersion = await _versionService.Get("WYC") ?? await _versionService.Create(new MockWYC());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1 WYC")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1 WYC")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Song of the Three Young Men 1:1 WYC",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -1248,22 +1202,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldProcessVerseWithDataNamePRAZ()
         {
-            var testVersion = await versionService.Get("NRSVA");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockNRSVA());
-            }
+            Version testVersion = await _versionService.Get("NRSVA") ?? await _versionService.Create(new MockNRSVA());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 NRSVA")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 NRSVA")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Prayer of Azariah 1:1 NRSVA",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "The Prayer of Azariah in the Furnace",
                         PsalmTitle = "(Additions to Daniel, inserted between 3.23 and 3.24)",
@@ -1291,22 +1241,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldProcessVerseWithActualDataNamePRAZAR()
         {
-            var testVersion = await versionService.Get("CEB");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockCEB());
-            }
+            Version testVersion = await _versionService.Get("CEB") ?? await _versionService.Create(new MockCEB());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 CEB")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 CEB")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Prayer of Azariah 1:1 CEB",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "Azariah's prayer for reconciliation",
                         PsalmTitle = "",
@@ -1334,22 +1280,18 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldProcessVerseWithDataNameADDESTH()
         {
-            var testVersion = await versionService.Get("WYC");
-            if (testVersion == null)
-            {
-                testVersion = await versionService.Create(new MockWYC());
-            }
+            Version testVersion = await _versionService.Get("WYC") ?? await _versionService.Create(new MockWYC());
 
-            var resp = versesController.ProcessMessage(new MockRequest("Additions to Esther 10:4 WYC")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Additions to Esther 10:4 WYC")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = true,
                 LogStatement = "Additions to Esther 10:4 WYC",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {
-                    new Verse
+                    new()
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -1377,12 +1319,11 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldNotProcessInvalidVerse()
         {
-            var resp = versesController.ProcessMessage(new MockRequest("Genesis 1:125")).GetAwaiter().GetResult();
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1:125")).GetAwaiter().GetResult() as VerseResponse;
 
-            var expected = new VerseResponse
+            VerseResponse expected = new()
             {
                 OK = false,
-                Verses = null,
                 LogStatement = null
             };
 

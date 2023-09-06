@@ -20,14 +20,14 @@ namespace BibleBot.Backend.Services
 
         public VersionService(IDatabaseSettings settings)
         {
-            var client = new MongoClient(System.Environment.GetEnvironmentVariable("MONGODB_CONN"));
-            var database = client.GetDatabase(settings.DatabaseName);
+            MongoClient client = new(System.Environment.GetEnvironmentVariable("MONGODB_CONN"));
+            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
             _versions = database.GetCollection<Version>(settings.VersionCollectionName);
         }
 
         public async Task<List<Version>> Get() => (await _versions.FindAsync(version => true)).ToList();
-        public async Task<Version> Get(string abbv) => (await _versions.FindAsync<Version>(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant())).FirstOrDefault();
+        public async Task<Version> Get(string abbv) => (await _versions.FindAsync(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant())).FirstOrDefault();
         public async Task<long> GetCount() => await _versions.EstimatedDocumentCountAsync();
 
         public async Task<Version> Create(Version version)
@@ -37,7 +37,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task Update(string abbv, UpdateDefinition<Version> updateDefinition) => await _versions.UpdateOneAsync(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant(), updateDefinition);
-        public async Task Remove(Version idealVersion) => await this.Remove(idealVersion.Abbreviation);
+        public async Task Remove(Version idealVersion) => await Remove(idealVersion.Abbreviation);
         public async Task Remove(string abbv) => await _versions.DeleteOneAsync(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant());
     }
 }
