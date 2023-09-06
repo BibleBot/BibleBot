@@ -159,7 +159,6 @@ namespace BibleBot.Backend.Controllers
 
             foreach (Reference reference in references)
             {
-                Verse result = new();
                 IBibleProvider provider = _bibleProviders.FirstOrDefault(pv =>
                 {
                     if (reference != null)
@@ -173,7 +172,7 @@ namespace BibleBot.Backend.Controllers
                     return false;
                 }) ?? throw new ProviderNotFoundException();
 
-                result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
+                Verse result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
                 if (result == null)
                 {

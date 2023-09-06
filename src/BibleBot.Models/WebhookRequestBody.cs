@@ -26,15 +26,15 @@ namespace BibleBot.Models
         public bool IsTTSMessage { get; set; }
 
         [JsonPropertyName("file")]
-        public string File;
+        public string File { get; set; }
 
         [JsonPropertyName("embeds")]
         public List<InternalEmbed> Embeds { get; set; }
 
         [JsonPropertyName("payload_json")]
-        public string PayloadJSON;
+        public string PayloadJSON { get; set; }
 
         [JsonPropertyName("allowed_mentions")]
-        public string AllowedMentions;
+        public string AllowedMentions { get; set; }
     }
 }

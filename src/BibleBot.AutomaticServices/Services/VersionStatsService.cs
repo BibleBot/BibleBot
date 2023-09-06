@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -85,14 +86,14 @@ namespace BibleBot.AutomaticServices.Services
                     }
                 }
 
-                string fileContents = "";
+                StringBuilder fileContents = new();
 
                 var sortedStats = versionStats.ToList();
                 sortedStats.Sort((p1, p2) => p2.Value.CompareTo(p1.Value));
 
                 foreach (KeyValuePair<string, int> kvp in sortedStats)
                 {
-                    fileContents += $"{kvp.Key},{kvp.Value}\n";
+                    fileContents.Append($"{kvp.Key},{kvp.Value}\n");
                 }
 
                 WebhookRequestBody webhookRequestBody = new()

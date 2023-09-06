@@ -15,10 +15,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using AngleSharp.Html.Dom;
+using System;
 
 namespace BibleBot.Backend.Services.Providers
 {
-    public class SpecialVerseProvider
+    public class SpecialVerseProvider : IDisposable
     {
         private readonly CancellationTokenSource _cancellationToken;
         private readonly HttpClient _httpClient;
@@ -30,6 +31,8 @@ namespace BibleBot.Backend.Services.Providers
             _httpClient = new HttpClient();
             _htmlParser = new HtmlParser();
         }
+
+        public void Dispose() => (_cancellationToken as IDisposable).Dispose();
 
         public async Task<string> GetDailyVerse()
         {

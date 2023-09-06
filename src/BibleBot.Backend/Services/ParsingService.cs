@@ -95,7 +95,7 @@ namespace BibleBot.Backend.Services
 
                     if (tokens.Length > tokenIdxAfterSpan)
                     {
-                        string lastToken = tokens[tokenIdxAfterSpan].ToUpper();
+                        string lastToken = tokens[tokenIdxAfterSpan].ToUpperInvariant();
 
                         Version idealVersion = await _versionService.Get(lastToken);
 
@@ -275,7 +275,7 @@ namespace BibleBot.Backend.Services
 
         public string PurifyBody(List<string> ignoringBrackets, string str)
         {
-            str = str.ToLower().Replace("\r", " ").Replace("\n", " ");
+            str = str.ToLowerInvariant().Replace("\r", " ").Replace("\n", " ");
 
             foreach (string brackets in ignoringBrackets)
             {

@@ -17,10 +17,11 @@ using AngleSharp.Html.Parser;
 using AngleSharp.Html.Dom;
 using AngleSharp.Dom;
 using BibleBot.Models;
+using System;
 
 namespace BibleBot.Backend.Services.Providers
 {
-    public class BibleGatewayProvider : IBibleProvider
+    public class BibleGatewayProvider : IBibleProvider, IDisposable
     {
         public string Name { get; set; }
         private readonly CancellationTokenSource _cancellationToken;
@@ -37,7 +38,7 @@ namespace BibleBot.Backend.Services.Providers
 
             _cancellationToken = new CancellationTokenSource();
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
-            _httpClient = new HttpClient { BaseAddress = new System.Uri(_baseURL) };
+            _httpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
 
             _htmlParser = new HtmlParser();
         }
@@ -140,9 +141,9 @@ namespace BibleBot.Backend.Services.Providers
             return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
 
-        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
-        public async Task<List<SearchResult>> Search(string query, Version version)
+        public async Task<List<SearchResult>> Search(string query, Models.Version version)
         {
             string url = string.Format(_searchURI, query, version.Abbreviation);
 
@@ -264,5 +265,7 @@ namespace BibleBot.Backend.Services.Providers
 
             return text.Trim();
         }
+
+        public void Dispose() => (_cancellationToken as IDisposable).Dispose();
     }
 }

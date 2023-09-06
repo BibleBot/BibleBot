@@ -41,7 +41,7 @@ namespace BibleBot.Backend
             ERROR_COLOR = 16723502
         }
 
-        public static string Version = "9.2-beta";
+        public static readonly string Version = "9.2-beta";
 
         public InternalEmbed Embedify(string title, string description, bool isError) => Embedify(null, title, description, isError, null);
 
@@ -86,7 +86,7 @@ namespace BibleBot.Backend
                     var creedResource = resource as CreedResource;
                     string copyright = null;
 
-                    if ((new string[] { "apostles", "nicene" }).Contains(creedResource.CommandReference))
+                    if ((new[] { "apostles", "nicene" }).Contains(creedResource.CommandReference))
                     {
                         copyright = "© 1998 English Language Liturgical Consultation (ELLC)";
                     }

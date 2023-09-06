@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
@@ -393,8 +394,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 versions.Sort((x, y) => x.Name.CompareTo(y.Name));
 
                 List<string> versionsUsed = new();
-
                 List<InternalEmbed> pages = new();
+
                 int maxResultsPerPage = 25;
 
                 // We need to add a page here because the for loop won't hit the last one otherwise.
@@ -404,7 +405,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 for (int i = 0; i < totalPages; i++)
                 {
                     int count = 0;
-                    string versionList = "";
+                    StringBuilder versionList = new();
 
                     foreach (Version version in versions)
                     {
@@ -412,15 +413,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         {
                             if (!versionsUsed.Contains(version.Name))
                             {
-                                versionList += $"{version.Name}\n";
-
+                                versionList.Append($"{version.Name}\n");
                                 versionsUsed.Add(version.Name);
                                 count++;
                             }
                         }
                     }
 
-                    InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - Page {i + 1} of {totalPages}", versionList, false);
+                    InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - Page {i + 1} of {totalPages}", versionList.ToString(), false);
                     pages.Add(embed);
                 }
 
