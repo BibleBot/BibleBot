@@ -35,12 +35,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             Commands = new List<ICommand>
             {
                 new FormattingUsage(_userService, _guildService),
-                new FormattingSetVerseNumbers(_userService, _guildService),
-                new FormattingSetTitles(_userService, _guildService),
-                new FormattingSetPagination(_userService, _guildService),
-                new FormattingSetDisplayStyle(_userService, _guildService),
-                new FormattingSetServerDisplayStyle(_userService, _guildService),
-                new FormattingSetIgnoringBrackets(_userService, _guildService)
+                new FormattingSetVerseNumbers(_userService),
+                new FormattingSetTitles(_userService),
+                new FormattingSetPagination(_userService),
+                new FormattingSetDisplayStyle(_userService),
+                new FormattingSetServerDisplayStyle(_guildService),
+                new FormattingSetIgnoringBrackets(_guildService)
             };
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
@@ -138,9 +138,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public bool BotAllowed { get; set; }
 
             private readonly UserService _userService;
-            private readonly GuildService _guildService;
 
-            public FormattingSetVerseNumbers(UserService userService, GuildService guildService)
+            public FormattingSetVerseNumbers(UserService userService)
             {
                 Name = "setversenumbers";
                 ArgumentsError = "Expected an `enable` or `disable` parameter.";
@@ -149,7 +148,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 BotAllowed = false;
 
                 _userService = userService;
-                _guildService = guildService;
             }
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
@@ -212,9 +210,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public bool BotAllowed { get; set; }
 
             private readonly UserService _userService;
-            private readonly GuildService _guildService;
 
-            public FormattingSetTitles(UserService userService, GuildService guildService)
+            public FormattingSetTitles(UserService userService)
             {
                 Name = "settitles";
                 ArgumentsError = "Expected an `enable` or `disable` parameter.";
@@ -223,7 +220,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 BotAllowed = false;
 
                 _userService = userService;
-                _guildService = guildService;
             }
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
@@ -286,9 +282,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public bool BotAllowed { get; set; }
 
             private readonly UserService _userService;
-            private readonly GuildService _guildService;
 
-            public FormattingSetPagination(UserService userService, GuildService guildService)
+            public FormattingSetPagination(UserService userService)
             {
                 Name = "setpagination";
                 ArgumentsError = "Expected an `enable` or `disable` parameter.";
@@ -297,7 +292,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 BotAllowed = false;
 
                 _userService = userService;
-                _guildService = guildService;
             }
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
@@ -360,9 +354,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public bool BotAllowed { get; set; }
 
             private readonly UserService _userService;
-            private readonly GuildService _guildService;
 
-            public FormattingSetDisplayStyle(UserService userService, GuildService guildService)
+            public FormattingSetDisplayStyle(UserService userService)
             {
                 Name = "setdisplay";
                 ArgumentsError = "Expected a parameter of `embed`, `code`, or `blockquote`.";
@@ -371,7 +364,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 BotAllowed = false;
 
                 _userService = userService;
-                _guildService = guildService;
             }
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
@@ -433,10 +425,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public List<Permissions> PermissionsRequired { get; set; }
             public bool BotAllowed { get; set; }
 
-            private readonly UserService _userService;
             private readonly GuildService _guildService;
 
-            public FormattingSetServerDisplayStyle(UserService userService, GuildService guildService)
+            public FormattingSetServerDisplayStyle(GuildService guildService)
             {
                 Name = "setserverdisplay";
                 ArgumentsError = "Expected a parameter of `embed`, `code`, or `blockquote`.";
@@ -447,7 +438,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 };
                 BotAllowed = false;
 
-                _userService = userService;
                 _guildService = guildService;
             }
 
@@ -509,10 +499,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public List<Permissions> PermissionsRequired { get; set; }
             public bool BotAllowed { get; set; }
 
-            private readonly UserService _userService;
             private readonly GuildService _guildService;
 
-            public FormattingSetIgnoringBrackets(UserService userService, GuildService guildService)
+            public FormattingSetIgnoringBrackets(GuildService guildService)
             {
                 Name = "setbrackets";
                 ArgumentsError = "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.";
@@ -523,7 +512,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 };
                 BotAllowed = false;
 
-                _userService = userService;
                 _guildService = guildService;
             }
 

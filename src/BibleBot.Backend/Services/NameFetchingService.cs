@@ -15,14 +15,14 @@ using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Dom;
 using BibleBot.Models;
-using RestSharp;
+// using RestSharp;
 using Serilog;
 
 namespace BibleBot.Backend.Services
 {
     public class NameFetchingService
     {
-        private readonly Dictionary<string, string> _apiBibleNames;
+        // private readonly Dictionary<string, string> _apiBibleNames;
         private readonly Dictionary<string, List<string>> _abbreviations;
         private Dictionary<string, List<string>> _bookNames = new();
         private List<string> _defaultNames;
@@ -31,12 +31,12 @@ namespace BibleBot.Backend.Services
         private readonly List<string> _nuisances;
 
         private readonly HttpClient _httpClient;
-        private readonly RestClient _restClient;
+        // private readonly RestClient _restClient;
 
         public NameFetchingService()
         {
-            string apibibleNamesText = File.ReadAllText("./Data/NameFetching/apibible_names.json");
-            _apiBibleNames = JsonSerializer.Deserialize<Dictionary<string, string>>(apibibleNamesText);
+            // string apibibleNamesText = File.ReadAllText("./Data/NameFetching/apibible_names.json");
+            // _apiBibleNames = JsonSerializer.Deserialize<Dictionary<string, string>>(apibibleNamesText);
 
             string abbreviationsText = File.ReadAllText("./Data/NameFetching/abbreviations.json");
             _abbreviations = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(abbreviationsText);
@@ -53,7 +53,7 @@ namespace BibleBot.Backend.Services
             _bookMapDataNames = _bookMap.Select(b => b.Value).SelectMany(b => b.Keys).ToList();
 
             _httpClient = new HttpClient();
-            _restClient = new RestClient("https://api.scripture.api.bible/v1");
+            // _restClient = new RestClient("https://api.scripture.api.bible/v1");
         }
 
         public Dictionary<string, List<string>> GetBookNames()
@@ -324,7 +324,7 @@ namespace BibleBot.Backend.Services
 
                     if (!IsNuisance(bookName))
                     {
-                        BookCategories category = new();
+                        BookCategories category;
 
                         if (_bookMap["ot"].ContainsKey(dataName))
                         {

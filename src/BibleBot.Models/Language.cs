@@ -38,7 +38,7 @@ namespace BibleBot.Models
      *    to make more logical sense, however quirks may still be abound.
      */
 
-    public partial class RawLanguage
+    public class RawLanguage
     {
         [BsonElement("versionString")]
         public string VersionString { get; set; }
@@ -104,7 +104,7 @@ namespace BibleBot.Models
         public Commands Commands { get; set; }
     }
 
-    public partial class BracketsView
+    public class BracketsView
     {
         [BsonElement("selections")]
         public BracketsViewSelections Selections { get; set; }
@@ -116,7 +116,7 @@ namespace BibleBot.Models
         public string DiscordError { get; set; }
     }
 
-    public partial class BracketsViewSelections
+    public class BracketsViewSelections
     {
         [BsonElement("angleBrackets")]
         public BracketSelection AngleBrackets { get; set; }
@@ -131,7 +131,7 @@ namespace BibleBot.Models
         public BracketSelection Parentheses { get; set; }
     }
 
-    public partial class BracketSelection
+    public class BracketSelection
     {
         [BsonElement("label")]
         public string Label { get; set; }
@@ -140,7 +140,7 @@ namespace BibleBot.Models
         public string Description { get; set; }
     }
 
-    public partial class Commands
+    public class Commands
     {
         [BsonElement("biblebot")]
         public BibleBot Biblebot { get; set; }
@@ -233,7 +233,7 @@ namespace BibleBot.Models
         public Search Search { get; set; }
     }
 
-    public partial class Announce
+    public class Announce
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -248,7 +248,7 @@ namespace BibleBot.Models
         public AnnounceParameters Parameters { get; set; }
     }
 
-    public partial class AnnounceParameters
+    public class AnnounceParameters
     {
         [BsonElement("content")]
         public string Content { get; set; }
@@ -257,7 +257,7 @@ namespace BibleBot.Models
         public string ContentDesc { get; set; }
     }
 
-    public partial class BibleBot
+    public class BibleBot
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -299,7 +299,7 @@ namespace BibleBot.Models
         public string News { get; set; }
     }
 
-    public partial class ComplexResp
+    public class ComplexResp
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -308,7 +308,7 @@ namespace BibleBot.Models
         public string Description { get; set; }
     }
 
-    public partial class ToggleResp
+    public class ToggleResp
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -323,7 +323,7 @@ namespace BibleBot.Models
         public string ArgumentsError { get; set; }
     }
 
-    public partial class DailyVerseSet
+    public class DailyVerseSet
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -341,7 +341,7 @@ namespace BibleBot.Models
         public string FailDM { get; set; }
     }
 
-    public partial class DailyVerseStatus
+    public class DailyVerseStatus
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -362,7 +362,7 @@ namespace BibleBot.Models
         public string ServerStatus { get; set; }
     }
 
-    public partial class Formatting
+    public class Formatting
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -392,7 +392,7 @@ namespace BibleBot.Models
         public string RelatedCommands { get; set; }
     }
 
-    public partial class Invite
+    public class Invite
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -404,7 +404,7 @@ namespace BibleBot.Models
         public string Usage { get; set; }
     }
 
-    public partial class PlainResp
+    public class PlainResp
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -419,7 +419,7 @@ namespace BibleBot.Models
         public string ListStart { get; set; }
     }
 
-    public partial class Random
+    public class Random
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -434,7 +434,7 @@ namespace BibleBot.Models
         public string UseInDMs { get; set; }
     }
 
-    public partial class Resource
+    public class Resource
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -458,7 +458,7 @@ namespace BibleBot.Models
         public ResourceParameters Parameters { get; set; }
     }
 
-    public partial class ResourceParameters
+    public class ResourceParameters
     {
         [BsonElement("resource")]
         public string Resource { get; set; }
@@ -473,7 +473,7 @@ namespace BibleBot.Models
         public string RangeDesc { get; set; }
     }
 
-    public partial class Search
+    public class Search
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -494,7 +494,7 @@ namespace BibleBot.Models
         public string Paginator { get; set; }
     }
 
-    public partial class CustomInputResp
+    public class CustomInputResp
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -518,7 +518,7 @@ namespace BibleBot.Models
         public string Success { get; set; }
     }
 
-    public partial class SetVersionResp
+    public class SetVersionResp
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -539,7 +539,7 @@ namespace BibleBot.Models
         public SetVersionParameters Parameters { get; set; }
     }
 
-    public partial class SetLanguageResp
+    public class SetLanguageResp
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -560,7 +560,7 @@ namespace BibleBot.Models
         public SetLanguageParameters Parameters { get; set; }
     }
 
-    public partial class SetVersionParameters
+    public class SetVersionParameters
     {
         [BsonElement("abbreviation")]
         public string Abbreviation { get; set; }
@@ -569,7 +569,7 @@ namespace BibleBot.Models
         public string AbbreviationDesc { get; set; }
     }
 
-    public partial class SetLanguageParameters
+    public class SetLanguageParameters
     {
         [BsonElement("objectName")]
         public string ObjectName { get; set; }
@@ -578,7 +578,7 @@ namespace BibleBot.Models
         public string ObjectNameDesc { get; set; }
     }
 
-    public partial class Stats
+    public class Stats
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -617,7 +617,7 @@ namespace BibleBot.Models
         public string Metadata { get; set; }
     }
 
-    public partial class Versioninfo
+    public class Versioninfo
     {
         [BsonElement("cmd")]
         public string Command { get; set; }
@@ -644,7 +644,7 @@ namespace BibleBot.Models
         public SetVersionParameters Parameters { get; set; }
     }
 
-    public partial class SetDisplayView
+    public class SetDisplayView
     {
         [BsonElement("selections")]
         public SetDisplayViewSelections Selections { get; set; }
@@ -656,7 +656,7 @@ namespace BibleBot.Models
         public string DiscordError { get; set; }
     }
 
-    public partial class SetDisplayViewSelections
+    public class SetDisplayViewSelections
     {
         [BsonElement("embed")]
         public DisplayStyleSelection Embed { get; set; }
@@ -668,7 +668,7 @@ namespace BibleBot.Models
         public DisplayStyleSelection Blockquote { get; set; }
     }
 
-    public partial class DisplayStyleSelection
+    public class DisplayStyleSelection
     {
         [BsonElement("value")]
         public string Value { get; set; }

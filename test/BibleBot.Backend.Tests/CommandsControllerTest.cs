@@ -37,11 +37,11 @@ namespace BibleBot.Backend.Tests
 
         private IDatabaseSettings _databaseSettings;
 
-        private Version _defaultBibleGatewayVersion;
-        private Version _defaultAPIBibleVersion;
+        // private Version _defaultBibleGatewayVersion;
+        // private Version _defaultAPIBibleVersion;
 
         [OneTimeSetUp]
-        public async Task OneTimeSetup()
+        public void OneTimeSetup()
         {
             _databaseSettings = new DatabaseSettings
             {
@@ -64,9 +64,8 @@ namespace BibleBot.Backend.Tests
             _bgProviderMock = new Mock<BibleGatewayProvider>();
             _abProviderMock = new Mock<APIBibleProvider>();
 
-            _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
-
-            _defaultAPIBibleVersion = await _versionService.Get("KJVA") ?? await _versionService.Create(new MockKJVA());
+            // _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
+            // _defaultAPIBibleVersion = await _versionService.Get("KJVA") ?? await _versionService.Create(new MockKJVA());
 
             _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _versionService, _resourceServiceMock.Object,

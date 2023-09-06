@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using BibleBot.Models;
 
 namespace BibleBot.Backend
@@ -263,11 +264,11 @@ namespace BibleBot.Backend
 
         private InternalEmbed CreateTitlePage(string author, string title, string category, string copyright, string imageRef, List<Section> sections)
         {
-            string categoryText = "";
+            StringBuilder categoryText = new();
 
             foreach (string cat in category.Split("."))
             {
-                categoryText += $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(cat)} > ";
+                categoryText.Append($"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(cat)} > ");
             }
 
             InternalEmbed embed = Embedify(null, title, null, false, copyright);
@@ -283,7 +284,7 @@ namespace BibleBot.Backend
                 new()
                 {
                     Name = "Category",
-                    Value = categoryText.Substring(0, categoryText.Length - 3),
+                    Value = categoryText.ToString().Substring(0, categoryText.Length - 3),
                     Inline = false
                 }
             };
@@ -301,20 +302,20 @@ namespace BibleBot.Backend
             {
                 if (sections.Count > 0)
                 {
-                    string sectionList = "";
+                    StringBuilder sectionList = new();
 
                     for (int i = 0; i < sections.Count; i++)
                     {
                         Section section = sections[i];
 
-                        sectionList += $"{i + 1}. {section.Title} ({(section.Pages.Count > 1 ? $"{section.Pages.Count} pages" : $"{section.Pages.Count} page")})" +
-                                       $" [`{section.Slugs[0]}`]\n";
+                        sectionList.Append($"{i + 1}. {section.Title} ({(section.Pages.Count > 1 ? $"{section.Pages.Count} pages" : $"{section.Pages.Count} page")})" +
+                                       $" [`{section.Slugs[0]}`]\n");
                     }
 
                     embed.Fields.Add(new EmbedField
                     {
                         Name = "Sections",
-                        Value = sectionList,
+                        Value = sectionList.ToString(),
                         Inline = false
                     });
                 }

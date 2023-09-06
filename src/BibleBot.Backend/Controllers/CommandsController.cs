@@ -61,7 +61,7 @@ namespace BibleBot.Backend.Controllers
                 new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bibleProviders),
-                new CommandGroups.Owner.OwnerOnlyCommandGroup(_userService, _guildService, _versionService, _frontendStatsService)
+                new CommandGroups.Owner.OwnerOnlyCommandGroup()
             };
         }
 
@@ -93,8 +93,6 @@ namespace BibleBot.Backend.Controllers
             if (tokenizedBody.Length > 0)
             {
                 string potentialCommand = tokenizedBody[0];
-
-                Guild idealGuild = await _guildService.Get(req.GuildId);
                 string prefix = "+";
 
                 if (potentialCommand.StartsWith(prefix))

@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
@@ -37,9 +38,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             Commands = new List<ICommand>
             {
                 new LanguageUsage(_userService, _guildService, _languageService),
-                new LanguageSet(_userService, _guildService, _languageService),
-                new LanguageSetServer(_userService, _guildService, _languageService),
-                new LanguageList(_userService, _guildService, _languageService)
+                new LanguageSet(_userService, _languageService),
+                new LanguageSetServer( _guildService, _languageService),
+                new LanguageList(_languageService)
             };
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
@@ -127,10 +128,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public bool BotAllowed { get; set; }
 
             private readonly UserService _userService;
-            private readonly GuildService _guildService;
             private readonly LanguageService _languageService;
 
-            public LanguageSet(UserService userService, GuildService guildService, LanguageService languageService)
+            public LanguageSet(UserService userService, LanguageService languageService)
             {
                 Name = "set";
                 ArgumentsError = "Expected a language parameter, like `english` or `german`.";
@@ -139,7 +139,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 BotAllowed = false;
 
                 _userService = userService;
-                _guildService = guildService;
                 _languageService = languageService;
             }
 
@@ -205,11 +204,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public List<Permissions> PermissionsRequired { get; set; }
             public bool BotAllowed { get; set; }
 
-            private readonly UserService _userService;
             private readonly GuildService _guildService;
             private readonly LanguageService _languageService;
 
-            public LanguageSetServer(UserService userService, GuildService guildService, LanguageService languageService)
+            public LanguageSetServer(GuildService guildService, LanguageService languageService)
             {
                 Name = "setserver";
                 ArgumentsError = "Expected a language parameter, like `english` or `german`.";
@@ -220,7 +218,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 };
                 BotAllowed = false;
 
-                _userService = userService;
                 _guildService = guildService;
                 _languageService = languageService;
             }
@@ -286,11 +283,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public List<Permissions> PermissionsRequired { get; set; }
             public bool BotAllowed { get; set; }
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
             private readonly LanguageService _languageService;
 
-            public LanguageList(UserService userService, GuildService guildService, LanguageService languageService)
+            public LanguageList(LanguageService languageService)
             {
                 Name = "list";
                 ArgumentsError = null;
@@ -298,8 +293,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 PermissionsRequired = null;
                 BotAllowed = false;
 
-                _userService = userService;
-                _guildService = guildService;
                 _languageService = languageService;
             }
 
@@ -308,11 +301,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 List<Language> languages = await _languageService.Get();
                 languages.Sort((x, y) => x.Name.CompareTo(y.Name));
 
-                string content = "";
+                StringBuilder content = new();
 
                 foreach (Language lang in languages)
                 {
-                    content += $"{lang.Name} `[{lang.ObjectName}]`\n";
+                    content.Append($"{lang.Name} `[{lang.ObjectName}]`\n");
                 }
 
                 return new CommandResponse
@@ -320,7 +313,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        Utils.GetInstance().Embedify("+language list", content, false)
+                        Utils.GetInstance().Embedify("+language list", content.ToString(), false)
                     },
                     LogStatement = "+language list"
                 };

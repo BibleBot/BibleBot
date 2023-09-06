@@ -25,6 +25,8 @@ generated_code = true
 dotnet_analyzer_diagnostic.category-Style.severity = warning
 dotnet_diagnostic.IDE0058.severity = none # unnecessary expression value
 dotnet_diagnostic.IDE0051.severity = warning # unused private members
+dotnet_diagnostic.IDE0052.severity = warning # unused private members
+dotnet_diagnostic.IDE0079.severity = none # remove linting suppression pragmas
 # New line preferences
 csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true

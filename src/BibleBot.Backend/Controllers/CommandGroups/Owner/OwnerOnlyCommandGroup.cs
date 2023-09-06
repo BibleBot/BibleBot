@@ -9,7 +9,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BibleBot.Backend.Services;
 using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Owner
@@ -21,18 +20,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Owner
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-        private readonly VersionService _versionService;
-        private readonly FrontendStatsService _frontendStatsService;
-
-        public OwnerOnlyCommandGroup(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService)
+        public OwnerOnlyCommandGroup()
         {
-            _userService = userService;
-            _guildService = guildService;
-            _versionService = versionService;
-            _frontendStatsService = frontendStatsService;
-
             Name = "owner";
             IsOwnerOnly = true;
             Commands = new List<ICommand>

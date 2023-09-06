@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
@@ -21,23 +22,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-
         private readonly List<IResource> _resources;
 
         public ResourceCommandGroup(UserService userService, GuildService guildService, List<IResource> resources)
         {
-            _userService = userService;
-            _guildService = guildService;
-
             _resources = resources;
 
             Name = "resource";
             IsOwnerOnly = false;
             Commands = new List<ICommand>
             {
-                new ResourceUsage(_userService, _guildService, _resources),
+                new ResourceUsage(_resources),
             };
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
@@ -50,21 +45,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             public List<Permissions> PermissionsRequired { get; set; }
             public bool BotAllowed { get; set; }
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-
             private readonly List<IResource> _resources;
 
-            public ResourceUsage(UserService userService, GuildService guildService, List<IResource> resources)
+            public ResourceUsage(List<IResource> resources)
             {
                 Name = "usage";
                 ArgumentsError = null;
                 ExpectedArguments = 0;
                 PermissionsRequired = null;
                 BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
 
                 _resources = resources;
             }
@@ -108,33 +97,33 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
                 // TODO(SeraphimRP): Use a proper fallback if possible.
                 IEnumerable<IResource> creeds = _resources.Where(res => res.Type == ResourceType.CREED);
-                string creedsList = "";
+                StringBuilder creedsList = new();
 
                 foreach (IResource creed in creeds)
                 {
-                    creedsList += $"**{creed.CommandReference}** - {creed.Title}\n";
+                    creedsList.Append($"**{creed.CommandReference}** - {creed.Title}\n");
                 }
 
                 IEnumerable<IResource> catechisms = _resources.Where(res => res.Type == ResourceType.CATECHISM);
-                string catechismsList = "";
+                StringBuilder catechismsList = new();
 
                 foreach (IResource catechism in catechisms)
                 {
-                    catechismsList += $"**{catechism.CommandReference}** - {catechism.Title}\n";
+                    catechismsList.Append($"**{catechism.CommandReference}** - {catechism.Title}\n");
                 }
 
                 IEnumerable<IResource> canons = _resources.Where(res => res.Type == ResourceType.CANONS);
-                string canonsList = "";
+                StringBuilder canonsList = new();
 
                 foreach (IResource canon in canons)
                 {
-                    canonsList += $"**{canon.CommandReference}** - {canon.Title}\n";
+                    canonsList.Append($"**{canon.CommandReference}** - {canon.Title}\n");
                 }
 
 
-                string resp = $"**__Creeds__**\n" + creedsList.Substring(0, creedsList.Length - 1) +
-                "\n\n**__Catechisms__**\n" + catechismsList.Substring(0, catechismsList.Length - 1) +
-                "\n\n**__Canon Laws__**\n" + canonsList.Substring(0, catechismsList.Length - 1) +
+                string resp = $"**__Creeds__**\n" + creedsList.ToString().Substring(0, creedsList.Length - 1) +
+                "\n\n**__Catechisms__**\n" + catechismsList.ToString().Substring(0, catechismsList.Length - 1) +
+                "\n\n**__Canon Laws__**\n" + canonsList.ToString().Substring(0, catechismsList.Length - 1) +
                 "\n\nTo use a resource, do `/resource resource:<name>`.\nFor example, `/resource resource:nicene` or `/resource resource:ccc range:1`.";
 
 

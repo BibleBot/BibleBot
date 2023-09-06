@@ -39,8 +39,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             Commands = new List<ICommand>
             {
                 new VersionUsage(_userService, _guildService, _versionService),
-                new VersionSet(_userService, _guildService, _versionService),
-                new VersionSetServer(_userService, _guildService, _versionService),
+                new VersionSet(_userService, _versionService),
+                new VersionSetServer(_guildService, _versionService),
                 new VersionInfo(_userService, _guildService, _versionService),
                 new VersionList(_versionService),
                 new VersionBookList(_userService, _guildService, _versionService, _nameFetchingService)
@@ -133,10 +133,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public bool BotAllowed { get; set; }
 
             private readonly UserService _userService;
-            private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
-            public VersionSet(UserService userService, GuildService guildService, VersionService versionService)
+            public VersionSet(UserService userService, VersionService versionService)
             {
                 Name = "set";
                 ArgumentsError = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
@@ -145,7 +144,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 BotAllowed = false;
 
                 _userService = userService;
-                _guildService = guildService;
                 _versionService = versionService;
             }
 
@@ -210,11 +208,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             public List<Permissions> PermissionsRequired { get; set; }
             public bool BotAllowed { get; set; }
 
-            private readonly UserService _userService;
             private readonly GuildService _guildService;
             private readonly VersionService _versionService;
 
-            public VersionSetServer(UserService userService, GuildService guildService, VersionService versionService)
+            public VersionSetServer(GuildService guildService, VersionService versionService)
             {
                 Name = "setserver";
                 ArgumentsError = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
@@ -225,7 +222,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 };
                 BotAllowed = false;
 
-                _userService = userService;
                 _guildService = guildService;
                 _versionService = versionService;
             }

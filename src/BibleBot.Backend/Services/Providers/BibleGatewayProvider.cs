@@ -84,7 +84,6 @@ namespace BibleBot.Backend.Services.Providers
 
             foreach (IElement el in document.QuerySelectorAll(".versenum"))
             {
-                string verseNumber = el.TextContent.Substring(0, el.TextContent.Length - 1);
                 if (verseNumbersEnabled)
                 {
                     el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
