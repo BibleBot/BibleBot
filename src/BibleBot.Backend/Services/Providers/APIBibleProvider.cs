@@ -88,6 +88,12 @@ namespace BibleBot.Backend.Services.Providers
                 return null;
             }
 
+            if (resp.Passages == null)
+            {
+                Log.Error($"{reference.Version.Abbreviation} machine broke");
+                return null;
+            }
+
             if (resp.Passages.Count() == 0)
             {
                 Log.Error($"{reference.Version.Abbreviation} machine broke");
