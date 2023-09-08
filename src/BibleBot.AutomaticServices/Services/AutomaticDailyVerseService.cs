@@ -119,7 +119,7 @@ namespace BibleBot.AutomaticServices.Services
                     }
                     else
                     {
-                        string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
+                        string votdRef = await _spProvider.GetDailyVerse();
                         IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
 
                         if (provider == null)
@@ -127,7 +127,7 @@ namespace BibleBot.AutomaticServices.Services
                             continue;
                         }
 
-                        Verse verse = provider.GetVerse(votdRef, true, true, idealVersion).GetAwaiter().GetResult();
+                        Verse verse = await provider.GetVerse(votdRef, true, true, idealVersion);
 
                         // If API.Bible gives us a null result...
                         if (verse == null)
