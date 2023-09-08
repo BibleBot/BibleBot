@@ -256,12 +256,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         });
                     }
 
+                    string message = "Set server version successfully.";
+                    if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
+                    {
+                        message += "\n\n" +
+                        ":warning: This version will not work with automatic daily verses as it does not support both the Old and New Testaments. If this is a concern to you, use `/versioninfo` to help you identify versions that support both.";
+                    }
+
                     return new CommandResponse
                     {
                         OK = true,
                         Pages = new List<InternalEmbed>
                         {
-                            Utils.GetInstance().Embedify("/setserverversion", "Set server version successfully.", false)
+                            Utils.GetInstance().Embedify("/setserverversion", message, false)
                         },
                         LogStatement = $"/setserverversion {args[0]}"
                     };
@@ -336,8 +343,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     string response = $"### {idealVersion.Name}\n\n" +
                                 $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n" +
                                 $"Contains New Testament: {(idealVersion.SupportsNewTestament ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n" +
-                                $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n\n" +
+                                $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n" +
                                 $"Source (mainly for developers): `{idealVersion.Source}`";
+
+
+                    if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
+                    {
+                        response += "\n\n:warning: This version will not work with automatic daily verses.";
+                    }
 
                     if (idealVersion.Source != "bg")
                     {

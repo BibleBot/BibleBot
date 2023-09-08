@@ -102,38 +102,61 @@ namespace BibleBot.AutomaticServices.Services
             {
                 if (!guildsCleared.Contains(guild.GuildId))
                 {
+                    InternalEmbed embed;
+                    WebhookRequestBody webhookRequestBody;
                     string version = guild.Version ?? "RSV";
                     Models.Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
 
-                    string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
-                    IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
-
-                    if (provider != null)
+                    if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
                     {
+                        embed = Utils.GetInstance().Embedify("BibleBot Automatic Daily Verse Notice", "Automatic daily verse will no longer support versions that do not have both Testaments. Please change your server's preferred version (`/setserverversion`) to one that has both.", true);
+                        webhookRequestBody = new()
+                        {
+                            Username = "BibleBot Automatic Daily Verses",
+                            AvatarURL = embed.Footer.IconURL,
+                            Embeds = new List<InternalEmbed> { embed }
+                        };
+                    }
+                    else
+                    {
+                        string votdRef = _spProvider.GetDailyVerse().GetAwaiter().GetResult();
+                        IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
+
+                        if (provider == null)
+                        {
+                            continue;
+                        }
+
                         Verse verse = provider.GetVerse(votdRef, true, true, idealVersion).GetAwaiter().GetResult();
 
-                        InternalEmbed embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
-                        WebhookRequestBody webhookRequestBody = new()
+                        // If API.Bible gives us a null result...
+                        if (verse == null)
+                        {
+                            continue;
+                        }
+
+                        embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
+                        webhookRequestBody = new()
                         {
                             Content = "Here is the daily verse:",
                             Username = "BibleBot Automatic Daily Verses",
                             AvatarURL = embed.Footer.IconURL,
                             Embeds = new List<InternalEmbed> { embed }
                         };
+                    }
 
-                        RestRequest request = new(guild.DailyVerseWebhook);
-                        request.AddJsonBody(webhookRequestBody);
+                    RestRequest request = new(guild.DailyVerseWebhook);
+                    request.AddJsonBody(webhookRequestBody);
 
-                        IRestResponse resp = await _restClient.ExecuteAsync(request, Method.POST);
-                        if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
-                        {
-                            count += 1;
+                    IRestResponse resp = await _restClient.ExecuteAsync(request, Method.POST);
+                    if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    {
+                        count += 1;
 
-                            UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                         .Set(guild => guild.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null));
+                        UpdateDefinition<Guild> update = Builders<Guild>.Update
+                                     .Set(guild => guild.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null));
 
-                            await _guildService.Update(guild.GuildId, update);
-                        }
+                        await _guildService.Update(guild.GuildId, update);
                     }
 
                     guildsCleared.Add(guild.Id);
