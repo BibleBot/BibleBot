@@ -53,6 +53,7 @@ namespace BibleBot.Backend.Services
             _bookMapDataNames = _bookMap.Select(b => b.Value).SelectMany(b => b.Keys).ToList();
 
             _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
             // _restClient = new RestClient("https://api.scripture.api.bible/v1");
         }
 

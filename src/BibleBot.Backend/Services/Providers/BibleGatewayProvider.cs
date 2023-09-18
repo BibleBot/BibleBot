@@ -37,8 +37,12 @@ namespace BibleBot.Backend.Services.Providers
             Name = "bg";
 
             _cancellationToken = new CancellationTokenSource();
+
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
+            _cachingHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
+
             _httpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
 
             _htmlParser = new HtmlParser();
         }
