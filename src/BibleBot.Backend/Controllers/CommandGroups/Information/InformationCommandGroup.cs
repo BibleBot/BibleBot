@@ -17,7 +17,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
     public class InformationCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
-        public bool IsOwnerOnly { get; set; }
+        public bool IsStaffOnly { get; set; }
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
@@ -34,7 +34,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             _frontendStatsService = frontendStatsService;
 
             Name = "info";
-            IsOwnerOnly = false;
+            IsStaffOnly = false;
             Commands = new List<ICommand>
             {
                 new InfoStats(_userService, _guildService, _versionService, _frontendStatsService),

@@ -18,7 +18,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
     public class RandomVerseCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
-        public bool IsOwnerOnly { get; set; }
+        public bool IsStaffOnly { get; set; }
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
@@ -40,7 +40,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             _bibleProviders = bibleProviders;
 
             Name = "random";
-            IsOwnerOnly = false;
+            IsStaffOnly = false;
             Commands = new List<ICommand>
             {
                 new RandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders),

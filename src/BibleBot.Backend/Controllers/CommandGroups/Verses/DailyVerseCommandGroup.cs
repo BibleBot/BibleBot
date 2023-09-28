@@ -21,7 +21,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
     public class DailyVerseCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
-        public bool IsOwnerOnly { get; set; }
+        public bool IsStaffOnly { get; set; }
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
@@ -43,7 +43,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             _bibleProviders = bibleProviders;
 
             Name = "dailyverse";
-            IsOwnerOnly = false;
+            IsStaffOnly = false;
             Commands = new List<ICommand>
             {
                 new DailyVerseUsage(_userService, _guildService, _versionService, _spProvider, _bibleProviders),

@@ -61,7 +61,7 @@ namespace BibleBot.Backend.Controllers
                 new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bibleProviders),
-                new CommandGroups.Owner.OwnerOnlyCommandGroup()
+                new CommandGroups.Staff.StaffOnlyCommandGroup()
             };
         }
 
@@ -101,43 +101,42 @@ namespace BibleBot.Backend.Controllers
 
                     if (grp != null)
                     {
-                        if (grp.IsOwnerOnly && req.UserId != "186046294286925824")
+                        if (grp.IsStaffOnly && req.UserId != "186046294286925824")
                         {
                             return new CommandResponse
                             {
                                 OK = false,
                                 Pages = new List<InternalEmbed>
                                 {
-                                    Utils.GetInstance().Embedify("Permissions Error", "You do not have the required permissions to use this command.", true)
+                                    Utils.GetInstance().Embedify("Permissions Error", "This command can only be performed by BibleBot staff", true)
                                 }
                             };
                         }
 
                         if (tokenizedBody.Length > 1)
                         {
-
                             ICommand idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
 
                             if (idealCommand != null)
                             {
-                                if (idealCommand.PermissionsRequired != null)
-                                {
-                                    foreach (Permissions permission in idealCommand.PermissionsRequired)
-                                    {
-                                        // if ((req.UserPermissions & (long)permission) != (long)permission)
-                                        // {
-                                        //     return new CommandResponse
-                                        //     {
-                                        //         OK = false,
-                                        //         Pages = new List<InternalEmbed>
-                                        //         {
-                                        //             Utils.GetInstance().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
-                                        //         },
-                                        //         LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
-                                        //     };
-                                        // }
-                                    }
-                                }
+                                // if (idealCommand.PermissionsRequired != null)
+                                // {
+                                //     foreach (Permissions permission in idealCommand.PermissionsRequired)
+                                //     {
+                                //         if ((req.UserPermissions & (long)permission) != (long)permission)
+                                //         {
+                                //             return new CommandResponse
+                                //             {
+                                //                 OK = false,
+                                //                 Pages = new List<InternalEmbed>
+                                //                 {
+                                //                     Utils.GetInstance().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
+                                //                 },
+                                //                 LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
+                                //             };
+                                //         }
+                                //     }
+                                // }
 
                                 if (req.IsBot && !idealCommand.BotAllowed)
                                 {

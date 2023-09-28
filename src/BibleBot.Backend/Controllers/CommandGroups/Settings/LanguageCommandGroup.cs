@@ -19,7 +19,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
     public class LanguageCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
-        public bool IsOwnerOnly { get; set; }
+        public bool IsStaffOnly { get; set; }
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
@@ -34,7 +34,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             _languageService = languageService;
 
             Name = "language";
-            IsOwnerOnly = false;
+            IsStaffOnly = false;
             Commands = new List<ICommand>
             {
                 new LanguageUsage(_userService, _guildService, _languageService),

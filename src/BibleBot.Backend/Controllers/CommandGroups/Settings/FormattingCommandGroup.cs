@@ -18,7 +18,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
     public class FormattingCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
-        public bool IsOwnerOnly { get; set; }
+        public bool IsStaffOnly { get; set; }
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
@@ -31,7 +31,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             _guildService = guildService;
 
             Name = "formatting";
-            IsOwnerOnly = false;
+            IsStaffOnly = false;
             Commands = new List<ICommand>
             {
                 new FormattingUsage(_userService, _guildService),

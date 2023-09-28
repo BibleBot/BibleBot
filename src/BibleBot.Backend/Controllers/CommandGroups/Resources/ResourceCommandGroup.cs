@@ -18,7 +18,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
     public class ResourceCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
-        public bool IsOwnerOnly { get; set; }
+        public bool IsStaffOnly { get; set; }
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
@@ -29,7 +29,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
             _resources = resources;
 
             Name = "resource";
-            IsOwnerOnly = false;
+            IsStaffOnly = false;
             Commands = new List<ICommand>
             {
                 new ResourceUsage(_resources),

@@ -19,7 +19,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
     public class VersionCommandGroup : ICommandGroup
     {
         public string Name { get; set; }
-        public bool IsOwnerOnly { get; set; }
+        public bool IsStaffOnly { get; set; }
         public ICommand DefaultCommand { get; set; }
         public List<ICommand> Commands { get; set; }
 
@@ -36,7 +36,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             _nameFetchingService = nameFetchingService;
 
             Name = "version";
-            IsOwnerOnly = false;
+            IsStaffOnly = false;
             Commands = new List<ICommand>
             {
                 new VersionUsage(_userService, _guildService, _versionService),

@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -322,6 +323,52 @@ namespace BibleBot.Backend
             }
 
             return embed;
+        }
+
+        public StringBuilder[] PermissionsChecker(long botPermissionsInChannel, long botPermissionsInGuild)
+        {
+            Permissions[] permissionsToCheck = {
+                Permissions.VIEW_CHANNEL,
+                Permissions.SEND_MESSAGES,
+                Permissions.SEND_MESSAGES_IN_THREADS,
+                Permissions.ADD_REACTIONS,
+                Permissions.EMBED_LINKS,
+                Permissions.READ_MESSAGE_HISTORY,
+                Permissions.MANAGE_MESSAGES,
+                Permissions.MANAGE_WEBHOOKS,
+                Permissions.USE_APPLICATION_COMMANDS,
+                Permissions.USE_EXTERNAL_EMOJIS
+            };
+
+            StringBuilder channelPermissionsList = new();
+            StringBuilder guildPermissionsList = new();
+            foreach (Permissions perm in permissionsToCheck)
+            {
+                string permName = Enum.GetName(typeof(Permissions), perm);
+
+                if ((botPermissionsInChannel & (long)perm) == (long)perm)
+                {
+                    channelPermissionsList.Append($"{permName}: True\n");
+                }
+                else
+                {
+                    channelPermissionsList.Append($"{permName}: False\n");
+                }
+
+                if (permName != "VIEW_CHANNEL")
+                {
+                    if ((botPermissionsInGuild & (long)perm) == (long)perm)
+                    {
+                        guildPermissionsList.Append($"{permName}: True\n");
+                    }
+                    else
+                    {
+                        guildPermissionsList.Append($"{permName}: False\n");
+                    }
+                }
+            }
+
+            return new StringBuilder[] { channelPermissionsList, guildPermissionsList };
         }
     }
 }

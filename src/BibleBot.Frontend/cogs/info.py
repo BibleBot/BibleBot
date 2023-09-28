@@ -45,6 +45,28 @@ class Information(commands.Cog):
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
+    @commands.slash_command(
+        description="Check bot permissions for this channel and server."
+    )
+    async def permscheck(self, inter: CommandInteraction):
+        await inter.response.defer()
+
+        integrated_role = [
+            x
+            for x in inter.guild.me.roles
+            if x.is_bot_managed and x.is_integration and x.name != "@everyone"
+        ][0]
+        channel_perms = inter.channel.permissions_for(integrated_role).value
+        guild_perms = integrated_role.permissions.value
+
+        resp = await backend.submit_command(
+            inter.channel,
+            inter.author,
+            f"+staff permscheck {channel_perms} {guild_perms}",
+        )
+
+        await sending.safe_send_interaction(inter.followup, embed=resp)
+
     @commands.slash_command(description="View all Patreon supporters.")
     async def supporters(self, inter: CommandInteraction):
         await inter.response.defer()

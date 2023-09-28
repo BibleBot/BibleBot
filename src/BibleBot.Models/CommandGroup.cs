@@ -13,7 +13,7 @@ namespace BibleBot.Models
     public interface ICommandGroup
     {
         string Name { get; set; }
-        bool IsOwnerOnly { get; set; }
+        bool IsStaffOnly { get; set; }
         List<ICommand> Commands { get; set; }
         ICommand DefaultCommand { get; set; }
     }
