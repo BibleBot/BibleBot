@@ -74,27 +74,32 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
             {
                 Name = "permscheck";
                 ArgumentsError = null;
-                ExpectedArguments = 2;
+                ExpectedArguments = 5;
                 PermissionsRequired = null;
                 BotAllowed = false; // anti-spam measure
             }
 
             public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                StringBuilder[] results = Utils.GetInstance().PermissionsChecker(long.Parse(args[0]), long.Parse(args[1]));
+                StringBuilder[] results = Utils.GetInstance().PermissionsChecker(long.Parse(args[0]), long.Parse(args[1]), long.Parse(args[2]));
 
-                InternalEmbed embed = Utils.GetInstance().Embedify("Permissions Check", $"Integrated Role: {args[2]} ({args[3]})", false);
+                InternalEmbed embed = Utils.GetInstance().Embedify("Permissions Check", $"This is a command for support use.\n\nIntegrated Role (IR): {args[3]} ({args[4]})", false);
                 embed.Fields = new List<EmbedField>
                 {
                     new()
                     {
-                        Name = "Channel Permissions",
+                        Name = "Bot Channel Permissions",
                         Value = results[0].ToString()
                     },
                     new()
                     {
-                        Name = "Guild Permissions",
+                        Name = "IR Channel Permissions",
                         Value = results[1].ToString()
+                    },
+                    new()
+                    {
+                        Name = "IR Server Permissions",
+                        Value = results[2].ToString()
                     }
                 };
 
@@ -106,7 +111,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
                         embed
                     },
                     LogStatement = "/permscheck",
-                    SendAnnouncement = true
+                    SendAnnouncement = false
                 });
             }
         }

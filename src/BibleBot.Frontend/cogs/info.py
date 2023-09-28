@@ -56,13 +56,15 @@ class Information(commands.Cog):
             for x in inter.guild.me.roles
             if x.is_bot_managed and x.is_integration and x.name != "@everyone"
         ][0]
-        channel_perms = inter.channel.permissions_for(integrated_role).value
+
+        channel_perms_for_self = inter.channel.permissions_for(inter.guild.me).value
+        channel_perms_for_role = inter.channel.permissions_for(integrated_role).value
         guild_perms = integrated_role.permissions.value
 
         resp = await backend.submit_command(
             inter.channel,
             inter.author,
-            f"+staff permscheck {channel_perms} {guild_perms} {integrated_role.name} {integrated_role.id}",
+            f"+staff permscheck {channel_perms_for_self} {channel_perms_for_role} {guild_perms} {integrated_role.name} {integrated_role.id}",
         )
 
         await sending.safe_send_interaction(inter.followup, embed=resp)

@@ -325,7 +325,7 @@ namespace BibleBot.Backend
             return embed;
         }
 
-        public StringBuilder[] PermissionsChecker(long botPermissionsInChannel, long botPermissionsInGuild)
+        public StringBuilder[] PermissionsChecker(long selfPermissionsInChannel, long rolePermissionsInChannel, long rolePermissionsInGuild)
         {
             Permissions[] permissionsToCheck = {
                 Permissions.VIEW_CHANNEL,
@@ -340,35 +340,45 @@ namespace BibleBot.Backend
                 Permissions.USE_EXTERNAL_EMOJIS
             };
 
-            StringBuilder channelPermissionsList = new();
-            StringBuilder guildPermissionsList = new();
+            StringBuilder selfChannelPermissionsList = new();
+            StringBuilder roleChannelPermissionsList = new();
+            StringBuilder roleGuildPermissionsList = new();
             foreach (Permissions perm in permissionsToCheck)
             {
                 string permName = Enum.GetName(typeof(Permissions), perm);
 
-                if ((botPermissionsInChannel & (long)perm) == (long)perm)
+                if ((selfPermissionsInChannel & (long)perm) == (long)perm)
                 {
-                    channelPermissionsList.Append($"{permName}: True\n");
+                    selfChannelPermissionsList.Append($"{permName}: True\n");
                 }
                 else
                 {
-                    channelPermissionsList.Append($"{permName}: False\n");
+                    selfChannelPermissionsList.Append($"{permName}: False\n");
+                }
+
+                if ((rolePermissionsInChannel & (long)perm) == (long)perm)
+                {
+                    roleChannelPermissionsList.Append($"{permName}: True\n");
+                }
+                else
+                {
+                    roleChannelPermissionsList.Append($"{permName}: False\n");
                 }
 
                 if (permName != "VIEW_CHANNEL")
                 {
-                    if ((botPermissionsInGuild & (long)perm) == (long)perm)
+                    if ((rolePermissionsInGuild & (long)perm) == (long)perm)
                     {
-                        guildPermissionsList.Append($"{permName}: True\n");
+                        roleGuildPermissionsList.Append($"{permName}: True\n");
                     }
                     else
                     {
-                        guildPermissionsList.Append($"{permName}: False\n");
+                        roleGuildPermissionsList.Append($"{permName}: False\n");
                     }
                 }
             }
 
-            return new StringBuilder[] { channelPermissionsList, guildPermissionsList };
+            return new StringBuilder[] { selfChannelPermissionsList, roleChannelPermissionsList, roleGuildPermissionsList };
         }
     }
 }
