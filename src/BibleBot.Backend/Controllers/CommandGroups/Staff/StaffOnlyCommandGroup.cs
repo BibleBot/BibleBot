@@ -83,7 +83,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
             {
                 StringBuilder[] results = Utils.GetInstance().PermissionsChecker(long.Parse(args[0]), long.Parse(args[1]));
 
-                InternalEmbed embed = Utils.GetInstance().Embedify("Permissions Check", null, false);
+                InternalEmbed embed = Utils.GetInstance().Embedify("Permissions Check", $"Integrated Role: {args[2]} ({args[3]})", false);
                 embed.Fields = new List<EmbedField>
                 {
                     new()

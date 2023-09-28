@@ -62,7 +62,7 @@ class Information(commands.Cog):
         resp = await backend.submit_command(
             inter.channel,
             inter.author,
-            f"+staff permscheck {channel_perms} {guild_perms}",
+            f"+staff permscheck {channel_perms} {guild_perms} {integrated_role.name} {integrated_role.id}",
         )
 
         await sending.safe_send_interaction(inter.followup, embed=resp)
