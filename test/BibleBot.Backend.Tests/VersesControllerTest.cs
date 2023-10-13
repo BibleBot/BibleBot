@@ -180,13 +180,13 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldFailWhenReferencingDeuterocanonInProtestantBible()
         {
-            _ = _versionService.Get("NTE") ?? _versionService.Create(new MockNTE());
-            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTE")).GetAwaiter().GetResult() as VerseResponse;
+            _ = _versionService.Get("NTFE") ?? _versionService.Create(new MockNTFE());
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTFE")).GetAwaiter().GetResult() as VerseResponse;
 
             VerseResponse expected = new()
             {
                 OK = false,
-                LogStatement = "New Testament for Everyone (NTE) does not support the Apocrypha/Deuterocanon."
+                LogStatement = "New Testament for Everyone (NTFE) does not support the Apocrypha/Deuterocanon."
             };
 
             resp.Should().BeEquivalentTo(expected);
@@ -195,13 +195,13 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldFailWhenReferencingOldTestamentInNewTestamentOnlyBible()
         {
-            _ = _versionService.Get("NTE") ?? _versionService.Create(new MockNTE());
-            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTE")).GetAwaiter().GetResult() as VerseResponse;
+            _ = _versionService.Get("NTFE") ?? _versionService.Create(new MockNTFE());
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTFE")).GetAwaiter().GetResult() as VerseResponse;
 
             VerseResponse expected = new()
             {
                 OK = false,
-                LogStatement = "New Testament for Everyone (NTE) does not support the Old Testament."
+                LogStatement = "New Testament for Everyone (NTFE) does not support the Old Testament."
             };
 
             resp.Should().BeEquivalentTo(expected);
@@ -210,7 +210,7 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldIgnoreMultipleVerseReferencesInIgnoringBrackets()
         {
-            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTE / Matthew 1:1 NTE / Acts 1:1 NTE > ipsum John 1:1 dolor < Genesis 1:1 NTE > sit")).GetAwaiter().GetResult() as VerseResponse;
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTFE / Matthew 1:1 NTFE / Acts 1:1 NTFE > ipsum John 1:1 dolor < Genesis 1:1 NTFE > sit")).GetAwaiter().GetResult() as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1031,14 +1031,14 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldReturnDuplicatesWhenVersionsDiffer()
         {
-            Version testVersion = await _versionService.Get("NTE") ?? await _versionService.Create(new MockNTE());
+            Version testVersion = await _versionService.Get("NTFE") ?? await _versionService.Create(new MockNTFE());
 
-            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTE")).GetAwaiter().GetResult() as VerseResponse;
+            VerseResponse resp = _versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTFE")).GetAwaiter().GetResult() as VerseResponse;
 
             VerseResponse expected = new()
             {
                 OK = true,
-                LogStatement = "Philippians 1:6 RSV / Philippians 1:6 NTE",
+                LogStatement = "Philippians 1:6 RSV / Philippians 1:6 NTFE",
                 DisplayStyle = "embed",
                 Verses = new List<Verse>
                 {

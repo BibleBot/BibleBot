@@ -23,12 +23,12 @@ namespace BibleBot.Backend.Tests.Mocks
         }
     }
 
-    public class MockNTE : Version
+    public class MockNTFE : Version
     {
-        public MockNTE()
+        public MockNTFE()
         {
-            Name = "New Testament for Everyone (NTE)";
-            Abbreviation = "NTE";
+            Name = "New Testament for Everyone (NTFE)";
+            Abbreviation = "NTFE";
             Source = "bg";
             SupportsOldTestament = false;
             SupportsNewTestament = true;
