@@ -349,31 +349,31 @@ namespace BibleBot.Backend
 
                 if ((selfPermissionsInChannel & (long)perm) == (long)perm)
                 {
-                    selfChannelPermissionsList.Append($"{permName}: True\n");
+                    selfChannelPermissionsList.Append($"{permName}: :white_check_mark:\n");
                 }
                 else
                 {
-                    selfChannelPermissionsList.Append($"{permName}: False\n");
+                    selfChannelPermissionsList.Append($"{permName}: :x:\n");
                 }
 
                 if ((rolePermissionsInChannel & (long)perm) == (long)perm)
                 {
-                    roleChannelPermissionsList.Append($"{permName}: True\n");
+                    roleChannelPermissionsList.Append($"{permName}: :white_check_mark:\n");
                 }
                 else
                 {
-                    roleChannelPermissionsList.Append($"{permName}: False\n");
+                    roleChannelPermissionsList.Append($"{permName}: :x:\n");
                 }
 
                 if (permName != "VIEW_CHANNEL")
                 {
                     if ((rolePermissionsInGuild & (long)perm) == (long)perm)
                     {
-                        roleGuildPermissionsList.Append($"{permName}: True\n");
+                        roleGuildPermissionsList.Append($"{permName}: :white_check_mark:\n");
                     }
                     else
                     {
-                        roleGuildPermissionsList.Append($"{permName}: False\n");
+                        roleGuildPermissionsList.Append($"{permName}: :x:\n");
                     }
                 }
             }

@@ -137,7 +137,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             {
                 InternalEmbed embed = new()
                 {
-                    Title = $"<:biblebot:800682801925980260> BibleBot v{Utils.Version}",
+                    Title = $"BibleBot v{Utils.Version}",
                     Description = "Scripture from your Discord client to your heart.",
                     Color = 6709986,
                     Footer = new Footer
@@ -149,7 +149,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                     {
                         new()
                         {
-                            Name = "<:slashcommand:1132081589313081364> Commands",
+                            Name = ":tools: Commands",
                             Value = "`/search` - search for verses by keyword\n" +
                             "`/version` - version preferences and information\n" +
                             "`/formatting` - preferences for verse styles and bot behavior\n" +
@@ -174,9 +174,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         },
                         new()
                         {
-                            Name = "<:news:1132081053251686552> News",
-                            Value = "<:newbadge:1132080714343526521> **26 July 2023** - [The NKJV has been restored for use...](https://discord.com/channels/362503610006765568/440313404427730945/1133504754031546380) <:newbadge:1132080714343526521>\n" +
-                            "<:newbadge:1132080714343526521> **21 July 2023** - [Update: v9.2-beta (build 559)](https://biblebot.xyz/2023/07/21/update-v9-2-beta-build-559/) <:newbadge:1132080714343526521>\n" +
+                            Name = ":newspaper: News",
+                            Value = ":new: **26 July 2023** - [The NKJV has been restored for use...](https://discord.com/channels/362503610006765568/440313404427730945/1133504754031546380) :new:\n" +
+                            ":new: **21 July 2023** - [Update: v9.2-beta (build 559)](https://biblebot.xyz/2023/07/21/update-v9-2-beta-build-559/) :new:\n" +
                             "**21 June 2023** - [Update: v9.2-beta (build 532)](https://biblebot.xyz/2023/06/21/release-v9-2-beta-build-532/)\n" +
                             "**31 March 2022** - [Release: v9.2-beta](https://biblebot.xyz/2022/03/31/release-v9-2-beta/)",
                             Inline = false,

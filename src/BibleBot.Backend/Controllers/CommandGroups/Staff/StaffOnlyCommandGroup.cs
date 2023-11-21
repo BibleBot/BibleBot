@@ -81,14 +81,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
 
             public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                StringBuilder[] results = Utils.GetInstance().PermissionsChecker(long.Parse(args[0]), long.Parse(args[1]), long.Parse(args[2]));
+                StringBuilder[] results = Utils.GetInstance().PermissionsChecker(long.Parse(args[2]), long.Parse(args[3]), long.Parse(args[4]));
 
-                InternalEmbed embed = Utils.GetInstance().Embedify("Permissions Check", $"This is a command for support use.\n\nIntegrated Role (IR): {args[3]} ({args[4]})", false);
+                InternalEmbed embed = Utils.GetInstance().Embedify("Permissions Check", $"This is a command for support use.\n\n**Channel ID**: {args[0]}\n**Server ID**: {args[1]}\n**Integrated Role (IR)**: {args[5]} ({args[6]})", false);
                 embed.Fields = new List<EmbedField>
                 {
                     new()
                     {
-                        Name = "Bot Channel Permissions",
+                        Name = "Bot User Channel Permissions",
                         Value = results[0].ToString()
                     },
                     new()

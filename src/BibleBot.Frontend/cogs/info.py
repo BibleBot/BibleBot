@@ -48,23 +48,67 @@ class Information(commands.Cog):
     @commands.slash_command(
         description="Check bot permissions for this channel and server."
     )
-    async def permscheck(self, inter: CommandInteraction):
+    async def permscheck(
+        self,
+        inter: CommandInteraction,
+        channel_id: str = commands.Param(
+            default=None,
+            description="The ID of the channel (optional)",
+        ),
+    ):
         await inter.response.defer()
+
+        channel = inter.channel
+        guild = inter.guild
+
+        if channel_id is not None:
+            try:
+                channel_to_be = await self.bot.fetch_channel(channel_id)
+
+                if not isinstance(channel_to_be, disnake.abc.PrivateChannel):
+                    channel = channel_to_be
+                    guild = channel_to_be.guild
+                else:
+                    await sending.safe_send_interaction(
+                        inter.followup,
+                        embed=backend.create_error_embed(
+                            "Permissions Check",
+                            "Channel ID specified belongs to a DM channel.",
+                        ),
+                    )
+            except (disnake.NotFound, disnake.Forbidden):
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=backend.create_error_embed(
+                        "Permissions Check",
+                        "The channel either does not exist or we do not have permission for it.",
+                    ),
+                )
+                return
+            except:
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=backend.create_error_embed(
+                        "Permissions Check",
+                        "We either received a channel of unknown type or an HTTPException was thrown.",
+                    ),
+                )
+                return
 
         integrated_role = [
             x
-            for x in inter.guild.me.roles
+            for x in guild.me.roles
             if x.is_bot_managed and x.is_integration and x.name != "@everyone"
         ][0]
 
-        channel_perms_for_self = inter.channel.permissions_for(inter.guild.me).value
-        channel_perms_for_role = inter.channel.permissions_for(integrated_role).value
+        channel_perms_for_self = channel.permissions_for(guild.me).value
+        channel_perms_for_role = channel.permissions_for(integrated_role).value
         guild_perms = integrated_role.permissions.value
 
         resp = await backend.submit_command(
             inter.channel,
             inter.author,
-            f"+staff permscheck {channel_perms_for_self} {channel_perms_for_role} {guild_perms} {integrated_role.name} {integrated_role.id}",
+            f"+staff permscheck {channel.id} {guild.id} {channel_perms_for_self} {channel_perms_for_role} {guild_perms} {integrated_role.name} {integrated_role.id}",
         )
 
         await sending.safe_send_interaction(inter.followup, embed=resp)
@@ -73,7 +117,6 @@ class Information(commands.Cog):
     async def supporters(self, inter: CommandInteraction):
         await inter.response.defer()
         campaigns = patreon_api.fetch_campaign()
-        print(campaigns)
         campaign = campaigns.data()[0].id()
         pledges = []
         names = []

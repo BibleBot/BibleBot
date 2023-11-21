@@ -341,9 +341,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 if (idealVersion != null)
                 {
                     string response = $"### {idealVersion.Name}\n\n" +
-                                $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n" +
-                                $"Contains New Testament: {(idealVersion.SupportsNewTestament ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n" +
-                                $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? "<:checkmark:1132080313854603295>" : "<:xmark:1132080327557398599>")}\n" +
+                                $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":x:")}\n" +
+                                $"Contains New Testament: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":x:")}\n" +
+                                $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n" +
                                 $"Source (mainly for developers): `{idealVersion.Source}`";
 
 

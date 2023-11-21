@@ -1065,7 +1065,7 @@ namespace BibleBot.Backend.Tests
                     {
                         Title = "",
                         PsalmTitle = "",
-                        Text = "<**6**> Of this I'm convinced: the one who began a good work in you will thoroughly complete it by the day of King Jesus.",
+                        Text = "<**6**> Of this I'm convinced: the one who began a good work in you will thoroughly complete it by the day of Messiah Jesus.",
                         Reference = new Reference
                         {
                             Book = "Philippians",
