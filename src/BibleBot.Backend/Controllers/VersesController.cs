@@ -206,7 +206,7 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            if (results.Count() > 6)
+            if (results.Count > 6)
             {
                 return new CommandResponse
                 {
@@ -218,7 +218,7 @@ namespace BibleBot.Backend.Controllers
                     LogStatement = "too many verses"
                 };
             }
-            else if (results.Count() > 0)
+            else if (results.Count > 0)
             {
                 string logStatement = string.Join(" / ", results.Select(verse => $"{verse.Reference} {verse.Reference.Version.Abbreviation}"));
 

@@ -318,7 +318,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 string version;
 
-                if (args.Count() > 0)
+                if (args.Count > 0)
                 {
                     version = args[0];
                 }
@@ -480,7 +480,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 string version;
 
-                if (args.Count() > 0)
+                if (args.Count > 0)
                 {
                     version = args[0];
                 }

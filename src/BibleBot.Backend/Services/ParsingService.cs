@@ -89,7 +89,7 @@ namespace BibleBot.Backend.Services
                 Regex colonRegex = new(@"[:：]", RegexOptions.Compiled);
                 MatchCollection colonMatches = colonRegex.Matches(relevantToken);
 
-                if (colonMatches.Count() != 0)
+                if (colonMatches.Count != 0)
                 {
                     int tokenIdxAfterSpan = bookSearchResult.Index + 2;
 
@@ -106,7 +106,7 @@ namespace BibleBot.Backend.Services
                     }
 
 
-                    if (colonMatches.Count() == 2)
+                    if (colonMatches.Count == 2)
                     {
                         string[] span = relevantToken.Split("-");
 
@@ -141,7 +141,7 @@ namespace BibleBot.Backend.Services
                             }
                         }
                     }
-                    else if (colonMatches.Count() == 1)
+                    else if (colonMatches.Count == 1)
                     {
                         string[] pair = relevantToken.Split(colonMatches.First().Value);
 
@@ -158,7 +158,7 @@ namespace BibleBot.Backend.Services
                         }
 
                         Regex spanRegex = new(@"-", RegexOptions.Compiled);
-                        int spanQuantity = spanRegex.Matches(relevantToken).Count();
+                        int spanQuantity = spanRegex.Matches(relevantToken).Count;
 
                         string[] spanSplit = pair[1].Split("-");
                         foreach (string pairValue in spanSplit)

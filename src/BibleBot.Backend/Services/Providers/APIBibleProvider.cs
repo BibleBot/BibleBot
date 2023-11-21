@@ -94,7 +94,7 @@ namespace BibleBot.Backend.Services.Providers
                 return null;
             }
 
-            if (resp.Passages.Count() == 0)
+            if (resp.Passages.Count == 0)
             {
                 Log.Error($"{reference.Version.Abbreviation} machine broke");
                 return null;

@@ -153,7 +153,7 @@ namespace BibleBot.Backend.Controllers
 
                                 var commandArgs = tokenizedBody.Skip(2).ToList();
 #pragma warning disable IDE0045
-                                if (commandArgs.Count() < idealCommand.ExpectedArguments)
+                                if (commandArgs.Count < idealCommand.ExpectedArguments)
                                 {
                                     return new CommandResponse
                                     {
