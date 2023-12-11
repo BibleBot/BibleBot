@@ -99,6 +99,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 $"**User Preference Count**: {userPrefs}\n" +
                 $"**Guild Preference Count**: {guildPrefs}\n" +
                 $"**Version Count**: {versions}\n\n" +
+                $"*For full statistics on our server count and preferences, see <https://biblebot.xyz/stats>.*\n\n" +
                 $"### Metadata\n" +
                 $"**Frontend**: v{version} ([{frontendShortHash}]({frontendCommitURL}))\n" +
                 $"**Backend**: v{version} ([{backendShortHash}]({backendCommitURL}))\n";

@@ -101,15 +101,21 @@ namespace BibleBot.Backend.Controllers
 
                     if (grp != null)
                     {
-                        if (grp.IsStaffOnly && req.UserId != "186046294286925824")
+                        string[] staffIds = {
+                            "186046294286925824", "270590533880119297", "304602975446499329", // directors
+                            "394261640335327234", "1029302033993433130", "842427954263752724" // support specialists
+                        };
+
+                        if (grp.IsStaffOnly && staffIds.Contains(req.UserId))
                         {
                             return new CommandResponse
                             {
                                 OK = false,
                                 Pages = new List<InternalEmbed>
                                 {
-                                    Utils.GetInstance().Embedify("Permissions Error", "This command can only be performed by BibleBot staff", true)
-                                }
+                                    Utils.GetInstance().Embedify("Permissions Error", "This command can only be performed by BibleBot staff.", true)
+                                },
+                                LogStatement = $"Insufficient permissions on +{grp.Name}."
                             };
                         }
 
