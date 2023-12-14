@@ -15,6 +15,19 @@ from utils.paginator import CreatePaginator
 
 logger = VyLogger("default")
 
+Resource = commands.option_enum(
+    {
+        "Canon Law - Code of Canon Law (1983)": "cic",
+        "Canon Law - Code of Canons of the Eastern Churches (1990, Feb 2022)": "cceo",
+        "Catechism - of the Catholic Church (1993, 2018)": "ccc",
+        "Catechism - Luther's Small (1529, 1986)": "lsc",
+        "Creed - Apostles'": "apostles",
+        "Creed - Chalcedonian Definition (451)": "chalcedon",
+        "Creed - Nicene (325)": "nicene325",
+        "Creed - Nicene-Constantinopolitan (381)": "nicene",
+    }
+)
+
 
 class Resources(commands.Cog):
     def __init__(self, bot):
@@ -28,21 +41,24 @@ class Resources(commands.Cog):
 
     @commands.slash_command(description="Use a resource.")
     async def resource(
-        self, inter: CommandInteraction, resource: str, range: str = None
+        self, inter: CommandInteraction, resource: Resource, input: str = None
     ):
         await inter.response.defer()
         cmd = f"+resource {resource}"
 
-        if range:
-            cmd += f" {range}"
+        if input:
+            cmd += f" {input}"
 
         resp = await backend.submit_command(inter.channel, inter.author, cmd)
 
         if isinstance(resp, list):
-            await sending.safe_send_interaction(
-                inter.followup,
-                embed=resp[0],
-                view=CreatePaginator(resp, inter.author.id, 180),
-            )
+            if resource in ["lsc"] or len(resp) > 3:
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=resp[0],
+                    view=CreatePaginator(resp, inter.author.id, 180),
+                )
+            else:
+                await sending.safe_send_interaction(inter.followup, embeds=resp)
         else:
             await sending.safe_send_interaction(inter.followup, embed=resp)
