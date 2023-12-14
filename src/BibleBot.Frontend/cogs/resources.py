@@ -18,9 +18,9 @@ logger = VyLogger("default")
 Resource = commands.option_enum(
     {
         "Canon Law - Code of Canon Law (1983)": "cic",
-        "Canon Law - Code of Canons of the Eastern Churches (1990, Feb 2022)": "cceo",
-        "Catechism - of the Catholic Church (1993, 2018)": "ccc",
-        "Catechism - Luther's Small (1529, 1986)": "lsc",
+        "Canon Law - Code of Canons of the Eastern Churches (1990)": "cceo",
+        "Catechism - of the Catholic Church (1993)": "ccc",
+        "Catechism - Luther's Small (1529)": "lsc",
         "Creed - Apostles'": "apostles",
         "Creed - Chalcedonian Definition (451)": "chalcedon",
         "Creed - Nicene (325)": "nicene325",
