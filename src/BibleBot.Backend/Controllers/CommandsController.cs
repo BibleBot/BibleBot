@@ -106,7 +106,7 @@ namespace BibleBot.Backend.Controllers
                             "394261640335327234", "1029302033993433130", "842427954263752724" // support specialists
                         };
 
-                        if (grp.IsStaffOnly && staffIds.Contains(req.UserId))
+                        if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))
                         {
                             return new CommandResponse
                             {
