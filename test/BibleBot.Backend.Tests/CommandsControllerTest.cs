@@ -13,6 +13,7 @@ using BibleBot.Backend.Services.Providers;
 using BibleBot.Backend.Tests.Mocks;
 using BibleBot.Models;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 
@@ -81,7 +82,8 @@ namespace BibleBot.Backend.Tests
                 Token = "meowmix"
             };
 
-            CommandResponse resp = await _commandsController.ProcessMessage(req) as CommandResponse;
+            ActionResult<IResponse> result = await _commandsController.ProcessMessage(req);
+            CommandResponse resp = (result.Result as ObjectResult).Value as CommandResponse;
 
             CommandResponse expected = new()
             {
@@ -99,7 +101,8 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldFailWhenBodyIsEmpty()
         {
-            CommandResponse resp = await _commandsController.ProcessMessage(new MockRequest()) as CommandResponse;
+            ActionResult<IResponse> result = await _commandsController.ProcessMessage(new MockRequest());
+            CommandResponse resp = (result.Result as ObjectResult).Value as CommandResponse;
 
             CommandResponse expected = new()
             {
@@ -117,7 +120,8 @@ namespace BibleBot.Backend.Tests
         [Test]
         public async Task ShouldProcessSearchQueryWithLargeResults()
         {
-            CommandResponse resp = await _commandsController.ProcessMessage(new MockRequest("+search faith")) as CommandResponse;
+            ActionResult<IResponse> result = await _commandsController.ProcessMessage(new MockRequest("+search faith"));
+            CommandResponse resp = (result.Result as ObjectResult).Value as CommandResponse;
 
             resp.OK.Should().BeTrue();
             resp.LogStatement.Should().NotBeNullOrEmpty();

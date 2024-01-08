@@ -59,15 +59,19 @@ namespace BibleBot.Backend.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IResponse> ProcessMessage([FromBody] Request req)
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
             if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
             {
-                return new VerseResponse
+                return new ObjectResult(new VerseResponse
                 {
                     OK = false,
                     Verses = null,
                     LogStatement = null
+                })
+                {
+                    StatusCode = 403
                 };
             }
 
@@ -126,27 +130,27 @@ namespace BibleBot.Backend.Controllers
 
                 if (reference.IsOT && !reference.Version.SupportsOldTestament)
                 {
-                    return new VerseResponse
+                    return BadRequest(new VerseResponse
                     {
                         OK = false,
                         LogStatement = $"{reference.Version.Name} does not support the Old Testament."
-                    };
+                    });
                 }
                 else if (reference.IsNT && !reference.Version.SupportsNewTestament)
                 {
-                    return new VerseResponse
+                    return BadRequest(new VerseResponse
                     {
                         OK = false,
                         LogStatement = $"{reference.Version.Name} does not support the New Testament."
-                    };
+                    });
                 }
                 else if (reference.IsDEU && !reference.Version.SupportsDeuterocanon)
                 {
-                    return new VerseResponse
+                    return BadRequest(new VerseResponse
                     {
                         OK = false,
                         LogStatement = $"{reference.Version.Name} does not support the Apocrypha/Deuterocanon."
-                    };
+                    });
                 }
 
                 if (!references.Contains(reference))
@@ -208,7 +212,7 @@ namespace BibleBot.Backend.Controllers
 
             if (results.Count > 6)
             {
-                return new CommandResponse
+                return BadRequest(new CommandResponse
                 {
                     OK = false,
                     Pages = new List<InternalEmbed>
@@ -216,7 +220,7 @@ namespace BibleBot.Backend.Controllers
                         Utils.GetInstance().Embedify("Too Many References", "There are too many references, the maximum amount of references you can do in one message is 6.", true)
                     },
                     LogStatement = "too many verses"
-                };
+                });
             }
             else if (results.Count > 0)
             {
@@ -227,23 +231,23 @@ namespace BibleBot.Backend.Controllers
                     logStatement = logStatement.Replace("Psalm 151 1", "Psalm 151");
                 }
 
-                return new VerseResponse
+                return Ok(new VerseResponse
                 {
                     OK = true,
                     Verses = results,
                     DisplayStyle = displayStyle,
                     Paginate = paginateVerses,
                     LogStatement = logStatement
-                };
+                });
             }
             else
             {
-                return new VerseResponse
+                return BadRequest(new VerseResponse
                 {
                     OK = false,
                     Verses = null,
                     LogStatement = null
-                };
+                });
             }
         }
     }

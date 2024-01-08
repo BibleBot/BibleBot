@@ -35,13 +35,17 @@ namespace BibleBot.Backend.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<CommandResponse> ProcessMessage([FromBody] Request req)
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<CommandResponse>> ProcessMessage([FromBody] Request req)
         {
             if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
             {
-                return new CommandResponse
+                return new ObjectResult(new CommandResponse
                 {
                     OK = false
+                })
+                {
+                    StatusCode = 403
                 };
             }
 
@@ -71,10 +75,10 @@ namespace BibleBot.Backend.Controllers
                 });
             }
 
-            return new CommandResponse
+            return Ok(new CommandResponse
             {
                 OK = true
-            };
+            });
         }
     }
 }

@@ -76,18 +76,23 @@ namespace BibleBot.Backend.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IResponse> ProcessMessage([FromBody] Request req)
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
             if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
             {
-                return new CommandResponse
+                return new ObjectResult(new CommandResponse
                 {
                     OK = false,
                     Pages = null,
                     LogStatement = null
+                })
+                {
+                    StatusCode = 403
                 };
             }
 
+            IResponse response;
             string[] tokenizedBody = req.Body.Split(" ");
 
             if (tokenizedBody.Length > 0)
@@ -108,7 +113,7 @@ namespace BibleBot.Backend.Controllers
 
                         if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))
                         {
-                            return new CommandResponse
+                            return BadRequest(new CommandResponse
                             {
                                 OK = false,
                                 Pages = new List<InternalEmbed>
@@ -116,7 +121,7 @@ namespace BibleBot.Backend.Controllers
                                     Utils.GetInstance().Embedify("Permissions Error", "This command can only be performed by BibleBot staff.", true)
                                 },
                                 LogStatement = $"Insufficient permissions on +{grp.Name}."
-                            };
+                            });
                         }
 
                         if (tokenizedBody.Length > 1)
@@ -131,7 +136,7 @@ namespace BibleBot.Backend.Controllers
                                 //     {
                                 //         if ((req.UserPermissions & (long)permission) != (long)permission)
                                 //         {
-                                //             return new CommandResponse
+                                //             return BadRequest(new CommandResponse
                                 //             {
                                 //                 OK = false,
                                 //                 Pages = new List<InternalEmbed>
@@ -139,14 +144,14 @@ namespace BibleBot.Backend.Controllers
                                 //                     Utils.GetInstance().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
                                 //                 },
                                 //                 LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
-                                //             };
+                                //             });
                                 //         }
                                 //     }
                                 // }
 
                                 if (req.IsBot && !idealCommand.BotAllowed)
                                 {
-                                    return new CommandResponse
+                                    return BadRequest(new CommandResponse
                                     {
                                         OK = false,
                                         Pages = new List<InternalEmbed>
@@ -154,14 +159,14 @@ namespace BibleBot.Backend.Controllers
                                                 Utils.GetInstance().Embedify("Insufficient Permissions", "Bots are not permitted to use this command, please inform your nearest human.", true)
                                             },
                                         LogStatement = $"Bot can't use +{grp.Name} {idealCommand.Name}."
-                                    };
+                                    });
                                 }
 
                                 var commandArgs = tokenizedBody.Skip(2).ToList();
 #pragma warning disable IDE0045
                                 if (commandArgs.Count < idealCommand.ExpectedArguments)
                                 {
-                                    return new CommandResponse
+                                    return BadRequest(new CommandResponse
                                     {
                                         OK = false,
                                         Pages = new List<InternalEmbed>
@@ -169,18 +174,21 @@ namespace BibleBot.Backend.Controllers
                                             Utils.GetInstance().Embedify("Insufficient Parameters", idealCommand.ArgumentsError, true)
                                         },
                                         LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
-                                    };
+                                    });
                                 }
 #pragma warning restore IDE0045
-                                return await idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
+                                response = await idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
+                                return response.OK ? Ok(response) : BadRequest(response);
                             }
                             else if (grp.Name is "resource" or "search")
                             {
-                                return await grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
+                                response = await grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
+                                return response.OK ? Ok(response) : BadRequest(response);
                             }
                         }
 
-                        return await grp.DefaultCommand.ProcessCommand(req, new List<string>());
+                        response = await grp.DefaultCommand.ProcessCommand(req, new List<string>());
+                        return response.OK ? Ok(response) : BadRequest(response);
                     }
                     else
                     {
@@ -188,18 +196,19 @@ namespace BibleBot.Backend.Controllers
 
                         if (cmd != null)
                         {
-                            return await cmd.ProcessCommand(req, new List<string>());
+                            response = await cmd.ProcessCommand(req, new List<string>());
+                            return response.OK ? Ok(response) : BadRequest(response);
                         }
                     }
                 }
             }
 
-            return new CommandResponse
+            return BadRequest(new CommandResponse
             {
                 OK = false,
                 Pages = null,
                 LogStatement = null
-            };
+            });
         }
     }
 }
