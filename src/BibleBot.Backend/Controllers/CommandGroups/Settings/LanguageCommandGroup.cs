@@ -160,17 +160,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                     else
                     {
-                        await _userService.Create(new User
+                        User newUser = new()
                         {
                             UserId = req.UserId,
-                            Version = "RSV",
-                            InputMethod = "default",
-                            Language = idealLanguage.ObjectName,
-                            TitlesEnabled = true,
-                            VerseNumbersEnabled = true,
-                            PaginationEnabled = false,
-                            DisplayStyle = "embed"
-                        });
+                            Language = idealLanguage.ObjectName
+                        };
+
+                        await _userService.Create(newUser);
                     }
 
                     return new CommandResponse
@@ -240,16 +236,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                     else
                     {
-                        await _guildService.Create(new Guild
+                        Guild newGuild = new()
                         {
                             GuildId = req.GuildId,
-                            Version = "RSV",
                             Language = idealLanguage.ObjectName,
-                            Prefix = "+",
-                            DisplayStyle = "embed",
-                            IgnoringBrackets = "<>",
                             IsDM = req.IsDM
-                        });
+                        };
+
+                        await _guildService.Create(newGuild);
                     }
 
                     return new CommandResponse

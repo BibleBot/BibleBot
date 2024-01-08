@@ -21,19 +21,19 @@ namespace BibleBot.Models
         public string GuildId { get; set; }
 
         [BsonElement("Language")]
-        public string Language { get; set; }
+        public string Language { get; set; } = "english_us";
 
         [BsonElement("Version")]
-        public string Version { get; set; }
+        public string Version { get; set; } = "RSV";
 
         [BsonElement("Prefix")]
-        public string Prefix { get; set; }
+        public string Prefix { get; set; } = "+";
 
         [BsonElement("DisplayStyle")]
-        public string DisplayStyle { get; set; }
+        public string DisplayStyle { get; set; } = "embed";
 
         [BsonElement("IgnoringBrackets")]
-        public string IgnoringBrackets { get; set; }
+        public string IgnoringBrackets { get; set; } = "<>";
 
         [BsonElement("DailyVerseChannelId")]
         public string DailyVerseChannelId { get; set; }
@@ -50,7 +50,10 @@ namespace BibleBot.Models
         [BsonElement("DailyVerseLastSentDate")]
         public string DailyVerseLastSentDate { get; set; }
 
+        [BsonElement("DailyVerseRoleId")]
+        public string DailyVerseRoleId { get; set; }
+
         [BsonElement("IsDM")]
-        public bool IsDM { get; set; }
+        public bool IsDM { get; set; } = false;
     }
 }

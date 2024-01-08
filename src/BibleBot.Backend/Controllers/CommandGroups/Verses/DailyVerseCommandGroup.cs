@@ -189,20 +189,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             }
                             else
                             {
-                                await _guildService.Create(new Guild
+                                // You may be inclined to think that this is where we should set
+                                // the channel ID the verses will be sent to, but this is actually
+                                // handled in the webhook creation process which results in these
+                                // variables being set in the preference by WebhooksController.
+                                Guild newGuild = new()
                                 {
                                     GuildId = req.GuildId,
-                                    Version = "RSV",
-                                    Language = "english_us",
-                                    Prefix = "+",
-                                    DisplayStyle = "embed",
-                                    IgnoringBrackets = "<>",
-                                    IsDM = req.IsDM,
                                     DailyVerseTime = args[0],
                                     DailyVerseTimeZone = args[1],
-                                });
+                                    IsDM = req.IsDM
+                                };
+
+                                await _guildService.Create(newGuild);
                             }
 
+                            // It may seem counter-intuitive to assert both the creation
+                            // and the removal of a webhook, but the frontend removes any
+                            // pre-existing daily verse webhooks before creating the new one.
                             return new CommandResponse
                             {
                                 OK = true,

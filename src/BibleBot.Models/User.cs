@@ -22,24 +22,24 @@ namespace BibleBot.Models
         public string UserId { get; set; }
 
         [BsonElement("InputMethod")]
-        public string InputMethod { get; set; }
+        public string InputMethod { get; set; } = "default";
 
         [BsonElement("Language")]
-        public string Language { get; set; }
+        public string Language { get; set; } = "english_us";
 
         [BsonElement("Version")]
-        public string Version { get; set; }
+        public string Version { get; set; } = "RSV";
 
         [BsonElement("TitlesEnabled")]
-        public bool TitlesEnabled { get; set; }
+        public bool TitlesEnabled { get; set; } = true;
 
         [BsonElement("VerseNumbersEnabled")]
-        public bool VerseNumbersEnabled { get; set; }
+        public bool VerseNumbersEnabled { get; set; } = true;
 
         [BsonElement("PaginationEnabled")]
-        public bool PaginationEnabled { get; set; }
+        public bool PaginationEnabled { get; set; } = false;
 
         [BsonElement("DisplayStyle")]
-        public string DisplayStyle { get; set; }
+        public string DisplayStyle { get; set; } = "embed";
     }
 }
