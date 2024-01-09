@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2023 Kerygma Digital Co.
+* Copyright (C) 2016-2024 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -8,10 +8,24 @@
 
 namespace BibleBot.Models
 {
+    /// <summary>
+    /// An interface describing the implementation of a Response.
+    /// </summary>
     public interface IResponse
     {
+        /// <summary>
+        /// Indicates whether the operation was performed successfully.
+        /// </summary>
         bool OK { get; set; }
+
+        /// <summary>
+        /// The message that frontend should log.
+        /// </summary>
         string LogStatement { get; set; }
+
+        /// <summary>
+        /// The type of response this is, to indicate to frontend how to handle it.
+        /// </summary>
         string Type { get; }
     }
 }

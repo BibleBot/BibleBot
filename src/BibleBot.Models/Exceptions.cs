@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2023 Kerygma Digital Co.
+* Copyright (C) 2016-2024 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -8,6 +8,9 @@
 
 namespace BibleBot.Models
 {
+    /// <summary>
+    /// This should thrown when no BibleProvider corresponds to a particular condition.
+    /// </summary>
     [System.Serializable]
     public class ProviderNotFoundException : System.Exception
     {
@@ -19,6 +22,10 @@ namespace BibleBot.Models
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 
+    /// <summary>
+    /// This is/was planned for usage with <see cref="Language"/>s, where this
+    /// exception would be thrown if a particular string didn't exist.
+    /// </summary>
     [System.Serializable]
     public class StringNotFoundException : System.Exception
     {

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2023 Kerygma Digital Co.
+* Copyright (C) 2016-2024 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -8,6 +8,10 @@
 
 namespace BibleBot.Models
 {
+    /// <summary>
+    /// A convenient way to distinguish sections of the Bible
+    /// without hardcoded strings.
+    /// </summary>
     public enum BookCategories
     {
         OldTestament,

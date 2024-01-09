@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2023 Kerygma Digital Co.
+* Copyright (C) 2016-2024 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -204,9 +204,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 await _guildService.Create(newGuild);
                             }
 
-                            // It may seem counter-intuitive to assert both the creation
-                            // and the removal of a webhook, but the frontend removes any
-                            // pre-existing daily verse webhooks before creating the new one.
+                            // For information on why both CreateWebhook and RemoveWebhook are
+                            // true, see the documentation comment on RemoveWebhook.
                             return new CommandResponse
                             {
                                 OK = true,

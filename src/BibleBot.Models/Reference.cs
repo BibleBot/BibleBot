@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2023 Kerygma Digital Co.
+* Copyright (C) 2016-2024 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -10,23 +10,79 @@ using System.Collections.Generic;
 
 namespace BibleBot.Models
 {
+    /// <summary>
+    /// The model for verse references.
+    /// </summary>
     public class Reference
     {
+        /// <summary>
+        /// The actual, English name of the book being referenced.
+        /// </summary>
         public string Book { get; set; }
 
+        /// <summary>
+        /// The chapter the reference begins in.
+        /// </summary>
         public int StartingChapter { get; set; }
+
+        /// <summary>
+        /// The verse of the chapter the reference begins in.
+        /// </summary>
         public int StartingVerse { get; set; }
+
+        /// <summary>
+        /// The chapter the reference ends in.
+        /// </summary>
         public int EndingChapter { get; set; }
+
+        /// <summary>
+        /// The verse of the chapter the reference ends in.
+        /// </summary>
         public int EndingVerse { get; set; }
 
+        /// <summary>
+        /// The <see cref="Version"/> that the reference requests.
+        /// </summary>
         public Version Version { get; set; }
 
+        /// <summary>
+        /// Indicates whether the reference is of the Old Testament.
+        /// </summary>
+        /// <remarks>
+        /// If this is true, <see cref="IsNT"/> and <see cref="IsDEU"/> must be false.
+        /// </remarks>
         public bool IsOT { get; set; }
+
+        /// <summary>
+        /// Indicates whether the reference is of the New Testament.
+        /// </summary>
+        /// <remarks>
+        /// If this is true, <see cref="IsOT"/> and <see cref="IsDEU"/> must be false.
+        /// </remarks>
         public bool IsNT { get; set; }
+        /// <summary>
+        /// Indicates whether the reference is of the Deuterocanon.
+        /// </summary>
+        /// <remarks>
+        /// If this is true, <see cref="IsOT"/> and <see cref="IsNT"/> must be false.
+        /// </remarks>
         public bool IsDEU { get; set; }
 
+        /// <summary>
+        /// The string representation of the Reference.
+        /// </summary>
+        /// <remarks>
+        /// In most cases, this will equal the value of <see cref="ToString"/>, set by the BibleProvider at the end of
+        /// fetching a verse. In certain cases, it is used to handle references where we skip the parsing process and
+        /// trust the origin to have their references proper.
+        /// </remarks>
         public string AsString { get; set; }
 
+        /// <summary>
+        /// Returns a string that represents the Reference. Data names of books differ in
+        /// API.Bible, thus the distinct function.
+        /// </summary>
+        /// <returns>A string that represents the Reference.</returns>
         public override string ToString()
         {
             string result = $"{Book} {StartingChapter}:{StartingVerse}";
@@ -47,6 +103,11 @@ namespace BibleBot.Models
             return result;
         }
 
+        /// <summary>
+        /// Returns a API.Bible-friendly string that represents the Reference. Data names of books differ in
+        /// API.Bible, thus the distinct function.
+        /// </summary>
+        /// <returns>An API.Bible-friendly string that represents the Reference.</returns>
         public string ToAPIBibleString()
         {
             Dictionary<string, string> nameToId = new()
@@ -150,7 +211,23 @@ namespace BibleBot.Models
             return result;
         }
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the Reference.
+        /// </summary>
+        /// <remarks>
+        /// This is used for caching purposes.
+        /// </remarks>
+        /// <param name="obj"></param>
+        /// <returns>true if the specified object is equal to the Reference; otherwise, false.</returns>
         public override bool Equals(object obj) => obj is not null and Reference && ToString() == (obj as Reference).ToString() && Version.Abbreviation == (obj as Reference).Version.Abbreviation;
+
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <remarks>
+        /// This is used for caching purposes.
+        /// </remarks>
+        /// <returns>A hash code for the string representing the reference.</returns>
         public override int GetHashCode() => ToString().GetHashCode();
     }
 }

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2023 Kerygma Digital Co.
+* Copyright (C) 2016-2024 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -16,6 +16,8 @@ using AngleSharp.Html.Parser;
 using AngleSharp.Dom;
 using CacheCow.Client;
 using AngleSharp.Html.Dom;
+
+// TODO(srp): Add documentation strings to this.
 
 namespace BibleBot.Models
 {

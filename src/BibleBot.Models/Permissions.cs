@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016-2023 Kerygma Digital Co.
+* Copyright (C) 2016-2024 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -10,7 +10,11 @@ using System;
 
 namespace BibleBot.Models
 {
+    /// <summary>
+    /// A enum of Discord's permission bitfields (see <seealso href="https://discord.com/developers/docs/topics/permissions"/>).
+    /// </summary>
     [Flags]
+    [Obsolete("Slash commands has made this obsolete. We expect frontend to handle permission checks.")]
     public enum Permissions : long
     {
         CREATE_INSTANT_INVITE = (long)1 << 0,
