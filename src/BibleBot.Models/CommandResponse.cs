@@ -15,8 +15,11 @@ namespace BibleBot.Models
     /// </summary>
     public class CommandResponse : IResponse
     {
+        /// <inheritdoc/>
         public bool OK { get; set; }
+        /// <inheritdoc/>
         public string LogStatement { get; set; }
+        /// <inheritdoc/>
         public string Type => "cmd";
 
         /// <summary>

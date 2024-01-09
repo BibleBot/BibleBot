@@ -9,7 +9,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace BibleBot.Models
 {
     public class Language
@@ -680,3 +680,4 @@ namespace BibleBot.Models
         public string Description { get; set; }
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

@@ -18,7 +18,7 @@ using CacheCow.Client;
 using AngleSharp.Html.Dom;
 
 // TODO(srp): Add documentation strings to this.
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace BibleBot.Models
 {
     public static class CachingClient
@@ -128,3 +128,4 @@ namespace BibleBot.Models
         }
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

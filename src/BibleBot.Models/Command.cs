@@ -28,12 +28,21 @@ namespace BibleBot.Models
         /// </summary>
         string ArgumentsError { get; set; }
 
+        /// <summary>
+        /// The minimum amount of arguments for the command.
+        /// </summary>
         [Obsolete("Slash commands has made this obsolete. We expect frontend to handle argument counts and similar validation.")]
         int ExpectedArguments { get; set; }
 
+        /// <summary>
+        /// A list of permissions required to run the command.
+        /// </summary>
         [Obsolete("Slash commands has made this obsolete. We expect frontend to handle permission checks.")]
         List<Permissions> PermissionsRequired { get; set; }
 
+        /// <summary>
+        /// Indicates whether bots are allowed to run the command.
+        /// </summary>
         [Obsolete("Slash commands has made this obsolete. Bots cannot run slash commands.")]
         bool BotAllowed { get; set; }
 

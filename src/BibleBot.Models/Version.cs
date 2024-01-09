@@ -35,6 +35,7 @@ namespace BibleBot.Models
         /// <remarks>
         /// In hindsight, maybe this should have been "Acronym" given that's what most of these are
         /// but this was a decision made by December 2016 Seraphim, and we don't question December 2016 Seraphim.
+        /// </remarks>
         [BsonElement("Abbreviation")]
         public string Abbreviation { get; set; }
 

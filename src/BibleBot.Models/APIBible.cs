@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 
 // TODO(srp): Docstrings, eventually...
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace BibleBot.Models
 {
     public class ABBibleResponse
@@ -128,3 +128,4 @@ namespace BibleBot.Models
         public string FUMSNoScript { get; set; }
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

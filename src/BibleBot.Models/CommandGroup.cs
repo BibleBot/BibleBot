@@ -26,12 +26,12 @@ namespace BibleBot.Models
         bool IsStaffOnly { get; set; }
 
         /// <summary>
-        /// A list of the <see cref="Command"/>s within this group.
+        /// A list of the <see cref="ICommand"/>s within this group.
         /// </summary>
         List<ICommand> Commands { get; set; }
 
         /// <summary>
-        /// The <see cref="Command"/> that should be used as a fallback if this group is invoked by itself.
+        /// The <see cref="ICommand"/> that should be used as a fallback if this group is invoked by itself.
         /// </summary>
         ICommand DefaultCommand { get; set; }
     }

@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace BibleBot.Models
 {
     public class DatabaseSettings : IDatabaseSettings
@@ -28,3 +29,4 @@ namespace BibleBot.Models
         string DatabaseName { get; set; }
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

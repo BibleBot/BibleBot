@@ -8,6 +8,7 @@
 
 using System;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace BibleBot.Models
 {
     /// <summary>
@@ -63,3 +64,4 @@ namespace BibleBot.Models
         SEND_VOICE_MESSAGES = (long)1 << 46
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

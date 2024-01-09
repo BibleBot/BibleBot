@@ -15,13 +15,21 @@ namespace BibleBot.Models
     /// </summary>
     public class ParagraphedResource : IResource
     {
+        /// <inheritdoc/>
         public ResourceType Type { get; set; }
+        /// <inheritdoc/>
         public ResourceStyle Style { get; set; } = ResourceStyle.PARAGRAPHED;
+        /// <inheritdoc/>
         public string CommandReference { get; set; }
+        /// <inheritdoc/>
         public string Title { get; set; }
+        /// <inheritdoc/>
         public string Author { get; set; }
+        /// <inheritdoc/>
         public string ImageRef { get; set; }
+        /// <inheritdoc/>
         public string Copyright { get; set; }
+        /// <inheritdoc/>
         public string Category { get; set; }
 
         /// <summary>
@@ -35,13 +43,21 @@ namespace BibleBot.Models
     /// </summary>
     public class SectionedResource : IResource
     {
+        /// <inheritdoc/>
         public ResourceType Type { get; set; }
+        /// <inheritdoc/>
         public ResourceStyle Style { get; set; }
+        /// <inheritdoc/>
         public string CommandReference { get; set; }
+        /// <inheritdoc/>
         public string Title { get; set; }
+        /// <inheritdoc/>
         public string Author { get; set; }
+        /// <inheritdoc/>
         public string ImageRef { get; set; }
+        /// <inheritdoc/>
         public string Copyright { get; set; }
+        /// <inheritdoc/>
         public string Category { get; set; }
 
         /// <summary>
@@ -55,13 +71,21 @@ namespace BibleBot.Models
     /// </summary>
     public class CreedResource : IResource
     {
+        /// <inheritdoc/>
         public ResourceType Type { get; set; }
+        /// <inheritdoc/>
         public ResourceStyle Style { get; set; }
+        /// <inheritdoc/>
         public string CommandReference { get; set; }
+        /// <inheritdoc/>
         public string Title { get; set; }
+        /// <inheritdoc/>
         public string Author { get; set; }
+        /// <inheritdoc/>
         public string ImageRef { get; set; }
+        /// <inheritdoc/>
         public string Copyright { get; set; }
+        /// <inheritdoc/>
         public string Category { get; set; }
 
         /// <summary>
@@ -75,9 +99,13 @@ namespace BibleBot.Models
     /// </summary>
     public class CreedFile
     {
+        /// <inheritdoc/>
         public CreedResource Apostles { get; set; }
+        /// <inheritdoc/>
         public CreedResource Nicene325 { get; set; }
+        /// <inheritdoc/>
         public CreedResource Nicene { get; set; }
+        /// <inheritdoc/>
         public CreedResource Chalcedon { get; set; }
     }
 
@@ -170,8 +198,11 @@ namespace BibleBot.Models
     /// </summary>
     public enum ResourceType
     {
+        /// <inheritdoc/>
         CREED = 0,
+        /// <inheritdoc/>
         CATECHISM = 1,
+        /// <inheritdoc/>
         CANONS = 2
     }
 
@@ -180,8 +211,11 @@ namespace BibleBot.Models
     /// </summary>
     public enum ResourceStyle
     {
+        /// <inheritdoc/>
         PARAGRAPHED = 0,
+        /// <inheritdoc/>
         SECTIONED = 1,
+        /// <inheritdoc/>
         FULL_TEXT = 2
     }
 }

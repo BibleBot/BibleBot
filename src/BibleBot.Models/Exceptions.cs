@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace BibleBot.Models
 {
     /// <summary>
@@ -37,3 +38,5 @@ namespace BibleBot.Models
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }
+
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

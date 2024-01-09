@@ -2,14 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.15.0" />
-    <PackageReference Include="CacheCow.Client" Version="2.12.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
   </ItemGroup>
-
 </Project>

@@ -14,8 +14,19 @@ namespace BibleBot.Models
     /// </summary>
     public enum BookCategories
     {
+        /// <summary>
+        /// An Old Testament book, more specifically the whole OT from a Protestant POV.
+        /// </summary>
         OldTestament,
+
+        /// <summary>
+        /// A New Testament book.
+        /// </summary>
         NewTestament,
+
+        /// <summary>
+        /// A Deuterocanonical book, found standard in the OT canon of Apostolic churches.
+        /// </summary>
         Deuterocanon
     }
 }

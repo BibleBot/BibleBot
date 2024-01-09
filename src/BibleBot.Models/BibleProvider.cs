@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,19 +33,20 @@ namespace BibleBot.Models
         Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled);
 
         /// <summary>
-        /// This serves as a wrapper for <see cref="GetVerse"/>, when we have a verse reference
+        /// This serves as a wrapper for <see cref="GetVerse(Reference, bool, bool)"/>, when we have a verse reference
         /// string, usually of trustworthy composition.
         /// </summary>
         /// <remarks>
         /// In practice, this function will create a <see cref="Reference"/> out of the string by
         /// setting the <see cref="Reference.Book"/> to "str", <see cref="Reference.Version"/> to
         /// the provided version, and <see cref="Reference.AsString"/> to the string provided.
-        /// <see cref="GetVerse"/> is expected to handle <see cref="Reference"/>s of this nature.
+        /// <see cref="GetVerse(Reference, bool, bool)"/> is expected to handle <see cref="Reference"/>s of this nature.
         /// This function should not be used for user-generated verse reference strings.
         /// </remarks>
         /// <param name="reference">The reference whose content we are fetching.</param>
         /// <param name="titlesEnabled">Whether the content should include titles and other headings.</param>
         /// <param name="verseNumbersEnabled">Whether the content should include chapter and verse numbers.</param>
+        /// <param name="version">The version we should fetch the content from.</param>
         /// <returns>
         /// If the <see cref="Reference"/> is valid, a <see cref="Verse"/> object populated with
         /// content according to the parameters given. If not, null.
