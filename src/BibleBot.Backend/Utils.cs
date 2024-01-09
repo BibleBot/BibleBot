@@ -74,7 +74,6 @@ namespace BibleBot.Backend
                 };
             }
 
-
             return embed;
         }
 
@@ -115,7 +114,7 @@ namespace BibleBot.Backend
 
                 if (sectionAsIndex == 0)
                 {
-                    if (section.Contains("-"))
+                    if (section.Contains('-'))
                     {
                         string[] sectionRange = section.Split("-").Where(item => item.Length > 0).ToArray();
                         int firstPart = 0;
@@ -378,7 +377,7 @@ namespace BibleBot.Backend
                 }
             }
 
-            return new StringBuilder[] { selfChannelPermissionsList, roleChannelPermissionsList, roleGuildPermissionsList };
+            return new[] { selfChannelPermissionsList, roleChannelPermissionsList, roleGuildPermissionsList };
         }
     }
 }

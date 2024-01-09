@@ -14,7 +14,6 @@ namespace BibleBot.Models
     /// A enum of Discord's permission bitfields (see <seealso href="https://discord.com/developers/docs/topics/permissions"/>).
     /// </summary>
     [Flags]
-    [Obsolete("Slash commands has made this obsolete. We expect frontend to handle permission checks.")]
     public enum Permissions : long
     {
         CREATE_INSTANT_INVITE = (long)1 << 0,
