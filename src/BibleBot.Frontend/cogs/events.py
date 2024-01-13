@@ -68,9 +68,9 @@ class EventListeners(commands.Cog):
                     async with session.post(
                         f"{endpoint}/webhooks/process", json=reqbody
                     ) as resp:
-                        if resp.status != 200:
-                            logger.error(
-                                "on_webhooks_update: unable to send delete event to webhook endpoint"
+                        if resp.status == 200:
+                            logger.info(
+                                f"<global@{ch.guild.id}#{ch.id}> detected removed webhook, deleting..."
                             )
         except disnake.errors.Forbidden:
             # this is likely triggered by on_guild_remove, if not
