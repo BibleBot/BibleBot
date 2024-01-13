@@ -173,7 +173,7 @@ class VerseCommands(commands.Cog):
                 inter.followup,
                 embed=backend.create_error_embed(
                     "/dailyverserole",
-                    "This role is unmentionable. Please enable `Allow anyone to \@mention this role` within the role's permissions.",
+                    "This role is unmentionable. Please enable `Allow anyone to @mention this role` within the role's permissions.",
                 ),
                 ephemeral=True,
             )
