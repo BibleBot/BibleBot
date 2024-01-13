@@ -101,9 +101,9 @@ class EventListeners(commands.Cog):
             async with session.post(
                 f"{endpoint}/webhooks/process", json=reqbody
             ) as resp:
-                if resp.status != 200:
-                    logger.error(
-                        "on_guild_remove: unable to send delete event to webhook endpoint"
+                if resp.status == 200:
+                    logger.info(
+                        f"<global@{guild.id}#global> we've left this server, deleting webhook..."
                     )
 
     @commands.Cog.listener()
