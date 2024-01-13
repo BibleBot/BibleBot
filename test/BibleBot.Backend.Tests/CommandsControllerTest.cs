@@ -82,8 +82,8 @@ namespace BibleBot.Backend.Tests
                 Token = "meowmix"
             };
 
-            ActionResult<IResponse> result = await _commandsController.ProcessMessage(req);
-            CommandResponse resp = (result.Result as ObjectResult).Value as CommandResponse;
+            ObjectResult result = (await _commandsController.ProcessMessage(req)).Result as ObjectResult;
+            CommandResponse resp = result.Value as CommandResponse;
 
             CommandResponse expected = new()
             {
@@ -95,14 +95,15 @@ namespace BibleBot.Backend.Tests
                 SendAnnouncement = false
             };
 
+            result.StatusCode.Should().Be(403);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public async Task ShouldFailWhenBodyIsEmpty()
         {
-            ActionResult<IResponse> result = await _commandsController.ProcessMessage(new MockRequest());
-            CommandResponse resp = (result.Result as ObjectResult).Value as CommandResponse;
+            ObjectResult result = (await _commandsController.ProcessMessage(new MockRequest())).Result as ObjectResult;
+            CommandResponse resp = result.Value as CommandResponse;
 
             CommandResponse expected = new()
             {
@@ -114,15 +115,17 @@ namespace BibleBot.Backend.Tests
                 SendAnnouncement = false
             };
 
+            result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public async Task ShouldProcessSearchQueryWithLargeResults()
         {
-            ActionResult<IResponse> result = await _commandsController.ProcessMessage(new MockRequest("+search faith"));
-            CommandResponse resp = (result.Result as ObjectResult).Value as CommandResponse;
+            ObjectResult result = (await _commandsController.ProcessMessage(new MockRequest("+search faith"))).Result as ObjectResult;
+            CommandResponse resp = result.Value as CommandResponse;
 
+            result.StatusCode.Should().Be(200);
             resp.OK.Should().BeTrue();
             resp.LogStatement.Should().NotBeNullOrEmpty();
             resp.Pages.Should().NotBeNullOrEmpty();

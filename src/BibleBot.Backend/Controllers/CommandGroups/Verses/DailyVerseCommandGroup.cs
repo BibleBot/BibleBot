@@ -48,6 +48,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             {
                 new DailyVerseUsage(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new DailyVerseSet(_guildService),
+                new DailyVerseRole(_guildService),
                 new DailyVerseStatus(_guildService),
                 new DailyVerseClear(_guildService)
             };
@@ -177,12 +178,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         if (((hour > -1 && hour < 24) || (minute > -1 && minute < 60)) && DateTimeZoneProviders.Tzdb.GetZoneOrNull(args[1]) != null)
                         {
                             Guild idealGuild = await _guildService.Get(req.GuildId);
+                            bool isChannelChanging = true;
 
                             if (idealGuild != null)
                             {
+                                isChannelChanging = idealGuild.DailyVerseChannelId != req.ChannelId;
+
                                 UpdateDefinition<Guild> update = Builders<Guild>.Update
                                              .Set(guild => guild.DailyVerseTime, args[0])
                                              .Set(guild => guild.DailyVerseTimeZone, args[1])
+                                             .Set(guild => guild.DailyVerseChannelId, req.ChannelId)
                                              .Set(guild => guild.DailyVerseLastSentDate, null);
 
                                 await _guildService.Update(req.GuildId, update);
@@ -198,14 +203,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                     GuildId = req.GuildId,
                                     DailyVerseTime = args[0],
                                     DailyVerseTimeZone = args[1],
+                                    DailyVerseChannelId = req.ChannelId,
                                     IsDM = req.IsDM
                                 };
 
                                 await _guildService.Create(newGuild);
                             }
 
-                            // For information on why both CreateWebhook and RemoveWebhook are
-                            // true, see the documentation comment on RemoveWebhook.
+                            // For information on why both CreateWebhook and RemoveWebhook can
+                            // both be true, see the documentation comment on RemoveWebhook.
                             return new CommandResponse
                             {
                                 OK = true,
@@ -214,8 +220,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                     Utils.GetInstance().Embedify("/dailyverseset", "Set automatic daily verse successfully.", false)
                                 },
                                 LogStatement = $"/dailyverseset {args[0]} {args[1]}",
-                                CreateWebhook = true,
-                                RemoveWebhook = true
+                                CreateWebhook = isChannelChanging,
+                                RemoveWebhook = isChannelChanging
                             };
                         }
                     }
@@ -241,6 +247,81 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         Utils.GetInstance().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
                     },
                     LogStatement = "/dailyverseset"
+                };
+            }
+        }
+
+        public class DailyVerseRole : ICommand
+        {
+            public string Name { get; set; }
+            public string ArgumentsError { get; set; }
+            public int ExpectedArguments { get; set; }
+            public List<Permissions> PermissionsRequired { get; set; }
+            public bool BotAllowed { get; set; }
+
+            private readonly GuildService _guildService;
+
+            public DailyVerseRole(GuildService guildService)
+            {
+                Name = "role";
+                ArgumentsError = null;
+                ExpectedArguments = 0;
+                PermissionsRequired = new List<Permissions>
+                {
+                    Permissions.MANAGE_GUILD
+                };
+                BotAllowed = false;
+
+                _guildService = guildService;
+            }
+
+            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            {
+                if (req.IsDM)
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages = new List<InternalEmbed>
+                        {
+                            Utils.GetInstance().Embedify("/dailyverserole", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
+                        },
+                        LogStatement = "/dailyverserole"
+                    };
+                }
+
+
+                Guild idealGuild = await _guildService.Get(req.GuildId);
+
+                if (idealGuild != null)
+                {
+                    if (idealGuild.DailyVerseWebhook != null)
+                    {
+                        UpdateDefinition<Guild> update = Builders<Guild>.Update
+                                     .Set(guild => guild.DailyVerseRoleId, args[0]);
+
+                        await _guildService.Update(req.GuildId, update);
+
+                        return new CommandResponse
+                        {
+                            OK = true,
+                            Pages = new List<InternalEmbed>
+                            {
+                                Utils.GetInstance().Embedify("/dailyverserole", "Set automatic daily verse role successfully.", false)
+                            },
+                            LogStatement = $"/dailyverserole {args[0]}"
+                        };
+                    }
+                }
+
+                return new CommandResponse
+                {
+                    OK = false,
+                    Pages = new List<InternalEmbed>
+                    {
+                        Utils.GetInstance().Embedify("/dailyverserole", "This server does not have automatic daily verse setup. Please do so with `/dailyverseset` before running this command.", true)
+                    },
+                    LogStatement = $"/dailyverserole {args[0]}"
                 };
             }
         }
@@ -317,7 +398,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                         string timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
 
-                        string resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>. It will use this server's preferred version, which you can find by using **`/version`**.\n\nUse **`/dailyverseset`** to set a new time or channel.\nUse **`/dailyverseclear`** to clear automatic daily verse settings.";
+                        string mentionClause = idealGuild.DailyVerseRoleId != null ? $" The <@&{idealGuild.DailyVerseRoleId}> role will be notified when daily verses are sent. " : " ";
+                        string resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>.{mentionClause}It will use this server's preferred version, which you can find by using **`/version`**.\n\nUse **`/dailyverseset`** to set a new time or channel.\nUse **`/dailyverserole`** to set a role to be @mention'd with every automatic daily verse.\nUse **`/dailyverseclear`** to clear automatic daily verse settings.";
 
                         return new CommandResponse
                         {
@@ -377,7 +459,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                  .Set(guild => guild.DailyVerseTime, null)
                                  .Set(guild => guild.DailyVerseTimeZone, null)
                                  .Set(guild => guild.DailyVerseWebhook, null)
-                                 .Set(guild => guild.DailyVerseChannelId, null);
+                                 .Set(guild => guild.DailyVerseChannelId, null)
+                                 .Set(guild => guild.DailyVerseLastSentDate, null)
+                                 .Set(guild => guild.DailyVerseRoleId, null);
 
                     await _guildService.Update(req.GuildId, update);
                 }
@@ -387,7 +471,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = true,
                     Pages = new List<InternalEmbed>
                     {
-                        Utils.GetInstance().Embedify("/dailyverseclear", "Cleared all daily verse webhooks successfully.", false)
+                        Utils.GetInstance().Embedify("/dailyverseclear", "Cleared all daily verse preferences successfully.", false)
                     },
                     LogStatement = "/dailyverseclear",
                     RemoveWebhook = true

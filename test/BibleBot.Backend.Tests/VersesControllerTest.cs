@@ -79,8 +79,8 @@ namespace BibleBot.Backend.Tests
                 Token = "meowmix"
             };
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(req).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(req).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -88,14 +88,15 @@ namespace BibleBot.Backend.Tests
                 LogStatement = null
             };
 
+            result.StatusCode.Should().Be(403);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldFailWhenBodyIsEmpty()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest()).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest()).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -103,14 +104,15 @@ namespace BibleBot.Backend.Tests
                 LogStatement = null
             };
 
+            result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessBibleGatewayReference()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -141,14 +143,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessAPIBibleReference()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJVA")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -179,6 +182,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -186,8 +190,8 @@ namespace BibleBot.Backend.Tests
         public void ShouldFailWhenReferencingDeuterocanonInProtestantBible()
         {
             _ = _versionService.Get("NTFE") ?? _versionService.Create(new MockNTFE());
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTFE")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTFE")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -195,6 +199,7 @@ namespace BibleBot.Backend.Tests
                 LogStatement = "New Testament for Everyone (NTFE) does not support the Apocrypha/Deuterocanon."
             };
 
+            result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -202,8 +207,8 @@ namespace BibleBot.Backend.Tests
         public void ShouldFailWhenReferencingOldTestamentInNewTestamentOnlyBible()
         {
             _ = _versionService.Get("NTFE") ?? _versionService.Create(new MockNTFE());
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTFE")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTFE")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -211,14 +216,15 @@ namespace BibleBot.Backend.Tests
                 LogStatement = "New Testament for Everyone (NTFE) does not support the Old Testament."
             };
 
+            result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldIgnoreMultipleVerseReferencesInIgnoringBrackets()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTFE / Matthew 1:1 NTFE / Acts 1:1 NTFE > ipsum John 1:1 dolor < Genesis 1:1 NTFE > sit")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTFE / Matthew 1:1 NTFE / Acts 1:1 NTFE > ipsum John 1:1 dolor < Genesis 1:1 NTFE > sit")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -249,14 +255,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessVerseInNonIgnoringBrackets()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("(John 1:1)")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("(John 1:1)")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -287,14 +294,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessBibleGatewaySpannedReference()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-2")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-2")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -324,14 +332,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessAPIBibleSpannedReference()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJVA")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -362,14 +371,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessBibleGatewaySpannedChapterReference()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Matthew 1:25-2:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:25-2:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -400,14 +410,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessAPIBibleSpannedChapterReference()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJVA")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -438,14 +449,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessBibleGatewayExpandedReference()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24-")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24-")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -476,14 +488,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldIgnoreAPIBibleExpandedReference()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJVA")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -491,14 +504,15 @@ namespace BibleBot.Backend.Tests
                 LogStatement = null
             };
 
+            result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldNotProcessReferenceStartingWithVerseZero()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Genesis 1:0")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:0")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -506,14 +520,15 @@ namespace BibleBot.Backend.Tests
                 LogStatement = null
             };
 
+            result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldNotProcessReferenceWithSpaceBetweenColonAndVerseNumbers()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Genesis 1: 1-5")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1: 1-5")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -521,14 +536,15 @@ namespace BibleBot.Backend.Tests
                 LogStatement = null
             };
 
+            result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessReferenceWithFullWidthColon()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Matthew 1：1-2")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1：1-2")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -559,14 +575,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldNotProcessSameVerseSpannedReferenceAsExpando()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -597,6 +614,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -605,8 +623,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("ELXX") ?? await _versionService.Create(new MockELXX());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 ELXX")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 ELXX")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -637,6 +655,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -645,8 +664,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("LXX") ?? await _versionService.Create(new MockLXX());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 LXX")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 LXX")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -677,6 +696,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -719,7 +739,8 @@ namespace BibleBot.Backend.Tests
         //             }
         //         }
         //     };
-
+        //
+        //     result.StatusCode.Should().Be(200);
         //     resp.Should().BeEquivalentTo(expected);
         // }
 
@@ -728,8 +749,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("NIV") ?? await _versionService.Create(new MockNIV());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Proverbs 25:1-12 NIV")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Proverbs 25:1-12 NIV")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -760,6 +781,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -768,8 +790,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("ISV") ?? await _versionService.Create(new MockISV());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Exodus 20:1-7 ISV")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Exodus 20:1-7 ISV")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -800,6 +822,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -808,8 +831,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("ISV") ?? await _versionService.Create(new MockISV());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Exodus 20:8-17 ISV")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Exodus 20:8-17 ISV")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -840,14 +863,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldNotProcessEsdrasBooksAsEzra()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("1 Esdras 1:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("1 Esdras 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -878,14 +902,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldNotProcessLetterOfJeremiahAsJeremiah()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Letter of Jeremiah 1:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Letter of Jeremiah 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -916,14 +941,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessJeremiah()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Jeremiah 1:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Jeremiah 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -954,6 +980,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -962,8 +989,8 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldProcessPsalm151Properly()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Psalm 151:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Psalm 151:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -994,6 +1021,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -1022,8 +1050,8 @@ namespace BibleBot.Backend.Tests
         [Test]
         public void ShouldNotReturnDuplicates()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("John 1:1 / John 1:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1 / John 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1054,6 +1082,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -1062,8 +1091,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("NTFE") ?? await _versionService.Create(new MockNTFE());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTFE")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTFE")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1113,14 +1142,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldNotProcessGreekEstherAsEsther()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Greek Esther 1:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Greek Esther 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1151,14 +1181,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldProcessVerseWithDataNameSGTHR()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1189,6 +1220,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -1197,8 +1229,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("WYC") ?? await _versionService.Create(new MockWYC());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1 WYC")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Song of the Three Young Men 1:1 WYC")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1229,6 +1261,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -1237,8 +1270,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("NRSVA") ?? await _versionService.Create(new MockNRSVA());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 NRSVA")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 NRSVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1269,6 +1302,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -1277,8 +1311,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("CEB") ?? await _versionService.Create(new MockCEB());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 CEB")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Prayer of Azariah 1:1 CEB")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1309,6 +1343,7 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -1317,8 +1352,8 @@ namespace BibleBot.Backend.Tests
         {
             Version testVersion = await _versionService.Get("WYC") ?? await _versionService.Create(new MockWYC());
 
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Additions to Esther 10:4 WYC")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Additions to Esther 10:4 WYC")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1349,14 +1384,15 @@ namespace BibleBot.Backend.Tests
                 }
             };
 
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
         [Test]
         public void ShouldNotProcessInvalidVerse()
         {
-            ActionResult<IResponse> result = _versesController.ProcessMessage(new MockRequest("Genesis 1:125")).GetAwaiter().GetResult();
-            VerseResponse resp = (result.Result as ObjectResult).Value as VerseResponse;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:125")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1364,6 +1400,7 @@ namespace BibleBot.Backend.Tests
                 LogStatement = null
             };
 
+            result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
     }

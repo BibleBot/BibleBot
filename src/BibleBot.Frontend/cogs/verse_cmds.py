@@ -8,6 +8,7 @@
 
 from disnake import CommandInteraction
 from disnake.ext import commands
+import disnake
 from setuptools import Command
 from logger import VyLogger
 from utils import backend, sending
@@ -147,6 +148,38 @@ class VerseCommands(commands.Cog):
 
         resp = await backend.submit_command(
             inter.channel, inter.author, "+dailyverse clear"
+        )
+
+        await sending.safe_send_interaction(inter.followup, embed=resp)
+
+    @commands.slash_command(
+        description="Set a role to be @mention'd with every automatic daily verse."
+    )
+    async def dailyverserole(self, inter: CommandInteraction, role: disnake.Role):
+        await inter.response.defer()
+        if not inter.channel.permissions_for(inter.author).manage_guild:
+            await sending.safe_send_interaction(
+                inter.followup,
+                embed=backend.create_error_embed(
+                    "Permissions Error",
+                    "You must have the `Manage Server` permission to use this command.",
+                ),
+                ephemeral=True,
+            )
+            return
+
+        if not role.mentionable:
+            await sending.safe_send_interaction(
+                inter.followup,
+                embed=backend.create_error_embed(
+                    "/dailyverserole",
+                    "This role is unmentionable. Please enable `Allow anyone to \@mention this role` within the role's permissions.",
+                ),
+                ephemeral=True,
+            )
+
+        resp = await backend.submit_command(
+            inter.channel, inter.author, f"+dailyverse role {role.id}"
         )
 
         await sending.safe_send_interaction(inter.followup, embed=resp)

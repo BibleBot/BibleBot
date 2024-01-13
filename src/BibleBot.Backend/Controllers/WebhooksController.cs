@@ -55,32 +55,39 @@ namespace BibleBot.Backend.Controllers
             {
                 if (req.Body == "delete")
                 {
-                    UpdateDefinition<Guild> update = Builders<Guild>.Update
+                    // i.e. delete if no channel id is given, if it is then make sure it's in the database before deleting
+                    // channel ids are only included in this when frontend is checking for manually deleted webhooks
+                    if (!(req.ChannelId != null && req.ChannelId != idealGuild.DailyVerseChannelId))
+                    {
+                        UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DailyVerseWebhook, null)
                                  .Set(guild => guild.DailyVerseChannelId, null)
                                  .Set(guild => guild.DailyVerseTime, null)
                                  .Set(guild => guild.DailyVerseTimeZone, null)
-                                 .Set(guild => guild.DailyVerseLastSentDate, null);
+                                 .Set(guild => guild.DailyVerseLastSentDate, null)
+                                 .Set(guild => guild.DailyVerseRoleId, null);
 
-                    await _guildService.Update(req.GuildId, update);
+                        await _guildService.Update(req.GuildId, update);
+                    }
                 }
                 else
                 {
                     string[] fields = req.Body.Split("||");
+
                     UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DailyVerseWebhook, fields[0])
                                  .Set(guild => guild.DailyVerseChannelId, fields[1]);
 
                     await _guildService.Update(req.GuildId, update);
-
-                    return Ok(new CommandResponse
-                    {
-                        OK = true
-                    });
                 }
+
+                return Ok(new CommandResponse
+                {
+                    OK = true
+                });
             }
 
-            return Ok(new CommandResponse
+            return BadRequest(new CommandResponse
             {
                 OK = false
             });

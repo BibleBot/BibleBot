@@ -35,6 +35,7 @@ async def submit_command(
     reqbody = {
         "UserId": str(user.id),
         "GuildId": str(guildId),
+        "ChannelId": str(ch.id),
         "IsDM": isDM,
         "Body": body,
         "Token": os.environ.get("ENDPOINT_TOKEN"),
@@ -71,7 +72,7 @@ async def submit_command(
                             await sending.safe_send_channel(
                                 ch,
                                 embed=create_error_embed(
-                                    "/dailyverseset",
+                                    "Permissions Error",
                                     "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.",
                                 ),
                             )

@@ -135,10 +135,11 @@ namespace BibleBot.AutomaticServices.Services
                             continue;
                         }
 
+                        string content = guild.DailyVerseRoleId != null ? $"<@&{guild.DailyVerseRoleId}> - Here is the daily verse:" : "Here is the daily verse:";
                         embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
                         webhookRequestBody = new()
                         {
-                            Content = "Here is the daily verse:",
+                            Content = content,
                             Username = "BibleBot Automatic Daily Verses",
                             AvatarURL = embed.Footer.IconURL,
                             Embeds = new List<InternalEmbed> { embed }

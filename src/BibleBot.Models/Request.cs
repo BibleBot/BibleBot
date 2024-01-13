@@ -30,6 +30,14 @@ namespace BibleBot.Models
         public string GuildId { get; set; }
 
         /// <summary>
+        /// The Discord Snowflake identifier of the channel that the request was made in.
+        /// If the request came from Direct Messages (see <see cref="IsDM"/>), the
+        /// <see cref="GuildId"/> will match this value.
+        /// </summary>
+        [JsonPropertyName("channelId")]
+        public string ChannelId { get; set; }
+
+        /// <summary>
         /// This indicates whether the request came from Direct Messages.
         /// If it is, <see cref="GuildId"/> is the ID of the Direct Messages channel that the request was made in.
         /// </summary>
