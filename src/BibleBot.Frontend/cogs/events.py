@@ -47,30 +47,36 @@ class EventListeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_webhooks_update(self, ch: disnake.abc.GuildChannel):
-        webhooks = await ch.webhooks()
-        biblebot_webhooks = [x for x in webhooks if x.user.id == self.bot.user.id]
+        try:
+            webhooks = await ch.webhooks()
+            biblebot_webhooks = [x for x in webhooks if x.user.id == self.bot.user.id]
 
-        # from frontend, we have no way of knowing if there was a daily verse webhook here
-        # thus we inform backend just in case
-        if len(biblebot_webhooks) == 0:
-            # yeet the webhook from the database, if applicable
-            reqbody = {
-                "GuildId": str(ch.guild.id),
-                "ChannelId": str(ch.id),
-                "Body": "delete",
-                "Token": os.environ.get("ENDPOINT_TOKEN"),
-            }
+            # from frontend, we have no way of knowing if there was a daily verse webhook here
+            # thus we inform backend just in case
+            if len(biblebot_webhooks) == 0:
+                # yeet the webhook from the database, if applicable
+                reqbody = {
+                    "GuildId": str(ch.guild.id),
+                    "ChannelId": str(ch.id),
+                    "Body": "delete",
+                    "Token": os.environ.get("ENDPOINT_TOKEN"),
+                }
 
-            endpoint = os.environ.get("ENDPOINT")
+                endpoint = os.environ.get("ENDPOINT")
 
-            async with aiohttp.ClientSession() as session:
-                async with session.post(
-                    f"{endpoint}/webhooks/process", json=reqbody
-                ) as resp:
-                    if resp.status != 200:
-                        logger.error(
-                            "on_webhooks_update: unable to send delete event to webhook endpoint"
-                        )
+                async with aiohttp.ClientSession() as session:
+                    async with session.post(
+                        f"{endpoint}/webhooks/process", json=reqbody
+                    ) as resp:
+                        if resp.status != 200:
+                            logger.error(
+                                "on_webhooks_update: unable to send delete event to webhook endpoint"
+                            )
+        except disnake.errors.Forbidden:
+            # this is likely triggered by on_guild_remove, if not
+            # then the server is on their own in deleting the webhook.
+            # the only other scenario here is that they've removed Manage Webhooks perms
+            pass
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: disnake.Guild):
