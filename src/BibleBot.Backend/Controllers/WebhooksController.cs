@@ -55,9 +55,16 @@ namespace BibleBot.Backend.Controllers
             {
                 if (req.Body == "delete")
                 {
-                    // i.e. delete if no channel id is given, if it is then make sure it's in the database before deleting
+                    bool stopDeletion = false;
+
+                    // i.e. if channel id is given, then make sure it's not in the database, we do not want to delete then
                     // channel ids are only included in this when frontend is checking for manually deleted webhooks
-                    if (!(req.ChannelId != null && req.ChannelId != idealGuild.DailyVerseChannelId))
+                    if (req.ChannelId != null && req.ChannelId != idealGuild.DailyVerseChannelId)
+                    {
+                        stopDeletion = true;
+                    }
+
+                    if (!stopDeletion)
                     {
                         UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DailyVerseWebhook, null)
