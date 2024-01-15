@@ -50,17 +50,16 @@ namespace BibleBot.Backend.Controllers
             }
 
             Guild idealGuild = await _guildService.Get(req.GuildId);
-            bool stopDeletion = false;
 
             if (idealGuild != null)
             {
+                bool channelIdIsPreference = req.ChannelId == idealGuild.DailyVerseChannelId;
+
                 if (req.Body == "delete")
                 {
-                    // i.e. if channel id is given, then make sure it's not in the database, we do not want to delete then
-                    // channel ids are only included in this when frontend is checking for manually deleted webhooks
-                    stopDeletion = req.ChannelId != null && req.ChannelId != idealGuild.DailyVerseChannelId;
-
-                    if (!stopDeletion)
+                    // if the channel is in the database, then we can safely delete
+                    // this prevents some unrelated webhooks from causing preference deletion
+                    if (channelIdIsPreference)
                     {
                         UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DailyVerseWebhook, null)
@@ -84,7 +83,7 @@ namespace BibleBot.Backend.Controllers
                     await _guildService.Update(req.GuildId, update);
                 }
 
-                if (!stopDeletion)
+                if (channelIdIsPreference)
                 {
                     return Ok(new CommandResponse
                     {
