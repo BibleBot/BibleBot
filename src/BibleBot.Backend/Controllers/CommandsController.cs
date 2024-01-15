@@ -124,59 +124,14 @@ namespace BibleBot.Backend.Controllers
                             });
                         }
 
+                        // TODO: this logic could be simplified. it wouldn't necessarily optimize anything (nor the opposite),
+                        // but it would look visually cleaner
                         if (tokenizedBody.Length > 1)
                         {
                             ICommand idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
 
                             if (idealCommand != null)
                             {
-                                // if (idealCommand.PermissionsRequired != null)
-                                // {
-                                //     foreach (Permissions permission in idealCommand.PermissionsRequired)
-                                //     {
-                                //         if ((req.UserPermissions & (long)permission) != (long)permission)
-                                //         {
-                                //             return BadRequest(new CommandResponse
-                                //             {
-                                //                 OK = false,
-                                //                 Pages = new List<InternalEmbed>
-                                //                 {
-                                //                     Utils.GetInstance().Embedify("Insufficient Permissions", "You do not have the required permissions to use this command.", true)
-                                //                 },
-                                //                 LogStatement = $"Insufficient permissions on +{grp.Name} {idealCommand.Name}."
-                                //             });
-                                //         }
-                                //     }
-                                // }
-
-                                if (req.IsBot && !idealCommand.BotAllowed)
-                                {
-                                    return BadRequest(new CommandResponse
-                                    {
-                                        OK = false,
-                                        Pages = new List<InternalEmbed>
-                                            {
-                                                Utils.GetInstance().Embedify("Insufficient Permissions", "Bots are not permitted to use this command, please inform your nearest human.", true)
-                                            },
-                                        LogStatement = $"Bot can't use +{grp.Name} {idealCommand.Name}."
-                                    });
-                                }
-
-                                var commandArgs = tokenizedBody.Skip(2).ToList();
-#pragma warning disable IDE0045
-                                if (commandArgs.Count < idealCommand.ExpectedArguments)
-                                {
-                                    return BadRequest(new CommandResponse
-                                    {
-                                        OK = false,
-                                        Pages = new List<InternalEmbed>
-                                        {
-                                            Utils.GetInstance().Embedify("Insufficient Parameters", idealCommand.ArgumentsError, true)
-                                        },
-                                        LogStatement = $"Insufficient parameters on +{grp.Name} {idealCommand.Name}."
-                                    });
-                                }
-#pragma warning restore IDE0045
                                 response = await idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
                                 return response.OK ? Ok(response) : BadRequest(response);
                             }
@@ -192,6 +147,7 @@ namespace BibleBot.Backend.Controllers
                     }
                     else
                     {
+                        // TODO: this logic could be simplified with above TODO also
                         ICommand cmd = _commandGroups.FirstOrDefault(grp => grp.Name == "info").Commands.FirstOrDefault(cmd => cmd.Name == potentialCommand.Substring(1));
 
                         if (cmd != null)
