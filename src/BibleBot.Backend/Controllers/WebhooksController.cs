@@ -54,24 +54,25 @@ namespace BibleBot.Backend.Controllers
 
             if (idealGuild != null)
             {
-                bool channelIdIsPreference = req.ChannelId == idealGuild.DailyVerseChannelId;
-
                 if (req.Body == "delete")
                 {
-                    // if the channel is in the database, then we can safely delete
-                    // this prevents some unrelated webhooks from causing preference deletion
-                    if (channelIdIsPreference)
+                    if (req.ChannelId != idealGuild.DailyVerseChannelId)
                     {
-                        UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                 .Set(guild => guild.DailyVerseWebhook, null)
-                                 .Set(guild => guild.DailyVerseChannelId, null)
-                                 .Set(guild => guild.DailyVerseTime, null)
-                                 .Set(guild => guild.DailyVerseTimeZone, null)
-                                 .Set(guild => guild.DailyVerseLastSentDate, null)
-                                 .Set(guild => guild.DailyVerseRoleId, null);
-
-                        await _guildService.Update(req.GuildId, update);
+                        return BadRequest(new CommandResponse
+                        {
+                            OK = false
+                        });
                     }
+
+                    UpdateDefinition<Guild> update = Builders<Guild>.Update
+                             .Set(guild => guild.DailyVerseWebhook, null)
+                             .Set(guild => guild.DailyVerseChannelId, null)
+                             .Set(guild => guild.DailyVerseTime, null)
+                             .Set(guild => guild.DailyVerseTimeZone, null)
+                             .Set(guild => guild.DailyVerseLastSentDate, null)
+                             .Set(guild => guild.DailyVerseRoleId, null);
+
+                    await _guildService.Update(req.GuildId, update);
                 }
                 else
                 {
@@ -84,13 +85,10 @@ namespace BibleBot.Backend.Controllers
                     await _guildService.Update(req.GuildId, update);
                 }
 
-                if (channelIdIsPreference)
+                return Ok(new CommandResponse
                 {
-                    return Ok(new CommandResponse
-                    {
-                        OK = true
-                    });
-                }
+                    OK = true
+                });
             }
 
             return BadRequest(new CommandResponse
