@@ -158,8 +158,13 @@ async def send_stats(bot: disnake.AutoShardedClient):
     guild_count = len(bot.guilds)
     user_count = sum([x.member_count for x in bot.guilds])
     channel_count = sum([len(x.channels) for x in bot.guilds])
+
+    file_dir = os.path.dirname(os.path.realpath(__file__))
+
     repo_sha = (
-        subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+        subprocess.check_output(["git", "-C", file_dir, "rev-parse", "HEAD"])
+        .decode("ascii")
+        .strip()
     )
 
     async with aiohttp.ClientSession() as session:
