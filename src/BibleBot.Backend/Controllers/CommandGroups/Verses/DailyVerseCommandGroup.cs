@@ -178,12 +178,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         if (((hour > -1 && hour < 24) || (minute > -1 && minute < 60)) && DateTimeZoneProviders.Tzdb.GetZoneOrNull(args[1]) != null)
                         {
                             Guild idealGuild = await _guildService.Get(req.GuildId);
-                            bool isChannelChanging = true;
 
                             if (idealGuild != null)
                             {
-                                isChannelChanging = idealGuild.DailyVerseChannelId != req.ChannelId;
-
                                 UpdateDefinition<Guild> update = Builders<Guild>.Update
                                              .Set(guild => guild.DailyVerseTime, args[0])
                                              .Set(guild => guild.DailyVerseTimeZone, args[1])
@@ -210,7 +207,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 await _guildService.Create(newGuild);
                             }
 
-                            // For information on why both CreateWebhook and RemoveWebhook can
+                            // For information on why CreateWebhook and RemoveWebhook can
                             // both be true, see the documentation comment on RemoveWebhook.
                             return new CommandResponse
                             {
@@ -220,8 +217,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                     Utils.GetInstance().Embedify("/dailyverseset", "Set automatic daily verse successfully.", false)
                                 },
                                 LogStatement = $"/dailyverseset {args[0]} {args[1]}",
-                                CreateWebhook = isChannelChanging,
-                                RemoveWebhook = isChannelChanging
+                                CreateWebhook = true,
+                                RemoveWebhook = true
                             };
                         }
                     }
