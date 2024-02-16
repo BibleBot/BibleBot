@@ -211,6 +211,11 @@ namespace BibleBot.Backend.Services.Providers
                 { "’",     "'" }, // Fonts may make it look like this is no different than the line above, but it's a different codepoint in Unicode.
                 { "' s",     "'s" },
                 { " . ",   " " },
+                { "*",     "\\*" },
+                { "_",     "\\_" },
+                { "\\*\\*", "**" },
+                { "\\_\\_", "__" },
+                { "\\*(Selah)\\*", "*(Selah)*"}
             };
 
             if (text.Contains("Selah."))
