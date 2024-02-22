@@ -106,7 +106,7 @@ namespace BibleBot.Backend.Services.Providers
             }
 
             foreach (IElement el in document.QuerySelectorAll(
-                ".crossreference, .footnote, .footnotes, .copyright-table, .translation-note, .inline-h3, h2"))
+                ".crossreference, .footnote, .footnotes, .copyright-table, .translation-note, .inline-h3, .psalm-acrostic, .psalm-acrostic-title, .psalm-book, h2"))
             {
                 el.Remove();
             }
