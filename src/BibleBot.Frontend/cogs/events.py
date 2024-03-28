@@ -8,10 +8,12 @@
 
 import os
 import disnake
-from utils import backend
+from utils import backend, sending
 import aiohttp
 from disnake.ext import commands
 from logger import VyLogger
+from utils.paginator import CreatePaginator
+import re
 
 logger = VyLogger("default")
 
@@ -119,6 +121,42 @@ class EventListeners(commands.Cog):
 
         if ":" in clean_msg or "：" in clean_msg:
             await backend.submit_verse(msg.channel, msg.author, clean_msg)
+        elif "ccc" in clean_msg.lower() and msg.guild:
+            if msg.guild.id in [
+                238001909716353025,
+                769709969796628500,
+                362503610006765568,
+                636984073226813449,
+            ]:
+                tokenized_msg = clean_msg.lower().split(" ")
+
+                while tokenized_msg[0] != "ccc":
+                    tokenized_msg.pop(0)
+
+                while len(tokenized_msg) > 2:
+                    tokenized_msg.pop()
+
+                reconstructed_reference = " ".join(tokenized_msg)
+
+                reference_regex = re.compile(r"^ccc [0-9]*(\-[0-9]*)?$")
+                if not reference_regex.match(reconstructed_reference):
+                    return
+
+                resp = await backend.submit_command(
+                    msg.channel, msg.author, f"+resource {reconstructed_reference}"
+                )
+
+                if isinstance(resp, list):
+                    if len(resp) > 3:
+                        await sending.safe_send_channel(
+                            msg.channel,
+                            embed=resp[0],
+                            view=CreatePaginator(resp, msg.author.id, 180),
+                        )
+                    else:
+                        await sending.safe_send_channel(msg.channel, embeds=resp)
+                else:
+                    await sending.safe_send_channel(msg.channel, embed=resp)
 
 
 async def update_topgg(bot: disnake.AutoShardedClient):
