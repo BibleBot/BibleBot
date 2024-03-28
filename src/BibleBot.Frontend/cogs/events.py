@@ -128,35 +128,26 @@ class EventListeners(commands.Cog):
                 362503610006765568,
                 636984073226813449,
             ]:
-                tokenized_msg = clean_msg.lower().split(" ")
+                reference_regex = re.compile(r"ccc [0-9]+(-[0-9]+)?")
+                reference_regex_match = reference_regex.search(clean_msg.lower())
+                if reference_regex_match:
+                    resp = await backend.submit_command(
+                        msg.channel,
+                        msg.author,
+                        f"+resource {reference_regex_match[0]}",
+                    )
 
-                while tokenized_msg[0] != "ccc":
-                    tokenized_msg.pop(0)
-
-                while len(tokenized_msg) > 2:
-                    tokenized_msg.pop()
-
-                reconstructed_reference = " ".join(tokenized_msg)
-
-                reference_regex = re.compile(r"^ccc [0-9]*(\-[0-9]*)?$")
-                if not reference_regex.match(reconstructed_reference):
-                    return
-
-                resp = await backend.submit_command(
-                    msg.channel, msg.author, f"+resource {reconstructed_reference}"
-                )
-
-                if isinstance(resp, list):
-                    if len(resp) > 3:
-                        await sending.safe_send_channel(
-                            msg.channel,
-                            embed=resp[0],
-                            view=CreatePaginator(resp, msg.author.id, 180),
-                        )
+                    if isinstance(resp, list):
+                        if len(resp) > 3:
+                            await sending.safe_send_channel(
+                                msg.channel,
+                                embed=resp[0],
+                                view=CreatePaginator(resp, msg.author.id, 180),
+                            )
+                        else:
+                            await sending.safe_send_channel(msg.channel, embeds=resp)
                     else:
-                        await sending.safe_send_channel(msg.channel, embeds=resp)
-                else:
-                    await sending.safe_send_channel(msg.channel, embed=resp)
+                        await sending.safe_send_channel(msg.channel, embed=resp)
 
 
 async def update_topgg(bot: disnake.AutoShardedClient):
