@@ -62,6 +62,30 @@ namespace BibleBot.Models
             return client;
         }
 
+        public static HttpClient GetTrimmedCachingClient(bool isHtml)
+        {
+            HttpClient client;
+
+#pragma warning disable IDE0045
+            if (isHtml)
+            {
+                client = HttpClientFactory.Create(
+                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
+                new CacheControlHandler(),
+                new HtmlTrimHandler());
+            }
+            else
+            {
+                client = HttpClientFactory.Create(
+                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
+                new CacheControlHandler(),
+                new JsonTrimHandler());
+            }
+#pragma warning restore IDE0045
+
+            return client;
+        }
+
 
         public static async Task<T> GetJsonContentAs<T>(this HttpClient client, string url, JsonSerializerOptions op)
         {
