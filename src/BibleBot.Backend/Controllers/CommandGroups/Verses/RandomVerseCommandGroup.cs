@@ -117,7 +117,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Version idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
                 string randomRef = await _svProvider.GetRandomVerse();
                 IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
 
@@ -201,7 +201,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Version idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
                 string trulyRandomRef = await _svProvider.GetTrulyRandomVerse();
                 IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
 

@@ -1,0 +1,22 @@
+{
+    "apostles": {
+        "title": "The Apostles' Creed",
+        "origin": "ca. 5th c.",
+        "text": "I believe in God, the Father almighty, creator of heaven and earth.\n\nI believe in Jesus Christ, God’s only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died, and was buried; he descended to the dead. On the third day he rose again; he ascended into heaven, he is seated at the right hand of the Father, and he will come to judge the living and the dead.\n\nI believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and the life everlasting. Amen."
+    },
+    "nicene325": {
+        "title": "The Nicene Creed",
+        "origin": "325",
+        "text": "We believe in one God, the Father almighty, maker of all things visible and invisible; And in one Lord, Jesus Christ, the Son of God, begotten from the Father, only-begotten, that is, from the substance of the Father, God from God, light from light, true God from true God, begotten not made, of one substance with the Father, through Whom all things came into being, things in heaven and things on earth, Who because of us men and because of our salvation came down, and became incarnate and became man, and suffered, and rose again on the third day, and ascended to the heavens, and will come to judge the living and dead. And in the Holy Spirit.\n\n[But those who say: 'There was a time when he was not;' and 'He was not before he was made;' and 'He was made out of nothing,' or 'He is of another substance' or 'essence,' or 'The Son of God is created,' or 'changeable,' or 'alterable'— they are condemned by the holy catholic and apostolic Church.]"
+    },
+    "nicene": {
+        "title": "The Nicene-Constantinopolitan Creed",
+        "origin": "381",
+        "text": "We believe in one God, the Father, the Almighty, maker of heaven and earth, of all that is, seen and unseen.\n\nWe believe in one Lord, Jesus Christ, the only Son of God, eternally begotten of the Father, God from God, Light from Light, true God from true God, begotten, not made, of one Being with the Father; through him all things were made. For us and for our salvation he came down from heaven, was incarnate of the Holy Spirit and the Virgin Mary and became truly human. For our sake he was crucified under Pontius Pilate; he suffered death and was buried. On the third day he rose again in accordance with the Scriptures; he ascended into heaven and is seated at the right hand of the Father. He will come again in glory to judge the living and the dead, and his kingdom will have no end.\n\nWe believe in the Holy Spirit, the Lord, the giver of life, who proceeds from the Father*, who with the Father and the Son is worshipped and glorified, who has spoken through the prophets. We believe in one holy catholic and apostolic Church. We acknowledge one baptism for the forgiveness of sins. We look for the resurrection of the dead, and the life of the world to come. Amen.\n\n* - some churches add 'and the Son'"
+    },
+    "chalcedon": {
+        "title": "The Chalcedonian Definition",
+        "origin": "451",
+        "text": "Following, then, the holy Fathers, we all unanimously teach that our Lord Jesus Christ is to us One and the same Son, the Self-same Perfect in Godhead, the Self-same Perfect in Manhood; truly God and truly Man; the Self-same of a rational soul and body; co-essential with the Father according to the Godhead, the Self-same co-essential with us according to the Manhood; like us in all things, sin apart; before the ages begotten of the Father as to the Godhead, but in the last days, the Self-same, for us and for our salvation (born) of Mary the Virgin Theotokos as to the Manhood; One and the Same Christ, Son, Lord, Only-begotten; acknowledged in Two Natures unconfusedly, unchangeably, indivisibly, inseparably; the difference of the Natures being in no way removed because of the Union, but rather the properties of each Nature being preserved, and (both) concurring into One Person and One Hypostasis; not as though He were parted or divided into Two Persons, but One and the Self-same Son and Only-begotten God, Word, Lord, Jesus Christ; even as from the beginning the prophets have taught concerning Him, and as the Lord Jesus Christ Himself hath taught us, and as the Symbol of the Fathers hath handed down to us."
+    }
+}

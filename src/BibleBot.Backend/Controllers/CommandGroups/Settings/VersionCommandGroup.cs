@@ -330,7 +330,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                 }
 
-                Version idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
 
                 if (idealVersion != null)
                 {
@@ -492,7 +492,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                 }
 
-                Version idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
 
                 if (idealVersion != null)
                 {

@@ -116,7 +116,8 @@ namespace BibleBot.Backend.Controllers
                 version = idealGuild.Version;
             }
 
-            Models.Version idealVersion = await _versionService.Get(version);
+
+            Models.Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
 
             List<Reference> references = new();
 

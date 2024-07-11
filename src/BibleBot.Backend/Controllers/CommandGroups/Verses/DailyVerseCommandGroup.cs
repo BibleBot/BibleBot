@@ -110,7 +110,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Version idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
                 string votdRef = await _svProvider.GetDailyVerse();
                 IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
 

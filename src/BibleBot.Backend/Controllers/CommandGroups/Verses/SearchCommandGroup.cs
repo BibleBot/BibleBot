@@ -91,7 +91,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     version = idealGuild.Version;
                 }
 
-                Version idealVersion = await _versionService.Get(version);
+                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
                 string query = string.Join(" ", args);
 
                 IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
