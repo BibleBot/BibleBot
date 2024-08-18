@@ -91,7 +91,18 @@ namespace BibleBot.Backend.Services.Providers
             {
                 if (verseNumbersEnabled)
                 {
-                    el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
+                    IElement previousElement = el.PreviousElementSibling;
+
+                    if (previousElement.ClassList.Contains("chapternum"))
+                    {
+                        // Prevent number duplication for verse 1s.
+                        el.Remove();
+                    }
+                    else
+                    {
+                        el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
+                    }
+
                 }
                 else
                 {
