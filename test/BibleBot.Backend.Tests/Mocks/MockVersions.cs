@@ -152,4 +152,17 @@ namespace BibleBot.Backend.Tests.Mocks
             SupportsDeuterocanon = true;
         }
     }
+
+    public class MockNKJV : Version
+    {
+        public MockNKJV()
+        {
+            Name = "New King James Version";
+            Abbreviation = "NKJV";
+            Source = "bg";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = false;
+        }
+    }
 }

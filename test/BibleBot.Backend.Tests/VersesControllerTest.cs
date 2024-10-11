@@ -1389,6 +1389,47 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
+        public async Task ShouldRemoveH4HeadingsInVerseContent()
+        {
+            Version testVersion = await _versionService.Get("NKJV") ?? await _versionService.Create(new MockNKJV());
+
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Song of Songs 7:9-10 NKJV")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "Song of Songs 7:9-10 NKJV",
+                DisplayStyle = "embed",
+                Verses = new List<Verse>
+                {
+                    new()
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**9**> And the roof of your mouth like the best wine. The wine goes down smoothly for my beloved, Moving gently the lips of sleepers. <**10**> I am my beloved's, And his desire is toward me.",
+                        Reference = new Reference
+                        {
+                            Book = "Song of Songs",
+                            StartingChapter = 7,
+                            StartingVerse = 9,
+                            EndingChapter = 7,
+                            EndingVerse = 10,
+                            Version = testVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Song of Solomon 7:9-10"
+                        }
+                    }
+                }
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
         public void ShouldNotProcessInvalidVerse()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:125")).GetAwaiter().GetResult().Result as ObjectResult;

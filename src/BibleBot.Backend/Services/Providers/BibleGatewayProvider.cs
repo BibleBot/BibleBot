@@ -93,10 +93,13 @@ namespace BibleBot.Backend.Services.Providers
                 {
                     IElement previousElement = el.PreviousElementSibling;
 
-                    if (previousElement.ClassList.Contains("chapternum"))
+                    if (previousElement != null)
                     {
-                        // Prevent number duplication for verse 1s.
-                        el.Remove();
+                        if (previousElement.ClassList.Contains("chapternum"))
+                        {
+                            // Prevent number duplication for verse 1s.
+                            el.Remove();
+                        }
                     }
                     else
                     {
@@ -136,7 +139,8 @@ namespace BibleBot.Backend.Services.Providers
                 psalmTitle = string.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
             }
 
-            foreach (IElement el in document.GetElementsByTagName("h3"))
+            IEnumerable<IElement> headingElements = new[] { document.GetElementsByTagName("h3"), document.GetElementsByTagName("h4"), document.GetElementsByTagName("h5"), document.GetElementsByTagName("h6") }.SelectMany(x => x);
+            foreach (IElement el in headingElements)
             {
                 el.Remove();
             }
