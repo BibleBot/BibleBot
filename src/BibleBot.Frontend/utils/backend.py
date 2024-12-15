@@ -30,12 +30,18 @@ async def submit_command(
         return
 
     isDM = ch.type == disnake.ChannelType.private
+    isThread = True if ch.type in [disnake.ChannelType.news_thread, disnake.ChannelType.public_thread, disnake.ChannelType.private_thread] else False
+
     guildId = ch.id if isDM else ch.guild.id
+    channelId = ch.id
+
+    if isThread:
+        channelId = ch.parent.id
 
     reqbody = {
         "UserId": str(user.id),
         "GuildId": str(guildId),
-        "ChannelId": str(ch.id),
+        "ChannelId": str(channelId),
         "IsDM": isDM,
         "Body": body,
         "Token": os.environ.get("ENDPOINT_TOKEN"),
@@ -79,17 +85,27 @@ async def submit_command(
 
                     if respBody["createWebhook"] and not isDM:
                         try:
+                            webhook_service_body = None
                             # Unlike other libraries, we have to convert an
                             # image into bytes to pass as the webhook avatar.
                             with open("./data/avatar.png", "rb") as image:
-                                webhook = await ch.create_webhook(
-                                    name="BibleBot Automatic Daily Verses",
-                                    avatar=bytearray(image.read()),
-                                    reason="For automatic daily verses from BibleBot.",
-                                )
+                                if isThread:
+                                    webhook = await ch.parent.create_webhook(
+                                        name="BibleBot Automatic Daily Verses",
+                                        avatar=bytearray(image.read()),
+                                        reason="For automatic daily verses from BibleBot.",
+                                    )
+                                    webhook_service_body = f"{webhook.id}/{webhook.token}?thread_id={ch.id}||{ch.parent.id}"
+                                else:
+                                    webhook = await ch.create_webhook(
+                                        name="BibleBot Automatic Daily Verses",
+                                        avatar=bytearray(image.read()),
+                                        reason="For automatic daily verses from BibleBot.",
+                                    )
+                                    webhook_service_body = f"{webhook.id}/{webhook.token}||{ch.id}"
 
                             # Send a request to the webhook controller, which will update the DB.
-                            reqbody["Body"] = f"{webhook.id}/{webhook.token}||{ch.id}"
+                            reqbody["Body"] = webhook_service_body
                             async with aiohttp.ClientSession() as subsession:
                                 async with subsession.post(
                                     f"{endpoint}/webhooks/process", json=reqbody
