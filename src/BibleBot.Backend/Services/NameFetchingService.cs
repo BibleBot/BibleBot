@@ -24,7 +24,7 @@ namespace BibleBot.Backend.Services
     {
         // private readonly Dictionary<string, string> _apiBibleNames;
         private readonly Dictionary<string, List<string>> _abbreviations;
-        private Dictionary<string, List<string>> _bookNames = new();
+        private Dictionary<string, List<string>> _bookNames = [];
         private List<string> _defaultNames;
         private readonly Dictionary<string, Dictionary<string, string>> _bookMap;
         private readonly List<string> _bookMapDataNames;
@@ -111,7 +111,7 @@ namespace BibleBot.Backend.Services
                 Log.Information("NameFetchingService: Removed old names file...");
             }
 
-            Dictionary<string, List<string>> completedNames = MergeDictionaries(new List<Dictionary<string, List<string>>> { bgNames, /*abNames,*/ _abbreviations });
+            Dictionary<string, List<string>> completedNames = MergeDictionaries([bgNames, /*abNames,*/ _abbreviations]);
 
             Log.Information("NameFetchingService: Serializing and writing to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, new JsonSerializerOptions { PropertyNameCaseInsensitive = false });
@@ -122,7 +122,7 @@ namespace BibleBot.Backend.Services
 
         private async Task<Dictionary<string, string>> GetBibleGatewayVersions()
         {
-            Dictionary<string, string> versions = new();
+            Dictionary<string, string> versions = [];
 
             string resp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
             IDocument document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
@@ -146,14 +146,14 @@ namespace BibleBot.Backend.Services
 
         private async Task<Dictionary<string, List<string>>> GetBibleGatewayNames(Dictionary<string, string> versions)
         {
-            Dictionary<string, List<string>> names = new();
+            Dictionary<string, List<string>> names = [];
 
-            List<string> threeMaccVariants = new() { "3ma", "3macc", "3m" };
-            List<string> fourMaccVariants = new() { "4ma", "4macc", "4m" };
-            List<string> greekEstherVariants = new() { "gkest", "gkesth", "gkes" };
-            List<string> addEstherVariants = new() { "addesth", "adest" };
-            List<string> prayerAzariahVariants = new() { "praz", "prazar" };
-            List<string> songThreeYouthsVariants = new() { "sgthr", "sgthree" };
+            List<string> threeMaccVariants = ["3ma", "3macc", "3m"];
+            List<string> fourMaccVariants = ["4ma", "4macc", "4m"];
+            List<string> greekEstherVariants = ["gkest", "gkesth", "gkes"];
+            List<string> addEstherVariants = ["addesth", "adest"];
+            List<string> prayerAzariahVariants = ["praz", "prazar"];
+            List<string> songThreeYouthsVariants = ["sgthr", "sgthree"];
 
             foreach (KeyValuePair<string, string> version in versions)
             {
@@ -242,7 +242,7 @@ namespace BibleBot.Backend.Services
                             }
                             else
                             {
-                                names[dataName] = new List<string> { bookName };
+                                names[dataName] = [bookName];
                             }
                         }
                     }
@@ -255,12 +255,12 @@ namespace BibleBot.Backend.Services
         public async Task<Dictionary<BookCategories, Dictionary<string, string>>> GetBibleGatewayVersionBookList(Version version)
         {
             // TODO: We need to find a cleaner solution for these booknames that isn't nested Dictionaries.
-            Dictionary<BookCategories, Dictionary<string, string>> names = new();
+            Dictionary<BookCategories, Dictionary<string, string>> names = [];
 
-            List<string> threeMaccVariants = new() { "3macc", "3m" };
-            List<string> fourMaccVariants = new() { "4macc", "4m" };
-            List<string> greekEstherVariants = new() { "gkesth", "adest", "addesth", "gkes" };
-            List<string> prayerAzariahVariants = new() { "sgthree", "sgthr", "prazar" };
+            List<string> threeMaccVariants = ["3macc", "3m"];
+            List<string> fourMaccVariants = ["4macc", "4m"];
+            List<string> greekEstherVariants = ["gkesth", "adest", "addesth", "gkes"];
+            List<string> prayerAzariahVariants = ["sgthree", "sgthr", "prazar"];
 
             string versionListResp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
             IDocument versionListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(versionListResp));
@@ -352,7 +352,7 @@ namespace BibleBot.Backend.Services
 
                         if (!names.ContainsKey(category))
                         {
-                            names.Add(category, new Dictionary<string, string>());
+                            names.Add(category, []);
                         }
 
                         names[category].Add(dataName, bookName);

@@ -37,42 +37,29 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             Name = "version";
             IsStaffOnly = false;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new VersionUsage(_userService, _guildService, _versionService),
                 new VersionSet(_userService, _versionService),
                 new VersionSetServer(_guildService, _versionService),
                 new VersionInfo(_userService, _guildService, _versionService),
                 new VersionList(_versionService),
                 new VersionBookList(_userService, _guildService, _versionService, _nameFetchingService)
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
-        public class VersionUsage : ICommand
+        public class VersionUsage(UserService userService, GuildService guildService, VersionService versionService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "usage";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
-
-            public VersionUsage(UserService userService, GuildService guildService, VersionService versionService)
-            {
-                Name = "usage";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-            }
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -116,37 +103,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/version", response, false)
-                    },
+                    ],
                     LogStatement = "/version"
                 };
             }
         }
 
-        public class VersionSet : ICommand
+        public class VersionSet(UserService userService, VersionService versionService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "set";
+            public string ArgumentsError { get; set; } = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly UserService _userService;
-            private readonly VersionService _versionService;
-
-            public VersionSet(UserService userService, VersionService versionService)
-            {
-                Name = "set";
-                ArgumentsError = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
-                ExpectedArguments = 1;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _userService = userService;
-                _versionService = versionService;
-            }
+            private readonly UserService _userService = userService;
+            private readonly VersionService _versionService = versionService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -177,10 +152,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = true,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/setversion", "Set version successfully.", false)
-                        },
+                        ],
                         LogStatement = $"/setversion {args[0]}"
                     };
                 }
@@ -188,40 +163,28 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/setversion", "Failed to set version, see `/listversions`.", true)
-                    },
+                    ],
                     LogStatement = "/setversion"
                 };
             }
         }
 
-        public class VersionSetServer : ICommand
+        public class VersionSetServer(GuildService guildService, VersionService versionService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
-
-            public VersionSetServer(GuildService guildService, VersionService versionService)
-            {
-                Name = "setserver";
-                ArgumentsError = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
-                ExpectedArguments = 1;
-                PermissionsRequired = new List<Permissions>
-                {
+            public string Name { get; set; } = "setserver";
+            public string ArgumentsError { get; set; } = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } =
+                [
                     Permissions.MANAGE_GUILD
-                };
-                BotAllowed = false;
+                ];
+            public bool BotAllowed { get; set; } = false;
 
-                _guildService = guildService;
-                _versionService = versionService;
-            }
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -260,10 +223,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = true,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/setserverversion", message, false)
-                        },
+                        ],
                         LogStatement = $"/setserverversion {args[0]}"
                     };
                 }
@@ -271,39 +234,26 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/setserverversion", "Failed to set server version, see `/listversions`.", true)
-                    },
+                    ],
                     LogStatement = "/setserverversion"
                 };
             }
         }
 
-        public class VersionInfo : ICommand
+        public class VersionInfo(UserService userService, GuildService guildService, VersionService versionService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "info";
+            public string ArgumentsError { get; set; } = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
-
-            public VersionInfo(UserService userService, GuildService guildService, VersionService versionService)
-            {
-                Name = "info";
-                ArgumentsError = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-            }
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -354,10 +304,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = true,
-                        Pages = new List<InternalEmbed>
-                            {
+                        Pages =
+                            [
                                 Utils.GetInstance().Embedify("/versioninfo", response, false)
-                            },
+                            ],
                         LogStatement = $"/versioninfo {version}"
                     };
                 }
@@ -365,43 +315,32 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/versioninfo", "I couldn't find that version, are you sure you used the right acronym?", true)
-                    },
+                    ],
                     LogStatement = "/versioninfo"
                 };
             }
         }
 
-        public class VersionList : ICommand
+        public class VersionList(VersionService versionService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "list";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly VersionService _versionService;
-
-            public VersionList(VersionService versionService)
-            {
-                Name = "list";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _versionService = versionService;
-            }
+            private readonly VersionService _versionService = versionService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 List<Version> versions = await _versionService.Get();
                 versions.Sort((x, y) => x.Name.CompareTo(y.Name));
 
-                List<string> versionsUsed = new();
-                List<InternalEmbed> pages = new();
+                List<string> versionsUsed = [];
+                List<InternalEmbed> pages = [];
 
                 int maxResultsPerPage = 25;
 
@@ -440,32 +379,18 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class VersionBookList : ICommand
+        public class VersionBookList(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "booklist";
+            public string ArgumentsError { get; set; } = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
-            private readonly NameFetchingService _nameFetchingService;
-
-            public VersionBookList(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService)
-            {
-                Name = "booklist";
-                ArgumentsError = "Expected a version abbreviation parameter, like `RSV` or `KJV`.";
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-                _nameFetchingService = nameFetchingService;
-            }
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
+            private readonly NameFetchingService _nameFetchingService = nameFetchingService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -501,10 +426,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         return new CommandResponse
                         {
                             OK = false,
-                            Pages = new List<InternalEmbed>
-                            {
+                            Pages =
+                            [
                                 Utils.GetInstance().Embedify("/booklist", "This version is not eligible for this command yet. Make sure you're using a version of source `bg` (see `/versioninfo`).", true)
-                            },
+                            ],
                             LogStatement = "/booklist - non-bg source"
                         };
                     }
@@ -513,7 +438,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                     if (names != null)
                     {
-                        List<InternalEmbed> pages = new();
+                        List<InternalEmbed> pages = [];
 
                         if (names.ContainsKey(BookCategories.OldTestament))
                         {
@@ -546,10 +471,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         return new CommandResponse
                         {
                             OK = false,
-                            Pages = new List<InternalEmbed>
-                            {
+                            Pages =
+                            [
                                 Utils.GetInstance().Embedify("/booklist", message, true)
-                            },
+                            ],
                             LogStatement = $"/booklist - internal error on {idealVersion.Abbreviation}"
                         };
                     }
@@ -558,10 +483,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/booklist", "I couldn't find that version, are you sure you used the right acronym?", true)
-                    },
+                    ],
                     LogStatement = "/booklist - invalid version"
                 };
             }

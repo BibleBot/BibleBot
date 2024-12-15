@@ -30,33 +30,22 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 
             Name = "resource";
             IsStaffOnly = false;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new ResourceUsage(_resources),
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
-        public class ResourceUsage : ICommand
+        public class ResourceUsage(List<IResource> resources) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "usage";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly List<IResource> _resources;
-
-            public ResourceUsage(List<IResource> resources)
-            {
-                Name = "usage";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _resources = resources;
-            }
+            private readonly List<IResource> _resources = resources;
 
             public Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -130,10 +119,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/resource", resp, false)
-                    },
+                    ],
                     LogStatement = "/resource"
                 });
             }

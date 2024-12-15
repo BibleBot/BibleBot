@@ -30,18 +30,26 @@ async def submit_command(
         return
 
     isDM = ch.type == disnake.ChannelType.private
-    isThread = True if ch.type in [disnake.ChannelType.news_thread, disnake.ChannelType.public_thread, disnake.ChannelType.private_thread] else False
+    isThread = (
+        True
+        if ch.type
+        in [
+            disnake.ChannelType.news_thread,
+            disnake.ChannelType.public_thread,
+            disnake.ChannelType.private_thread,
+        ]
+        else False
+    )
 
     guildId = ch.id if isDM else ch.guild.id
-    channelId = ch.id
-
-    if isThread:
-        channelId = ch.parent.id
+    channelId = ch.parent.id if isThread else ch.id
 
     reqbody = {
         "UserId": str(user.id),
         "GuildId": str(guildId),
         "ChannelId": str(channelId),
+        "ThreadId": str(ch.id),
+        "IsThread": isThread,
         "IsDM": isDM,
         "Body": body,
         "Token": os.environ.get("ENDPOINT_TOKEN"),
@@ -95,14 +103,16 @@ async def submit_command(
                                         avatar=bytearray(image.read()),
                                         reason="For automatic daily verses from BibleBot.",
                                     )
-                                    webhook_service_body = f"{webhook.id}/{webhook.token}?thread_id={ch.id}||{ch.parent.id}"
+                                    webhook_service_body = f"{webhook.id}/{webhook.token}?thread_id={ch.id}"
                                 else:
                                     webhook = await ch.create_webhook(
                                         name="BibleBot Automatic Daily Verses",
                                         avatar=bytearray(image.read()),
                                         reason="For automatic daily verses from BibleBot.",
                                     )
-                                    webhook_service_body = f"{webhook.id}/{webhook.token}||{ch.id}"
+                                    webhook_service_body = (
+                                        f"{webhook.id}/{webhook.token}"
+                                    )
 
                             # Send a request to the webhook controller, which will update the DB.
                             reqbody["Body"] = webhook_service_body

@@ -114,6 +114,12 @@ namespace BibleBot.Models
         public string DailyVerseRoleId { get; set; }
 
         /// <summary>
+        /// Whether the DailyVerse channel is a thread.
+        /// </summary>
+        [BsonElement("DailyVerseIsThread")]
+        public bool DailyVerseIsThread { get; set; }
+
+        /// <summary>
         /// Indicates whether this preference represents a Direct Messages channel, instead of a proper guild.
         /// </summary>
         /// <remarks>

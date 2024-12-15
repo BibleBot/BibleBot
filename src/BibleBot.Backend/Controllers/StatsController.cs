@@ -19,11 +19,9 @@ namespace BibleBot.Backend.Controllers
     [Produces("application/json")]
     [Route("api/stats")]
     [ApiController]
-    public class StatsController : ControllerBase
+    public class StatsController(FrontendStatsService frontendStatsService) : ControllerBase
     {
-        private readonly FrontendStatsService _frontendStatsService;
-
-        public StatsController(FrontendStatsService frontendStatsService) => _frontendStatsService = frontendStatsService;
+        private readonly FrontendStatsService _frontendStatsService = frontendStatsService;
 
         /// <summary>
         /// Processes a message to update stats from frontend.

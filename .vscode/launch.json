@@ -23,7 +23,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/BibleBot.Backend/bin/Debug/net7.0/BibleBot.Backend.dll",
+            "program": "${workspaceFolder}/src/BibleBot.Backend/bin/Debug/net9.0/BibleBot.Backend.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/BibleBot.Backend",
             "stopAtEntry": false,
@@ -39,7 +39,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/BibleBot.AutomaticServices/bin/Debug/net7.0/BibleBot.AutomaticServices.dll",
+            "program": "${workspaceFolder}/src/BibleBot.AutomaticServices/bin/Debug/net9.0/BibleBot.AutomaticServices.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/BibleBot.AutomaticServices",
             "stopAtEntry": false,

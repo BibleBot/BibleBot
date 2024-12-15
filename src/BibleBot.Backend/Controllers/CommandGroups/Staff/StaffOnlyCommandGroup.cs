@@ -25,11 +25,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
         {
             Name = "staff";
             IsStaffOnly = true;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new StaffAnnounce(),
                 new StaffPermissionsCheck()
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "announce");
         }
 
@@ -53,10 +53,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
             public Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
             {
                 OK = true,
-                Pages = new List<InternalEmbed>
-                {
+                Pages =
+                [
                     Utils.GetInstance().Embedify("BibleBot Announcement", string.Join(" ", args), false)
-                },
+                ],
                 LogStatement = "/announce",
                 SendAnnouncement = true
             });
@@ -84,8 +84,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
                 StringBuilder[] results = Utils.GetInstance().PermissionsChecker(long.Parse(args[2]), long.Parse(args[3]), long.Parse(args[4]));
 
                 InternalEmbed embed = Utils.GetInstance().Embedify("Permissions Check", $"This is a command for support use.\n\n**Channel ID**: {args[0]}\n**Server ID**: {args[1]}\n**Integrated Role (IR)**: {args[5]} ({args[6]})", false);
-                embed.Fields = new List<EmbedField>
-                {
+                embed.Fields =
+                [
                     new()
                     {
                         Name = "Bot User Channel Permissions",
@@ -101,15 +101,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
                         Name = "IR Server Permissions",
                         Value = results[2].ToString()
                     }
-                };
+                ];
 
                 return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         embed
-                    },
+                    ],
                     LogStatement = "/permscheck",
                     SendAnnouncement = false
                 });

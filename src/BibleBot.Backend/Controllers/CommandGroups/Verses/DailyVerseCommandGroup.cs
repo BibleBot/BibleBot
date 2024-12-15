@@ -44,48 +44,32 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             Name = "dailyverse";
             IsStaffOnly = false;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new DailyVerseUsage(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new DailyVerseSet(_guildService),
                 new DailyVerseRole(_guildService),
                 new DailyVerseStatus(_guildService),
                 new DailyVerseClear(_guildService)
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
-        public class DailyVerseUsage : ICommand
+        public class DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
+                               SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "usage";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
 
-            private readonly SpecialVerseProvider _svProvider;
-            private readonly List<IBibleProvider> _bibleProviders;
-
-            public DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                                   SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders)
-            {
-                Name = "usage";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-
-                _svProvider = svProvider;
-                _bibleProviders = bibleProviders;
-            }
+            private readonly SpecialVerseProvider _svProvider = svProvider;
+            private readonly List<IBibleProvider> _bibleProviders = bibleProviders;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -117,39 +101,28 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 return new VerseResponse
                 {
                     OK = true,
-                    Verses = new List<Verse>
-                    {
+                    Verses =
+                    [
                         await provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                    },
+                    ],
                     DisplayStyle = displayStyle,
                     LogStatement = "/dailyverse"
                 };
             }
         }
 
-        public class DailyVerseSet : ICommand
+        public class DailyVerseSet(GuildService guildService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            private readonly GuildService _guildService;
-
-            public DailyVerseSet(GuildService guildService)
-            {
-                Name = "set";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = new List<Permissions>
-                {
+            public string Name { get; set; } = "set";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } =
+                [
                     Permissions.MANAGE_GUILD
-                };
-                BotAllowed = false;
+                ];
+            public bool BotAllowed { get; set; } = false;
 
-                _guildService = guildService;
-            }
+            private readonly GuildService _guildService = guildService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -158,10 +131,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/dailyverseset", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
-                        },
+                        ],
                         LogStatement = "/dailyverseset"
                     };
                 }
@@ -184,7 +157,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 UpdateDefinition<Guild> update = Builders<Guild>.Update
                                              .Set(guild => guild.DailyVerseTime, args[0])
                                              .Set(guild => guild.DailyVerseTimeZone, args[1])
-                                             .Set(guild => guild.DailyVerseChannelId, req.ChannelId)
+                                             .Set(guild => guild.DailyVerseChannelId, req.IsThread ? req.ThreadId : req.ChannelId)
+                                             .Set(guild => guild.DailyVerseIsThread, req.IsThread)
                                              .Set(guild => guild.DailyVerseLastSentDate, null);
 
                                 await _guildService.Update(req.GuildId, update);
@@ -200,7 +174,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                     GuildId = req.GuildId,
                                     DailyVerseTime = args[0],
                                     DailyVerseTimeZone = args[1],
-                                    DailyVerseChannelId = req.ChannelId,
+                                    DailyVerseChannelId = req.IsThread ? req.ThreadId : req.ChannelId,
+                                    DailyVerseIsThread = req.IsThread,
                                     IsDM = req.IsDM
                                 };
 
@@ -212,10 +187,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             return new CommandResponse
                             {
                                 OK = true,
-                                Pages = new List<InternalEmbed>
-                                {
+                                Pages =
+                                [
                                     Utils.GetInstance().Embedify("/dailyverseset", "Set automatic daily verse successfully.", false)
-                                },
+                                ],
                                 LogStatement = $"/dailyverseset {args[0]} {args[1]}",
                                 CreateWebhook = true,
                                 RemoveWebhook = true
@@ -227,10 +202,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         return new CommandResponse
                         {
                             OK = false,
-                            Pages = new List<InternalEmbed>
-                            {
+                            Pages =
+                            [
                                 Utils.GetInstance().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
-                            },
+                            ],
                             LogStatement = "/dailyverseset"
                         };
                     }
@@ -239,38 +214,27 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
-                    },
+                    ],
                     LogStatement = "/dailyverseset"
                 };
             }
         }
 
-        public class DailyVerseRole : ICommand
+        public class DailyVerseRole(GuildService guildService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            private readonly GuildService _guildService;
-
-            public DailyVerseRole(GuildService guildService)
-            {
-                Name = "role";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = new List<Permissions>
-                {
+            public string Name { get; set; } = "role";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } =
+                [
                     Permissions.MANAGE_GUILD
-                };
-                BotAllowed = false;
+                ];
+            public bool BotAllowed { get; set; } = false;
 
-                _guildService = guildService;
-            }
+            private readonly GuildService _guildService = guildService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -279,10 +243,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/dailyverserole", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
-                        },
+                        ],
                         LogStatement = "/dailyverserole"
                     };
                 }
@@ -302,10 +266,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         return new CommandResponse
                         {
                             OK = true,
-                            Pages = new List<InternalEmbed>
-                            {
+                            Pages =
+                            [
                                 Utils.GetInstance().Embedify("/dailyverserole", "Set automatic daily verse role successfully.", false)
-                            },
+                            ],
                             LogStatement = $"/dailyverserole {args[0]}"
                         };
                     }
@@ -314,35 +278,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/dailyverserole", "This server does not have automatic daily verse setup. Please do so with `/dailyverseset` before running this command.", true)
-                    },
+                    ],
                     LogStatement = $"/dailyverserole {args[0]}"
                 };
             }
         }
 
-        public class DailyVerseStatus : ICommand
+        public class DailyVerseStatus(GuildService guildService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "status";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly GuildService _guildService;
-
-            public DailyVerseStatus(GuildService guildService)
-            {
-                Name = "status";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _guildService = guildService;
-            }
+            private readonly GuildService _guildService = guildService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -401,10 +354,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         return new CommandResponse
                         {
                             OK = true,
-                            Pages = new List<InternalEmbed>
-                            {
+                            Pages =
+                            [
                                 Utils.GetInstance().Embedify("/dailyversestatus", resp, false)
-                            },
+                            ],
                             LogStatement = "/dailyversestatus"
                         };
                     }
@@ -413,38 +366,27 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/dailyversestatus", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/dailyverseset` to setup the automatic daily verse.", true)
-                    },
+                    ],
                     LogStatement = "/dailyversestatus"
                 };
             }
         }
 
-        public class DailyVerseClear : ICommand
+        public class DailyVerseClear(GuildService guildService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            private readonly GuildService _guildService;
-
-            public DailyVerseClear(GuildService guildService)
-            {
-                Name = "clear";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = new List<Permissions>
-                {
+            public string Name { get; set; } = "clear";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } =
+                [
                     Permissions.MANAGE_GUILD
-                };
-                BotAllowed = false;
+                ];
+            public bool BotAllowed { get; set; } = false;
 
-                _guildService = guildService;
-            }
+            private readonly GuildService _guildService = guildService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -457,6 +399,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                  .Set(guild => guild.DailyVerseTimeZone, null)
                                  .Set(guild => guild.DailyVerseWebhook, null)
                                  .Set(guild => guild.DailyVerseChannelId, null)
+                                 .Set(guild => guild.DailyVerseIsThread, false)
                                  .Set(guild => guild.DailyVerseLastSentDate, null)
                                  .Set(guild => guild.DailyVerseRoleId, null);
 
@@ -466,10 +409,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/dailyverseclear", "Cleared all daily verse preferences successfully.", false)
-                    },
+                    ],
                     LogStatement = "/dailyverseclear",
                     RemoveWebhook = true
                 };

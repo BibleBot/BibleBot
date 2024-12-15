@@ -46,14 +46,14 @@ namespace BibleBot.Backend.Controllers
             _nameFetchingService = nameFetchingService;
 
             _spProvider = spProvider;
-            _bibleProviders = new List<IBibleProvider>
-            {
+            _bibleProviders =
+            [
                 bgProvider,
                 abProvider
-            };
+            ];
 
-            _commandGroups = new List<ICommandGroup>
-            {
+            _commandGroups =
+            [
                 new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
                 new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
                 new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService, _nameFetchingService),
@@ -62,7 +62,7 @@ namespace BibleBot.Backend.Controllers
                 new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bibleProviders),
                 new CommandGroups.Staff.StaffOnlyCommandGroup()
-            };
+            ];
         }
 
         /// <summary>
@@ -107,20 +107,20 @@ namespace BibleBot.Backend.Controllers
 
                     if (grp != null)
                     {
-                        string[] staffIds = {
+                        string[] staffIds = [
                             "186046294286925824", "270590533880119297", "304602975446499329", // directors
                             "394261640335327234", "1029302033993433130", "842427954263752724" // support specialists
-                        };
+                        ];
 
                         if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))
                         {
                             return BadRequest(new CommandResponse
                             {
                                 OK = false,
-                                Pages = new List<InternalEmbed>
-                                {
+                                Pages =
+                                [
                                     Utils.GetInstance().Embedify("Permissions Error", "This command can only be performed by BibleBot staff.", true)
-                                },
+                                ],
                                 LogStatement = $"Insufficient permissions on +{grp.Name}."
                             });
                         }
@@ -143,7 +143,7 @@ namespace BibleBot.Backend.Controllers
                             }
                         }
 
-                        response = await grp.DefaultCommand.ProcessCommand(req, new List<string>());
+                        response = await grp.DefaultCommand.ProcessCommand(req, []);
                         return response.OK ? Ok(response) : BadRequest(response);
                     }
                     else
@@ -153,7 +153,7 @@ namespace BibleBot.Backend.Controllers
 
                         if (cmd != null)
                         {
-                            response = await cmd.ProcessCommand(req, new List<string>());
+                            response = await cmd.ProcessCommand(req, []);
                             return response.OK ? Ok(response) : BadRequest(response);
                         }
                     }

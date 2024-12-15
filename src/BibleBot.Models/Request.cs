@@ -38,6 +38,21 @@ namespace BibleBot.Models
         public string ChannelId { get; set; }
 
         /// <summary>
+        /// The Discord Snowflake identifier of the thread that the request was made in.
+        /// If the request did not come from a thread (see <see cref="IsThread"/>), the
+        /// <see cref="ChannelId"/> will match this value.
+        /// </summary>
+        [JsonPropertyName("threadId")]
+        public string ThreadId { get; set; }
+
+        /// <summary>
+        /// This indicates whether the request came from a thread.
+        /// If it is, <see cref="ChannelId"/> is the ID of the channel that the thread belongs to.
+        /// </summary>
+        [JsonPropertyName("isThread")]
+        public bool IsThread { get; set; }
+
+        /// <summary>
         /// This indicates whether the request came from Direct Messages.
         /// If it is, <see cref="GuildId"/> is the ID of the Direct Messages channel that the request was made in.
         /// </summary>

@@ -41,45 +41,29 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             Name = "random";
             IsStaffOnly = false;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new RandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
                 new TrulyRandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders)
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
-        public class RandomVerse : ICommand
+        public class RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
+                           SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "usage";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
 
-            private readonly SpecialVerseProvider _svProvider;
-            private readonly List<IBibleProvider> _bibleProviders;
-
-            public RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                               SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders)
-            {
-                Name = "usage";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-
-                _svProvider = svProvider;
-                _bibleProviders = bibleProviders;
-            }
+            private readonly SpecialVerseProvider _svProvider = svProvider;
+            private readonly List<IBibleProvider> _bibleProviders = bibleProviders;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -88,10 +72,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/random", "This server has personally requested that this command be only used in DMs to avoid spam.", true)
-                        },
+                        ],
                         LogStatement = "/random"
                     };
                 }
@@ -124,47 +108,31 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 return new VerseResponse
                 {
                     OK = true,
-                    Verses = new List<Verse>
-                    {
+                    Verses =
+                    [
                         await provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                    },
+                    ],
                     DisplayStyle = displayStyle,
                     LogStatement = "/random"
                 };
             }
         }
 
-        public class TrulyRandomVerse : ICommand
+        public class TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
+                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "true";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
 
-            private readonly SpecialVerseProvider _svProvider;
-            private readonly List<IBibleProvider> _bibleProviders;
-
-            public TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                    SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders)
-            {
-                Name = "true";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-
-                _svProvider = svProvider;
-                _bibleProviders = bibleProviders;
-            }
+            private readonly SpecialVerseProvider _svProvider = svProvider;
+            private readonly List<IBibleProvider> _bibleProviders = bibleProviders;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -173,10 +141,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/truerandom", "This server has personally requested that this command be only used in DMs to avoid spam.", true)
-                        },
+                        ],
                         LogStatement = "/truerandom"
                     };
                 }
@@ -208,10 +176,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 return new VerseResponse
                 {
                     OK = true,
-                    Verses = new List<Verse>
-                    {
+                    Verses =
+                    [
                         await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                    },
+                    ],
                     DisplayStyle = displayStyle,
                     LogStatement = "/truerandom"
                 };

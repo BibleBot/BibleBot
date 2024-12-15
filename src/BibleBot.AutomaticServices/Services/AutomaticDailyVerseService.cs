@@ -22,7 +22,7 @@ using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using NodaTime;
 using RestSharp;
-using RestSharp.Serializers.SystemTextJson;
+using RestSharp.Serializers.Json;
 using Serilog;
 
 namespace BibleBot.AutomaticServices.Services
@@ -45,14 +45,14 @@ namespace BibleBot.AutomaticServices.Services
             _versionService = versionService;
             _spProvider = spProvider;
 
-            _bibleProviders = new List<IBibleProvider>
-            {
+            _bibleProviders =
+            [
                 bgProvider,
                 abProvider
-            };
+            ];
 
-            _restClient = new RestClient("https://discord.com/api/webhooks");
-            _restClient.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
+            _restClient = new RestClient("https://discord.com/api/webhooks", configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
+
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -68,7 +68,7 @@ namespace BibleBot.AutomaticServices.Services
         {
             int count = 0;
             int idealCount = 0;
-            List<string> guildsCleared = new();
+            List<string> guildsCleared = [];
 
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
             ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["America/Detroit"]);
@@ -114,7 +114,7 @@ namespace BibleBot.AutomaticServices.Services
                         {
                             Username = "BibleBot Automatic Daily Verses",
                             AvatarURL = embed.Footer.IconURL,
-                            Embeds = new List<InternalEmbed> { embed }
+                            Embeds = [embed]
                         };
                     }
                     else
@@ -142,14 +142,14 @@ namespace BibleBot.AutomaticServices.Services
                             Content = content,
                             Username = "BibleBot Automatic Daily Verses",
                             AvatarURL = embed.Footer.IconURL,
-                            Embeds = new List<InternalEmbed> { embed }
+                            Embeds = [embed]
                         };
                     }
 
                     RestRequest request = new(guild.DailyVerseWebhook);
                     request.AddJsonBody(webhookRequestBody);
 
-                    IRestResponse resp = await _restClient.ExecuteAsync(request, Method.POST);
+                    RestResponse resp = await _restClient.PostAsync(request);
                     if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
                     {
                         count += 1;
@@ -176,6 +176,22 @@ namespace BibleBot.AutomaticServices.Services
             return Task.CompletedTask;
         }
 
-        public void Dispose() => _timer?.Dispose();
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_timer != null)
+                {
+                    _timer.Dispose();
+                    _timer = null;
+                }
+            }
+        }
     }
 }

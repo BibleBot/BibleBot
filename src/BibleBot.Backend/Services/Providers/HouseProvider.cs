@@ -158,7 +158,7 @@ namespace BibleBot.Backend.Services.Providers
             IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            List<SearchResult> results = new();
+            List<SearchResult> results = [];
 
             foreach (IElement row in document.QuerySelectorAll(".row"))
             {

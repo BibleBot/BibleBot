@@ -35,40 +35,27 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             Name = "language";
             IsStaffOnly = false;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new LanguageUsage(_userService, _guildService, _languageService),
                 new LanguageSet(_userService, _languageService),
                 new LanguageSetServer( _guildService, _languageService),
                 new LanguageList(_languageService)
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
-        public class LanguageUsage : ICommand
+        public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "usage";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly LanguageService _languageService;
-
-            public LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService)
-            {
-                Name = "usage";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
-                _languageService = languageService;
-            }
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly LanguageService _languageService = languageService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -110,37 +97,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("+language", response, false)
-                    },
+                    ],
                     LogStatement = "+language"
                 };
             }
         }
 
-        public class LanguageSet : ICommand
+        public class LanguageSet(UserService userService, LanguageService languageService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "set";
+            public string ArgumentsError { get; set; } = "Expected a language parameter, like `english` or `german`.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly UserService _userService;
-            private readonly LanguageService _languageService;
-
-            public LanguageSet(UserService userService, LanguageService languageService)
-            {
-                Name = "set";
-                ArgumentsError = "Expected a language parameter, like `english` or `german`.";
-                ExpectedArguments = 1;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _userService = userService;
-                _languageService = languageService;
-            }
+            private readonly UserService _userService = userService;
+            private readonly LanguageService _languageService = languageService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -172,10 +147,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = true,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("+language set", "Set language successfully.", false)
-                        },
+                        ],
                         LogStatement = $"+language set {args[0]}"
                     };
                 }
@@ -183,40 +158,28 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("+language set", "Failed to set language, see `+language list`.", true)
-                    },
+                    ],
                     LogStatement = "+language set"
                 };
             }
         }
 
-        public class LanguageSetServer : ICommand
+        public class LanguageSetServer(GuildService guildService, LanguageService languageService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            private readonly GuildService _guildService;
-            private readonly LanguageService _languageService;
-
-            public LanguageSetServer(GuildService guildService, LanguageService languageService)
-            {
-                Name = "setserver";
-                ArgumentsError = "Expected a language parameter, like `english` or `german`.";
-                ExpectedArguments = 1;
-                PermissionsRequired = new List<Permissions>
-                {
+            public string Name { get; set; } = "setserver";
+            public string ArgumentsError { get; set; } = "Expected a language parameter, like `english` or `german`.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } =
+                [
                     Permissions.MANAGE_GUILD
-                };
-                BotAllowed = false;
+                ];
+            public bool BotAllowed { get; set; } = false;
 
-                _guildService = guildService;
-                _languageService = languageService;
-            }
+            private readonly GuildService _guildService = guildService;
+            private readonly LanguageService _languageService = languageService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -249,10 +212,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = true,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("+language setserver", "Set server language successfully.", false)
-                        },
+                        ],
                         LogStatement = $"+language setserver {args[0]}"
                     };
                 }
@@ -260,35 +223,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("+language setserver", "Failed to set server language, see `+language list`.", true)
-                    },
+                    ],
                     LogStatement = "+language setserver"
                 };
             }
         }
 
-        public class LanguageList : ICommand
+        public class LanguageList(LanguageService languageService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "list";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly LanguageService _languageService;
-
-            public LanguageList(LanguageService languageService)
-            {
-                Name = "list";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _languageService = languageService;
-            }
+            private readonly LanguageService _languageService = languageService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -305,10 +257,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("+language list", content.ToString(), false)
-                    },
+                    ],
                     LogStatement = "+language list"
                 };
             }

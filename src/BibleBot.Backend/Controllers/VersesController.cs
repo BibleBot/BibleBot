@@ -22,31 +22,20 @@ namespace BibleBot.Backend.Controllers
     [Produces("application/json")]
     [Route("api/verses")]
     [ApiController]
-    public class VersesController : ControllerBase
+    public class VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
+                            BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
     {
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-        private readonly ParsingService _parsingService;
-        private readonly VersionService _versionService;
-        private readonly NameFetchingService _nameFetchingService;
+        private readonly UserService _userService = userService;
+        private readonly GuildService _guildService = guildService;
+        private readonly ParsingService _parsingService = parsingService;
+        private readonly VersionService _versionService = versionService;
+        private readonly NameFetchingService _nameFetchingService = nameFetchingService;
 
-        private readonly List<IBibleProvider> _bibleProviders;
-
-        public VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
-                                BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
-        {
-            _userService = userService;
-            _guildService = guildService;
-            _parsingService = parsingService;
-            _versionService = versionService;
-            _nameFetchingService = nameFetchingService;
-
-            _bibleProviders = new List<IBibleProvider>
-            {
+        private readonly List<IBibleProvider> _bibleProviders =
+            [
                 bgProvider,
                 abProvider
-            };
-        }
+            ];
 
         /// <summary>
         /// Processes a message to locate verse references, outputting
@@ -77,7 +66,7 @@ namespace BibleBot.Backend.Controllers
             }
 
             string displayStyle = "embed";
-            List<string> ignoringBrackets = new() { "<>" };
+            List<string> ignoringBrackets = ["<>"];
             bool paginateVerses = false;
 
             Guild idealGuild = await _guildService.Get(req.GuildId);
@@ -119,7 +108,7 @@ namespace BibleBot.Backend.Controllers
 
             Models.Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
 
-            List<Reference> references = new();
+            List<Reference> references = [];
 
             foreach (BookSearchResult bsr in tuple.Item2)
             {
@@ -161,7 +150,7 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            List<Verse> results = new();
+            List<Verse> results = [];
 
             foreach (Reference reference in references)
             {
@@ -217,10 +206,10 @@ namespace BibleBot.Backend.Controllers
                 return BadRequest(new CommandResponse
                 {
                     OK = false,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("Too Many References", "There are too many references, the maximum amount of references you can do in one message is 6.", true)
-                    },
+                    ],
                     LogStatement = "too many verses"
                 });
             }

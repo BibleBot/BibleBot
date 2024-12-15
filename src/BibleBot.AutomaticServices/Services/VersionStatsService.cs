@@ -19,7 +19,7 @@ using BibleBot.Models;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using RestSharp;
-using RestSharp.Serializers.SystemTextJson;
+using RestSharp.Serializers.Json;
 using Serilog;
 
 namespace BibleBot.AutomaticServices.Services
@@ -39,8 +39,7 @@ namespace BibleBot.AutomaticServices.Services
             _userService = userService;
             _versionService = versionService;
 
-            _restClient = new RestClient("https://discord.com/api/webhooks");
-            _restClient.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
+            _restClient = new RestClient("https://discord.com/api/webhooks", configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -64,14 +63,11 @@ namespace BibleBot.AutomaticServices.Services
                 var preferences = (await _userService.Get()).Concat<IPreference>(await _guildService.Get()).ToList();
                 List<Models.Version> versions = await _versionService.Get();
 
-                Dictionary<string, int> versionStats = new();
+                Dictionary<string, int> versionStats = [];
 
                 foreach (Models.Version version in versions)
                 {
-                    if (!versionStats.ContainsKey(version.Abbreviation))
-                    {
-                        versionStats.Add(version.Abbreviation, 0);
-                    }
+                    versionStats.TryAdd(version.Abbreviation, 0);
                 }
 
                 foreach (IPreference preference in preferences)
@@ -106,7 +102,7 @@ namespace BibleBot.AutomaticServices.Services
                 RestRequest request = new(Environment.GetEnvironmentVariable("STATS_WEBHOOK"));
                 request.AddJsonBody(webhookRequestBody);
 
-                IRestResponse resp = await _restClient.ExecuteAsync(request, Method.POST);
+                RestResponse resp = await _restClient.PostAsync(request);
                 sentStats = resp.StatusCode == System.Net.HttpStatusCode.NoContent;
             }
 
@@ -129,6 +125,22 @@ namespace BibleBot.AutomaticServices.Services
             return Task.CompletedTask;
         }
 
-        public void Dispose() => _timer?.Dispose();
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_timer != null)
+                {
+                    _timer.Dispose();
+                    _timer = null;
+                }
+            }
+        }
     }
 }

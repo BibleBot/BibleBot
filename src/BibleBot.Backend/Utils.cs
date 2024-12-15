@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using BibleBot.Models;
 
 namespace BibleBot.Backend
@@ -20,7 +21,7 @@ namespace BibleBot.Backend
 
         private Utils() { }
         private static Utils _instance;
-        private static readonly object _lock = new();
+        private static readonly Lock _lock = new();
 
         public static Utils GetInstance()
         {
@@ -92,10 +93,10 @@ namespace BibleBot.Backend
                     }
 
 
-                    return new List<InternalEmbed>
-                    {
+                    return
+                    [
                         Embedify(null, creedResource.Title, creedResource.Text, false, copyright)
-                    };
+                    ];
                 }
             }
             else if (resource.Style == ResourceStyle.PARAGRAPHED)
@@ -120,7 +121,7 @@ namespace BibleBot.Backend
                         int firstPart = 0;
                         int secondPart = 0;
 
-                        List<InternalEmbed> results = new();
+                        List<InternalEmbed> results = [];
 
                         if (sectionRange.Length == 2)
                         {
@@ -179,20 +180,20 @@ namespace BibleBot.Backend
                     }
                     else
                     {
-                        return new List<InternalEmbed>
-                        {
+                        return
+                        [
                             CreateTitlePage(pgResource.Author, pgResource.Title, pgResource.Category, pgResource.Copyright, pgResource.ImageRef, null)
-                        };
+                        ];
                     }
                 }
                 else
                 {
                     string title = $"{pgResource.Title} - Paragraph {sectionAsIndex}";
 
-                    return new List<InternalEmbed>
-                    {
+                    return
+                    [
                         Embedify(null, title, $"<**{sectionAsIndex}**> {pgResource.Paragraphs.ElementAt(sectionAsIndex - 1).Text}", false, pgResource.Copyright)
-                    };
+                    ];
                 }
             }
             else if (resource.Style == ResourceStyle.SECTIONED)
@@ -216,7 +217,7 @@ namespace BibleBot.Backend
                     if (matchingSection != null)
                     {
                         string title = $"{matchingSection.Title}";
-                        List<InternalEmbed> results = new();
+                        List<InternalEmbed> results = [];
 
                         for (int i = 0; i < matchingSection.Pages.Count; i++)
                         {
@@ -227,10 +228,10 @@ namespace BibleBot.Backend
                     }
                     else
                     {
-                        return new List<InternalEmbed>
-                        {
+                        return
+                        [
                             CreateTitlePage(sResource.Author, sResource.Title, sResource.Category, sResource.Copyright, sResource.ImageRef, sResource.Sections)
-                        };
+                        ];
                     }
                 }
                 else
@@ -240,7 +241,7 @@ namespace BibleBot.Backend
                     if (matchingSection != null)
                     {
                         string title = $"{matchingSection.Title}";
-                        List<InternalEmbed> results = new();
+                        List<InternalEmbed> results = [];
 
                         for (int i = 0; i < matchingSection.Pages.Count; i++)
                         {
@@ -251,10 +252,10 @@ namespace BibleBot.Backend
                     }
                     else
                     {
-                        return new List<InternalEmbed>
-                        {
+                        return
+                        [
                             CreateTitlePage(sResource.Author, sResource.Title, sResource.Category, sResource.Copyright, sResource.ImageRef, sResource.Sections)
-                        };
+                        ];
                     }
                 }
             }
@@ -273,8 +274,8 @@ namespace BibleBot.Backend
 
             InternalEmbed embed = Embedify(null, title, null, false, copyright);
 
-            embed.Fields = new List<EmbedField>
-            {
+            embed.Fields =
+            [
                 new()
                 {
                     Name = "Author",
@@ -287,7 +288,7 @@ namespace BibleBot.Backend
                     Value = categoryText.ToString().Substring(0, categoryText.Length - 3),
                     Inline = false
                 }
-            };
+            ];
 
 
             if (imageRef != null)
@@ -326,7 +327,7 @@ namespace BibleBot.Backend
 
         public StringBuilder[] PermissionsChecker(long selfPermissionsInChannel, long rolePermissionsInChannel, long rolePermissionsInGuild)
         {
-            Permissions[] permissionsToCheck = {
+            Permissions[] permissionsToCheck = [
                 Permissions.VIEW_CHANNEL,
                 Permissions.SEND_MESSAGES,
                 Permissions.SEND_MESSAGES_IN_THREADS,
@@ -337,7 +338,7 @@ namespace BibleBot.Backend
                 Permissions.MANAGE_WEBHOOKS,
                 Permissions.USE_APPLICATION_COMMANDS,
                 Permissions.USE_EXTERNAL_EMOJIS
-            };
+            ];
 
             StringBuilder selfChannelPermissionsList = new();
             StringBuilder roleChannelPermissionsList = new();
@@ -377,7 +378,7 @@ namespace BibleBot.Backend
                 }
             }
 
-            return new[] { selfChannelPermissionsList, roleChannelPermissionsList, roleGuildPermissionsList };
+            return [selfChannelPermissionsList, roleChannelPermissionsList, roleGuildPermissionsList];
         }
     }
 }

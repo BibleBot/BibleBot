@@ -150,7 +150,7 @@ namespace BibleBot.Backend.Services.Providers
 
             ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
 
-            List<SearchResult> results = new();
+            List<SearchResult> results = [];
 
             if (resp.Data != null)
             {

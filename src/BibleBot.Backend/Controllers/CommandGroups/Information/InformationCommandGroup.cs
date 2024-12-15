@@ -35,41 +35,27 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
             Name = "info";
             IsStaffOnly = false;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new InfoStats(_userService, _guildService, _versionService, _frontendStatsService),
                 new InfoBibleBot(),
                 new InfoInvite()
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "biblebot");
         }
 
-        public class InfoStats : ICommand
+        public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "stats";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false; // anti-spam measure
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
-            private readonly FrontendStatsService _frontendStatsService;
-
-            public InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService)
-            {
-                Name = "stats";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = false; // anti-spam measure
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-                _frontendStatsService = frontendStatsService;
-            }
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
+            private readonly FrontendStatsService _frontendStatsService = frontendStatsService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -108,10 +94,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/stats", resp, false)
-                    },
+                    ],
                     LogStatement = "/stats"
                 };
             }
@@ -146,8 +132,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         Text = "Made with ❤️ by Kerygma Digital",
                         IconURL = "https://i.imgur.com/hr4RXpy.png"
                     },
-                    Fields = new List<EmbedField>
-                    {
+                    Fields =
+                    [
                         new()
                         {
                             Name = ":tools: Commands",
@@ -182,17 +168,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             "**31 March 2022** - [Release: v9.2-beta](https://biblebot.xyz/2022/03/31/release-v9-2-beta/)",
                             Inline = false,
                         }
-                    }
+                    ]
                 };
 
 
                 return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         embed
-                    },
+                    ],
                     LogStatement = "/biblebot"
                 });
             }
@@ -218,10 +204,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             public Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
             {
                 OK = true,
-                Pages = new List<InternalEmbed>
-                    {
+                Pages =
+                    [
                         Utils.GetInstance().Embedify("/invite", "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).", false)
-                    },
+                    ],
                 LogStatement = "/invite"
             });
         }

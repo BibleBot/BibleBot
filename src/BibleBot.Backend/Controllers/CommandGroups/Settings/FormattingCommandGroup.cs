@@ -32,8 +32,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             Name = "formatting";
             IsStaffOnly = false;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new FormattingUsage(_userService, _guildService),
                 new FormattingSetVerseNumbers(_userService),
                 new FormattingSetTitles(_userService),
@@ -41,32 +41,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new FormattingSetDisplayStyle(_userService),
                 new FormattingSetServerDisplayStyle(_guildService),
                 new FormattingSetIgnoringBrackets(_guildService)
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
-        public class FormattingUsage : ICommand
+        public class FormattingUsage(UserService userService, GuildService guildService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "usage";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = true;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-
-            public FormattingUsage(UserService userService, GuildService guildService)
-            {
-                Name = "usage";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-
-                _userService = userService;
-                _guildService = guildService;
-            }
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -120,35 +108,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/formatting", response, false)
-                    },
+                    ],
                     LogStatement = "/formatting"
                 };
             }
         }
 
-        public class FormattingSetVerseNumbers : ICommand
+        public class FormattingSetVerseNumbers(UserService userService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "setversenumbers";
+            public string ArgumentsError { get; set; } = "Expected an `enable` or `disable` parameter.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly UserService _userService;
-
-            public FormattingSetVerseNumbers(UserService userService)
-            {
-                Name = "setversenumbers";
-                ArgumentsError = "Expected an `enable` or `disable` parameter.";
-                ExpectedArguments = 1;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _userService = userService;
-            }
+            private readonly UserService _userService = userService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -157,10 +134,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/setversenumbers", "Expected an `enable` or `disable` parameter.", true)
-                        },
+                        ],
                         LogStatement = "/setversenumbers"
                     };
                 }
@@ -188,35 +165,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/setversenumbers", "Set verse numbers successfully.", false)
-                    },
+                    ],
                     LogStatement = $"/setversenumbers {args[0]}"
                 };
             }
         }
 
-        public class FormattingSetTitles : ICommand
+        public class FormattingSetTitles(UserService userService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "settitles";
+            public string ArgumentsError { get; set; } = "Expected an `enable` or `disable` parameter.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly UserService _userService;
-
-            public FormattingSetTitles(UserService userService)
-            {
-                Name = "settitles";
-                ArgumentsError = "Expected an `enable` or `disable` parameter.";
-                ExpectedArguments = 1;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _userService = userService;
-            }
+            private readonly UserService _userService = userService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -225,10 +191,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/settitles", "Expected an `enable` or `disable` parameter.", true)
-                        },
+                        ],
                         LogStatement = "/settitles"
                     };
                 }
@@ -256,35 +222,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/settitles", "Set titles successfully.", false)
-                    },
+                    ],
                     LogStatement = $"/settitles {args[0]}"
                 };
             }
         }
 
-        public class FormattingSetPagination : ICommand
+        public class FormattingSetPagination(UserService userService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "setpagination";
+            public string ArgumentsError { get; set; } = "Expected an `enable` or `disable` parameter.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly UserService _userService;
-
-            public FormattingSetPagination(UserService userService)
-            {
-                Name = "setpagination";
-                ArgumentsError = "Expected an `enable` or `disable` parameter.";
-                ExpectedArguments = 1;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _userService = userService;
-            }
+            private readonly UserService _userService = userService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -293,10 +248,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/setpagination", "Expected an `enable` or `disable` parameter.", true)
-                        },
+                        ],
                         LogStatement = "/setpagination"
                     };
                 }
@@ -324,35 +279,24 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/setpagination", "Set pagination successfully.", false)
-                    },
+                    ],
                     LogStatement = $"/setpagination {args[0]}"
                 };
             }
         }
 
-        public class FormattingSetDisplayStyle : ICommand
+        public class FormattingSetDisplayStyle(UserService userService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "setdisplay";
+            public string ArgumentsError { get; set; } = "Expected a parameter of `embed`, `code`, or `blockquote`.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly UserService _userService;
-
-            public FormattingSetDisplayStyle(UserService userService)
-            {
-                Name = "setdisplay";
-                ArgumentsError = "Expected a parameter of `embed`, `code`, or `blockquote`.";
-                ExpectedArguments = 1;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _userService = userService;
-            }
+            private readonly UserService _userService = userService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -361,10 +305,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/setdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
-                        },
+                        ],
                         LogStatement = "/setdisplay"
                     };
                 }
@@ -392,38 +336,27 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/setdisplay", "Set display style successfully.", false)
-                    },
+                    ],
                     LogStatement = $"/setdisplay {args[0]}"
                 };
             }
         }
 
-        public class FormattingSetServerDisplayStyle : ICommand
+        public class FormattingSetServerDisplayStyle(GuildService guildService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            private readonly GuildService _guildService;
-
-            public FormattingSetServerDisplayStyle(GuildService guildService)
-            {
-                Name = "setserverdisplay";
-                ArgumentsError = "Expected a parameter of `embed`, `code`, or `blockquote`.";
-                ExpectedArguments = 1;
-                PermissionsRequired = new List<Permissions>
-                {
+            public string Name { get; set; } = "setserverdisplay";
+            public string ArgumentsError { get; set; } = "Expected a parameter of `embed`, `code`, or `blockquote`.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } =
+                [
                     Permissions.MANAGE_GUILD
-                };
-                BotAllowed = false;
+                ];
+            public bool BotAllowed { get; set; } = false;
 
-                _guildService = guildService;
-            }
+            private readonly GuildService _guildService = guildService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -432,10 +365,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/setserverdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
-                        },
+                        ],
                         LogStatement = "/setserverdisplay"
                     };
                 }
@@ -464,52 +397,41 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/setserverdisplay", "Set server display style successfully.", false)
-                    },
+                    ],
                     LogStatement = $"/setserverdisplay {args[0]}"
                 };
             }
         }
 
-        public class FormattingSetIgnoringBrackets : ICommand
+        public class FormattingSetIgnoringBrackets(GuildService guildService) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            private readonly GuildService _guildService;
-
-            public FormattingSetIgnoringBrackets(GuildService guildService)
-            {
-                Name = "setbrackets";
-                ArgumentsError = "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.";
-                ExpectedArguments = 1;
-                PermissionsRequired = new List<Permissions>
-                {
+            public string Name { get; set; } = "setbrackets";
+            public string ArgumentsError { get; set; } = "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.";
+            public int ExpectedArguments { get; set; } = 1;
+            public List<Permissions> PermissionsRequired { get; set; } =
+                [
                     Permissions.MANAGE_GUILD
-                };
-                BotAllowed = false;
+                ];
+            public bool BotAllowed { get; set; } = false;
 
-                _guildService = guildService;
-            }
+            private readonly GuildService _guildService = guildService;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                List<string> acceptableBrackets = new() { "<>", "[]", "{}", "()" };
+                List<string> acceptableBrackets = ["<>", "[]", "{}", "()"];
 
                 if (args[0].Length != 2)
                 {
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/setbrackets", "The brackets can only be two characters.", true)
-                        },
+                        ],
                         LogStatement = "/setbrackets"
                     };
                 }
@@ -518,10 +440,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/setbrackets", "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.", true)
-                        },
+                        ],
                         LogStatement = "/setbrackets"
                     };
                 }
@@ -551,10 +473,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 return new CommandResponse
                 {
                     OK = true,
-                    Pages = new List<InternalEmbed>
-                    {
+                    Pages =
+                    [
                         Utils.GetInstance().Embedify("/setbrackets", "Set brackets successfully.", false)
-                    },
+                    ],
                     LogStatement = $"/setbrackets {args[0]}"
                 };
             }

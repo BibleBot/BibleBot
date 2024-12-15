@@ -40,15 +40,15 @@ namespace BibleBot.Backend.Services
                 { "lsc" , new Tuple<ResourceStyle, string>(ResourceStyle.SECTIONED,  "luthers_small_catechism") }
             };
 
-            _creeds = new List<string>
-            {
+            _creeds =
+            [
                 "apostles",
                 "nicene325",
                 "nicene",
                 "chalcedon"
-            };
+            ];
 
-            _resources = new List<IResource>();
+            _resources = [];
 
             _jsonSerializerOptions = new JsonSerializerOptions
             {

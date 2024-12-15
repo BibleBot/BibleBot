@@ -16,22 +16,20 @@ using BibleBot.Models;
 
 namespace BibleBot.Backend.Services
 {
-    public class ParsingService
+    public class ParsingService(VersionService versionService)
     {
-        private readonly VersionService _versionService;
-
-        public ParsingService(VersionService versionService) => _versionService = versionService;
+        private readonly VersionService _versionService = versionService;
 
         public System.Tuple<string, List<BookSearchResult>> GetBooksInString(Dictionary<string, List<string>> bookNames, List<string> defaultNames, string str)
         {
-            List<BookSearchResult> results = new();
+            List<BookSearchResult> results = [];
 
-            List<string> overlaps = new()
-            {
+            List<string> overlaps =
+            [
                 "ezra",
                 "jer",
                 "esth"
-            };
+            ];
 
             // We want to iterate twice through the booknames
             // in order to skip Ezra in the first iteration,

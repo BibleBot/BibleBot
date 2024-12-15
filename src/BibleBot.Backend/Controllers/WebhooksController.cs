@@ -19,11 +19,9 @@ namespace BibleBot.Backend.Controllers
     [Produces("application/json")]
     [Route("api/webhooks")]
     [ApiController]
-    public class WebhooksController : ControllerBase
+    public class WebhooksController(GuildService guildService) : ControllerBase
     {
-        private readonly GuildService _guildService;
-
-        public WebhooksController(GuildService guildService) => _guildService = guildService;
+        private readonly GuildService _guildService = guildService;
 
         /// <summary>
         /// Processes a message to add a webhook url to a Guild object.
@@ -70,17 +68,15 @@ namespace BibleBot.Backend.Controllers
                              .Set(guild => guild.DailyVerseTime, null)
                              .Set(guild => guild.DailyVerseTimeZone, null)
                              .Set(guild => guild.DailyVerseLastSentDate, null)
-                             .Set(guild => guild.DailyVerseRoleId, null);
+                             .Set(guild => guild.DailyVerseRoleId, null)
+                             .Set(guild => guild.DailyVerseIsThread, false);
 
                     await _guildService.Update(req.GuildId, update);
                 }
                 else
                 {
-                    string[] fields = req.Body.Split("||");
-
                     UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                 .Set(guild => guild.DailyVerseWebhook, fields[0])
-                                 .Set(guild => guild.DailyVerseChannelId, fields[1]);
+                                 .Set(guild => guild.DailyVerseWebhook, req.Body);
 
                     await _guildService.Update(req.GuildId, update);
                 }

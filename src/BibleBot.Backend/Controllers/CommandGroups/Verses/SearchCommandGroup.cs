@@ -38,42 +38,27 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
             Name = "search";
             IsStaffOnly = false;
-            Commands = new List<ICommand>
-            {
+            Commands =
+            [
                 new Search(_userService, _guildService, _versionService, _bibleProviders)
-            };
+            ];
             DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
         }
 
-        public class Search : ICommand
+        public class Search(UserService userService, GuildService guildService, VersionService versionService,
+                      List<IBibleProvider> bibleProviders) : ICommand
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public string Name { get; set; } = "usage";
+            public string ArgumentsError { get; set; } = null;
+            public int ExpectedArguments { get; set; } = 0;
+            public List<Permissions> PermissionsRequired { get; set; } = null;
+            public bool BotAllowed { get; set; } = false;
 
-            private readonly UserService _userService;
-            private readonly GuildService _guildService;
-            private readonly VersionService _versionService;
+            private readonly UserService _userService = userService;
+            private readonly GuildService _guildService = guildService;
+            private readonly VersionService _versionService = versionService;
 
-            private readonly List<IBibleProvider> _bibleProviders;
-
-            public Search(UserService userService, GuildService guildService, VersionService versionService,
-                          List<IBibleProvider> bibleProviders)
-            {
-                Name = "usage";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = false;
-
-                _userService = userService;
-                _guildService = guildService;
-                _versionService = versionService;
-
-                _bibleProviders = bibleProviders;
-            }
+            private readonly List<IBibleProvider> _bibleProviders = bibleProviders;
 
             public async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -99,9 +84,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                 if (searchResults.Count > 1)
                 {
-                    List<InternalEmbed> pages = new();
+                    List<InternalEmbed> pages = [];
                     int maxResultsPerPage = 6;
-                    List<string> referencesUsed = new();
+                    List<string> referencesUsed = [];
 
                     int totalPages = (int)System.Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
 
@@ -121,7 +106,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     for (int i = 0; i < totalPages; i++)
                     {
                         InternalEmbed embed = Utils.GetInstance().Embedify(string.Format(title, query), string.Format(pageCounter, i + 1, totalPages), false);
-                        embed.Fields = new List<EmbedField>();
+                        embed.Fields = [];
 
                         int count = 0;
 
@@ -159,10 +144,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     return new CommandResponse
                     {
                         OK = false,
-                        Pages = new List<InternalEmbed>
-                        {
+                        Pages =
+                        [
                             Utils.GetInstance().Embedify("/search", "Your search query produced no results.", true)
-                        },
+                        ],
                         LogStatement = "/search"
                     };
                 }
