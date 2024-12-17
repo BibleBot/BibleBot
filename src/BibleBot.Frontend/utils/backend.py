@@ -19,7 +19,7 @@ logger = VyLogger("default")
 
 
 async def submit_command(
-    rch: disnake.abc.MessageableChannel,
+    rch: disnake.abc.Messageable,
     user: disnake.abc.User,
     body: str,
 ):
@@ -199,13 +199,7 @@ async def submit_command(
 
 
 async def submit_command_raw(
-    rch: (
-        disnake.TextChannel
-        | disnake.Thread
-        | disnake.VoiceChannel
-        | disnake.StageChannel
-        | disnake.DMChannel
-    ),
+    rch: disnake.abc.Messageable,
     user: disnake.abc.User,
     body: str,
 ):
@@ -231,6 +225,8 @@ async def submit_command_raw(
         ]
         else False
     )
+
+    assert not isinstance(ch, disnake.PartialMessageable)
 
     guildId = ch.id if isDM else ch.guild.id
     channelId = ch.id
@@ -263,7 +259,7 @@ async def submit_command_raw(
 
 
 async def submit_verse(
-    rch: disnake.abc.MessageableChannel,
+    rch: disnake.abc.Messageable,
     user: disnake.abc.User,
     body: str,
 ):

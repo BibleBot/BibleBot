@@ -7,7 +7,7 @@
 """
 
 import disnake
-from disnake import CommandInteraction, Permissions
+from disnake import CommandInteraction
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending
