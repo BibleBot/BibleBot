@@ -48,13 +48,15 @@ class DisplayStyleSelect(disnake.ui.Select):
         if inter.author.id != self.author_id:
             return
 
+        assert inter.values is not None
+
         value = inter.values[0]
 
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+{self.custom_id} {value}"
         )
 
-        await inter.message.edit(embed=resp, components=None, content=None)
+        await inter.message.edit(embed=resp, components=None, content=None)  # type: ignore
 
     async def on_error(
         self, error: Exception, inter: disnake.MessageInteraction
@@ -101,13 +103,15 @@ class BracketsSelect(disnake.ui.Select):
         if inter.author.id != self.author_id:
             return
 
+        assert inter.values is not None
+
         value = inter.values[0]
 
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+{self.custom_id} {value}"
         )
 
-        await inter.message.edit(embed=resp, components=None, content=None)
+        await inter.message.edit(embed=resp, components=None, content=None)  # type: ignore
 
     async def on_error(
         self, error: Exception, inter: disnake.MessageInteraction
@@ -182,6 +186,10 @@ class Formatting(commands.Cog):
     @commands.slash_command(description="Set your server's preferred display style.")
     async def setserverdisplay(self, inter: CommandInteraction):
         await inter.response.defer()
+
+        assert not isinstance(inter.channel, disnake.PartialMessageable)
+        assert isinstance(inter.author, disnake.Member)
+
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(
                 inter.followup,
@@ -207,6 +215,10 @@ class Formatting(commands.Cog):
     )
     async def setbrackets(self, inter: CommandInteraction):
         await inter.response.defer()
+
+        assert not isinstance(inter.channel, disnake.PartialMessageable)
+        assert isinstance(inter.author, disnake.Member)
+
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(
                 inter.followup,

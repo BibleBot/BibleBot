@@ -6,8 +6,8 @@
     You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-import disnake
 from disnake import CommandInteraction
+import disnake
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending
@@ -93,6 +93,10 @@ class Versions(commands.Cog):
         ),
     ):
         await inter.response.defer()
+
+        assert not isinstance(inter.channel, disnake.PartialMessageable)
+        assert isinstance(inter.author, disnake.Member)
+
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(
                 inter.followup,
@@ -113,7 +117,7 @@ class Versions(commands.Cog):
     async def versioninfo(
         self,
         inter: CommandInteraction,
-        abbreviation: str = None,
+        abbreviation: str = "",
     ):
         await inter.response.defer()
 
@@ -145,7 +149,7 @@ class Versions(commands.Cog):
     async def booklist(
         self,
         inter: CommandInteraction,
-        abbreviation: str = None,
+        abbreviation: str = "",
     ):
         await inter.response.defer()
 

@@ -19,7 +19,9 @@ logger = VyLogger("default")
 
 
 async def submit_command(
-    rch: disnake.abc.Messageable, user: disnake.abc.User, body: str
+    rch: disnake.abc.MessageableChannel,
+    user: disnake.abc.User,
+    body: str,
 ):
     try:
         ch = await rch._get_channel()
@@ -27,6 +29,9 @@ async def submit_command(
         # In this scenario, we've got something that
         # should inherit Messageable in disnake but
         # has not been implemented.
+        #
+        # May seem silly to have this, but we've been
+        # fooled before.
         return
 
     isDM = ch.type == disnake.ChannelType.private
@@ -41,8 +46,18 @@ async def submit_command(
         else False
     )
 
+    assert not isinstance(ch, disnake.PartialMessageable)
+
     guildId = ch.id if isDM else ch.guild.id
-    channelId = ch.parent.id if isThread else ch.id
+    channelId = ch.id
+
+    if isThread:
+        assert isinstance(ch, disnake.Thread)
+        assert isinstance(ch.parent, disnake.TextChannel) or isinstance(
+            ch.parent, disnake.ForumChannel
+        )
+
+        channelId = ch.parent.id
 
     reqbody = {
         "UserId": str(user.id),
@@ -78,10 +93,11 @@ async def submit_command(
                             webhooks = await ch.guild.webhooks()
 
                             for webhook in webhooks:
-                                if webhook.user.id == ch.guild.me.id:
-                                    await webhook.delete(
-                                        reason=f"User ID {user.id} performed a command that removes BibleBot-related webhooks."
-                                    )
+                                if webhook.user is not None:
+                                    if webhook.user.id == ch.guild.me.id:
+                                        await webhook.delete(
+                                            reason=f"User ID {user.id} performed a command that removes BibleBot-related webhooks."
+                                        )
                         except disnake.errors.Forbidden:
                             await sending.safe_send_channel(
                                 ch,
@@ -98,14 +114,15 @@ async def submit_command(
                             # image into bytes to pass as the webhook avatar.
                             with open("./data/avatar.png", "rb") as image:
                                 if isThread:
-                                    webhook = await ch.parent.create_webhook(
+                                    # We asserted earlier that ch is a thread and ch.parent is not None.
+                                    webhook = await ch.parent.create_webhook(  # type: ignore
                                         name="BibleBot Automatic Daily Verses",
                                         avatar=bytearray(image.read()),
                                         reason="For automatic daily verses from BibleBot.",
                                     )
                                     webhook_service_body = f"{webhook.id}/{webhook.token}?thread_id={ch.id}"
                                 else:
-                                    webhook = await ch.create_webhook(
+                                    webhook = await ch.create_webhook(  # type: ignore
                                         name="BibleBot Automatic Daily Verses",
                                         avatar=bytearray(image.read()),
                                         reason="For automatic daily verses from BibleBot.",
@@ -182,7 +199,15 @@ async def submit_command(
 
 
 async def submit_command_raw(
-    rch: disnake.abc.Messageable, user: disnake.abc.User, body: str
+    rch: (
+        disnake.TextChannel
+        | disnake.Thread
+        | disnake.VoiceChannel
+        | disnake.StageChannel
+        | disnake.DMChannel
+    ),
+    user: disnake.abc.User,
+    body: str,
 ):
     try:
         ch = await rch._get_channel()
@@ -190,14 +215,40 @@ async def submit_command_raw(
         # In this scenario, we've got something that
         # should inherit Messageable in disnake but
         # has not been implemented.
+        #
+        # May seem silly to have this, but we've been
+        # fooled before.
         return
 
     isDM = ch.type == disnake.ChannelType.private
+    isThread = (
+        True
+        if ch.type
+        in [
+            disnake.ChannelType.news_thread,
+            disnake.ChannelType.public_thread,
+            disnake.ChannelType.private_thread,
+        ]
+        else False
+    )
+
     guildId = ch.id if isDM else ch.guild.id
+    channelId = ch.id
+
+    if isThread:
+        assert isinstance(ch, disnake.Thread)
+        assert isinstance(ch.parent, disnake.TextChannel) or isinstance(
+            ch.parent, disnake.ForumChannel
+        )
+
+        channelId = ch.parent.id
 
     reqbody = {
         "UserId": str(user.id),
         "GuildId": str(guildId),
+        "ChannelId": str(channelId),
+        "ThreadId": str(ch.id),
+        "IsThread": isThread,
         "IsDM": isDM,
         "Body": body,
         "Token": os.environ.get("ENDPOINT_TOKEN"),
@@ -211,23 +262,54 @@ async def submit_command_raw(
             return respBody
 
 
-async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, body: str):
+async def submit_verse(
+    rch: disnake.abc.MessageableChannel,
+    user: disnake.abc.User,
+    body: str,
+):
     try:
         ch = await rch._get_channel()
     except AttributeError:
         # In this scenario, we've got something that
         # should inherit Messageable in disnake but
         # has not been implemented.
+        #
+        # May seem silly to have this, but we've been
+        # fooled before.
         return
 
     isDM = ch.type == disnake.ChannelType.private
+    isThread = (
+        True
+        if ch.type
+        in [
+            disnake.ChannelType.news_thread,
+            disnake.ChannelType.public_thread,
+            disnake.ChannelType.private_thread,
+        ]
+        else False
+    )
+
+    assert not isinstance(ch, disnake.PartialMessageable)
+
     guildId = ch.id if isDM else ch.guild.id
+    channelId = ch.id
+
+    if isThread:
+        assert isinstance(ch, disnake.Thread)
+        assert isinstance(ch.parent, disnake.TextChannel) or isinstance(
+            ch.parent, disnake.ForumChannel
+        )
+
+        channelId = ch.parent.id
 
     reqbody = {
         "UserId": str(user.id),
         "GuildId": str(guildId),
+        "ChannelId": str(channelId),
+        "ThreadId": str(ch.id),
+        "IsThread": isThread,
         "IsDM": isDM,
-        "IsBot": user.bot,
         "Body": body,
         "Token": os.environ.get("ENDPOINT_TOKEN"),
     }

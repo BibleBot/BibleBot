@@ -41,7 +41,21 @@ class Resources(commands.Cog):
 
     @commands.slash_command(description="Use a resource.")
     async def resource(
-        self, inter: CommandInteraction, resource: Resource, input: str = None
+        self,
+        inter: CommandInteraction,
+        resource: str = commands.Param(
+            choices={
+                "Canon Law - Code of Canon Law (1983)": "cic",
+                "Canon Law - Code of Canons of the Eastern Churches (1990)": "cceo",
+                "Catechism - of the Catholic Church (1993)": "ccc",
+                "Catechism - Luther's Small (1529)": "lsc",
+                "Creed - Apostles'": "apostles",
+                "Creed - Chalcedonian Definition (451)": "chalcedon",
+                "Creed - Nicene (325)": "nicene325",
+                "Creed - Nicene-Constantinopolitan (381)": "nicene",
+            }
+        ),
+        input: str = "",
     ):
         await inter.response.defer()
         cmd = f"+resource {resource}"

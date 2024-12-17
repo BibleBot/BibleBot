@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from disnake import *
+from disnake import ui, ButtonStyle
 from logger import VyLogger
 
 logger = VyLogger("default")
@@ -43,7 +43,7 @@ class CreatePaginator(ui.View):
 
     """
 
-    def __init__(self, embeds: list, author: int = 123, timeout: float = None):
+    def __init__(self, embeds: list, author: int = 123, timeout: float = 0.0):
         if not timeout:
             super().__init__()
         else:

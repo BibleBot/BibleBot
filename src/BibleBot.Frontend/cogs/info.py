@@ -95,11 +95,15 @@ class Information(commands.Cog):
                 )
                 return
 
+        assert guild is not None
+
         integrated_role = [
             x
             for x in guild.me.roles
             if x.is_bot_managed and x.is_integration and x.name != "@everyone"
         ][0]
+
+        assert not isinstance(channel, disnake.PartialMessageable)
 
         channel_perms_for_self = channel.permissions_for(guild.me).value
         channel_perms_for_role = channel.permissions_for(integrated_role).value
@@ -115,9 +119,13 @@ class Information(commands.Cog):
 
     @commands.slash_command(description="View all Patreon supporters.")
     async def supporters(self, inter: CommandInteraction):
+        # Patreon's development utilities are pretty garbage.
+        # The way they've positioned the types and how they actually work are not the same thing.
+        # Thus, we ignore type checking in some lines to compensate for their... [redacted].
+
         await inter.response.defer()
-        campaigns = patreon_api.fetch_campaign()
-        campaign = campaigns.data()[0].id()
+        campaigns = patreon_api.fetch_campaign().data()
+        campaign = campaigns[0].id()  # type: ignore
         pledges = []
         names = []
         cursor = None
@@ -126,7 +134,7 @@ class Information(commands.Cog):
             pledges_resp = patreon_api.fetch_page_of_pledges(
                 campaign, 25, cursor=cursor
             )
-            pledges += pledges_resp.data()
+            pledges += pledges_resp.data()  # type: ignore
             cursor = patreon_api.extract_cursor(pledges_resp)
             if not cursor:
                 break
