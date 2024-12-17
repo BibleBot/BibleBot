@@ -36,6 +36,7 @@ namespace BibleBot.Backend
             return _instance;
         }
 
+        private static readonly string[] _creeds = ["apostles", "nicene"];
 
         public enum Colors
         {
@@ -87,7 +88,7 @@ namespace BibleBot.Backend
                     var creedResource = resource as CreedResource;
                     string copyright = null;
 
-                    if ((new[] { "apostles", "nicene" }).Contains(creedResource.CommandReference))
+                    if (_creeds.Contains(creedResource.CommandReference))
                     {
                         copyright = "© 1998 English Language Liturgical Consultation (ELLC)";
                     }
@@ -345,7 +346,7 @@ namespace BibleBot.Backend
             StringBuilder roleGuildPermissionsList = new();
             foreach (Permissions perm in permissionsToCheck)
             {
-                string permName = Enum.GetName(typeof(Permissions), perm);
+                string permName = Enum.GetName(perm);
 
                 if ((selfPermissionsInChannel & (long)perm) == (long)perm)
                 {

@@ -29,6 +29,7 @@ namespace BibleBot.Backend.Services
         private readonly Dictionary<string, Dictionary<string, string>> _bookMap;
         private readonly List<string> _bookMapDataNames;
         private readonly List<string> _nuisances;
+        private static readonly JsonSerializerOptions _serializerOptions = new() { PropertyNameCaseInsensitive = false };
 
         private readonly HttpClient _httpClient;
         // private readonly RestClient _restClient;
@@ -114,7 +115,7 @@ namespace BibleBot.Backend.Services
             Dictionary<string, List<string>> completedNames = MergeDictionaries([bgNames, /*abNames,*/ _abbreviations]);
 
             Log.Information("NameFetchingService: Serializing and writing to file...");
-            string serializedNames = JsonSerializer.Serialize(completedNames, new JsonSerializerOptions { PropertyNameCaseInsensitive = false });
+            string serializedNames = JsonSerializer.Serialize(completedNames, _serializerOptions);
             File.WriteAllText("./Data/NameFetching/book_names.json", serializedNames);
 
             Log.Information("NameFetchingService: Finished.");
@@ -350,7 +351,7 @@ namespace BibleBot.Backend.Services
                             names[BookCategories.OldTestament]["ps"] = $"{names[BookCategories.OldTestament]["ps"]} <151>";
                         }
 
-                        if (!names.ContainsKey(category))
+                        if (!names.TryGetValue(category, out Dictionary<string, string> value))
                         {
                             names.Add(category, []);
                         }
@@ -433,7 +434,7 @@ namespace BibleBot.Backend.Services
 
         private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");
 
-        private Dictionary<string, List<string>> MergeDictionaries(List<Dictionary<string, List<string>>> dicts) => dicts.SelectMany(dict => dict)
+        private static Dictionary<string, List<string>> MergeDictionaries(List<Dictionary<string, List<string>>> dicts) => dicts.SelectMany(dict => dict)
                                                                                                                          .ToLookup(pair => pair.Key, pair => pair.Value)
                                                                                                                          .ToDictionary(group => group.Key,
                                                                                                                          group => group.SelectMany(list => list).ToList());

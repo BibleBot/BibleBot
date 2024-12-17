@@ -101,9 +101,9 @@ namespace BibleBot.Backend.Services
             }
             else if (type == ResourceType.CATECHISM)
             {
-                if (_catechismData.ContainsKey(name))
+                if (_catechismData.TryGetValue(name, out Tuple<ResourceStyle, string> catechismValue))
                 {
-                    Tuple<ResourceStyle, string> idealCatechism = _catechismData[name];
+                    Tuple<ResourceStyle, string> idealCatechism = catechismValue;
 
                     string catechismFile = File.ReadAllText($"./Data/Catechisms/{idealCatechism.Item2}.json");
 
@@ -127,9 +127,9 @@ namespace BibleBot.Backend.Services
             }
             else if (type == ResourceType.CANONS)
             {
-                if (_canonData.ContainsKey(name))
+                if (_canonData.TryGetValue(name, out Tuple<ResourceStyle, string> canonValue))
                 {
-                    Tuple<ResourceStyle, string> idealCanons = _canonData[name];
+                    Tuple<ResourceStyle, string> idealCanons = canonValue;
 
                     string canonsFile = File.ReadAllText($"./Data/Canons/{idealCanons.Item2}.json");
 

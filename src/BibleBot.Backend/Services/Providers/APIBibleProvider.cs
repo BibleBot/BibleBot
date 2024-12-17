@@ -20,7 +20,7 @@ using Serilog;
 
 namespace BibleBot.Backend.Services.Providers
 {
-    public class APIBibleProvider : IBibleProvider
+    public partial class APIBibleProvider : IBibleProvider
     {
         public string Name { get; set; }
         private readonly HttpClient _cachingHttpClient;
@@ -167,7 +167,9 @@ namespace BibleBot.Backend.Services.Providers
             return results;
         }
 
-        private string PurifyText(string text)
+        [GeneratedRegex(@"\s+")]
+        private static partial Regex MultipleWhitespacesGeneratedRegex();
+        private static string PurifyText(string text)
         {
             Dictionary<string, string> nuisances = new()
             {
@@ -182,7 +184,15 @@ namespace BibleBot.Backend.Services.Providers
                 { " , ",   ", " },
                 { " .",    "." },
                 { "′",     "'" },
+                { "‘",     "'" },
+                { "’",     "'" }, // Fonts may make it look like this is no different than the line above, but it's a different codepoint in Unicode.
+                { "' s",     "'s" },
                 { " . ",   " " },
+                { "*",     "\\*" },
+                { "_",     "\\_" },
+                { "\\*\\*", "**" },
+                { "\\_\\_", "__" },
+                { "\\*(Selah)\\*", "*(Selah)*"}
             };
 
             if (text.Contains("Selah."))
@@ -202,7 +212,7 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            text = Regex.Replace(text, @"\s+", " ");
+            text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");
 
             return text.Trim();
         }

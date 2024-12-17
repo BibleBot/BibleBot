@@ -440,19 +440,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     {
                         List<InternalEmbed> pages = [];
 
-                        if (names.ContainsKey(BookCategories.OldTestament))
+                        if (names.TryGetValue(BookCategories.OldTestament, out Dictionary<string, string> otNames))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", otNames.Values).Replace("<151>", "*(contains Psalm 151)*"), false));
                         }
 
-                        if (names.ContainsKey(BookCategories.NewTestament))
+                        if (names.TryGetValue(BookCategories.NewTestament, out Dictionary<string, string> ntNames))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", ntNames.Values), false));
                         }
 
-                        if (names.ContainsKey(BookCategories.Deuterocanon))
+                        if (names.TryGetValue(BookCategories.Deuterocanon, out Dictionary<string, string> deuNames))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", deuNames.Values), false));
                         }
 
                         return new CommandResponse

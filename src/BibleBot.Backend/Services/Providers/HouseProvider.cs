@@ -21,10 +21,10 @@ using System;
 
 namespace BibleBot.Backend.Services.Providers
 {
-    public class HouseProvider : IBibleProvider, IDisposable
+    public partial class HouseProvider : IBibleProvider, IDisposable
     {
         public string Name { get; set; }
-        private readonly CancellationTokenSource _cancellationToken;
+        private CancellationTokenSource _cancellationToken;
         private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
@@ -38,7 +38,7 @@ namespace BibleBot.Backend.Services.Providers
 
             _cancellationToken = new CancellationTokenSource();
 
-            _cachingHttpClient = CachingClient.GetTrimmedCachingClient(false);
+            _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
 
             _httpClient = new HttpClient();
 
@@ -191,7 +191,9 @@ namespace BibleBot.Backend.Services.Providers
             return results;
         }
 
-        private string PurifyText(string text, bool isISV)
+        [GeneratedRegex(@"\s+")]
+        private static partial Regex MultipleWhitespacesGeneratedRegex();
+        private static string PurifyText(string text, bool isISV)
         {
             Dictionary<string, string> nuisances = new()
             {
@@ -206,6 +208,7 @@ namespace BibleBot.Backend.Services.Providers
                 { " , ",   ", " },
                 { " .",    "." },
                 { "′",     "'" },
+                { "‘",     "'" },
                 { "’",     "'" }, // Fonts may make it look like this is no different than the line above, but it's a different codepoint in Unicode.
                 { "' s",     "'s" },
                 { " . ",   " " },
@@ -268,11 +271,27 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            text = Regex.Replace(text, @"\s+", " ");
+            text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");
 
             return text.Trim();
         }
 
-        public void Dispose() => (_cancellationToken as IDisposable).Dispose();
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_cancellationToken != null)
+                {
+                    _cancellationToken.Dispose();
+                    _cancellationToken = null;
+                }
+            }
+        }
     }
 }

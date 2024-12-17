@@ -21,7 +21,7 @@ namespace BibleBot.Backend.Services.Providers
 {
     public class SpecialVerseProvider : IDisposable
     {
-        private readonly CancellationTokenSource _cancellationToken;
+        private CancellationTokenSource _cancellationToken;
         private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
 
@@ -32,7 +32,23 @@ namespace BibleBot.Backend.Services.Providers
             _htmlParser = new HtmlParser();
         }
 
-        public void Dispose() => (_cancellationToken as IDisposable).Dispose();
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_cancellationToken != null)
+                {
+                    _cancellationToken.Dispose();
+                    _cancellationToken = null;
+                }
+            }
+        }
 
         public async Task<string> GetDailyVerse()
         {
@@ -102,9 +118,9 @@ namespace BibleBot.Backend.Services.Providers
 
             string book = verseArray.ElementAt(0);
 
-            if (bookMap.ContainsKey(book))
+            if (bookMap.TryGetValue(book, out string value))
             {
-                book = bookMap[book];
+                book = value;
             }
 
             return $"{book} {verseArray.ElementAt(1)}";

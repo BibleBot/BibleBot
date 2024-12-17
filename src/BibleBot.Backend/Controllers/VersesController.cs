@@ -22,7 +22,7 @@ namespace BibleBot.Backend.Controllers
     [Produces("application/json")]
     [Route("api/verses")]
     [ApiController]
-    public class VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
+    public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
                             BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
     {
         private readonly UserService _userService = userService;
@@ -36,6 +36,9 @@ namespace BibleBot.Backend.Controllers
                 bgProvider,
                 abProvider
             ];
+
+        [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$")]
+        private static partial Regex TruncatedTextRegex();
 
         /// <summary>
         /// Processes a message to locate verse references, outputting
@@ -182,7 +185,7 @@ namespace BibleBot.Backend.Controllers
                 if (displayStyle == "embed" && result.Text.Length > 2048)
                 {
                     result.Text = $"{string.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
-                    result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                    result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                 }
                 else if (displayStyle != "embed")
                 {
@@ -191,7 +194,7 @@ namespace BibleBot.Backend.Controllers
                     if (combinedTextLength > 2000)
                     {
                         result.Text = $"{string.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
-                        result.Text = Regex.Replace(result.Text, @"(\.*\s*<*\**\d*\**>*\.\.\.)$", "...");
+                        result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                     }
                 }
 

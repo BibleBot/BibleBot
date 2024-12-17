@@ -21,10 +21,10 @@ using System;
 
 namespace BibleBot.Backend.Services.Providers
 {
-    public class BibleGatewayProvider : IBibleProvider, IDisposable
+    public partial class BibleGatewayProvider : IBibleProvider, IDisposable
     {
         public string Name { get; set; }
-        private readonly CancellationTokenSource _cancellationToken;
+        private CancellationTokenSource _cancellationToken;
         private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
@@ -139,7 +139,11 @@ namespace BibleBot.Backend.Services.Providers
                 psalmTitle = string.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
             }
 
-            IEnumerable<IElement> headingElements = new[] { document.GetElementsByTagName("h3"), document.GetElementsByTagName("h4"), document.GetElementsByTagName("h5"), document.GetElementsByTagName("h6") }.SelectMany(x => x);
+            IEnumerable<IElement> headingElements = new[] {
+                document.GetElementsByTagName("h3"), document.GetElementsByTagName("h4"),
+                document.GetElementsByTagName("h5"), document.GetElementsByTagName("h6")
+            }.SelectMany(x => x);
+
             foreach (IElement el in headingElements)
             {
                 el.Remove();
@@ -208,7 +212,9 @@ namespace BibleBot.Backend.Services.Providers
             return results;
         }
 
-        private string PurifyText(string text, bool isISV)
+        [GeneratedRegex(@"\s+")]
+        private static partial Regex MultipleWhitespacesGeneratedRegex();
+        private static string PurifyText(string text, bool isISV)
         {
             Dictionary<string, string> nuisances = new()
             {
@@ -286,11 +292,27 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            text = Regex.Replace(text, @"\s+", " ");
+            text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");
 
             return text.Trim();
         }
 
-        public void Dispose() => (_cancellationToken as IDisposable).Dispose();
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_cancellationToken != null)
+                {
+                    _cancellationToken.Dispose();
+                    _cancellationToken = null;
+                }
+            }
+        }
     }
 }

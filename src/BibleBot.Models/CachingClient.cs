@@ -121,7 +121,7 @@ namespace BibleBot.Models
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
             HtmlParser parser = new();
-            IHtmlDocument document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync());
+            IHtmlDocument document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync(cancellationToken));
 
             IHtmlCollection<IElement> respReference = document.GetElementsByClassName("dropdown-display");
             IElement respContent = document.QuerySelector(".result-text-style-normal");
@@ -145,7 +145,7 @@ namespace BibleBot.Models
             // Reduces cache response size by ~1kb (~39% less on Phil 4:6-7)
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-            JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync());
+            JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
             response.Content = json["data"] != null ? new StringContent(json["data"].ToJsonString()) : null;
 
             return response;

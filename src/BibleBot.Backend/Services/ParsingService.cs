@@ -16,7 +16,7 @@ using BibleBot.Models;
 
 namespace BibleBot.Backend.Services
 {
-    public class ParsingService(VersionService versionService)
+    public partial class ParsingService(VersionService versionService)
     {
         private readonly VersionService _versionService = versionService;
 
@@ -69,6 +69,12 @@ namespace BibleBot.Backend.Services
             return new System.Tuple<string, List<BookSearchResult>>(str, results);
         }
 
+        [GeneratedRegex(@"[:：]")]
+        private static partial Regex ContainsColonsRegex();
+
+        [GeneratedRegex(@"-")]
+        private static partial Regex ContainsSpanRegex();
+
         public async Task<Reference> GenerateReference(string str, BookSearchResult bookSearchResult, Version version)
         {
             string book = bookSearchResult.Name;
@@ -83,9 +89,7 @@ namespace BibleBot.Backend.Services
             if (bookSearchResult.Index + 2 <= tokens.Length)
             {
                 string relevantToken = tokens.Skip(bookSearchResult.Index + 1).First();
-
-                Regex colonRegex = new(@"[:：]", RegexOptions.Compiled);
-                MatchCollection colonMatches = colonRegex.Matches(relevantToken);
+                MatchCollection colonMatches = ContainsColonsRegex().Matches(relevantToken);
 
                 if (colonMatches.Count != 0)
                 {
@@ -155,8 +159,7 @@ namespace BibleBot.Backend.Services
                             return null;
                         }
 
-                        Regex spanRegex = new(@"-", RegexOptions.Compiled);
-                        int spanQuantity = spanRegex.Matches(relevantToken).Count;
+                        int spanQuantity = ContainsSpanRegex().Matches(relevantToken).Count;
 
                         string[] spanSplit = pair[1].Split("-");
                         foreach (string pairValue in spanSplit)
@@ -231,20 +234,20 @@ namespace BibleBot.Backend.Services
             string bookMapString = File.ReadAllText("./Data/book_map.json");
             Dictionary<string, Dictionary<string, string>> bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapString);
 
-            if (bookMap["ot"].ContainsKey(book))
+            if (bookMap["ot"].TryGetValue(book, out string otValue))
             {
                 isOT = true;
-                book = bookMap["ot"][book];
+                book = otValue;
             }
-            else if (bookMap["nt"].ContainsKey(book))
+            else if (bookMap["nt"].TryGetValue(book, out string ntValue))
             {
                 isNT = true;
-                book = bookMap["nt"][book];
+                book = ntValue;
             }
-            else if (bookMap["deu"].ContainsKey(book))
+            else if (bookMap["deu"].TryGetValue(book, out string deuValue))
             {
                 isDEU = true;
-                book = bookMap["deu"][book];
+                book = deuValue;
             }
 
             if (book == "Psalm" && startingChapter == 151)
@@ -289,14 +292,14 @@ namespace BibleBot.Backend.Services
             return str;
         }
 
-        private bool IsValueInString(string str, string val) => $" {str} ".Contains($" {val} ");
+        private static bool IsValueInString(string str, string val) => $" {str} ".Contains($" {val} ");
 
-        private string RemovePunctuation(string str)
-        {
-            Regex noPunctuationRegex = new(@"[^\w\s]|_", RegexOptions.Compiled);
-            Regex minimizeWhitespaceRegex = new(@"\s+", RegexOptions.Compiled);
+        [GeneratedRegex(@"[^\w\s]|_")]
+        private static partial Regex NoPunctuationRegex();
 
-            return minimizeWhitespaceRegex.Replace(noPunctuationRegex.Replace(str, ""), " ");
-        }
+        [GeneratedRegex(@"\s+")]
+        private static partial Regex MinimizeWhitespaceRegex();
+
+        private static string RemovePunctuation(string str) => MinimizeWhitespaceRegex().Replace(NoPunctuationRegex().Replace(str, ""), " ");
     }
 }

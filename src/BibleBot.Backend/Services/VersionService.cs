@@ -27,7 +27,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task<List<Version>> Get() => (await _versions.FindAsync(version => true)).ToList();
-        public async Task<Version> Get(string abbv) => (await _versions.FindAsync(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant())).FirstOrDefault();
+        public async Task<Version> Get(string abbv) => (await _versions.FindAsync(version => string.Equals(version.Abbreviation, abbv))).FirstOrDefault();
         public async Task<long> GetCount() => await _versions.EstimatedDocumentCountAsync();
 
         public async Task<Version> Create(Version version)
@@ -36,8 +36,8 @@ namespace BibleBot.Backend.Services
             return version;
         }
 
-        public async Task Update(string abbv, UpdateDefinition<Version> updateDefinition) => await _versions.UpdateOneAsync(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant(), updateDefinition);
+        public async Task Update(string abbv, UpdateDefinition<Version> updateDefinition) => await _versions.UpdateOneAsync(version => string.Equals(version.Abbreviation, abbv), updateDefinition);
         public async Task Remove(Version idealVersion) => await Remove(idealVersion.Abbreviation);
-        public async Task Remove(string abbv) => await _versions.DeleteOneAsync(version => version.Abbreviation.ToUpperInvariant() == abbv.ToUpperInvariant());
+        public async Task Remove(string abbv) => await _versions.DeleteOneAsync(version => string.Equals(version.Abbreviation, abbv));
     }
 }

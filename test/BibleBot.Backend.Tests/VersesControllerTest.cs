@@ -6,7 +6,6 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
 using BibleBot.Backend.Services;
@@ -119,8 +118,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Matthew 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Genealogy of Jesus the Messiah",
@@ -140,7 +139,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Matthew 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -158,8 +157,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Genesis 1:1 KJVA",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -179,7 +178,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Genesis 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -231,8 +230,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "John 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Word Became Flesh",
@@ -252,7 +251,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "John 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -270,8 +269,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "John 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Word Became Flesh",
@@ -291,7 +290,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "John 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -309,8 +308,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Matthew 1:1-2 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Genealogy of Jesus the Messiah",
@@ -329,7 +328,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Matthew 1:1-2"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -347,8 +346,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Genesis 1:1-2 KJVA",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -368,7 +367,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Genesis 1:1-2"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -386,8 +385,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Matthew 1:25-2:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Visit of the Wise Men",
@@ -407,7 +406,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Matthew 1:25-2:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -425,8 +424,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Genesis 1:31-2:1 KJVA",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -446,7 +445,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Genesis 1:31-2:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -464,8 +463,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Matthew 1:24- RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -485,7 +484,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Matthew 1:24-25"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -551,8 +550,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Matthew 1:1-2 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Genealogy of Jesus the Messiah",
@@ -572,7 +571,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Matthew 1:1-2"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -590,8 +589,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Matthew 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Genealogy of Jesus the Messiah",
@@ -611,7 +610,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Matthew 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -631,8 +630,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Daniel 1:1-2 ELXX",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -652,7 +651,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Daniel 1:1-2"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -672,8 +671,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Daniel 1:1-2 LXX",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -693,7 +692,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Daniel 1:1-2"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -757,8 +756,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Proverbs 25:1-12 NIV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "More Proverbs of Solomon",
@@ -778,7 +777,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Proverbs 25:1-12"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -798,8 +797,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Exodus 20:1-7 ISV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Ten Commandments",
@@ -819,7 +818,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Exodus 20:1-7"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -839,8 +838,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Exodus 20:8-17 ISV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -860,7 +859,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Exodus 20:8-17"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -878,8 +877,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "1 Esdras 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "Josiah Celebrates the Passover",
@@ -899,7 +898,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "1 Esdras 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -917,8 +916,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Letter of Jeremiah 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -938,7 +937,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Letter of Jeremiah 1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -956,8 +955,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Jeremiah 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -977,7 +976,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Jeremiah 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -997,8 +996,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Psalm 151:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -1018,7 +1017,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Psalm 151 1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1058,8 +1057,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "John 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Word Became Flesh",
@@ -1079,7 +1078,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "John 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1099,8 +1098,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Philippians 1:6 RSV / Philippians 1:6 NTFE",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -1139,7 +1138,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Philippians 1:6"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1157,8 +1156,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Greek Esther 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "King Ahasu-erus Deposes Queen Vashti",
@@ -1178,7 +1177,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Greek Esther 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1196,8 +1195,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Song of the Three Young Men 1:1 RSV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Prayer of Azariah in the Furnace",
@@ -1217,7 +1216,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Song of the Three Young Men 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1237,8 +1236,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Song of the Three Young Men 1:1 WYC",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -1258,7 +1257,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Song of the Three Young Men 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1278,8 +1277,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Prayer of Azariah 1:1 NRSVA",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "The Prayer of Azariah in the Furnace",
@@ -1299,7 +1298,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Prayer of Azariah 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1319,8 +1318,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Prayer of Azariah 1:1 CEB",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "Azariah's prayer for reconciliation",
@@ -1340,7 +1339,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Prayer of Azariah 1:1"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1360,8 +1359,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Additions to Esther 10:4 WYC",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -1381,7 +1380,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Additions to Esther 10:4"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
@@ -1401,8 +1400,8 @@ namespace BibleBot.Backend.Tests
                 OK = true,
                 LogStatement = "Song of Songs 7:9-10 NKJV",
                 DisplayStyle = "embed",
-                Verses = new List<Verse>
-                {
+                Verses =
+                [
                     new()
                     {
                         Title = "",
@@ -1422,7 +1421,7 @@ namespace BibleBot.Backend.Tests
                             AsString = "Song of Solomon 7:9-10"
                         }
                     }
-                }
+                ]
             };
 
             result.StatusCode.Should().Be(200);
