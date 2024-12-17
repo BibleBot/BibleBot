@@ -15,4 +15,7 @@ include:
   - template: Jobs/Dependency-Scanning.gitlab-ci.yml
 variables:
   SECURE_LOG_LEVEL: debug
+gemnasium-python-dependency_scanning:
+  before_script:
+    - apt-get -qqy update && apt-get install -qqy cargo
 
