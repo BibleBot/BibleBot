@@ -155,6 +155,19 @@ namespace BibleBot.Backend.Controllers
 
             List<Verse> results = [];
 
+            if (references.Count > 6)
+            {
+                return BadRequest(new CommandResponse
+                {
+                    OK = false,
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify("Too Many References", "There are too many references, the maximum amount of references you can do in one message is 6.", true)
+                    ],
+                    LogStatement = "too many verses"
+                });
+            }
+
             foreach (Reference reference in references)
             {
                 IBibleProvider provider = _bibleProviders.FirstOrDefault(pv =>
@@ -213,19 +226,7 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            if (results.Count > 6)
-            {
-                return BadRequest(new CommandResponse
-                {
-                    OK = false,
-                    Pages =
-                    [
-                        Utils.GetInstance().Embedify("Too Many References", "There are too many references, the maximum amount of references you can do in one message is 6.", true)
-                    ],
-                    LogStatement = "too many verses"
-                });
-            }
-            else if (results.Count > 0)
+            if (results.Count > 0)
             {
                 string logStatement = string.Join(" / ", results.Select(verse => $"{verse.Reference} {verse.Reference.Version.Abbreviation}"));
 
