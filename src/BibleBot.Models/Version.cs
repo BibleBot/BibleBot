@@ -46,6 +46,15 @@ namespace BibleBot.Models
         public string Source { get; set; }
 
         /// <summary>
+        /// The publisher of the version.
+        /// </summary>
+        /// <remarks>
+        /// This is currently only planned for use in the frontend to fulfill license agreement obligations.
+        /// </remarks>
+        [BsonElement("Publisher")]
+        public string Publisher { get; set; }
+
+        /// <summary>
         /// Indicates whether the version supports Old Testament books.
         /// </summary>
         [BsonElement("SupportsOldTestament")]

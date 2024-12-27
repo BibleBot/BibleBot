@@ -182,10 +182,19 @@ namespace BibleBot.Backend.Controllers
                     continue;
                 }
 
-                if (displayStyle == "embed" && result.Text.Length > 2048)
+                if (displayStyle == "embed")
                 {
-                    result.Text = $"{string.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
-                    result.Text = TruncatedTextRegex().Replace(result.Text, "...");
+                    if (result.Text.Length > 2048)
+                    {
+                        result.Text = $"{string.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
+                        result.Text = TruncatedTextRegex().Replace(result.Text, "...");
+                    }
+
+                    if (result.Title.Length > 256)
+                    {
+                        result.Title = $"{string.Join("", result.Title.SkipLast(result.Title.Length - 2044))}...";
+                        result.Title = TruncatedTextRegex().Replace(result.Title, "...");
+                    }
                 }
                 else if (displayStyle != "embed")
                 {

@@ -396,7 +396,11 @@ def create_embed_from_verse(verse):
         verse["reference"]["asString"] + " - " + verse["reference"]["version"]["name"]
     )
 
-    embed.set_author(name=reference_title)
+    if verse["reference"]["version"]["publisher"] == "biblica":
+        embed.set_author(name=reference_title + " (Biblica)", url="https://biblica.com")
+    else:
+        embed.set_author(name=reference_title)
+
     embed.title = verse["title"]
     embed.description = verse["text"]
     embed.color = 6709986
