@@ -97,9 +97,6 @@ class VerseCommands(commands.Cog):
     ):
         await inter.response.defer()
 
-        assert not isinstance(inter.channel, disnake.PartialMessageable)
-        assert isinstance(inter.author, disnake.Member)
-
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(
                 inter.followup,
@@ -140,9 +137,6 @@ class VerseCommands(commands.Cog):
     async def dailyverseclear(self, inter: CommandInteraction):
         await inter.response.defer()
 
-        assert not isinstance(inter.channel, disnake.PartialMessageable)
-        assert isinstance(inter.author, disnake.Member)
-
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(
                 inter.followup,
@@ -165,9 +159,6 @@ class VerseCommands(commands.Cog):
     )
     async def dailyverserole(self, inter: CommandInteraction, role: disnake.Role):
         await inter.response.defer()
-
-        assert not isinstance(inter.channel, disnake.PartialMessageable)
-        assert isinstance(inter.author, disnake.Member)
 
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(

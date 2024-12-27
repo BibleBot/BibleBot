@@ -48,8 +48,6 @@ class DisplayStyleSelect(disnake.ui.Select):
         if inter.author.id != self.author_id:
             return
 
-        assert inter.values is not None
-
         value = inter.values[0]
 
         resp = await backend.submit_command(
@@ -102,8 +100,6 @@ class BracketsSelect(disnake.ui.Select):
     async def callback(self, inter: disnake.MessageInteraction) -> None:
         if inter.author.id != self.author_id:
             return
-
-        assert inter.values is not None
 
         value = inter.values[0]
 
@@ -187,9 +183,6 @@ class Formatting(commands.Cog):
     async def setserverdisplay(self, inter: CommandInteraction):
         await inter.response.defer()
 
-        assert not isinstance(inter.channel, disnake.PartialMessageable)
-        assert isinstance(inter.author, disnake.Member)
-
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(
                 inter.followup,
@@ -215,9 +208,6 @@ class Formatting(commands.Cog):
     )
     async def setbrackets(self, inter: CommandInteraction):
         await inter.response.defer()
-
-        assert not isinstance(inter.channel, disnake.PartialMessageable)
-        assert isinstance(inter.author, disnake.Member)
 
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(

@@ -46,17 +46,10 @@ async def submit_command(
         else False
     )
 
-    assert not isinstance(ch, disnake.PartialMessageable)
-
     guildId = ch.id if isDM else ch.guild.id
     channelId = ch.id
 
     if isThread:
-        assert isinstance(ch, disnake.Thread)
-        assert isinstance(ch.parent, disnake.TextChannel) or isinstance(
-            ch.parent, disnake.ForumChannel
-        )
-
         channelId = ch.parent.id
 
     reqbody = {
@@ -114,7 +107,6 @@ async def submit_command(
                             # image into bytes to pass as the webhook avatar.
                             with open("./data/avatar.png", "rb") as image:
                                 if isThread:
-                                    # We asserted earlier that ch is a thread and ch.parent is not None.
                                     webhook = await ch.parent.create_webhook(  # type: ignore
                                         name="BibleBot Automatic Daily Verses",
                                         avatar=bytearray(image.read()),
@@ -226,17 +218,10 @@ async def submit_command_raw(
         else False
     )
 
-    assert not isinstance(ch, disnake.PartialMessageable)
-
     guildId = ch.id if isDM else ch.guild.id
     channelId = ch.id
 
     if isThread:
-        assert isinstance(ch, disnake.Thread)
-        assert isinstance(ch.parent, disnake.TextChannel) or isinstance(
-            ch.parent, disnake.ForumChannel
-        )
-
         channelId = ch.parent.id
 
     reqbody = {
@@ -286,17 +271,10 @@ async def submit_verse(
         else False
     )
 
-    assert not isinstance(ch, disnake.PartialMessageable)
-
     guildId = ch.id if isDM else ch.guild.id
     channelId = ch.id
 
     if isThread:
-        assert isinstance(ch, disnake.Thread)
-        assert isinstance(ch.parent, disnake.TextChannel) or isinstance(
-            ch.parent, disnake.ForumChannel
-        )
-
         channelId = ch.parent.id
 
     reqbody = {

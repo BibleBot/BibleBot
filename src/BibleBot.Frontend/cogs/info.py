@@ -95,15 +95,11 @@ class Information(commands.Cog):
                 )
                 return
 
-        assert guild is not None
-
         integrated_role = [
             x
             for x in guild.me.roles
             if x.is_bot_managed and x.is_integration and x.name != "@everyone"
         ][0]
-
-        assert not isinstance(channel, disnake.PartialMessageable)
 
         channel_perms_for_self = channel.permissions_for(guild.me).value
         channel_perms_for_role = channel.permissions_for(integrated_role).value

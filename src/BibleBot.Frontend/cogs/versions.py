@@ -94,9 +94,6 @@ class Versions(commands.Cog):
     ):
         await inter.response.defer()
 
-        assert not isinstance(inter.channel, disnake.PartialMessageable)
-        assert isinstance(inter.author, disnake.Member)
-
         if not inter.channel.permissions_for(inter.author).manage_guild:
             await sending.safe_send_interaction(
                 inter.followup,
