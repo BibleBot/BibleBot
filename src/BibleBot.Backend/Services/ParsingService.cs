@@ -234,20 +234,20 @@ namespace BibleBot.Backend.Services
             string bookMapString = File.ReadAllText("./Data/book_map.json");
             Dictionary<string, Dictionary<string, string>> bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapString);
 
-            if (bookMap["ot"].TryGetValue(book, out string otValue))
+            if (bookMap["ot"].ContainsKey(book))
             {
                 isOT = true;
-                book = otValue;
+                book = bookMap["ot"][book];
             }
-            else if (bookMap["nt"].TryGetValue(book, out string ntValue))
+            else if (bookMap["nt"].ContainsKey(book))
             {
                 isNT = true;
-                book = ntValue;
+                book = bookMap["nt"][book];
             }
-            else if (bookMap["deu"].TryGetValue(book, out string deuValue))
+            else if (bookMap["deu"].ContainsKey(book))
             {
                 isDEU = true;
-                book = deuValue;
+                book = bookMap["deu"][book];
             }
 
             if (book == "Psalm" && startingChapter == 151)

@@ -440,19 +440,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     {
                         List<InternalEmbed> pages = [];
 
-                        if (names.TryGetValue(BookCategories.OldTestament, out Dictionary<string, string> otNames))
+                        if (names.ContainsKey(BookCategories.OldTestament))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", otNames.Values).Replace("<151>", "*(contains Psalm 151)*"), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false));
                         }
 
-                        if (names.TryGetValue(BookCategories.NewTestament, out Dictionary<string, string> ntNames))
+                        if (names.ContainsKey(BookCategories.NewTestament))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", ntNames.Values), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false));
                         }
 
-                        if (names.TryGetValue(BookCategories.Deuterocanon, out Dictionary<string, string> deuNames))
+                        if (names.ContainsKey(BookCategories.Deuterocanon))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", deuNames.Values), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false));
                         }
 
                         return new CommandResponse

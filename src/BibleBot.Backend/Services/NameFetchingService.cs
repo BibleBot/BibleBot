@@ -351,7 +351,7 @@ namespace BibleBot.Backend.Services
                             names[BookCategories.OldTestament]["ps"] = $"{names[BookCategories.OldTestament]["ps"]} <151>";
                         }
 
-                        if (!names.TryGetValue(category, out Dictionary<string, string> value))
+                        if (!names.ContainsKey(category))
                         {
                             names.Add(category, []);
                         }

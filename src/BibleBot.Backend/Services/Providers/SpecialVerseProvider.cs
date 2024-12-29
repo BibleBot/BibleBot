@@ -118,9 +118,9 @@ namespace BibleBot.Backend.Services.Providers
 
             string book = verseArray.ElementAt(0);
 
-            if (bookMap.TryGetValue(book, out string value))
+            if (bookMap.ContainsKey(book))
             {
-                book = value;
+                book = bookMap[book];
             }
 
             return $"{book} {verseArray.ElementAt(1)}";
