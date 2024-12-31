@@ -55,7 +55,7 @@ namespace BibleBot.Backend.Tests
             _userServiceMock = new Mock<UserService>(_databaseSettings);
             _guildServiceMock = new Mock<GuildService>(_databaseSettings);
             _versionService = new VersionService(_databaseSettings);
-            _parsingServiceMock = new Mock<ParsingService>(_versionService);
+            _parsingServiceMock = new Mock<ParsingService>();
             _nameFetchingServiceMock = new Mock<NameFetchingService>();
 
             _bgProviderMock = new Mock<BibleGatewayProvider>();
