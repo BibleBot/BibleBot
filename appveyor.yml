@@ -6,7 +6,7 @@ clone_depth: 1
 environment:
   ASPNETCORE_ENVIRONMENT: Development
   MONGODB_CONN:
-    secure: coNsjNr2LeBFkdsO4s24WDcGfoYOvkYoGQeV+TIbdmXjOlcSjRpppMr9AeO3JJbCantUQ7PR5gDRMDS1wS68Ip1gWo5cxlckysOTvWuZJVqRw8ldI5ILQnpCMFtQVb12flDIeWyZ8lpO/6RS51ujfj7tBpPQzj4yETBUzkot1YU=
+    secure: coNsjNr2LeBFkdsO4s24WDcGfoYOvkYoGQeV+TIbdmWZLtkIRfjH6XjnMl2Z6aOVulzNZvUMcTsgwdtVRB/O1OIJvdklR3X0uc/u7zvOo+vSHr24IVmJO54xyYZiSyDUjOrDos4l+WQENjEBi9jJPPTIOe3IO5p0hywEMK18Sdw=
   WEBHOOK_SCRIPT: https://gitlab.com/kerygmadigital/biblebot/appveyor-discord-webhook/-/raw/master/send.ps1
   APIBIBLE_TOKEN:
     secure: NoI3xBuwnbCU1KkhhZCHqtuups493tGwfNZlBNtXvCw8cNuuTvwZZwMYm2V12EvA
