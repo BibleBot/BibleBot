@@ -11,17 +11,12 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using BibleBot.Models;
 
 namespace BibleBot.Backend.Services
 {
     public partial class ParsingService
     {
-        private readonly Dictionary<string, Dictionary<string, string>> _bookMap;
-
-        public ParsingService() => _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(File.ReadAllText("./Data/book_map.json"));
-
         public System.Tuple<string, List<BookSearchResult>> GetBooksInString(Dictionary<string, List<string>> bookNames, List<string> defaultNames, string str)
         {
             List<BookSearchResult> results = [];
@@ -85,6 +80,8 @@ namespace BibleBot.Backend.Services
             int endingChapter = 0;
             int endingVerse = 0;
             bool expandoVerseUsed = false;
+
+            Dictionary<string, Dictionary<string, string>> _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(File.ReadAllText("./Data/book_map.json"));
 
             string[] tokens = str.Split(" ");
 
