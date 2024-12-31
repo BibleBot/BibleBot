@@ -16,9 +16,11 @@ using BibleBot.Models;
 
 namespace BibleBot.Backend.Services
 {
-    public partial class ParsingService(VersionService versionService)
+    public partial class ParsingService
     {
-        private readonly VersionService _versionService = versionService;
+        private readonly Dictionary<string, Dictionary<string, string>> _bookMap;
+
+        public ParsingService() => _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(File.ReadAllText("./Data/book_map.json"));
 
         public System.Tuple<string, List<BookSearchResult>> GetBooksInString(Dictionary<string, List<string>> bookNames, List<string> defaultNames, string str)
         {
@@ -75,7 +77,7 @@ namespace BibleBot.Backend.Services
         [GeneratedRegex(@"-")]
         private static partial Regex ContainsSpanRegex();
 
-        public async Task<Reference> GenerateReference(string str, BookSearchResult bookSearchResult, Version version)
+        public Reference GenerateReference(string str, BookSearchResult bookSearchResult, Version prefVersion, List<Version> versions)
         {
             string book = bookSearchResult.Name;
             int startingChapter = 0;
@@ -98,12 +100,11 @@ namespace BibleBot.Backend.Services
                     if (tokens.Length > tokenIdxAfterSpan)
                     {
                         string lastToken = tokens[tokenIdxAfterSpan].ToUpperInvariant();
+                        Version potentialVersion = versions.SingleOrDefault(version => string.Equals(version.Abbreviation, lastToken, System.StringComparison.OrdinalIgnoreCase));
 
-                        Version idealVersion = await _versionService.Get(lastToken);
-
-                        if (idealVersion != null)
+                        if (potentialVersion != null)
                         {
-                            version = idealVersion;
+                            prefVersion = potentialVersion;
                         }
                     }
 
@@ -186,7 +187,7 @@ namespace BibleBot.Backend.Services
                             {
                                 // We know that BibleGateway will extend to the end of a chapter with this 
                                 // "Genesis 1:1-" syntax, but for other sources this is likely not available.
-                                if (version.Source == "bg")
+                                if (prefVersion.Source == "bg")
                                 {
                                     // Instead of returning null here, we'll break out of the loop
                                     // in the event that the span exists to extend to the end of a chapter.
@@ -231,30 +232,27 @@ namespace BibleBot.Backend.Services
             bool isNT = false;
             bool isDEU = false;
 
-            string bookMapString = File.ReadAllText("./Data/book_map.json");
-            Dictionary<string, Dictionary<string, string>> bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapString);
-
-            if (bookMap["ot"].ContainsKey(book))
+            if (_bookMap["ot"].ContainsKey(book))
             {
                 isOT = true;
-                book = bookMap["ot"][book];
+                book = _bookMap["ot"][book];
             }
-            else if (bookMap["nt"].ContainsKey(book))
+            else if (_bookMap["nt"].ContainsKey(book))
             {
                 isNT = true;
-                book = bookMap["nt"][book];
+                book = _bookMap["nt"][book];
             }
-            else if (bookMap["deu"].ContainsKey(book))
+            else if (_bookMap["deu"].ContainsKey(book))
             {
                 isDEU = true;
-                book = bookMap["deu"][book];
+                book = _bookMap["deu"][book];
             }
 
             if (book == "Psalm" && startingChapter == 151)
             {
                 isOT = false;
                 isDEU = true;
-                book = bookMap["deu"]["ps151"];
+                book = _bookMap["deu"]["ps151"];
                 startingChapter = 1;
                 endingChapter -= 150;
             }
@@ -266,7 +264,7 @@ namespace BibleBot.Backend.Services
                 StartingVerse = startingVerse,
                 EndingChapter = endingChapter,
                 EndingVerse = endingVerse,
-                Version = version,
+                Version = prefVersion,
 
                 IsOT = isOT,
                 IsNT = isNT,

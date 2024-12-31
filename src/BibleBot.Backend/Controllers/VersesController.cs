@@ -108,14 +108,14 @@ namespace BibleBot.Backend.Controllers
                 version = idealGuild.Version;
             }
 
-
             Models.Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
+            List<Models.Version> versions = await _versionService.Get();
 
             List<Reference> references = [];
 
             foreach (BookSearchResult bsr in tuple.Item2)
             {
-                Reference reference = await _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion);
+                Reference reference = _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion, versions);
 
                 if (reference == null)
                 {
