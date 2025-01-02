@@ -62,7 +62,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 long userPrefs = await _userService.GetCount();
                 long guildPrefs = await _guildService.GetCount();
                 long versions = await _versionService.GetCount();
-                FrontendStats frontendStats = await _frontendStatsService.Get();
+                FrontendStats frontendStats = (await _frontendStatsService.Get()).First();
 
                 string version = Utils.Version;
 

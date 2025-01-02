@@ -6,34 +6,19 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
 
 namespace BibleBot.Backend.Services
 {
-    public class FrontendStatsService
+    public class FrontendStatsService(MongoService mongoService)
     {
-        private readonly IMongoCollection<FrontendStats> _frontendStats;
+        private readonly MongoService _mongoService = mongoService;
 
-        public FrontendStatsService(IDatabaseSettings settings)
-        {
-            MongoClient client = new(Environment.GetEnvironmentVariable("MONGODB_CONN"));
-            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
-
-            _frontendStats = database.GetCollection<FrontendStats>(settings.FrontendStatsCollectionName);
-        }
-
-        public async Task<FrontendStats> Get() => (await _frontendStats.FindAsync(frontendStats => true)).FirstOrDefault();
-
-        public async Task<FrontendStats> Create(FrontendStats frontendStats)
-        {
-            await _frontendStats.InsertOneAsync(frontendStats);
-            return frontendStats;
-        }
-
-        public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _frontendStats.UpdateOneAsync(frontendStats => true, updateDefinition);
+        public async Task<List<FrontendStats>> Get() => await _mongoService.Get<FrontendStats>();
+        public async Task<FrontendStats> Create(FrontendStats frontendStats) => await _mongoService.Create(frontendStats);
+        public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _mongoService.Update(frontendStats, updateDefinition);
     }
 }

@@ -21,7 +21,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using Prometheus;
 using Serilog;
 
 namespace BibleBot.Backend
@@ -36,8 +35,8 @@ namespace BibleBot.Backend
             // Link settings in appsettings.json to a database settings model.
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-
             // Instantiate the various services.
+            services.AddSingleton<MongoService>();
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();
             services.AddSingleton<ParsingService>();
@@ -68,7 +67,7 @@ namespace BibleBot.Backend
                     Description = "The Backend of BibleBot",
                     Contact = new OpenApiContact
                     {
-                        Name = "Seraphim R.P.",
+                        Name = "Seraphim R. Pardee",
                         Email = "srp@kerygma.digital"
                     },
                     License = new OpenApiLicense
@@ -109,12 +108,10 @@ namespace BibleBot.Backend
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseHttpMetrics();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapMetrics();
             });
 
             Log.Information("Backend is ready.");

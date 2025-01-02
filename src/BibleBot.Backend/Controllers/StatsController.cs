@@ -7,6 +7,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
@@ -48,7 +49,7 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            FrontendStats stats = await _frontendStatsService.Get();
+            FrontendStats stats = (await _frontendStatsService.Get()).First();
             string[] fields = req.Body.Split("||");
 
             if (stats != null)

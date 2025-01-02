@@ -7,37 +7,23 @@
 */
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
 
 namespace BibleBot.Backend.Services
 {
-    public class VersionService
+    public class VersionService(MongoService mongoService)
     {
-        private readonly IMongoCollection<Version> _versions;
+        private readonly MongoService _mongoService = mongoService;
 
-        public VersionService(IDatabaseSettings settings)
-        {
-            MongoClient client = new(System.Environment.GetEnvironmentVariable("MONGODB_CONN"));
-            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
+        public async Task<List<Version>> Get() => await _mongoService.Get<Version>();
+        public async Task<Version> Get(string abbv) => await _mongoService.Get<Version>(abbv);
+        public async Task<long> GetCount() => await _mongoService.GetCount<Version>();
 
-            _versions = database.GetCollection<Version>(settings.VersionCollectionName);
-        }
+        public async Task<Version> Create(Version version) => await _mongoService.Create(version);
 
-        public async Task<List<Version>> Get() => (await _versions.FindAsync(version => true)).ToList();
-        public async Task<Version> Get(string abbv) => (await _versions.FindAsync(version => string.Equals(version.Abbreviation, abbv, System.StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
-        public async Task<long> GetCount() => await _versions.EstimatedDocumentCountAsync();
-
-        public async Task<Version> Create(Version version)
-        {
-            await _versions.InsertOneAsync(version);
-            return version;
-        }
-
-        public async Task Update(string abbv, UpdateDefinition<Version> updateDefinition) => await _versions.UpdateOneAsync(version => string.Equals(version.Abbreviation, abbv, System.StringComparison.OrdinalIgnoreCase), updateDefinition);
-        public async Task Remove(Version idealVersion) => await Remove(idealVersion.Abbreviation);
-        public async Task Remove(string abbv) => await _versions.DeleteOneAsync(version => string.Equals(version.Abbreviation, abbv));
+        public async Task Update(string abbv, UpdateDefinition<Version> updateDefinition) => await _mongoService.Update(abbv, updateDefinition);
+        public async Task Remove(Version idealVersion) => await _mongoService.Remove(idealVersion);
     }
 }
