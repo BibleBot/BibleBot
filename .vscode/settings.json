@@ -12,5 +12,6 @@
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "editor.suggest.insertMode": "insert",
-    "dotnet.codeLens.enableReferencesCodeLens": false
+    "dotnet.codeLens.enableReferencesCodeLens": false,
+    "dotnet.unitTests.runSettingsPath": "test/BibleBot.Backend.Tests/.env"
 }

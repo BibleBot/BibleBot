@@ -2,6 +2,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
             "name": ".NET Core Attach (Remote)",
             "type": "coreclr",
             "request": "attach",
@@ -58,12 +64,6 @@
             "stopAtEntry": false,
             "requireExactSource": false,
             "envFile": "${workspaceFolder}/src/BibleBot.Backend/.env"
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
         }
     ]
 }

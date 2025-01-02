@@ -24,6 +24,7 @@ namespace BibleBot.Backend.Tests
     {
         private VersesController _versesController;
 
+        private MongoService _mongoService;
         private VersionService _versionService;
 
         private Mock<UserService> _userServiceMock;
@@ -52,9 +53,10 @@ namespace BibleBot.Backend.Tests
                 DatabaseName = "BibleBotBackend"
             };
 
-            _userServiceMock = new Mock<UserService>(_databaseSettings);
-            _guildServiceMock = new Mock<GuildService>(_databaseSettings);
-            _versionService = new VersionService(_databaseSettings);
+            _mongoService = new MongoService(_databaseSettings);
+            _userServiceMock = new Mock<UserService>(_mongoService);
+            _guildServiceMock = new Mock<GuildService>(_mongoService);
+            _versionService = new VersionService(_mongoService);
             _parsingServiceMock = new Mock<ParsingService>();
             _nameFetchingServiceMock = new Mock<NameFetchingService>();
 

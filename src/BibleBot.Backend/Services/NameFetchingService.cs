@@ -258,10 +258,12 @@ namespace BibleBot.Backend.Services
             // TODO: We need to find a cleaner solution for these booknames that isn't nested Dictionaries.
             Dictionary<BookCategories, Dictionary<string, string>> names = [];
 
-            List<string> threeMaccVariants = ["3macc", "3m"];
-            List<string> fourMaccVariants = ["4macc", "4m"];
-            List<string> greekEstherVariants = ["gkesth", "adest", "addesth", "gkes"];
-            List<string> prayerAzariahVariants = ["sgthree", "sgthr", "prazar"];
+            List<string> threeMaccVariants = ["3ma", "3macc", "3m"];
+            List<string> fourMaccVariants = ["4ma", "4macc", "4m"];
+            List<string> greekEstherVariants = ["gkest", "gkesth", "gkes"];
+            List<string> addEstherVariants = ["addesth", "adest"];
+            List<string> prayerAzariahVariants = ["praz", "prazar"];
+            List<string> songThreeYouthsVariants = ["sgthr", "sgthree"];
 
             string versionListResp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
             IDocument versionListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(versionListResp));
@@ -315,9 +317,17 @@ namespace BibleBot.Backend.Services
                     {
                         dataName = "gkest";
                     }
+                    else if (addEstherVariants.Contains(dataName))
+                    {
+                        dataName = "addesth";
+                    }
                     else if (prayerAzariahVariants.Contains(dataName))
                     {
                         dataName = "praz";
+                    }
+                    else if (songThreeYouthsVariants.Contains(dataName))
+                    {
+                        dataName = "sgthr";
                     }
                     else if (dataName == "epjer")
                     {
