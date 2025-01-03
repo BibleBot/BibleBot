@@ -23,25 +23,25 @@ cache:
 
 before_script:
   - "dotnet restore --packages .nuget --verbosity q"
-  - 'dotnet tool install dotnet-reportgenerator-globaltool --global || echo "DRG already installed."'
+  - "dotnet tool install dotnet-reportgenerator-globaltool --global --verbosity q"
   - 'export PATH="$PATH:/root/.dotnet/tools"'
+  - "apt-get -qqy update && apt-get install -qqy bc"
 
 build:
   stage: build
   script:
     - "dotnet build -c Release --no-restore --verbosity q"
 
-tests:
+unit_tests:
   stage: test
   needs:
     - build
   coverage: '/TOTAL_COVERAGE=(\d+.\d+)/'
   script:
     - dotnet test --collect:"XPlat Code Coverage" --verbosity q --logger "junit;MethodFormat=Class;FailureBodyFormat=Verbose" -- NUnit.Where="namespace == BibleBot.Backend.Tests"
-    - reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura"
+    - reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura" -verbosity:none
     - COVERAGE_VALUE=$(grep -oPm 1 'line-rate="\K([0-9.]+)' "./Cobertura.xml")
     - COVERAGE=$(echo "scale=2; $COVERAGE_VALUE * 100" | bc)
-    - 'echo "TOTAL_COVERAGE=$COVERAGE%"'
   artifacts:
     when: always
     expire_in: 1 day

@@ -276,6 +276,7 @@ __pycache__/
 
 coverage.json
 coverage.xml
+Cobertura.xml
 
 .db/
 .envrc
