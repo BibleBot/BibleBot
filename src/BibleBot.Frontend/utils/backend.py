@@ -272,10 +272,7 @@ async def submit_verse(
     )
 
     guildId = ch.id if isDM else ch.guild.id
-    channelId = ch.id
-
-    if isThread:
-        channelId = ch.parent.id
+    channelId = ch.parent_id if isThread else ch.id
 
     reqbody = {
         "UserId": str(user.id),
