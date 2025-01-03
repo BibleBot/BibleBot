@@ -79,7 +79,9 @@ namespace BibleBot.Backend.Services.Providers
             IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            return document.GetElementsByClassName("b1").FirstOrDefault().GetElementsByClassName("vr").FirstOrDefault().GetElementsByClassName("vc").FirstOrDefault().TextContent;
+            return document.GetElementsByClassName("b1").FirstOrDefault()
+                           .GetElementsByClassName("vr").FirstOrDefault()
+                           .GetElementsByClassName("vc").FirstOrDefault().TextContent;
         }
 
         public async Task<string> GetTrulyRandomVerse()

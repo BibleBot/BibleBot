@@ -31,7 +31,6 @@ namespace BibleBot.Backend.Services
             // We want to iterate twice through the booknames
             // in order to skip Ezra in the first iteration,
             // otherwise 1/2/3 Esdras will collide with Ezra.
-            // Ditto for Jeremiah + Letter/Epistle of Jeremiah.
             for (int i = 1; i < 3; i++)
             {
                 foreach (KeyValuePair<string, List<string>> bookName in bookNames)
@@ -104,7 +103,6 @@ namespace BibleBot.Backend.Services
                             prefVersion = potentialVersion;
                         }
                     }
-
 
                     if (colonMatches.Count == 2)
                     {
