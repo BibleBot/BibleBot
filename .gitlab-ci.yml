@@ -1,21 +1,55 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
-stages:
-  - test
-sast:
-  stage: test
+image: mcr.microsoft.com/dotnet/sdk:9.0
+
+variables:
+  SOURCE_CODE_PATH: "src/*"
+  ASPNETCORE_ENVIRONMENT: "Development"
+
 include:
   - template: Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml
   - template: Jobs/Dependency-Scanning.gitlab-ci.yml
-variables:
-  SECURE_LOG_LEVEL: debug
+
 gemnasium-python-dependency_scanning:
   before_script:
     - apt-get -qqy update && apt-get install -qqy cargo
 
+cache:
+  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+  paths:
+    - "$SOURCE_CODE_PATH/obj/project.assets.json"
+    - "$SOURCE_CODE_PATH/obj/*.csproj.nuget.*"
+    - ".nuget"
+  policy: pull-push
+
+before_script:
+  - "dotnet restore --packages .nuget --verbosity q"
+  - 'dotnet tool install dotnet-reportgenerator-globaltool --global || echo "DRG already installed."'
+
+build:
+  stage: build
+  script:
+    - "dotnet build -c Release --no-restore --verbosity q"
+
+tests:
+  stage: test
+  needs:
+    - build
+  coverage: '/TOTAL_COVERAGE=(\d+.\d+)/'
+  script:
+    - dotnet test --collect:"XPlat Code Coverage" --verbosity q --logger "junit;MethodFormat=Class;FailureBodyFormat=Verbose" -- NUnit.Where="namespace == BibleBot.Backend.Tests"
+    - reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura"
+    - COVERAGE_VALUE=$(grep -oPm 1 'line-rate="\K([0-9.]+)' "./Cobertura.xml")
+    - COVERAGE=$(echo "scale=2; $COVERAGE_VALUE * 100" | bc)
+    - 'echo "TOTAL_COVERAGE=$COVERAGE%"'
+  artifacts:
+    when: always
+    expire_in: 1 day
+    paths:
+      - ./**/TestResults.xml
+      - ./Cobertura.xml
+    reports:
+      junit:
+        - ./**/TestResults.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: ./Cobertura.xml
