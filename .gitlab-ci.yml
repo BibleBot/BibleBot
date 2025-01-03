@@ -21,14 +21,10 @@ cache:
     - ".nuget"
   policy: pull-push
 
-before_script:
-  - "dotnet restore --packages .nuget --verbosity q"
-  - "dotnet tool install dotnet-reportgenerator-globaltool --global --verbosity q"
-  - 'export PATH="$PATH:/root/.dotnet/tools"'
-  - "apt-get -qqy update && apt-get install -qqy bc"
-
 build:
   stage: build
+  before_script:
+    - "dotnet restore --packages .nuget --verbosity q"
   script:
     - "dotnet build -c Release --no-restore --verbosity q"
 
@@ -37,6 +33,11 @@ unit_tests:
   needs:
     - build
   coverage: '/TOTAL_COVERAGE=(\d+.\d+)/'
+  before_script:
+    - "dotnet restore --packages .nuget --verbosity q"
+    - 'export PATH="$PATH:/root/.dotnet/tools"'
+    - "dotnet tool install dotnet-reportgenerator-globaltool --global --verbosity q"
+    - "apt-get -qqy update && apt-get install -qqy bc"
   script:
     - dotnet test --collect:"XPlat Code Coverage" --verbosity q --logger "junit;MethodFormat=Class;FailureBodyFormat=Verbose" -- NUnit.Where="namespace == BibleBot.Backend.Tests"
     - reportgenerator -reports:"test/**/TestResults/**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura"
