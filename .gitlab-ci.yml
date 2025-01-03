@@ -24,6 +24,7 @@ cache:
 before_script:
   - "dotnet restore --packages .nuget --verbosity q"
   - 'dotnet tool install dotnet-reportgenerator-globaltool --global || echo "DRG already installed."'
+  - 'export PATH="$PATH:/root/.dotnet/tools"'
 
 build:
   stage: build
