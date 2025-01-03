@@ -39,7 +39,7 @@ unit_tests:
   coverage: '/TOTAL_COVERAGE=(\d+.\d+)/'
   script:
     - dotnet test --collect:"XPlat Code Coverage" --verbosity q --logger "junit;MethodFormat=Class;FailureBodyFormat=Verbose" -- NUnit.Where="namespace == BibleBot.Backend.Tests"
-    - reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura" -verbosity:none
+    - reportgenerator -reports:"test/**/TestResults/**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura" -verbosity:none
     - COVERAGE_VALUE=$(grep -oPm 1 'line-rate="\K([0-9.]+)' "./Cobertura.xml")
     - COVERAGE=$(echo "scale=2; $COVERAGE_VALUE * 100" | bc)
   artifacts:
