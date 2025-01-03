@@ -64,7 +64,7 @@ namespace BibleBot.Backend.Services
 
             if (typeOfT == typeof(Models.Version))
             {
-                cursor = (IAsyncCursor<T>)await _versions.FindAsync(version => version.Abbreviation == query);
+                cursor = (IAsyncCursor<T>)await _versions.FindAsync(version => string.Equals(version.Abbreviation, query, StringComparison.OrdinalIgnoreCase));
             }
             else if (typeOfT == typeof(User))
             {
@@ -124,7 +124,7 @@ namespace BibleBot.Backend.Services
 
         public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await _users.UpdateOneAsync(user => user.UserId == userId, updateDefinition);
         public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition) => await _guilds.UpdateOneAsync(guild => guild.GuildId == guildId, updateDefinition);
-        public async Task Update(string abbv, UpdateDefinition<Models.Version> updateDefinition) => await _versions.UpdateOneAsync(version => version.Abbreviation == abbv, updateDefinition);
+        public async Task Update(string abbv, UpdateDefinition<Models.Version> updateDefinition) => await _versions.UpdateOneAsync(version => string.Equals(version.Abbreviation, abbv, StringComparison.OrdinalIgnoreCase), updateDefinition);
         public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _frontendStats.UpdateOneAsync(frontendStats => true, updateDefinition);
 
         public async Task Remove(User idealUser) => await Remove<User>(idealUser.UserId);
@@ -137,7 +137,7 @@ namespace BibleBot.Backend.Services
 
             if (typeOfT == typeof(Models.Version))
             {
-                return await _versions.DeleteOneAsync(version => version.Abbreviation == query);
+                return await _versions.DeleteOneAsync(version => string.Equals(version.Abbreviation, query, StringComparison.OrdinalIgnoreCase));
             }
             else if (typeOfT == typeof(User))
             {
