@@ -133,5 +133,18 @@ namespace BibleBot.Backend.Tests
             resp.Pages.Should().NotBeNullOrEmpty();
             resp.Pages[0].Description.Should().Contain("Page 1 of"); // Ensure we're sending back the correct order.
         }
+
+        [Test]
+        public async Task ShouldSetVersionWithLowercaseVersionAbbreviation()
+        {
+            ObjectResult result = (await _commandsController.ProcessMessage(new MockRequest("+version set rsv"))).Result as ObjectResult;
+            CommandResponse resp = result.Value as CommandResponse;
+
+            result.StatusCode.Should().Be(200);
+            resp.OK.Should().BeTrue();
+            resp.LogStatement.Should().NotBeNullOrEmpty();
+            resp.Pages.Should().NotBeNullOrEmpty();
+            resp.Pages[0].Description.Should().Be("Set version successfully.");
+        }
     }
 }
