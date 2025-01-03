@@ -4,11 +4,9 @@
     </a>
     <br>
     <br>
-    <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot">
-        <img alt="AppVeyor Build Status" src="https://img.shields.io/appveyor/build/SeraphimRP/BibleBot?style=flat-square&logo=appveyor">
+    <a href="https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/pipelines/latest">
+        <img alt="GitLab Pipeline Status" src="https://img.shields.io/gitlab/pipeline-status/kerygmadigital%2Fbiblebot%2FBibleBot?branch=master&style=flat-square&logo=gitlab&label=pipeline">
     </a>
-    <a href="https://ci.appveyor.com/project/SeraphimRP/biblebot/build/tests">
-        <img alt="AppVeyor Test Status" src="https://img.shields.io/appveyor/tests/SeraphimRP/BibleBot?style=flat-square&logo=appveyor">
     </a>
     <a href="https://app.codacy.com/gl/kerygmadigital/BibleBot/dashboard">
         <img alt="Codacy Coverage Status" src="https://img.shields.io/codacy/coverage/2f77eda59dca4477b7b127f94c76db62?style=flat-square&logo=codacy">
