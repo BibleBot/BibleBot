@@ -43,6 +43,8 @@ unit_tests:
     - reportgenerator -reports:"test/**/TestResults/**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura"
     - COVERAGE_VALUE=$(grep -oPm 1 'line-rate="\K([0-9.]+)' "./Cobertura.xml")
     - COVERAGE=$(echo "scale=2; $COVERAGE_VALUE * 100" | bc)
+    - 'echo "TOTAL_COVERAGE=$COVERAGE%"'
+    - bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r Cobertura.xml
   artifacts:
     when: always
     expire_in: 1 day
