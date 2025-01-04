@@ -35,6 +35,7 @@ namespace BibleBot.Backend
             // Link settings in appsettings.json to a database settings model.
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
+
             // Instantiate the various services.
             services.AddSingleton<MongoService>();
             services.AddSingleton<UserService>();

@@ -7,6 +7,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -68,6 +69,7 @@ namespace BibleBot.AutomaticServices.Services
         {
             int count = 0;
             int idealCount = 0;
+            bool isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
             List<string> guildsCleared = [];
 
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
@@ -75,6 +77,11 @@ namespace BibleBot.AutomaticServices.Services
 
             IEnumerable<Guild> matches = (await _guildService.Get()).Where((guild) =>
             {
+                if (isTesting && guild.GuildId != "769709969796628500")
+                {
+                    return false;
+                }
+
                 if (guild.DailyVerseTime != null && guild.DailyVerseTimeZone != null && guild.DailyVerseWebhook != null)
                 {
                     string[] guildTime = guild.DailyVerseTime.Split(":");
@@ -97,6 +104,8 @@ namespace BibleBot.AutomaticServices.Services
             });
 
             idealCount = matches.Count();
+
+            Stopwatch watch = Stopwatch.StartNew();
 
             foreach (Guild guild in matches)
             {
@@ -164,7 +173,9 @@ namespace BibleBot.AutomaticServices.Services
                 }
             }
 
-            Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) at {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
+            watch.Stop();
+            string timeToProcess = $"{(watch.Elapsed.Hours != 0 ? $"{watch.Elapsed.Hours} hours, " : "")}{(watch.Elapsed.Minutes != 0 ? $"{watch.Elapsed.Minutes} minutes, " : "")}{watch.Elapsed.Seconds} seconds";
+            Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

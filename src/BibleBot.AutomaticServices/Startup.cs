@@ -20,7 +20,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using Prometheus;
 using Serilog;
 
 namespace BibleBot.AutomaticServices
@@ -41,6 +40,7 @@ namespace BibleBot.AutomaticServices
             services.AddHostedService<VersionStatsService>();
 
             // Instantiate the various services.
+            services.AddSingleton<MongoService>();
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();
             services.AddSingleton<VersionService>();
@@ -61,7 +61,7 @@ namespace BibleBot.AutomaticServices
                     Description = "The AutomaticServices of BibleBot",
                     Contact = new OpenApiContact
                     {
-                        Name = "Seraphim R.P.",
+                        Name = "Seraphim R. Pardee",
                         Email = "srp@kerygma.digital"
                     },
                     License = new OpenApiLicense
@@ -98,12 +98,10 @@ namespace BibleBot.AutomaticServices
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseHttpMetrics();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapMetrics();
             });
 
             Log.Information("AutomaticServices is ready.");
