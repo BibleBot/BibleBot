@@ -283,3 +283,5 @@ Cobertura.xml
 .env
 
 .DS_Store
+
+heavy_queries.json

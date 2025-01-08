@@ -14,6 +14,8 @@ from disnake.ext import commands
 from logger import VyLogger
 from utils.paginator import CreatePaginator
 import re
+import time
+import json
 
 logger = VyLogger("default")
 
@@ -117,10 +119,25 @@ class EventListeners(commands.Cog):
         if msg.author == self.bot.user:
             return
 
-        clean_msg = msg.content.replace("http:", "").replace("https:", "")
+        clean_msg = msg.content.replace("://", "")
 
         if ":" in clean_msg or "：" in clean_msg:
-            await backend.submit_verse(msg.channel, msg.author, clean_msg)
+            start_time = time.time()
+            req, resp = await backend.submit_verse(msg.channel, msg.author, clean_msg)
+            end_time = time.time()
+
+            seconds_to_execute = end_time - start_time
+
+            if seconds_to_execute > 2:
+                logger.info(
+                    f"<{msg.author.id}@{msg.guild.id if msg.guild is not None else msg.channel.id}#{msg.channel.id}> this response took {seconds_to_execute} seconds to receive, logging message to file"
+                )
+                with open("heavy_queries.json", "a", encoding="utf-8") as heavy_queries:
+                    json_string = json.dumps(
+                        {"req": req, "resp": resp, "time_seconds": seconds_to_execute}
+                    )
+                    heavy_queries.write(f"{json_string}\n")
+
         elif "ccc" in clean_msg.lower() and msg.guild:
             if msg.guild.id in [
                 238001909716353025,
@@ -162,7 +179,10 @@ async def update_topgg(bot: disnake.AutoShardedClient):
                 headers={"Authorization": topgg_auth},
             ) as resp:
                 if resp.status != 200:
-                    logger.warn("couldn't submit stats to top.gg, it may be offline")
+                    if resp.status != 429:
+                        logger.warning(
+                            "couldn't submit stats to top.gg, it may be offline"
+                        )
                 else:
                     logger.info("submitted stats to top.gg")
 
@@ -182,8 +202,9 @@ async def update_discordbotlist(bot: disnake.AutoShardedClient):
                 headers={"Authorization": discordbotlist_auth},
             ) as resp:
                 if resp.status != 200:
-                    logger.warn(
-                        "couldn't submit stats to discordbotlist.com, it may be offline"
-                    )
+                    if resp.status != 429:
+                        logger.warning(
+                            "couldn't submit stats to discordbotlist.com, it may be offline"
+                        )
                 else:
                     logger.info("submitted stats to discordbotlist.com")

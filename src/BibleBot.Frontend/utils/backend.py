@@ -257,7 +257,7 @@ async def submit_verse(
         #
         # May seem silly to have this, but we've been
         # fooled before.
-        return
+        return None, None
 
     isDM = ch.type == disnake.ChannelType.private
     isThread = (
@@ -304,15 +304,15 @@ async def submit_verse(
                             "Verse Error", respBody["logStatement"]
                         ),
                     )
-                    return
+                    return (reqbody, respBody)
                 elif "too many verses" in respBody["logStatement"]:
                     await sending.safe_send_channel(
                         ch, embed=convert_embed(respBody["pages"][0])
                     )
-                    return
+                    return (reqbody, respBody)
 
             if respBody["verses"] is None:
-                return
+                return (reqbody, respBody)
 
             verses = respBody["verses"]  # todo: remove duplicate verses
 
@@ -362,6 +362,8 @@ async def submit_verse(
                         ch,
                         f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```",
                     )
+
+            return (reqbody, respBody)
 
 
 def convert_embed(internal_embed):
