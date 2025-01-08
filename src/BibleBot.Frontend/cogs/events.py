@@ -120,8 +120,11 @@ class EventListeners(commands.Cog):
             return
 
         clean_msg = msg.content.replace("://", "")
+        verse_regex = re.compile(
+            r"\ [0-9]{1,3}:[0-9]{1,3}(-)?([0-9]{1,3})?(:[0-9]{1,3})?"
+        )
 
-        if ":" in clean_msg or "：" in clean_msg:
+        if verse_regex.search(clean_msg):
             start_time = time.time()
             req, resp = await backend.submit_verse(msg.channel, msg.author, clean_msg)
             end_time = time.time()
