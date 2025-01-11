@@ -1445,5 +1445,46 @@ namespace BibleBot.Backend.Tests
             result.StatusCode.Should().Be(400);
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public async Task ShouldProcessJohn1InArabic()
+        {
+            Version testVersion = await _versionService.Get("ERV-AR") ?? await _versionService.Create(new MockERVAR());
+
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1 ERV-AR")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "John 1:1 ERV-AR",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new()
+                    {
+                        Title = "يَسُوعُ المَسِيحُ كَلِمَةُ الله",
+                        PsalmTitle = "",
+                        Text = "<**1**> فِي البَدْءِ كَانَ الكَلِمَةُ مَوْجُودًا ،وَكَانَ الكَلِمَةُ مَعَ اللهِ،وَكَانَ الكَلِمَةُ هُوَ اللهَ.",
+                        Reference = new Reference
+                        {
+                            Book = "John",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = testVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "John 1:1"
+                        }
+                    }
+                ]
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }

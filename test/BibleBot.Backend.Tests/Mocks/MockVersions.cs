@@ -165,4 +165,16 @@ namespace BibleBot.Backend.Tests.Mocks
             SupportsDeuterocanon = false;
         }
     }
+
+    public class MockERVAR : Version
+    {
+        public MockERVAR()
+        {
+            Name = "Arabic Bible: Easy-to-Read Version";
+            Abbreviation = "ERV-AR";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = false;
+        }
+    }
 }
