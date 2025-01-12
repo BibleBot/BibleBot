@@ -172,6 +172,7 @@ namespace BibleBot.Backend.Tests.Mocks
         {
             Name = "Arabic Bible: Easy-to-Read Version";
             Abbreviation = "ERV-AR";
+            Source = "bg";
             SupportsOldTestament = true;
             SupportsNewTestament = true;
             SupportsDeuterocanon = false;

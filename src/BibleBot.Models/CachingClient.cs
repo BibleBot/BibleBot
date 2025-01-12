@@ -124,7 +124,7 @@ namespace BibleBot.Models
             IHtmlDocument document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync(cancellationToken));
 
             IHtmlCollection<IElement> respReference = document.GetElementsByClassName("dropdown-display");
-            IElement respContent = document.QuerySelector(".result-text-style-normal");
+            IElement respContent = document.QuerySelector(".result-text-style-normal") ?? document.QuerySelector(".result-text-style-rtl");
 
             if (respReference == null || respContent == null)
             {

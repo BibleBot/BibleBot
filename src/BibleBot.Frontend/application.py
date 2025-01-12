@@ -10,6 +10,10 @@ import disnake
 from disnake.ext import commands
 from logger import VyLogger
 import os
+import asyncio
+
+if os.name == "nt":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 logger = VyLogger("default")
 
