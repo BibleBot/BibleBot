@@ -17,8 +17,6 @@ namespace BibleBot.Models
         public string LanguageCollectionName { get; set; }
         public string FrontendStatsCollectionName { get; set; }
         public string DatabaseName { get; set; }
-
-        public string VersionDataIndexName { get; set; }
     }
 
     public interface IDatabaseSettings
@@ -29,8 +27,6 @@ namespace BibleBot.Models
         string LanguageCollectionName { get; set; }
         string FrontendStatsCollectionName { get; set; }
         string DatabaseName { get; set; }
-
-        string VersionDataIndexName { get; set; }
     }
 }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

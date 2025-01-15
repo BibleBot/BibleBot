@@ -71,5 +71,71 @@ namespace BibleBot.Models
         /// </summary>
         [BsonElement("SupportsDeuterocanon")]
         public bool SupportsDeuterocanon { get; set; }
+
+        /// <summary>
+        /// An array of books, which contains an array of chapters along with other metadata.
+        /// </summary>
+        [BsonElement("Books")]
+        public BookData[] Books { get; set; }
+    }
+
+    /// <summary>
+    /// A representation of a book data object.
+    /// </summary>
+    public class BookData
+    {
+        /// <summary>
+        /// The data name of the book, like "1tim".
+        /// </summary>
+        [BsonElement("Name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The proper English name of the book, like "1 Timothy".
+        /// </summary>
+        [BsonElement("ProperName")]
+        public string ProperName { get; set; }
+
+        /// <summary>
+        /// An array of acceptable book names.
+        /// </summary>
+        [BsonElement("AcceptableNames")]
+        public string[] AcceptableNames { get; set; }
+
+        /// <summary>
+        /// An array of variant data names, used for some deuterocanonicals.
+        /// </summary>
+        [BsonElement("VariantDataNames")]
+        public string[] VariantDataNames { get; set; }
+
+        /// <summary>
+        /// An array of chapters, which contains an array of verse data.
+        /// </summary>
+        [BsonElement("Chapters")]
+        public ChapterData[] Chapters { get; set; }
+    }
+
+    /// <summary>
+    /// A representation of a chapter data object.
+    /// </summary>
+    public class ChapterData
+    {
+        /// <summary>
+        /// An array of verse data.
+        /// </summary>
+        [BsonElement("Verses")]
+        public VerseData[] Verses { get; set; }
+    }
+
+    /// <summary>
+    /// A representation of a verse data object.
+    /// </summary>
+    public class VerseData
+    {
+        /// <summary>
+        /// The content of a verse.
+        /// </summary>
+        [BsonElement("Content")]
+        public string Content { get; set; }
     }
 }
