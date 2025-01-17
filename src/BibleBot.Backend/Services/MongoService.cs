@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
+using MongoDB.Driver.Search;
 
 namespace BibleBot.Backend.Services
 {
@@ -57,6 +58,7 @@ namespace BibleBot.Backend.Services
             return cursor != null ? await cursor.ToListAsync() : throw new NotImplementedException("No established path for provided type");
         }
 
+        // TODO(srp): Replace these FindAsync()s with aggregate+$lookup for performance benefits.
         public async Task<T> Get<T>(string query)
         {
             Type typeOfT = typeof(T);
@@ -76,6 +78,27 @@ namespace BibleBot.Backend.Services
             }
 
             return cursor != null ? await cursor.FirstOrDefaultAsync() : throw new NotImplementedException("No established path for provided type");
+        }
+
+        public async Task<List<T>> Search<T>(SearchDefinition<T> def)
+        {
+            Type typeOfT = typeof(T);
+            IAsyncCursor<T> cursor = null;
+
+            if (typeOfT == typeof(Models.Version))
+            {
+                cursor = (IAsyncCursor<T>)await _versions.Aggregate().Search((SearchDefinition<Models.Version>)(object)def).ToCursorAsync();
+            }
+            else if (typeOfT == typeof(User))
+            {
+                cursor = (IAsyncCursor<T>)await _users.Aggregate().Search((SearchDefinition<User>)(object)def).ToCursorAsync();
+            }
+            else if (typeOfT == typeof(Guild))
+            {
+                cursor = (IAsyncCursor<T>)await _guilds.Aggregate().Search((SearchDefinition<Guild>)(object)def).ToCursorAsync();
+            }
+
+            return cursor != null ? await cursor.ToListAsync() : throw new NotImplementedException("No established path for provided type");
         }
 
         public async Task<long> GetCount<T>()
@@ -98,28 +121,28 @@ namespace BibleBot.Backend.Services
             throw new NotImplementedException("No established path for provided type");
         }
 
-        public async Task<User> Create(User user)
+        public async Task<T> Create<T>(T t)
         {
-            await _users.InsertOneAsync(user);
-            return user;
-        }
+            Type typeOfT = typeof(T);
 
-        public async Task<Guild> Create(Guild guild)
-        {
-            await _guilds.InsertOneAsync(guild);
-            return guild;
-        }
+            if (typeOfT == typeof(Models.Version))
+            {
+                await _versions.InsertOneAsync(t as Models.Version);
+            }
+            else if (typeOfT == typeof(User))
+            {
+                await _users.InsertOneAsync(t as User);
+            }
+            else if (typeOfT == typeof(Guild))
+            {
+                await _guilds.InsertOneAsync(t as Guild);
+            }
+            else if (typeOfT == typeof(FrontendStats))
+            {
+                await _frontendStats.InsertOneAsync(t as FrontendStats);
+            }
 
-        public async Task<Models.Version> Create(Models.Version version)
-        {
-            await _versions.InsertOneAsync(version);
-            return version;
-        }
-
-        public async Task<FrontendStats> Create(FrontendStats frontendStats)
-        {
-            await _frontendStats.InsertOneAsync(frontendStats);
-            return frontendStats;
+            return t;
         }
 
         public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await _users.UpdateOneAsync(user => user.UserId == userId, updateDefinition);
