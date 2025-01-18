@@ -14,43 +14,18 @@ using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Staff
 {
-    public class StaffOnlyCommandGroup : ICommandGroup
+    public class StaffOnlyCommandGroup : CommandGroup
     {
-        public string Name { get; set; }
-        public bool IsStaffOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
+        public override string Name { get => "staff"; set { } }
+        public override bool IsStaffOnly { get => true; set { } }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "announce"); set { } }
+        public override List<Command> Commands { get => [new StaffAnnounce(), new StaffPermissionsCheck()]; set { } }
 
-        public StaffOnlyCommandGroup()
+        public class StaffAnnounce : Command
         {
-            Name = "staff";
-            IsStaffOnly = true;
-            Commands =
-            [
-                new StaffAnnounce(),
-                new StaffPermissionsCheck()
-            ];
-            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "announce");
-        }
+            public override string Name { get => "announce"; set { } }
 
-        public class StaffAnnounce : ICommand
-        {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
-
-            public StaffAnnounce()
-            {
-                Name = "announce";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = false; // anti-spam measure
-            }
-
-            public Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
+            public override Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
             {
                 OK = true,
                 Pages =
@@ -62,24 +37,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
             });
         }
 
-        public class StaffPermissionsCheck : ICommand
+        public class StaffPermissionsCheck : Command
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public override string Name { get => "permscheck"; set { } }
 
-            public StaffPermissionsCheck()
-            {
-                Name = "permscheck";
-                ArgumentsError = null;
-                ExpectedArguments = 5;
-                PermissionsRequired = null;
-                BotAllowed = false; // anti-spam measure
-            }
-
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 StringBuilder[] results = Utils.GetInstance().PermissionsChecker(long.Parse(args[2]), long.Parse(args[3]), long.Parse(args[4]));
 

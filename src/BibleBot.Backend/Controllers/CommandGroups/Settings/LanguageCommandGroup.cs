@@ -16,53 +16,30 @@ using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
-    public class LanguageCommandGroup : ICommandGroup
+    public class LanguageCommandGroup(UserService userService, GuildService guildService, LanguageService languageService) : CommandGroup
     {
-        public string Name { get; set; }
-        public bool IsStaffOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
-
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-        private readonly LanguageService _languageService;
-
-        public LanguageCommandGroup(UserService userService, GuildService guildService, LanguageService languageService)
+        public override string Name { get => "language"; set { } }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override List<Command> Commands
         {
-            _userService = userService;
-            _guildService = guildService;
-            _languageService = languageService;
-
-            Name = "language";
-            IsStaffOnly = false;
-            Commands =
-            [
-                new LanguageUsage(_userService, _guildService, _languageService),
-                new LanguageSet(_userService, _languageService),
-                new LanguageSetServer( _guildService, _languageService),
-                new LanguageList(_languageService)
-            ];
-            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
+            get => [
+                new LanguageUsage(userService, guildService, languageService),
+                new LanguageSet(userService, languageService),
+                new LanguageSetServer( guildService, languageService),
+                new LanguageList(languageService)
+            ]; set { }
         }
 
-        public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService) : ICommand
+        public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService) : Command
         {
-            public string Name { get; set; } = "usage";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = true;
+            public override string Name { get => "usage"; set { } }
 
-            private readonly UserService _userService = userService;
-            private readonly GuildService _guildService = guildService;
-            private readonly LanguageService _languageService = languageService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                User idealUser = await _userService.Get(req.UserId);
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await userService.Get(req.UserId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
-                Language defaultLanguage = await _languageService.Get("english");
+                Language defaultLanguage = await languageService.Get("english");
 
                 string response = "Your preferred language is set to **<language>**.\n" +
                                "The server's preferred language is set to **<glanguage>**.\n\n" +
@@ -73,7 +50,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    Language idealUserLanguage = await _languageService.Get(idealUser.Language);
+                    Language idealUserLanguage = await languageService.Get(idealUser.Language);
 
                     if (idealUserLanguage != null)
                     {
@@ -83,7 +60,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealGuild != null)
                 {
-                    Language idealGuildLanguage = await _languageService.Get(idealGuild.Language);
+                    Language idealGuildLanguage = await languageService.Get(idealGuild.Language);
 
                     if (idealGuildLanguage != null)
                     {
@@ -106,32 +83,26 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class LanguageSet(UserService userService, LanguageService languageService) : ICommand
+        public class LanguageSet(UserService userService, LanguageService languageService) : Command
         {
-            public string Name { get; set; } = "set";
-            public string ArgumentsError { get; set; } = "Expected a language parameter, like `english` or `german`.";
-            public int ExpectedArguments { get; set; } = 1;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "set"; set { } }
+            public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set { } }
 
-            private readonly UserService _userService = userService;
-            private readonly LanguageService _languageService = languageService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 string newLanguage = args[0].ToUpperInvariant();
-                Language idealLanguage = await _languageService.Get(newLanguage);
+                Language idealLanguage = await languageService.Get(newLanguage);
 
                 if (idealLanguage != null)
                 {
-                    User idealUser = await _userService.Get(req.UserId);
+                    User idealUser = await userService.Get(req.UserId);
 
                     if (idealUser != null)
                     {
                         UpdateDefinition<User> update = Builders<User>.Update
                                      .Set(user => user.Language, idealLanguage.ObjectName);
 
-                        await _userService.Update(req.UserId, update);
+                        await userService.Update(req.UserId, update);
                     }
                     else
                     {
@@ -141,7 +112,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             Language = idealLanguage.ObjectName
                         };
 
-                        await _userService.Create(newUser);
+                        await userService.Create(newUser);
                     }
 
                     return new CommandResponse
@@ -167,35 +138,26 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class LanguageSetServer(GuildService guildService, LanguageService languageService) : ICommand
+        public class LanguageSetServer(GuildService guildService, LanguageService languageService) : Command
         {
-            public string Name { get; set; } = "setserver";
-            public string ArgumentsError { get; set; } = "Expected a language parameter, like `english` or `german`.";
-            public int ExpectedArguments { get; set; } = 1;
-            public List<Permissions> PermissionsRequired { get; set; } =
-                [
-                    Permissions.MANAGE_GUILD
-                ];
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "setserver"; set { } }
+            public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set { } }
 
-            private readonly GuildService _guildService = guildService;
-            private readonly LanguageService _languageService = languageService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 string newLanguage = args[0].ToUpperInvariant();
-                Language idealLanguage = await _languageService.Get(newLanguage);
+                Language idealLanguage = await languageService.Get(newLanguage);
 
                 if (idealLanguage != null)
                 {
-                    Guild idealGuild = await _guildService.Get(req.GuildId);
+                    Guild idealGuild = await guildService.Get(req.GuildId);
 
                     if (idealGuild != null)
                     {
                         UpdateDefinition<Guild> update = Builders<Guild>.Update
                                      .Set(guild => guild.Language, idealLanguage.ObjectName);
 
-                        await _guildService.Update(req.GuildId, update);
+                        await guildService.Update(req.GuildId, update);
                     }
                     else
                     {
@@ -206,7 +168,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             IsDM = req.IsDM
                         };
 
-                        await _guildService.Create(newGuild);
+                        await guildService.Create(newGuild);
                     }
 
                     return new CommandResponse
@@ -232,19 +194,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class LanguageList(LanguageService languageService) : ICommand
+        public class LanguageList(LanguageService languageService) : Command
         {
-            public string Name { get; set; } = "list";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "list"; set { } }
 
-            private readonly LanguageService _languageService = languageService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                List<Language> languages = await _languageService.Get();
+                List<Language> languages = await languageService.Get();
                 languages.Sort((x, y) => x.Name.CompareTo(y.Name));
 
                 StringBuilder content = new();

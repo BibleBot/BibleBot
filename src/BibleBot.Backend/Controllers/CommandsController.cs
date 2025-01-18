@@ -20,50 +20,21 @@ namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/commands")]
+    [AutoValidateAntiforgeryToken]
     [ApiController]
-    public class CommandsController : ControllerBase
+    public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
+                                    FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
     {
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-        private readonly VersionService _versionService;
-        private readonly ResourceService _resourceService;
-        private readonly FrontendStatsService _frontendStatsService;
-        private readonly NameFetchingService _nameFetchingService;
-
-        private readonly List<IBibleProvider> _bibleProviders;
-        private readonly SpecialVerseProvider _spProvider;
-
-        private readonly List<ICommandGroup> _commandGroups;
-
-        public CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
-                                  FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
-        {
-            _userService = userService;
-            _guildService = guildService;
-            _versionService = versionService;
-            _resourceService = resourceService;
-            _frontendStatsService = frontendStatsService;
-            _nameFetchingService = nameFetchingService;
-
-            _spProvider = spProvider;
-            _bibleProviders =
-            [
-                bgProvider,
-                abProvider
-            ];
-
-            _commandGroups =
-            [
-                new CommandGroups.Information.InformationCommandGroup(_userService, _guildService, _versionService, _frontendStatsService),
-                new CommandGroups.Settings.FormattingCommandGroup(_userService, _guildService),
-                new CommandGroups.Settings.VersionCommandGroup(_userService, _guildService, _versionService, _nameFetchingService),
-                new CommandGroups.Resources.ResourceCommandGroup(_userService, _guildService, _resourceService.GetAllResources()),
-                new CommandGroups.Verses.DailyVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
-                new CommandGroups.Verses.RandomVerseCommandGroup(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
-                new CommandGroups.Verses.SearchCommandGroup(_userService, _guildService, _versionService, _bibleProviders),
+        private readonly List<CommandGroup> _commandGroups = [
+                new CommandGroups.Information.InformationCommandGroup(userService, guildService, versionService, frontendStatsService),
+                new CommandGroups.Settings.FormattingCommandGroup(userService, guildService),
+                new CommandGroups.Settings.VersionCommandGroup(userService, guildService, versionService, nameFetchingService),
+                new CommandGroups.Resources.ResourceCommandGroup(resourceService.GetAllResources()),
+                new CommandGroups.Verses.DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
+                new CommandGroups.Verses.RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
+                new CommandGroups.Verses.SearchCommandGroup(userService, guildService, versionService, [bgProvider, abProvider]),
                 new CommandGroups.Staff.StaffOnlyCommandGroup()
             ];
-        }
 
         /// <summary>
         /// Processes a message to locate verse references, outputting
@@ -103,7 +74,7 @@ namespace BibleBot.Backend.Controllers
 
                 if (potentialCommand.StartsWith(prefix))
                 {
-                    ICommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand.Substring(1));
+                    CommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand.Substring(1));
 
                     if (grp != null)
                     {
@@ -129,16 +100,16 @@ namespace BibleBot.Backend.Controllers
                         // but it would look visually cleaner
                         if (tokenizedBody.Length > 1)
                         {
-                            ICommand idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
+                            Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
 
                             if (idealCommand != null)
                             {
-                                response = await idealCommand.ProcessCommand(req, tokenizedBody.Skip(2).ToList());
+                                response = await idealCommand.ProcessCommand(req, [.. tokenizedBody.Skip(2)]);
                                 return response.OK ? Ok(response) : BadRequest(response);
                             }
                             else if (grp.Name is "resource" or "search")
                             {
-                                response = await grp.DefaultCommand.ProcessCommand(req, tokenizedBody.Skip(1).ToList());
+                                response = await grp.DefaultCommand.ProcessCommand(req, [.. tokenizedBody.Skip(1)]);
                                 return response.OK ? Ok(response) : BadRequest(response);
                             }
                         }
@@ -149,7 +120,7 @@ namespace BibleBot.Backend.Controllers
                     else
                     {
                         // TODO: this logic could be simplified with above TODO also
-                        ICommand cmd = _commandGroups.FirstOrDefault(grp => grp.Name == "info").Commands.FirstOrDefault(cmd => cmd.Name == potentialCommand.Substring(1));
+                        Command cmd = _commandGroups.FirstOrDefault(grp => grp.Name == "info").Commands.FirstOrDefault(cmd => cmd.Name == potentialCommand.Substring(1));
 
                         if (cmd != null)
                         {

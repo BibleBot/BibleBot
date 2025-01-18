@@ -18,63 +18,31 @@ using NodaTime;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
-    public class DailyVerseCommandGroup : ICommandGroup
+    public class DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
+                                        SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : CommandGroup
     {
-        public string Name { get; set; }
-        public bool IsStaffOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
-
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-        private readonly VersionService _versionService;
-
-        private readonly SpecialVerseProvider _spProvider;
-        private readonly List<IBibleProvider> _bibleProviders;
-
-        public DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                      SpecialVerseProvider spProvider, List<IBibleProvider> bibleProviders)
+        public override string Name { get => "dailyverse"; set { } }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override List<Command> Commands
         {
-            _userService = userService;
-            _guildService = guildService;
-            _versionService = versionService;
-
-            _spProvider = spProvider;
-            _bibleProviders = bibleProviders;
-
-            Name = "dailyverse";
-            IsStaffOnly = false;
-            Commands =
-            [
-                new DailyVerseUsage(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
-                new DailyVerseSet(_guildService),
-                new DailyVerseRole(_guildService),
-                new DailyVerseStatus(_guildService),
-                new DailyVerseClear(_guildService)
-            ];
-            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
+            get => [
+                new DailyVerseUsage(userService, guildService, versionService, svProvider, bibleProviders),
+                new DailyVerseSet(guildService),
+                new DailyVerseRole(guildService),
+                new DailyVerseStatus(guildService),
+                new DailyVerseClear(guildService)
+            ]; set { }
         }
 
         public class DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                               SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : ICommand
+                               SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : Command
         {
-            public string Name { get; set; } = "usage";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = true;
+            public override string Name { get => "usage"; set { } }
 
-            private readonly UserService _userService = userService;
-            private readonly GuildService _guildService = guildService;
-            private readonly VersionService _versionService = versionService;
-
-            private readonly SpecialVerseProvider _svProvider = svProvider;
-            private readonly List<IBibleProvider> _bibleProviders = bibleProviders;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                User idealUser = await _userService.Get(req.UserId);
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await userService.Get(req.UserId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 string version = "RSV";
                 bool verseNumbersEnabled = true;
@@ -94,9 +62,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
-                string votdRef = await _svProvider.GetDailyVerse();
-                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
+                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                string votdRef = await svProvider.GetDailyVerse();
+                IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
 
                 return new VerseResponse
                 {
@@ -111,20 +79,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class DailyVerseSet(GuildService guildService) : ICommand
+        public class DailyVerseSet(GuildService guildService) : Command
         {
-            public string Name { get; set; } = "set";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } =
-                [
-                    Permissions.MANAGE_GUILD
-                ];
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "set"; set { } }
 
-            private readonly GuildService _guildService = guildService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (req.IsDM)
                 {
@@ -150,7 +109,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                         if (((hour > -1 && hour < 24) || (minute > -1 && minute < 60)) && DateTimeZoneProviders.Tzdb.GetZoneOrNull(args[1]) != null)
                         {
-                            Guild idealGuild = await _guildService.Get(req.GuildId);
+                            Guild idealGuild = await guildService.Get(req.GuildId);
 
                             if (idealGuild != null)
                             {
@@ -161,7 +120,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                              .Set(guild => guild.DailyVerseIsThread, req.IsThread)
                                              .Set(guild => guild.DailyVerseLastSentDate, null);
 
-                                await _guildService.Update(req.GuildId, update);
+                                await guildService.Update(req.GuildId, update);
                             }
                             else
                             {
@@ -179,7 +138,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                     IsDM = req.IsDM
                                 };
 
-                                await _guildService.Create(newGuild);
+                                await guildService.Create(newGuild);
                             }
 
                             // For information on why CreateWebhook and RemoveWebhook can
@@ -223,20 +182,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class DailyVerseRole(GuildService guildService) : ICommand
+        public class DailyVerseRole(GuildService guildService) : Command
         {
-            public string Name { get; set; } = "role";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } =
-                [
-                    Permissions.MANAGE_GUILD
-                ];
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "role"; set { } }
 
-            private readonly GuildService _guildService = guildService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (req.IsDM)
                 {
@@ -252,7 +202,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 }
 
 
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
@@ -261,7 +211,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         UpdateDefinition<Guild> update = Builders<Guild>.Update
                                      .Set(guild => guild.DailyVerseRoleId, args[0]);
 
-                        await _guildService.Update(req.GuildId, update);
+                        await guildService.Update(req.GuildId, update);
 
                         return new CommandResponse
                         {
@@ -287,19 +237,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class DailyVerseStatus(GuildService guildService) : ICommand
+        public class DailyVerseStatus(GuildService guildService) : Command
         {
-            public string Name { get; set; } = "status";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = true;
+            public override string Name { get => "status"; set { } }
 
-            private readonly GuildService _guildService = guildService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
@@ -375,22 +319,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class DailyVerseClear(GuildService guildService) : ICommand
+        public class DailyVerseClear(GuildService guildService) : Command
         {
-            public string Name { get; set; } = "clear";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } =
-                [
-                    Permissions.MANAGE_GUILD
-                ];
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "clear"; set { } }
 
-            private readonly GuildService _guildService = guildService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
@@ -403,7 +338,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                  .Set(guild => guild.DailyVerseLastSentDate, null)
                                  .Set(guild => guild.DailyVerseRoleId, null);
 
-                    await _guildService.Update(req.GuildId, update);
+                    await guildService.Update(req.GuildId, update);
                 }
 
                 return new CommandResponse

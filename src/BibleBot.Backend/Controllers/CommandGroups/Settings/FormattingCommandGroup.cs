@@ -15,51 +15,31 @@ using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
-    public class FormattingCommandGroup : ICommandGroup
+    public class FormattingCommandGroup(UserService userService, GuildService guildService) : CommandGroup
     {
-        public string Name { get; set; }
-        public bool IsStaffOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
-
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-
-        public FormattingCommandGroup(UserService userService, GuildService guildService)
+        public override string Name { get => "formatting"; set { } }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override List<Command> Commands
         {
-            _userService = userService;
-            _guildService = guildService;
-
-            Name = "formatting";
-            IsStaffOnly = false;
-            Commands =
-            [
-                new FormattingUsage(_userService, _guildService),
-                new FormattingSetVerseNumbers(_userService),
-                new FormattingSetTitles(_userService),
-                new FormattingSetPagination(_userService),
-                new FormattingSetDisplayStyle(_userService),
-                new FormattingSetServerDisplayStyle(_guildService),
-                new FormattingSetIgnoringBrackets(_guildService)
-            ];
-            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
+            get => [
+                new FormattingUsage(userService, guildService),
+                new FormattingSetVerseNumbers(userService),
+                new FormattingSetTitles(userService),
+                new FormattingSetPagination(userService),
+                new FormattingSetDisplayStyle(userService),
+                new FormattingSetServerDisplayStyle(guildService),
+                new FormattingSetIgnoringBrackets(guildService)
+            ]; set { }
         }
 
-        public class FormattingUsage(UserService userService, GuildService guildService) : ICommand
+        public class FormattingUsage(UserService userService, GuildService guildService) : Command
         {
-            public string Name { get; set; } = "usage";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = true;
+            public override string Name { get => "usage"; set { } }
 
-            private readonly UserService _userService = userService;
-            private readonly GuildService _guildService = guildService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                User idealUser = await _userService.Get(req.UserId);
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await userService.Get(req.UserId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 string response = "<vncheck> Verse numbers are **<verseNumbers>**.\n" +
                                "<titlecheck> Titles are **<titles>**.\n" +
@@ -117,17 +97,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetVerseNumbers(UserService userService) : ICommand
+        public class FormattingSetVerseNumbers(UserService userService) : Command
         {
-            public string Name { get; set; } = "setversenumbers";
-            public string ArgumentsError { get; set; } = "Expected an `enable` or `disable` parameter.";
-            public int ExpectedArguments { get; set; } = 1;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "setversenumbers"; set { } }
+            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set { } }
 
-            private readonly UserService _userService = userService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] is not "enable" and not "disable")
                 {
@@ -142,14 +117,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                User idealUser = await _userService.Get(req.UserId);
+                User idealUser = await userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
                     UpdateDefinition<User> update = Builders<User>.Update
                                  .Set(user => user.VerseNumbersEnabled, args[0] is "enable" and not "disable");
 
-                    await _userService.Update(req.UserId, update);
+                    await userService.Update(req.UserId, update);
                 }
                 else
                 {
@@ -159,7 +134,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         VerseNumbersEnabled = args[0] is "enable" and not "disable"
                     };
 
-                    await _userService.Create(newUser);
+                    await userService.Create(newUser);
                 }
 
                 return new CommandResponse
@@ -174,17 +149,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetTitles(UserService userService) : ICommand
+        public class FormattingSetTitles(UserService userService) : Command
         {
-            public string Name { get; set; } = "settitles";
-            public string ArgumentsError { get; set; } = "Expected an `enable` or `disable` parameter.";
-            public int ExpectedArguments { get; set; } = 1;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "settitles"; set { } }
+            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set { } }
 
-            private readonly UserService _userService = userService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] is not "enable" and not "disable")
                 {
@@ -199,14 +169,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                User idealUser = await _userService.Get(req.UserId);
+                User idealUser = await userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
                     UpdateDefinition<User> update = Builders<User>.Update
                                  .Set(user => user.TitlesEnabled, args[0] is "enable" and not "disable");
 
-                    await _userService.Update(req.UserId, update);
+                    await userService.Update(req.UserId, update);
                 }
                 else
                 {
@@ -216,7 +186,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         TitlesEnabled = args[0] is "enable" and not "disable"
                     };
 
-                    await _userService.Create(newUser);
+                    await userService.Create(newUser);
                 }
 
                 return new CommandResponse
@@ -231,17 +201,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetPagination(UserService userService) : ICommand
+        public class FormattingSetPagination(UserService userService) : Command
         {
-            public string Name { get; set; } = "setpagination";
-            public string ArgumentsError { get; set; } = "Expected an `enable` or `disable` parameter.";
-            public int ExpectedArguments { get; set; } = 1;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "setpagination"; set { } }
+            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set { } }
 
-            private readonly UserService _userService = userService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] is not "enable" and not "disable")
                 {
@@ -256,14 +221,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                User idealUser = await _userService.Get(req.UserId);
+                User idealUser = await userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
                     UpdateDefinition<User> update = Builders<User>.Update
                                  .Set(user => user.PaginationEnabled, args[0] is "enable" and not "disable");
 
-                    await _userService.Update(req.UserId, update);
+                    await userService.Update(req.UserId, update);
                 }
                 else
                 {
@@ -273,7 +238,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         PaginationEnabled = args[0] is "enable" and not "disable"
                     };
 
-                    await _userService.Create(newUser);
+                    await userService.Create(newUser);
                 }
 
                 return new CommandResponse
@@ -288,17 +253,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetDisplayStyle(UserService userService) : ICommand
+        public class FormattingSetDisplayStyle(UserService userService) : Command
         {
-            public string Name { get; set; } = "setdisplay";
-            public string ArgumentsError { get; set; } = "Expected a parameter of `embed`, `code`, or `blockquote`.";
-            public int ExpectedArguments { get; set; } = 1;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "setdisplay"; set { } }
+            public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set { } }
 
-            private readonly UserService _userService = userService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] is not ("embed" or "code" or "blockquote"))
                 {
@@ -313,14 +273,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                User idealUser = await _userService.Get(req.UserId);
+                User idealUser = await userService.Get(req.UserId);
 
                 if (idealUser != null)
                 {
                     UpdateDefinition<User> update = Builders<User>.Update
                                  .Set(user => user.DisplayStyle, args[0]);
 
-                    await _userService.Update(req.UserId, update);
+                    await userService.Update(req.UserId, update);
                 }
                 else
                 {
@@ -330,7 +290,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         DisplayStyle = args[0]
                     };
 
-                    await _userService.Create(newUser);
+                    await userService.Create(newUser);
                 }
 
                 return new CommandResponse
@@ -345,20 +305,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetServerDisplayStyle(GuildService guildService) : ICommand
+        public class FormattingSetServerDisplayStyle(GuildService guildService) : Command
         {
-            public string Name { get; set; } = "setserverdisplay";
-            public string ArgumentsError { get; set; } = "Expected a parameter of `embed`, `code`, or `blockquote`.";
-            public int ExpectedArguments { get; set; } = 1;
-            public List<Permissions> PermissionsRequired { get; set; } =
-                [
-                    Permissions.MANAGE_GUILD
-                ];
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "setserverdisplay"; set { } }
+            public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set { } }
 
-            private readonly GuildService _guildService = guildService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args[0] is not ("embed" or "code" or "blockquote"))
                 {
@@ -373,14 +325,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     };
                 }
 
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
                     UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DisplayStyle, args[0]);
 
-                    await _guildService.Update(req.GuildId, update);
+                    await guildService.Update(req.GuildId, update);
                 }
                 else
                 {
@@ -391,7 +343,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         IsDM = req.IsDM
                     };
 
-                    await _guildService.Create(newGuild);
+                    await guildService.Create(newGuild);
                 }
 
                 return new CommandResponse
@@ -406,20 +358,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetIgnoringBrackets(GuildService guildService) : ICommand
+        public class FormattingSetIgnoringBrackets(GuildService guildService) : Command
         {
-            public string Name { get; set; } = "setbrackets";
-            public string ArgumentsError { get; set; } = "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`.";
-            public int ExpectedArguments { get; set; } = 1;
-            public List<Permissions> PermissionsRequired { get; set; } =
-                [
-                    Permissions.MANAGE_GUILD
-                ];
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "setbrackets"; set { } }
+            public override string ArgumentsError { get => "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`."; set { } }
 
-            private readonly GuildService _guildService = guildService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 List<string> acceptableBrackets = ["<>", "[]", "{}", "()"];
 
@@ -449,14 +393,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 }
 
 
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 if (idealGuild != null)
                 {
                     UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.IgnoringBrackets, args[0]);
 
-                    await _guildService.Update(req.GuildId, update);
+                    await guildService.Update(req.GuildId, update);
                 }
                 else
                 {
@@ -467,7 +411,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         IsDM = req.IsDM
                     };
 
-                    await _guildService.Create(newGuild);
+                    await guildService.Create(newGuild);
                 }
 
                 return new CommandResponse

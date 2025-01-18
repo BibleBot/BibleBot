@@ -26,13 +26,39 @@ namespace BibleBot.Models
         bool IsStaffOnly { get; set; }
 
         /// <summary>
-        /// A list of the <see cref="ICommand"/>s within this group.
+        /// A list of the <see cref="Command"/>s within this group.
         /// </summary>
-        List<ICommand> Commands { get; set; }
+        List<Command> Commands { get; set; }
 
         /// <summary>
-        /// The <see cref="ICommand"/> that should be used as a fallback if this group is invoked by itself.
+        /// The <see cref="Command"/> that should be used as a fallback if this group is invoked by itself.
         /// </summary>
-        ICommand DefaultCommand { get; set; }
+        Command DefaultCommand { get; set; }
+    }
+
+    /// <summary>
+    /// The base implementation of a CommandGroup.
+    /// </summary>
+    public abstract class CommandGroup : ICommandGroup
+    {
+        /// <summary>
+        /// The name of the command group.
+        /// </summary>
+        public abstract string Name { get; set; }
+
+        /// <summary>
+        /// Indicates whether the commands within this group are only for BibleBot staff.
+        /// </summary>
+        public virtual bool IsStaffOnly { get; set; } = false;
+
+        /// <summary>
+        /// A list of the <see cref="Command"/>s within this group.
+        /// </summary>
+        public abstract List<Command> Commands { get; set; }
+
+        /// <summary>
+        /// The <see cref="Command"/> that should be used as a fallback if this group is invoked by itself.
+        /// </summary>
+        public abstract Command DefaultCommand { get; set; }
     }
 }

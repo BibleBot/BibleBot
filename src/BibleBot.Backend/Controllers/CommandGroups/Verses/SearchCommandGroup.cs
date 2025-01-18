@@ -14,56 +14,22 @@ using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
-    public class SearchCommandGroup : ICommandGroup
+    public class SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
+                                    List<IBibleProvider> bibleProviders) : CommandGroup
     {
-        public string Name { get; set; }
-        public bool IsStaffOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
-
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-        private readonly VersionService _versionService;
-
-        private readonly List<IBibleProvider> _bibleProviders;
-
-        public SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                  List<IBibleProvider> bibleProviders)
-        {
-            _userService = userService;
-            _guildService = guildService;
-            _versionService = versionService;
-
-            _bibleProviders = bibleProviders;
-
-            Name = "search";
-            IsStaffOnly = false;
-            Commands =
-            [
-                new Search(_userService, _guildService, _versionService, _bibleProviders)
-            ];
-            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
-        }
+        public override string Name { get => "search"; set { } }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, bibleProviders)]; set { } }
 
         public class Search(UserService userService, GuildService guildService, VersionService versionService,
-                      List<IBibleProvider> bibleProviders) : ICommand
+                            List<IBibleProvider> bibleProviders) : Command
         {
-            public string Name { get; set; } = "usage";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = false;
+            public override string Name { get => "usage"; set { } }
 
-            private readonly UserService _userService = userService;
-            private readonly GuildService _guildService = guildService;
-            private readonly VersionService _versionService = versionService;
-
-            private readonly List<IBibleProvider> _bibleProviders = bibleProviders;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                User idealUser = await _userService.Get(req.UserId);
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await userService.Get(req.UserId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 string version = "RSV";
 
@@ -76,10 +42,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     version = idealGuild.Version;
                 }
 
-                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
+                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
                 string query = string.Join(" ", args);
 
-                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
+                IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
                 List<SearchResult> searchResults = await provider.Search(query, idealVersion);
 
                 if (searchResults.Count > 1)

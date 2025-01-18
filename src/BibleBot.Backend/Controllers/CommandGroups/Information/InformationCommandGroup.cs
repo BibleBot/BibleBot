@@ -14,55 +14,29 @@ using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Information
 {
-    public class InformationCommandGroup : ICommandGroup
+    public class InformationCommandGroup(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService) : CommandGroup
     {
-        public string Name { get; set; }
-        public bool IsStaffOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
-
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-        private readonly VersionService _versionService;
-        private readonly FrontendStatsService _frontendStatsService;
-
-        public InformationCommandGroup(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService)
+        public override string Name { get => "info"; set { } }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "biblebot"); set { } }
+        public override List<Command> Commands
         {
-            _userService = userService;
-            _guildService = guildService;
-            _versionService = versionService;
-            _frontendStatsService = frontendStatsService;
-
-            Name = "info";
-            IsStaffOnly = false;
-            Commands =
-            [
-                new InfoStats(_userService, _guildService, _versionService, _frontendStatsService),
+            get => [
+                new InfoStats(userService, guildService, versionService, frontendStatsService),
                 new InfoBibleBot(),
                 new InfoInvite()
-            ];
-            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "biblebot");
+            ]; set { }
         }
 
-        public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService) : ICommand
+        public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService) : Command
         {
-            public string Name { get; set; } = "stats";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = false; // anti-spam measure
+            public override string Name { get => "stats"; set { } }
 
-            private readonly UserService _userService = userService;
-            private readonly GuildService _guildService = guildService;
-            private readonly VersionService _versionService = versionService;
-            private readonly FrontendStatsService _frontendStatsService = frontendStatsService;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                long userPrefs = await _userService.GetCount();
-                long guildPrefs = await _guildService.GetCount();
-                long versions = await _versionService.GetCount();
-                FrontendStats frontendStats = (await _frontendStatsService.Get()).First();
+                long userPrefs = await userService.GetCount();
+                long guildPrefs = await guildService.GetCount();
+                long versions = await versionService.GetCount();
+                FrontendStats frontendStats = (await frontendStatsService.Get()).First();
 
                 string version = Utils.Version;
 
@@ -103,24 +77,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             }
         }
 
-        public class InfoBibleBot : ICommand
+        public class InfoBibleBot : Command
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public override string Name { get => "biblebot"; set { } }
 
-            public InfoBibleBot()
-            {
-                Name = "biblebot";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-            }
-
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 InternalEmbed embed = new()
                 {
@@ -184,24 +145,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             }
         }
 
-        public class InfoInvite : ICommand
+        public class InfoInvite : Command
         {
-            public string Name { get; set; }
-            public string ArgumentsError { get; set; }
-            public int ExpectedArguments { get; set; }
-            public List<Permissions> PermissionsRequired { get; set; }
-            public bool BotAllowed { get; set; }
+            public override string Name { get => "invite"; set { } }
 
-            public InfoInvite()
-            {
-                Name = "invite";
-                ArgumentsError = null;
-                ExpectedArguments = 0;
-                PermissionsRequired = null;
-                BotAllowed = true;
-            }
-
-            public Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
+            public override Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
             {
                 OK = true,
                 Pages =

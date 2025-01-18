@@ -15,57 +15,25 @@ using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
-    public class RandomVerseCommandGroup : ICommandGroup
+    public class RandomVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
+                                         SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : CommandGroup
     {
-        public string Name { get; set; }
-        public bool IsStaffOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
-
-        private readonly UserService _userService;
-        private readonly GuildService _guildService;
-        private readonly VersionService _versionService;
-
-        private readonly SpecialVerseProvider _spProvider;
-        private readonly List<IBibleProvider> _bibleProviders;
-
-        public RandomVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                       SpecialVerseProvider spProvider, List<IBibleProvider> bibleProviders)
+        public override string Name { get => "random"; set { } }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override List<Command> Commands
         {
-            _userService = userService;
-            _guildService = guildService;
-            _versionService = versionService;
-
-            _spProvider = spProvider;
-            _bibleProviders = bibleProviders;
-
-            Name = "random";
-            IsStaffOnly = false;
-            Commands =
-            [
-                new RandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders),
-                new TrulyRandomVerse(_userService, _guildService, _versionService, _spProvider, _bibleProviders)
-            ];
-            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
+            get => [
+                new RandomVerse(userService, guildService, versionService, svProvider, bibleProviders),
+                new TrulyRandomVerse(userService, guildService, versionService, svProvider, bibleProviders)
+            ]; set { }
         }
 
         public class RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                           SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : ICommand
+                           SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : Command
         {
-            public string Name { get; set; } = "usage";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = true;
+            public override string Name { get => "usage"; set { } }
 
-            private readonly UserService _userService = userService;
-            private readonly GuildService _guildService = guildService;
-            private readonly VersionService _versionService = versionService;
-
-            private readonly SpecialVerseProvider _svProvider = svProvider;
-            private readonly List<IBibleProvider> _bibleProviders = bibleProviders;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (req.GuildId == "238001909716353025")
                 {
@@ -80,8 +48,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                User idealUser = await _userService.Get(req.UserId);
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await userService.Get(req.UserId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 string version = "RSV";
                 bool verseNumbersEnabled = true;
@@ -101,9 +69,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
-                string randomRef = await _svProvider.GetRandomVerse();
-                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
+                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                string randomRef = await svProvider.GetRandomVerse();
+                IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
 
                 return new VerseResponse
                 {
@@ -119,22 +87,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
         }
 
         public class TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : ICommand
+                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : Command
         {
-            public string Name { get; set; } = "true";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = true;
+            public override string Name { get => "true"; set { } }
 
-            private readonly UserService _userService = userService;
-            private readonly GuildService _guildService = guildService;
-            private readonly VersionService _versionService = versionService;
-
-            private readonly SpecialVerseProvider _svProvider = svProvider;
-            private readonly List<IBibleProvider> _bibleProviders = bibleProviders;
-
-            public async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (req.GuildId == "238001909716353025")
                 {
@@ -149,8 +106,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     };
                 }
 
-                User idealUser = await _userService.Get(req.UserId);
-                Guild idealGuild = await _guildService.Get(req.GuildId);
+                User idealUser = await userService.Get(req.UserId);
+                Guild idealGuild = await guildService.Get(req.GuildId);
 
                 string version = "RSV";
                 bool verseNumbersEnabled = true;
@@ -169,9 +126,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
-                string trulyRandomRef = await _svProvider.GetTrulyRandomVerse();
-                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
+                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                string trulyRandomRef = await svProvider.GetTrulyRandomVerse();
+                IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
 
                 return new VerseResponse
                 {

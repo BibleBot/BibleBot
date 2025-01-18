@@ -18,11 +18,10 @@ namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/webhooks")]
+    [AutoValidateAntiforgeryToken]
     [ApiController]
     public class WebhooksController(GuildService guildService) : ControllerBase
     {
-        private readonly GuildService _guildService = guildService;
-
         /// <summary>
         /// Processes a message to add a webhook url to a Guild object.
         /// </summary>
@@ -48,7 +47,7 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            Guild idealGuild = await _guildService.Get(req.GuildId);
+            Guild idealGuild = await guildService.Get(req.GuildId);
 
             if (idealGuild != null)
             {
@@ -71,14 +70,14 @@ namespace BibleBot.Backend.Controllers
                              .Set(guild => guild.DailyVerseRoleId, null)
                              .Set(guild => guild.DailyVerseIsThread, false);
 
-                    await _guildService.Update(req.GuildId, update);
+                    await guildService.Update(req.GuildId, update);
                 }
                 else
                 {
                     UpdateDefinition<Guild> update = Builders<Guild>.Update
                                  .Set(guild => guild.DailyVerseWebhook, req.Body);
 
-                    await _guildService.Update(req.GuildId, update);
+                    await guildService.Update(req.GuildId, update);
                 }
 
                 return Ok(new CommandResponse

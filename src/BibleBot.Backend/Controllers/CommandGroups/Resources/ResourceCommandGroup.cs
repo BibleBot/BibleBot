@@ -10,48 +10,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BibleBot.Backend.Services;
 using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 {
-    public class ResourceCommandGroup : ICommandGroup
+    public class ResourceCommandGroup(List<IResource> resources) : CommandGroup
     {
-        public string Name { get; set; }
-        public bool IsStaffOnly { get; set; }
-        public ICommand DefaultCommand { get; set; }
-        public List<ICommand> Commands { get; set; }
+        public override string Name { get => "resource"; set { } }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override List<Command> Commands { get => [new ResourceUsage(resources)]; set { } }
 
-        private readonly List<IResource> _resources;
-
-        public ResourceCommandGroup(UserService userService, GuildService guildService, List<IResource> resources)
+        public class ResourceUsage(List<IResource> resources) : Command
         {
-            _resources = resources;
+            public override string Name { get => "usage"; set { } }
 
-            Name = "resource";
-            IsStaffOnly = false;
-            Commands =
-            [
-                new ResourceUsage(_resources),
-            ];
-            DefaultCommand = Commands.FirstOrDefault(cmd => cmd.Name == "usage");
-        }
-
-        public class ResourceUsage(List<IResource> resources) : ICommand
-        {
-            public string Name { get; set; } = "usage";
-            public string ArgumentsError { get; set; } = null;
-            public int ExpectedArguments { get; set; } = 0;
-            public List<Permissions> PermissionsRequired { get; set; } = null;
-            public bool BotAllowed { get; set; } = true;
-
-            private readonly List<IResource> _resources = resources;
-
-            public Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 if (args.Count > 0)
                 {
-                    IResource matchingResource = _resources.FirstOrDefault(resource => resource.CommandReference == args[0]);
+                    IResource matchingResource = resources.FirstOrDefault(resource => resource.CommandReference == args[0]);
 
                     if (matchingResource != null)
                     {
@@ -85,7 +62,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 }
 
                 // TODO(SeraphimRP): Use a proper fallback if possible.
-                IEnumerable<IResource> creeds = _resources.Where(res => res.Type == ResourceType.CREED);
+                IEnumerable<IResource> creeds = resources.Where(res => res.Type == ResourceType.CREED);
                 StringBuilder creedsList = new();
 
                 foreach (IResource creed in creeds)
@@ -93,7 +70,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     creedsList.Append($"**{creed.CommandReference}** - {creed.Title}\n");
                 }
 
-                IEnumerable<IResource> catechisms = _resources.Where(res => res.Type == ResourceType.CATECHISM);
+                IEnumerable<IResource> catechisms = resources.Where(res => res.Type == ResourceType.CATECHISM);
                 StringBuilder catechismsList = new();
 
                 foreach (IResource catechism in catechisms)
@@ -101,7 +78,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     catechismsList.Append($"**{catechism.CommandReference}** - {catechism.Title}\n");
                 }
 
-                IEnumerable<IResource> canons = _resources.Where(res => res.Type == ResourceType.CANONS);
+                IEnumerable<IResource> canons = resources.Where(res => res.Type == ResourceType.CANONS);
                 StringBuilder canonsList = new();
 
                 foreach (IResource canon in canons)

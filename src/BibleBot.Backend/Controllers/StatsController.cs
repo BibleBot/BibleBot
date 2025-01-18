@@ -19,10 +19,10 @@ namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/stats")]
+    [AutoValidateAntiforgeryToken]
     [ApiController]
     public class StatsController(FrontendStatsService frontendStatsService) : ControllerBase
     {
-        private readonly FrontendStatsService _frontendStatsService = frontendStatsService;
 
         /// <summary>
         /// Processes a message to update stats from frontend.
@@ -49,7 +49,7 @@ namespace BibleBot.Backend.Controllers
                 };
             }
 
-            FrontendStats stats = (await _frontendStatsService.Get()).First();
+            FrontendStats stats = (await frontendStatsService.Get()).First();
             string[] fields = req.Body.Split("||");
 
             if (stats != null)
@@ -61,11 +61,11 @@ namespace BibleBot.Backend.Controllers
                              .Set(stats => stats.ChannelCount, int.Parse(fields[3]))
                              .Set(stats => stats.FrontendRepoCommitHash, fields[4]);
 
-                await _frontendStatsService.Update(stats, update);
+                await frontendStatsService.Update(stats, update);
             }
             else
             {
-                await _frontendStatsService.Create(new FrontendStats
+                await frontendStatsService.Create(new FrontendStats
                 {
                     ShardCount = int.Parse(fields[0]),
                     ServerCount = int.Parse(fields[1]),

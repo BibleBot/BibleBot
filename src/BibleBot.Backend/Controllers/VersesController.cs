@@ -21,15 +21,12 @@ namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/verses")]
+    [AutoValidateAntiforgeryToken]
     [ApiController]
-    public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VersionService versionService, NameFetchingService nameFetchingService,
-                            BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
+    public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
+                                          VersionService versionService, NameFetchingService nameFetchingService,
+                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
     {
-        private readonly UserService _userService = userService;
-        private readonly GuildService _guildService = guildService;
-        private readonly ParsingService _parsingService = parsingService;
-        private readonly VersionService _versionService = versionService;
-        private readonly NameFetchingService _nameFetchingService = nameFetchingService;
 
         private readonly List<IBibleProvider> _bibleProviders =
             [
@@ -72,7 +69,7 @@ namespace BibleBot.Backend.Controllers
             List<string> ignoringBrackets = ["<>"];
             bool paginateVerses = false;
 
-            Guild idealGuild = await _guildService.Get(req.GuildId);
+            Guild idealGuild = await guildService.Get(req.GuildId);
             if (idealGuild != null)
             {
                 displayStyle = idealGuild.DisplayStyle ?? displayStyle;
@@ -83,14 +80,14 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            string body = _parsingService.PurifyBody(ignoringBrackets, req.Body);
-            Tuple<string, List<BookSearchResult>> tuple = _parsingService.GetBooksInString(_nameFetchingService.GetBookNames(), _nameFetchingService.GetDefaultBookNames(), body);
+            string body = parsingService.PurifyBody(ignoringBrackets, req.Body);
+            Tuple<string, List<BookSearchResult>> tuple = parsingService.GetBooksInString(nameFetchingService.GetBookNames(), nameFetchingService.GetDefaultBookNames(), body);
 
             string version = "RSV";
             bool verseNumbersEnabled = true;
             bool titlesEnabled = true;
 
-            User idealUser = await _userService.Get(req.UserId);
+            User idealUser = await userService.Get(req.UserId);
 
             if (idealUser != null && !req.IsBot)
             {
@@ -108,14 +105,14 @@ namespace BibleBot.Backend.Controllers
                 version = idealGuild.Version;
             }
 
-            Models.Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
-            List<Models.Version> versions = await _versionService.Get();
+            Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+            List<Models.Version> versions = await versionService.Get();
 
             List<Reference> references = [];
 
             foreach (BookSearchResult bsr in tuple.Item2)
             {
-                Reference reference = _parsingService.GenerateReference(tuple.Item1, bsr, idealVersion, versions);
+                Reference reference = parsingService.GenerateReference(tuple.Item1, bsr, idealVersion, versions);
 
                 if (reference == null)
                 {
