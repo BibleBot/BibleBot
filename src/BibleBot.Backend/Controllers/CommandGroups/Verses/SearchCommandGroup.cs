@@ -121,14 +121,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         return false;
                     });
 
-                    if (searchResults.Count == 0)
+                    if (searchResults.Count == 0 && potentialSubset != SubsetFlag.INVALID)
                     {
                         return new CommandResponse
                         {
                             OK = false,
                             Pages =
                             [
-                                Utils.GetInstance().Embedify("/search", "Your search query produced no results. Your version lacks the books belonging to the subset.", true)
+                                Utils.GetInstance().Embedify("/search", "Your search query produced no results. Does your version support the subset you are searching? (`/versioninfo`)", true)
                             ],
                             LogStatement = "/search"
                         };
