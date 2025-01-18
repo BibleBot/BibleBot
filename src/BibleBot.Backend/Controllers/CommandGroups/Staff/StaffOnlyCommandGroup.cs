@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,14 +17,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
 {
     public class StaffOnlyCommandGroup : CommandGroup
     {
-        public override string Name { get => "staff"; set { } }
-        public override bool IsStaffOnly { get => true; set { } }
-        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "announce"); set { } }
-        public override List<Command> Commands { get => [new StaffAnnounce(), new StaffPermissionsCheck()]; set { } }
+        public override string Name { get => "staff"; set => throw new NotImplementedException(); }
+        public override bool IsStaffOnly { get => true; set => throw new NotImplementedException(); }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "announce"); set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new StaffAnnounce(), new StaffPermissionsCheck()]; set => throw new NotImplementedException(); }
 
         public class StaffAnnounce : Command
         {
-            public override string Name { get => "announce"; set { } }
+            public override string Name { get => "announce"; set => throw new NotImplementedException(); }
 
             public override Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
             {
@@ -39,7 +40,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
 
         public class StaffPermissionsCheck : Command
         {
-            public override string Name { get => "permscheck"; set { } }
+            public override string Name { get => "permscheck"; set => throw new NotImplementedException(); }
 
             public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {

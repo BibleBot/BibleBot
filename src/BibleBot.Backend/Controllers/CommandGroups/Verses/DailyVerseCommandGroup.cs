@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -21,8 +22,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
     public class DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
                                         SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : CommandGroup
     {
-        public override string Name { get => "dailyverse"; set { } }
-        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override string Name { get => "dailyverse"; set => throw new NotImplementedException(); }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
@@ -31,13 +32,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 new DailyVerseRole(guildService),
                 new DailyVerseStatus(guildService),
                 new DailyVerseClear(guildService)
-            ]; set { }
+            ]; set => throw new NotImplementedException();
         }
 
         public class DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : Command
         {
-            public override string Name { get => "usage"; set { } }
+            public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -62,7 +63,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
                 string votdRef = await svProvider.GetDailyVerse();
                 IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
 
@@ -81,7 +82,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
         public class DailyVerseSet(GuildService guildService) : Command
         {
-            public override string Name { get => "set"; set { } }
+            public override string Name { get => "set"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -184,7 +185,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
         public class DailyVerseRole(GuildService guildService) : Command
         {
-            public override string Name { get => "role"; set { } }
+            public override string Name { get => "role"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -239,7 +240,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
         public class DailyVerseStatus(GuildService guildService) : Command
         {
-            public override string Name { get => "status"; set { } }
+            public override string Name { get => "status"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -321,7 +322,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
         public class DailyVerseClear(GuildService guildService) : Command
         {
-            public override string Name { get => "clear"; set { } }
+            public override string Name { get => "clear"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {

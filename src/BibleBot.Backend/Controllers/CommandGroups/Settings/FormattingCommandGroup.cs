@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,8 +18,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
     public class FormattingCommandGroup(UserService userService, GuildService guildService) : CommandGroup
     {
-        public override string Name { get => "formatting"; set { } }
-        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override string Name { get => "formatting"; set => throw new NotImplementedException(); }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
@@ -29,12 +30,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new FormattingSetDisplayStyle(userService),
                 new FormattingSetServerDisplayStyle(guildService),
                 new FormattingSetIgnoringBrackets(guildService)
-            ]; set { }
+            ]; set => throw new NotImplementedException();
         }
 
         public class FormattingUsage(UserService userService, GuildService guildService) : Command
         {
-            public override string Name { get => "usage"; set { } }
+            public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -99,8 +100,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class FormattingSetVerseNumbers(UserService userService) : Command
         {
-            public override string Name { get => "setversenumbers"; set { } }
-            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set { } }
+            public override string Name { get => "setversenumbers"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -151,8 +152,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class FormattingSetTitles(UserService userService) : Command
         {
-            public override string Name { get => "settitles"; set { } }
-            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set { } }
+            public override string Name { get => "settitles"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -203,8 +204,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class FormattingSetPagination(UserService userService) : Command
         {
-            public override string Name { get => "setpagination"; set { } }
-            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set { } }
+            public override string Name { get => "setpagination"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -255,8 +256,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class FormattingSetDisplayStyle(UserService userService) : Command
         {
-            public override string Name { get => "setdisplay"; set { } }
-            public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set { } }
+            public override string Name { get => "setdisplay"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -307,8 +308,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class FormattingSetServerDisplayStyle(GuildService guildService) : Command
         {
-            public override string Name { get => "setserverdisplay"; set { } }
-            public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set { } }
+            public override string Name { get => "setserverdisplay"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -360,8 +361,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class FormattingSetIgnoringBrackets(GuildService guildService) : Command
         {
-            public override string Name { get => "setbrackets"; set { } }
-            public override string ArgumentsError { get => "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`."; set { } }
+            public override string Name { get => "setbrackets"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {

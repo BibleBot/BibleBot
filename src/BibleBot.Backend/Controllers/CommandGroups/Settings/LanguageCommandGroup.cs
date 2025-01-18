@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
     public class LanguageCommandGroup(UserService userService, GuildService guildService, LanguageService languageService) : CommandGroup
     {
-        public override string Name { get => "language"; set { } }
-        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override string Name { get => "language"; set => throw new NotImplementedException(); }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
@@ -27,12 +28,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new LanguageSet(userService, languageService),
                 new LanguageSetServer( guildService, languageService),
                 new LanguageList(languageService)
-            ]; set { }
+            ]; set => throw new NotImplementedException();
         }
 
         public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService) : Command
         {
-            public override string Name { get => "usage"; set { } }
+            public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -85,8 +86,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class LanguageSet(UserService userService, LanguageService languageService) : Command
         {
-            public override string Name { get => "set"; set { } }
-            public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set { } }
+            public override string Name { get => "set"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -140,8 +141,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class LanguageSetServer(GuildService guildService, LanguageService languageService) : Command
         {
-            public override string Name { get => "setserver"; set { } }
-            public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set { } }
+            public override string Name { get => "setserver"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -196,7 +197,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class LanguageList(LanguageService languageService) : Command
         {
-            public override string Name { get => "list"; set { } }
+            public override string Name { get => "list"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {

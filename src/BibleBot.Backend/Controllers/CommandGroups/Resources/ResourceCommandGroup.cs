@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,13 +17,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 {
     public class ResourceCommandGroup(List<IResource> resources) : CommandGroup
     {
-        public override string Name { get => "resource"; set { } }
-        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
-        public override List<Command> Commands { get => [new ResourceUsage(resources)]; set { } }
+        public override string Name { get => "resource"; set => throw new NotImplementedException(); }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new ResourceUsage(resources)]; set => throw new NotImplementedException(); }
 
         public class ResourceUsage(List<IResource> resources) : Command
         {
-            public override string Name { get => "usage"; set { } }
+            public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
             public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {

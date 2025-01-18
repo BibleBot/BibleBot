@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,14 +18,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
     public class SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
                                     List<IBibleProvider> bibleProviders) : CommandGroup
     {
-        public override string Name { get => "search"; set { } }
-        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
-        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, bibleProviders)]; set { } }
+        public override string Name { get => "search"; set => throw new NotImplementedException(); }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, bibleProviders)]; set => throw new NotImplementedException(); }
 
         public class Search(UserService userService, GuildService guildService, VersionService versionService,
                             List<IBibleProvider> bibleProviders) : Command
         {
-            public override string Name { get => "usage"; set { } }
+            public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -42,7 +43,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     version = idealGuild.Version;
                 }
 
-                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
                 string query = string.Join(" ", args);
 
                 IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
@@ -54,7 +55,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     int maxResultsPerPage = 6;
                     List<string> referencesUsed = [];
 
-                    int totalPages = (int)System.Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
+                    int totalPages = (int)Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
 
                     if (totalPages > 100)
                     {

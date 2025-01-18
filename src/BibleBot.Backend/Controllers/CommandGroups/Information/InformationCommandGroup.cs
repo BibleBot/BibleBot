@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,20 +17,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 {
     public class InformationCommandGroup(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService) : CommandGroup
     {
-        public override string Name { get => "info"; set { } }
-        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "biblebot"); set { } }
+        public override string Name { get => "info"; set => throw new NotImplementedException(); }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "biblebot"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
                 new InfoStats(userService, guildService, versionService, frontendStatsService),
                 new InfoBibleBot(),
                 new InfoInvite()
-            ]; set { }
+            ]; set => throw new NotImplementedException();
         }
 
         public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService) : Command
         {
-            public override string Name { get => "stats"; set { } }
+            public override string Name { get => "stats"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -79,7 +80,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
         public class InfoBibleBot : Command
         {
-            public override string Name { get => "biblebot"; set { } }
+            public override string Name { get => "biblebot"; set => throw new NotImplementedException(); }
 
             public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -147,7 +148,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
         public class InfoInvite : Command
         {
-            public override string Name { get => "invite"; set { } }
+            public override string Name { get => "invite"; set => throw new NotImplementedException(); }
 
             public override Task<IResponse> ProcessCommand(Request req, List<string> args) => Task.FromResult<IResponse>(new CommandResponse
             {

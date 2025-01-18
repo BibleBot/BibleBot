@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
     public class VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService) : CommandGroup
     {
-        public override string Name { get => "version"; set { } }
-        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set { } }
+        public override string Name { get => "version"; set => throw new NotImplementedException(); }
+        public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
@@ -29,19 +30,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new VersionInfo(userService, guildService, versionService),
                 new VersionList(versionService),
                 new VersionBookList(userService, guildService, versionService, nameFetchingService)
-            ]; set { }
+            ]; set => throw new NotImplementedException();
         }
 
         public class VersionUsage(UserService userService, GuildService guildService, VersionService versionService) : Command
         {
-            public override string Name { get => "usage"; set { } }
+            public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 User idealUser = await userService.Get(req.UserId);
                 Guild idealGuild = await guildService.Get(req.GuildId);
 
-                Version defaultVersion = await versionService.Get("RSV");
+                Models.Version defaultVersion = await versionService.Get("RSV");
 
                 string response = "Your preferred version is set to **<version>**.\n" +
                                "The server's preferred version is set to **<gversion>**.\n\n" +
@@ -54,7 +55,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    Version idealUserVersion = await versionService.Get(idealUser.Version);
+                    Models.Version idealUserVersion = await versionService.Get(idealUser.Version);
 
                     if (idealUserVersion != null)
                     {
@@ -64,7 +65,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealGuild != null)
                 {
-                    Version idealGuildVersion = await versionService.Get(idealGuild.Version);
+                    Models.Version idealGuildVersion = await versionService.Get(idealGuild.Version);
 
                     if (idealGuildVersion != null)
                     {
@@ -89,12 +90,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class VersionSet(UserService userService, VersionService versionService) : Command
         {
-            public override string Name { get => "set"; set { } }
-            public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set { } }
+            public override string Name { get => "set"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                Version idealVersion = await versionService.Get(args[0]);
+                Models.Version idealVersion = await versionService.Get(args[0]);
 
                 if (idealVersion != null)
                 {
@@ -143,12 +144,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class VersionSetServer(GuildService guildService, VersionService versionService) : Command
         {
-            public override string Name { get => "setserver"; set { } }
-            public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set { } }
+            public override string Name { get => "setserver"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                Version idealVersion = await versionService.Get(args[0]);
+                Models.Version idealVersion = await versionService.Get(args[0]);
 
                 if (idealVersion != null)
                 {
@@ -205,8 +206,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class VersionInfo(UserService userService, GuildService guildService, VersionService versionService) : Command
         {
-            public override string Name { get => "info"; set { } }
-            public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set { } }
+            public override string Name { get => "info"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -233,7 +234,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                 }
 
-                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
 
                 if (idealVersion != null)
                 {
@@ -279,11 +280,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class VersionList(VersionService versionService) : Command
         {
-            public override string Name { get => "list"; set { } }
+            public override string Name { get => "list"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                List<Version> versions = await versionService.Get();
+                List<Models.Version> versions = await versionService.Get();
                 versions.Sort((x, y) => x.Name.CompareTo(y.Name));
 
                 List<string> versionsUsed = [];
@@ -293,14 +294,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 // We need to add a page here because the for loop won't hit the last one otherwise.
                 // This also prevents situations where the Ceiling() result might equal 0.
-                int totalPages = (int)System.Math.Ceiling((decimal)(versions.Count / maxResultsPerPage)) + 1;
+                int totalPages = (int)Math.Ceiling((decimal)(versions.Count / maxResultsPerPage)) + 1;
 
                 for (int i = 0; i < totalPages; i++)
                 {
                     int count = 0;
                     StringBuilder versionList = new();
 
-                    foreach (Version version in versions)
+                    foreach (Models.Version version in versions)
                     {
                         if (count < maxResultsPerPage)
                         {
@@ -328,8 +329,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
         public class VersionBookList(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService) : Command
         {
-            public override string Name { get => "booklist"; set { } }
-            public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set { } }
+            public override string Name { get => "booklist"; set => throw new NotImplementedException(); }
+            public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
@@ -356,7 +357,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                 }
 
-                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
 
                 if (idealVersion != null)
                 {
