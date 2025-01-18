@@ -21,7 +21,6 @@ namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/verses")]
-    [AutoValidateAntiforgeryToken]
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
                                           VersionService versionService, NameFetchingService nameFetchingService,

@@ -19,7 +19,6 @@ namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/stats")]
-    [AutoValidateAntiforgeryToken]
     [ApiController]
     public class StatsController(FrontendStatsService frontendStatsService) : ControllerBase
     {

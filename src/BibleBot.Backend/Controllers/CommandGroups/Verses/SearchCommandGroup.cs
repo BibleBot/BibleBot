@@ -12,18 +12,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using Serilog;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
     public class SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                    List<IBibleProvider> bibleProviders) : CommandGroup
+                                    NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders) : CommandGroup
     {
         public override string Name { get => "search"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
-        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, bibleProviders)]; set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, nameFetchingService, bibleProviders)]; set => throw new NotImplementedException(); }
+
+        public enum SubsetFlag
+        {
+            INVALID = 0,
+            OT_ONLY = 1,
+            NT_ONLY = 2,
+            DEU_ONLY = 3
+        }
 
         public class Search(UserService userService, GuildService guildService, VersionService versionService,
-                            List<IBibleProvider> bibleProviders) : Command
+                            NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -31,6 +40,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             {
                 User idealUser = await userService.Get(req.UserId);
                 Guild idealGuild = await guildService.Get(req.GuildId);
+                SubsetFlag potentialSubset = SubsetFlag.INVALID;
 
                 string version = "RSV";
 
@@ -43,17 +53,86 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     version = idealGuild.Version;
                 }
 
+                if (args[0].StartsWith("subset:"))
+                {
+                    string[] subsetSplit = args[0].Split(":");
+
+                    try
+                    {
+                        potentialSubset = (SubsetFlag)int.Parse(subsetSplit[1]);
+                    }
+                    catch
+                    {
+                        Log.Warning("Received an invalid subset, ignoring...");
+                    }
+
+                    args.RemoveAt(0);
+                }
+
                 Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+
+                if (idealVersion.Source != "bg" && potentialSubset != SubsetFlag.INVALID)
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify("/search", "This version is not eligible for search subsets yet. Make sure you're using a version of source `bg` (see `/versioninfo`).", true)
+                        ],
+                        LogStatement = "/search"
+                    };
+                }
+
                 string query = string.Join(" ", args);
 
                 IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
                 List<SearchResult> searchResults = await provider.Search(query, idealVersion);
+
 
                 if (searchResults.Count > 1)
                 {
                     List<InternalEmbed> pages = [];
                     int maxResultsPerPage = 6;
                     List<string> referencesUsed = [];
+
+                    Dictionary<BookCategories, Dictionary<string, string>> categoryMapping = potentialSubset != SubsetFlag.INVALID ? await nameFetchingService.GetBibleGatewayVersionBookList(idealVersion) : null;
+
+                    searchResults.RemoveAll(searchResult =>
+                    {
+                        if (potentialSubset != SubsetFlag.INVALID)
+                        {
+                            if ((!categoryMapping.ContainsKey(BookCategories.OldTestament) && potentialSubset == SubsetFlag.OT_ONLY) ||
+                                (!categoryMapping.ContainsKey(BookCategories.NewTestament) && potentialSubset == SubsetFlag.NT_ONLY) ||
+                                (!categoryMapping.ContainsKey(BookCategories.Deuterocanon) && potentialSubset == SubsetFlag.DEU_ONLY))
+                            {
+                                return true;
+                            }
+
+                            string bookName = searchResult.Reference.Split(" ")[0];
+
+                            bool notOT = categoryMapping.ContainsKey(BookCategories.OldTestament) && potentialSubset == SubsetFlag.OT_ONLY && !categoryMapping[BookCategories.OldTestament].ContainsValue(bookName);
+                            bool notNT = categoryMapping.ContainsKey(BookCategories.NewTestament) && potentialSubset == SubsetFlag.NT_ONLY && !categoryMapping[BookCategories.NewTestament].ContainsValue(bookName);
+                            bool notDEU = categoryMapping.ContainsKey(BookCategories.Deuterocanon) && potentialSubset == SubsetFlag.DEU_ONLY && !categoryMapping[BookCategories.Deuterocanon].ContainsValue(bookName);
+
+                            return notOT || notNT || notDEU;
+                        }
+
+                        return false;
+                    });
+
+                    if (searchResults.Count == 0)
+                    {
+                        return new CommandResponse
+                        {
+                            OK = false,
+                            Pages =
+                            [
+                                Utils.GetInstance().Embedify("/search", "Your search query produced no results. Your version lacks the books belonging to the subset.", true)
+                            ],
+                            LogStatement = "/search"
+                        };
+                    }
 
                     int totalPages = (int)Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
 
@@ -103,7 +182,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     {
                         OK = true,
                         Pages = pages,
-                        LogStatement = $"/search {query}"
+                        LogStatement = $"/search {(potentialSubset != SubsetFlag.INVALID ? $"subset:{potentialSubset} " : "")}{query}"
                     };
                 }
                 else

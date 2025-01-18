@@ -20,7 +20,6 @@ namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/commands")]
-    [AutoValidateAntiforgeryToken]
     [ApiController]
     public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
                                     FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
@@ -32,7 +31,7 @@ namespace BibleBot.Backend.Controllers
                 new CommandGroups.Resources.ResourceCommandGroup(resourceService.GetAllResources()),
                 new CommandGroups.Verses.DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
                 new CommandGroups.Verses.RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
-                new CommandGroups.Verses.SearchCommandGroup(userService, guildService, versionService, [bgProvider, abProvider]),
+                new CommandGroups.Verses.SearchCommandGroup(userService, guildService, versionService, nameFetchingService, [bgProvider, abProvider]),
                 new CommandGroups.Staff.StaffOnlyCommandGroup()
             ];
 

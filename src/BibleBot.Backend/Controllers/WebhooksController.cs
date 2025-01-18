@@ -18,7 +18,6 @@ namespace BibleBot.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/webhooks")]
-    [AutoValidateAntiforgeryToken]
     [ApiController]
     public class WebhooksController(GuildService guildService) : ControllerBase
     {

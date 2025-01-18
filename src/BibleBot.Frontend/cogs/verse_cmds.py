@@ -22,10 +22,22 @@ class VerseCommands(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(description="Search for verses by keyword.")
-    async def search(self, inter: CommandInteraction, query: str):
+    async def search(
+        self,
+        inter: CommandInteraction,
+        query: str,
+        subset: str = commands.Param(
+            choices={
+                "Old Testament only": "1",
+                "New Testament only": "2",
+                "Apocrypha/Deuterocanon only": "3",
+            },
+            default="0",
+        ),
+    ):
         await inter.response.defer()
         resp = await backend.submit_command(
-            inter.channel, inter.author, f"+search {query}"
+            inter.channel, inter.author, f"+search subset:{subset} {query}"
         )
 
         if isinstance(resp, list):
