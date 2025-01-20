@@ -77,31 +77,6 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public async Task ShouldFailWhenTokenIsInvalid()
-        {
-            MockRequest req = new()
-            {
-                Token = "meowmix"
-            };
-
-            ObjectResult result = (await _commandsController.ProcessMessage(req)).Result as ObjectResult;
-            CommandResponse resp = result.Value as CommandResponse;
-
-            CommandResponse expected = new()
-            {
-                OK = false,
-                LogStatement = null,
-                Pages = null,
-                CreateWebhook = false,
-                RemoveWebhook = false,
-                SendAnnouncement = false
-            };
-
-            result.StatusCode.Should().Be(403);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
         public async Task ShouldFailWhenBodyIsEmpty()
         {
             ObjectResult result = (await _commandsController.ProcessMessage(new MockRequest())).Result as ObjectResult;

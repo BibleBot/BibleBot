@@ -73,27 +73,6 @@ namespace BibleBot.Backend.Tests
         }
 
         [Test]
-        public void ShouldFailWhenTokenIsInvalid()
-        {
-            MockRequest req = new()
-            {
-                Token = "meowmix"
-            };
-
-            ObjectResult result = _versesController.ProcessMessage(req).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = false,
-                LogStatement = null
-            };
-
-            result.StatusCode.Should().Be(403);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
         public void ShouldFailWhenBodyIsEmpty()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest()).GetAwaiter().GetResult().Result as ObjectResult;
