@@ -171,9 +171,9 @@ async def send_stats(bot: disnake.AutoShardedClient):
         async with session.post(
             f"{endpoint}/stats/process",
             json={
-                "Token": token,
                 "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}||{repo_sha}",
             },
+            headers={"Authorization": token},
         ) as resp:
             if resp.status != 200:
                 logger.error("couldn't submit stats to backend")

@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using BibleBot.Backend.Middleware;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -54,6 +55,8 @@ namespace BibleBot.Backend
             NameFetchingService nameFetchingService = new();
             services.AddSingleton(nameFetchingService);
 
+            services.AddResponseCaching();
+            services.AddResponseCompression();
             services.AddControllers();
 
             // Run the NameFetchingService on startup without async.
@@ -105,8 +108,12 @@ namespace BibleBot.Backend
 
             app.UseSerilogRequestLogging();
 
+            app.UseResponseCaching();
+            app.UseResponseCompression();
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseHouseAuthorization();
 
             app.UseRouting();
 

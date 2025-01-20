@@ -42,27 +42,12 @@ namespace BibleBot.Backend.Controllers
         /// <param name="req">A <see cref="Request" /> object</param>
         /// <response code="200">Returns the corresponding text</response>
         /// <response code="400">If <paramref name="req"/> is invalid</response>
-        /// <response code="403">If <paramref name="req"/>.Token is invalid</response>
         [Route("process")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
-            if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
-            {
-                return new ObjectResult(new CommandResponse
-                {
-                    OK = false,
-                    Pages = null,
-                    LogStatement = null
-                })
-                {
-                    StatusCode = 403
-                };
-            }
-
             IResponse response;
             string[] tokenizedBody = req.Body.Split(" ");
 

@@ -97,17 +97,15 @@ class EventListeners(commands.Cog):
         await update_discordbotlist(self.bot)
 
         # yeet the webhook from the database, if applicable
-        reqbody = {
-            "GuildId": str(guild.id),
-            "Body": "delete",
-            "Token": os.environ.get("ENDPOINT_TOKEN"),
-        }
+        reqbody = {"GuildId": str(guild.id), "Body": "delete"}
 
         endpoint = os.environ.get("ENDPOINT")
 
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                f"{endpoint}/webhooks/process", json=reqbody
+                f"{endpoint}/webhooks/process",
+                json=reqbody,
+                headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
             ) as resp:
                 if resp.status == 200:
                     logger.info(

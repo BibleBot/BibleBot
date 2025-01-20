@@ -60,13 +60,16 @@ async def submit_command(
         "IsThread": isThread,
         "IsDM": isDM,
         "Body": body,
-        "Token": os.environ.get("ENDPOINT_TOKEN"),
     }
 
     endpoint = os.environ.get("ENDPOINT")
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"{endpoint}/commands/process", json=reqbody) as resp:
+        async with session.post(
+            f"{endpoint}/commands/process",
+            json=reqbody,
+            headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
+        ) as resp:
             respBody = await resp.json()
 
             if respBody["ok"]:
@@ -127,7 +130,13 @@ async def submit_command(
                             reqbody["Body"] = webhook_service_body
                             async with aiohttp.ClientSession() as subsession:
                                 async with subsession.post(
-                                    f"{endpoint}/webhooks/process", json=reqbody
+                                    f"{endpoint}/webhooks/process",
+                                    json=reqbody,
+                                    headers={
+                                        "Authorization": os.environ.get(
+                                            "ENDPOINT_TOKEN"
+                                        )
+                                    },
                                 ) as subresp:
                                     if subresp.status != 200:
                                         logger.error("couldn't submit webhook")
@@ -232,13 +241,16 @@ async def submit_command_raw(
         "IsThread": isThread,
         "IsDM": isDM,
         "Body": body,
-        "Token": os.environ.get("ENDPOINT_TOKEN"),
     }
 
     endpoint = os.environ.get("ENDPOINT")
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"{endpoint}/commands/process", json=reqbody) as resp:
+        async with session.post(
+            f"{endpoint}/commands/process",
+            json=reqbody,
+            headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
+        ) as resp:
             respBody = await resp.json()
             return respBody
 
@@ -282,13 +294,16 @@ async def submit_verse(
         "IsThread": isThread,
         "IsDM": isDM,
         "Body": body,
-        "Token": os.environ.get("ENDPOINT_TOKEN"),
     }
 
     endpoint = os.environ.get("ENDPOINT")
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"{endpoint}/verses/process", json=reqbody) as resp:
+        async with session.post(
+            f"{endpoint}/verses/process",
+            json=reqbody,
+            headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
+        ) as resp:
             respBody = await resp.json()
 
             if respBody["logStatement"]:

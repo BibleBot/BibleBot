@@ -6,7 +6,6 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
@@ -29,25 +28,12 @@ namespace BibleBot.Backend.Controllers
         /// <param name="req">A <see cref="Request" /> object</param>
         /// <response code="200">Returns BibleBot.Backend.CommandResponse</response>
         /// <response code="400">If <paramref name="req"/> is invalid</response>
-        /// <response code="403">If <paramref name="req"/>.Token is invalid</response>
         [Route("process")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<CommandResponse>> ProcessMessage([FromBody] Request req)
         {
-            if (req.Token != Environment.GetEnvironmentVariable("ENDPOINT_TOKEN"))
-            {
-                return new ObjectResult(new CommandResponse
-                {
-                    OK = false
-                })
-                {
-                    StatusCode = 403
-                };
-            }
-
             FrontendStats stats = (await frontendStatsService.Get()).First();
             string[] fields = req.Body.Split("||");
 

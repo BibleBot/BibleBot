@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Text.Json.Serialization;
 
 namespace BibleBot.Models
@@ -74,6 +75,7 @@ namespace BibleBot.Models
         /// The authorization token of the request.
         /// </summary>
         [JsonPropertyName("token")]
+        [Obsolete("Moved tokens to authentication header, handled by HouseAuthorization middleware.")]
         public string Token { get; set; }
 
         /// <summary>
