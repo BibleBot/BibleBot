@@ -58,6 +58,7 @@ async def submit_command(
         "ChannelId": str(channelId),
         "ThreadId": str(ch.id),
         "IsThread": isThread,
+        "IsBot": user.bot,
         "IsDM": isDM,
         "Body": body,
     }
@@ -239,6 +240,7 @@ async def submit_command_raw(
         "ChannelId": str(channelId),
         "ThreadId": str(ch.id),
         "IsThread": isThread,
+        "IsBot": user.bot,
         "IsDM": isDM,
         "Body": body,
     }
@@ -292,6 +294,7 @@ async def submit_verse(
         "ChannelId": str(channelId),
         "ThreadId": str(ch.id),
         "IsThread": isThread,
+        "IsBot": user.bot,
         "IsDM": isDM,
         "Body": body,
     }
