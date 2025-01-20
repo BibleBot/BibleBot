@@ -6,7 +6,6 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System;
 using BibleBot.Models;
 
 namespace BibleBot.Backend.Tests.Mocks
@@ -18,7 +17,6 @@ namespace BibleBot.Backend.Tests.Mocks
             UserId = "000000";
             GuildId = "000000";
             IsDM = false;
-            Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN");
             Body = body;
         }
 
@@ -27,7 +25,6 @@ namespace BibleBot.Backend.Tests.Mocks
             UserId = "000000";
             GuildId = "000000";
             IsDM = false;
-            Token = Environment.GetEnvironmentVariable("ENDPOINT_TOKEN");
             Body = "";
         }
     }
