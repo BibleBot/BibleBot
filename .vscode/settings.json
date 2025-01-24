@@ -13,5 +13,5 @@
     },
     "editor.suggest.insertMode": "insert",
     "dotnet.codeLens.enableReferencesCodeLens": false,
-    "dotnet.unitTests.runSettingsPath": "test/BibleBot.Backend.Tests/.env"
+    "dotnet.unitTests.runSettingsPath": "test/BibleBot.Tests.Backend/.env"
 }

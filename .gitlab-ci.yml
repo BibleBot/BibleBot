@@ -39,7 +39,7 @@ unit_tests:
     - "dotnet tool install dotnet-reportgenerator-globaltool --global --verbosity q"
     - "apt-get -qqy update && apt-get install -qqy bc"
   script:
-    - dotnet test --collect:"XPlat Code Coverage" --verbosity q --logger "junit;MethodFormat=Class;FailureBodyFormat=Verbose" -- NUnit.Where="namespace == BibleBot.Backend.Tests"
+    - dotnet test --collect:"XPlat Code Coverage" --verbosity q --logger "junit;MethodFormat=Class;FailureBodyFormat=Verbose" -- NUnit.Where="namespace == BibleBot.Tests.Backend"
     - reportgenerator -reports:"test/**/TestResults/**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura"
     - COVERAGE_VALUE=$(grep -oPm 1 'line-rate="\K([0-9.]+)' "./Cobertura.xml")
     - COVERAGE=$(echo "scale=2; ($COVERAGE_VALUE * 100)/1" | bc)

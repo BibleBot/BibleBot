@@ -8,7 +8,7 @@
 
 using BibleBot.Models;
 
-namespace BibleBot.Backend.Tests.Mocks
+namespace BibleBot.Tests.Backend.Mocks
 {
     public class MockRequest : Request
     {
