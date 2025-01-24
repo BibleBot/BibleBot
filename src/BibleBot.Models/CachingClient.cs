@@ -6,7 +6,6 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Nodes;

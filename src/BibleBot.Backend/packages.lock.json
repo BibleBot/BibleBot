@@ -108,6 +108,12 @@
           "Swashbuckle.AspNetCore.SwaggerUI": "7.2.0"
         }
       },
+      "System.ServiceModel.Syndication": {
+        "type": "Direct",
+        "requested": "[9.0.1, )",
+        "resolved": "9.0.1",
+        "contentHash": "+Qg/qX62dGCD8DetCLWX/xlzgYVqBQXKmS6dPeDc4PDGX7S7GfBoMlhU2oMXydd55cYplD+KEbipv8HZW0YSmg=="
+      },
       "CacheCow.Client": {
         "type": "Transitive",
         "resolved": "2.13.1",

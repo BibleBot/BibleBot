@@ -9,7 +9,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.ServiceModel.Syndication;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 
@@ -84,6 +88,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
             public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
+                XmlReader reader = XmlReader.Create("https://biblebot.xyz/feed/");
+                SyndicationFeed blogRssFeed = SyndicationFeed.Load(reader);
+                SyndicationItem[] firstFourEntries = [.. blogRssFeed.Items.Take(4)];
+
+                StringBuilder newsSb = new();
+
+                for (int i = 0; i < firstFourEntries.Length; i++)
+                {
+                    SyndicationItem entry = firstFourEntries[i];
+                    if (i < 2)
+                    {
+                        newsSb.AppendLine($":new: **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault().GetAbsoluteUri().ToString()}) :new:");
+                    }
+                    else
+                    {
+                        newsSb.AppendLine($"**{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault().GetAbsoluteUri().ToString()})");
+                    }
+                }
+
                 InternalEmbed embed = new()
                 {
                     Title = $"BibleBot v{Utils.Version}",
@@ -123,11 +146,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         },
                         new()
                         {
-                            Name = ":newspaper: News",
-                            Value = ":new: **9 December 2024** - [Update: v9.2-beta (80158bb2)](https://biblebot.xyz/2025/01/24/update-v9-2-beta-80158bb2/) :new:\n" +
-                            ":new: **9 December 2024** - [Biblica Translations Returning to BibleBot](https://biblebot.xyz/2024/12/09/biblica-translations-returning-to-biblebot/) :new:\n" +
-                            "**26 July 2023** - [The NKJV has been restored for use...](https://discord.com/channels/362503610006765568/440313404427730945/1133504754031546380)\n" +
-                            "**21 July 2023** - [Update: v9.2-beta (build 559)](https://biblebot.xyz/2023/07/21/update-v9-2-beta-build-559/)",
+                            Name = ":newspaper: News from BibleBot's Blog",
+                            Value = newsSb.ToString().Trim(),
                             Inline = false,
                         }
                     ]
