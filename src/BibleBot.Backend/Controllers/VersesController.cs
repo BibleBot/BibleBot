@@ -91,7 +91,27 @@ namespace BibleBot.Backend.Controllers
 
             foreach (BookSearchResult bsr in tuple.Item2)
             {
-                Reference reference = parsingService.GenerateReference(tuple.Item1, bsr, idealVersion, versions);
+                Reference reference = null;
+
+                try
+                {
+                    reference = parsingService.GenerateReference(tuple.Item1, bsr, idealVersion, versions);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message == "too many commas")
+                    {
+                        return BadRequest(new CommandResponse
+                        {
+                            OK = false,
+                            Pages =
+                            [
+                                Utils.GetInstance().Embedify("Too Many Commas", "There are too many commas, the maximum amount of commas you can do in one reference is 5.", true)
+                            ],
+                            LogStatement = "too many commas"
+                        });
+                    }
+                }
 
                 if (reference == null)
                 {

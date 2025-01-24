@@ -34,10 +34,13 @@ class VerseCommands(commands.Cog):
             },
             default="0",
         ),
+        version: str = "null",
     ):
         await inter.response.defer()
         resp = await backend.submit_command(
-            inter.channel, inter.author, f"+search subset:{subset} {query}"
+            inter.channel,
+            inter.author,
+            f"+search subset:{subset} version:{version} {query}",
         )
 
         if isinstance(resp, list):

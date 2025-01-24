@@ -329,7 +329,11 @@ async def submit_verse(
                     )
                     return (reqbody, respBody)
 
-            if respBody["verses"] is None:
+            if "verses" not in respBody:
+                if "pages" in respBody:
+                    await sending.safe_send_channel(
+                        ch, embed=convert_embed(respBody["pages"][0])
+                    )
                 return (reqbody, respBody)
 
             verses = respBody["verses"]  # todo: remove duplicate verses

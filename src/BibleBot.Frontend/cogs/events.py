@@ -119,7 +119,7 @@ class EventListeners(commands.Cog):
 
         clean_msg = msg.content.replace("://", "")
         verse_regex = re.compile(
-            r"\ [0-9]{1,3}:[0-9]{1,3}(-)?([0-9]{1,3})?(:[0-9]{1,3})?"
+            r"\ [0-9]{1,3}:[0-9]{1,3}((,[0-9]{1,3})*)?(-)?([0-9]{1,3})?((,[0-9]{1,3})*)?(:[0-9]{1,3})?"
         )
 
         if verse_regex.search(clean_msg):

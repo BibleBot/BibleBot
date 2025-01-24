@@ -123,15 +123,14 @@ namespace BibleBot.Models
             HtmlParser parser = new();
             IHtmlDocument document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync(cancellationToken));
 
-            IHtmlCollection<IElement> respReference = document.GetElementsByClassName("dropdown-display");
-            IElement respContent = document.QuerySelector(".result-text-style-normal") ?? document.QuerySelector(".result-text-style-rtl");
+            IElement respContent = document.QuerySelector(".passage-box");
 
-            if (respReference == null || respContent == null)
+            if (respContent == null)
             {
                 return new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.BadRequest };
             }
 
-            response.Content = new StringContent(respReference.FirstOrDefault().InnerHtml + respContent.InnerHtml);
+            response.Content = new StringContent(respContent.InnerHtml);
 
             return response;
         }

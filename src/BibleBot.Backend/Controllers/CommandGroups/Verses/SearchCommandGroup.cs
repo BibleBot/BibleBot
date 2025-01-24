@@ -53,20 +53,39 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     version = idealGuild.Version;
                 }
 
-                if (args[0].StartsWith("subset:"))
+                for (int i = 0; i < args.Count; i++)
                 {
-                    string[] subsetSplit = args[0].Split(":");
-
-                    try
+                    if (args[i].StartsWith("subset:"))
                     {
-                        potentialSubset = (SubsetFlag)int.Parse(subsetSplit[1]);
-                    }
-                    catch
-                    {
-                        Log.Warning("Received an invalid subset, ignoring...");
+                        string[] subsetSplit = args[i].Split(":");
+
+                        try
+                        {
+                            potentialSubset = (SubsetFlag)int.Parse(subsetSplit[1]);
+                        }
+                        catch
+                        {
+                            Log.Warning("Received an invalid subset, ignoring...");
+                        }
+
+                        args.Remove(args[i]);
                     }
 
-                    args.RemoveAt(0);
+                    if (args[i].StartsWith("version:"))
+                    {
+                        string[] versionSplit = args[i].Split(":");
+
+                        try
+                        {
+                            version = versionSplit[1] != "null" ? versionSplit[1] : version;
+                        }
+                        catch
+                        {
+                            Log.Warning("Received an invalid version, ignoring...");
+                        }
+
+                        args.Remove(args[i]);
+                    }
                 }
 
                 Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
@@ -146,12 +165,26 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         totalPages = 1;
                     }
 
-                    string title = "Search results for \"{0}\"";
+                    string subsetString = "";
+                    if (potentialSubset == SubsetFlag.OT_ONLY)
+                    {
+                        subsetString = "in the Old Testament ";
+                    }
+                    else if (potentialSubset == SubsetFlag.NT_ONLY)
+                    {
+                        subsetString = "in the New Testament ";
+                    }
+                    else if (potentialSubset == SubsetFlag.DEU_ONLY)
+                    {
+                        subsetString = "in the Apocrypha/Deuterocanon ";
+                    }
+
+                    string title = $"Search results for \"{query}\" {subsetString}({idealVersion.Abbreviation})";
                     string pageCounter = "Page {0} of {1}";
 
                     for (int i = 0; i < totalPages; i++)
                     {
-                        InternalEmbed embed = Utils.GetInstance().Embedify(string.Format(title, query), string.Format(pageCounter, i + 1, totalPages), false);
+                        InternalEmbed embed = Utils.GetInstance().Embedify(title, string.Format(pageCounter, i + 1, totalPages), false);
                         embed.Fields = [];
 
                         int count = 0;

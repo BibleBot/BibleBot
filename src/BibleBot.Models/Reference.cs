@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace BibleBot.Models
@@ -36,9 +37,14 @@ namespace BibleBot.Models
         public int EndingChapter { get; set; }
 
         /// <summary>
-        /// The verse of the chapter the reference ends in.
+        /// The verses of the chapter the reference ends in.
         /// </summary>
         public int EndingVerse { get; set; }
+
+        /// <summary>
+        /// The appended verses in a reference.
+        /// </summary>
+        public List<Tuple<int, int>> AppendedVerses { get; set; } = [];
 
         /// <summary>
         /// The <see cref="Version"/> that the reference requests.
@@ -91,13 +97,46 @@ namespace BibleBot.Models
             {
                 result += $"-{EndingChapter}:{EndingVerse}";
             }
-            else if (EndingVerse > 0 && EndingVerse != StartingVerse)
+            else if (AppendedVerses != null && AppendedVerses.Count == 0 && EndingVerse > 0 && EndingVerse != StartingVerse)
             {
                 result += $"-{EndingVerse}";
             }
-            else if (EndingChapter > 0 && EndingVerse == 0)
+            else if (EndingChapter > 0 && AppendedVerses != null && AppendedVerses.Count == 0 && EndingVerse == 0)
             {
                 result += "-";
+            }
+            else if (EndingChapter == StartingChapter && AppendedVerses != null && AppendedVerses.Count > 1 && EndingVerse == 0)
+            {
+                foreach (Tuple<int, int> verse in AppendedVerses)
+                {
+                    if (verse.Item1 == verse.Item2)
+                    {
+                        result += $", {verse.Item1}";
+                    }
+                    else if (verse.Item2 > verse.Item1)
+                    {
+                        result += $", {verse.Item1}-{verse.Item2}";
+                    }
+                }
+            }
+            else if (EndingChapter == StartingChapter && AppendedVerses != null && AppendedVerses.Count > 0 && EndingVerse != 0)
+            {
+                if (EndingVerse != StartingVerse)
+                {
+                    result += $"-{EndingVerse}";
+                }
+
+                foreach (Tuple<int, int> verse in AppendedVerses)
+                {
+                    if (verse.Item1 == verse.Item2)
+                    {
+                        result += $", {verse.Item1}";
+                    }
+                    else if (verse.Item2 > verse.Item1)
+                    {
+                        result += $", {verse.Item1}-{verse.Item2}";
+                    }
+                }
             }
 
             return result;

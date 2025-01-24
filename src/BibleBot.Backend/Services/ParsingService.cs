@@ -78,6 +78,7 @@ namespace BibleBot.Backend.Services
             int startingVerse = 0;
             int endingChapter = 0;
             int endingVerse = 0;
+            List<System.Tuple<int, int>> appendedVerses = [];
             bool expandoVerseUsed = false;
 
             Dictionary<string, Dictionary<string, string>> _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(File.ReadAllText("./Data/book_map.json"));
@@ -180,23 +181,97 @@ namespace BibleBot.Backend.Services
                             }
                             catch
                             {
-                                // We know that BibleGateway will extend to the end of a chapter with this 
-                                // "Genesis 1:1-" syntax, but for other sources this is likely not available.
-                                if (prefVersion.Source == "bg")
+                                if (pairValueCopy.Contains(','))
                                 {
-                                    // Instead of returning null here, we'll break out of the loop
-                                    // in the event that the span exists to extend to the end of a chapter.
-                                    expandoVerseUsed = true;
-                                    break;
-                                }
+                                    string[] commaSplit = pairValueCopy.Split(",");
 
-                                return null;
+                                    if (commaSplit[0] == "")
+                                    {
+                                        return null;
+                                    }
+
+                                    int tokenIndexPtr = 2;
+
+                                    while (commaSplit[commaSplit.Length - 1] == "")
+                                    {
+                                        pairValueCopy += tokens[bookSearchResult.Index + tokenIndexPtr];
+                                        commaSplit = pairValueCopy.Split(",");
+
+                                        tokenIndexPtr++;
+                                    }
+
+                                    foreach (string commaValue in commaSplit)
+                                    {
+                                        try
+                                        {
+                                            int num = int.Parse(commaValue);
+                                            appendedVerses.Add(new System.Tuple<int, int>(num, num));
+                                        }
+                                        catch
+                                        {
+                                            if (commaValue.Contains('-'))
+                                            {
+                                                string[] commaSpanSplit = commaValue.Split("-");
+                                                List<int> pairArray = [];
+
+                                                foreach (string commaSpanPairValue in commaSpanSplit)
+                                                {
+                                                    try
+                                                    {
+                                                        int commaSpanPairNum = int.Parse(commaSpanPairValue);
+                                                        pairArray.Add(commaSpanPairNum);
+                                                    }
+                                                    catch
+                                                    {
+                                                        return null;
+                                                    }
+                                                }
+
+                                                appendedVerses.Add(new System.Tuple<int, int>(pairArray[0], pairArray[1]));
+                                            }
+                                        }
+                                    }
+
+                                    // TODO(srp): Indicate comma limit to user.
+                                    if (commaSplit.Length > 5)
+                                    {
+                                        throw new System.Exception("too many commas");
+                                    }
+
+                                    switch (System.Array.IndexOf(spanSplit, pairValue))
+                                    {
+                                        case 0:
+                                            startingVerse = appendedVerses[0].Item1;
+                                            appendedVerses = [.. appendedVerses.TakeLast(appendedVerses.Count - 1)];
+                                            break;
+                                        case 1:
+                                            endingVerse = appendedVerses[0].Item1;
+                                            appendedVerses = [.. appendedVerses.Skip(1).TakeLast(appendedVerses.Count - 1)];
+                                            break;
+                                        default:
+                                            return null;
+                                    }
+                                }
+                                else
+                                {
+                                    // We know that BibleGateway will extend to the end of a chapter with this 
+                                    // "Genesis 1:1-" syntax, but for other sources this is likely not available.
+                                    if (prefVersion.Source == "bg")
+                                    {
+                                        // Instead of returning null here, we'll break out of the loop
+                                        // in the event that the span exists to extend to the end of a chapter.
+                                        expandoVerseUsed = true;
+                                        break;
+                                    }
+
+                                    return null;
+                                }
                             }
                         }
 
                         // We set a toggle if we think expando verses are being used, otherwise
                         // references like "Genesis 1:1-1" act like expando verses.
-                        if (endingVerse == 0 && (spanQuantity == 0 || !expandoVerseUsed))
+                        if (appendedVerses.Count == 0 && endingVerse == 0 && (spanQuantity == 0 || !expandoVerseUsed))
                         {
                             endingVerse = startingVerse;
                         }
@@ -259,6 +334,7 @@ namespace BibleBot.Backend.Services
                 StartingVerse = startingVerse,
                 EndingChapter = endingChapter,
                 EndingVerse = endingVerse,
+                AppendedVerses = appendedVerses,
                 Version = prefVersion,
 
                 IsOT = isOT,
@@ -276,7 +352,7 @@ namespace BibleBot.Backend.Services
                 str = new Regex(@"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1]).Replace(str, "");
             }
 
-            string punctuationToIgnore = "!\"#$%&'()*+,./;<=>?@[\\]^_`{|}~";
+            string punctuationToIgnore = "!\"#$%&'()*+./;<=>?@[\\]^_`{|}~";
             foreach (char character in punctuationToIgnore)
             {
                 str = str.Replace(character, ' ');
@@ -287,7 +363,7 @@ namespace BibleBot.Backend.Services
 
         private static bool IsValueInString(string str, string val) => $" {str} ".Contains($" {val} ");
 
-        [GeneratedRegex(@"[^\w\s]|_")]
+        [GeneratedRegex(@"[^,\w\s]|_")]
         private static partial Regex NoPunctuationRegex();
 
         [GeneratedRegex(@"\s+")]

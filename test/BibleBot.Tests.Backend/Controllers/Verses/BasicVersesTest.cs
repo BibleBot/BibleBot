@@ -886,5 +886,88 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldHandleSpanlessCommaNotation()
+        {
+            ObjectResult spacelessResult = _versesController.ProcessMessage(new MockRequest("Matthew 1:1,3,9")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse spacelessResp = spacelessResult.Value as VerseResponse;
+
+            ObjectResult spacedResult = _versesController.ProcessMessage(new MockRequest("Matthew 1:1, 3, 9")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse spacedResp = spacedResult.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "Matthew 1:1, 3, 9 RSV",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new()
+                    {
+                        Title = "The Genealogy of Jesus the Messiah",
+                        PsalmTitle = "",
+                        Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham. <**3**> and Judah the father of Perez and Zerah by Tamar, and Perez the father of Hezron, and Hezron the father of Ram, <**9**> and Uzzi'ah the father of Jotham, and Jotham the father of Ahaz, and Ahaz the father of Hezeki'ah,",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            AppendedVerses = [new System.Tuple<int, int>(3, 3), new System.Tuple<int, int>(9, 9)],
+                            Version = _defaultBibleGatewayVersion,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:1, 3, 9"
+                        }
+                    }
+                ]
+            };
+
+            spacelessResult.StatusCode.Should().Be(200);
+            spacedResult.StatusCode.Should().Be(200);
+            spacelessResp.Should().BeEquivalentTo(expected);
+            spacedResp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldHandleSpannedCommaNotation()
+        {
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-3, 5-7, 9-11")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "Matthew 1:1-3, 5-7, 9-11 RSV",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new()
+                    {
+                        Title = "The Genealogy of Jesus the Messiah",
+                        PsalmTitle = "",
+                        Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham. <**2**> Abraham was the father of Isaac, and Isaac the father of Jacob, and Jacob the father of Judah and his brothers, <**3**> and Judah the father of Perez and Zerah by Tamar, and Perez the father of Hezron, and Hezron the father of Ram, <**5**> and Salmon the father of Bo'az by Rahab, and Bo'az the father of Obed by Ruth, and Obed the father of Jesse, <**6**> and Jesse the father of David the king. And David was the father of Solomon by the wife of Uri'ah, <**7**> and Solomon the father of Rehobo'am, and Rehobo'am the father of Abi'jah, and Abi'jah the father of Asa, <**9**> and Uzzi'ah the father of Jotham, and Jotham the father of Ahaz, and Ahaz the father of Hezeki'ah, <**10**> and Hezeki'ah the father of Manas'seh, and Manas'seh the father of Amos, and Amos the father of Josi'ah, <**11**> and Josi'ah the father of Jechoni'ah and his brothers, at the time of the deportation to Babylon.",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 3,
+                            AppendedVerses = [new System.Tuple<int, int>(5, 7), new System.Tuple<int, int>(9, 11)],
+                            Version = _defaultBibleGatewayVersion,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:1-3, 5-7, 9-11"
+                        }
+                    }
+                ]
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }

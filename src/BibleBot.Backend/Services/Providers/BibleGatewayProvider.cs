@@ -159,6 +159,21 @@ namespace BibleBot.Backend.Services.Providers
             // As the verse reference could have a non-English name...
             reference.AsString = document.GetElementsByClassName("dropdown-display-text").FirstOrDefault().TextContent.Trim();
 
+            if (reference.AppendedVerses.Count > 0)
+            {
+                foreach (IElement referenceEl in document.GetElementsByClassName("dropdown-display-text").Skip(1))
+                {
+                    string referenceTrimmed = referenceEl.TextContent.Trim();
+
+                    if (referenceTrimmed.Contains(':') && referenceTrimmed.Contains(reference.AsString.Split(" ")[0]))
+                    {
+                        string[] colonSplit = referenceTrimmed.Split(":");
+
+                        reference.AsString += $", {colonSplit[1]}";
+                    }
+                }
+            }
+
             bool isISV = reference.Version.Abbreviation == "ISV";
 
             return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
