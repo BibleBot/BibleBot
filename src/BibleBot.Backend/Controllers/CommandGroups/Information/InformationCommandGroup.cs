@@ -124,10 +124,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new()
                         {
                             Name = ":newspaper: News",
-                            Value = ":new: **26 July 2023** - [The NKJV has been restored for use...](https://discord.com/channels/362503610006765568/440313404427730945/1133504754031546380) :new:\n" +
-                            ":new: **21 July 2023** - [Update: v9.2-beta (build 559)](https://biblebot.xyz/2023/07/21/update-v9-2-beta-build-559/) :new:\n" +
-                            "**21 June 2023** - [Update: v9.2-beta (build 532)](https://biblebot.xyz/2023/06/21/release-v9-2-beta-build-532/)\n" +
-                            "**31 March 2022** - [Release: v9.2-beta](https://biblebot.xyz/2022/03/31/release-v9-2-beta/)",
+                            Value = ":new: **9 December 2024** - [Update: v9.2-beta (80158bb2)](https://biblebot.xyz/2025/01/24/update-v9-2-beta-80158bb2/) :new:\n" +
+                            ":new: **9 December 2024** - [Biblica Translations Returning to BibleBot](https://biblebot.xyz/2024/12/09/biblica-translations-returning-to-biblebot/) :new:\n" +
+                            "**26 July 2023** - [The NKJV has been restored for use...](https://discord.com/channels/362503610006765568/440313404427730945/1133504754031546380)\n" +
+                            "**21 July 2023** - [Update: v9.2-beta (build 559)](https://biblebot.xyz/2023/07/21/update-v9-2-beta-build-559/)",
                             Inline = false,
                         }
                     ]
