@@ -1,5 +1,3 @@
-commit_message: "[ci skip]"
-append_commit_message: false
 files:
-  - source: /i18n/default/default.json
-    translation: /i18n/%locale%/%locale%.json
+  - source: /i18n/**/*.resx
+    translation: /i18n/%file_name%/%file_name%.%locale%.resx
