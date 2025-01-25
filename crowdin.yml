@@ -1,5 +1,5 @@
 commit_message: "[ci skip]"
 append_commit_message:
 files:
-  - source: /src/**/Resources/*.resx
-    translation: /src/**/Resources/%file_name%.%locale%.resx
+  - source: /src/**/Resources/**/*.resx
+    translation: /src/**/Resources/**/%file_name%.%locale%.resx
