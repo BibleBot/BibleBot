@@ -9,30 +9,31 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Information
 {
-    public class InformationCommandGroup(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService) : CommandGroup
+    public class InformationCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
+                                         FrontendStatsService frontendStatsService, IStringLocalizer<InformationCommandGroup> localizer) : CommandGroup
     {
         public override string Name { get => "info"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "biblebot"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new InfoStats(userService, guildService, versionService, frontendStatsService),
-                new InfoBibleBot(),
-                new InfoInvite()
+                new InfoStats(userService, guildService, versionService, frontendStatsService, localizer),
+                new InfoBibleBot(localizer),
+                new InfoInvite(localizer)
             ]; set => throw new NotImplementedException();
         }
 
-        public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService) : Command
+        public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService, IStringLocalizer<InformationCommandGroup> localizer) : Command
         {
             public override string Name { get => "stats"; set => throw new NotImplementedException(); }
 
@@ -55,19 +56,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 string backendLongHash = ThisAssembly.Git.Sha;
                 string backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
 
-                string resp = $"### Frontend Stats\n" +
-                $"**Shard Count**: {frontendStats.ShardCount}\n" +
-                $"**Server Count**: {frontendStats.ServerCount}\n" +
-                $"**User Count**: {frontendStats.UserCount}\n" +
-                $"**Channel Count**: {frontendStats.ChannelCount}\n\n" +
-                $"### Backend Stats (estimated)\n" +
-                $"**User Preference Count**: {userPrefs}\n" +
-                $"**Guild Preference Count**: {guildPrefs}\n" +
-                $"**Version Count**: {versions}\n\n" +
-                $"*For full statistics on our server count and preferences, see <https://biblebot.xyz/stats>.*\n\n" +
-                $"### Metadata\n" +
-                $"**Frontend**: v{version} ([{frontendShortHash}]({frontendCommitURL}))\n" +
-                $"**Backend**: v{version} ([{backendShortHash}]({backendCommitURL}))\n";
+                string resp = $"{localizer["FrontendStats"]}\n" +
+                $"{localizer["ShardCount"]}: {frontendStats.ShardCount}\n" +
+                $"{localizer["ServerCount"]}: {frontendStats.ServerCount}\n" +
+                $"{localizer["UserCount"]}: {frontendStats.UserCount}\n" +
+                $"{localizer["ChannelCount"]}: {frontendStats.ChannelCount}\n\n" +
+                $"{localizer["BackendStats"]}\n" +
+                $"{localizer["UserPreferenceCount"]}: {userPrefs}\n" +
+                $"{localizer["GuildPreferenceCount"]}: {guildPrefs}\n" +
+                $"{localizer["VersionCount"]}: {versions}\n\n" +
+                $"*{localizer["StatisticsSheetAddenda"]}*\n\n" +
+                $"{localizer["Metadata"]}\n" +
+                $"{localizer["Frontend"]}: v{version} ([{frontendShortHash}]({frontendCommitURL}))\n" +
+                $"{localizer["Backend"]}: v{version} ([{backendShortHash}]({backendCommitURL}))\n";
 
 
                 return new CommandResponse
@@ -82,7 +83,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             }
         }
 
-        public class InfoBibleBot : Command
+        public class InfoBibleBot(IStringLocalizer<InformationCommandGroup> localizer) : Command
         {
             public override string Name { get => "biblebot"; set => throw new NotImplementedException(); }
 
@@ -110,43 +111,43 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 InternalEmbed embed = new()
                 {
                     Title = $"BibleBot v{Utils.Version}",
-                    Description = "Scripture from your Discord client to your heart.",
+                    Description = localizer["BibleBotSlogan"],
                     Color = 6709986,
                     Footer = new Footer
                     {
-                        Text = "Made with ❤️ by Kerygma Digital",
+                        Text = localizer["BibleBotCommandFooter"],
                         IconURL = "https://i.imgur.com/hr4RXpy.png"
                     },
                     Fields =
                     [
                         new()
                         {
-                            Name = ":tools: Commands",
-                            Value = "`/search` - search for verses by keyword\n" +
-                            "`/version` - version preferences and information\n" +
-                            "`/formatting` - preferences for verse styles and bot behavior\n" +
-                            "`/dailyverse` - daily verses and automation\n" +
-                            "`/random` - get a random Bible verse\n" +
-                            "`/resource` - creeds, catechisms, confessions, and historical documents\n" +
-                            "`/stats` - view bot statistics\n" +
-                            "`/invite` - get the invite link for BibleBot\n\n" +
-                            "Look inside these commands for more, or check out our [documentation](https://biblebot.xyz/usage-and-commands/).\n\n" +
+                            Name = $":tools: {localizer["Commands"]}",
+                            Value = $"`/search` - {localizer["SearchCommandDescription"]}\n" +
+                            $"`/version` - {localizer["VersionCommandDescription"]}\n" +
+                            $"`/formatting` - {localizer["FormattingCommandDescription"]}\n" +
+                            $"`/dailyverse` - {localizer["DailyVerseCommandDescription"]}\n" +
+                            $"`/random` - {localizer["RandomCommandDescription"]}\n" +
+                            $"`/resource` - {localizer["ResourceCommandDescription"]}\n" +
+                            $"`/stats` - {localizer["StatsCommandDescription"]}\n" +
+                            $"`/invite` - {localizer["InviteCommandDescription"]}\n\n" +
+                            $"{localizer["CommandsAddenda"]}\n\n" +
                             "─────────────",
                             Inline = false
                         },
                         new()
                         {
-                            Name = ":link: Links",
-                            Value = "**Website**: https://biblebot.xyz\n" +
-                            "**Copyrights**: https://biblebot.xyz/copyright\n" +
-                            "**Source Code**: https://gitlab.com/KerygmaDigital/BibleBot/BibleBot\n" +
-                            "**Official Discord Server**: https://biblebot.xyz/discord\n" +
-                            "**Terms and Conditions**: https://biblebot.xyz/terms\n\n" +
+                            Name = $":link: {localizer["Links"]}",
+                            Value = $"{localizer["Website"]}: https://biblebot.xyz\n" +
+                            $"{localizer["Copyrights"]}: https://biblebot.xyz/copyright\n" +
+                            $"{localizer["SourceCode"]}: https://gitlab.com/KerygmaDigital/BibleBot/BibleBot\n" +
+                            $"{localizer["OfficialDiscordServer"]}: https://biblebot.xyz/discord\n" +
+                            $"{localizer["TermsAndConditions"]}: https://biblebot.xyz/terms\n\n" +
                             "─────────────"
                         },
                         new()
                         {
-                            Name = ":newspaper: News from BibleBot's Blog",
+                            Name = $":newspaper: {localizer["NewsFromBlog"]}",
                             Value = newsSb.ToString().Trim(),
                             Inline = false,
                         }
@@ -166,7 +167,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             }
         }
 
-        public class InfoInvite : Command
+        public class InfoInvite(IStringLocalizer<InformationCommandGroup> localizer) : Command
         {
             public override string Name { get => "invite"; set => throw new NotImplementedException(); }
 
@@ -175,7 +176,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 OK = true,
                 Pages =
                     [
-                        Utils.GetInstance().Embedify("/invite", "To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).", false)
+                        Utils.GetInstance().Embedify("/invite", localizer["InviteResp"], false)
                     ],
                 LogStatement = "/invite"
             });

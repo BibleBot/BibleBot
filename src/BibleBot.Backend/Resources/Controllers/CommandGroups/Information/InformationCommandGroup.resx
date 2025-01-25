@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FrontendStats" xml:space="preserve">
-    <value>#### Frontend Stats</value>
+    <value>### Frontend Stats</value>
     <comment>Header above various frontend-related statistics.</comment>
   </data>
   <data name="ShardCount" xml:space="preserve">
@@ -138,7 +138,7 @@
     <comment>The aggregated number of channels in all servers with BibleBot.</comment>
   </data>
   <data name="BackendStats" xml:space="preserve">
-    <value>#### Backend Stats</value>
+    <value>### Backend Stats</value>
     <comment>Header above various backend-related statistics.</comment>
   </data>
   <data name="UserPreferenceCount" xml:space="preserve">
@@ -158,7 +158,7 @@
     <comment>A pointer to our statistics spreadsheet.</comment>
   </data>
   <data name="Metadata" xml:space="preserve">
-    <value>#### Metadata</value>
+    <value>### Metadata</value>
     <comment>Header above various metadata.</comment>
   </data>
   <data name="Frontend" xml:space="preserve">
@@ -168,6 +168,10 @@
   <data name="Backend" xml:space="preserve">
     <value>**Backend**</value>
     <comment>To denote current version/build of the running backend(s).</comment>
+  </data>
+  <data name="BibleBotSlogan" xml:space="preserve">
+    <value>Scripture from your Discord client to your heart.</value>
+    <comment>Slogan in /biblebot.</comment>
   </data>
   <data name="BibleBotCommandFooter" xml:space="preserve">
     <value>Made with ❤️ by Kerygma Digital</value>
@@ -225,6 +229,10 @@
     <value>**Copyrights**</value>
     <comment>For linking to our copyrights page.</comment>
   </data>
+  <data name="SourceCode" xml:space="preserve">
+    <value>**Source Code**</value>
+    <comment>For linking to our source code.</comment>
+  </data>
   <data name="OfficialDiscordServer" xml:space="preserve">
     <value>**Official Discord Server**</value>
     <comment>For linking to our official Discord server.</comment>
@@ -232,6 +240,10 @@
   <data name="TermsAndConditions" xml:space="preserve">
     <value>**Terms and Conditions**</value>
     <comment>For linking to our Terms and Conditions.</comment>
+  </data>
+  <data name="NewsFromBlog" xml:space="preserve">
+    <value>News from BibleBot's Blog</value>
+    <comment>Header above latest blog post entries.</comment>
   </data>
   <data name="InviteResp" xml:space="preserve">
     <value>To invite the bot to your server, click [here](https://biblebot.xyz/invite).\nTo join the official Discord server, click [here](https://biblebot.xyz/discord).\n\nFor information on the permissions we request, click [here](https://biblebot.xyz/permissions/).</value>

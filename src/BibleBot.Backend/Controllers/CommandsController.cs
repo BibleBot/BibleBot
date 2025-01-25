@@ -15,6 +15,7 @@ using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -22,10 +23,11 @@ namespace BibleBot.Backend.Controllers
     [Route("api/commands")]
     [ApiController]
     public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
-                                    FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
+                                    FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider,
+                                    BibleGatewayProvider bgProvider, APIBibleProvider abProvider, IStringLocalizer<CommandGroups.Information.InformationCommandGroup> cgInfoLocalizer) : ControllerBase
     {
         private readonly List<CommandGroup> _commandGroups = [
-                new CommandGroups.Information.InformationCommandGroup(userService, guildService, versionService, frontendStatsService),
+                new CommandGroups.Information.InformationCommandGroup(userService, guildService, versionService, frontendStatsService, cgInfoLocalizer),
                 new CommandGroups.Settings.FormattingCommandGroup(userService, guildService),
                 new CommandGroups.Settings.VersionCommandGroup(userService, guildService, versionService, nameFetchingService),
                 new CommandGroups.Resources.ResourceCommandGroup(resourceService.GetAllResources()),
