@@ -12,16 +12,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Resources
 {
-    public class ResourceCommandGroup(List<IResource> resources) : CommandGroup
+    public class ResourceCommandGroup(List<IResource> resources, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(ResourceCommandGroup));
+
         public override string Name { get => "resource"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
-        public override List<Command> Commands { get => [new ResourceUsage(resources)]; set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new ResourceUsage(resources, _localizer)]; set => throw new NotImplementedException(); }
 
-        public class ResourceUsage(List<IResource> resources) : Command
+        public class ResourceUsage(List<IResource> resources, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -88,10 +91,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                 }
 
 
-                string resp = $"**__Creeds__**\n" + creedsList.ToString().Substring(0, creedsList.Length - 1) +
-                "\n\n**__Catechisms__**\n" + catechismsList.ToString().Substring(0, catechismsList.Length - 1) +
-                "\n\n**__Canon Laws__**\n" + canonsList.ToString().Substring(0, catechismsList.Length - 1) +
-                "\n\nTo use a resource, do `/resource resource:<name>`.\nFor example, `/resource resource:nicene` or `/resource resource:ccc range:1`.";
+                string resp = $"**__{localizer["Creeds"]}__**\n" + creedsList.ToString().Substring(0, creedsList.Length - 1) +
+                $"\n\n**__{localizer["Catechisms"]}__**\n" + catechismsList.ToString().Substring(0, catechismsList.Length - 1) +
+                $"\n\n**__{localizer["CanonLaws"]}__**\n" + canonsList.ToString().Substring(0, catechismsList.Length - 1) +
+                $"\n\n{localizer["ResourceUsageExample"]}";
 
 
                 return Task.FromResult<IResponse>(new CommandResponse

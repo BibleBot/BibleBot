@@ -12,28 +12,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
-    public class FormattingCommandGroup(UserService userService, GuildService guildService) : CommandGroup
+    public class FormattingCommandGroup(UserService userService, GuildService guildService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FormattingCommandGroup));
+
         public override string Name { get => "formatting"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new FormattingUsage(userService, guildService),
-                new FormattingSetVerseNumbers(userService),
-                new FormattingSetTitles(userService),
-                new FormattingSetPagination(userService),
-                new FormattingSetDisplayStyle(userService),
-                new FormattingSetServerDisplayStyle(guildService),
-                new FormattingSetIgnoringBrackets(guildService)
+                new FormattingUsage(userService, guildService, _localizer),
+                new FormattingSetVerseNumbers(userService, _localizer),
+                new FormattingSetTitles(userService, _localizer),
+                new FormattingSetPagination(userService, _localizer),
+                new FormattingSetDisplayStyle(userService, _localizer),
+                new FormattingSetServerDisplayStyle(guildService, _localizer),
+                new FormattingSetIgnoringBrackets(guildService, _localizer)
             ]; set => throw new NotImplementedException();
         }
 
-        public class FormattingUsage(UserService userService, GuildService guildService) : Command
+        public class FormattingUsage(UserService userService, GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -98,7 +101,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetVerseNumbers(UserService userService) : Command
+        public class FormattingSetVerseNumbers(UserService userService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setversenumbers"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
@@ -150,7 +153,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetTitles(UserService userService) : Command
+        public class FormattingSetTitles(UserService userService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "settitles"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
@@ -202,7 +205,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetPagination(UserService userService) : Command
+        public class FormattingSetPagination(UserService userService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setpagination"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
@@ -254,7 +257,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetDisplayStyle(UserService userService) : Command
+        public class FormattingSetDisplayStyle(UserService userService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setdisplay"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set => throw new NotImplementedException(); }
@@ -306,7 +309,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetServerDisplayStyle(GuildService guildService) : Command
+        public class FormattingSetServerDisplayStyle(GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setserverdisplay"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set => throw new NotImplementedException(); }
@@ -359,7 +362,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class FormattingSetIgnoringBrackets(GuildService guildService) : Command
+        public class FormattingSetIgnoringBrackets(GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setbrackets"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`."; set => throw new NotImplementedException(); }

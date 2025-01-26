@@ -14,24 +14,27 @@ using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
 using NodaTime;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
     public class DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                        SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : CommandGroup
+                                        SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(DailyVerseCommandGroup));
+
         public override string Name { get => "dailyverse"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
                 new DailyVerseUsage(userService, guildService, versionService, svProvider, bibleProviders),
-                new DailyVerseSet(guildService),
-                new DailyVerseRole(guildService),
-                new DailyVerseStatus(guildService),
-                new DailyVerseClear(guildService)
+                new DailyVerseSet(guildService, _localizer),
+                new DailyVerseRole(guildService, _localizer),
+                new DailyVerseStatus(guildService, _localizer),
+                new DailyVerseClear(guildService, _localizer)
             ]; set => throw new NotImplementedException();
         }
 
@@ -80,7 +83,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class DailyVerseSet(GuildService guildService) : Command
+        public class DailyVerseSet(GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "set"; set => throw new NotImplementedException(); }
 
@@ -183,7 +186,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class DailyVerseRole(GuildService guildService) : Command
+        public class DailyVerseRole(GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "role"; set => throw new NotImplementedException(); }
 
@@ -238,7 +241,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class DailyVerseStatus(GuildService guildService) : Command
+        public class DailyVerseStatus(GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "status"; set => throw new NotImplementedException(); }
 
@@ -320,7 +323,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
             }
         }
 
-        public class DailyVerseClear(GuildService guildService) : Command
+        public class DailyVerseClear(GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "clear"; set => throw new NotImplementedException(); }
 

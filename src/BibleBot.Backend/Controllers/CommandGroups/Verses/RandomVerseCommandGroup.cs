@@ -13,24 +13,27 @@ using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
     public class RandomVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                         SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : CommandGroup
+                                         SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(RandomVerseCommandGroup));
+
         public override string Name { get => "random"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new RandomVerse(userService, guildService, versionService, svProvider, bibleProviders),
-                new TrulyRandomVerse(userService, guildService, versionService, svProvider, bibleProviders)
+                new RandomVerse(userService, guildService, versionService, svProvider, bibleProviders, _localizer),
+                new TrulyRandomVerse(userService, guildService, versionService, svProvider, bibleProviders, _localizer)
             ]; set => throw new NotImplementedException();
         }
 
         public class RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                           SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : Command
+                           SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -88,7 +91,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
         }
 
         public class TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : Command
+                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "true"; set => throw new NotImplementedException(); }
 

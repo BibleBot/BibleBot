@@ -13,27 +13,30 @@ using System.Text;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
-    public class VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService) : CommandGroup
+    public class VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(VersionCommandGroup));
+
         public override string Name { get => "version"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new VersionUsage(userService, guildService, versionService),
-                new VersionSet(userService, versionService),
-                new VersionSetServer(guildService, versionService),
-                new VersionInfo(userService, guildService, versionService),
-                new VersionList(versionService),
-                new VersionBookList(userService, guildService, versionService, nameFetchingService)
+                new VersionUsage(userService, guildService, versionService, _localizer),
+                new VersionSet(userService, versionService, _localizer),
+                new VersionSetServer(guildService, versionService, _localizer),
+                new VersionInfo(userService, guildService, versionService, _localizer),
+                new VersionList(versionService, _localizer),
+                new VersionBookList(userService, guildService, versionService, nameFetchingService, _localizer)
             ]; set => throw new NotImplementedException();
         }
 
-        public class VersionUsage(UserService userService, GuildService guildService, VersionService versionService) : Command
+        public class VersionUsage(UserService userService, GuildService guildService, VersionService versionService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -88,7 +91,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class VersionSet(UserService userService, VersionService versionService) : Command
+        public class VersionSet(UserService userService, VersionService versionService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "set"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
@@ -142,7 +145,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class VersionSetServer(GuildService guildService, VersionService versionService) : Command
+        public class VersionSetServer(GuildService guildService, VersionService versionService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setserver"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
@@ -204,7 +207,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class VersionInfo(UserService userService, GuildService guildService, VersionService versionService) : Command
+        public class VersionInfo(UserService userService, GuildService guildService, VersionService versionService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "info"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
@@ -278,7 +281,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class VersionList(VersionService versionService) : Command
+        public class VersionList(VersionService versionService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "list"; set => throw new NotImplementedException(); }
 
@@ -327,7 +330,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class VersionBookList(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService) : Command
+        public class VersionBookList(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "booklist"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }

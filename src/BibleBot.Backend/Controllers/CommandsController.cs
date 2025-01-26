@@ -33,11 +33,11 @@ namespace BibleBot.Backend.Controllers
     {
         private readonly List<CommandGroup> _commandGroups = [
                 new InformationCommandGroup(userService, guildService, versionService, frontendStatsService, localizerFactory),
-                new FormattingCommandGroup(userService, guildService),
-                new VersionCommandGroup(userService, guildService, versionService, nameFetchingService),
-                new ResourceCommandGroup(resourceService.GetAllResources()),
-                new DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
-                new RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
+                new FormattingCommandGroup(userService, guildService, localizerFactory),
+                new VersionCommandGroup(userService, guildService, versionService, nameFetchingService, localizerFactory),
+                new ResourceCommandGroup(resourceService.GetAllResources(), localizerFactory),
+                new DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider], localizerFactory),
+                new RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider], localizerFactory),
                 new SearchCommandGroup(userService, guildService, versionService, nameFetchingService, [bgProvider, abProvider], localizerFactory),
                 new StaffOnlyCommandGroup()
             ];

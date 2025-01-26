@@ -13,25 +13,28 @@ using System.Text;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 {
-    public class LanguageCommandGroup(UserService userService, GuildService guildService, LanguageService languageService) : CommandGroup
+    public class LanguageCommandGroup(UserService userService, GuildService guildService, LanguageService languageService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(LanguageCommandGroup));
+
         public override string Name { get => "language"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new LanguageUsage(userService, guildService, languageService),
-                new LanguageSet(userService, languageService),
-                new LanguageSetServer( guildService, languageService),
+                new LanguageUsage(userService, guildService, languageService, _localizer),
+                new LanguageSet(userService, languageService, _localizer),
+                new LanguageSetServer( guildService, languageService, _localizer),
                 new LanguageList(languageService)
             ]; set => throw new NotImplementedException();
         }
 
-        public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService) : Command
+        public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -84,7 +87,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class LanguageSet(UserService userService, LanguageService languageService) : Command
+        public class LanguageSet(UserService userService, LanguageService languageService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "set"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set => throw new NotImplementedException(); }
@@ -139,7 +142,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             }
         }
 
-        public class LanguageSetServer(GuildService guildService, LanguageService languageService) : Command
+        public class LanguageSetServer(GuildService guildService, LanguageService languageService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setserver"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set => throw new NotImplementedException(); }
