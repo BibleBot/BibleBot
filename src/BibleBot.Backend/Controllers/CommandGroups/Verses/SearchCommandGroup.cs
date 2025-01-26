@@ -12,16 +12,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
 using Serilog;
 
 namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 {
     public class SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                    NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders) : CommandGroup
+                                    NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders,
+                                    IStringLocalizerFactory localizerFactory) : CommandGroup
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(SearchCommandGroup));
+
         public override string Name { get => "search"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
-        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, nameFetchingService, bibleProviders)]; set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, nameFetchingService, bibleProviders, _localizer)]; set => throw new NotImplementedException(); }
 
         public enum SubsetFlag
         {
@@ -32,7 +36,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
         }
 
         public class Search(UserService userService, GuildService guildService, VersionService versionService,
-                            NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders) : Command
+                            NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -97,7 +101,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/search", "This version is not eligible for search subsets yet. Make sure you're using a version of source `bg` (see `/versioninfo`).", true)
+                            Utils.GetInstance().Embedify("/search", localizer["SearchSubsetVersionIneligible"], true)
                         ],
                         LogStatement = "/search"
                     };
@@ -147,7 +151,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             OK = false,
                             Pages =
                             [
-                                Utils.GetInstance().Embedify("/search", "Your search query produced no results. Does your version support the subset you are searching? (`/versioninfo`)", true)
+                                Utils.GetInstance().Embedify("/search", localizer["SearchNoResultsVersionMissingSubset"], true)
                             ],
                             LogStatement = "/search"
                         };
@@ -168,19 +172,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     string subsetString = "";
                     if (potentialSubset == SubsetFlag.OT_ONLY)
                     {
-                        subsetString = "in the Old Testament ";
+                        subsetString = $"{localizer["SearchSubsetOldTestament"]} ";
                     }
                     else if (potentialSubset == SubsetFlag.NT_ONLY)
                     {
-                        subsetString = "in the New Testament ";
+                        subsetString = $"{localizer["SearchSubsetNewTestament"]} ";
                     }
                     else if (potentialSubset == SubsetFlag.DEU_ONLY)
                     {
-                        subsetString = "in the Apocrypha/Deuterocanon ";
+                        subsetString = $"{localizer["SearchSubsetDeuterocanon"]} ";
                     }
 
-                    string title = $"Search results for \"{query}\" {subsetString}({idealVersion.Abbreviation})";
-                    string pageCounter = "Page {0} of {1}";
+                    string title = $"{localizer["SearchResultsTitle"]} \"{query}\" {subsetString}({idealVersion.Abbreviation})";
+                    string pageCounter = localizer["SearchResultsPageCounter"];
 
                     for (int i = 0; i < totalPages; i++)
                     {
@@ -225,7 +229,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/search", "Your search query produced no results.", true)
+                            Utils.GetInstance().Embedify("/search", localizer["SearchNoResults"], true)
                         ],
                         LogStatement = "/search"
                     };

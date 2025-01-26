@@ -20,20 +20,22 @@ using Microsoft.Extensions.Localization;
 namespace BibleBot.Backend.Controllers.CommandGroups.Information
 {
     public class InformationCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                         FrontendStatsService frontendStatsService, IStringLocalizer<InformationCommandGroup> localizer) : CommandGroup
+                                         FrontendStatsService frontendStatsService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(InformationCommandGroup));
+
         public override string Name { get => "info"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "biblebot"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new InfoStats(userService, guildService, versionService, frontendStatsService, localizer),
-                new InfoBibleBot(localizer),
-                new InfoInvite(localizer)
+                new InfoStats(userService, guildService, versionService, frontendStatsService, _localizer),
+                new InfoBibleBot(_localizer),
+                new InfoInvite(_localizer)
             ]; set => throw new NotImplementedException();
         }
 
-        public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService, IStringLocalizer<InformationCommandGroup> localizer) : Command
+        public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "stats"; set => throw new NotImplementedException(); }
 
@@ -83,7 +85,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             }
         }
 
-        public class InfoBibleBot(IStringLocalizer<InformationCommandGroup> localizer) : Command
+        public class InfoBibleBot(IStringLocalizer localizer) : Command
         {
             public override string Name { get => "biblebot"; set => throw new NotImplementedException(); }
 
@@ -167,7 +169,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
             }
         }
 
-        public class InfoInvite(IStringLocalizer<InformationCommandGroup> localizer) : Command
+        public class InfoInvite(IStringLocalizer localizer) : Command
         {
             public override string Name { get => "invite"; set => throw new NotImplementedException(); }
 

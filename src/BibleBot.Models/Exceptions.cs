@@ -10,7 +10,7 @@
 namespace BibleBot.Models
 {
     /// <summary>
-    /// This should thrown when no BibleProvider corresponds to a particular condition.
+    /// This should be thrown when no BibleProvider corresponds to a particular condition.
     /// </summary>
     public class ProviderNotFoundException : System.Exception
     {
@@ -28,6 +28,16 @@ namespace BibleBot.Models
         public StringNotFoundException() { }
         public StringNotFoundException(string message) : base(message) { }
         public StringNotFoundException(string message, System.Exception inner) : base(message, inner) { }
+    }
+
+    /// <summary>
+    /// This should be thrown when a limitation is encountered and should be made known to the user..
+    /// </summary>
+    public class VerseLimitationException : System.Exception
+    {
+        public VerseLimitationException() { }
+        public VerseLimitationException(string message) : base(message) { }
+        public VerseLimitationException(string message, System.Exception inner) : base(message, inner) { }
     }
 }
 

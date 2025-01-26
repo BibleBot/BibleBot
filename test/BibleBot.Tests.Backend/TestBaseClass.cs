@@ -14,6 +14,9 @@ using BibleBot.Models;
 using Moq;
 using NUnit.Framework;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
+using Serilog.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BibleBot.Tests.Backend
 {
@@ -41,6 +44,8 @@ namespace BibleBot.Tests.Backend
 
         public Version _defaultBibleGatewayVersion;
         public Version _defaultAPIBibleVersion;
+
+        public IStringLocalizerFactory _localizerFactory = new ResourceManagerStringLocalizerFactory(Options.Create(new LocalizationOptions { ResourcesPath = "Resources" }), new SerilogLoggerFactory());
 
         [OneTimeSetUp]
         public async Task RunBeforeAnyTests()
@@ -74,7 +79,7 @@ namespace BibleBot.Tests.Backend
             _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _versionService, _resourceServiceMock.Object,
                                                     _frontendStatsServiceMock.Object, _nameFetchingServiceMock.Object,
-                                                    _spProviderMock.Object, _bgProviderMock.Object, _abProviderMock.Object);
+                                                    _spProviderMock.Object, _bgProviderMock.Object, _abProviderMock.Object, _localizerFactory);
 
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _parsingServiceMock.Object, _versionService,

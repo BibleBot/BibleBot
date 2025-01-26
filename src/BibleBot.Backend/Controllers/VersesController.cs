@@ -97,7 +97,7 @@ namespace BibleBot.Backend.Controllers
                 {
                     reference = parsingService.GenerateReference(tuple.Item1, bsr, idealVersion, versions);
                 }
-                catch (Exception ex)
+                catch (VerseLimitationException ex)
                 {
                     if (ex.Message == "too many commas")
                     {

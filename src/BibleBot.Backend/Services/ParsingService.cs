@@ -235,7 +235,7 @@ namespace BibleBot.Backend.Services
                                     // TODO(srp): Indicate comma limit to user.
                                     if (commaSplit.Length > 5)
                                     {
-                                        throw new System.Exception("too many commas");
+                                        throw new VerseLimitationException("too many commas");
                                     }
 
                                     switch (System.Array.IndexOf(spanSplit, pairValue))

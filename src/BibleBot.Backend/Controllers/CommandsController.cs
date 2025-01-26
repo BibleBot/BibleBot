@@ -10,6 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BibleBot.Backend.Controllers.CommandGroups.Information;
+using BibleBot.Backend.Controllers.CommandGroups.Settings;
+using BibleBot.Backend.Controllers.CommandGroups.Resources;
+using BibleBot.Backend.Controllers.CommandGroups.Verses;
+using BibleBot.Backend.Controllers.CommandGroups.Staff;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -23,18 +28,18 @@ namespace BibleBot.Backend.Controllers
     [Route("api/commands")]
     [ApiController]
     public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
-                                    FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider,
-                                    BibleGatewayProvider bgProvider, APIBibleProvider abProvider, IStringLocalizer<CommandGroups.Information.InformationCommandGroup> cgInfoLocalizer) : ControllerBase
+                              FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider,
+                              BibleGatewayProvider bgProvider, APIBibleProvider abProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
         private readonly List<CommandGroup> _commandGroups = [
-                new CommandGroups.Information.InformationCommandGroup(userService, guildService, versionService, frontendStatsService, cgInfoLocalizer),
-                new CommandGroups.Settings.FormattingCommandGroup(userService, guildService),
-                new CommandGroups.Settings.VersionCommandGroup(userService, guildService, versionService, nameFetchingService),
-                new CommandGroups.Resources.ResourceCommandGroup(resourceService.GetAllResources()),
-                new CommandGroups.Verses.DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
-                new CommandGroups.Verses.RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
-                new CommandGroups.Verses.SearchCommandGroup(userService, guildService, versionService, nameFetchingService, [bgProvider, abProvider]),
-                new CommandGroups.Staff.StaffOnlyCommandGroup()
+                new InformationCommandGroup(userService, guildService, versionService, frontendStatsService, localizerFactory),
+                new FormattingCommandGroup(userService, guildService),
+                new VersionCommandGroup(userService, guildService, versionService, nameFetchingService),
+                new ResourceCommandGroup(resourceService.GetAllResources()),
+                new DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
+                new RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider]),
+                new SearchCommandGroup(userService, guildService, versionService, nameFetchingService, [bgProvider, abProvider], localizerFactory),
+                new StaffOnlyCommandGroup()
             ];
 
         /// <summary>
