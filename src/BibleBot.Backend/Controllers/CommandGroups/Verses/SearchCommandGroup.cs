@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
@@ -22,10 +23,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                     IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(SearchCommandGroup));
+        private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
 
         public override string Name { get => "search"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
-        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, nameFetchingService, bibleProviders, _localizer)]; set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, nameFetchingService, bibleProviders, _localizer, _sharedLocalizer)]; set => throw new NotImplementedException(); }
 
         public enum SubsetFlag
         {
@@ -36,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
         }
 
         public class Search(UserService userService, GuildService guildService, VersionService versionService,
-                            NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders, IStringLocalizer localizer) : Command
+                            NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -184,7 +186,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     }
 
                     string title = $"{localizer["SearchResultsTitle"]} \"{query}\" {subsetString}({idealVersion.Abbreviation})";
-                    string pageCounter = localizer["SearchResultsPageCounter"];
+                    string pageCounter = sharedLocalizer["PageCounter"];
 
                     for (int i = 0; i < totalPages; i++)
                     {

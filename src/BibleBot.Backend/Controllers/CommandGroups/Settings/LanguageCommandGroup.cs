@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
@@ -21,20 +22,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
     public class LanguageCommandGroup(UserService userService, GuildService guildService, LanguageService languageService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(LanguageCommandGroup));
+        private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
 
         public override string Name { get => "language"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new LanguageUsage(userService, guildService, languageService, _localizer),
+                new LanguageUsage(userService, guildService, languageService, _localizer, _sharedLocalizer),
                 new LanguageSet(userService, languageService, _localizer),
                 new LanguageSetServer( guildService, languageService, _localizer),
                 new LanguageList(languageService)
             ]; set => throw new NotImplementedException();
         }
 
-        public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService, IStringLocalizer localizer) : Command
+        public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -45,12 +47,12 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 Language defaultLanguage = await languageService.Get("english");
 
-                string response = "Your preferred language is set to **<language>**.\n" +
-                               "The server's preferred language is set to **<glanguage>**.\n\n" +
-                               "__**Subcommands**__\n" +
-                               "**set** - set your preferred language\n" +
-                               "**setserver** - set the server's default language (staff only)\n" +
-                               "**list** - list all available languages";
+                string response = $"{localizer["LanguageStatusPreference"]}\n" +
+                               $"{localizer["LanguageStatusServerPreference"]}\n\n" +
+                               $"__**{sharedLocalizer["RelatedCommands"]}**__\n" +
+                               $"**/setlanguage** - {localizer["SetLanguageCommandDescription"]}\n" +
+                               $"**/setserverlanguage** - {localizer["SetServerLanguageCommandDescription"]}\n" +
+                               $"**/listlanguages** - {localizer["ListLanguagesCommandDescription"]}";
 
                 if (idealUser != null)
                 {
@@ -104,7 +106,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     if (idealUser != null)
                     {
                         UpdateDefinition<User> update = Builders<User>.Update
-                                     .Set(user => user.Language, idealLanguage.ObjectName);
+                                     .Set(user => user.Language, idealLanguage.Culture);
 
                         await userService.Update(req.UserId, update);
                     }
@@ -113,7 +115,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         User newUser = new()
                         {
                             UserId = req.UserId,
-                            Language = idealLanguage.ObjectName
+                            Language = idealLanguage.Culture
                         };
 
                         await userService.Create(newUser);
@@ -124,7 +126,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("+language set", "Set language successfully.", false)
+                            Utils.GetInstance().Embedify("+language set", localizer["SetLanguageSuccess"], false)
                         ],
                         LogStatement = $"+language set {args[0]}"
                     };
@@ -159,7 +161,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     if (idealGuild != null)
                     {
                         UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                     .Set(guild => guild.Language, idealLanguage.ObjectName);
+                                     .Set(guild => guild.Language, idealLanguage.Culture);
 
                         await guildService.Update(req.GuildId, update);
                     }
@@ -168,7 +170,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         Guild newGuild = new()
                         {
                             GuildId = req.GuildId,
-                            Language = idealLanguage.ObjectName,
+                            Language = idealLanguage.Culture,
                             IsDM = req.IsDM
                         };
 
@@ -180,7 +182,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("+language setserver", "Set server language successfully.", false)
+                            Utils.GetInstance().Embedify("+language setserver", localizer["SetServerLanguageSuccess"], false)
                         ],
                         LogStatement = $"+language setserver {args[0]}"
                     };
@@ -211,7 +213,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 foreach (Language lang in languages)
                 {
-                    content.Append($"{lang.Name} `[{lang.ObjectName}]`\n");
+                    content.Append($"{lang.Name} `[{lang.Culture}]`\n");
                 }
 
                 return new CommandResponse

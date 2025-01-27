@@ -28,7 +28,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task<List<Language>> Get() => (await _languages.FindAsync(language => true)).ToList();
-        public async Task<Language> Get(string objectName) => (await _languages.FindAsync(language => language.ObjectName == objectName)).FirstOrDefault();
+        public async Task<Language> Get(string culture) => (await _languages.FindAsync(language => language.Culture == culture)).FirstOrDefault();
 
         public async Task<Language> Create(Language language)
         {
@@ -36,8 +36,8 @@ namespace BibleBot.Backend.Services
             return language;
         }
 
-        public async Task Update(string objectName, UpdateDefinition<Language> updateDefinition) => await _languages.UpdateOneAsync(language => language.ObjectName == objectName, updateDefinition);
-        public async Task Remove(Language idealLanguage) => await Remove(idealLanguage.ObjectName);
-        public async Task Remove(string objectName) => await _languages.DeleteOneAsync(language => language.ObjectName == objectName);
+        public async Task Update(string culture, UpdateDefinition<Language> updateDefinition) => await _languages.UpdateOneAsync(language => language.Culture == culture, updateDefinition);
+        public async Task Remove(Language idealLanguage) => await Remove(idealLanguage.Culture);
+        public async Task Remove(string culture) => await _languages.DeleteOneAsync(language => language.Culture == culture);
     }
 }

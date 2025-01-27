@@ -117,32 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SearchSubsetVersionIneligible" xml:space="preserve">
-    <value>This version is not eligible for search subsets yet. Make sure you're using a version of source `bg` (see `/versioninfo`).</value>
-    <comment>The error message sent when trying to use a search subset with an unsupported Bible version.</comment>
+  <data name="FormattingStatusVerseNumbers" xml:space="preserve">
+    <value>{0} Verse numbers are {1}.</value>
+    <comment>For indicating verse number toggle status.</comment>
   </data>
-  <data name="SearchNoResultsVersionMissingSubset" xml:space="preserve">
-    <value>Your search query produced no results. Does your version support the subset you are searching? (`/versioninfo`)</value>
-    <comment>The error message sent when no search results are found within a subset, suggesting the version may not have that subset.</comment>
+  <data name="FormattingStatusTitles" xml:space="preserve">
+    <value>{2} Titles are {3}.</value>
+    <comment>For indicating title toggle status.</comment>
   </data>
-  <data name="SearchSubsetOldTestament" xml:space="preserve">
-    <value>in the Old Testament</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="FormattingStatusVersePagination" xml:space="preserve">
+    <value>{4} Verse pagination is {5}.</value>
+    <comment>For indicating verse pagination toggle status.</comment>
   </data>
-  <data name="SearchSubsetNewTestament" xml:space="preserve">
-    <value>in the New Testament</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="FormattingStatusDisplayStyle" xml:space="preserve">
+    <value>Your preferred display style is set to {6}.</value>
+    <comment>For indicating preferred display style.</comment>
   </data>
-  <data name="SearchSubsetDeuterocanon" xml:space="preserve">
-    <value>in the Apocrypha/Deuterocanon</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="FormattingStatusServerDisplayStyle" xml:space="preserve">
+    <value>The server's preferred display style is set to {7}.</value>
+    <comment>For indicating server preferred display style.</comment>
   </data>
-  <data name="SearchResultsTitle" xml:space="preserve">
-    <value>Search results for</value>
-    <comment>See screenshot for examples.</comment>
+  <data name="FormattingStatusIgnoringBrackets" xml:space="preserve">
+    <value>This bot will ignore verses in this server surrounded by **`&lt;&gt;`**{8}.</value>
+    <comment>For indicating ignoring brackets.</comment>
   </data>
-  <data name="SearchNoResults" xml:space="preserve">
-    <value>Your search query produced no results.</value>
-    <comment>Error message sent when no search results are found (no subset used).</comment>
+  <data name="SetVerseNumbersCommandDescription" xml:space="preserve">
+    <value>enable or disable verse numbers</value>
+    <comment>Description for /setversenumbers command.</comment>
+  </data>
+  <data name="SetTitlesCommandDescription" xml:space="preserve">
+    <value>enable or disable titles</value>
+    <comment>Description for /settitles command.</comment>
+  </data>
+  <data name="SetPaginationCommandDescription" xml:space="preserve">
+    <value>enable or disable verse pagination</value>
+    <comment>Description for /setpagination command.</comment>
+  </data>
+  <data name="SetDisplayCommandDescription" xml:space="preserve">
+    <value>set your preferred display style</value>
+    <comment>Description for /setdisplay command.</comment>
+  </data>
+  <data name="SetServerDisplayCommandDescription" xml:space="preserve">
+    <value>set the server's preferred display style (staff only)</value>
+    <comment>Description for /setserverdisplay command.</comment>
+  </data>
+  <data name="SetBracketsCommandDescription" xml:space="preserve">
+    <value>set the bot's ignoring brackets for this server (staff only)</value>
+    <comment>Description for /setbrackets command.</comment>
+  </data>
+  <data name="SetVerseNumbersSuccess" xml:space="preserve">
+    <value>Set verse numbers successfully.</value>
+    <comment>Response for successful usage of /setversenumbers.</comment>
+  </data>
+  <data name="SetTitlesSuccess" xml:space="preserve">
+    <value>Set titles successfully.</value>
+    <comment>Response for successful usage of /settitles.</comment>
+  </data>
+  <data name="SetPaginationSuccess" xml:space="preserve">
+    <value>Set pagination successfully.</value>
+    <comment>Response for successful usage of /setpagination.</comment>
+  </data>
+  <data name="SetDisplaySuccess" xml:space="preserve">
+    <value>Set display style successfully.</value>
+    <comment>Response for successful usage of /setdisplay.</comment>
+  </data>
+  <data name="SetServerDisplaySuccess" xml:space="preserve">
+    <value>Set server display style successfully.</value>
+    <comment>Response for successful usage of /setserverdisplay.</comment>
+  </data>
+  <data name="SetBracketsSuccess" xml:space="preserve">
+    <value>Set brackets successfully.</value>
+    <comment>Response for successful usage of /setbrackets.</comment>
   </data>
 </root>

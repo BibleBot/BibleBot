@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
@@ -21,13 +22,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
     public class VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(VersionCommandGroup));
+        private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
 
         public override string Name { get => "version"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new VersionUsage(userService, guildService, versionService, _localizer),
+                new VersionUsage(userService, guildService, versionService, _localizer, _sharedLocalizer),
                 new VersionSet(userService, versionService, _localizer),
                 new VersionSetServer(guildService, versionService, _localizer),
                 new VersionInfo(userService, guildService, versionService, _localizer),
@@ -36,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             ]; set => throw new NotImplementedException();
         }
 
-        public class VersionUsage(UserService userService, GuildService guildService, VersionService versionService, IStringLocalizer localizer) : Command
+        public class VersionUsage(UserService userService, GuildService guildService, VersionService versionService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -47,14 +49,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 Models.Version defaultVersion = await versionService.Get("RSV");
 
-                string response = "Your preferred version is set to **<version>**.\n" +
-                               "The server's preferred version is set to **<gversion>**.\n\n" +
-                               "__**Related Commands**__\n" +
-                               "**/setversion** - set your preferred version\n" +
-                               "**/setserverversion** - set the server's default version (staff only)\n" +
-                               "**/versioninfo** - get information on a version\n" +
-                               "**/listversions** - list all available versions\n" +
-                               "**/booklist** - list all available books";
+                string response = $"Your preferred version is set to **<version>**.\n" +
+                               $"The server's preferred version is set to **<gversion>**.\n\n" +
+                               $"__**Related Commands**__\n" +
+                               $"**/setversion** - set your preferred version\n" +
+                               $"**/setserverversion** - set the server's default version (staff only)\n" +
+                               $"**/versioninfo** - get information on a version\n" +
+                               $"**/listversions** - list all available versions\n" +
+                               $"**/booklist** - list all available books";
 
                 if (idealUser != null)
                 {
@@ -407,8 +409,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                     else
                     {
-                        string message = "We encountered an internal error. " +
-                        "Please report this to the support server (https://biblebot.xyz/discord) or make a bug report (https://biblebot.xyz/bugreport) with the following information:\n\n" +
+                        string message = "We encountered an internal error. Please report this to the support server (https://biblebot.xyz/discord) or make a bug report (https://biblebot.xyz/bugreport) with the following information:\n\n" +
                         $"```\nVersion: {idealVersion.Abbreviation}\n```";
 
                         return new CommandResponse

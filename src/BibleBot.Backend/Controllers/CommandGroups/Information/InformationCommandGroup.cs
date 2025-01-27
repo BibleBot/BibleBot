@@ -58,19 +58,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                 string backendLongHash = ThisAssembly.Git.Sha;
                 string backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
 
-                string resp = $"{localizer["FrontendStats"]}\n" +
-                $"{localizer["ShardCount"]}: {frontendStats.ShardCount}\n" +
-                $"{localizer["ServerCount"]}: {frontendStats.ServerCount}\n" +
-                $"{localizer["UserCount"]}: {frontendStats.UserCount}\n" +
-                $"{localizer["ChannelCount"]}: {frontendStats.ChannelCount}\n\n" +
-                $"{localizer["BackendStats"]}\n" +
-                $"{localizer["UserPreferenceCount"]}: {userPrefs}\n" +
-                $"{localizer["GuildPreferenceCount"]}: {guildPrefs}\n" +
-                $"{localizer["VersionCount"]}: {versions}\n\n" +
+                string resp = $"### {localizer["FrontendStats"]}\n" +
+                $"**{localizer["ShardCount"]}**: {frontendStats.ShardCount}\n" +
+                $"**{localizer["ServerCount"]}**: {frontendStats.ServerCount}\n" +
+                $"**{localizer["UserCount"]}**: {frontendStats.UserCount}\n" +
+                $"**{localizer["ChannelCount"]}**: {frontendStats.ChannelCount}\n\n" +
+                $"### {localizer["BackendStats"]}\n" +
+                $"**{localizer["UserPreferenceCount"]}**: {userPrefs}\n" +
+                $"**{localizer["GuildPreferenceCount"]}**: {guildPrefs}\n" +
+                $"**{localizer["VersionCount"]}**: {versions}\n\n" +
                 $"*{localizer["StatisticsSheetAddenda"]}*\n\n" +
-                $"{localizer["Metadata"]}\n" +
-                $"{localizer["Frontend"]}: v{version} ([{frontendShortHash}]({frontendCommitURL}))\n" +
-                $"{localizer["Backend"]}: v{version} ([{backendShortHash}]({backendCommitURL}))\n";
+                $"### {localizer["Metadata"]}\n" +
+                $"**{localizer["Frontend"]}**: {version} ([{frontendShortHash}]({frontendCommitURL}))\n" +
+                $"**{localizer["Backend"]}**: {version} ([{backendShortHash}]({backendCommitURL}))\n";
 
 
                 return new CommandResponse
@@ -140,11 +140,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                         new()
                         {
                             Name = $":link: {localizer["Links"]}",
-                            Value = $"{localizer["Website"]}: https://biblebot.xyz\n" +
-                            $"{localizer["Copyrights"]}: https://biblebot.xyz/copyright\n" +
-                            $"{localizer["SourceCode"]}: https://gitlab.com/KerygmaDigital/BibleBot/BibleBot\n" +
-                            $"{localizer["OfficialDiscordServer"]}: https://biblebot.xyz/discord\n" +
-                            $"{localizer["TermsAndConditions"]}: https://biblebot.xyz/terms\n\n" +
+                            Value = $"**{localizer["Website"]}**: https://biblebot.xyz\n" +
+                            $"**{localizer["Copyrights"]}**: https://biblebot.xyz/copyright\n" +
+                            $"**{localizer["SourceCode"]}**: https://gitlab.com/KerygmaDigital/BibleBot/BibleBot\n" +
+                            $"**{localizer["OfficialDiscordServer"]}**: https://biblebot.xyz/discord\n" +
+                            $"**{localizer["TermsAndConditions"]}**: https://biblebot.xyz/terms\n\n" +
                             "─────────────"
                         },
                         new()

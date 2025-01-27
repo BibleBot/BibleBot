@@ -118,39 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FrontendStats" xml:space="preserve">
-    <value>### Frontend Stats</value>
+    <value>Frontend Stats</value>
     <comment>Header above various frontend-related statistics.</comment>
   </data>
   <data name="ShardCount" xml:space="preserve">
-    <value>**Shard Count**</value>
+    <value>Shard Count</value>
     <comment>The count of logical processes to distribute the load of the bot, by having ~1,000 servers/guilds per shard.</comment>
   </data>
   <data name="ServerCount" xml:space="preserve">
-    <value>**Server Count**</value>
+    <value>Server Count</value>
     <comment>The number of servers with BibleBot.</comment>
   </data>
   <data name="UserCount" xml:space="preserve">
-    <value>**User Count**</value>
+    <value>User Count</value>
     <comment>The aggregated, estimated number of users in all servers with BibleBot.</comment>
   </data>
   <data name="ChannelCount" xml:space="preserve">
-    <value>**Channel Count**</value>
+    <value>Channel Count</value>
     <comment>The aggregated number of channels in all servers with BibleBot.</comment>
   </data>
   <data name="BackendStats" xml:space="preserve">
-    <value>### Backend Stats</value>
+    <value>Backend Stats</value>
     <comment>Header above various backend-related statistics.</comment>
   </data>
   <data name="UserPreferenceCount" xml:space="preserve">
-    <value>**User Preference Count**</value>
+    <value>User Preference Count</value>
     <comment>The estimated number of user preferences in the database.</comment>
   </data>
   <data name="GuildPreferenceCount" xml:space="preserve">
-    <value>**Guild Preference Count**</value>
+    <value>Guild Preference Count</value>
     <comment>The estimated number of guild preferences in the database.</comment>
   </data>
   <data name="VersionCount" xml:space="preserve">
-    <value>**Version Count**</value>
+    <value>Version Count</value>
     <comment>The estimated number of Bible versions in the database.</comment>
   </data>
   <data name="StatisticsSheetAddenda" xml:space="preserve">
@@ -158,15 +158,15 @@
     <comment>A pointer to our statistics spreadsheet.</comment>
   </data>
   <data name="Metadata" xml:space="preserve">
-    <value>### Metadata</value>
+    <value>Metadata</value>
     <comment>Header above various metadata.</comment>
   </data>
   <data name="Frontend" xml:space="preserve">
-    <value>**Frontend**</value>
+    <value>Frontend</value>
     <comment>To denote current version/build of the running frontend.</comment>
   </data>
   <data name="Backend" xml:space="preserve">
-    <value>**Backend**</value>
+    <value>Backend</value>
     <comment>To denote current version/build of the running backend(s).</comment>
   </data>
   <data name="BibleBotSlogan" xml:space="preserve">
@@ -222,23 +222,23 @@
     <comment>Header above link list.</comment>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>**Website**</value>
+    <value>Website</value>
     <comment>For linking to our website.</comment>
   </data>
   <data name="Copyrights" xml:space="preserve">
-    <value>**Copyrights**</value>
+    <value>Copyrights</value>
     <comment>For linking to our copyrights page.</comment>
   </data>
   <data name="SourceCode" xml:space="preserve">
-    <value>**Source Code**</value>
+    <value>Source Code</value>
     <comment>For linking to our source code.</comment>
   </data>
   <data name="OfficialDiscordServer" xml:space="preserve">
-    <value>**Official Discord Server**</value>
+    <value>Official Discord Server</value>
     <comment>For linking to our official Discord server.</comment>
   </data>
   <data name="TermsAndConditions" xml:space="preserve">
-    <value>**Terms and Conditions**</value>
+    <value>Terms and Conditions</value>
     <comment>For linking to our Terms and Conditions.</comment>
   </data>
   <data name="NewsFromBlog" xml:space="preserve">

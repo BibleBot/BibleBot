@@ -12,16 +12,28 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Models;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
+using Serilog.Extensions.Logging;
 
 namespace BibleBot.Backend
 {
     public class Utils
     {
-
-        private Utils() { }
         private static Utils _instance;
         private static readonly Lock _lock = new();
+        private readonly IStringLocalizer _localizer;
+        private readonly ResourceManagerStringLocalizerFactory _localizerFactory;
+
+        public Utils()
+        {
+            _localizerFactory = new ResourceManagerStringLocalizerFactory(Options.Create(new LocalizationOptions { ResourcesPath = "Resources" }), new SerilogLoggerFactory());
+            _localizer = _localizerFactory.Create(typeof(SharedResource));
+
+            _instance = this;
+        }
 
         public static Utils GetInstance()
         {
@@ -44,13 +56,13 @@ namespace BibleBot.Backend
             ERROR_COLOR = 16723502
         }
 
-        public static readonly string Version = "9.2-beta";
+        public static readonly string Version = "v9.2-beta";
 
         public InternalEmbed Embedify(string title, string description, bool isError) => Embedify(null, title, description, isError, null);
 
         public InternalEmbed Embedify(string author, string title, string description, bool isError, string copyright)
         {
-            string footerText = $"BibleBot v{Version} by Kerygma Digital";
+            string footerText = string.Format(_localizer["GlobalFooter"], Version);
 
             InternalEmbed embed = new()
             {
@@ -118,7 +130,7 @@ namespace BibleBot.Backend
                 {
                     if (section.Contains('-'))
                     {
-                        string[] sectionRange = section.Split("-").Where(item => item.Length > 0).ToArray();
+                        string[] sectionRange = [.. section.Split("-").Where(item => item.Length > 0)];
                         int firstPart = 0;
                         int secondPart = 0;
 

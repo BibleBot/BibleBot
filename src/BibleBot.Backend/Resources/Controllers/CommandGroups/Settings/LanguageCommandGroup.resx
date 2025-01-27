@@ -117,32 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SearchSubsetVersionIneligible" xml:space="preserve">
-    <value>This version is not eligible for search subsets yet. Make sure you're using a version of source `bg` (see `/versioninfo`).</value>
-    <comment>The error message sent when trying to use a search subset with an unsupported Bible version.</comment>
+  <data name="LanguageStatusPreference" xml:space="preserve">
+    <value>Your preferred language is set to {0}.</value>
+    <comment>To indicate language preference.</comment>
   </data>
-  <data name="SearchNoResultsVersionMissingSubset" xml:space="preserve">
-    <value>Your search query produced no results. Does your version support the subset you are searching? (`/versioninfo`)</value>
-    <comment>The error message sent when no search results are found within a subset, suggesting the version may not have that subset.</comment>
+  <data name="LanguageStatusGuildPreference" xml:space="preserve">
+    <value>The server's preferred language is set to {0}.</value>
+    <comment>To indicate server language preference.</comment>
   </data>
-  <data name="SearchSubsetOldTestament" xml:space="preserve">
-    <value>in the Old Testament</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="SetLanguageCommandDescription" xml:space="preserve">
+    <value>set your preferred language</value>
+    <comment>Description for /setlanguage command.</comment>
   </data>
-  <data name="SearchSubsetNewTestament" xml:space="preserve">
-    <value>in the New Testament</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="SetServerLanguageCommandDescription" xml:space="preserve">
+    <value>set the server's default language (staff only)</value>
+    <comment>Description for /setserverlanguage command.</comment>
   </data>
-  <data name="SearchSubsetDeuterocanon" xml:space="preserve">
-    <value>in the Apocrypha/Deuterocanon</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="ListLanguagesCommandDescription" xml:space="preserve">
+    <value>list all available languages</value>
+    <comment>Description for /listlanguages command.</comment>
   </data>
-  <data name="SearchResultsTitle" xml:space="preserve">
-    <value>Search results for</value>
-    <comment>See screenshot for examples.</comment>
+  <data name="SetLanguageSuccess" xml:space="preserve">
+    <value>Set language successfully.</value>
+    <comment>Response for successful usage of /setlanguage.</comment>
   </data>
-  <data name="SearchNoResults" xml:space="preserve">
-    <value>Your search query produced no results.</value>
-    <comment>Error message sent when no search results are found (no subset used).</comment>
+  <data name="SetServerLanguageSuccess" xml:space="preserve">
+    <value>Set server language successfully.</value>
+    <comment>Response for successful usage of /setserverlanguage.</comment>
   </data>
 </root>

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
@@ -20,13 +21,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
     public class FormattingCommandGroup(UserService userService, GuildService guildService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(FormattingCommandGroup));
+        private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
 
         public override string Name { get => "formatting"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new FormattingUsage(userService, guildService, _localizer),
+                new FormattingUsage(userService, guildService, _localizer, _sharedLocalizer),
                 new FormattingSetVerseNumbers(userService, _localizer),
                 new FormattingSetTitles(userService, _localizer),
                 new FormattingSetPagination(userService, _localizer),
@@ -36,7 +38,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
             ]; set => throw new NotImplementedException();
         }
 
-        public class FormattingUsage(UserService userService, GuildService guildService, IStringLocalizer localizer) : Command
+        public class FormattingUsage(UserService userService, GuildService guildService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -45,49 +47,49 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 User idealUser = await userService.Get(req.UserId);
                 Guild idealGuild = await guildService.Get(req.GuildId);
 
-                string response = "<vncheck> Verse numbers are **<verseNumbers>**.\n" +
-                               "<titlecheck> Titles are **<titles>**.\n" +
-                               "<vpcheck> Verse pagination is **<pagination>**.\n" +
-                               "Your preferred display style is set to **`<displayStyle>`**.\n\n" +
-                               "The server's preferred display style is set to **`<serverDisplayStyle>`**.\n" +
-                               "This bot will ignore verses in this server surrounded by **`<>`**<ignoringBrackets>.\n\n" +
-                               "__**Related Commands**__\n" +
-                               "**/setversenumbers** - enable or disable verse numbers\n" +
-                               "**/settitles** - enable or disable titles\n" +
-                               "**/setpagination** - enable or disable verse pagination\n" +
-                               "**/setdisplay** - set your preferred display style\n" +
-                               "**/setserverdisplay** - set the server's preferred display style (staff only)\n" +
-                               "**/setbrackets** - set the bot's ignoring brackets for this server (staff only)";
+                string response = $"{localizer["FormattingStatusVerseNumbers"]}\n" +
+                               $"{localizer["FormattingStatusTitles"]}\n" +
+                               $"{localizer["FormattingStatusVersePagination"]}\n" +
+                               $"{localizer["FormattingStatusDisplayStyle"]}\n\n" +
+                               $"{localizer["FormattingStatusServerDisplayStyle"]}\n" +
+                               $"{localizer["FormattingStatusIgnoringBrackets"]}\n\n" +
+                               $"__**{sharedLocalizer["RelatedCommands"]}**__\n" +
+                               $"**/setversenumbers** - {localizer["SetVerseNumbersCommandDescription"]}\n" +
+                               $"**/settitles** - {localizer["SetTitlesCommandDescription"]}\n" +
+                               $"**/setpagination** - {localizer["SetPaginationCommandDescription"]}\n" +
+                               $"**/setdisplay** - {localizer["SetDisplayCommandDescription"]}\n" +
+                               $"**/setserverdisplay** - {localizer["SetServerDisplayCommandDescription"]}\n" +
+                               $"**/setbrackets** - {localizer["SetBracketsCommandDescription"]}";
+
+                List<string> replacements = [];
 
                 if (idealUser != null)
                 {
-                    response = idealUser.VerseNumbersEnabled
-                        ? response.Replace("<vncheck>", "<:checkmark:1132080313854603295>").Replace("<verseNumbers>", "enabled")
-                        : response.Replace("<vncheck>", "<:xmark:1132080327557398599>").Replace("<verseNumbers>", "disabled");
-
-                    response = idealUser.TitlesEnabled
-                        ? response.Replace("<titlecheck>", "<:checkmark:1132080313854603295>").Replace("<titles>", "enabled")
-                        : response.Replace("<titlecheck>", "<:xmark:1132080327557398599>").Replace("<titles>", "disabled");
-
-                    response = idealUser.PaginationEnabled
-                        ? response.Replace("<vpcheck>", "<:checkmark:1132080313854603295>").Replace("<pagination>", "enabled")
-                        : response.Replace("<vpcheck>", "<:xmark:1132080327557398599>").Replace("<pagination>", "disabled");
-
-                    response = response.Replace("<displayStyle>", idealUser.DisplayStyle);
+                    replacements.AddRange(idealUser.VerseNumbersEnabled ? [":white_check_mark:", "**enabled**"] : [":no_entry_sign:", "**disabled**"]);
+                    replacements.AddRange(idealUser.TitlesEnabled ? [":white_check_mark:", "**enabled**"] : [":no_entry_sign:", "**disabled**"]);
+                    replacements.AddRange(idealUser.PaginationEnabled ? [":white_check_mark:", "**enabled**"] : [":no_entry_sign:", "**disabled**"]);
+                    replacements.Add(idealUser.DisplayStyle != null ? $"**`{idealUser.DisplayStyle}`**" : "**`embed`**");
+                }
+                else
+                {
+                    replacements.AddRange([":white_check_mark:", "**enabled**"]);
+                    replacements.AddRange([":white_check_mark:", "**enabled**"]);
+                    replacements.AddRange([":white_check_mark:", "**enabled**"]);
+                    replacements.Add("**`embed`**");
                 }
 
                 if (idealGuild != null)
                 {
-                    response = response.Replace("<serverDisplayStyle>", idealGuild.DisplayStyle ?? "embed");
-                    response = response.Replace("<ignoringBrackets>", idealGuild.IgnoringBrackets != "<>" ? $" or **`{idealGuild.IgnoringBrackets}`**" : "");
+                    replacements.Add(idealGuild.DisplayStyle != null ? $"**`{idealUser.DisplayStyle}`**" : "**`embed`**");
+                    replacements.Add(idealGuild.IgnoringBrackets != "<>" ? $" / **`{idealGuild.IgnoringBrackets}`**" : "");
+                }
+                else
+                {
+                    replacements.Add("**`embed`**");
+                    replacements.Add("");
                 }
 
-                response = response.Replace("<vncheck>", "<:checkmark:1132080313854603295>").Replace("<verseNumbers>", "enabled");
-                response = response.Replace("<titlecheck>", "<:checkmark:1132080313854603295>").Replace("<titles>", "enabled");
-                response = response.Replace("<vpcheck>", "<:checkmark:1132080313854603295>").Replace("<pagination>", "enabled");
-                response = response.Replace("<displayStyle>", "embed");
-                response = response.Replace("<serverDisplayStyle>", "embed");
-                response = response.Replace("<ignoringBrackets>", "");
+                response = string.Format(response, [.. replacements]);
 
                 return new CommandResponse
                 {
@@ -146,7 +148,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setversenumbers", "Set verse numbers successfully.", false)
+                        Utils.GetInstance().Embedify("/setversenumbers", localizer["SetVerseNumbersSuccess"], false)
                     ],
                     LogStatement = $"/setversenumbers {args[0]}"
                 };
@@ -198,7 +200,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/settitles", "Set titles successfully.", false)
+                        Utils.GetInstance().Embedify("/settitles", localizer["SetTitlesSuccess"], false)
                     ],
                     LogStatement = $"/settitles {args[0]}"
                 };
@@ -250,7 +252,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setpagination", "Set pagination successfully.", false)
+                        Utils.GetInstance().Embedify("/setpagination", localizer["SetPaginationSuccess"], false)
                     ],
                     LogStatement = $"/setpagination {args[0]}"
                 };
@@ -302,7 +304,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setdisplay", "Set display style successfully.", false)
+                        Utils.GetInstance().Embedify("/setdisplay", localizer["SetDisplaySuccess"], false)
                     ],
                     LogStatement = $"/setdisplay {args[0]}"
                 };
@@ -355,7 +357,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setserverdisplay", "Set server display style successfully.", false)
+                        Utils.GetInstance().Embedify("/setserverdisplay", localizer["SetServerDisplaySuccess"], false)
                     ],
                     LogStatement = $"/setserverdisplay {args[0]}"
                 };
@@ -423,7 +425,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setbrackets", "Set brackets successfully.", false)
+                        Utils.GetInstance().Embedify("/setbrackets", localizer["SetBracketsSuccess"], false)
                     ],
                     LogStatement = $"/setbrackets {args[0]}"
                 };

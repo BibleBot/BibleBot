@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace BibleBot.Models
 {
@@ -91,31 +92,31 @@ namespace BibleBot.Models
         /// <returns>A string that represents the Reference.</returns>
         public override string ToString()
         {
-            string result = $"{Book} {StartingChapter}:{StartingVerse}";
+            StringBuilder resultBuilder = new($"{Book} {StartingChapter}:{StartingVerse}");
 
             if (EndingChapter > 0 && EndingChapter != StartingChapter)
             {
-                result += $"-{EndingChapter}:{EndingVerse}";
+                resultBuilder.Append($"-{EndingChapter}:{EndingVerse}");
             }
             else if (AppendedVerses != null && AppendedVerses.Count == 0 && EndingVerse > 0 && EndingVerse != StartingVerse)
             {
-                result += $"-{EndingVerse}";
+                resultBuilder.Append($"-{EndingVerse}");
             }
             else if (EndingChapter > 0 && AppendedVerses != null && AppendedVerses.Count == 0 && EndingVerse == 0)
             {
-                result += "-";
+                resultBuilder.Append('-');
             }
-            else if (EndingChapter == StartingChapter && AppendedVerses != null && AppendedVerses.Count > 1 && EndingVerse == 0)
+            else if (EndingChapter == StartingChapter && AppendedVerses != null && AppendedVerses.Count > 0 && EndingVerse == 0)
             {
                 foreach (Tuple<int, int> verse in AppendedVerses)
                 {
                     if (verse.Item1 == verse.Item2)
                     {
-                        result += $", {verse.Item1}";
+                        resultBuilder.Append($", {verse.Item1}");
                     }
                     else if (verse.Item2 > verse.Item1)
                     {
-                        result += $", {verse.Item1}-{verse.Item2}";
+                        resultBuilder.Append($", {verse.Item1}-{verse.Item2}");
                     }
                 }
             }
@@ -123,23 +124,23 @@ namespace BibleBot.Models
             {
                 if (EndingVerse != StartingVerse)
                 {
-                    result += $"-{EndingVerse}";
+                    resultBuilder.Append($"-{EndingVerse}");
                 }
 
                 foreach (Tuple<int, int> verse in AppendedVerses)
                 {
                     if (verse.Item1 == verse.Item2)
                     {
-                        result += $", {verse.Item1}";
+                        resultBuilder.Append($", {verse.Item1}");
                     }
                     else if (verse.Item2 > verse.Item1)
                     {
-                        result += $", {verse.Item1}-{verse.Item2}";
+                        resultBuilder.Append($", {verse.Item1}-{verse.Item2}");
                     }
                 }
             }
 
-            return result;
+            return resultBuilder.ToString();
         }
 
         /// <summary>

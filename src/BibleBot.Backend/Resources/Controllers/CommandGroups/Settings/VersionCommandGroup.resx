@@ -117,32 +117,100 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SearchSubsetVersionIneligible" xml:space="preserve">
-    <value>This version is not eligible for search subsets yet. Make sure you're using a version of source `bg` (see `/versioninfo`).</value>
-    <comment>The error message sent when trying to use a search subset with an unsupported Bible version.</comment>
+  <data name="VersionStatusPreference" xml:space="preserve">
+    <value>Your preferred version is set to {0}.</value>
+    <comment>To indicate version preference.</comment>
   </data>
-  <data name="SearchNoResultsVersionMissingSubset" xml:space="preserve">
-    <value>Your search query produced no results. Does your version support the subset you are searching? (`/versioninfo`)</value>
-    <comment>The error message sent when no search results are found within a subset, suggesting the version may not have that subset.</comment>
+  <data name="VersionStatusServerPreference" xml:space="preserve">
+    <value>The server's preferred version is set to {1}.</value>
+    <comment>To indicate server version preference.</comment>
   </data>
-  <data name="SearchSubsetOldTestament" xml:space="preserve">
-    <value>in the Old Testament</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="SetVersionCommandDescription" xml:space="preserve">
+    <value>set your preferred version</value>
+    <comment>Description for /setversion command.</comment>
   </data>
-  <data name="SearchSubsetNewTestament" xml:space="preserve">
-    <value>in the New Testament</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="SetServerVersionCommandDescription" xml:space="preserve">
+    <value>set the server's default version (staff only)</value>
+    <comment>Description for /setserverversion command.</comment>
   </data>
-  <data name="SearchSubsetDeuterocanon" xml:space="preserve">
-    <value>in the Apocrypha/Deuterocanon</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
+  <data name="VersionInfoCommandDescription" xml:space="preserve">
+    <value>get information on a version</value>
+    <comment>Description for /versioninfo command.</comment>
   </data>
-  <data name="SearchResultsTitle" xml:space="preserve">
-    <value>Search results for</value>
-    <comment>See screenshot for examples.</comment>
+  <data name="ListVersionsCommandDescription" xml:space="preserve">
+    <value>list all available versions</value>
+    <comment>Description for /listversions command.</comment>
   </data>
-  <data name="SearchNoResults" xml:space="preserve">
-    <value>Your search query produced no results.</value>
-    <comment>Error message sent when no search results are found (no subset used).</comment>
+  <data name="BookListCommandDescription" xml:space="preserve">
+    <value>list all available books</value>
+    <comment>Description for /booklist command.</comment>
+  </data>
+  <data name="SetVersionSuccess" xml:space="preserve">
+    <value>Set version successfully.</value>
+    <comment>Response for successful usage of /setversion.</comment>
+  </data>
+  <data name="SetVersionFailure" xml:space="preserve">
+    <value>Failed to set version, see `/listversions`.</value>
+    <comment>Response for failed usage of /setversion.</comment>
+  </data>
+  <data name="SetServerVersionSuccess" xml:space="preserve">
+    <value>Set server version successfully.</value>
+    <comment>Response for successful usage of /setserverversion.</comment>
+  </data>
+  <data name="SetServerVersionSuccessDailyVerseWarning" xml:space="preserve">
+    <value>This version will not work with automatic daily verses as it does not support both the Old and New Testaments. If this is a concern to you, use `/versioninfo` to help you identify versions that support both.</value>
+    <comment>Appended message for successful usage of /setserverversion if version does not have both testaments.</comment>
+  </data>
+  <data name="SetServerVersionFailure" xml:space="preserve">
+    <value>Failed to set server version, see `/listversions`.</value>
+    <comment>Response for failed usage of /setserverversion.</comment>
+  </data>
+  <data name="VersionInfoContainsOT" xml:space="preserve">
+    <value>Contains Old Testament</value>
+    <comment>To indicate whether version supports the Old Testament.</comment>
+  </data>
+  <data name="VersionInfoContainsNT" xml:space="preserve">
+    <value>Contains New Testament</value>
+    <comment>To indicate whether version supports the New Testament.</comment>
+  </data>
+  <data name="VersionInfoContainsDEU" xml:space="preserve">
+    <value>Contains Apocrypha/Deuterocanon</value>
+    <comment>To indicate whether version supports the Apocrypha/Deuterocanon.</comment>
+  </data>
+  <data name="VersionInfoSource" xml:space="preserve">
+    <value>Source (mainly for developers)</value>
+    <comment>To indicate internal source for version text.</comment>
+  </data>
+  <data name="VersionInfoDailyVerseWarning" xml:space="preserve">
+    <value>This version will not work with automatic daily verses.</value>
+    <comment>To indicate whether a version is compatible with automatic daily verses.</comment>
+  </data>
+  <data name="VersionInfoBookListNotice" xml:space="preserve">
+    <value>See `/booklist` for a list of available books.</value>
+    <comment>To point user to /booklist to see available books.</comment>
+  </data>
+  <data name="InvalidVersion" xml:space="preserve">
+    <value>I couldn't find that version, are you sure you used the right acronym?</value>
+    <comment>Response for failed usage of /versioninfo.</comment>
+  </data>
+  <data name="BookListVersionIneligible" xml:space="preserve">
+    <value>This version is not eligible for this command yet. Make sure you're using a version of source `bg` (see `/versioninfo`).</value>
+    <comment>Response for ineligible version provided to /booklist.</comment>
+  </data>
+  <data name="BookListOTHeader" xml:space="preserve">
+    <value>Old Testament</value>
+    <comment>Header above Old Testament books.</comment>
+  </data>
+  <data name="BookListNTHeader" xml:space="preserve">
+    <value>New Testament</value>
+    <comment>Header above New Testament books.</comment>
+  </data>
+  <data name="BookListDEUHeader" xml:space="preserve">
+    <value>Apocrypha/Deuterocanon</value>
+    <comment>Header above Apocrypha/Deuterocanon books.</comment>
+  </data>
+  <data name="BookListInternalError" xml:space="preserve">
+    <value>We encountered an internal error. Please report this to the support server (https://biblebot.xyz/discord) or make a bug report (https://biblebot.xyz/bugreport) with the following information:</value>
+    <comment>Message when internal error occurred obtaining booklist.</comment>
   </data>
 </root>

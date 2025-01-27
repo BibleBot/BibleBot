@@ -117,32 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SearchSubsetVersionIneligible" xml:space="preserve">
-    <value>This version is not eligible for search subsets yet. Make sure you're using a version of source `bg` (see `/versioninfo`).</value>
-    <comment>The error message sent when trying to use a search subset with an unsupported Bible version.</comment>
+  <data name="PageCounter" xml:space="preserve">
+    <value>Page {0} of {1}</value>
+    <comment>For paginated results.</comment>
   </data>
-  <data name="SearchNoResultsVersionMissingSubset" xml:space="preserve">
-    <value>Your search query produced no results. Does your version support the subset you are searching? (`/versioninfo`)</value>
-    <comment>The error message sent when no search results are found within a subset, suggesting the version may not have that subset.</comment>
+  <data name="RelatedCommands" xml:space="preserve">
+    <value>Related Commands</value>
+    <comment>Header above related commands.</comment>
   </data>
-  <data name="SearchSubsetOldTestament" xml:space="preserve">
-    <value>in the Old Testament</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
-  </data>
-  <data name="SearchSubsetNewTestament" xml:space="preserve">
-    <value>in the New Testament</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
-  </data>
-  <data name="SearchSubsetDeuterocanon" xml:space="preserve">
-    <value>in the Apocrypha/Deuterocanon</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
-  </data>
-  <data name="SearchResultsTitle" xml:space="preserve">
-    <value>Search results for</value>
-    <comment>See screenshot for examples.</comment>
-  </data>
-  <data name="SearchNoResults" xml:space="preserve">
-    <value>Your search query produced no results.</value>
-    <comment>Error message sent when no search results are found (no subset used).</comment>
+  <data name="GlobalFooter" xml:space="preserve">
+    <value>BibleBot {0} by Kerygma Digital</value>
+    <comment>Footer displayed across embeds.</comment>
   </data>
 </root>
