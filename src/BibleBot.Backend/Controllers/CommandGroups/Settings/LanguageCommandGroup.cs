@@ -45,7 +45,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 User idealUser = await userService.Get(req.UserId);
                 Guild idealGuild = await guildService.Get(req.GuildId);
 
-                Language defaultLanguage = await languageService.Get("english");
+                Language defaultLanguage = await languageService.Get("en-US");
 
                 string response = $"{localizer["LanguageStatusPreference"]}\n" +
                                $"{localizer["LanguageStatusServerPreference"]}\n\n" +
@@ -54,14 +54,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                                $"**/setserverlanguage** - {localizer["SetServerLanguageCommandDescription"]}\n" +
                                $"**/listlanguages** - {localizer["ListLanguagesCommandDescription"]}";
 
+                List<string> replacements = [];
+
                 if (idealUser != null)
                 {
                     Language idealUserLanguage = await languageService.Get(idealUser.Language);
 
                     if (idealUserLanguage != null)
                     {
-                        response = response.Replace("<language>", idealUserLanguage.Name);
+                        replacements.Add($"**{idealUserLanguage.Name}**");
                     }
+                }
+
+                if (replacements.Count == 0)
+                {
+                    replacements.Add($"**{defaultLanguage.Name}**");
                 }
 
                 if (idealGuild != null)
@@ -70,21 +77,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                     if (idealGuildLanguage != null)
                     {
-                        response = response.Replace("<glanguage>", idealGuildLanguage.Name);
+                        replacements.Add($"**{idealGuildLanguage.Name}**");
                     }
                 }
 
-                response = response.Replace("<language>", defaultLanguage.Name);
-                response = response.Replace("<glanguage>", defaultLanguage.Name);
+                if (replacements.Count == 1)
+                {
+                    replacements.Add($"**{defaultLanguage.Name}**");
+                }
+
+                response = string.Format(response, [.. replacements]);
 
                 return new CommandResponse
                 {
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("+language", response, false)
+                        Utils.GetInstance().Embedify("/language", response, false)
                     ],
-                    LogStatement = "+language"
+                    LogStatement = "/language"
                 };
             }
         }
@@ -126,9 +137,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("+language set", localizer["SetLanguageSuccess"], false)
+                            Utils.GetInstance().Embedify("/setlanguage", localizer["SetLanguageSuccess"], false)
                         ],
-                        LogStatement = $"+language set {args[0]}"
+                        LogStatement = $"/setlanguage {args[0]}"
                     };
                 }
 
@@ -137,9 +148,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("+language set", "Failed to set language, see `+language list`.", true)
+                        Utils.GetInstance().Embedify("/setlanguage", localizer["SetLanguageFailure"], true)
                     ],
-                    LogStatement = "+language set"
+                    LogStatement = "/setlanguage"
                 };
             }
         }
@@ -182,9 +193,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("+language setserver", localizer["SetServerLanguageSuccess"], false)
+                            Utils.GetInstance().Embedify("/setserverlanguage", localizer["SetServerLanguageSuccess"], false)
                         ],
-                        LogStatement = $"+language setserver {args[0]}"
+                        LogStatement = $"/setserverlanguage {args[0]}"
                     };
                 }
 
@@ -193,9 +204,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("+language setserver", "Failed to set server language, see `+language list`.", true)
+                        Utils.GetInstance().Embedify("/setserverlanguage", localizer["SetServerLanguageFailure"], true)
                     ],
-                    LogStatement = "+language setserver"
+                    LogStatement = "/setserverlanguage"
                 };
             }
         }
@@ -221,9 +232,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("+language list", content.ToString(), false)
+                        Utils.GetInstance().Embedify("/listlanguages", content.ToString(), false)
                     ],
-                    LogStatement = "+language list"
+                    LogStatement = "/listlanguages"
                 };
             }
         }

@@ -96,9 +96,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/dailyverseset", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
+                            Utils.GetInstance().Embedify("/setdailyverse", localizer["AutomaticDailyVerseNoDMs"], true)
                         ],
-                        LogStatement = "/dailyverseset"
+                        LogStatement = "/setdailyverse"
                     };
                 }
 
@@ -152,9 +152,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 OK = true,
                                 Pages =
                                 [
-                                    Utils.GetInstance().Embedify("/dailyverseset", "Set automatic daily verse successfully.", false)
+                                    Utils.GetInstance().Embedify("/setdailyverse", localizer["SetDailyVerseSuccess"], false)
                                 ],
-                                LogStatement = $"/dailyverseset {args[0]} {args[1]}",
+                                LogStatement = $"/setdailyverse {args[0]} {args[1]}",
                                 CreateWebhook = true,
                                 RemoveWebhook = true
                             };
@@ -167,9 +167,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             OK = false,
                             Pages =
                             [
-                                Utils.GetInstance().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
+                                Utils.GetInstance().Embedify("/setdailyverse", localizer["SetDailyVerseSetupNotice"], true)
                             ],
-                            LogStatement = "/dailyverseset"
+                            LogStatement = "/setdailyverse"
                         };
                     }
                 }
@@ -179,9 +179,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/dailyverseset", "Go to https://biblebot.xyz/daily-verse-setup/ to continue the setup process.", true)
+                        Utils.GetInstance().Embedify("/setdailyverse", localizer["SetDailyVerseSetupNotice"], true)
                     ],
-                    LogStatement = "/dailyverseset"
+                    LogStatement = "/setdailyverse"
                 };
             }
         }
@@ -199,7 +199,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/dailyverserole", "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.", true)
+                            Utils.GetInstance().Embedify("/dailyverserole", localizer["AutomaticDailyVerseNoDMs"], true)
                         ],
                         LogStatement = "/dailyverserole"
                     };
@@ -222,9 +222,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             OK = true,
                             Pages =
                             [
-                                Utils.GetInstance().Embedify("/dailyverserole", "Set automatic daily verse role successfully.", false)
+                                Utils.GetInstance().Embedify("/setdailyverserole", localizer["SetDailyVerseRoleSuccess"], false)
                             ],
-                            LogStatement = $"/dailyverserole {args[0]}"
+                            LogStatement = $"/setdailyverserole {args[0]}"
                         };
                     }
                 }
@@ -234,9 +234,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/dailyverserole", "This server does not have automatic daily verse setup. Please do so with `/dailyverseset` before running this command.", true)
+                        Utils.GetInstance().Embedify("/setdailyverserole", localizer["SetDailyVerseRoleNotSetup"], true)
                     ],
-                    LogStatement = $"/dailyverserole {args[0]}"
+                    LogStatement = $"/setdailyverserole {args[0]}"
                 };
             }
         }
@@ -296,8 +296,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                         string timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
 
-                        string mentionClause = idealGuild.DailyVerseRoleId != null ? $" The <@&{idealGuild.DailyVerseRoleId}> role will be notified when daily verses are sent. " : " ";
-                        string resp = $"The daily verse will be sent at `{timeFormatted}`, in the **{preferredTimeZone}** time zone, and will be published in <#{idealGuild.DailyVerseChannelId}>.{mentionClause}It will use this server's preferred version, which you can find by using **`/version`**.\n\nUse **`/dailyverseset`** to set a new time or channel.\nUse **`/dailyverserole`** to set a role to be @mention'd with every automatic daily verse.\nUse **`/dailyverseclear`** to clear automatic daily verse settings.";
+                        string mentionClause = idealGuild.DailyVerseRoleId != null ? string.Format($" {localizer["DailyVerseStatusRoleAddenda"]} ", $"<@&{idealGuild.DailyVerseRoleId}>") : " ";
+                        string resp = $"{localizer["DailyVerseStatusDetail"]}\n\n" +
+                                      $"{localizer["DailyVerseStatusHelpSet"]}\n" +
+                                      $"{localizer["DailyVerseStatusHelpSetRole"]}\n" +
+                                      $"{localizer["DailyVerseStatusHelpClearRole"]}";
+
+                        resp = string.Format(resp, [$"`{timeFormatted}`", $"**{idealGuild.DailyVerseTimeZone}**", $"<#{idealGuild.DailyVerseChannelId}>", mentionClause]);
 
                         return new CommandResponse
                         {
@@ -316,7 +321,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/dailyversestatus", "The automatic daily verse has not been setup for this server or has been configured incorrectly. Use `/dailyverseset` to setup the automatic daily verse.", true)
+                        Utils.GetInstance().Embedify("/dailyversestatus", localizer["DailyVerseStatusNotSetup"], true)
                     ],
                     LogStatement = "/dailyversestatus"
                 };
@@ -350,9 +355,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/dailyverseclear", "Cleared all daily verse preferences successfully.", false)
+                        Utils.GetInstance().Embedify("/cleardailyverse", localizer["ClearDailyVerseSuccess"], false)
                     ],
-                    LogStatement = "/dailyverseclear",
+                    LogStatement = "/cleardailyverse",
                     RemoveWebhook = true
                 };
             }

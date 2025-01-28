@@ -33,7 +33,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 new VersionSet(userService, versionService, _localizer),
                 new VersionSetServer(guildService, versionService, _localizer),
                 new VersionInfo(userService, guildService, versionService, _localizer),
-                new VersionList(versionService, _localizer),
+                new VersionList(versionService, _sharedLocalizer),
                 new VersionBookList(userService, guildService, versionService, nameFetchingService, _localizer)
             ]; set => throw new NotImplementedException();
         }
@@ -49,14 +49,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 Models.Version defaultVersion = await versionService.Get("RSV");
 
-                string response = $"Your preferred version is set to **<version>**.\n" +
-                               $"The server's preferred version is set to **<gversion>**.\n\n" +
-                               $"__**Related Commands**__\n" +
-                               $"**/setversion** - set your preferred version\n" +
-                               $"**/setserverversion** - set the server's default version (staff only)\n" +
-                               $"**/versioninfo** - get information on a version\n" +
-                               $"**/listversions** - list all available versions\n" +
-                               $"**/booklist** - list all available books";
+                string response = $"{localizer["VersionStatusPreference"]}\n" +
+                               $"{localizer["VersionStatusServerPreference"]}\n\n" +
+                               $"__**{sharedLocalizer["RelatedCommands"]}**__\n" +
+                               $"**/setversion** - {localizer["SetVersionCommandDescription"]}\n" +
+                               $"**/setserverversion** - {localizer["SetServerVersionCommandDescription"]}\n" +
+                               $"**/versioninfo** - {localizer["VersionInfoCommandDescription"]}\n" +
+                               $"**/listversions** - {localizer["ListVersionsCommandDescription"]}\n" +
+                               $"**/booklist** - {localizer["BookListCommandDescription"]}";
+
+                List<string> replacements = [];
 
                 if (idealUser != null)
                 {
@@ -64,8 +66,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                     if (idealUserVersion != null)
                     {
-                        response = response.Replace("<version>", idealUserVersion.Name);
+                        replacements.Add($"**{idealUserVersion.Name}**");
                     }
+                }
+
+                if (replacements.Count == 0)
+                {
+                    replacements.Add($"**{defaultVersion.Name}**");
                 }
 
                 if (idealGuild != null)
@@ -74,12 +81,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                     if (idealGuildVersion != null)
                     {
-                        response = response.Replace("<gversion>", idealGuildVersion.Name);
+                        replacements.Add($"**{idealGuildVersion.Name}**");
                     }
                 }
 
-                response = response.Replace("<version>", defaultVersion.Name);
-                response = response.Replace("<gversion>", defaultVersion.Name);
+                if (replacements.Count == 1)
+                {
+                    replacements.Add($"**{defaultVersion.Name}**");
+                }
+
+                response = string.Format(response, [.. replacements]);
 
                 return new CommandResponse
                 {
@@ -129,7 +140,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = true,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setversion", "Set version successfully.", false)
+                            Utils.GetInstance().Embedify("/setversion", localizer["SetVersionSuccess"], false)
                         ],
                         LogStatement = $"/setversion {args[0]}"
                     };
@@ -140,7 +151,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setversion", "Failed to set version, see `/listversions`.", true)
+                        Utils.GetInstance().Embedify("/setversion", localizer["SetVersionFailure"], true)
                     ],
                     LogStatement = "/setversion"
                 };
@@ -179,11 +190,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         await guildService.Create(newGuild);
                     }
 
-                    string message = "Set server version successfully.";
+                    string message = localizer["SetServerVersionSuccess"];
                     if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
                     {
-                        message += "\n\n" +
-                        ":warning: This version will not work with automatic daily verses as it does not support both the Old and New Testaments. If this is a concern to you, use `/versioninfo` to help you identify versions that support both.";
+                        message += $"\n\n:warning: {localizer["SetServerVersionSuccessDailyVerseWarning"]}";
                     }
 
                     return new CommandResponse
@@ -202,7 +212,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setserverversion", "Failed to set server version, see `/listversions`.", true)
+                        Utils.GetInstance().Embedify("/setserverversion", localizer["SetServerVersionFailure"], true)
                     ],
                     LogStatement = "/setserverversion"
                 };
@@ -244,20 +254,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 if (idealVersion != null)
                 {
                     string response = $"### {idealVersion.Name}\n\n" +
-                                $"Contains Old Testament: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":x:")}\n" +
-                                $"Contains New Testament: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":x:")}\n" +
-                                $"Contains Apocrypha/Deuterocanon: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n" +
-                                $"Source (mainly for developers): `{idealVersion.Source}`";
+                                $"{localizer["VersionInfoContainsOT"]}: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":x:")}\n" +
+                                $"{localizer["VersionInfoContainsNT"]}: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":x:")}\n" +
+                                $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n" +
+                                $"{localizer["VersionInfoSource"]}: `{idealVersion.Source}`";
 
 
                     if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
                     {
-                        response += "\n\n:warning: This version will not work with automatic daily verses.";
+                        response += $"\n\n:warning: {localizer["VersionInfoDailyVerseWarning"]}";
                     }
 
-                    if (idealVersion.Source != "bg")
+                    if (idealVersion.Source == "bg")
                     {
-                        response += "\n\nSee `/booklist` for a list of available books.";
+                        response += $"\n\n{localizer["VersionInfoBookListNotice"]}";
                     }
 
                     return new CommandResponse
@@ -276,14 +286,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/versioninfo", "I couldn't find that version, are you sure you used the right acronym?", true)
+                        Utils.GetInstance().Embedify("/versioninfo", localizer["InvalidVersion"], true)
                     ],
                     LogStatement = "/versioninfo"
                 };
             }
         }
 
-        public class VersionList(VersionService versionService, IStringLocalizer localizer) : Command
+        public class VersionList(VersionService versionService, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "list"; set => throw new NotImplementedException(); }
 
@@ -319,7 +329,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         }
                     }
 
-                    InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - Page {i + 1} of {totalPages}", versionList.ToString(), false);
+                    string pageCounter = string.Format(sharedLocalizer["PageCounter"], [i + 1, totalPages]);
+                    InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - {pageCounter}", versionList.ToString(), false);
                     pages.Add(embed);
                 }
 
@@ -373,7 +384,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             OK = false,
                             Pages =
                             [
-                                Utils.GetInstance().Embedify("/booklist", "This version is not eligible for this command yet. Make sure you're using a version of source `bg` (see `/versioninfo`).", true)
+                                Utils.GetInstance().Embedify("/booklist", localizer["BookListVersionIneligible"], true)
                             ],
                             LogStatement = "/booklist - non-bg source"
                         };
@@ -387,17 +398,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                         if (names.ContainsKey(BookCategories.OldTestament))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Old Testament\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", "*(contains Psalm 151)*"), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListOTHeader"]}\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", $"*({localizer["BookListContainsPsalm151"]})*"), false));
                         }
 
                         if (names.ContainsKey(BookCategories.NewTestament))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### New Testament\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListNTHeader"]}\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false));
                         }
 
                         if (names.ContainsKey(BookCategories.Deuterocanon))
                         {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", "### Apocrypha/Deuterocanon\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false));
+                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListDEUHeader"]}\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false));
                         }
 
                         return new CommandResponse
@@ -409,7 +420,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     }
                     else
                     {
-                        string message = "We encountered an internal error. Please report this to the support server (https://biblebot.xyz/discord) or make a bug report (https://biblebot.xyz/bugreport) with the following information:\n\n" +
+                        string message = $"{localizer["BookListInternalError"]}\n\n" +
                         $"```\nVersion: {idealVersion.Abbreviation}\n```";
 
                         return new CommandResponse
@@ -429,7 +440,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/booklist", "I couldn't find that version, are you sure you used the right acronym?", true)
+                        Utils.GetInstance().Embedify("/booklist", localizer["InvalidVersion"], true)
                     ],
                     LogStatement = "/booklist - invalid version"
                 };

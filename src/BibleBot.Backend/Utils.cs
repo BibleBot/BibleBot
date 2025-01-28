@@ -56,7 +56,7 @@ namespace BibleBot.Backend
             ERROR_COLOR = 16723502
         }
 
-        public static readonly string Version = "v9.2-beta";
+        public static readonly string Version = "v9.3";
 
         public InternalEmbed Embedify(string title, string description, bool isError) => Embedify(null, title, description, isError, null);
 

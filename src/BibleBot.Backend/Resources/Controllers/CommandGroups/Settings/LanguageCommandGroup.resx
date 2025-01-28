@@ -145,4 +145,12 @@
     <value>Set server language successfully.</value>
     <comment>Response for successful usage of /setserverlanguage.</comment>
   </data>
+  <data name="SetLanguageFailure" xml:space="preserve">
+    <value>Failed to set language, see `/listlanguages`.</value>
+    <comment>Response for failed usage of /setlanguage.</comment>
+  </data>
+  <data name="SetServerLanguageFailure" xml:space="preserve">
+    <value>Failed to set server language, see `/listlanguages`.</value>
+    <comment>Response for failed usage of /setserverlanguage.</comment>
+  </data>
 </root>

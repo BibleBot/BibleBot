@@ -107,7 +107,7 @@ class VerseCommands(commands.Cog):
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Setup automatic daily verses on this channel.")
-    async def dailyverseset(
+    async def setdailyverse(
         self, inter: CommandInteraction, time: str = "", tz: str = ""
     ):
         await inter.response.defer()
@@ -149,7 +149,7 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(
         description="Clear all automatic daily verse preferences for this server."
     )
-    async def dailyverseclear(self, inter: CommandInteraction):
+    async def cleardailyverse(self, inter: CommandInteraction):
         await inter.response.defer()
 
         if not inter.channel.permissions_for(inter.author).manage_guild:
@@ -172,7 +172,7 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(
         description="Set a role to be @mention'd with every automatic daily verse."
     )
-    async def dailyverserole(self, inter: CommandInteraction, role: disnake.Role):
+    async def setdailyverserole(self, inter: CommandInteraction, role: disnake.Role):
         await inter.response.defer()
 
         if not inter.channel.permissions_for(inter.author).manage_guild:
