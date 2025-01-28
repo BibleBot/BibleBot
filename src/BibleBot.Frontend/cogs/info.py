@@ -148,7 +148,7 @@ class Information(commands.Cog):
         embed.color = 6709986
 
         embed.set_footer(
-            text="BibleBot v9.2-beta by Kerygma Digital",
+            text="BibleBot v9.3 by Kerygma Digital",
             icon_url="https://i.imgur.com/hr4RXpy.png",
         )
         await sending.safe_send_interaction(inter.followup, embed=embed)

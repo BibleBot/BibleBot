@@ -427,7 +427,7 @@ def create_embed_from_verse(verse):
     embed.color = 6709986
 
     embed.set_footer(
-        text="BibleBot v9.2-beta by Kerygma Digital",
+        text="BibleBot v9.3 by Kerygma Digital",
         icon_url="https://i.imgur.com/hr4RXpy.png",
     )
 
@@ -442,7 +442,7 @@ def create_error_embed(title, description):
     embed.color = 16723502
 
     embed.set_footer(
-        text="BibleBot v9.2-beta by Kerygma Digital",
+        text="BibleBot v9.3 by Kerygma Digital",
         icon_url="https://i.imgur.com/hr4RXpy.png",
     )
 
