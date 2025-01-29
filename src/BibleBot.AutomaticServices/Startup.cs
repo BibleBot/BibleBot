@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using BibleBot.AutomaticServices.Services;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -51,6 +52,11 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<SpecialVerseProvider>();
             services.AddSingleton<BibleGatewayProvider>();
             services.AddSingleton<APIBibleProvider>();
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                services.AddHostedService<SystemdWatchdogService>();
+            }
 
             services.AddControllers();
 

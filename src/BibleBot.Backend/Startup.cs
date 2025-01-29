@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using BibleBot.Backend.Middleware;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
@@ -52,6 +53,11 @@ namespace BibleBot.Backend
             services.AddSingleton<SpecialVerseProvider>();
             services.AddSingleton<BibleGatewayProvider>();
             services.AddSingleton<APIBibleProvider>();
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                services.AddHostedService<SystemdWatchdogService>();
+            }
 
             // Add the name fetching service with a predefined instance, since we'll use it later in this function.
             NameFetchingService nameFetchingService = new();
