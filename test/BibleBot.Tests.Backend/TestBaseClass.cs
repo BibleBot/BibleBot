@@ -28,6 +28,7 @@ namespace BibleBot.Tests.Backend
 
         private MongoService _mongoService;
         public VersionService _versionService;
+        public LanguageService _languageService;
 
         public Mock<UserService> _userServiceMock;
         public Mock<GuildService> _guildServiceMock;
@@ -64,6 +65,7 @@ namespace BibleBot.Tests.Backend
             _userServiceMock = new Mock<UserService>(_mongoService);
             _guildServiceMock = new Mock<GuildService>(_mongoService);
             _versionService = new VersionService(_mongoService);
+            _languageService = new LanguageService(_mongoService);
             _resourceServiceMock = new Mock<ResourceService>();
             _parsingServiceMock = new Mock<ParsingService>();
             _frontendStatsServiceMock = new Mock<FrontendStatsService>(_mongoService);
@@ -78,11 +80,11 @@ namespace BibleBot.Tests.Backend
 
             _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _versionService, _resourceServiceMock.Object,
-                                                    _frontendStatsServiceMock.Object, _nameFetchingServiceMock.Object,
+                                                    _frontendStatsServiceMock.Object, _languageService, _nameFetchingServiceMock.Object,
                                                     _spProviderMock.Object, _bgProviderMock.Object, _abProviderMock.Object, _localizerFactory);
 
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
-                                                    _parsingServiceMock.Object, _versionService,
+                                                    _parsingServiceMock.Object, _versionService, _languageService,
                                                     _nameFetchingServiceMock.Object, _bgProviderMock.Object,
                                                     _abProviderMock.Object);
 
