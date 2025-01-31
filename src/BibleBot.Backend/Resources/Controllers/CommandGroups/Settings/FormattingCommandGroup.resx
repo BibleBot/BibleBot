@@ -189,4 +189,12 @@
     <value>Set brackets successfully.</value>
     <comment>Response for successful usage of /setbrackets.</comment>
   </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>enabled</value>
+    <comment>Used for indicating enabled toggles.</comment>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>disabled</value>
+    <comment>Used for indicating disabled toggles.</comment>
+  </data>
 </root>
