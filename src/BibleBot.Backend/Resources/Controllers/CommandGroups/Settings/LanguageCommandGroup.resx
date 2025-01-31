@@ -122,7 +122,7 @@
     <comment>To indicate language preference.</comment>
   </data>
   <data name="LanguageStatusGuildPreference" xml:space="preserve">
-    <value>The server's preferred language is set to {0}.</value>
+    <value>The server's preferred language is set to {1}.</value>
     <comment>To indicate server language preference.</comment>
   </data>
   <data name="SetLanguageCommandDescription" xml:space="preserve">
