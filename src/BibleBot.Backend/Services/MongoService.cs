@@ -21,6 +21,7 @@ namespace BibleBot.Backend.Services
         private readonly IMongoCollection<Guild> _guilds;
         private readonly IMongoCollection<Models.Version> _versions;
         private readonly IMongoCollection<FrontendStats> _frontendStats;
+        private readonly IMongoCollection<Language> _languages;
 
         public MongoService(IDatabaseSettings settings)
         {
@@ -31,6 +32,7 @@ namespace BibleBot.Backend.Services
             _guilds = database.GetCollection<Guild>(settings.GuildCollectionName);
             _versions = database.GetCollection<Models.Version>(settings.VersionCollectionName);
             _frontendStats = database.GetCollection<FrontendStats>(settings.FrontendStatsCollectionName);
+            _languages = database.GetCollection<Language>(settings.LanguageCollectionName);
         }
 
         public async Task<List<T>> Get<T>()
@@ -54,6 +56,10 @@ namespace BibleBot.Backend.Services
             {
                 cursor = (IAsyncCursor<T>)await _frontendStats.FindAsync(frontendStats => true);
             }
+            else if (typeOfT == typeof(Language))
+            {
+                cursor = (IAsyncCursor<T>)await _languages.FindAsync(language => true);
+            }
 
             return cursor != null ? await cursor.ToListAsync() : throw new NotImplementedException("No established path for provided type");
         }
@@ -75,6 +81,10 @@ namespace BibleBot.Backend.Services
             else if (typeOfT == typeof(Guild))
             {
                 cursor = (IAsyncCursor<T>)await _guilds.FindAsync(guild => guild.GuildId == query);
+            }
+            else if (typeOfT == typeof(Language))
+            {
+                cursor = (IAsyncCursor<T>)await _languages.FindAsync(language => language.Culture == query);
             }
 
             return cursor != null ? await cursor.FirstOrDefaultAsync() : throw new NotImplementedException("No established path for provided type");

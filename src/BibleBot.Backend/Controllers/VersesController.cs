@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace BibleBot.Backend.Controllers
     [Route("api/verses")]
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
-                                          VersionService versionService, NameFetchingService nameFetchingService,
+                                          VersionService versionService, LanguageService languageService, NameFetchingService nameFetchingService,
                                           BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
     {
         private readonly List<IBibleProvider> _bibleProviders = [bgProvider, abProvider];
@@ -62,6 +63,7 @@ namespace BibleBot.Backend.Controllers
             string body = parsingService.PurifyBody(ignoringBrackets, req.Body);
             Tuple<string, List<BookSearchResult>> tuple = parsingService.GetBooksInString(nameFetchingService.GetBookNames(), nameFetchingService.GetDefaultBookNames(), body);
 
+            string culture = "en-US";
             string version = "RSV";
             bool verseNumbersEnabled = true;
             bool titlesEnabled = true;
@@ -70,6 +72,7 @@ namespace BibleBot.Backend.Controllers
 
             if (idealUser != null && !req.IsBot)
             {
+                culture = idealUser.Language;
                 version = idealUser.Version;
                 verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                 titlesEnabled = idealUser.TitlesEnabled;
@@ -81,7 +84,15 @@ namespace BibleBot.Backend.Controllers
                 // As much as I hate the if-duplication, we have to check independently of the previous
                 // otherwise the guild default won't be a default.
 
+                culture = idealGuild.Language;
                 version = idealGuild.Version;
+            }
+
+            Language language = await languageService.Get(culture);
+
+            if (language != null)
+            {
+                CultureInfo.CurrentUICulture = new CultureInfo(culture);
             }
 
             Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");

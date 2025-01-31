@@ -25,6 +25,7 @@ using NodaTime;
 using RestSharp;
 using RestSharp.Serializers.Json;
 using Serilog;
+using Microsoft.Extensions.Localization;
 
 namespace BibleBot.AutomaticServices.Services
 {
@@ -32,19 +33,25 @@ namespace BibleBot.AutomaticServices.Services
     {
         private readonly GuildService _guildService;
         private readonly VersionService _versionService;
+        private readonly LanguageService _languageService;
 
         private readonly SpecialVerseProvider _spProvider;
         private readonly List<IBibleProvider> _bibleProviders;
 
+        private readonly IStringLocalizer<AutomaticDailyVerseService> _localizer;
+
         private readonly RestClient _restClient;
         private Timer _timer;
 
-        public AutomaticDailyVerseService(GuildService guildService, VersionService versionService,
-                                          SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider)
+        public AutomaticDailyVerseService(GuildService guildService, VersionService versionService, LanguageService languageService,
+                                          SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider,
+                                          IStringLocalizer<AutomaticDailyVerseService> localizer)
         {
             _guildService = guildService;
             _versionService = versionService;
+            _languageService = languageService;
             _spProvider = spProvider;
+            _localizer = localizer;
 
             _bibleProviders =
             [
@@ -113,15 +120,21 @@ namespace BibleBot.AutomaticServices.Services
                 {
                     InternalEmbed embed;
                     WebhookRequestBody webhookRequestBody;
+
                     string version = guild.Version ?? "RSV";
+                    string culture = guild.Language ?? "en-US";
+
                     Models.Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
+                    Language idealLanguage = await _languageService.Get(culture) ?? await _languageService.Get("en-US");
+
+                    CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Culture);
 
                     if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
                     {
-                        embed = Utils.GetInstance().Embedify("BibleBot Automatic Daily Verse Notice", "Automatic daily verse will no longer support versions that do not have both Testaments. Please change your server's preferred version (`/setserverversion`) to one that has both.", true);
+                        embed = Utils.GetInstance().Embedify(_localizer["AutomaticDailyVerseWebhookUsernameAlt"], _localizer["AutomaticDailyVerseBothTestamentsWarning"], true);
                         webhookRequestBody = new()
                         {
-                            Username = "BibleBot Automatic Daily Verses",
+                            Username = _localizer["AutomaticDailyVerseWebhookUsername"],
                             AvatarURL = embed.Footer.IconURL,
                             Embeds = [embed]
                         };
@@ -144,12 +157,12 @@ namespace BibleBot.AutomaticServices.Services
                             continue;
                         }
 
-                        string content = guild.DailyVerseRoleId != null ? $"<@&{guild.DailyVerseRoleId}> - Here is the daily verse:" : "Here is the daily verse:";
+                        string content = guild.DailyVerseRoleId != null ? $"<@&{guild.DailyVerseRoleId}> - {_localizer["AutomaticDailyVerseLeadIn"]}:" : $"{_localizer["AutomaticDailyVerseLeadIn"]}:";
                         embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
                         webhookRequestBody = new()
                         {
                             Content = content,
-                            Username = "BibleBot Automatic Daily Verses",
+                            Username = _localizer["AutomaticDailyVerseWebhookUsername"],
                             AvatarURL = embed.Footer.IconURL,
                             Embeds = [embed]
                         };

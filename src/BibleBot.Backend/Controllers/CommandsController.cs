@@ -21,6 +21,7 @@ using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -28,7 +29,7 @@ namespace BibleBot.Backend.Controllers
     [Route("api/commands")]
     [ApiController]
     public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
-                              FrontendStatsService frontendStatsService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider,
+                              FrontendStatsService frontendStatsService, LanguageService languageService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider,
                               BibleGatewayProvider bgProvider, APIBibleProvider abProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
         private readonly List<CommandGroup> _commandGroups = [
@@ -55,6 +56,30 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
+            User idealUser = await userService.Get(req.UserId);
+            string culture = "en-US";
+
+            if (idealUser != null)
+            {
+                culture = idealUser.Language;
+            }
+            else
+            {
+                Guild idealGuild = await guildService.Get(req.GuildId);
+
+                if (idealGuild != null)
+                {
+                    culture = idealGuild.Language;
+                }
+            }
+
+            Language language = await languageService.Get(culture);
+
+            if (language != null)
+            {
+                CultureInfo.CurrentUICulture = new CultureInfo(culture);
+            }
+
             IResponse response;
             string[] tokenizedBody = req.Body.Split(" ");
 

@@ -7,6 +7,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -35,6 +36,7 @@ namespace BibleBot.Backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddLocalization(options => options.ResourcesPath = "Resources");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
             // Link settings in appsettings.json to a database settings model.
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
