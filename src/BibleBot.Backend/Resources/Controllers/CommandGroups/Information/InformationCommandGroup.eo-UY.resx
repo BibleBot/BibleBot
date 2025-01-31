@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="FrontendStats" xml:space="preserve">
+    <value>Fasado-statistikoj</value>
+    <comment>Header above various frontend-related statistics.</comment>
+  </data>
+  <data name="ShardCount" xml:space="preserve">
+    <value>Fragmento-kalkulo</value>
+    <comment>The count of logical processes to distribute the load of the bot, by having ~1,000 servers/guilds per shard.</comment>
+  </data>
+  <data name="ServerCount" xml:space="preserve">
+    <value>Servilo-kalkulo</value>
+    <comment>The number of servers with BibleBot.</comment>
+  </data>
+  <data name="UserCount" xml:space="preserve">
+    <value>Uzanto-kalkulo</value>
+    <comment>The aggregated, estimated number of users in all servers with BibleBot.</comment>
+  </data>
+  <data name="ChannelCount" xml:space="preserve">
+    <value>Kanalo-kalkulo</value>
+    <comment>The aggregated number of channels in all servers with BibleBot.</comment>
+  </data>
+  <data name="BackendStats" xml:space="preserve">
+    <value>Interno-statistikoj</value>
+    <comment>Header above various backend-related statistics.</comment>
+  </data>
+  <data name="UserPreferenceCount" xml:space="preserve">
+    <value>Uzantprefero-kalkulo</value>
+    <comment>The estimated number of user preferences in the database.</comment>
+  </data>
+  <data name="GuildPreferenceCount" xml:space="preserve">
+    <value>Gildprefero-kalkulo</value>
+    <comment>The estimated number of guild preferences in the database.</comment>
+  </data>
+  <data name="VersionCount" xml:space="preserve">
+    <value>Versio-kalkulo</value>
+    <comment>The estimated number of Bible versions in the database.</comment>
+  </data>
+  <data name="StatisticsSheetAddenda" xml:space="preserve">
+    <value>Por plenaj statistikoj pri nia servilo-kalkulo kaj preferoj, vidu &lt;https://biblebot.xyz/stats&gt;.</value>
+    <comment>A pointer to our statistics spreadsheet.</comment>
+  </data>
+  <data name="Metadata" xml:space="preserve">
+    <value>Metadatumoj</value>
+    <comment>Header above various metadata.</comment>
+  </data>
+  <data name="Frontend" xml:space="preserve">
+    <value>Fasado</value>
+    <comment>To denote current version/build of the running frontend.</comment>
+  </data>
+  <data name="Backend" xml:space="preserve">
+    <value>Interno</value>
+    <comment>To denote current version/build of the running backend(s).</comment>
+  </data>
+  <data name="BibleBotSlogan" xml:space="preserve">
+    <value>Skribo de via Discord-kliento al via koro.</value>
+    <comment>Slogan in /biblebot.</comment>
+  </data>
+  <data name="BibleBotCommandFooter" xml:space="preserve">
+    <value>Farata kun ❤️ de Kerygma Digital</value>
+    <comment>Credits in /biblebot footer.</comment>
+  </data>
+  <data name="Commands" xml:space="preserve">
+    <value>Komandoj</value>
+    <comment>Header above command list.</comment>
+  </data>
+  <data name="SearchCommandDescription" xml:space="preserve">
+    <value>serĉu por versoj laŭ ŝlosilvorto</value>
+    <comment>Description of /search command.</comment>
+  </data>
+  <data name="VersionCommandDescription" xml:space="preserve">
+    <value>tradukpreferoj kaj informo</value>
+    <comment>Description of /version command.</comment>
+  </data>
+  <data name="FormattingCommandDescription" xml:space="preserve">
+    <value>preferoj por stiloj de verso kaj konduto de la roboto</value>
+    <comment>Description of /formatting command.</comment>
+  </data>
+  <data name="DailyVerseCommandDescription" xml:space="preserve">
+    <value>ĉiutagaj versoj kaj aŭtomatigo</value>
+    <comment>Description of /dailyverse command.</comment>
+  </data>
+  <data name="RandomCommandDescription" xml:space="preserve">
+    <value>ricevu arbitran Biblio-verson</value>
+    <comment>Description of /random command.</comment>
+  </data>
+  <data name="ResourceCommandDescription" xml:space="preserve">
+    <value>kredoj, katekismoj, konfesioj, kaj historiaj dokumentoj</value>
+    <comment>Description of /resource command.</comment>
+  </data>
+  <data name="StatsCommandDescription" xml:space="preserve">
+    <value>vidu statistikojn de la roboto</value>
+    <comment>Description of /stats command.</comment>
+  </data>
+  <data name="InviteCommandDescription" xml:space="preserve">
+    <value>receivu la invitligilon por BibleBot</value>
+    <comment>Description of /invite command.</comment>
+  </data>
+  <data name="CommandsAddenda" xml:space="preserve">
+    <value>Rigardu interne ĉiujn tiujn komandojn por pli, alie rigardu nian [dokumentado](https://biblebot.xyz/usage-and-commands/).</value>
+    <comment>A pointer to learning the rest of the commands.</comment>
+  </data>
+  <data name="Links" xml:space="preserve">
+    <value>Ligiloj</value>
+    <comment>Header above link list.</comment>
+  </data>
+  <data name="Website" xml:space="preserve">
+    <value>Retejo</value>
+    <comment>For linking to our website.</comment>
+  </data>
+  <data name="Copyrights" xml:space="preserve">
+    <value>Kopirajtoj</value>
+    <comment>For linking to our copyrights page.</comment>
+  </data>
+  <data name="SourceCode" xml:space="preserve">
+    <value>Fontkodo</value>
+    <comment>For linking to our source code.</comment>
+  </data>
+  <data name="OfficialDiscordServer" xml:space="preserve">
+    <value>Oficiala Discord-servilo</value>
+    <comment>For linking to our official Discord server.</comment>
+  </data>
+  <data name="TermsAndConditions" xml:space="preserve">
+    <value>Preskiboj kaj Kondiĉoj</value>
+    <comment>For linking to our Terms and Conditions.</comment>
+  </data>
+  <data name="NewsFromBlog" xml:space="preserve">
+    <value>Novaĵoj el la Blogo de BibleBot</value>
+    <comment>Header above latest blog post entries.</comment>
+  </data>
+  <data name="InviteResp" xml:space="preserve">
+    <value>Inviti la roboton al via servilo, alklaku [ĉi tie](https://biblebot.xyz/invite).\nAliĝi la oficialan Discord-servilon, alklaku [ĉi tie](https://biblebot.xyz/discord).\n\nPor informoj pri la permesoj, kiujn ni petas, alklaku [ĉi tie](https://biblebot.xyz/permissions/).</value>
+    <comment>The response for /invite.</comment>
+  </data>
+</root>
