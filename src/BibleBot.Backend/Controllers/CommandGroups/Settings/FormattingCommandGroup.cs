@@ -65,16 +65,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealUser != null)
                 {
-                    replacements.AddRange(idealUser.VerseNumbersEnabled ? [":white_check_mark:", "**enabled**"] : [":no_entry_sign:", "**disabled**"]);
-                    replacements.AddRange(idealUser.TitlesEnabled ? [":white_check_mark:", "**enabled**"] : [":no_entry_sign:", "**disabled**"]);
-                    replacements.AddRange(idealUser.PaginationEnabled ? [":white_check_mark:", "**enabled**"] : [":no_entry_sign:", "**disabled**"]);
+                    replacements.AddRange(idealUser.VerseNumbersEnabled ? [":white_check_mark:", $"**{localizer["Enabled"]}**"] : [":no_entry_sign:", $"**{localizer["Disabled"]}**"]);
+                    replacements.AddRange(idealUser.TitlesEnabled ? [":white_check_mark:", $"**{localizer["Enabled"]}**"] : [":no_entry_sign:", $"**{localizer["Disabled"]}**"]);
+                    replacements.AddRange(idealUser.PaginationEnabled ? [":white_check_mark:", $"**{localizer["Enabled"]}**"] : [":no_entry_sign:", $"**{localizer["Disabled"]}**"]);
                     replacements.Add(idealUser.DisplayStyle != null ? $"**`{idealUser.DisplayStyle}`**" : "**`embed`**");
                 }
                 else
                 {
-                    replacements.AddRange([":white_check_mark:", "**enabled**"]);
-                    replacements.AddRange([":white_check_mark:", "**enabled**"]);
-                    replacements.AddRange([":white_check_mark:", "**enabled**"]);
+                    replacements.AddRange([":white_check_mark:", $"**{localizer["Enabled"]}**"]);
+                    replacements.AddRange([":white_check_mark:", $"**{localizer["Enabled"]}**"]);
+                    replacements.AddRange([":white_check_mark:", $"**{localizer["Disabled"]}**"]);
                     replacements.Add("**`embed`**");
                 }
 
