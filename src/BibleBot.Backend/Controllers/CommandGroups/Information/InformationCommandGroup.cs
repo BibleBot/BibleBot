@@ -127,6 +127,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                             Name = $":tools: {localizer["Commands"]}",
                             Value = $"`/search` - {localizer["SearchCommandDescription"]}\n" +
                             $"`/version` - {localizer["VersionCommandDescription"]}\n" +
+                            $"`/language` - {localizer["LanguageCommandDescription"]}\n" +
                             $"`/formatting` - {localizer["FormattingCommandDescription"]}\n" +
                             $"`/dailyverse` - {localizer["DailyVerseCommandDescription"]}\n" +
                             $"`/random` - {localizer["RandomCommandDescription"]}\n" +
