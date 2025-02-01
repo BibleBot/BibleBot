@@ -74,13 +74,11 @@ class Versions(commands.Cog):
     async def setversion(
         self,
         inter: CommandInteraction,
-        abbreviation: str = commands.Param(
-            description="The abbreviation of the version."
-        ),
+        acronym: str = commands.Param(description="The acronym of the version."),
     ):
         await inter.response.defer()
         resp = await backend.submit_command(
-            inter.channel, inter.author, f"+version set {abbreviation}"
+            inter.channel, inter.author, f"+version set {acronym}"
         )
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
@@ -88,9 +86,7 @@ class Versions(commands.Cog):
     async def setserverversion(
         self,
         inter: CommandInteraction,
-        abbreviation: str = commands.Param(
-            description="The abbreviation of the version."
-        ),
+        acronym: str = commands.Param(description="The acronym of the version."),
     ):
         await inter.response.defer()
 
@@ -106,7 +102,7 @@ class Versions(commands.Cog):
             return
 
         resp = await backend.submit_command(
-            inter.channel, inter.author, f"+version setserver {abbreviation}"
+            inter.channel, inter.author, f"+version setserver {acronym}"
         )
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
@@ -114,14 +110,14 @@ class Versions(commands.Cog):
     async def versioninfo(
         self,
         inter: CommandInteraction,
-        abbreviation: str = "",
+        acronym: str = commands.Param(description="The acronym of the version."),
     ):
         await inter.response.defer()
 
         command = "+version info"
 
-        if abbreviation:
-            command += f" {abbreviation}"
+        if acronym:
+            command += f" {acronym}"
 
         resp = await backend.submit_command(inter.channel, inter.author, command)
         await sending.safe_send_interaction(inter.followup, embed=resp)
@@ -146,14 +142,14 @@ class Versions(commands.Cog):
     async def booklist(
         self,
         inter: CommandInteraction,
-        abbreviation: str = "",
+        acronym: str = commands.Param(description="The acronym of the version."),
     ):
         await inter.response.defer()
 
         command = "+version booklist"
 
-        if abbreviation:
-            command += f" {abbreviation}"
+        if acronym:
+            command += f" {acronym}"
 
         resp = await backend.submit_command(inter.channel, inter.author, command)
         if isinstance(resp, list):

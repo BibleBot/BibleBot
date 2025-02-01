@@ -175,7 +175,7 @@ class Formatting(commands.Cog):
 
         await sending.safe_send_interaction(
             inter.followup,
-            content="Select your preferred display style.",
+            content="Select a display style...",
             view=select_menu_view,
         )
 
@@ -199,7 +199,7 @@ class Formatting(commands.Cog):
 
         await sending.safe_send_interaction(
             inter.followup,
-            content="Select your server's preferred display style.",
+            content="Select a display style...",
             view=select_menu_view,
         )
 
@@ -225,6 +225,6 @@ class Formatting(commands.Cog):
 
         await sending.safe_send_interaction(
             inter.followup,
-            content="Select a pair of brackets.",
+            content="Select a pair of brackets...",
             view=select_menu_view,
         )

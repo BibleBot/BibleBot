@@ -34,7 +34,7 @@ class Resources(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(description="See all available resources.")
-    async def resources(self, inter: CommandInteraction):
+    async def listresources(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, f"+resource")
         await sending.safe_send_interaction(inter.followup, embed=resp)
