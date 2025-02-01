@@ -138,7 +138,7 @@
     <comment>Response for usage of /setdailyverserole when automatic daily verses are not set up.</comment>
   </data>
   <data name="DailyVerseStatusDetail" xml:space="preserve">
-    <value>La ĉiutaga verso estos sendi je {0}, laŭ la {1} horzono, kaj eldonos al {3}.{4}Ĝi uzos la preferan tradukon de la servilo, kiun vi povas trovi uzante **`/version`**.</value>
+    <value>La ĉiutaga verso estos sendi je {0}, laŭ la {1} horzono, kaj eldonos al {2}.{3}Ĝi uzos la preferan tradukon de la servilo, kiun vi povas trovi uzante **`/version`**.</value>
     <comment>Explanation of preferences for automatic daily verse.</comment>
   </data>
   <data name="DailyVerseStatusRoleAddenda" xml:space="preserve">
