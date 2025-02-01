@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "build-backend",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -14,7 +14,19 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "publish",
+            "label": "build-autoserv",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/src/BibleBot.AutomaticServices/BibleBot.AutomaticServices.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish-backend",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -26,13 +38,38 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch",
+            "label": "publish-autoserv",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/src/BibleBot.AutomaticServices/BibleBot.AutomaticServices.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch-backend",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "watch",
                 "run",
                 "${workspaceFolder}/src/BibleBot.Backend/BibleBot.Backend.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch-autoserv",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "${workspaceFolder}/src/BibleBot.AutomaticServices/BibleBot.AutomaticServices.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

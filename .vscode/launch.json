@@ -40,7 +40,7 @@
             "name": "Debug Backend",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build-backend",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/src/BibleBot.Backend/bin/Debug/net9.0/BibleBot.Backend.dll",
             "args": [],
@@ -56,7 +56,7 @@
             "name": "Debug AutoServ",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build-autoserv",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/src/BibleBot.AutomaticServices/bin/Debug/net9.0/BibleBot.AutomaticServices.dll",
             "args": [],

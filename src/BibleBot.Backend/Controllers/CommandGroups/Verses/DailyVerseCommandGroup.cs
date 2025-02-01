@@ -296,13 +296,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                         string timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
 
-                        string mentionClause = idealGuild.DailyVerseRoleId != null ? string.Format($" {localizer["DailyVerseStatusRoleAddenda"]} ", $"<@&{idealGuild.DailyVerseRoleId}>") : " ";
+                        string mentionClause = idealGuild.DailyVerseRoleId != null ? string.Format($" {localizer["DailyVerseStatusRoleAddenda"]} ", $"<@&{idealGuild.DailyVerseRoleId}>") : "<rm>";
                         string resp = $"{localizer["DailyVerseStatusDetail"]}\n\n" +
                                       $"{localizer["DailyVerseStatusHelpSet"]}\n" +
                                       $"{localizer["DailyVerseStatusHelpSetRole"]}\n" +
-                                      $"{localizer["DailyVerseStatusHelpClearRole"]}";
+                                      $"{localizer["DailyVerseStatusHelpClear"]}";
 
-                        resp = string.Format(resp, [$"`{timeFormatted}`", $"**{idealGuild.DailyVerseTimeZone}**", $"<#{idealGuild.DailyVerseChannelId}>", mentionClause]);
+                        resp = string.Format(resp, [$"`{timeFormatted}`", $"**{idealGuild.DailyVerseTimeZone}**", $"<#{idealGuild.DailyVerseChannelId}>", mentionClause]).Replace("<rm>", " ");
 
                         return new CommandResponse
                         {

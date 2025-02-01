@@ -26,7 +26,7 @@ namespace BibleBot.AutomaticServices
                 .WriteTo.Console(outputTemplate: "[{Level:w4}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
                 .CreateBootstrapLogger();
 
-            Log.Information($"BibleBot v{Utils.Version} (AutomaticServices) by Kerygma Digital");
+            Log.Information($"BibleBot {Utils.Version} (AutomaticServices) by Kerygma Digital");
             CreateHostBuilder(args).Build().Run();
         }
 

@@ -138,7 +138,7 @@
     <comment>Response for usage of /setdailyverserole when automatic daily verses are not set up.</comment>
   </data>
   <data name="DailyVerseStatusDetail" xml:space="preserve">
-    <value>The daily verse will be sent at {0}, in the {1} time zone, and will be published in {3}.{4}It will use this server's preferred version, which you can find by using **`/version`**.</value>
+    <value>The daily verse will be sent at {0}, in the {1} time zone, and will be published in {2}.{3}It will use this server's preferred version, which you can find by using **`/version`**.</value>
     <comment>Explanation of preferences for automatic daily verse.</comment>
   </data>
   <data name="DailyVerseStatusRoleAddenda" xml:space="preserve">

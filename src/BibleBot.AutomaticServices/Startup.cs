@@ -32,15 +32,9 @@ namespace BibleBot.AutomaticServices
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
-
             // Link settings in appsettings.json to a database settings model.
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-
-            // Add background services.
-            services.AddHostedService<AutomaticDailyVerseService>();
-            services.AddHostedService<VersionStatsService>();
 
             // Instantiate the various services.
             services.AddSingleton<MongoService>();
@@ -49,10 +43,25 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<VersionService>();
             services.AddSingleton<LanguageService>();
 
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                string[] supportedCultures = ["en-US", "eo"];
+                options.SetDefaultCulture(supportedCultures[0])
+                       .AddSupportedCultures(supportedCultures)
+                       .AddSupportedUICultures(supportedCultures);
+            });
+
             // Instantiate the various providers, which are just services.
             services.AddSingleton<SpecialVerseProvider>();
             services.AddSingleton<BibleGatewayProvider>();
             services.AddSingleton<APIBibleProvider>();
+
+            // Add background services.
+            services.AddSingleton<AutomaticDailyVerseService>();
+            services.AddHostedService(sp => sp.GetService<AutomaticDailyVerseService>());
+            services.AddSingleton<VersionStatsService>();
+            services.AddHostedService(sp => sp.GetService<VersionStatsService>());
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
@@ -105,6 +114,9 @@ namespace BibleBot.AutomaticServices
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            IOptions<RequestLocalizationOptions> localizationOption = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(localizationOption.Value);
 
             app.UseRouting();
 
