@@ -189,6 +189,10 @@
     <value>tradukpreferoj kaj informo</value>
     <comment>Description of /version command.</comment>
   </data>
+  <data name="LanguageCommandDescription" xml:space="preserve">
+    <value>lingvo-preferoj kaj informo</value>
+    <comment>Description of /language command.</comment>
+  </data>
   <data name="FormattingCommandDescription" xml:space="preserve">
     <value>preferoj por stiloj de verso kaj konduto de la roboto</value>
     <comment>Description of /formatting command.</comment>
