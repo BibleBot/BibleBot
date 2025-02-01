@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\src\BibleBot.Models\BibleBot.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResources Include="Resources\**\*.resx" />
+  </ItemGroup>
+
 </Project>

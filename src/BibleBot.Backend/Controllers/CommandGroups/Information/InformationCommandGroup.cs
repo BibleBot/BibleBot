@@ -112,7 +112,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
 
                 InternalEmbed embed = new()
                 {
-                    Title = $"BibleBot v{Utils.Version}",
+                    Title = $"BibleBot {Utils.Version}",
                     Description = localizer["BibleBotSlogan"],
                     Color = 6709986,
                     Footer = new Footer

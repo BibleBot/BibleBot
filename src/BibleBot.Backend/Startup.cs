@@ -7,7 +7,6 @@
 */
 
 using System;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -35,21 +34,39 @@ namespace BibleBot.Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
-            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
-
             // Link settings in appsettings.json to a database settings model.
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
             // Instantiate the various services.
-            services.AddSingleton<MongoService>();
-            services.AddSingleton<UserService>();
-            services.AddSingleton<GuildService>();
+            MongoService mongoService = new(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>());
+            services.AddSingleton(mongoService);
+
+            UserService userService = new(mongoService);
+            services.AddSingleton(userService);
+
+            GuildService guildService = new(mongoService);
+            services.AddSingleton(guildService);
+
             services.AddSingleton<ParsingService>();
             services.AddSingleton<VersionService>();
+
+            LanguageService languageService = new(mongoService);
+            services.AddSingleton(languageService);
+
             services.AddSingleton<ResourceService>();
             services.AddSingleton<FrontendStatsService>();
+
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                string[] supportedCultures = ["en-US", "eo"];
+                options.SetDefaultCulture(supportedCultures[0])
+                       .AddSupportedCultures(supportedCultures)
+                       .AddSupportedUICultures(supportedCultures);
+
+                options.AddInitialRequestCultureProvider(new PreferenceRequestCultureProvider(userService, guildService, languageService));
+            });
 
             // Instantiate the various providers, which are just services.
             services.AddSingleton<SpecialVerseProvider>();
@@ -122,6 +139,9 @@ namespace BibleBot.Backend
             app.UseResponseCompression();
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            IOptions<RequestLocalizationOptions> localizationOption = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(localizationOption.Value);
 
             app.UseHouseAuthorization();
 

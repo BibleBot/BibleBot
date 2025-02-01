@@ -36,7 +36,7 @@ namespace BibleBot.Models
         /// The default language of the guild.
         /// </summary>
         [BsonElement("Language")]
-        public string Language { get; set; } = "english_us";
+        public string Language { get; set; }
 
         /// <summary>
         /// The default version of the guild.

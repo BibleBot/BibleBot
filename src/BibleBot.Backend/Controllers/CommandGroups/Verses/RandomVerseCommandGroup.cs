@@ -46,7 +46,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/random", "This server has personally requested that this command be only used in DMs to avoid spam.", true)
+                            Utils.GetInstance().Embedify("/random", localizer["RandomVerseAntiSpamProvision"], true)
                         ],
                         LogStatement = "/random"
                     };
@@ -104,7 +104,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/truerandom", "This server has personally requested that this command be only used in DMs to avoid spam.", true)
+                            Utils.GetInstance().Embedify("/truerandom", localizer["RandomVerseAntiSpamProvision"], true)
                         ],
                         LogStatement = "/truerandom"
                     };

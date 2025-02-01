@@ -48,7 +48,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 Language defaultLanguage = await languageService.Get("en-US");
 
                 string response = $"{localizer["LanguageStatusPreference"]}\n" +
-                               $"{localizer["LanguageStatusServerPreference"]}\n\n" +
+                               $"{localizer["LanguageStatusGuildPreference"]}\n\n" +
                                $"__**{sharedLocalizer["RelatedCommands"]}**__\n" +
                                $"**/setlanguage** - {localizer["SetLanguageCommandDescription"]}\n" +
                                $"**/setserverlanguage** - {localizer["SetServerLanguageCommandDescription"]}\n" +
@@ -107,8 +107,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                string newLanguage = args[0].ToUpperInvariant();
-                Language idealLanguage = await languageService.Get(newLanguage);
+                Language idealLanguage = await languageService.Get(args[0]);
 
                 if (idealLanguage != null)
                 {
@@ -162,8 +161,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                string newLanguage = args[0].ToUpperInvariant();
-                Language idealLanguage = await languageService.Get(newLanguage);
+                Language idealLanguage = await languageService.Get(args[0]);
 
                 if (idealLanguage != null)
                 {
