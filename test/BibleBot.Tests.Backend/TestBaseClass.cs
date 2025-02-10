@@ -6,17 +6,17 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
-using BibleBot.Tests.Backend.Mocks;
 using BibleBot.Models;
+using BibleBot.Tests.Backend.Mocks;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Localization;
 using Serilog.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace BibleBot.Tests.Backend
 {
@@ -59,6 +59,7 @@ namespace BibleBot.Tests.Backend
                 VersionCollectionName = "Versions",
                 LanguageCollectionName = "Languages",
                 FrontendStatsCollectionName = "FrontendStats",
+                OptOutUserCollectionName = "OptOutUsers",
                 DatabaseName = "BibleBotBackend"
             };
 

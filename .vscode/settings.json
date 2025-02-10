@@ -1,7 +1,6 @@
 {
     "json.schemaDownload.enable": true,
     "editor.formatOnSave": true,
-    "omnisharp.organizeImportsOnFormat": true,
     "editor.codeLens": true,
     "editor.rulers": [
         120
@@ -13,5 +12,6 @@
     },
     "editor.suggest.insertMode": "insert",
     "dotnet.codeLens.enableReferencesCodeLens": false,
-    "dotnet.unitTests.runSettingsPath": "test/BibleBot.Tests.Backend/.env"
+    "dotnet.unitTests.runSettingsPath": "test/BibleBot.Tests.Backend/.env",
+    "dotnet.formatting.organizeImportsOnFormat": true
 }
