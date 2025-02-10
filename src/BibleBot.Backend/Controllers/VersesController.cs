@@ -17,6 +17,7 @@ using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -25,9 +26,10 @@ namespace BibleBot.Backend.Controllers
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
                                           VersionService versionService, LanguageService languageService, NameFetchingService nameFetchingService,
-                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider) : ControllerBase
+                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider, OptOutService optOutService, IStringLocalizer<VersesController> localizer) : ControllerBase
     {
         private readonly List<IBibleProvider> _bibleProviders = [bgProvider, abProvider];
+        private readonly IStringLocalizer<VersesController> _localizer = localizer;
 
         [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$")]
         private static partial Regex TruncatedTextRegex();
@@ -45,6 +47,13 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
+            OptOutUser potentialOptOut = await optOutService.Get(req.UserId);
+
+            if (potentialOptOut != null)
+            {
+                return null;
+            }
+
             string displayStyle = "embed";
             List<string> ignoringBrackets = ["<>"];
             bool paginateVerses = false;
@@ -117,7 +126,7 @@ namespace BibleBot.Backend.Controllers
                             OK = false,
                             Pages =
                             [
-                                Utils.GetInstance().Embedify("Too Many Commas", "There are too many commas, the maximum amount of commas you can do in one reference is 5.", true)
+                                Utils.GetInstance().Embedify(_localizer["CommaLimitTitle"], _localizer["CommaLimitDescription"], true)
                             ],
                             LogStatement = "too many commas"
                         });
@@ -134,7 +143,7 @@ namespace BibleBot.Backend.Controllers
                     return BadRequest(new VerseResponse
                     {
                         OK = false,
-                        LogStatement = $"{reference.Version.Name} does not support the Old Testament."
+                        LogStatement = string.Format(_localizer["VersionNoSupportOT"], reference.Version.Name)
                     });
                 }
                 else if (reference.IsNT && !reference.Version.SupportsNewTestament)
@@ -142,7 +151,7 @@ namespace BibleBot.Backend.Controllers
                     return BadRequest(new VerseResponse
                     {
                         OK = false,
-                        LogStatement = $"{reference.Version.Name} does not support the New Testament."
+                        LogStatement = string.Format(_localizer["VersionNoSupportNT"], reference.Version.Name)
                     });
                 }
                 else if (reference.IsDEU && !reference.Version.SupportsDeuterocanon)
@@ -150,7 +159,7 @@ namespace BibleBot.Backend.Controllers
                     return BadRequest(new VerseResponse
                     {
                         OK = false,
-                        LogStatement = $"{reference.Version.Name} does not support the Apocrypha/Deuterocanon."
+                        LogStatement = string.Format(_localizer["VersionNoSupportDEU"], reference.Version.Name)
                     });
                 }
 
@@ -169,7 +178,7 @@ namespace BibleBot.Backend.Controllers
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("Too Many References", "There are too many references, the maximum amount of references you can do in one message is 6.", true)
+                        Utils.GetInstance().Embedify(_localizer["ReferenceLimitTitle"], _localizer["ReferenceLimitDescription"], true)
                     ],
                     LogStatement = "too many verses"
                 });

@@ -27,7 +27,7 @@ namespace BibleBot.Backend.Controllers
     [Produces("application/json")]
     [Route("api/commands")]
     [ApiController]
-    public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
+    public class CommandsController(UserService userService, OptOutService optOutService, GuildService guildService, VersionService versionService, ResourceService resourceService,
                               FrontendStatsService frontendStatsService, LanguageService languageService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider,
                               BibleGatewayProvider bgProvider, APIBibleProvider abProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
@@ -43,6 +43,8 @@ namespace BibleBot.Backend.Controllers
                 new StaffOnlyCommandGroup()
             ];
 
+        private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(CommandsController));
+
         /// <summary>
         /// Processes a message to locate verse references, outputting
         /// the corresponding text.
@@ -56,6 +58,13 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
+            OptOutUser potentialOptOut = await optOutService.Get(req.UserId);
+
+            if (potentialOptOut != null)
+            {
+                return null;
+            }
+
             IResponse response;
             string[] tokenizedBody = req.Body.Split(" ");
 
@@ -82,7 +91,7 @@ namespace BibleBot.Backend.Controllers
                                 OK = false,
                                 Pages =
                                 [
-                                    Utils.GetInstance().Embedify("Permissions Error", "This command can only be performed by BibleBot staff.", true)
+                                    Utils.GetInstance().Embedify(_localizer["PermissionsErrorTitle"], _localizer["StaffOnlyCommandError"], true)
                                 ],
                                 LogStatement = $"Insufficient permissions on +{grp.Name}."
                             });

@@ -56,6 +56,7 @@ namespace BibleBot.Backend
 
             services.AddSingleton<ResourceService>();
             services.AddSingleton<FrontendStatsService>();
+            services.AddSingleton<OptOutService>();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.Configure<RequestLocalizationOptions>(options =>
