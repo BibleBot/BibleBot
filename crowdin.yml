@@ -6,4 +6,4 @@ files:
       - /src/**/Resources/**/*.*.resx
     translation: /src/**/Resources/**/%file_name%.%locale%.resx
   - source: /src/BibleBot.Frontend/locale/default.json
-    translation: /src/BibleBot.Frontend/locale/%locale%.json
+    translation: /src/BibleBot.Frontend/locale/%two_letters_code%.json
