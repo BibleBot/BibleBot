@@ -217,4 +217,8 @@
     <value>enhavas Psalmo 151</value>
     <comment>To indicate whether a version has Psalm 151.</comment>
   </data>
+  <data name="VersionInfoDeveloperInfoHeader" xml:space="preserve">
+    <value>Informoj por Programistoj</value>
+    <comment>Header above developer information for a version.</comment>
+  </data>
 </root>
