@@ -302,7 +302,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                     {
                         Title = "The Visit of the Wise Men",
                         PsalmTitle = "",
-                        Text = "<**25**> but knew her not until she had borne a son; and he called his name Jesus. <**1**> Now when Jesus was born in Bethlehem of Judea in the days of Herod the king, behold, wise men from the East came to Jerusalem, saying,",
+                        Text = "<**25**> but knew her not until she had borne a son; and he called his name Jesus. <**2:1**> Now when Jesus was born in Bethlehem of Judea in the days of Herod the king, behold, wise men from the East came to Jerusalem, saying,",
                         Reference = new Reference
                         {
                             Book = "Matthew",
@@ -341,7 +341,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                     {
                         Title = "",
                         PsalmTitle = "",
-                        Text = "<**31**> And God saw every thing that he had made, and, behold, it was very good. And the evening and the morning were the sixth day. <**1**> Thus the heavens and the earth were finished, and all the host of them.",
+                        Text = "<**31**> And God saw every thing that he had made, and, behold, it was very good. And the evening and the morning were the sixth day. <**2:1**> Thus the heavens and the earth were finished, and all the host of them.",
                         Reference = new Reference
                         {
                             Book = "Genesis",
@@ -403,18 +403,41 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldIgnoreAPIBibleExpandedReference()
+        public void ShouldProcessAPIBibleExpandedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
-                OK = false,
-                LogStatement = null
+                OK = true,
+                LogStatement = "Matthew 1:24- KJVA",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new()
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**24**> Then Joseph being raised from sleep did as the angel of the Lord had bidden him, and took unto him his wife: <**25**> And knew her not till she had brought forth her firstborn son: and he called his name JESUS.",
+                        Reference = new Reference
+                        {
+                            Book = "Matthew",
+                            StartingChapter = 1,
+                            StartingVerse = 24,
+                            EndingChapter = 1,
+                            EndingVerse = 200,
+                            Version = _defaultAPIBibleVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:24-25"
+                        }
+                    }
+                ]
             };
 
-            result.StatusCode.Should().Be(400);
+            result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
 
@@ -584,7 +607,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                     {
                         Title = "",
                         PsalmTitle = "",
-                        Text = "<**1**> A copy of a letter which Jeremiah sent to those who were to be taken to Babylon as captives by the king of the Babylonians, to give them the message which God had commanded him.",
+                        Text = "<**6:1**> A copy of a letter which Jeremiah sent to those who were to be taken to Babylon as captives by the king of the Babylonians, to give them the message which God had commanded him.",
                         Reference = new Reference
                         {
                             Book = "Letter of Jeremiah",

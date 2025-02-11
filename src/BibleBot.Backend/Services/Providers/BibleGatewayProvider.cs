@@ -47,6 +47,9 @@ namespace BibleBot.Backend.Services.Providers
             _htmlParser = new HtmlParser();
         }
 
+        [GeneratedRegex("[a-zA-Z]{2,3}-([0-9]{1,3})-([0-9]{1,3})")]
+        private static partial Regex VerseIdRegex();
+
         public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
             if (reference.Book != "str")
@@ -81,7 +84,7 @@ namespace BibleBot.Backend.Services.Providers
                 {
                     string chapterNum = el.TextContent.Substring(0, el.TextContent.Length - 1);
 
-                    el.TextContent = chapterNum != "1" ? $" [**{chapterNum}:1**] " : " [**1**] ";
+                    el.TextContent = chapterNum != "1" && chapterNum != $"{reference.StartingChapter}" ? $" <**{chapterNum}:1**> " : " <**1**> ";
 
                 }
                 else
@@ -104,11 +107,47 @@ namespace BibleBot.Backend.Services.Providers
                             el.Remove();
                         }
                     }
+
+                    if (el.TextContent.Substring(0, el.TextContent.Length - 1) == "1")
+                    {
+                        IElement parentElement = el.ParentElement;
+                        string verseId = parentElement.ClassList.FirstOrDefault(tok => tok != "text" && VerseIdRegex().Match(tok).Success);
+
+                        if (verseId != null)
+                        {
+                            MatchCollection matches = VerseIdRegex().Matches(verseId);
+
+#pragma warning disable IDE0045 // Convert to conditional expression
+                            if (matches[0].Groups[2].Value == "1")
+                            {
+                                if (matches[0].Groups[1].Value == "1")
+                                {
+                                    el.TextContent = " <**1**> ";
+                                }
+                                else if (matches[0].Groups[1].Value == $"{reference.StartingChapter}")
+                                {
+                                    el.TextContent = " <**1**> ";
+                                }
+                                else
+                                {
+                                    el.TextContent = $" <**{matches[0].Groups[1].Value}:1**> ";
+                                }
+#pragma warning restore IDE0045 // Convert to conditional expression
+                            }
+                            else
+                            {
+                                el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
+                            }
+                        }
+                        else
+                        {
+                            el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
+                        }
+                    }
                     else
                     {
                         el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
                     }
-
                 }
                 else
                 {

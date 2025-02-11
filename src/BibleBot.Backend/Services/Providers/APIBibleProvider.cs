@@ -46,6 +46,9 @@ namespace BibleBot.Backend.Services.Providers
             _htmlParser = new HtmlParser();
         }
 
+        [GeneratedRegex("[a-zA-Z]{3} ([0-9]{1,3}):([0-9]{1,3})")]
+        private static partial Regex VerseIdRegex();
+
         public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
             string[] oddTextClasses = ["m", "cls", "mi"];
@@ -123,7 +126,30 @@ namespace BibleBot.Backend.Services.Providers
                 {
                     if (verseNumbersEnabled)
                     {
-                        el.TextContent = $" <**{el.TextContent}**> ";
+                        string id = el.GetAttribute("data-sid");
+                        MatchCollection matches = VerseIdRegex().Matches(id);
+
+#pragma warning disable IDE0045 // Convert to conditional expression
+                        if (matches[0].Groups[2].Value == "1")
+                        {
+                            if (matches[0].Groups[1].Value == "1")
+                            {
+                                el.TextContent = " <**1**> ";
+                            }
+                            else if (matches[0].Groups[1].Value == $"{reference.StartingChapter}")
+                            {
+                                el.TextContent = " <**1**> ";
+                            }
+                            else
+                            {
+                                el.TextContent = $" <**{matches[0].Groups[1].Value}:1**> ";
+                            }
+                        }
+                        else
+                        {
+                            el.TextContent = $" <**{el.TextContent}**> ";
+                        }
+#pragma warning restore IDE0045 // Convert to conditional expression
                     }
                     else
                     {

@@ -85,7 +85,7 @@ namespace BibleBot.Models
         /// The string representation of the Reference.
         /// </summary>
         /// <remarks>
-        /// In most cases, this will equal the value of <see cref="ToString"/>, set by the BibleProvider at the end of
+        /// In most cases, this will equal the value of <see cref="ToString()"/>, set by the BibleProvider at the end of
         /// fetching a verse. In certain cases, it is used to handle references where we skip the parsing process and
         /// trust the origin to have their references proper.
         /// </remarks>
@@ -279,7 +279,7 @@ namespace BibleBot.Models
         /// </remarks>
         /// <param name="obj"></param>
         /// <returns>true if the specified object is equal to the Reference; otherwise, false.</returns>
-        public override bool Equals(object obj) => obj is not null and Reference && ToString() == (obj as Reference).ToString() && Version.Abbreviation == (obj as Reference).Version.Abbreviation;
+        public override bool Equals(object obj) => obj is not null and Reference && ToString(false) == (obj as Reference).ToString(false) && Version.Abbreviation == (obj as Reference).Version.Abbreviation;
 
         /// <summary>
         /// Serves as the default hash function.
@@ -288,6 +288,6 @@ namespace BibleBot.Models
         /// This is used for caching purposes.
         /// </remarks>
         /// <returns>A hash code for the string representing the reference.</returns>
-        public override int GetHashCode() => ToString().GetHashCode();
+        public override int GetHashCode() => ToString(false).GetHashCode();
     }
 }
