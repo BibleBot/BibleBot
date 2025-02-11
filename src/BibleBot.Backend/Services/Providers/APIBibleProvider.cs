@@ -50,7 +50,6 @@ namespace BibleBot.Backend.Services.Providers
         {
             string[] oddTextClasses = ["m", "cls", "mi"];
 
-            // todo: handle Psalm 151 properly (if not already usable)
             if (reference.Book != "str")
             {
                 if (reference.Version.Abbreviation == "KJVA" && reference.Book == "Song of Songs")
@@ -155,6 +154,17 @@ namespace BibleBot.Backend.Services.Providers
             {
                 reference.Book = "Daniel";
                 reference.AsString = reference.ToString();
+            }
+
+            // For some reason something like Psalm 1:1-2:1 comes back with the
+            // reference Psalm 1:1-21 despite the text itself being correct.
+            if (reference.AsString.EndsWith('1') && reference.AppendedVerses.Count == 0)
+            {
+                if (reference.StartingChapter != reference.EndingChapter && reference.EndingVerse == 1)
+                {
+                    int referenceStrLen = reference.AsString.Length;
+                    reference.AsString = $"{reference.AsString.Substring(0, referenceStrLen - 1)}:{reference.AsString.Substring(referenceStrLen - 1)}";
+                }
             }
 
             return new Verse { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };

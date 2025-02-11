@@ -67,6 +67,7 @@ namespace BibleBot.Models
         /// If this is true, <see cref="IsOT"/> and <see cref="IsDEU"/> must be false.
         /// </remarks>
         public bool IsNT { get; set; }
+
         /// <summary>
         /// Indicates whether the reference is of the Deuterocanon.
         /// </summary>
@@ -74,6 +75,11 @@ namespace BibleBot.Models
         /// If this is true, <see cref="IsOT"/> and <see cref="IsNT"/> must be false.
         /// </remarks>
         public bool IsDEU { get; set; }
+
+        /// <summary>
+        /// Indicates whether the expando notation was used, like Psalm 1:1-
+        /// </summary>
+        public bool IsExpandoVerse { get; set; }
 
         /// <summary>
         /// The string representation of the Reference.
@@ -90,7 +96,7 @@ namespace BibleBot.Models
         /// API.Bible, thus the distinct function.
         /// </summary>
         /// <returns>A string that represents the Reference.</returns>
-        public override string ToString()
+        public string ToString(bool isLogStatement)
         {
             StringBuilder resultBuilder = new($"{Book} {StartingChapter}:{StartingVerse}");
 
@@ -100,7 +106,14 @@ namespace BibleBot.Models
             }
             else if (AppendedVerses != null && AppendedVerses.Count == 0 && EndingVerse > 0 && EndingVerse != StartingVerse)
             {
-                resultBuilder.Append($"-{EndingVerse}");
+                if (isLogStatement && IsExpandoVerse && Version.Source == "ab")
+                {
+                    resultBuilder.Append('-');
+                }
+                else
+                {
+                    resultBuilder.Append($"-{EndingVerse}");
+                }
             }
             else if (EndingChapter > 0 && AppendedVerses != null && AppendedVerses.Count == 0 && EndingVerse == 0)
             {
@@ -142,6 +155,13 @@ namespace BibleBot.Models
 
             return resultBuilder.ToString();
         }
+
+        /// <summary>
+        /// Returns a string that represents the Reference. Data names of books differ in
+        /// API.Bible, thus the distinct function.
+        /// </summary>
+        /// <returns>A string that represents the Reference.</returns>
+        public override string ToString() => ToString(false);
 
         /// <summary>
         /// Returns a API.Bible-friendly string that represents the Reference. Data names of books differ in

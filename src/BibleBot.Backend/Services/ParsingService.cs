@@ -101,7 +101,7 @@ namespace BibleBot.Backend.Services
                     {
                         string lastToken = tokens[tokenIdxAfterSpan].ToUpperInvariant();
 
-                        while (HasNumberRegex().Match(lastToken).Success && tokenIdxAfterSpan < tokens.Length)
+                        while (HasNumberRegex().Match(lastToken).Success && tokenIdxAfterSpan < tokens.Length - 1)
                         {
                             tokenIdxAfterSpan += 1;
                             lastToken = tokens[tokenIdxAfterSpan].ToUpperInvariant();
@@ -264,17 +264,18 @@ namespace BibleBot.Backend.Services
                                 }
                                 else
                                 {
-                                    // We know that BibleGateway will extend to the end of a chapter with this 
-                                    // "Genesis 1:1-" syntax, but for other sources this is likely not available.
-                                    if (prefVersion.Source == "bg")
+                                    // Instead of returning null here, we'll break out of the loop
+                                    // in the event that the span exists to extend to the end of a chapter.
+                                    expandoVerseUsed = true;
+
+                                    // API.Bible doesn't treat the unfinished span like BibleGateway, thus a workaround.
+                                    if (prefVersion.Source == "ab")
                                     {
-                                        // Instead of returning null here, we'll break out of the loop
-                                        // in the event that the span exists to extend to the end of a chapter.
-                                        expandoVerseUsed = true;
-                                        break;
+                                        // Largest verse count in any chapter is 176. No harm in rounding up.
+                                        endingVerse = 200;
                                     }
 
-                                    return null;
+                                    break;
                                 }
                             }
                         }
@@ -350,6 +351,7 @@ namespace BibleBot.Backend.Services
                 EndingVerse = endingVerse,
                 AppendedVerses = appendedVerses,
                 Version = prefVersion,
+                IsExpandoVerse = expandoVerseUsed,
 
                 IsOT = isOT,
                 IsNT = isNT,

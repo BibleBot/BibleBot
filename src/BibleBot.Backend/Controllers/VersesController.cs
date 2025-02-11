@@ -244,7 +244,7 @@ namespace BibleBot.Backend.Controllers
 
             if (results.Count > 0)
             {
-                string logStatement = string.Join(" / ", results.Select(verse => $"{verse.Reference} {verse.Reference.Version.Abbreviation}"));
+                string logStatement = string.Join(" / ", results.Select(verse => $"{verse.Reference.ToString(true)} {verse.Reference.Version.Abbreviation}"));
 
                 if (logStatement.Contains("Psalm 151"))
                 {

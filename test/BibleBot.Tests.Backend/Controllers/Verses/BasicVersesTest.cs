@@ -888,7 +888,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldHandleSpanlessCommaNotation()
+        public void BGShouldHandleSpanlessCommaNotation()
         {
             ObjectResult spacelessResult = _versesController.ProcessMessage(new MockRequest("Matthew 1:1,3,9")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse spacelessResp = spacelessResult.Value as VerseResponse;
@@ -932,7 +932,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldHandleSpannedCommaNotation()
+        public void BGShouldHandleSpannedCommaNotation()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-3, 5-7, 9-11")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result.Value as VerseResponse;

@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,11 +14,10 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using AngleSharp.Html.Parser;
-using AngleSharp.Html.Dom;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
 using BibleBot.Models;
-using System;
 
 namespace BibleBot.Backend.Services.Providers
 {
@@ -79,7 +79,10 @@ namespace BibleBot.Backend.Services.Providers
             {
                 if (verseNumbersEnabled)
                 {
-                    el.TextContent = " <**1**> ";
+                    string chapterNum = el.TextContent.Substring(0, el.TextContent.Length - 1);
+
+                    el.TextContent = chapterNum != "1" ? $" [**{chapterNum}:1**] " : " [**1**] ";
+
                 }
                 else
                 {
@@ -172,6 +175,10 @@ namespace BibleBot.Backend.Services.Providers
                         reference.AsString += $", {colonSplit[1]}";
                     }
                 }
+            }
+            else if (reference.StartingChapter != reference.EndingChapter && reference.EndingVerse == 1)
+            {
+                reference.AsString += ":1";
             }
 
             bool isISV = reference.Version.Abbreviation == "ISV";
