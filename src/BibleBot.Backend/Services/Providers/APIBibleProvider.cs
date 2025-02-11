@@ -12,9 +12,9 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using AngleSharp.Html.Parser;
-using AngleSharp.Html.Dom;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
 using BibleBot.Models;
 using Serilog;
 
@@ -27,8 +27,6 @@ namespace BibleBot.Backend.Services.Providers
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly HtmlParser _htmlParser;
-
-        private readonly Dictionary<string, string> _versionTable;
 
         private readonly string _baseURL = "https://api.scripture.api.bible/v1/";
         private readonly string _getURI = "bibles/{0}/search?query={1}&limit=100";
@@ -46,20 +44,12 @@ namespace BibleBot.Backend.Services.Providers
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
             _htmlParser = new HtmlParser();
-
-            _versionTable = new Dictionary<string, string>
-            {
-                { "KJVA", "de4e12af7f28f599-01" }, // King James Version with Apocrypha
-                { "FBV", "65eec8e0b60e656b-01" }, // Free Bible Version
-                { "WEB", "9879dbb7cfe39e4d-01" }, // World English Bible (includes Apocrypha)
-                { "LXX", "c114c33098c4fef1-01" }, // Brenton's Greek Septuagint
-                { "ELXX", "6bab4d6c61b31b80-01" }, // Brenton's English Septuagint
-                { "PAT1904", "901dcd9744e1bf69-01" } // Patriarchal Text of 1904
-            };
         }
 
         public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
+            string[] oddTextClasses = ["m", "cls", "mi"];
+
             // todo: handle Psalm 151 properly (if not already usable)
             if (reference.Book != "str")
             {
@@ -79,7 +69,7 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString = reference.ToString();
             }
 
-            string url = string.Format(_getURI, _versionTable[reference.Version.Abbreviation], reference.AsString);
+            string url = string.Format(_getURI, reference.Version.ApiBibleId, reference.AsString);
 
             ABSearchData resp = await _cachingHttpClient.GetJsonContentAs<ABSearchData>(url, _jsonOptions);
 
@@ -100,7 +90,7 @@ namespace BibleBot.Backend.Services.Providers
                 return null;
             }
 
-            if (resp.Passages[0].BibleId != _versionTable[reference.Version.Abbreviation])
+            if (resp.Passages[0].BibleId != reference.Version.ApiBibleId)
             {
                 Log.Error($"{reference.Version.Abbreviation} machine broke - version no longer available");
                 return null;
@@ -111,27 +101,55 @@ namespace BibleBot.Backend.Services.Providers
                 return null;
             }
 
-            IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp.Passages[0].Content);
+            string title = "";
+            List<string> texts = [];
 
-            IHtmlCollection<IElement> numbers = document.QuerySelectorAll(".v");
-
-            foreach (IElement el in numbers)
+            foreach (ABPassage passage in resp.Passages)
             {
-                if (verseNumbersEnabled)
+                IHtmlDocument document = await _htmlParser.ParseDocumentAsync(passage.Content);
+
+                IHtmlCollection<IElement> otherData = document.QuerySelectorAll(".d");
+
+                foreach (IElement el in otherData)
                 {
-                    el.TextContent = $" <**{el.TextContent}**> ";
+                    while (el.ChildNodes.Length > 1)
+                    {
+                        el.RemoveChild(el.ChildNodes[1]);
+                    }
                 }
-                else
+
+                IHtmlCollection<IElement> numbers = document.QuerySelectorAll(".v");
+
+                foreach (IElement el in numbers)
                 {
-                    el.Remove();
+                    if (verseNumbersEnabled)
+                    {
+                        el.TextContent = $" <**{el.TextContent}**> ";
+                    }
+                    else
+                    {
+                        el.Remove();
+                    }
                 }
+
+                title += titlesEnabled ? string.Join(" / ", document.GetElementsByClassName("s1").Select(el => el.TextContent.Trim())) : "";
+                texts.Add(string.Join("\n", document.GetElementsByTagName("p").Where(el => oddTextClasses.Contains(el.ClassName) || el.ClassName.StartsWith('q') || el.ClassName.StartsWith('p')).Select(el => el.TextContent.Trim())));
             }
 
-            string title = titlesEnabled ? string.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim())) : "";
-            string text = string.Join("\n", document.GetElementsByTagName("p").Select(el => el.TextContent.Trim()));
+            string text = string.Join("\n", texts);
 
             // As the verse reference could have a non-English name...
             reference.AsString = resp.Passages[0].Reference;
+
+            if (resp.Passages.Count > 1)
+            {
+                for (int i = 1; i < resp.Passages.Count; i++)
+                {
+                    string[] colonSplit = resp.Passages[i].Reference.Split(':');
+
+                    reference.AsString += $", {colonSplit[1]}";
+                }
+            }
 
             if (reference.AsString.Contains("Daniel (Greek)") || reference.AsString.Contains("ΔΑΝΙΗΛ (Ελληνικά)"))
             {
@@ -146,7 +164,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = string.Format(_searchURI, _versionTable[version.Abbreviation], query);
+            string url = string.Format(_searchURI, version.ApiBibleId, query);
 
             ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
 

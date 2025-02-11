@@ -89,7 +89,7 @@ namespace BibleBot.Tests.Backend
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _parsingServiceMock.Object, _versionService, _languageService,
                                                     _nameFetchingServiceMock.Object, _bgProviderMock.Object,
-                                                    _abProviderMock.Object, _optOutServiceMock.Object, _localizerFactory.Create(typeof(VersesController)));
+                                                    _abProviderMock.Object, _optOutServiceMock.Object, new StringLocalizer<VersesController>(_localizerFactory));
 
             return;
         }

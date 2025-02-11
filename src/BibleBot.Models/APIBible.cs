@@ -24,6 +24,16 @@ namespace BibleBot.Models
         public ABMetadata Metadata { get; set; }
     }
 
+    public class ABBooksResponse
+    {
+        public List<ABBookData> Data { get; set; }
+    }
+
+    public class ABChaptersResponse
+    {
+        public List<ABChapter> Data { get; set; }
+    }
+
     public class ABBookData
     {
         public string Id { get; set; }

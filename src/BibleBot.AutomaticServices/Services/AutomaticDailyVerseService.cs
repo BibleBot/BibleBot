@@ -7,8 +7,8 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
@@ -20,12 +20,12 @@ using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
 using NodaTime;
 using RestSharp;
 using RestSharp.Serializers.Json;
 using Serilog;
-using Microsoft.Extensions.Localization;
 
 namespace BibleBot.AutomaticServices.Services
 {
@@ -159,6 +159,13 @@ namespace BibleBot.AutomaticServices.Services
 
                         string content = guild.DailyVerseRoleId != null ? $"<@&{guild.DailyVerseRoleId}> - {_localizer["AutomaticDailyVerseLeadIn"]}:" : $"{_localizer["AutomaticDailyVerseLeadIn"]}:";
                         embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
+
+                        if (verse.Reference.Version.Publisher == "biblica")
+                        {
+                            embed.Author.Name += " (Biblica)";
+                            embed.Author.URL = "https://biblica.org";
+                        }
+
                         webhookRequestBody = new()
                         {
                             Content = content,

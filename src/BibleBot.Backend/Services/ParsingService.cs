@@ -71,6 +71,9 @@ namespace BibleBot.Backend.Services
         [GeneratedRegex(@"-")]
         private static partial Regex ContainsSpanRegex();
 
+        [GeneratedRegex(@"[0-9]")]
+        private static partial Regex HasNumberRegex();
+
         public Reference GenerateReference(string str, BookSearchResult bookSearchResult, Version prefVersion, List<Version> versions)
         {
             string book = bookSearchResult.Name;
@@ -97,6 +100,13 @@ namespace BibleBot.Backend.Services
                     if (tokens.Length > tokenIdxAfterSpan)
                     {
                         string lastToken = tokens[tokenIdxAfterSpan].ToUpperInvariant();
+
+                        while (HasNumberRegex().Match(lastToken).Success && tokenIdxAfterSpan < tokens.Length)
+                        {
+                            tokenIdxAfterSpan += 1;
+                            lastToken = tokens[tokenIdxAfterSpan].ToUpperInvariant();
+                        }
+
                         Version potentialVersion = versions.SingleOrDefault(version => string.Equals(version.Abbreviation, lastToken, System.StringComparison.OrdinalIgnoreCase));
 
                         if (potentialVersion != null)
@@ -322,9 +332,13 @@ namespace BibleBot.Backend.Services
             {
                 isOT = false;
                 isDEU = true;
-                book = _bookMap["deu"]["ps151"];
-                startingChapter = 1;
-                endingChapter -= 150;
+
+                if (prefVersion.Source == "bg")
+                {
+                    book = _bookMap["deu"]["ps151"];
+                    startingChapter = 1;
+                    endingChapter -= 150;
+                }
             }
 
             return new Reference

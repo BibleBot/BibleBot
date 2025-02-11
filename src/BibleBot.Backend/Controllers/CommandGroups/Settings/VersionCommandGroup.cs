@@ -256,19 +256,26 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     string response = $"### {idealVersion.Name}\n\n" +
                                 $"{localizer["VersionInfoContainsOT"]}: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":x:")}\n" +
                                 $"{localizer["VersionInfoContainsNT"]}: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":x:")}\n" +
-                                $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n" +
+                                $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n\n" +
+                                $"__**{localizer["VersionInfoDeveloperInfoHeader"]}**__\n" +
                                 $"{localizer["VersionInfoSource"]}: `{idealVersion.Source}`";
 
+                    if (idealVersion.Publisher != null)
+                    {
+                        response += $"\n{localizer["VersionInfoPublisher"]}: `{idealVersion.Publisher}`";
+                    }
+
+                    if (idealVersion.ApiBibleId != null)
+                    {
+                        response += $"\nAPI.Bible ID: `{idealVersion.ApiBibleId}`";
+                    }
 
                     if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
                     {
                         response += $"\n\n:warning: {localizer["VersionInfoDailyVerseWarning"]}";
                     }
 
-                    if (idealVersion.Source == "bg")
-                    {
-                        response += $"\n\n{localizer["VersionInfoBookListNotice"]}";
-                    }
+                    response += $"\n\n{localizer["VersionInfoBookListNotice"]}";
 
                     return new CommandResponse
                     {
@@ -377,20 +384,29 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 if (idealVersion != null)
                 {
-                    if (idealVersion.Source != "bg")
-                    {
-                        return new CommandResponse
-                        {
-                            OK = false,
-                            Pages =
-                            [
-                                Utils.GetInstance().Embedify("/booklist", localizer["BookListVersionIneligible"], true)
-                            ],
-                            LogStatement = "/booklist - non-bg source"
-                        };
-                    }
+                    // if (idealVersion.Source != "bg")
+                    // {
+                    //     return new CommandResponse
+                    //     {
+                    //         OK = false,
+                    //         Pages =
+                    //         [
+                    //             Utils.GetInstance().Embedify("/booklist", localizer["BookListVersionIneligible"], true)
+                    //         ],
+                    //         LogStatement = "/booklist - non-bg source"
+                    //     };
+                    // }
 
-                    Dictionary<BookCategories, Dictionary<string, string>> names = await nameFetchingService.GetBibleGatewayVersionBookList(idealVersion);
+                    Dictionary<BookCategories, Dictionary<string, string>> names = null;
+
+                    if (idealVersion.Source == "bg")
+                    {
+                        names = await nameFetchingService.GetBibleGatewayVersionBookList(idealVersion);
+                    }
+                    else if (idealVersion.Source == "ab")
+                    {
+                        names = await nameFetchingService.GetAPIBibleVersionBookList(idealVersion);
+                    }
 
                     if (names != null)
                     {

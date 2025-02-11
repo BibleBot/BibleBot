@@ -26,7 +26,7 @@ namespace BibleBot.Backend.Controllers
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
                                           VersionService versionService, LanguageService languageService, NameFetchingService nameFetchingService,
-                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider, OptOutService optOutService, IStringLocalizer localizer) : ControllerBase
+                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider, OptOutService optOutService, IStringLocalizer<VersesController> localizer) : ControllerBase
     {
         private readonly List<IBibleProvider> _bibleProviders = [bgProvider, abProvider];
         private readonly IStringLocalizer _localizer = localizer;

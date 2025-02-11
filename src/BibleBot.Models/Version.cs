@@ -55,6 +55,12 @@ namespace BibleBot.Models
         public string Publisher { get; set; }
 
         /// <summary>
+        /// The API.Bible id for the version.
+        /// </summary>
+        [BsonElement("ApiBibleId")]
+        public string ApiBibleId { get; set; }
+
+        /// <summary>
         /// Indicates whether the version supports Old Testament books.
         /// </summary>
         [BsonElement("SupportsOldTestament")]
