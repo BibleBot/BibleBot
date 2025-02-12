@@ -1,5 +1,3 @@
-commit_message: "[ci skip]"
-append_commit_message:
 files:
   - source: /src/**/Resources/**/*.resx
     ignore:
