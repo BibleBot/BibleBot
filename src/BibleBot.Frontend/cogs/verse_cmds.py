@@ -94,39 +94,66 @@ class VerseCommands(commands.Cog):
     ):
         await inter.response.defer()
 
-        if not inter.channel.permissions_for(inter.author).manage_guild:
+        if hasattr(inter.channel, "permissions_for") and callable(
+            inter.channel.permissions_for
+        ):
+            if not inter.channel.permissions_for(inter.author).manage_guild:
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=backend.create_error_embed(
+                        "Permissions Error",
+                        "You must have the `Manage Server` permission to use this command.",
+                    ),
+                    ephemeral=True,
+                )
+                return
+
+            resp = None
+            if time is None or tz is None:
+                resp = await backend.submit_command(
+                    inter.channel, inter.author, "+dailyverse set"
+                )
+            else:
+                resp = await backend.submit_command(
+                    inter.channel, inter.author, f"+dailyverse set {time} {tz}"
+                )
+
+            await sending.safe_send_interaction(inter.followup, embed=resp)
+        else:
             await sending.safe_send_interaction(
                 inter.followup,
                 embed=backend.create_error_embed(
-                    "Permissions Error",
-                    "You must have the `Manage Server` permission to use this command.",
+                    "/setdailyverse",
+                    "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
                 ),
                 ephemeral=True,
             )
             return
-
-        resp = None
-        if time is None or tz is None:
-            resp = await backend.submit_command(
-                inter.channel, inter.author, "+dailyverse set"
-            )
-        else:
-            resp = await backend.submit_command(
-                inter.channel, inter.author, f"+dailyverse set {time} {tz}"
-            )
-
-        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(
         description="See automatic daily verse status for this server."
     )
     async def dailyversestatus(self, inter: CommandInteraction):
         await inter.response.defer()
-        resp = await backend.submit_command(
-            inter.channel, inter.author, "+dailyverse status"
-        )
 
-        await sending.safe_send_interaction(inter.followup, embed=resp)
+        if hasattr(inter.channel, "permissions_for") and callable(
+            inter.channel.permissions_for
+        ):
+            resp = await backend.submit_command(
+                inter.channel, inter.author, "+dailyverse status"
+            )
+
+            await sending.safe_send_interaction(inter.followup, embed=resp)
+        else:
+            await sending.safe_send_interaction(
+                inter.followup,
+                embed=backend.create_error_embed(
+                    "/dailyversestatus",
+                    "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
+                ),
+                ephemeral=True,
+            )
+            return
 
     @commands.slash_command(
         description="Clear all automatic daily verse preferences for this server."
@@ -134,22 +161,35 @@ class VerseCommands(commands.Cog):
     async def cleardailyverse(self, inter: CommandInteraction):
         await inter.response.defer()
 
-        if not inter.channel.permissions_for(inter.author).manage_guild:
+        if hasattr(inter.channel, "permissions_for") and callable(
+            inter.channel.permissions_for
+        ):
+            if not inter.channel.permissions_for(inter.author).manage_guild:
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=backend.create_error_embed(
+                        "Permissions Error",
+                        "You must have the `Manage Server` permission to use this command.",
+                    ),
+                    ephemeral=True,
+                )
+                return
+
+            resp = await backend.submit_command(
+                inter.channel, inter.author, "+dailyverse clear"
+            )
+
+            await sending.safe_send_interaction(inter.followup, embed=resp)
+        else:
             await sending.safe_send_interaction(
                 inter.followup,
                 embed=backend.create_error_embed(
-                    "Permissions Error",
-                    "You must have the `Manage Server` permission to use this command.",
+                    "/cleardailyverse",
+                    "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
                 ),
                 ephemeral=True,
             )
             return
-
-        resp = await backend.submit_command(
-            inter.channel, inter.author, "+dailyverse clear"
-        )
-
-        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(
         description="Set a role to be @mention'd with every automatic daily verse."
@@ -157,29 +197,42 @@ class VerseCommands(commands.Cog):
     async def setdailyverserole(self, inter: CommandInteraction, role: disnake.Role):
         await inter.response.defer()
 
-        if not inter.channel.permissions_for(inter.author).manage_guild:
+        if hasattr(inter.channel, "permissions_for") and callable(
+            inter.channel.permissions_for
+        ):
+            if not inter.channel.permissions_for(inter.author).manage_guild:
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=backend.create_error_embed(
+                        "Permissions Error",
+                        "You must have the `Manage Server` permission to use this command.",
+                    ),
+                    ephemeral=True,
+                )
+                return
+
+            if not role.mentionable:
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=backend.create_error_embed(
+                        "/setdailyverserole",
+                        "This role is unmentionable. Please enable `Allow anyone to @mention this role` within the role's permissions.",
+                    ),
+                    ephemeral=True,
+                )
+
+            resp = await backend.submit_command(
+                inter.channel, inter.author, f"+dailyverse role {role.id}"
+            )
+
+            await sending.safe_send_interaction(inter.followup, embed=resp)
+        else:
             await sending.safe_send_interaction(
                 inter.followup,
                 embed=backend.create_error_embed(
-                    "Permissions Error",
-                    "You must have the `Manage Server` permission to use this command.",
+                    "/setdailyverserole",
+                    "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
                 ),
                 ephemeral=True,
             )
             return
-
-        if not role.mentionable:
-            await sending.safe_send_interaction(
-                inter.followup,
-                embed=backend.create_error_embed(
-                    "/dailyverserole",
-                    "This role is unmentionable. Please enable `Allow anyone to @mention this role` within the role's permissions.",
-                ),
-                ephemeral=True,
-            )
-
-        resp = await backend.submit_command(
-            inter.channel, inter.author, f"+dailyverse role {role.id}"
-        )
-
-        await sending.safe_send_interaction(inter.followup, embed=resp)

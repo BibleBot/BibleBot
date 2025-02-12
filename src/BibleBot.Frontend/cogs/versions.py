@@ -90,21 +90,34 @@ class Versions(commands.Cog):
     ):
         await inter.response.defer()
 
-        if not inter.channel.permissions_for(inter.author).manage_guild:
+        if hasattr(inter.channel, "permissions_for") and callable(
+            inter.channel.permissions_for
+        ):
+            if not inter.channel.permissions_for(inter.author).manage_guild:
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=backend.create_error_embed(
+                        "Permissions Error",
+                        "You must have the `Manage Server` permission to use this command.",
+                    ),
+                    ephemeral=True,
+                )
+                return
+
+            resp = await backend.submit_command(
+                inter.channel, inter.author, f"+version setserver {acronym}"
+            )
+            await sending.safe_send_interaction(inter.followup, embed=resp)
+        else:
             await sending.safe_send_interaction(
                 inter.followup,
                 embed=backend.create_error_embed(
-                    "Permissions Error",
-                    "You must have the `Manage Server` permission to use this command.",
+                    "/setserverversion",
+                    "This command can only be used in a server.",
                 ),
                 ephemeral=True,
             )
             return
-
-        resp = await backend.submit_command(
-            inter.channel, inter.author, f"+version setserver {acronym}"
-        )
-        await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="See information on a version.")
     async def versioninfo(
