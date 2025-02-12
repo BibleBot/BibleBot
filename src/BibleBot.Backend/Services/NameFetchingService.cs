@@ -30,25 +30,31 @@ namespace BibleBot.Backend.Services
         private readonly List<string> _bookMapDataNames;
         private readonly List<string> _nuisances;
         private static readonly JsonSerializerOptions _serializerOptions = new() { PropertyNameCaseInsensitive = false };
+        private readonly string _filePrefix = ".";
 
         private readonly HttpClient _httpClient;
         private readonly RestClient _restClient;
 
-        public NameFetchingService()
+        public NameFetchingService(bool isForAutoServ)
         {
-            string apibibleNamesText = File.ReadAllText("../BibleBot.Backend/Data/NameFetching/apibible_names.json");
+            if (isForAutoServ)
+            {
+                _filePrefix = "../BibleBot.Backend";
+            }
+
+            string apibibleNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/apibible_names.json");
             _apiBibleNames = JsonSerializer.Deserialize<Dictionary<string, string>>(apibibleNamesText);
 
-            string abbreviationsText = File.ReadAllText("../BibleBot.Backend/Data/NameFetching/abbreviations.json");
+            string abbreviationsText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/abbreviations.json");
             _abbreviations = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(abbreviationsText);
 
-            string defaultNamesText = File.ReadAllText("../BibleBot.Backend/Data/NameFetching/default_names.json");
+            string defaultNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/default_names.json");
             _defaultNames = JsonSerializer.Deserialize<List<string>>(defaultNamesText);
 
-            string nuisancesText = File.ReadAllText("../BibleBot.Backend/Data/NameFetching/nuisances.json");
+            string nuisancesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/nuisances.json");
             _nuisances = JsonSerializer.Deserialize<List<string>>(nuisancesText);
 
-            string bookMapText = File.ReadAllText("../BibleBot.Backend/Data/book_map.json");
+            string bookMapText = File.ReadAllText($"{_filePrefix}/Data/book_map.json");
             _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapText);
 
             _bookMapDataNames = [.. _bookMap.Select(b => b.Value).SelectMany(b => b.Keys)];
@@ -62,7 +68,7 @@ namespace BibleBot.Backend.Services
         {
             if (_bookNames.Count == 0)
             {
-                string bookNamesText = File.ReadAllText("../BibleBot.Backend/Data/NameFetching/book_names.json");
+                string bookNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/book_names.json");
                 _bookNames = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(bookNamesText);
             }
 
@@ -73,7 +79,7 @@ namespace BibleBot.Backend.Services
         {
             if (_defaultNames.Count == 0)
             {
-                string defaultNamesText = File.ReadAllText("../BibleBot.Backend/Data/NameFetching/default_names.json");
+                string defaultNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/default_names.json");
                 _defaultNames = JsonSerializer.Deserialize<List<string>>(defaultNamesText);
             }
 
@@ -84,7 +90,7 @@ namespace BibleBot.Backend.Services
         {
             if (_apiBibleNames.Count == 0)
             {
-                string apiBibleNamesText = File.ReadAllText("../BibleBot.Backend/Data/NameFetching/apibible_names.json");
+                string apiBibleNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/apibible_names.json");
                 _apiBibleNames = JsonSerializer.Deserialize<Dictionary<string, string>>(apiBibleNamesText);
             }
 
@@ -97,7 +103,7 @@ namespace BibleBot.Backend.Services
             {
                 Log.Information("NameFetchingService: Dry run enabled, we will not fetch book names for this session.");
 
-                if (!File.Exists("../BibleBot.Backend/Data/NameFetching/book_names.json"))
+                if (!File.Exists($"{_filePrefix}/Data/NameFetching/book_names.json"))
                 {
                     Log.Warning("NameFetchingService: Book names file does NOT exist, some references may not process");
                 }
@@ -116,9 +122,9 @@ namespace BibleBot.Backend.Services
             Log.Information("NameFetchingService: Getting API.Bible book names...");
             Dictionary<string, List<string>> abNames = await GetAPIBibleNames(abVersions);
 
-            if (File.Exists("../BibleBot.Backend/Data/NameFetching/book_names.json"))
+            if (File.Exists($"{_filePrefix}/Data/NameFetching/book_names.json"))
             {
-                File.Delete("../BibleBot.Backend/Data/NameFetching/book_names.json");
+                File.Delete($"{_filePrefix}/Data/NameFetching/book_names.json");
                 Log.Information("NameFetchingService: Removed old names file...");
             }
 
@@ -126,7 +132,7 @@ namespace BibleBot.Backend.Services
 
             Log.Information("NameFetchingService: Serializing and writing to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, _serializerOptions);
-            File.WriteAllText("../BibleBot.Backend/Data/NameFetching/book_names.json", serializedNames);
+            File.WriteAllText($"{_filePrefix}/Data/NameFetching/book_names.json", serializedNames);
 
             Log.Information("NameFetchingService: Finished.");
         }

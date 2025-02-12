@@ -72,7 +72,7 @@ namespace BibleBot.Tests.Backend
             _resourceServiceMock = new Mock<ResourceService>();
             _parsingServiceMock = new Mock<ParsingService>();
             _frontendStatsServiceMock = new Mock<FrontendStatsService>(_mongoService);
-            _nameFetchingServiceMock = new Mock<NameFetchingService>();
+            _nameFetchingServiceMock = new Mock<NameFetchingService>(false);
 
             _spProviderMock = new Mock<SpecialVerseProvider>();
             _bgProviderMock = new Mock<BibleGatewayProvider>();

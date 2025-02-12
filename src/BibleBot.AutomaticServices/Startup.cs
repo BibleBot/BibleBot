@@ -42,7 +42,7 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<GuildService>();
             services.AddSingleton<VersionService>();
             services.AddSingleton<LanguageService>();
-            services.AddSingleton<NameFetchingService>();
+            services.AddSingleton(sp => new NameFetchingService(true));
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.Configure<RequestLocalizationOptions>(options =>

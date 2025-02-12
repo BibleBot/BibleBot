@@ -80,7 +80,7 @@ namespace BibleBot.Backend
             }
 
             // Add the name fetching service with a predefined instance, since we'll use it later in this function.
-            NameFetchingService nameFetchingService = new();
+            NameFetchingService nameFetchingService = new(false);
             services.AddSingleton(nameFetchingService);
 
             services.AddResponseCaching();
