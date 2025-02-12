@@ -712,7 +712,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         [Test]
         public async Task ShouldThrowProviderNotFoundException()
         {
-            Version testVersion = await _versionService.Create(new Version
+            Version testVersion = await _versionService.Get("TEST") ?? await _versionService.Create(new Version
             {
                 Name = "A Test Version (TEST)",
                 Abbreviation = "TEST",
