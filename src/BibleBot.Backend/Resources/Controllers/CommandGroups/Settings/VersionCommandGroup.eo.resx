@@ -178,7 +178,7 @@
     <comment>To indicate whether version supports the Apocrypha/Deuterocanon.</comment>
   </data>
   <data name="VersionInfoSource" xml:space="preserve">
-    <value>Fonto (ĉefe por programistoj)</value>
+    <value>Fonto</value>
     <comment>To indicate internal source for version text.</comment>
   </data>
   <data name="VersionInfoDailyVerseWarning" xml:space="preserve">
