@@ -75,5 +75,6 @@
     "CMD_BOOKLIST_DESC": "List all available books in a version.",
     "WEBHOOK_REMOVAL_FAILURE": "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.",
     "WEBHOOK_CREATION_FAILURE": "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.",
-    "AUTOMATIC_DAILY_VERSE_NODMS": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks."
+    "AUTOMATIC_DAILY_VERSE_NODMS": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
+    "CMD_NODMS": "This command can only be used in a server."
 }
