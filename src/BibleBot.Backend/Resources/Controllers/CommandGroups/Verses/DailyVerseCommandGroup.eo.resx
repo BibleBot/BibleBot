@@ -59,7 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AutomaticDailyVerseNoDMs" xml:space="preserve">
-    <value>La aŭtomata ĉiutaga verso ne funkcias en rektaj mesaĝoj, ĉar rektaj mesaĝoj ne permesas rethokojn.</value>
-    <comment>Response when attempting to use automatic daily verse commands in direct messages.</comment>
-  </data>
   <data name="SetDailyVerseSuccess" xml:space="preserve">
     <value>Vi agordis aŭtomatan ĉiutagan verson sukcese.</value>
     <comment>Response for successful usage of /setdailyverse.</comment>

@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AutomaticDailyVerseNoDMs" xml:space="preserve">
-    <value>The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.</value>
-    <comment>Response when attempting to use automatic daily verse commands in direct messages.</comment>
-  </data>
   <data name="SetDailyVerseSuccess" xml:space="preserve">
     <value>Set automatic daily verse successfully.</value>
     <comment>Response for successful usage of /setdailyverse.</comment>
