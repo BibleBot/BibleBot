@@ -37,19 +37,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     if (matchingResource != null)
                     {
                         string section = args.ElementAtOrDefault(1) ?? "";
-                        int page = 0;
-
-                        if (args.Count > 2)
-                        {
-                            try
-                            {
-                                page = int.Parse(args[2]);
-                            }
-                            catch
-                            {
-                                page = 0;
-                            }
-                        }
 
                         List<InternalEmbed> pages = Utils.GetInstance().EmbedifyResource(matchingResource, section);
 

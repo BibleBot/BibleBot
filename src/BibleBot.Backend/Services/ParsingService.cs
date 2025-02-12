@@ -345,6 +345,7 @@ namespace BibleBot.Backend.Services
             return new Reference
             {
                 Book = book,
+                BookDataName = bookSearchResult.Name,
                 StartingChapter = startingChapter,
                 StartingVerse = startingVerse,
                 EndingChapter = endingChapter,

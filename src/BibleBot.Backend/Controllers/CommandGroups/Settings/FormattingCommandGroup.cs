@@ -273,7 +273,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
+                            Utils.GetInstance().Embedify("/setdisplay", localizer["SetDisplayFailure"], true)
                         ],
                         LogStatement = "/setdisplay"
                     };
@@ -325,7 +325,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setserverdisplay", "You may choose between `embed`, `code`, or `blockquote`.", true)
+                            Utils.GetInstance().Embedify("/setserverdisplay", localizer["SetDisplayFailure"], true)
                         ],
                         LogStatement = "/setserverdisplay"
                     };
@@ -380,7 +380,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setbrackets", "The brackets can only be two characters.", true)
+                            Utils.GetInstance().Embedify("/setbrackets", localizer["SetBracketsFailureLength"], true)
                         ],
                         LogStatement = "/setbrackets"
                     };
@@ -392,7 +392,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setbrackets", "The brackets can only be set to `<>`, `[]`, `{}`, or `()`.", true)
+                            Utils.GetInstance().Embedify("/setbrackets", localizer["SetBracketsFailure"], true)
                         ],
                         LogStatement = "/setbrackets"
                     };

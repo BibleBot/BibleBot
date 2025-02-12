@@ -11,10 +11,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using AngleSharp.Html.Parser;
 using AngleSharp.Dom;
-using CacheCow.Client;
 using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+using CacheCow.Client;
 
 // TODO(srp): Add documentation strings to this.
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member

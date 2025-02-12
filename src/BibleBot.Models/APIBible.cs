@@ -12,26 +12,21 @@ using System.Collections.Generic;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace BibleBot.Models
 {
-    public class ABBibleResponse
+
+    public class ABListResponse<T>
     {
-        public List<ABBibleData> Data { get; set; }
+        public List<T> Data { get; set; }
     }
+
+    public class ABBibleResponse : ABListResponse<ABBibleData> { }
+    public class ABBooksResponse : ABListResponse<ABBookData> { }
+    public class ABChaptersResponse : ABListResponse<ABChapter> { }
 
     public class ABSearchResponse
     {
         public string Query { get; set; }
         public ABSearchData Data { get; set; }
         public ABMetadata Metadata { get; set; }
-    }
-
-    public class ABBooksResponse
-    {
-        public List<ABBookData> Data { get; set; }
-    }
-
-    public class ABChaptersResponse
-    {
-        public List<ABChapter> Data { get; set; }
     }
 
     public class ABBookData
@@ -122,6 +117,7 @@ namespace BibleBot.Models
     {
         public string Id { get; set; }
         public string BibleId { get; set; }
+        public string BookId { get; set; }
         public string OrgId { get; set; }
         public string Content { get; set; }
         public string Reference { get; set; }

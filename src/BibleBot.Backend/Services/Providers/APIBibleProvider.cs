@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
@@ -23,6 +24,9 @@ namespace BibleBot.Backend.Services.Providers
     public partial class APIBibleProvider : IBibleProvider
     {
         public string Name { get; set; }
+
+        private readonly Dictionary<string, string> _nameMapping;
+
         private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
@@ -30,18 +34,21 @@ namespace BibleBot.Backend.Services.Providers
 
         private readonly string _baseURL = "https://api.scripture.api.bible/v1/";
         private readonly string _getURI = "bibles/{0}/search?query={1}&limit=100";
+        private readonly string _getBookURI = "bibles/{0}/books/{1}";
         private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=100&sort=relevance";
 
-        public APIBibleProvider()
+        public APIBibleProvider(NameFetchingService nameFetchingService)
         {
             Name = "ab";
+
+            _nameMapping = nameFetchingService.GetAPIBibleMapping();
 
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, false);
             _cachingHttpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
             _httpClient = new HttpClient { BaseAddress = new System.Uri(_baseURL) };
             _httpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
-            _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 
             _htmlParser = new HtmlParser();
         }
@@ -51,20 +58,32 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
-            string[] oddTextClasses = ["m", "cls", "mi"];
+            string defaultBookName = reference.Book;
+
+            string[] solidTextClasses = ["d", "m", "cls", "mi"];
+            string[] prefixTextClasses = ["q", "p", "add", "l"];
 
             if (reference.Book != "str")
             {
-                if (reference.Version.Abbreviation == "KJVA" && reference.Book == "Song of Songs")
-                {
-                    reference.Book = "Song of Solomon";
-                }
+                reference.Book = _nameMapping.Keys.FirstOrDefault(key => _nameMapping[key] == reference.BookDataName);
 
                 if (reference.Version.Abbreviation is "ELXX" or "LXX")
                 {
-                    if (reference.Book == "Daniel")
+                    if (reference.BookDataName == "dan")
                     {
                         reference.Book = "DAG";
+
+                        // For whatever reason, the ELXX we use lists Daniel as a book
+                        // but it actually doesn't exist, so we defer to the "updated" ELXX.
+                        if (reference.Version.Abbreviation == "ELXX")
+                        {
+                            reference.Version.ApiBibleId = "6bab4d6c61b31b80-01";
+                        }
+                    }
+                    else if (reference.BookDataName is "ezra" or "neh")
+                    {
+                        reference.Book = "EZR";
+                        defaultBookName = "Ezra/Nehemiah";
                     }
                 }
 
@@ -114,10 +133,16 @@ namespace BibleBot.Backend.Services.Providers
 
                 foreach (IElement el in otherData)
                 {
-                    while (el.ChildNodes.Length > 1)
+                    IElement verseEl = el.QuerySelector("span.v");
+
+                    if (verseEl != null)
                     {
-                        el.RemoveChild(el.ChildNodes[1]);
+                        el.NextElementSibling.Prepend(verseEl.Clone(true));
+
+                        verseEl.Remove();
                     }
+
+                    el.Remove();
                 }
 
                 IHtmlCollection<IElement> numbers = document.QuerySelectorAll(".v");
@@ -129,20 +154,27 @@ namespace BibleBot.Backend.Services.Providers
                         string id = el.GetAttribute("data-sid");
                         MatchCollection matches = VerseIdRegex().Matches(id);
 
-#pragma warning disable IDE0045 // Convert to conditional expression
-                        if (matches[0].Groups[2].Value == "1")
+                        if (matches.Count > 0)
                         {
-                            if (matches[0].Groups[1].Value == "1")
+#pragma warning disable IDE0045 // Convert to conditional expression
+                            if (matches[0].Groups[2].Value == "1")
                             {
-                                el.TextContent = " <**1**> ";
-                            }
-                            else if (matches[0].Groups[1].Value == $"{reference.StartingChapter}")
-                            {
-                                el.TextContent = " <**1**> ";
+                                if (matches[0].Groups[1].Value == "1")
+                                {
+                                    el.TextContent = " <**1**> ";
+                                }
+                                else if (matches[0].Groups[1].Value == $"{reference.StartingChapter}")
+                                {
+                                    el.TextContent = " <**1**> ";
+                                }
+                                else
+                                {
+                                    el.TextContent = $" <**{matches[0].Groups[1].Value}:1**> ";
+                                }
                             }
                             else
                             {
-                                el.TextContent = $" <**{matches[0].Groups[1].Value}:1**> ";
+                                el.TextContent = $" <**{el.TextContent}**> ";
                             }
                         }
                         else
@@ -158,13 +190,25 @@ namespace BibleBot.Backend.Services.Providers
                 }
 
                 title += titlesEnabled ? string.Join(" / ", document.GetElementsByClassName("s1").Select(el => el.TextContent.Trim())) : "";
-                texts.Add(string.Join("\n", document.GetElementsByTagName("p").Where(el => oddTextClasses.Contains(el.ClassName) || el.ClassName.StartsWith('q') || el.ClassName.StartsWith('p')).Select(el => el.TextContent.Trim())));
+                texts.Add(string.Join("\n", document.GetElementsByTagName("p").Where(el => solidTextClasses.Contains(el.ClassName) || prefixTextClasses.Any(prefix => el.ClassName.StartsWith(prefix))).Select(el => el.TextContent.Trim())));
             }
 
             string text = string.Join("\n", texts);
 
             // As the verse reference could have a non-English name...
-            reference.AsString = resp.Passages[0].Reference;
+            string bookUrl = string.Format(_getBookURI, reference.Version.ApiBibleId, resp.Passages[0].BookId);
+            ABBookData bookResp = await _cachingHttpClient.GetJsonContentAs<ABBookData>(bookUrl, _jsonOptions);
+
+            string properBookName = bookResp.Name.EndsWith('.') ? bookResp.NameLong : bookResp.Name;
+
+            if (reference.Version.Abbreviation == "ELXX")
+            {
+                // Don't like version-specific workarounds, but given the naming convention
+                // wackyness they've got here, this seems like the best course of action.
+                properBookName = defaultBookName;
+            }
+
+            reference.AsString = resp.Passages[0].Reference.Replace(bookResp.Name, properBookName);
 
             if (resp.Passages.Count > 1)
             {
@@ -174,12 +218,6 @@ namespace BibleBot.Backend.Services.Providers
 
                     reference.AsString += $", {colonSplit[1]}";
                 }
-            }
-
-            if (reference.AsString.Contains("Daniel (Greek)") || reference.AsString.Contains("ΔΑΝΙΗΛ (Ελληνικά)"))
-            {
-                reference.Book = "Daniel";
-                reference.AsString = reference.ToString();
             }
 
             // For some reason something like Psalm 1:1-2:1 comes back with the
@@ -192,6 +230,8 @@ namespace BibleBot.Backend.Services.Providers
                     reference.AsString = $"{reference.AsString.Substring(0, referenceStrLen - 1)}:{reference.AsString.Substring(referenceStrLen - 1)}";
                 }
             }
+
+            reference.Book = defaultBookName;
 
             return new Verse { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
         }

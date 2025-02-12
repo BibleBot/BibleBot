@@ -23,6 +23,11 @@ namespace BibleBot.Models
         public string Book { get; set; }
 
         /// <summary>
+        /// The data name of the book.
+        /// </summary>
+        public string BookDataName { get; set; }
+
+        /// <summary>
         /// The chapter the reference begins in.
         /// </summary>
         public int StartingChapter { get; set; }

@@ -11,6 +11,15 @@
           "System.Text.Encoding.CodePages": "8.0.0"
         }
       },
+      "AngleSharp.Xml": {
+        "type": "Direct",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "TS+52am0+/HvCfh0yNiz7RlXUjOfdWl1bFQygBJkGKFHZ6N3RHv/vtK0VKfN4h7b0Kescy3+iWn6qqBlOkiL3w==",
+        "dependencies": {
+          "AngleSharp": "[1.0.0, 2.0.0)"
+        }
+      },
       "GitInfo": {
         "type": "Direct",
         "requested": "[3.5.0, )",

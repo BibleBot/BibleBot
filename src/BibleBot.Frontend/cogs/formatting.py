@@ -168,19 +168,27 @@ class Formatting(commands.Cog):
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Set your preferred display style.")
-    async def setdisplay(self, inter: CommandInteraction):
+    async def setdisplay(self, inter: CommandInteraction, style: str = ""):
         await inter.response.defer()
-        select_menu_view = disnake.ui.View(timeout=180)
-        select_menu_view.add_item(DisplayStyleSelect(inter.author.id, False))
 
-        await sending.safe_send_interaction(
-            inter.followup,
-            content="Select a display style...",
-            view=select_menu_view,
-        )
+        if style == "":
+            select_menu_view = disnake.ui.View(timeout=180)
+            select_menu_view.add_item(DisplayStyleSelect(inter.author.id, False))
+
+            await sending.safe_send_interaction(
+                inter.followup,
+                content="Select a display style...",
+                view=select_menu_view,
+            )
+        else:
+            resp = await backend.submit_command(
+                inter.channel, inter.author, f"+formatting setdisplay {style}"
+            )
+
+            await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description="Set your server's preferred display style.")
-    async def setserverdisplay(self, inter: CommandInteraction):
+    async def setserverdisplay(self, inter: CommandInteraction, style: str = ""):
         await inter.response.defer()
 
         if not inter.channel.permissions_for(inter.author).manage_guild:
@@ -194,19 +202,26 @@ class Formatting(commands.Cog):
             )
             return
 
-        select_menu_view = disnake.ui.View(timeout=180)
-        select_menu_view.add_item(DisplayStyleSelect(inter.author.id, True))
+        if style == "":
+            select_menu_view = disnake.ui.View(timeout=180)
+            select_menu_view.add_item(DisplayStyleSelect(inter.author.id, True))
 
-        await sending.safe_send_interaction(
-            inter.followup,
-            content="Select a display style...",
-            view=select_menu_view,
-        )
+            await sending.safe_send_interaction(
+                inter.followup,
+                content="Select a display style...",
+                view=select_menu_view,
+            )
+        else:
+            resp = await backend.submit_command(
+                inter.channel, inter.author, f"+formatting setserverdisplay {style}"
+            )
+
+            await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(
         description="Set the bot's ignoring brackets for this server."
     )
-    async def setbrackets(self, inter: CommandInteraction):
+    async def setbrackets(self, inter: CommandInteraction, brackets: str = ""):
         await inter.response.defer()
 
         if not inter.channel.permissions_for(inter.author).manage_guild:
@@ -220,11 +235,18 @@ class Formatting(commands.Cog):
             )
             return
 
-        select_menu_view = disnake.ui.View(timeout=180)
-        select_menu_view.add_item(BracketsSelect(inter.author.id))
+        if brackets == "":
+            select_menu_view = disnake.ui.View(timeout=180)
+            select_menu_view.add_item(BracketsSelect(inter.author.id))
 
-        await sending.safe_send_interaction(
-            inter.followup,
-            content="Select a pair of brackets...",
-            view=select_menu_view,
-        )
+            await sending.safe_send_interaction(
+                inter.followup,
+                content="Select a pair of brackets...",
+                view=select_menu_view,
+            )
+        else:
+            resp = await backend.submit_command(
+                inter.channel, inter.author, f"+formatting setbrackets {brackets}"
+            )
+
+            await sending.safe_send_interaction(inter.followup, embed=resp)

@@ -76,7 +76,7 @@ namespace BibleBot.Tests.Backend
 
             _spProviderMock = new Mock<SpecialVerseProvider>();
             _bgProviderMock = new Mock<BibleGatewayProvider>();
-            _abProviderMock = new Mock<APIBibleProvider>();
+            _abProviderMock = new Mock<APIBibleProvider>(_nameFetchingServiceMock.Object);
 
             _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
             _defaultAPIBibleVersion = await _versionService.Get("KJVA") ?? await _versionService.Create(new MockKJVA());
