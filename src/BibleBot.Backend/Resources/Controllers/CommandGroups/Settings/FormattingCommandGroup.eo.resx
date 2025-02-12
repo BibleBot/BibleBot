@@ -197,4 +197,16 @@
     <value>malŝaltita</value>
     <comment>Used for indicating disabled toggles.</comment>
   </data>
+  <data name="SetDisplayFailure" xml:space="preserve">
+    <value>Vi rajtas elekti inter `embed`, `code`, aŭ `blockquote`.</value>
+    <comment>Response for failed usage of /setdisplay or /setserverdisplay.</comment>
+  </data>
+  <data name="SetBracketsFailureLength" xml:space="preserve">
+    <value>La krampoj nur povas esti du signoj.</value>
+    <comment>Response for failed usage of /setbrackets when the length is incorrect.</comment>
+  </data>
+  <data name="SetBracketsFailure" xml:space="preserve">
+    <value>La krampoj nur povas esti `&lt;&gt;`, `[]`, `{}`, aŭ `()`.</value>
+    <comment>Response for failed usage of /setbrackets.</comment>
+  </data>
 </root>

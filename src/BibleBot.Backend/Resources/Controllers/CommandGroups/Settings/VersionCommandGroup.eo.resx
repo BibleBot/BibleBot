@@ -221,4 +221,8 @@
     <value>Informoj por Programistoj</value>
     <comment>Header above developer information for a version.</comment>
   </data>
+  <data name="VersionInfoPublisher" xml:space="preserve">
+    <value>Eldonejo</value>
+    <comment>To indicate publisher for version text.</comment>
+  </data>
 </root>
