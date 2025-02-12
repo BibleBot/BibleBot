@@ -1,0 +1,16 @@
+{
+   "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+   "tasks": [
+      {
+         "name": "commit-message-linter",
+         "command": "dotnet",
+         "args": [
+            "husky",
+            "exec",
+            ".husky/csx/commit-lint.csx",
+            "--args",
+            "${args}"
+         ]
+      }
+   ]
+}

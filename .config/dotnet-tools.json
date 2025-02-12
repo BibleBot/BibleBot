@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "husky": {
+      "version": "0.7.2",
+      "commands": [
+        "husky"
+      ],
+      "rollForward": false
+    },
+    "easybuild.commitlinter": {
+      "version": "2.0.0",
+      "commands": [
+        "commit-linter"
+      ],
+      "rollForward": false
+    }
+  }
+}
