@@ -1,3 +1,6 @@
+commit_message: "style: updates to %original_file_name% for %language%"
+append_commit_message: false
+pull_request_title: "style: crowdin updates"
 files:
   - source: /src/**/Resources/**/*.resx
     ignore:
