@@ -3,6 +3,7 @@ image: mcr.microsoft.com/dotnet/sdk:9.0
 variables:
   SOURCE_CODE_PATH: "src/*"
   ASPNETCORE_ENVIRONMENT: "Development"
+  HUSKY: 0
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
