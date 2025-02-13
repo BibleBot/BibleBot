@@ -9,3 +9,29 @@ This changelog is generated using [EasyBuild.ChangelogGen](https://github.com/ea
 <!-- EasyBuild: START -->
 <!-- last_commit_released: 8db5a35540f6dd43d97e3d5a14e2c5754022f4f7 -->
 <!-- EasyBuild: END -->
+
+<!-- to do: update date, any "need commit"s, last_commit_released -->
+
+## 9.3.0 - 2025-02-01
+
+### 🏗️ Breaking changes
+
+* Rename `/dailyverseset` to `/setdailyverse`, `/dailyverserole` to `/setdailyverserole`, and `/dailyverseclear` to `/cleardailyverse`. ([bd8d6627](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/bd8d66277129eb171be45f2128ec6667b7d1f3c3))
+
+### 🚀 Features
+
+* Restored language support to the fullest extent (besides command names), supporting English (US), English (UK), and Esperanto. (need commit)
+* AutomaticServices and Backend now broadcast `WATCHDOG=1` to systemd as a keep-alive measure. ([778200c7](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/778200c7254d594c3434781ddd096b4dcc56ecaf))
+* Added optout functionality to backend. Users can now optout of verse processing in line with our terms of conditions. ([978b9192](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/978b91924bde506ad7e735d7a0ea0ae62fc81abb))
+* Added expando verse functionality to API.Bible versions. ([11ed2667](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/11ed266737f3e071250607848ec93f903a201989))
+* Restored string input in an optional parameter for /set{server}display and /setbrackets. ([4596097f](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/4596097f748165fd7cefe675bf768473d7449f95))
+* Restored API.Bible name fetching and overhauled parsing to be aligned with BibleGateway results. ([4596097f](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/4596097f748165fd7cefe675bf768473d7449f95))
+* Restored Patriarchal Text of 1904 (PAT1904). ([4596097f](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/4596097f748165fd7cefe675bf768473d7449f95))
+* Added support for API.Bible versions in `/booklist`. ([4596097f](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/4596097f748165fd7cefe675bf768473d7449f95))
+* Changed sources for Biblica-published versions.
+* Added Berean Standard Bible (BSB), De Heilige Schrift (DHS), Evangelical Heritage Version (EHV), and Literal Standard Version (LSV).
+
+
+### 🐞 Bug Fixes
+
+* Added many, many workarounds to support Brenton's Septuagint (ELXX) and Septuagint (LXX). The ELXX should work properly and the LXX the same minus its own Greek book names (in `/booklist`). ([4596097f](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/4596097f748165fd7cefe675bf768473d7449f95))
