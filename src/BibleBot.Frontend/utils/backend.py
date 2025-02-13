@@ -12,6 +12,7 @@ import disnake
 from disnake.ext import commands
 from logger import VyLogger
 from utils import sending
+from utils import statics
 
 from utils.paginator import CreatePaginator
 
@@ -427,7 +428,7 @@ def create_embed_from_verse(verse):
     embed.color = 6709986
 
     embed.set_footer(
-        text="BibleBot v9.3 by Kerygma Digital",
+        text=f"BibleBot v{statics.version} by Kerygma Digital",
         icon_url="https://i.imgur.com/hr4RXpy.png",
     )
 
@@ -442,7 +443,7 @@ def create_error_embed(title, description):
     embed.color = 16723502
 
     embed.set_footer(
-        text="BibleBot v9.3 by Kerygma Digital",
+        text=f"BibleBot v{statics.version} by Kerygma Digital",
         icon_url="https://i.imgur.com/hr4RXpy.png",
     )
 

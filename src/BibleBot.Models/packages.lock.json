@@ -23,6 +23,12 @@
           "Newtonsoft.Json": "13.0.3"
         }
       },
+      "EasyBuild.PackageReleaseNotes.Tasks": {
+        "type": "Direct",
+        "requested": "[2.0.0, )",
+        "resolved": "2.0.0",
+        "contentHash": "jebz09lxa6pEJzft9Tr/PSNt5r7AVt5xmX3g4Ra+nLU1qtSrOh+hFgsywGn7fVME3LpbzhlX+2J8F7G9y3PxUQ=="
+      },
       "MongoDB.Driver": {
         "type": "Direct",
         "requested": "[3.1.0, )",

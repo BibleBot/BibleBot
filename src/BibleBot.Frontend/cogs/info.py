@@ -12,7 +12,7 @@ from disnake import CommandInteraction
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend, sending
+from utils import backend, sending, statics
 import patreon
 import subprocess
 
@@ -148,7 +148,7 @@ class Information(commands.Cog):
         embed.color = 6709986
 
         embed.set_footer(
-            text="BibleBot v9.3 by Kerygma Digital",
+            text=f"BibleBot v{statics.version} by Kerygma Digital",
             icon_url="https://i.imgur.com/hr4RXpy.png",
         )
         await sending.safe_send_interaction(inter.followup, embed=embed)

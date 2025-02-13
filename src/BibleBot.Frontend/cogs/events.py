@@ -16,6 +16,7 @@ from utils.paginator import CreatePaginator
 import re
 import time
 import json
+from utils import statics
 
 logger = VyLogger("default")
 
@@ -40,7 +41,9 @@ class EventListeners(commands.Cog):
     async def on_shard_ready(self, shard_id):
         await self.bot.change_presence(
             status=disnake.Status.online,
-            activity=disnake.Game(f"/biblebot v9.3 - shard {shard_id + 1}"),
+            activity=disnake.Game(
+                f"/biblebot v{statics.version} - shard {shard_id + 1}"
+            ),
             shard_id=shard_id,
         )
         logger.info(f"shard {shard_id + 1} ready")
