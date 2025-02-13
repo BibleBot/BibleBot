@@ -13,5 +13,17 @@
     "editor.suggest.insertMode": "insert",
     "dotnet.codeLens.enableReferencesCodeLens": false,
     "dotnet.unitTests.runSettingsPath": "test/BibleBot.Tests.Backend/.env",
-    "dotnet.formatting.organizeImportsOnFormat": true
+    "dotnet.formatting.organizeImportsOnFormat": true,
+    "[markdown]": {
+        "editor.unicodeHighlight.ambiguousCharacters": false,
+        "editor.unicodeHighlight.invisibleCharacters": false,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+            "comments": "off",
+            "strings": "off",
+            "other": "off"
+        },
+        "editor.formatOnSave": false
+    }
 }
