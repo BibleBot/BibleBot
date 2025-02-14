@@ -290,7 +290,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 // We need to add a page here because the for loop won't hit the last one otherwise.
                 // This also prevents situations where the Ceiling() result might equal 0.
-                int totalPages = (int)Math.Ceiling((decimal)(versions.Count / maxResultsPerPage)) + 1;
+                int totalPages = (int)Math.Ceiling((decimal)(versions.Count / maxResultsPerPage));
 
                 for (int i = 0; i < totalPages; i++)
                 {
