@@ -21,6 +21,46 @@ namespace BibleBot.Backend.Services
         public async Task<Version> Get(string abbv) => await _mongoService.Get<Version>(abbv);
         public async Task<long> GetCount() => await _mongoService.GetCount<Version>();
 
+        public async Task<Version> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)
+        {
+            Version idealVersion = await Get("RSV");
+
+            if (idealUser != null && !isBot)
+            {
+                idealVersion = await Get(idealUser.Version);
+            }
+            else if (idealGuild != null)
+            {
+                idealVersion = await Get(idealGuild.Version);
+            }
+
+            return idealVersion ?? await Get("RSV");
+        }
+
+        public async Task<Version> GetPreferenceOrDefault(User idealUser, bool isBot)
+        {
+            Version idealVersion = await Get("RSV");
+
+            if (idealUser != null && !isBot)
+            {
+                idealVersion = await Get(idealUser.Version);
+            }
+
+            return idealVersion ?? await Get("RSV");
+        }
+
+        public async Task<Version> GetPreferenceOrDefault(Guild idealGuild, bool isBot)
+        {
+            Version idealVersion = await Get("RSV");
+
+            if (idealGuild != null)
+            {
+                idealVersion = await Get(idealGuild.Version);
+            }
+
+            return idealVersion ?? await Get("RSV");
+        }
+
         public async Task<Version> Create(Version version) => await _mongoService.Create(version);
 
         public async Task Update(string abbv, UpdateDefinition<Version> updateDefinition) => await _mongoService.Update(abbv, updateDefinition);

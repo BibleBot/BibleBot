@@ -72,8 +72,6 @@ namespace BibleBot.Backend.Controllers
             string body = parsingService.PurifyBody(ignoringBrackets, req.Body);
             Tuple<string, List<BookSearchResult>> tuple = parsingService.GetBooksInString(nameFetchingService.GetBookNames(), nameFetchingService.GetDefaultBookNames(), body);
 
-            string culture = "en-US";
-            string version = "RSV";
             bool verseNumbersEnabled = true;
             bool titlesEnabled = true;
 
@@ -81,32 +79,18 @@ namespace BibleBot.Backend.Controllers
 
             if (idealUser != null && !req.IsBot)
             {
-                culture = idealUser.Language;
-                version = idealUser.Version;
                 verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                 titlesEnabled = idealUser.TitlesEnabled;
                 displayStyle = idealUser.DisplayStyle;
                 paginateVerses = idealUser.PaginationEnabled;
             }
-            else if (idealGuild != null)
-            {
-                // As much as I hate the if-duplication, we have to check independently of the previous
-                // otherwise the guild default won't be a default.
 
-                culture = idealGuild.Language;
-                version = idealGuild.Version;
-            }
+            Language language = await languageService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
+            CultureInfo.CurrentUICulture = new CultureInfo(language.Culture);
 
-            Language language = await languageService.Get(culture);
+            Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
 
-            if (language != null)
-            {
-                CultureInfo.CurrentUICulture = new CultureInfo(culture);
-            }
-
-            Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
             List<Models.Version> versions = await versionService.Get();
-
             List<Reference> references = [];
 
             foreach (BookSearchResult bsr in tuple.Item2)

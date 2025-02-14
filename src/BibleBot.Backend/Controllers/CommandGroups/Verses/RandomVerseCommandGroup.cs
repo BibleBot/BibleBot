@@ -55,25 +55,22 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 User idealUser = await userService.Get(req.UserId);
                 Guild idealGuild = await guildService.Get(req.GuildId);
 
-                string version = "RSV";
                 bool verseNumbersEnabled = true;
                 bool titlesEnabled = true;
                 string displayStyle = "embed";
 
                 if (idealUser != null && !req.IsBot)
                 {
-                    version = idealUser.Version;
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
                     displayStyle = idealUser.DisplayStyle;
                 }
                 else if (idealGuild != null)
                 {
-                    version = idealGuild.Version;
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 string randomRef = await svProvider.GetRandomVerse();
                 IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
 
@@ -113,24 +110,21 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 User idealUser = await userService.Get(req.UserId);
                 Guild idealGuild = await guildService.Get(req.GuildId);
 
-                string version = "RSV";
                 bool verseNumbersEnabled = true;
                 bool titlesEnabled = true;
                 string displayStyle = "embed";
 
                 if (idealUser != null && !req.IsBot)
                 {
-                    version = idealUser.Version;
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
                 }
                 else if (idealGuild != null)
                 {
-                    version = idealGuild.Version;
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 string trulyRandomRef = await svProvider.GetTrulyRandomVerse();
                 IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
 

@@ -48,16 +48,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                 Guild idealGuild = await guildService.Get(req.GuildId);
                 SubsetFlag potentialSubset = SubsetFlag.INVALID;
 
-                string version = "RSV";
-
-                if (idealUser != null)
-                {
-                    version = idealUser.Version;
-                }
-                else if (idealGuild != null)
-                {
-                    version = idealGuild.Version;
-                }
+                string versionParam = null;
 
                 for (int i = 0; i < args.Count; i++)
                 {
@@ -83,7 +74,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
 
                         try
                         {
-                            version = versionSplit[1] != "null" ? versionSplit[1] : version;
+                            versionParam = versionSplit[1] != "null" ? versionSplit[1] : null;
                         }
                         catch
                         {
@@ -94,7 +85,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     }
                 }
 
-                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Models.Version idealVersion = versionParam != null ? await versionService.Get(versionParam) : await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
 
                 if (idealVersion.Source != "bg" && potentialSubset != SubsetFlag.INVALID)
                 {

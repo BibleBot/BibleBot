@@ -18,5 +18,21 @@ namespace BibleBot.Backend.Services
 
         public async Task<List<Language>> Get() => await _mongoService.Get<Language>();
         public async Task<Language> Get(string culture) => await _mongoService.Get<Language>(culture);
+
+        public async Task<Language> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)
+        {
+            Language idealLanguage = await Get("en-US");
+
+            if (idealUser != null && !isBot)
+            {
+                idealLanguage = await Get(idealUser.Language);
+            }
+            else if (idealGuild != null)
+            {
+                idealLanguage = await Get(idealGuild.Language);
+            }
+
+            return idealLanguage ?? await Get("en-US");
+        }
     }
 }

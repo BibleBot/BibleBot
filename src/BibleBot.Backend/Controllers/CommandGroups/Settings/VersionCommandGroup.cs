@@ -47,8 +47,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 User idealUser = await userService.Get(req.UserId);
                 Guild idealGuild = await guildService.Get(req.GuildId);
 
-                Models.Version defaultVersion = await versionService.Get("RSV");
-
                 string response = $"{localizer["VersionStatusPreference"]}\n" +
                                $"{localizer["VersionStatusServerPreference"]}\n\n" +
                                $"__**{sharedLocalizer["RelatedCommands"]}**__\n" +
@@ -60,35 +58,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
 
                 List<string> replacements = [];
 
-                if (idealUser != null)
-                {
-                    Models.Version idealUserVersion = await versionService.Get(idealUser.Version);
+                Models.Version idealUserVersion = await versionService.GetPreferenceOrDefault(idealUser, false);
+                replacements.Add($"**{idealUserVersion.Name}**");
 
-                    if (idealUserVersion != null)
-                    {
-                        replacements.Add($"**{idealUserVersion.Name}**");
-                    }
-                }
-
-                if (replacements.Count == 0)
-                {
-                    replacements.Add($"**{defaultVersion.Name}**");
-                }
-
-                if (idealGuild != null)
-                {
-                    Models.Version idealGuildVersion = await versionService.Get(idealGuild.Version);
-
-                    if (idealGuildVersion != null)
-                    {
-                        replacements.Add($"**{idealGuildVersion.Name}**");
-                    }
-                }
-
-                if (replacements.Count == 1)
-                {
-                    replacements.Add($"**{defaultVersion.Name}**");
-                }
+                Models.Version idealGuildVersion = await versionService.GetPreferenceOrDefault(idealGuild, false);
+                replacements.Add($"**{idealGuildVersion.Name}**");
 
                 response = string.Format(response, [.. replacements]);
 
