@@ -71,8 +71,8 @@ namespace BibleBot.Backend.Services
         [GeneratedRegex(@"-")]
         private static partial Regex ContainsSpanRegex();
 
-        [GeneratedRegex(@"[0-9]")]
-        private static partial Regex HasNumberRegex();
+        [GeneratedRegex(@"[A-Z\-]{1,8}[0-9]{0,5}")]
+        private static partial Regex VersionAcronymRegex();
 
         public Reference GenerateReference(string str, BookSearchResult bookSearchResult, Version prefVersion, List<Version> versions)
         {
@@ -100,14 +100,16 @@ namespace BibleBot.Backend.Services
                     if (tokens.Length > tokenIdxAfterSpan)
                     {
                         string lastToken = tokens[tokenIdxAfterSpan].ToUpperInvariant();
+                        Match versionAcronymRegexMatch = VersionAcronymRegex().Match(lastToken);
 
-                        while (HasNumberRegex().Match(lastToken).Success && tokenIdxAfterSpan < tokens.Length - 1)
+                        while (!versionAcronymRegexMatch.Success && tokenIdxAfterSpan < tokens.Length - 1)
                         {
                             tokenIdxAfterSpan += 1;
                             lastToken = tokens[tokenIdxAfterSpan].ToUpperInvariant();
+                            versionAcronymRegexMatch = VersionAcronymRegex().Match(lastToken);
                         }
 
-                        Version potentialVersion = versions.SingleOrDefault(version => string.Equals(version.Abbreviation, lastToken, System.StringComparison.OrdinalIgnoreCase));
+                        Version potentialVersion = versions.SingleOrDefault(version => string.Equals(version.Abbreviation, versionAcronymRegexMatch.Value, System.StringComparison.OrdinalIgnoreCase));
 
                         if (potentialVersion != null)
                         {
