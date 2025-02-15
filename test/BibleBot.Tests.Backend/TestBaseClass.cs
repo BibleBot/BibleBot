@@ -8,6 +8,7 @@
 
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -75,7 +76,7 @@ namespace BibleBot.Tests.Backend
             _nameFetchingServiceMock = new Mock<NameFetchingService>(false);
 
             _spProviderMock = new Mock<SpecialVerseProvider>();
-            _bgProviderMock = new Mock<BibleGatewayProvider>();
+            _bgProviderMock = new Mock<BibleGatewayProvider>(_versionService);
             _abProviderMock = new Mock<APIBibleProvider>(_nameFetchingServiceMock.Object);
 
             _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
@@ -89,7 +90,7 @@ namespace BibleBot.Tests.Backend
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _parsingServiceMock.Object, _versionService, _languageService,
                                                     _nameFetchingServiceMock.Object, _bgProviderMock.Object,
-                                                    _abProviderMock.Object, _optOutServiceMock.Object, new StringLocalizer<VersesController>(_localizerFactory));
+                                                    _abProviderMock.Object, _optOutServiceMock.Object, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
 
             return;
         }

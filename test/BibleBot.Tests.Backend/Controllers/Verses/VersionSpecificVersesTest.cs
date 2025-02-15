@@ -7,6 +7,7 @@
 */
 
 using System.Threading.Tasks;
+using BibleBot.Backend;
 using BibleBot.Models;
 using BibleBot.Tests.Backend.Mocks;
 using FluentAssertions;
@@ -52,7 +53,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Daniel 1:1-2"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -93,7 +96,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Daniel 1:1-2"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -134,7 +139,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "John 1:1-2"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -175,7 +182,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Proverbs 25:1-12"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -216,7 +225,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Exodus 20:1-7"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -257,7 +268,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Exodus 20:8-17"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -298,7 +311,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "John 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);

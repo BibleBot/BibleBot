@@ -7,6 +7,7 @@
 */
 
 using System.Threading.Tasks;
+using BibleBot.Backend;
 using BibleBot.Models;
 using BibleBot.Tests.Backend.Mocks;
 using FluentAssertions;
@@ -50,7 +51,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -89,7 +92,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Genesis 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -106,7 +111,8 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             VerseResponse expected = new()
             {
                 OK = false,
-                LogStatement = "New Testament for Everyone (NTFE) does not support the Apocrypha/Deuterocanon."
+                LogStatement = "New Testament for Everyone (NTFE) does not support the Apocrypha/Deuterocanon.",
+                Culture = "en-US"
             };
 
             result.StatusCode.Should().Be(400);
@@ -123,7 +129,8 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             VerseResponse expected = new()
             {
                 OK = false,
-                LogStatement = "New Testament for Everyone (NTFE) does not support the Old Testament."
+                LogStatement = "New Testament for Everyone (NTFE) does not support the Old Testament.",
+                Culture = "en-US"
             };
 
             result.StatusCode.Should().Be(400);
@@ -162,7 +169,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "John 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -201,7 +210,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "John 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -239,7 +250,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:1-2"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -278,7 +291,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Genesis 1:1-2"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -317,7 +332,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:25-2:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -356,7 +373,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Genesis 1:31-2:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -395,7 +414,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:24-25"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -434,7 +455,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:24-25"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -450,7 +473,8 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             VerseResponse expected = new()
             {
                 OK = false,
-                LogStatement = null
+                LogStatement = null,
+                Culture = "en-US"
             };
 
             result.StatusCode.Should().Be(400);
@@ -466,7 +490,8 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             VerseResponse expected = new()
             {
                 OK = false,
-                LogStatement = null
+                LogStatement = null,
+                Culture = "en-US"
             };
 
             result.StatusCode.Should().Be(400);
@@ -505,7 +530,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:1-2"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -544,7 +571,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -583,7 +612,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "1 Esdras 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -622,7 +653,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Letter of Jeremiah 1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -661,7 +694,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Jeremiah 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -702,7 +737,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Psalm 151 1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -763,7 +800,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "John 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -823,7 +862,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Philippians 1:6"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -862,7 +903,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Greek Esther 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -903,7 +946,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Song of Solomon 7:9-10"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -945,7 +990,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:1, 3, 9"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             spacelessResult.StatusCode.Should().Be(200);
@@ -986,7 +1033,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Matthew 1:1-3, 5-7, 9-11"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);

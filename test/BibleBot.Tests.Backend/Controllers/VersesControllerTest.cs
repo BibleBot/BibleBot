@@ -6,8 +6,8 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using BibleBot.Tests.Backend.Mocks;
 using BibleBot.Models;
+using BibleBot.Tests.Backend.Mocks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
@@ -26,7 +26,8 @@ namespace BibleBot.Tests.Backend.Controllers
             VerseResponse expected = new()
             {
                 OK = false,
-                LogStatement = null
+                LogStatement = null,
+                Culture = "en-US"
             };
 
             result.StatusCode.Should().Be(400);
@@ -42,7 +43,8 @@ namespace BibleBot.Tests.Backend.Controllers
             VerseResponse expected = new()
             {
                 OK = false,
-                LogStatement = null
+                LogStatement = null,
+                Culture = "en-US"
             };
 
             result.StatusCode.Should().Be(400);

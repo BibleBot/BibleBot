@@ -7,6 +7,7 @@
 */
 
 using System.Threading.Tasks;
+using BibleBot.Backend;
 using BibleBot.Models;
 using BibleBot.Tests.Backend.Mocks;
 using FluentAssertions;
@@ -50,7 +51,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Song of the Three Young Men 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -91,7 +94,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Song of the Three Young Men 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -132,7 +137,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Prayer of Azariah 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -173,7 +180,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Prayer of Azariah 1:1"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
@@ -214,7 +223,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Additions to Esther 10:4"
                         }
                     }
-                ]
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
             };
 
             result.StatusCode.Should().Be(200);
