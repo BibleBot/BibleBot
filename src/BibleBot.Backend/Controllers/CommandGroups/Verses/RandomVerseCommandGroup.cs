@@ -8,8 +8,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -21,19 +23,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                          SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(RandomVerseCommandGroup));
+        private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
 
         public override string Name { get => "random"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new RandomVerse(userService, guildService, versionService, svProvider, bibleProviders, _localizer),
-                new TrulyRandomVerse(userService, guildService, versionService, svProvider, bibleProviders, _localizer)
+                new RandomVerse(userService, guildService, versionService, svProvider, bibleProviders, _localizer, _sharedLocalizer),
+                new TrulyRandomVerse(userService, guildService, versionService, svProvider, bibleProviders, _localizer, _sharedLocalizer)
             ]; set => throw new NotImplementedException();
         }
 
         public class RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                           SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer localizer) : Command
+                           SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -48,7 +51,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         [
                             Utils.GetInstance().Embedify("/random", localizer["RandomVerseAntiSpamProvision"], true)
                         ],
-                        LogStatement = "/random"
+                        LogStatement = "/random",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -82,13 +86,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         await provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
                     ],
                     DisplayStyle = displayStyle,
-                    LogStatement = "/random"
+                    LogStatement = "/random",
+                    Culture = CultureInfo.CurrentUICulture.Name,
+                    CultureFooter = string.Format(sharedLocalizer["GlobalFooter"], Utils.Version)
                 };
             }
         }
 
         public class TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer localizer) : Command
+                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "true"; set => throw new NotImplementedException(); }
 
@@ -103,7 +109,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         [
                             Utils.GetInstance().Embedify("/truerandom", localizer["RandomVerseAntiSpamProvision"], true)
                         ],
-                        LogStatement = "/truerandom"
+                        LogStatement = "/truerandom",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -136,7 +143,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
                     ],
                     DisplayStyle = displayStyle,
-                    LogStatement = "/truerandom"
+                    LogStatement = "/truerandom",
+                    Culture = CultureInfo.CurrentUICulture.Name,
+                    CultureFooter = string.Format(sharedLocalizer["GlobalFooter"], Utils.Version)
                 };
             }
         }

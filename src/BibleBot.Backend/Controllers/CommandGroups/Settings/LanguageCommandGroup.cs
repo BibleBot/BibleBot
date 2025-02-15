@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,7 +96,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/language", response, false)
                     ],
-                    LogStatement = "/language"
+                    LogStatement = "/language",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -131,6 +133,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         await userService.Create(newUser);
                     }
 
+                    CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Culture);
+
                     return new CommandResponse
                     {
                         OK = true,
@@ -138,7 +142,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setlanguage", localizer["SetLanguageSuccess"], false)
                         ],
-                        LogStatement = $"/setlanguage {args[0]}"
+                        LogStatement = $"/setlanguage {args[0]}",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -149,7 +154,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setlanguage", localizer["SetLanguageFailure"], true)
                     ],
-                    LogStatement = "/setlanguage"
+                    LogStatement = "/setlanguage",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -193,7 +199,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setserverlanguage", localizer["SetServerLanguageSuccess"], false)
                         ],
-                        LogStatement = $"/setserverlanguage {args[0]}"
+                        LogStatement = $"/setserverlanguage {args[0]}",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -204,7 +211,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setserverlanguage", localizer["SetServerLanguageFailure"], true)
                     ],
-                    LogStatement = "/setserverlanguage"
+                    LogStatement = "/setserverlanguage",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -232,7 +240,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/listlanguages", content.ToString(), false)
                     ],
-                    LogStatement = "/listlanguages"
+                    LogStatement = "/listlanguages",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }

@@ -25,6 +25,9 @@ SOFTWARE.
 
 from disnake import ui, ButtonStyle
 from logger import VyLogger
+from utils.i18n import i18n as i18n_class
+
+i18n = i18n_class()
 
 logger = VyLogger("default")
 
@@ -54,10 +57,11 @@ class CreatePaginator(ui.View):
 
     @ui.button(emoji="⬅️", style=ButtonStyle.grey)
     async def previous(self, button, inter):
+        localization = i18n.get_i18n_or_default(inter.locale.name)
         try:
             if inter.author.id != self.author:
                 return await inter.send(
-                    "You cannot interact with these buttons.", ephemeral=True
+                    localization["PAGINATOR_FORBIDDEN"], ephemeral=True
                 )
 
             potential_page = self.CurrentEmbed - 1
@@ -71,10 +75,11 @@ class CreatePaginator(ui.View):
 
     @ui.button(emoji="➡️", style=ButtonStyle.grey)
     async def next(self, button, inter):
+        localization = i18n.get_i18n_or_default(inter.locale.name)
         try:
             if inter.author.id != self.author:
                 return await inter.send(
-                    "You cannot interact with these buttons.", ephemeral=True
+                    localization["PAGINATOR_FORBIDDEN"], ephemeral=True
                 )
 
             potential_page = self.CurrentEmbed + 1

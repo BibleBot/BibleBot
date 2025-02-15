@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -26,10 +27,11 @@ namespace BibleBot.Backend.Controllers
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
                                           VersionService versionService, LanguageService languageService, NameFetchingService nameFetchingService,
-                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider, OptOutService optOutService, IStringLocalizer<VersesController> localizer) : ControllerBase
+                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider, OptOutService optOutService, IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
     {
         private readonly List<IBibleProvider> _bibleProviders = [bgProvider, abProvider];
         private readonly IStringLocalizer _localizer = localizer;
+        private readonly IStringLocalizer _sharedLocalizer = sharedLocalizer;
 
         [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$")]
         private static partial Regex TruncatedTextRegex();
@@ -112,7 +114,8 @@ namespace BibleBot.Backend.Controllers
                             [
                                 Utils.GetInstance().Embedify(_localizer["CommaLimitTitle"], _localizer["CommaLimitDescription"], true)
                             ],
-                            LogStatement = "too many commas"
+                            LogStatement = "too many commas",
+                            Culture = CultureInfo.CurrentUICulture.Name
                         });
                     }
                 }
@@ -127,7 +130,8 @@ namespace BibleBot.Backend.Controllers
                     return BadRequest(new VerseResponse
                     {
                         OK = false,
-                        LogStatement = string.Format(_localizer["VersionNoSupportOT"], reference.Version.Name)
+                        LogStatement = string.Format(_localizer["VersionNoSupportOT"], reference.Version.Name),
+                        Culture = CultureInfo.CurrentUICulture.Name
                     });
                 }
                 else if (reference.IsNT && !reference.Version.SupportsNewTestament)
@@ -135,7 +139,8 @@ namespace BibleBot.Backend.Controllers
                     return BadRequest(new VerseResponse
                     {
                         OK = false,
-                        LogStatement = string.Format(_localizer["VersionNoSupportNT"], reference.Version.Name)
+                        LogStatement = string.Format(_localizer["VersionNoSupportNT"], reference.Version.Name),
+                        Culture = CultureInfo.CurrentUICulture.Name
                     });
                 }
                 else if (reference.IsDEU && !reference.Version.SupportsDeuterocanon)
@@ -143,7 +148,8 @@ namespace BibleBot.Backend.Controllers
                     return BadRequest(new VerseResponse
                     {
                         OK = false,
-                        LogStatement = string.Format(_localizer["VersionNoSupportDEU"], reference.Version.Name)
+                        LogStatement = string.Format(_localizer["VersionNoSupportDEU"], reference.Version.Name),
+                        Culture = CultureInfo.CurrentUICulture.Name
                     });
                 }
 
@@ -164,7 +170,8 @@ namespace BibleBot.Backend.Controllers
                     [
                         Utils.GetInstance().Embedify(_localizer["ReferenceLimitTitle"], _localizer["ReferenceLimitDescription"], true)
                     ],
-                    LogStatement = "too many verses"
+                    LogStatement = "too many verses",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 });
             }
 
@@ -241,7 +248,9 @@ namespace BibleBot.Backend.Controllers
                     Verses = results,
                     DisplayStyle = displayStyle,
                     Paginate = paginateVerses,
-                    LogStatement = logStatement
+                    LogStatement = logStatement,
+                    Culture = CultureInfo.CurrentUICulture.Name,
+                    CultureFooter = string.Format(_sharedLocalizer["GlobalFooter"], Utils.Version)
                 });
             }
             else
@@ -250,7 +259,8 @@ namespace BibleBot.Backend.Controllers
                 {
                     OK = false,
                     Verses = null,
-                    LogStatement = null
+                    LogStatement = null,
+                    Culture = CultureInfo.CurrentUICulture.Name
                 });
             }
         }

@@ -7,40 +7,44 @@
 """
 
 import disnake
-from disnake import CommandInteraction
+from disnake import CommandInteraction, Localized
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending
+from utils.i18n import i18n as i18n_class
+
+i18n = i18n_class()
 
 logger = VyLogger("default")
 
 
 class DisplayStyleSelect(disnake.ui.Select):
-    def __init__(self, author_id: int, is_server: bool) -> None:
+    def __init__(self, author_id: int, is_server: bool, loc) -> None:
         self.author_id = author_id
         self.custom_id = "formatting " + (
             "setserverdisplay" if is_server else "setdisplay"
         )
+
         options = [
             disnake.SelectOption(
-                label="Embed Blocks",
+                label=loc["EMBED_BLOCKS_LABEL"],
                 value="embed",
-                description="The fancy blocks that our command output comes in.",
+                description=loc["EMBED_BLOCKS_DESC"],
             ),
             disnake.SelectOption(
-                label="Code Blocks",
+                label=loc["CODE_BLOCKS_LABEL"],
                 value="code",
-                description="See an example by saying ``` test ```.",
+                description=loc["CODE_BLOCKS_DESC"],
             ),
             disnake.SelectOption(
-                label="Blockquotes",
+                label=loc["BLOCKQUOTES_LABEL"],
                 value="blockquote",
-                description="See an example by saying `> test`.",
+                description=loc["BLOCKQUOTES_DESC"],
             ),
         ]
         super().__init__(
             custom_id=self.custom_id,
-            placeholder="Select a display style...",
+            placeholder=loc["SELECT_DISPLAY_STYLE"],
             options=options,
         )
 
@@ -59,41 +63,43 @@ class DisplayStyleSelect(disnake.ui.Select):
     async def on_error(
         self, error: Exception, inter: disnake.MessageInteraction
     ) -> None:
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+
         await inter.message.edit(
-            content="Error occurred, display style settings have not changed.",
+            content=localization["DISPLAY_STYLE_FAILURE"],
             components=None,
         )
 
 
 class BracketsSelect(disnake.ui.Select):
-    def __init__(self, author_id: int) -> None:
+    def __init__(self, author_id: int, loc: dict[str, str]) -> None:
         self.author_id = author_id
         self.custom_id = "formatting setbrackets"
         options = [
             disnake.SelectOption(
-                label="Angle Brackets <>",
+                label=loc["ANGLE_BRACKETS_LABEL"],
                 value="<>",
-                description="References like <Genesis 1:1> will be ignored.",
+                description=loc["ANGLE_BRACKETS_DESC"],
             ),
             disnake.SelectOption(
-                label="Square Brackets []",
+                label=loc["SQUARE_BRACKETS_LABEL"],
                 value="[]",
-                description="References like [Genesis 1:1] will be ignored.",
+                description=loc["SQUARE_BRACKETS_DESC"],
             ),
             disnake.SelectOption(
-                label="Curly Brackets {}",
+                label=loc["CURLY_BRACKETS_LABEL"],
                 value="{}",
-                description="References like {Genesis 1:1} will be ignored.",
+                description=loc["CURLY_BRACKETS_DESC"],
             ),
             disnake.SelectOption(
-                label="Parentheses ()",
+                label=loc["PARENTHESIS_LABEL"],
                 value="()",
-                description="References like (Genesis 1:1) will be ignored.",
+                description=loc["PARENTHESIS_DESC"],
             ),
         ]
         super().__init__(
             custom_id=self.custom_id,
-            placeholder="Select a pair of brackets...",
+            placeholder=loc["SELECT_BRACKETS"],
             options=options,
         )
 
@@ -112,8 +118,10 @@ class BracketsSelect(disnake.ui.Select):
     async def on_error(
         self, error: Exception, inter: disnake.MessageInteraction
     ) -> None:
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+
         await inter.message.edit(
-            content="Error occurred, bracket settings have not changed.",
+            content=localization["BRACKETS_FAILURE"],
             components=None,
         )
 
@@ -122,17 +130,28 @@ class Formatting(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(description="See your formatting preferences.")
+    @commands.slash_command(description=Localized(key="CMD_FORMATTING_DESC"))
     async def formatting(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+formatting")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Enable or disable verse numbers.")
+    @commands.slash_command(description=Localized(key="CMD_SETVERSENUMBERS_DESC"))
     async def setversenumbers(
         self,
         inter: CommandInteraction,
-        val: str = commands.Param(choices={"Enable": "enable", "Disable": "disable"}),
+        val: str = commands.Param(
+            choices=[
+                disnake.OptionChoice(
+                    Localized("TOGGLE_PARAM_ENABLE", key="TOGGLE_PARAM_ENABLE"),
+                    "enable",
+                ),
+                disnake.OptionChoice(
+                    Localized("TOGGLE_PARAM_DISABLE", key="TOGGLE_PARAM_DISABLE"),
+                    "disable",
+                ),
+            ]
+        ),
     ):
         await inter.response.defer()
         resp = await backend.submit_command(
@@ -141,11 +160,22 @@ class Formatting(commands.Cog):
 
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Enable or disable headings.")
+    @commands.slash_command(description=Localized(key="CMD_SETTITLES_DESC"))
     async def settitles(
         self,
         inter: CommandInteraction,
-        val: str = commands.Param(choices={"Enable": "enable", "Disable": "disable"}),
+        val: str = commands.Param(
+            choices=[
+                disnake.OptionChoice(
+                    Localized("TOGGLE_PARAM_ENABLE", key="TOGGLE_PARAM_ENABLE"),
+                    "enable",
+                ),
+                disnake.OptionChoice(
+                    Localized("TOGGLE_PARAM_DISABLE", key="TOGGLE_PARAM_DISABLE"),
+                    "disable",
+                ),
+            ]
+        ),
     ):
         await inter.response.defer()
         resp = await backend.submit_command(
@@ -154,11 +184,22 @@ class Formatting(commands.Cog):
 
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Enable or disable verse pagination.")
+    @commands.slash_command(description=Localized(key="CMD_SETPAGINATION_DESC"))
     async def setpagination(
         self,
         inter: CommandInteraction,
-        val: str = commands.Param(choices={"Enable": "enable", "Disable": "disable"}),
+        val: str = commands.Param(
+            choices=[
+                disnake.OptionChoice(
+                    Localized("TOGGLE_PARAM_ENABLE", key="TOGGLE_PARAM_ENABLE"),
+                    "enable",
+                ),
+                disnake.OptionChoice(
+                    Localized("TOGGLE_PARAM_DISABLE", key="TOGGLE_PARAM_DISABLE"),
+                    "disable",
+                ),
+            ]
+        ),
     ):
         await inter.response.defer()
         resp = await backend.submit_command(
@@ -167,17 +208,20 @@ class Formatting(commands.Cog):
 
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Set your preferred display style.")
+    @commands.slash_command(description=Localized(key="CMD_SETDISPLAY_DESC"))
     async def setdisplay(self, inter: CommandInteraction, style: str = ""):
         await inter.response.defer()
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if style == "":
             select_menu_view = disnake.ui.View(timeout=180)
-            select_menu_view.add_item(DisplayStyleSelect(inter.author.id, False))
+            select_menu_view.add_item(
+                DisplayStyleSelect(inter.author.id, False, localization)
+            )
 
             await sending.safe_send_interaction(
                 inter.followup,
-                content="Select a display style...",
+                content=localization["SELECT_DISPLAY_STYLE"],
                 view=select_menu_view,
             )
         else:
@@ -187,9 +231,11 @@ class Formatting(commands.Cog):
 
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Set your server's preferred display style.")
+    @commands.slash_command(description=Localized(key="CMD_SETSERVERDISPLAY_DESC"))
     async def setserverdisplay(self, inter: CommandInteraction, style: str = ""):
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if hasattr(inter.channel, "permissions_for") and callable(
             inter.channel.permissions_for
@@ -198,8 +244,9 @@ class Formatting(commands.Cog):
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
-                        "Permissions Error",
-                        "You must have the `Manage Server` permission to use this command.",
+                        localization["PERMS_ERROR_LABEL"],
+                        localization["PERMS_ERROR_DESC"],
+                        localization,
                     ),
                     ephemeral=True,
                 )
@@ -207,11 +254,13 @@ class Formatting(commands.Cog):
 
             if style == "":
                 select_menu_view = disnake.ui.View(timeout=180)
-                select_menu_view.add_item(DisplayStyleSelect(inter.author.id, True))
+                select_menu_view.add_item(
+                    DisplayStyleSelect(inter.author.id, True, localization)
+                )
 
                 await sending.safe_send_interaction(
                     inter.followup,
-                    content="Select a display style...",
+                    content=localization["SELECT_DISPLAY_STYLE"],
                     view=select_menu_view,
                 )
             else:
@@ -224,18 +273,19 @@ class Formatting(commands.Cog):
             await sending.safe_send_interaction(
                 inter.followup,
                 embed=backend.create_error_embed(
-                    "/setserverdisplay",
-                    "This command can only be used in a server.",
+                    localization["PERMS_ERROR_LABEL"],
+                    localization["CMD_NODMS"],
+                    localization,
                 ),
                 ephemeral=True,
             )
             return
 
-    @commands.slash_command(
-        description="Set the bot's ignoring brackets for this server."
-    )
+    @commands.slash_command(description=Localized(key="CMD_SETBRACKETS_DESC"))
     async def setbrackets(self, inter: CommandInteraction, brackets: str = ""):
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if hasattr(inter.channel, "permissions_for") and callable(
             inter.channel.permissions_for
@@ -244,8 +294,9 @@ class Formatting(commands.Cog):
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
-                        "Permissions Error",
-                        "You must have the `Manage Server` permission to use this command.",
+                        localization["PERMS_ERROR_LABEL"],
+                        localization["PERMS_ERROR_DESC"],
+                        localization,
                     ),
                     ephemeral=True,
                 )
@@ -253,11 +304,11 @@ class Formatting(commands.Cog):
 
             if brackets == "":
                 select_menu_view = disnake.ui.View(timeout=180)
-                select_menu_view.add_item(BracketsSelect(inter.author.id))
+                select_menu_view.add_item(BracketsSelect(inter.author.id, localization))
 
                 await sending.safe_send_interaction(
                     inter.followup,
-                    content="Select a pair of brackets...",
+                    content=localization["SELECT_BRACKETS"],
                     view=select_menu_view,
                 )
             else:
@@ -270,8 +321,7 @@ class Formatting(commands.Cog):
             await sending.safe_send_interaction(
                 inter.followup,
                 embed=backend.create_error_embed(
-                    "/setbrackets",
-                    "This command can only be used in a server.",
+                    "/setbrackets", localization["CMD_NODMS"], localization
                 ),
                 ephemeral=True,
             )

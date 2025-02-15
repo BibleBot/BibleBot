@@ -21,6 +21,10 @@ namespace BibleBot.Models
         public string LogStatement { get; set; }
         /// <inheritdoc/>
         public string Type => "cmd";
+        /// <inheritdoc/>
+        public string Culture { get; set; }
+        /// <inheritdoc/>
+        public string CultureFooter { get; set; }
 
         /// <summary>
         /// The content of the response.

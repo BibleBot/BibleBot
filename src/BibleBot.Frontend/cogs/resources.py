@@ -6,7 +6,7 @@
     You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import CommandInteraction
+from disnake import CommandInteraction, Localized, OptionChoice
 from disnake.ext import commands
 from setuptools import Command
 from logger import VyLogger
@@ -15,45 +15,56 @@ from utils.paginator import CreatePaginator
 
 logger = VyLogger("default")
 
-Resource = commands.option_enum(
-    {
-        "Canon Law - Code of Canon Law (1983)": "cic",
-        "Canon Law - Code of Canons of the Eastern Churches (1990)": "cceo",
-        "Catechism - of the Catholic Church (1993)": "ccc",
-        "Catechism - Luther's Small (1529)": "lsc",
-        "Creed - Apostles'": "apostles",
-        "Creed - Chalcedonian Definition (451)": "chalcedon",
-        "Creed - Nicene (325)": "nicene325",
-        "Creed - Nicene-Constantinopolitan (381)": "nicene",
-    }
-)
-
 
 class Resources(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(description="See all available resources.")
+    @commands.slash_command(description=Localized(key="CMD_LISTRESOURCES_DESC"))
     async def listresources(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, f"+resource")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Use a resource.")
+    @commands.slash_command(description=Localized(key="CMD_RESOURCE_DESC"))
     async def resource(
         self,
         inter: CommandInteraction,
         resource: str = commands.Param(
-            choices={
-                "Canon Law - Code of Canon Law (1983)": "cic",
-                "Canon Law - Code of Canons of the Eastern Churches (1990)": "cceo",
-                "Catechism - of the Catholic Church (1993)": "ccc",
-                "Catechism - Luther's Small (1529)": "lsc",
-                "Creed - Apostles'": "apostles",
-                "Creed - Chalcedonian Definition (451)": "chalcedon",
-                "Creed - Nicene (325)": "nicene325",
-                "Creed - Nicene-Constantinopolitan (381)": "nicene",
-            }
+            choices=[
+                OptionChoice(
+                    Localized("RESOURCE_CIC_TITLE", key="RESOURCE_CIC_TITLE"), "cic"
+                ),
+                OptionChoice(
+                    Localized("RESOURCE_CCEO_TITLE", key="RESOURCE_CCEO_TITLE"), "cceo"
+                ),
+                OptionChoice(
+                    Localized("RESOURCE_CCC_TITLE", key="RESOURCE_CCC_TITLE"), "ccc"
+                ),
+                OptionChoice(
+                    Localized("RESOURCE_LSC_TITLE", key="RESOURCE_LSC_TITLE"), "lsc"
+                ),
+                OptionChoice(
+                    Localized("RESOURCE_APOSTLES_TITLE", key="RESOURCE_APOSTLES_TITLE"),
+                    "apostles",
+                ),
+                OptionChoice(
+                    Localized(
+                        "RESOURCE_CHALCEDON_TITLE", key="RESOURCE_CHALCEDON_TITLE"
+                    ),
+                    "chalcedon",
+                ),
+                OptionChoice(
+                    Localized(
+                        "RESOURCE_NICENE325_TITLE", key="RESOURCE_NICENE325_TITLE"
+                    ),
+                    "nicene325",
+                ),
+                OptionChoice(
+                    Localized("RESOURCE_NICENE_TITLE", key="RESOURCE_NICENE_TITLE"),
+                    "nicene",
+                ),
+            ]
         ),
         input: str = "",
     ):

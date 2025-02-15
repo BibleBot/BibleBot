@@ -6,12 +6,15 @@
     You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import CommandInteraction
+from disnake import CommandInteraction, Localized
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending
 from utils.paginator import CreatePaginator
+from utils.i18n import i18n as i18n_class
+
+i18n = i18n_class()
 
 import os
 
@@ -64,17 +67,17 @@ class Versions(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(description="See your version preferences.")
+    @commands.slash_command(description=Localized(key="CMD_VERSION_DESC"))
     async def version(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+version")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Set your preferred version.")
+    @commands.slash_command(description=Localized(key="CMD_SETVERSION_DESC"))
     async def setversion(
         self,
         inter: CommandInteraction,
-        acronym: str = commands.Param(description="The acronym of the version."),
+        acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
         await inter.response.defer()
         resp = await backend.submit_command(
@@ -82,13 +85,15 @@ class Versions(commands.Cog):
         )
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Set your server's preferred version.")
+    @commands.slash_command(description=Localized(key="CMD_SETSERVERVERSION_DESC"))
     async def setserverversion(
         self,
         inter: CommandInteraction,
-        acronym: str = commands.Param(description="The acronym of the version."),
+        acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if hasattr(inter.channel, "permissions_for") and callable(
             inter.channel.permissions_for
@@ -97,8 +102,9 @@ class Versions(commands.Cog):
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
-                        "Permissions Error",
-                        "You must have the `Manage Server` permission to use this command.",
+                        localization["PERMS_ERROR_LABEL"],
+                        localization["PERMS_ERROR_DESC"],
+                        localization,
                     ),
                     ephemeral=True,
                 )
@@ -112,18 +118,17 @@ class Versions(commands.Cog):
             await sending.safe_send_interaction(
                 inter.followup,
                 embed=backend.create_error_embed(
-                    "/setserverversion",
-                    "This command can only be used in a server.",
+                    "/setserverversion", localization["CMD_NODMS"], localization
                 ),
                 ephemeral=True,
             )
             return
 
-    @commands.slash_command(description="See information on a version.")
+    @commands.slash_command(description=Localized(key="CMD_VERSIONINFO_DESC"))
     async def versioninfo(
         self,
         inter: CommandInteraction,
-        acronym: str = commands.Param(description="The acronym of the version."),
+        acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
         await inter.response.defer()
 
@@ -135,7 +140,7 @@ class Versions(commands.Cog):
         resp = await backend.submit_command(inter.channel, inter.author, command)
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="List all available versions.")
+    @commands.slash_command(description=Localized(key="CMD_LISTVERSIONS_DESC"))
     async def listversions(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(
@@ -151,11 +156,11 @@ class Versions(commands.Cog):
         else:
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="List all available books in a version.")
+    @commands.slash_command(description=Localized(key="CMD_BOOKLIST_DESC"))
     async def booklist(
         self,
         inter: CommandInteraction,
-        acronym: str = commands.Param(description="The acronym of the version."),
+        acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
         await inter.response.defer()
 

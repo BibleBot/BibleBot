@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,7 +47,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                             {
                                 OK = true,
                                 Pages = Utils.GetInstance().EmbedifyResource(matchingResource, section),
-                                LogStatement = $"/resource {matchingResource.CommandReference}{(section.Length > 0 ? $" {section}" : section)}"
+                                LogStatement = $"/resource {matchingResource.CommandReference}{(section.Length > 0 ? $" {section}" : section)}",
+                                Culture = CultureInfo.CurrentUICulture.Name
                             });
                         }
                     }
@@ -91,7 +93,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Resources
                     [
                         Utils.GetInstance().Embedify("/resource", resp, false)
                     ],
-                    LogStatement = "/resource"
+                    LogStatement = "/resource",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 });
             }
         }

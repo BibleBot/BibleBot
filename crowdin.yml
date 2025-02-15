@@ -6,5 +6,5 @@ files:
     ignore:
       - /src/**/Resources/**/*.*.resx
     translation: /src/**/Resources/**/%file_name%.%locale%.resx
-  - source: /src/BibleBot.Frontend/locale/default.json
+  - source: /src/BibleBot.Frontend/default_i18n.json
     translation: /src/BibleBot.Frontend/locale/%two_letters_code%.json

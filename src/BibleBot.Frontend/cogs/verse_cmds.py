@@ -6,13 +6,16 @@
     You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import CommandInteraction
+from disnake import CommandInteraction, Localized, OptionChoice
 from disnake.ext import commands
 import disnake
 from setuptools import Command
 from logger import VyLogger
 from utils import backend, sending
 from utils.paginator import CreatePaginator
+from utils.i18n import i18n as i18n_class
+
+i18n = i18n_class()
 
 logger = VyLogger("default")
 
@@ -21,17 +24,23 @@ class VerseCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(description="Search for verses by keyword.")
+    @commands.slash_command(description=Localized(key="CMD_SEARCH_DESC"))
     async def search(
         self,
         inter: CommandInteraction,
         query: str,
         subset: str = commands.Param(
-            choices={
-                "Old Testament only": "1",
-                "New Testament only": "2",
-                "Apocrypha/Deuterocanon only": "3",
-            },
+            choices=[
+                OptionChoice(
+                    Localized("SEARCH_SUBSET_OT", key="SEARCH_SUBSET_OT"), "1"
+                ),
+                OptionChoice(
+                    Localized("SEARCH_SUBSET_NT", key="SEARCH_SUBSET_NT"), "2"
+                ),
+                OptionChoice(
+                    Localized("SEARCH_SUBSET_DEU", key="SEARCH_SUBSET_DEU"), "3"
+                ),
+            ],
             default="0",
         ),
         version: str = "null",
@@ -52,9 +61,7 @@ class VerseCommands(commands.Cog):
         else:
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(
-        description="Display a random verse from a predetermined pool."
-    )
+    @commands.slash_command(description=Localized(key="CMD_RANDOM_DESC"))
     async def random(self, inter: CommandInteraction):
         await inter.response.defer()
 
@@ -65,9 +72,7 @@ class VerseCommands(commands.Cog):
         else:
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(
-        description="Display a random verse based on random number generation."
-    )
+    @commands.slash_command(description=Localized(key="CMD_TRUERANDOM_DESC"))
     async def truerandom(self, inter: CommandInteraction):
         await inter.response.defer()
 
@@ -78,7 +83,7 @@ class VerseCommands(commands.Cog):
         else:
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Display the verse of the day.")
+    @commands.slash_command(description=Localized(key="CMD_DAILYVERSE_DESC"))
     async def dailyverse(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+dailyverse")
@@ -88,11 +93,13 @@ class VerseCommands(commands.Cog):
         else:
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Setup automatic daily verses on this channel.")
+    @commands.slash_command(description=Localized(key="CMD_SETDAILYVERSE_DESC"))
     async def setdailyverse(
         self, inter: CommandInteraction, time: str = "", tz: str = ""
     ):
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if hasattr(inter.channel, "permissions_for") and callable(
             inter.channel.permissions_for
@@ -101,8 +108,9 @@ class VerseCommands(commands.Cog):
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
-                        "Permissions Error",
-                        "You must have the `Manage Server` permission to use this command.",
+                        localization["PERMS_ERROR_LABEL"],
+                        localization["PERMS_ERROR_DESC"],
+                        localization,
                     ),
                     ephemeral=True,
                 )
@@ -124,17 +132,18 @@ class VerseCommands(commands.Cog):
                 inter.followup,
                 embed=backend.create_error_embed(
                     "/setdailyverse",
-                    "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
+                    localization["AUTOMATIC_DAILY_VERSE_NODMS"],
+                    localization,
                 ),
                 ephemeral=True,
             )
             return
 
-    @commands.slash_command(
-        description="See automatic daily verse status for this server."
-    )
+    @commands.slash_command(description=Localized(key="CMD_DAILYVERSESTATUS_DESC"))
     async def dailyversestatus(self, inter: CommandInteraction):
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if hasattr(inter.channel, "permissions_for") and callable(
             inter.channel.permissions_for
@@ -149,17 +158,18 @@ class VerseCommands(commands.Cog):
                 inter.followup,
                 embed=backend.create_error_embed(
                     "/dailyversestatus",
-                    "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
+                    localization["AUTOMATIC_DAILY_VERSE_NODMS"],
+                    localization,
                 ),
                 ephemeral=True,
             )
             return
 
-    @commands.slash_command(
-        description="Clear all automatic daily verse preferences for this server."
-    )
+    @commands.slash_command(description=Localized(key="CMD_CLEARDAILYVERSE_DESC"))
     async def cleardailyverse(self, inter: CommandInteraction):
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if hasattr(inter.channel, "permissions_for") and callable(
             inter.channel.permissions_for
@@ -168,8 +178,9 @@ class VerseCommands(commands.Cog):
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
-                        "Permissions Error",
-                        "You must have the `Manage Server` permission to use this command.",
+                        localization["PERMS_ERROR_LABEL"],
+                        localization["PERMS_ERROR_DESC"],
+                        localization,
                     ),
                     ephemeral=True,
                 )
@@ -185,17 +196,18 @@ class VerseCommands(commands.Cog):
                 inter.followup,
                 embed=backend.create_error_embed(
                     "/cleardailyverse",
-                    "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
+                    localization["AUTOMATIC_DAILY_VERSE_NODMS"],
+                    localization,
                 ),
                 ephemeral=True,
             )
             return
 
-    @commands.slash_command(
-        description="Set a role to be @mention'd with every automatic daily verse."
-    )
+    @commands.slash_command(description=Localized(key="CMD_SETDAILYVERSEROLE_DESC"))
     async def setdailyverserole(self, inter: CommandInteraction, role: disnake.Role):
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if hasattr(inter.channel, "permissions_for") and callable(
             inter.channel.permissions_for
@@ -204,8 +216,9 @@ class VerseCommands(commands.Cog):
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
-                        "Permissions Error",
-                        "You must have the `Manage Server` permission to use this command.",
+                        localization["PERMS_ERROR_LABEL"],
+                        localization["PERMS_ERROR_DESC"],
+                        localization,
                     ),
                     ephemeral=True,
                 )
@@ -216,7 +229,8 @@ class VerseCommands(commands.Cog):
                     inter.followup,
                     embed=backend.create_error_embed(
                         "/setdailyverserole",
-                        "This role is unmentionable. Please enable `Allow anyone to @mention this role` within the role's permissions.",
+                        localization["SETDAILYVERSEROLE_UNMENTIONABLE"],
+                        localization,
                     ),
                     ephemeral=True,
                 )
@@ -231,7 +245,8 @@ class VerseCommands(commands.Cog):
                 inter.followup,
                 embed=backend.create_error_embed(
                     "/setdailyverserole",
-                    "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
+                    localization["AUTOMATIC_DAILY_VERSE_NODMS"],
+                    localization,
                 ),
                 ephemeral=True,
             )

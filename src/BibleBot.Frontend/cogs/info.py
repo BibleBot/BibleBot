@@ -8,13 +8,16 @@
 
 import os
 import aiohttp
-from disnake import CommandInteraction
+from disnake import CommandInteraction, Localized
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending, statics
+from utils.i18n import i18n as i18n_class
 import patreon
 import subprocess
+
+i18n = i18n_class()
 
 logger = VyLogger("default")
 patreon_api = patreon.API(os.environ.get("PATREON_TOKEN"))
@@ -24,13 +27,13 @@ class Information(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(description="The help command.")
+    @commands.slash_command(description=Localized(key="CMD_BIBLEBOT_DESC"))
     async def biblebot(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+biblebot")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="Statistics on the bot.")
+    @commands.slash_command(description=Localized(key="CMD_STATS_DESC"))
     async def stats(self, inter: CommandInteraction):
         await inter.response.defer()
         if not inter.author.bot:
@@ -39,15 +42,13 @@ class Information(commands.Cog):
         resp = await backend.submit_command(inter.channel, inter.author, "+stats")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="See bot and support server invites.")
+    @commands.slash_command(description=Localized(key="CMD_INVITE_DESC"))
     async def invite(self, inter: CommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(
-        description="Check bot permissions for this channel and server."
-    )
+    @commands.slash_command(description=Localized(key="CMD_PERMSCHECK_DESC"))
     async def permscheck(
         self,
         inter: CommandInteraction,
@@ -57,6 +58,8 @@ class Information(commands.Cog):
         ),
     ):
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
 
         channel = inter.channel
         guild = inter.guild
@@ -72,16 +75,18 @@ class Information(commands.Cog):
                     await sending.safe_send_interaction(
                         inter.followup,
                         embed=backend.create_error_embed(
-                            "Permissions Check",
-                            "Channel ID specified belongs to a DM channel.",
+                            localization["PERMSCHECK_ERROR_LABEL"],
+                            localization["PERMSCHECK_ERROR_DM"],
+                            localization,
                         ),
                     )
             except (disnake.NotFound, disnake.Forbidden):
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
-                        "Permissions Check",
-                        "The channel either does not exist or we do not have permission for it.",
+                        localization["PERMSCHECK_ERROR_LABEL"],
+                        localization["PERMSCHECK_ERROR_NOCHAN"],
+                        localization,
                     ),
                 )
                 return
@@ -89,8 +94,9 @@ class Information(commands.Cog):
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
-                        "Permissions Check",
-                        "We either received a channel of unknown type or an HTTPException was thrown.",
+                        localization["PERMSCHECK_ERROR_LABEL"],
+                        localization["PERMSCHECK_ERROR_UNKNOWN"],
+                        localization,
                     ),
                 )
                 return
@@ -113,13 +119,16 @@ class Information(commands.Cog):
 
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
-    @commands.slash_command(description="View all Patreon supporters.")
+    @commands.slash_command(description=Localized(key="CMD_SUPPORTERS_DESC"))
     async def supporters(self, inter: CommandInteraction):
         # Patreon's development utilities are pretty garbage.
         # The way they've positioned the types and how they actually work are not the same thing.
         # Thus, we ignore type checking in some lines to compensate for their... [redacted].
 
         await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+
         campaigns = patreon_api.fetch_campaign().data()
         campaign = campaigns[0].id()  # type: ignore
         pledges = []
@@ -141,14 +150,14 @@ class Information(commands.Cog):
 
         embed = disnake.Embed()
 
-        embed.title = "Patreon Supporters"
+        embed.title = localization["SUPPORTERS_TITLE"]
         embed.description = (
-            "Many thanks to our Patreon supporters:\n\n**" + "**\n**".join(names) + "**"
+            f"{localization["SUPPORTERS_LEADIN"]}:\n\n**" + "**\n**".join(names) + "**"
         )
         embed.color = 6709986
 
         embed.set_footer(
-            text=f"BibleBot v{statics.version} by Kerygma Digital",
+            text=localization["EMBED_FOOTER"].replace("<v>", statics.version),
             icon_url="https://i.imgur.com/hr4RXpy.png",
         )
         await sending.safe_send_interaction(inter.followup, embed=embed)

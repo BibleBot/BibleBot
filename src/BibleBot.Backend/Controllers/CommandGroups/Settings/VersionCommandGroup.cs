@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,7 +74,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/version", response, false)
                     ],
-                    LogStatement = "/version"
+                    LogStatement = "/version",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -116,7 +118,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setversion", localizer["SetVersionSuccess"], false)
                         ],
-                        LogStatement = $"/setversion {args[0]}"
+                        LogStatement = $"/setversion {args[0]}",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -127,7 +130,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setversion", localizer["SetVersionFailure"], true)
                     ],
-                    LogStatement = "/setversion"
+                    LogStatement = "/setversion",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -177,7 +181,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setserverversion", message, false)
                         ],
-                        LogStatement = $"/setserverversion {args[0]}"
+                        LogStatement = $"/setserverversion {args[0]}",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -188,7 +193,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setserverversion", localizer["SetServerVersionFailure"], true)
                     ],
-                    LogStatement = "/setserverversion"
+                    LogStatement = "/setserverversion",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -258,7 +264,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             [
                                 Utils.GetInstance().Embedify("/versioninfo", response, false)
                             ],
-                        LogStatement = $"/versioninfo {version}"
+                        LogStatement = $"/versioninfo {version}",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -269,7 +276,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/versioninfo", localizer["InvalidVersion"], true)
                     ],
-                    LogStatement = "/versioninfo"
+                    LogStatement = "/versioninfo",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -319,7 +327,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                 {
                     OK = true,
                     Pages = pages,
-                    LogStatement = "/listversions"
+                    LogStatement = "/listversions",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -420,7 +429,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                             [
                                 Utils.GetInstance().Embedify("/booklist", message, true)
                             ],
-                            LogStatement = $"/booklist - internal error on {idealVersion.Abbreviation}"
+                            LogStatement = $"/booklist - internal error on {idealVersion.Abbreviation}",
+                            Culture = CultureInfo.CurrentUICulture.Name
                         };
                     }
                 }
@@ -432,7 +442,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/booklist", localizer["InvalidVersion"], true)
                     ],
-                    LogStatement = "/booklist - invalid version"
+                    LogStatement = "/booklist - invalid version",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }

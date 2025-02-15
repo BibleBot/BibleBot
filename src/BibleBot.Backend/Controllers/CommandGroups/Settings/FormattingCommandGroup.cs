@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.InternalModels;
@@ -98,7 +99,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/formatting", response, false)
                     ],
-                    LogStatement = "/formatting"
+                    LogStatement = "/formatting",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -119,7 +121,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setversenumbers", "Expected an `enable` or `disable` parameter.", true)
                         ],
-                        LogStatement = "/setversenumbers"
+                        LogStatement = "/setversenumbers",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -150,7 +153,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setversenumbers", localizer["SetVerseNumbersSuccess"], false)
                     ],
-                    LogStatement = $"/setversenumbers {args[0]}"
+                    LogStatement = $"/setversenumbers {args[0]}",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -171,7 +175,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/settitles", "Expected an `enable` or `disable` parameter.", true)
                         ],
-                        LogStatement = "/settitles"
+                        LogStatement = "/settitles",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -202,7 +207,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/settitles", localizer["SetTitlesSuccess"], false)
                     ],
-                    LogStatement = $"/settitles {args[0]}"
+                    LogStatement = $"/settitles {args[0]}",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -223,7 +229,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setpagination", "Expected an `enable` or `disable` parameter.", true)
                         ],
-                        LogStatement = "/setpagination"
+                        LogStatement = "/setpagination",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -254,7 +261,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setpagination", localizer["SetPaginationSuccess"], false)
                     ],
-                    LogStatement = $"/setpagination {args[0]}"
+                    LogStatement = $"/setpagination {args[0]}",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -275,7 +283,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setdisplay", localizer["SetDisplayFailure"], true)
                         ],
-                        LogStatement = "/setdisplay"
+                        LogStatement = "/setdisplay",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -306,7 +315,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setdisplay", localizer["SetDisplaySuccess"], false)
                     ],
-                    LogStatement = $"/setdisplay {args[0]}"
+                    LogStatement = $"/setdisplay {args[0]}",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -327,7 +337,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setserverdisplay", localizer["SetDisplayFailure"], true)
                         ],
-                        LogStatement = "/setserverdisplay"
+                        LogStatement = "/setserverdisplay",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -359,7 +370,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setserverdisplay", localizer["SetServerDisplaySuccess"], false)
                     ],
-                    LogStatement = $"/setserverdisplay {args[0]}"
+                    LogStatement = $"/setserverdisplay {args[0]}",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -382,7 +394,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setbrackets", localizer["SetBracketsFailureLength"], true)
                         ],
-                        LogStatement = "/setbrackets"
+                        LogStatement = "/setbrackets",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
                 else if (!acceptableBrackets.Contains(args[0]))
@@ -394,7 +407,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                         [
                             Utils.GetInstance().Embedify("/setbrackets", localizer["SetBracketsFailure"], true)
                         ],
-                        LogStatement = "/setbrackets"
+                        LogStatement = "/setbrackets",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -427,7 +441,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Settings
                     [
                         Utils.GetInstance().Embedify("/setbrackets", localizer["SetBracketsSuccess"], false)
                     ],
-                    LogStatement = $"/setbrackets {args[0]}"
+                    LogStatement = $"/setbrackets {args[0]}",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }

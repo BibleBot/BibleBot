@@ -13,6 +13,9 @@ from disnake.ext import commands
 from logger import VyLogger
 from utils import sending
 from utils import statics
+from utils.i18n import i18n as i18n_class
+
+i18n = i18n_class()
 
 from utils.paginator import CreatePaginator
 
@@ -74,6 +77,10 @@ async def submit_command(
         ) as resp:
             respBody = await resp.json()
 
+            localization = i18n.get_i18n_or_default(
+                respBody["culture"].replace("-", "_")
+            )
+
             if respBody["ok"]:
                 logger.info(
                     f"<{user.id}@{guildId}#{ch.id}> " + respBody["logStatement"]
@@ -100,8 +107,9 @@ async def submit_command(
                             await sending.safe_send_channel(
                                 ch,
                                 embed=create_error_embed(
-                                    "Permissions Error",
-                                    "I was unable to remove our existing webhooks for this server. I need the **`Manage Webhooks`** permission to manage automatic daily verses.",
+                                    localization["PERMS_ERROR_LABEL"],
+                                    localization["WEBHOOK_REMOVAL_FAILURE"],
+                                    localization,
                                 ),
                             )
 
@@ -150,7 +158,8 @@ async def submit_command(
                                     ch,
                                     embed=create_error_embed(
                                         "/dailyverseset",
-                                        "I was unable to create a webhook for this channel. I need the **`Manage Webhooks`** permission to enable automatic daily verses.",
+                                        localization["WEBHOOK_CREATION_FAILURE"],
+                                        localization,
                                     ),
                                 )
                             except disnake.errors.Forbidden:
@@ -160,17 +169,19 @@ async def submit_command(
 
                     return convert_embed(respBody["pages"][0])
                 else:
-                    return create_pagination_embeds(respBody["pages"])
+                    return create_pagination_embeds(respBody["pages"], localization)
             elif respBody["type"] == "verse":
                 if "does not support the" in respBody["logStatement"]:
-                    return create_error_embed("Verse Error", respBody["logStatement"])
+                    return create_error_embed(
+                        "Verse Error", respBody["logStatement"], localization
+                    )
                 elif "too many verses" in respBody["logStatement"]:
                     return convert_embed(respBody["pages"][0])
 
                 display_style = respBody["displayStyle"]
                 if display_style == "embed":
                     for verse in respBody["verses"]:
-                        return create_embed_from_verse(verse)
+                        return create_embed_from_verse(verse, respBody["cultureFooter"])
                 elif display_style == "blockquote":
                     for verse in respBody["verses"]:
                         reference_title = (
@@ -310,6 +321,10 @@ async def submit_verse(
         ) as resp:
             respBody = await resp.json()
 
+            localization = i18n.get_i18n_or_default(
+                respBody["culture"].replace("-", "_")
+            )
+
             if respBody["logStatement"]:
                 logger.info(
                     f"<{user.id}@{guildId}#{ch.id}> " + respBody["logStatement"]
@@ -320,7 +335,7 @@ async def submit_verse(
                     await sending.safe_send_channel(
                         ch,
                         embed=create_error_embed(
-                            "Verse Error", respBody["logStatement"]
+                            "Verse Error", respBody["logStatement"], localization
                         ),
                     )
                     return (reqbody, respBody)
@@ -342,14 +357,19 @@ async def submit_verse(
             display_style = respBody["displayStyle"]
             if display_style == "embed":
                 if respBody["paginate"] and len(verses) > 1:
-                    embeds = create_pagination_embeds(verses, is_verses=True)
+                    embeds = create_pagination_embeds(
+                        verses, respBody["cultureFooter"], is_verses=True
+                    )
                     paginator = CreatePaginator(embeds, user.id, 180)
 
                     await sending.safe_send_channel(ch, embed=embeds[0], view=paginator)
                 else:
                     for verse in verses:
                         await sending.safe_send_channel(
-                            ch, embed=create_embed_from_verse(verse)
+                            ch,
+                            embed=create_embed_from_verse(
+                                verse, respBody["cultureFooter"]
+                            ),
                         )
             elif display_style == "blockquote":
                 for verse in verses:
@@ -411,7 +431,7 @@ def convert_embed(internal_embed):
     return embed
 
 
-def create_embed_from_verse(verse):
+def create_embed_from_verse(verse, localization):
     embed = disnake.Embed()
 
     reference_title = (
@@ -428,14 +448,14 @@ def create_embed_from_verse(verse):
     embed.color = 6709986
 
     embed.set_footer(
-        text=f"BibleBot v{statics.version} by Kerygma Digital",
+        text=localization.replace("{0}", statics.version),
         icon_url="https://i.imgur.com/hr4RXpy.png",
     )
 
     return embed
 
 
-def create_error_embed(title, description):
+def create_error_embed(title, description, localization):
     embed = disnake.Embed()
 
     embed.title = title
@@ -443,19 +463,19 @@ def create_error_embed(title, description):
     embed.color = 16723502
 
     embed.set_footer(
-        text=f"BibleBot v{statics.version} by Kerygma Digital",
+        text=localization["EMBED_FOOTER"].replace("<v>", statics.version),
         icon_url="https://i.imgur.com/hr4RXpy.png",
     )
 
     return embed
 
 
-def create_pagination_embeds(pages, is_verses=False):
+def create_pagination_embeds(pages, localization, is_verses=False):
     embeds = []
 
     for page in pages:
         if is_verses:
-            embeds.append(create_embed_from_verse(page))
+            embeds.append(create_embed_from_verse(page, localization))
         else:
             embeds.append(convert_embed(page))
 

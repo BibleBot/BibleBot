@@ -31,5 +31,6 @@ bot = commands.AutoShardedBot(
 )
 
 bot.load_extension("cogs")
+bot.i18n.load("locale/")
 
 bot.run(os.environ.get("DISCORD_TOKEN"))

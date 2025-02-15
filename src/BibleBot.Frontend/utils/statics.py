@@ -1,4 +1,4 @@
-import re
+import json
 
 version = "undefined"
 
@@ -13,6 +13,6 @@ try:
             quotation_split = line.split('"')
 
             if quotation_split:
-                version = quotation_split[1].split("+")[0]
+                version = f"v{quotation_split[1].split("+")[0]}"
 except:
     pass

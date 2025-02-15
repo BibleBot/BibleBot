@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +35,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
                     Utils.GetInstance().Embedify("BibleBot Announcement", string.Join(" ", args), false)
                 ],
                 LogStatement = "/announce",
-                SendAnnouncement = true
+                SendAnnouncement = true,
+                Culture = CultureInfo.CurrentUICulture.Name
             });
         }
 
@@ -74,7 +76,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Staff
                         embed
                     ],
                     LogStatement = "/permscheck",
-                    SendAnnouncement = false
+                    SendAnnouncement = false,
+                    Culture = CultureInfo.CurrentUICulture.Name
                 });
             }
         }

@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.InternalModels;
@@ -96,7 +97,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         [
                             Utils.GetInstance().Embedify("/search", localizer["SearchSubsetVersionIneligible"], true)
                         ],
-                        LogStatement = "/search"
+                        LogStatement = "/search",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -146,7 +148,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             [
                                 Utils.GetInstance().Embedify("/search", localizer["SearchNoResultsVersionMissingSubset"], true)
                             ],
-                            LogStatement = "/search"
+                            LogStatement = "/search",
+                            Culture = CultureInfo.CurrentUICulture.Name
                         };
                     }
 
@@ -212,7 +215,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     {
                         OK = true,
                         Pages = pages,
-                        LogStatement = $"/search {(potentialSubset != SubsetFlag.INVALID ? $"subset:{potentialSubset} " : "")}{query}"
+                        LogStatement = $"/search {(potentialSubset != SubsetFlag.INVALID ? $"subset:{potentialSubset} " : "")}{query}",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
                 else
@@ -224,7 +228,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         [
                             Utils.GetInstance().Embedify("/search", localizer["SearchNoResults"], true)
                         ],
-                        LogStatement = "/search"
+                        LogStatement = "/search",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
             }

@@ -42,7 +42,7 @@ class EventListeners(commands.Cog):
         await self.bot.change_presence(
             status=disnake.Status.online,
             activity=disnake.Game(
-                f"/biblebot v{statics.version} - shard {shard_id + 1}"
+                f"/biblebot {statics.version} - shard {shard_id + 1}"
             ),
             shard_id=shard_id,
         )

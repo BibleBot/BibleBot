@@ -24,6 +24,16 @@ namespace BibleBot.Models
         string LogStatement { get; set; }
 
         /// <summary>
+        /// The IETF BCP 47 tag of the localization used.
+        /// </summary>
+        string Culture { get; set; }
+
+        /// <summary>
+        /// The ordinary footer, but localized.
+        /// </summary>
+        string CultureFooter { get; set; }
+
+        /// <summary>
         /// The type of response this is, to indicate to frontend how to handle it.
         /// </summary>
         string Type { get; }

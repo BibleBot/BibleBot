@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
@@ -80,7 +81,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                     [
                         Utils.GetInstance().Embedify("/stats", resp, false)
                     ],
-                    LogStatement = "/stats"
+                    LogStatement = "/stats",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -165,7 +167,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                     [
                         embed
                     ],
-                    LogStatement = "/biblebot"
+                    LogStatement = "/biblebot",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 });
             }
         }
@@ -181,7 +184,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Information
                     [
                         Utils.GetInstance().Embedify("/invite", localizer["InviteResp"], false)
                     ],
-                LogStatement = "/invite"
+                LogStatement = "/invite",
+                Culture = CultureInfo.CurrentUICulture.Name
             });
         }
     }

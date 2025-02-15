@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -24,13 +25,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                         SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(DailyVerseCommandGroup));
+        private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
 
         public override string Name { get => "dailyverse"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new DailyVerseUsage(userService, guildService, versionService, svProvider, bibleProviders),
+                new DailyVerseUsage(userService, guildService, versionService, svProvider, bibleProviders, _sharedLocalizer),
                 new DailyVerseSet(guildService, _localizer),
                 new DailyVerseRole(guildService, _localizer),
                 new DailyVerseStatus(guildService, _localizer),
@@ -39,7 +41,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
         }
 
         public class DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                               SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders) : Command
+                               SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -75,7 +77,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         await provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion)
                     ],
                     DisplayStyle = displayStyle,
-                    LogStatement = "/dailyverse"
+                    LogStatement = "/dailyverse",
+                    Culture = CultureInfo.CurrentUICulture.Name,
+                    CultureFooter = string.Format(sharedLocalizer["GlobalFooter"], Utils.Version)
                 };
             }
         }
@@ -95,7 +99,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         [
                             Utils.GetInstance().Embedify("/setdailyverse", localizer["AutomaticDailyVerseNoDMs"], true)
                         ],
-                        LogStatement = "/setdailyverse"
+                        LogStatement = "/setdailyverse",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -153,7 +158,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                                 ],
                                 LogStatement = $"/setdailyverse {args[0]} {args[1]}",
                                 CreateWebhook = true,
-                                RemoveWebhook = true
+                                RemoveWebhook = true,
+                                Culture = CultureInfo.CurrentUICulture.Name
                             };
                         }
                     }
@@ -166,7 +172,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             [
                                 Utils.GetInstance().Embedify("/setdailyverse", localizer["SetDailyVerseSetupNotice"], true)
                             ],
-                            LogStatement = "/setdailyverse"
+                            LogStatement = "/setdailyverse",
+                            Culture = CultureInfo.CurrentUICulture.Name
                         };
                     }
                 }
@@ -178,7 +185,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     [
                         Utils.GetInstance().Embedify("/setdailyverse", localizer["SetDailyVerseSetupNotice"], true)
                     ],
-                    LogStatement = "/setdailyverse"
+                    LogStatement = "/setdailyverse",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -198,7 +206,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         [
                             Utils.GetInstance().Embedify("/dailyverserole", localizer["AutomaticDailyVerseNoDMs"], true)
                         ],
-                        LogStatement = "/dailyverserole"
+                        LogStatement = "/dailyverserole",
+                        Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
@@ -221,7 +230,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             [
                                 Utils.GetInstance().Embedify("/setdailyverserole", localizer["SetDailyVerseRoleSuccess"], false)
                             ],
-                            LogStatement = $"/setdailyverserole {args[0]}"
+                            LogStatement = $"/setdailyverserole {args[0]}",
+                            Culture = CultureInfo.CurrentUICulture.Name
                         };
                     }
                 }
@@ -233,7 +243,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     [
                         Utils.GetInstance().Embedify("/setdailyverserole", localizer["SetDailyVerseRoleNotSetup"], true)
                     ],
-                    LogStatement = $"/setdailyverserole {args[0]}"
+                    LogStatement = $"/setdailyverserole {args[0]}",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -308,7 +319,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                             [
                                 Utils.GetInstance().Embedify("/dailyversestatus", resp, false)
                             ],
-                            LogStatement = "/dailyversestatus"
+                            LogStatement = "/dailyversestatus",
+                            Culture = CultureInfo.CurrentUICulture.Name
                         };
                     }
                 }
@@ -320,7 +332,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                     [
                         Utils.GetInstance().Embedify("/dailyversestatus", localizer["DailyVerseStatusNotSetup"], true)
                     ],
-                    LogStatement = "/dailyversestatus"
+                    LogStatement = "/dailyversestatus",
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
@@ -355,7 +368,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups.Verses
                         Utils.GetInstance().Embedify("/cleardailyverse", localizer["ClearDailyVerseSuccess"], false)
                     ],
                     LogStatement = "/cleardailyverse",
-                    RemoveWebhook = true
+                    RemoveWebhook = true,
+                    Culture = CultureInfo.CurrentUICulture.Name
                 };
             }
         }
