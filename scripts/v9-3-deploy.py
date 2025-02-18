@@ -131,13 +131,13 @@ def consolidateVersions():
             {"Version": oldVersion}, {"$set": {"Version": newVersion}}
         )
         print(
-            f"changed {guild_changes.modified_count} guilds using version {oldVersion} to {newVersion}"
+            f"changed {guild_changes.modified_count} of {guild_changes.matched_count} guilds using version {oldVersion} to {newVersion}"
         )
         user_changes = users.update_many(
             {"Version": oldVersion}, {"$set": {"Version": newVersion}}
         )
         print(
-            f"changed {user_changes.modified_count} users using version {oldVersion} to {newVersion}"
+            f"changed {user_changes.modified_count} of {user_changes.matched_count} users using version {oldVersion} to {newVersion}"
         )
         versions.delete_one({"Abbreviation": oldVersion})
         print(f"removed version {oldVersion}")
@@ -168,13 +168,13 @@ def consolidateLanguages():
             {"Language": oldLanguage}, {"$set": {"Language": newLanguage}}
         )
         print(
-            f"changed {guild_changes.modified_count} guilds using language {oldLanguage} to {newLanguage}"
+            f"changed {guild_changes.modified_count} of {guild_changes.matched_count} guilds using language {oldLanguage} to {newLanguage}"
         )
         user_changes = users.update_many(
             {"Language": oldLanguage}, {"$set": {"Language": newLanguage}}
         )
         print(
-            f"changed {user_changes.modified_count} users using language {oldLanguage} to {newLanguage}"
+            f"changed {user_changes.modified_count} of {user_changes.matched_count} users using language {oldLanguage} to {newLanguage}"
         )
 
 
