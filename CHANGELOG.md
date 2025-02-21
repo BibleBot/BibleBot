@@ -30,7 +30,6 @@ This changelog is generated using [EasyBuild.ChangelogGen](https://github.com/ea
 * Added Berean Standard Bible (BSB), Canisiusvertaling 1939 (NLD1939), Evangelical Heritage Version (EHV), and Literal Standard Version (LSV).
 * Removed the old KJV and replaced it with the existing KJVA for quality improvements, the KJVA is now the formal KJV in BibleBot.
 
-
 ### 🐞 Bug Fixes
 
 * Added many, many workarounds to support Brenton's Septuagint (ELXX) and Septuagint (LXX). The ELXX should work properly and the LXX the same minus its own Greek book names (in `/booklist`). ([4596097f](https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit/4596097f748165fd7cefe675bf768473d7449f95))
