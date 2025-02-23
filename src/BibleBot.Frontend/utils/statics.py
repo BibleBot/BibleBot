@@ -13,6 +13,6 @@ try:
             quotation_split = line.split('"')
 
             if quotation_split:
-                version = f"v{quotation_split[1].split("+")[0]}"
+                version = "v" + quotation_split[1].split("+")[0]
 except:
     pass
