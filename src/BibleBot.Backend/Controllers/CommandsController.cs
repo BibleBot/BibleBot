@@ -8,13 +8,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers.CommandGroups.Information;
-using BibleBot.Backend.Controllers.CommandGroups.Settings;
 using BibleBot.Backend.Controllers.CommandGroups.Resources;
-using BibleBot.Backend.Controllers.CommandGroups.Verses;
+using BibleBot.Backend.Controllers.CommandGroups.Settings;
 using BibleBot.Backend.Controllers.CommandGroups.Staff;
+using BibleBot.Backend.Controllers.CommandGroups.Verses;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -93,7 +94,8 @@ namespace BibleBot.Backend.Controllers
                                 [
                                     Utils.GetInstance().Embedify(_localizer["PermissionsErrorTitle"], _localizer["StaffOnlyCommandError"], true)
                                 ],
-                                LogStatement = $"Insufficient permissions on +{grp.Name}."
+                                LogStatement = $"Insufficient permissions on +{grp.Name}.",
+                                Culture = CultureInfo.CurrentUICulture.Name
                             });
                         }
 
