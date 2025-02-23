@@ -152,7 +152,7 @@ class Information(commands.Cog):
 
         embed.title = localization["SUPPORTERS_TITLE"]
         embed.description = (
-            f"{localization["SUPPORTERS_LEADIN"]}:\n\n**" + "**\n**".join(names) + "**"
+            localization["SUPPORTERS_LEADIN"] + f":\n\n**" + "**\n**".join(names) + "**"
         )
         embed.color = 6709986
 
