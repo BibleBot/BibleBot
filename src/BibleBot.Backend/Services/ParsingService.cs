@@ -109,7 +109,7 @@ namespace BibleBot.Backend.Services
                             versionAcronymRegexMatch = VersionAcronymRegex().Match(lastToken);
                         }
 
-                        Version potentialVersion = versions.SingleOrDefault(version => string.Equals(version.Abbreviation, versionAcronymRegexMatch.Value, System.StringComparison.OrdinalIgnoreCase));
+                        Version potentialVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, versionAcronymRegexMatch.Value, System.StringComparison.OrdinalIgnoreCase));
 
                         if (potentialVersion != null)
                         {
