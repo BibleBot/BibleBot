@@ -37,12 +37,14 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
             // Instantiate the various services.
-            services.AddSingleton<MongoService>();
+            MongoService mongoService = new(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>());
+            services.AddSingleton(mongoService);
+
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();
             services.AddSingleton<VersionService>();
             services.AddSingleton<LanguageService>();
-            services.AddSingleton(sp => new NameFetchingService(true));
+            services.AddSingleton(sp => new NameFetchingService(mongoService, true));
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.Configure<RequestLocalizationOptions>(options =>
@@ -73,10 +75,10 @@ namespace BibleBot.AutomaticServices
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc("v9", new OpenApiInfo
                 {
                     Title = "BibleBot.AutomaticServices",
-                    Version = "1",
+                    Version = "9",
                     Description = "The AutomaticServices of BibleBot",
                     Contact = new OpenApiContact
                     {

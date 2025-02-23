@@ -80,7 +80,7 @@ namespace BibleBot.Backend
             }
 
             // Add the name fetching service with a predefined instance, since we'll use it later in this function.
-            NameFetchingService nameFetchingService = new(false);
+            NameFetchingService nameFetchingService = new(mongoService, false);
             services.AddSingleton(nameFetchingService);
 
             services.AddResponseCaching();
@@ -92,10 +92,10 @@ namespace BibleBot.Backend
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc("v9", new OpenApiInfo
                 {
                     Title = "BibleBot.Backend",
-                    Version = "1",
+                    Version = "9",
                     Description = "The Backend of BibleBot",
                     Contact = new OpenApiContact
                     {
@@ -123,7 +123,7 @@ namespace BibleBot.Backend
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BibleBot.Backend"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v9/swagger.json", "BibleBot.Backend"));
             }
             else
             {

@@ -107,15 +107,15 @@ namespace BibleBot.Backend.Services
 
             if (typeOfT == typeof(Models.Version))
             {
-                cursor = (IAsyncCursor<T>)await _versions.Aggregate().Search((SearchDefinition<Models.Version>)(object)def).ToCursorAsync();
+                cursor = (IAsyncCursor<T>)await _versions.Aggregate().Search(def as SearchDefinition<Models.Version>).ToCursorAsync();
             }
             else if (typeOfT == typeof(User))
             {
-                cursor = (IAsyncCursor<T>)await _users.Aggregate().Search((SearchDefinition<User>)(object)def).ToCursorAsync();
+                cursor = (IAsyncCursor<T>)await _users.Aggregate().Search(def as SearchDefinition<User>).ToCursorAsync();
             }
             else if (typeOfT == typeof(Guild))
             {
-                cursor = (IAsyncCursor<T>)await _guilds.Aggregate().Search((SearchDefinition<Guild>)(object)def).ToCursorAsync();
+                cursor = (IAsyncCursor<T>)await _guilds.Aggregate().Search(def as SearchDefinition<Guild>).ToCursorAsync();
             }
 
             return cursor != null ? await cursor.ToListAsync() : throw new NotImplementedException("No established path for provided type");

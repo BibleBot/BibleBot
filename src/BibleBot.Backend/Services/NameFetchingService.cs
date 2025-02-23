@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Dom;
 using BibleBot.Models;
+using MongoDB.Driver;
+using MongoDB.Driver.Search;
 using RestSharp;
 using Serilog;
 
@@ -35,8 +37,9 @@ namespace BibleBot.Backend.Services
 
         private readonly HttpClient _httpClient;
         private readonly RestClient _restClient;
+        private readonly MongoService _mongoService;
 
-        public NameFetchingService(bool isForAutoServ)
+        public NameFetchingService(MongoService mongoService, bool isForAutoServ)
         {
             if (isForAutoServ)
             {
@@ -63,6 +66,8 @@ namespace BibleBot.Backend.Services
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
             _restClient = new RestClient("https://api.scripture.api.bible/v1");
+
+            _mongoService = mongoService;
         }
 
         public Dictionary<string, List<string>> GetBookNames()
@@ -117,11 +122,12 @@ namespace BibleBot.Backend.Services
             Log.Information("NameFetchingService: Getting BibleGateway book names...");
             Dictionary<string, List<string>> bgNames = await GetBibleGatewayNames(bgVersions);
 
-            // Log.Information("NameFetchingService: Getting API.Bible versions...");
-            // Dictionary<string, string> abVersions = await GetAPIBibleVersions();
+            Log.Information("NameFetchingService: Getting API.Bible versions...");
+            SearchDefinition<Version> abVersionQuery = Builders<Version>.Search.Equals(version => version.Source, "ab");
+            List<Version> abVersions = await _mongoService.Search(abVersionQuery);
 
-            // Log.Information("NameFetchingService: Getting API.Bible book names...");
-            // Dictionary<string, List<string>> abNames = await GetAPIBibleNames(abVersions);
+            Log.Information("NameFetchingService: Getting API.Bible book names...");
+            Dictionary<string, List<string>> abNames = await GetAPIBibleNames(abVersions);
 
             if (File.Exists($"{_filePrefix}/Data/NameFetching/book_names.json"))
             {
@@ -129,7 +135,7 @@ namespace BibleBot.Backend.Services
                 Log.Information("NameFetchingService: Removed old names file...");
             }
 
-            Dictionary<string, List<string>> completedNames = MergeDictionaries([bgNames, /*abNames,*/ _abbreviations]);
+            Dictionary<string, List<string>> completedNames = MergeDictionaries([bgNames, abNames, _abbreviations]);
 
             Log.Information("NameFetchingService: Serializing and writing to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, _serializerOptions);
@@ -391,49 +397,16 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        private async Task<Dictionary<string, string>> GetAPIBibleVersions()
-        {
-            Dictionary<string, string> versions = [];
-
-            RestRequest req = new("bibles");
-            req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-
-            ABBibleResponse resp = null;
-
-            try
-            {
-                resp = await _restClient.GetAsync<ABBibleResponse>(req);
-            }
-            catch (HttpRequestException ex)
-            {
-                if (ex.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Log.Warning("NameFetchingService: Received Unauthorized from API.Bible, skipping...");
-                    return [];
-                }
-            }
-
-            if (resp != null)
-            {
-                foreach (ABBibleData version in resp.Data)
-                {
-                    versions.TryAdd(version.Name, version.Id);
-                }
-            }
-
-            return versions;
-        }
-
-        private async Task<Dictionary<string, List<string>>> GetAPIBibleNames(Dictionary<string, string> versions)
+        private async Task<Dictionary<string, List<string>>> GetAPIBibleNames(List<Version> versions)
         {
             Dictionary<string, List<string>> names = [];
 
             List<string> latterKings = ["3 Kings", "4 Kings"];
             List<string> workaroundIds = ["DAG", "PS2"];
 
-            foreach (KeyValuePair<string, string> version in versions)
+            foreach (Version version in versions)
             {
-                RestRequest req = new($"bibles/{version.Value}/books");
+                RestRequest req = new($"bibles/{version.ApiBibleId}/books");
                 req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
                 ABBooksResponse resp = null;
@@ -446,7 +419,10 @@ namespace BibleBot.Backend.Services
                 {
                     if (ex.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        Log.Warning("NameFetchingService: Received Unauthorized from API.Bible, skipping...");
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Log.Warning("NameFetchingService: Received unauthorized from API.Bible, WE MIGHT BE RATE LIMITED");
+                        }
                         return [];
                     }
                 }
@@ -464,7 +440,7 @@ namespace BibleBot.Backend.Services
 
                         if (!_apiBibleNames.ContainsKey(book.Id) && workaroundIds.Contains(book.Id))
                         {
-                            Log.Warning($"NameFetchingService: Id \"{book.Id}\" for '{book.Name}' in {version.Key} ({version.Value}) does not exist in apibible_names.json.");
+                            Log.Warning($"NameFetchingService: Id \"{book.Id}\" for '{book.Name}' in {version.Name} ({version.ApiBibleId}) does not exist in apibible_names.json.");
                             continue;
                         }
 
