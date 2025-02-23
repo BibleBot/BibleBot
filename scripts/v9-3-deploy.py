@@ -118,7 +118,7 @@ def addVersions():
     versions = db.Versions
     for version in versionsToAdd:
         versions.insert_one(version)
-        print(f"added version {version["Name"]}")
+        print("added version " + version["Name"])
 
 
 def consolidateVersions():
@@ -156,7 +156,7 @@ def addLanguages():
 
     for language in languagesToAdd:
         languages.insert_one(language)
-        print(f"added language {language["Culture"]}")
+        print("added language " + language["Culture"])
 
 
 def consolidateLanguages():
