@@ -19,7 +19,6 @@ namespace BibleBot.Backend.Services
     {
         private Timer _timer;
         private SystemdNotifier _sdNotifier;
-        private readonly ServiceState _watchdogServiceState = new("WATCHDOG=1");
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
@@ -33,7 +32,7 @@ namespace BibleBot.Backend.Services
 
         public void SendWatchdogNotify(object state)
         {
-            _sdNotifier.Notify(_watchdogServiceState);
+            _sdNotifier.Notify(new("WATCHDOG=1"));
             Log.Information("SystemdWatchdogService: WATCHDOG=1");
         }
 
