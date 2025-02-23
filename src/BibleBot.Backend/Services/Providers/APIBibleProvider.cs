@@ -151,7 +151,7 @@ namespace BibleBot.Backend.Services.Providers
                 {
                     if (verseNumbersEnabled)
                     {
-                        string id = el.GetAttribute("data-sid");
+                        string id = el.GetAttribute("data-sid") ?? el.GetAttribute("data-number");
                         MatchCollection matches = VerseIdRegex().Matches(id);
 
                         if (matches.Count > 0)
