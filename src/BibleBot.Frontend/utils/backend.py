@@ -77,9 +77,12 @@ async def submit_command(
         ) as resp:
             respBody = await resp.json()
 
-            localization = i18n.get_i18n_or_default(
-                respBody["culture"].replace("-", "_")
-            )
+            if respBody["culture"] is not None:
+                localization = i18n.get_i18n_or_default(
+                    respBody["culture"].replace("-", "_")
+                )
+            else:
+                localization = i18n.get_i18n_or_default("en_US")
 
             if respBody["ok"]:
                 logger.info(
