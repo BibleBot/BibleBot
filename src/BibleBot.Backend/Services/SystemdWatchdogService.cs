@@ -24,8 +24,8 @@ namespace BibleBot.Backend.Services
         {
             Log.Information("SystemdWatchdogService: Starting service...");
 
-            _timer = new Timer(SendWatchdogNotify, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
             _sdNotifier = new SystemdNotifier();
+            _timer = new Timer(SendWatchdogNotify, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
         }
