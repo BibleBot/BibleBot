@@ -21,6 +21,7 @@ logger = VyLogger("default")
 Language = commands.Param(
     choices={
         "English (US)": "en-US",
+        "English (UK)": "en-GB",
         "Esperanto": "eo",
     }
 )
