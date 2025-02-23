@@ -181,7 +181,14 @@ async def submit_command(
                 display_style = respBody["displayStyle"]
                 if display_style == "embed":
                     for verse in respBody["verses"]:
-                        return create_embed_from_verse(verse, respBody["cultureFooter"])
+                        return create_embed_from_verse(
+                            verse,
+                            (
+                                respBody["cultureFooter"]
+                                if respBody["cultureFooter"] is not None
+                                else statics.verse_footer
+                            ),
+                        )
                 elif display_style == "blockquote":
                     for verse in respBody["verses"]:
                         reference_title = (
@@ -321,9 +328,12 @@ async def submit_verse(
         ) as resp:
             respBody = await resp.json()
 
-            localization = i18n.get_i18n_or_default(
-                respBody["culture"].replace("-", "_")
-            )
+            if respBody["culture"] is not None:
+                localization = i18n.get_i18n_or_default(
+                    respBody["culture"].replace("-", "_")
+                )
+            else:
+                localization = i18n.get_i18n_or_default("en_US")
 
             if respBody["logStatement"]:
                 logger.info(
@@ -358,7 +368,13 @@ async def submit_verse(
             if display_style == "embed":
                 if respBody["paginate"] and len(verses) > 1:
                     embeds = create_pagination_embeds(
-                        verses, respBody["cultureFooter"], is_verses=True
+                        verses,
+                        (
+                            respBody["cultureFooter"]
+                            if respBody["cultureFooter"] is not None
+                            else statics.verse_footer
+                        ),
+                        is_verses=True,
                     )
                     paginator = CreatePaginator(embeds, user.id, 180)
 
@@ -368,7 +384,12 @@ async def submit_verse(
                         await sending.safe_send_channel(
                             ch,
                             embed=create_embed_from_verse(
-                                verse, respBody["cultureFooter"]
+                                verse,
+                                (
+                                    respBody["cultureFooter"]
+                                    if respBody["cultureFooter"] is not None
+                                    else statics.verse_footer
+                                ),
                             ),
                         )
             elif display_style == "blockquote":
