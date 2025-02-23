@@ -398,11 +398,27 @@ namespace BibleBot.Backend.Services
             RestRequest req = new("bibles");
             req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
-            ABBibleResponse resp = await _restClient.GetAsync<ABBibleResponse>(req);
+            ABBibleResponse resp = null;
 
-            foreach (ABBibleData version in resp.Data)
+            try
             {
-                versions.TryAdd(version.Name, version.Id);
+                resp = await _restClient.GetAsync<ABBibleResponse>(req);
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Log.Warning("NameFetchingService: Received Unauthorized from API.Bible, skipping...");
+                    return [];
+                }
+            }
+
+            if (resp != null)
+            {
+                foreach (ABBibleData version in resp.Data)
+                {
+                    versions.TryAdd(version.Name, version.Id);
+                }
             }
 
             return versions;
