@@ -202,7 +202,7 @@
     <comment>Description of /dailyverse command.</comment>
   </data>
   <data name="RandomCommandDescription" xml:space="preserve">
-    <value>otrzymaj losowy wers Biblii</value>
+    <value>otrzymaj losowy werset Biblii</value>
     <comment>Description of /random command.</comment>
   </data>
   <data name="ResourceCommandDescription" xml:space="preserve">

@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AutomaticDailyVerseWebhookUsername" xml:space="preserve">
-    <value>BibleBot Automatyczne Wersy Dnia</value>
+    <value>BibleBot Automatyczne Wersety Dnia</value>
     <comment>Username used in automatic daily verse webhooks.</comment>
   </data>
   <data name="AutomaticDailyVerseWebhookUsernameAlt" xml:space="preserve">
-    <value>BibleBot Automatyczne Wersy Dnia Powiadomienie</value>
+    <value>BibleBot Automatyczne Wersety Dnia Powiadomienie</value>
     <comment>Username used in automatic daily verse webhooks when making a notice.</comment>
   </data>
   <data name="AutomaticDailyVerseBothTestamentsWarning" xml:space="preserve">
-    <value>Automatyczne wersy dnia nie będą dłużej wspierać wersji, które nie mają obu Testamentów. Proszę, zmień preferowaną przez serwer wersję ('/setserverversion') na taką, która posiada oba.</value>
+    <value>Automatyczne wersety dnia nie będą dłużej wspierać wersji, które nie mają obu Testamentów. Proszę, zmień preferowaną przez serwer wersję (`/setserverversion`) na taką, która posiada oba.</value>
     <comment>Notice when version used for automatic daily verses does not have both testaments.</comment>
   </data>
   <data name="AutomaticDailyVerseLeadIn" xml:space="preserve">
-    <value>Oto wers dnia</value>
+    <value>Oto werset dnia</value>
     <comment>Leading message to the automatic daily verse.</comment>
   </data>
 </root>

@@ -142,7 +142,7 @@
     <comment>Description for /listversions command.</comment>
   </data>
   <data name="BookListCommandDescription" xml:space="preserve">
-    <value>wyświetl wszystkie dostępne książki</value>
+    <value>wyświetl wszystkie dostępne księgi</value>
     <comment>Description for /booklist command.</comment>
   </data>
   <data name="SetVersionSuccess" xml:space="preserve">
