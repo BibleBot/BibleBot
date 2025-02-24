@@ -71,7 +71,7 @@ namespace BibleBot.Backend.Services
         [GeneratedRegex(@"-")]
         private static partial Regex ContainsSpanRegex();
 
-        [GeneratedRegex(@"[A-Z\-]{1,8}[0-9]{0,5}")]
+        [GeneratedRegex(@"[A-Z]{1,8}[\-]{0,1}[A-Z]{0,4}[0-9]{0,5}")]
         private static partial Regex VersionAcronymRegex();
 
         public Reference GenerateReference(string str, BookSearchResult bookSearchResult, Version prefVersion, List<Version> versions)
@@ -270,8 +270,8 @@ namespace BibleBot.Backend.Services
                                     // in the event that the span exists to extend to the end of a chapter.
                                     expandoVerseUsed = true;
 
-                                    // API.Bible doesn't treat the unfinished span like BibleGateway, thus a workaround.
-                                    if (prefVersion.Source == "ab")
+                                    // These providers don't treat the unfinished span like BibleGateway, thus a workaround.
+                                    if (prefVersion.Source is "ab" or "nlt")
                                     {
                                         // Largest verse count in any chapter is 176. No harm in rounding up.
                                         endingVerse = 200;

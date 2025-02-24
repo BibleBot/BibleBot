@@ -59,6 +59,7 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<SpecialVerseProvider>();
             services.AddSingleton<BibleGatewayProvider>();
             services.AddSingleton<APIBibleProvider>();
+            services.AddSingleton<NLTAPIProvider>();
 
             // Add background services.
             services.AddSingleton<AutomaticDailyVerseService>();

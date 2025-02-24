@@ -30,7 +30,7 @@ namespace BibleBot.Backend.Controllers
     [ApiController]
     public class CommandsController(UserService userService, OptOutService optOutService, GuildService guildService, VersionService versionService, ResourceService resourceService,
                               FrontendStatsService frontendStatsService, LanguageService languageService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider,
-                              BibleGatewayProvider bgProvider, APIBibleProvider abProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
+                              BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
         private readonly List<CommandGroup> _commandGroups = [
                 new InformationCommandGroup(userService, guildService, versionService, frontendStatsService, localizerFactory),
@@ -38,9 +38,9 @@ namespace BibleBot.Backend.Controllers
                 new VersionCommandGroup(userService, guildService, versionService, nameFetchingService, localizerFactory),
                 new LanguageCommandGroup(userService, guildService, languageService, localizerFactory),
                 new ResourceCommandGroup(resourceService.GetAllResources(), localizerFactory),
-                new DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider], localizerFactory),
-                new RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider], localizerFactory),
-                new SearchCommandGroup(userService, guildService, versionService, nameFetchingService, [bgProvider, abProvider], localizerFactory),
+                new DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider, nltProvider], localizerFactory),
+                new RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider, nltProvider], localizerFactory),
+                new SearchCommandGroup(userService, guildService, versionService, nameFetchingService, [bgProvider, abProvider, nltProvider], localizerFactory),
                 new StaffOnlyCommandGroup()
             ];
 
