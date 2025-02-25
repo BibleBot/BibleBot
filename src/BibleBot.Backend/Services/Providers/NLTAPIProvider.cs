@@ -25,17 +25,23 @@ namespace BibleBot.Backend.Services.Providers
     public partial class NLTAPIProvider : IBibleProvider, IDisposable
     {
         public string Name { get; set; }
+
+        private readonly Dictionary<string, string> _nameMapping;
+
         private CancellationTokenSource _cancellationToken;
         private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
+
         private readonly string _baseURL = "https://api.nlt.to/api/";
         private readonly string _getURI = "passages?ref={0}&key={1}&version=NLT";
         private readonly string _searchURI = "search?text={0}&key={1}&version=NLT";
 
-        public NLTAPIProvider()
+        public NLTAPIProvider(NameFetchingService nameFetchingService)
         {
             Name = "nlt";
+
+            _nameMapping = nameFetchingService.GetNLTMapping();
 
             _cancellationToken = new CancellationTokenSource();
 
@@ -226,16 +232,17 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString += ":1";
             }
 
-            bool isISV = reference.Version.Abbreviation == "ISV";
-
-            return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
+            return new Verse { Reference = reference, Title = PurifyText(title, false), PsalmTitle = PurifyText(psalmTitle, false), Text = PurifyText(text, false) };
         }
 
         public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
+        [GeneratedRegex("\\*[0-9:A-Za-z\\ .\\;].*$")]
+        private static partial Regex CrossReferenceRegex();
+
         public async Task<List<SearchResult>> Search(string query, Models.Version version)
         {
-            string url = string.Format(_searchURI, query, version.Abbreviation);
+            string url = string.Format(_searchURI, query, Environment.GetEnvironmentVariable("NLTAPI_TOKEN"));
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
@@ -248,31 +255,33 @@ namespace BibleBot.Backend.Services.Providers
 
             List<SearchResult> results = [];
 
-            foreach (IElement row in document.QuerySelectorAll(".row"))
+            foreach (IElement row in document.QuerySelectorAll("tr"))
             {
-                foreach (IElement el in row.GetElementsByClassName("bible-item-extras"))
+                foreach (IElement el in row.GetElementsByTagName("td"))
                 {
-                    el.Remove();
+                    Match crossRef = CrossReferenceRegex().Match(el.TextContent);
+                    if (crossRef.Success)
+                    {
+                        el.TextContent = el.TextContent.Replace(crossRef.Value, "");
+                    }
                 }
 
-                foreach (IElement el in row.GetElementsByTagName("h3"))
-                {
-                    el.Remove();
-                }
-
-                IElement referenceElement = row.GetElementsByClassName("bible-item-title").FirstOrDefault();
-                IElement textElement = row.GetElementsByClassName("bible-item-text").FirstOrDefault();
+                IElement referenceElement = row.GetElementsByTagName("td").FirstOrDefault();
+                IElement textElement = row.GetElementsByTagName("td").Skip(1).FirstOrDefault();
 
                 if (referenceElement != null && textElement != null)
                 {
-                    string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
+                    string text = PurifyText(textElement.TextContent, false);
                     text = text.Replace(query, $"**{query}**");
 
-                    results.Add(new SearchResult
+                    if (text.Contains(query))
                     {
-                        Reference = referenceElement.TextContent,
-                        Text = text
-                    });
+                        results.Add(new SearchResult
+                        {
+                            Reference = referenceElement.TextContent,
+                            Text = text
+                        });
+                    }
                 }
             }
 

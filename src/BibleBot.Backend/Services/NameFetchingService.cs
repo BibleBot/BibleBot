@@ -32,6 +32,8 @@ namespace BibleBot.Backend.Services
         private readonly Dictionary<string, Dictionary<string, string>> _bookMap;
         private readonly List<string> _bookMapDataNames;
         private readonly List<string> _nuisances;
+        private Dictionary<string, string> _nltNamesText;
+
         private static readonly JsonSerializerOptions _serializerOptions = new() { PropertyNameCaseInsensitive = false };
         private readonly string _filePrefix = ".";
 
@@ -57,6 +59,9 @@ namespace BibleBot.Backend.Services
 
             string nuisancesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/nuisances.json");
             _nuisances = JsonSerializer.Deserialize<List<string>>(nuisancesText);
+
+            string nltNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/nlt_names.json");
+            _nltNamesText = JsonSerializer.Deserialize<Dictionary<string, string>>(nltNamesText);
 
             string bookMapText = File.ReadAllText($"{_filePrefix}/Data/book_map.json");
             _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapText);
@@ -93,6 +98,17 @@ namespace BibleBot.Backend.Services
         }
 
         public Dictionary<string, string> GetAPIBibleMapping()
+        {
+            if (_nltNamesText.Count == 0)
+            {
+                string nltNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/nlt_names.json");
+                _nltNamesText = JsonSerializer.Deserialize<Dictionary<string, string>>(nltNamesText);
+            }
+
+            return _nltNamesText;
+        }
+
+        public Dictionary<string, string> GetNLTMapping()
         {
             if (_apiBibleNames.Count == 0)
             {
