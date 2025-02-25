@@ -195,9 +195,9 @@ namespace BibleBot.Backend.Services.Providers
 
             string text = string.Join("\n", texts);
 
-            if (reference.Version.Abbreviation == "NLD1939" && text.Contains("tuchtmeester geweest tot Christus' 3:opdat we"))
+            if (reference.Version.Abbreviation == "NLD1939" && text.Contains("tuchtmeester geweest tot Christus’ 3:opdat we"))
             {
-                text = text.Replace("tuchtmeester geweest tot Christus' 3:opdat we", "tuchtmeester geweest tot Christus' komst, opdat we");
+                text = text.Replace("tuchtmeester geweest tot Christus’ 3:opdat we", "tuchtmeester geweest tot Christus' komst, opdat we");
             }
 
             // As the verse reference could have a non-English name...
