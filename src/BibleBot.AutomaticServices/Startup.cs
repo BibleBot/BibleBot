@@ -49,7 +49,7 @@ namespace BibleBot.AutomaticServices
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                string[] supportedCultures = ["en-US", "eo"];
+                string[] supportedCultures = ["en-GB", "en-US", "eo", "pl-PL"];
                 options.SetDefaultCulture(supportedCultures[0])
                        .AddSupportedCultures(supportedCultures)
                        .AddSupportedUICultures(supportedCultures);
