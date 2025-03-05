@@ -15,13 +15,6 @@
         "commit-linter"
       ],
       "rollForward": false
-    },
-    "easybuild.changeloggen": {
-      "version": "4.1.0",
-      "commands": [
-        "changelog-gen"
-      ],
-      "rollForward": false
     }
   }
 }
