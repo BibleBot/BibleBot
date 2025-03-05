@@ -1,11 +1,17 @@
-import json
+import os
 
 version = "undefined"
 verse_footer = "BibleBot <v> by Kerygma Digital"
 
 try:
+    config = (
+        "Release"
+        if os.environ.get("ASPNETCORE_ENVIRONMENT") == "Production"
+        else "Debug"
+    )
+
     __assembly_info_file__ = open(
-        "../../src/BibleBot.Backend/obj/Release/net9.0/BibleBot.Backend.AssemblyInfo.cs",
+        f"../../src/BibleBot.Backend/obj/{config}/net9.0/BibleBot.Backend.AssemblyInfo.cs",
         "r",
     ).readlines()
 
