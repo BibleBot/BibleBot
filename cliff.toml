@@ -4,6 +4,9 @@
 # Lines starting with "#" are comments.
 # Configuration options are organized into tables and keys.
 # See documentation for more information on available options.
+[bump]
+features_always_bump_minor = true
+breaking_always_bump_major = true
 
 [changelog]
 # template for the changelog header
