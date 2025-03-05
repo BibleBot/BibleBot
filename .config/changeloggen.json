@@ -1,0 +1,50 @@
+{
+    "types": [
+        {
+            "name": "feat",
+            "description": "A new feature"
+        },
+        {
+            "name": "perf",
+            "description": "A code change that improves performance"
+        },
+        {
+            "name": "fix",
+            "description": "A bug fix"
+        },
+        {
+            "name": "docs",
+            "description": "Documentation changes"
+        },
+        {
+            "name": "test",
+            "description": "Adding missing tests or correcting existing tests",
+            "skipTagFooter": false
+        },
+        {
+            "name": "style",
+            "description": "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)"
+        },
+        {
+            "name": "refactor",
+            "description": "A code change that neither fixes a bug nor adds a feature"
+        },
+        {
+            "name": "ci",
+            "description": "Changes to CI/CD configuration"
+        },
+        {
+            "name": "chore",
+            "description": "Changes to the build process or auxiliary tools and libraries such as documentation generation"
+        },
+        {
+            "name": "revert",
+            "description": "Reverts a previous commit"
+        },
+        {
+            "name": "build",
+            "description": "Changes that affect the build system or external dependencies"
+        }
+    ],
+    "tags": []
+}
