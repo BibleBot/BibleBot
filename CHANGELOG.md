@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [9.4.0] - 2025-03-05
+## [unreleased]
+
+### 🐛 Bug Fixes
+
+- Get the correct version information when running development versions ([b95c347](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b95c347c80a8820c0556bf9d689e2917923dcd10))
+
+## [9.4.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v9.3.0..v9.4.0) - 2025-03-05
 
 ### 🚀 Features
 
@@ -20,7 +26,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Patch content error in Galatians 3:24 NLD1939 ([75bd00a](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/75bd00aeec944238046da42c7705faa9af2cca3f))
 - Patch previous patch ([56a4163](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/56a416365bbb0dc84c1386554459b111dc25b451))
 
-## [9.3.0] - 2025-02-23
+## [9.3.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v9.2-beta..v9.3.0) - 2025-02-23
 
 ### 🚀 Features
 
