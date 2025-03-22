@@ -82,6 +82,8 @@ namespace BibleBot.AutomaticServices.Services
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
             ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["America/Detroit"]);
 
+            Log.Information($"AutomaticDailyVerseService: Fetching guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}...");
+
             IEnumerable<Guild> matches = (await _guildService.Get()).Where((guild) =>
             {
                 if (isTesting && guild.GuildId != "769709969796628500")
@@ -111,6 +113,7 @@ namespace BibleBot.AutomaticServices.Services
             });
 
             idealCount = matches.Count();
+            Log.Information($"AutomaticDailyVerseService: Fetched {idealCount} guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
 
             Stopwatch watch = Stopwatch.StartNew();
 
