@@ -20,7 +20,7 @@ try:
             split = line.split("=")
 
             if split:
-                version = "v" + split[1]
+                version = "v" + split[1].split(";")[0]
                 verse_footer = verse_footer.replace("<v>", version)
 except:
     pass
