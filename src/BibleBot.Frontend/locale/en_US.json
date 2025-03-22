@@ -78,5 +78,9 @@
     "AUTOMATIC_DAILY_VERSE_NODMS": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
     "CMD_NODMS": "This command can only be used in a server.",
     "PAGINATOR_FORBIDDEN": "You cannot interact with these buttons.",
-    "CHANNELID_PARAM": "The ID of the channel (optional)"
+    "CHANNELID_PARAM": "The ID of the channel (optional)",
+    "CONFIRMATION_REJECTED_TITLE": "Confirmation Rejected",
+    "CONFIRMATION_REJECTED_DESC": "You rejected the confirmation prompt. No settings have been changed.",
+    "CONFIRMATION_REQUIRED_TITLE": "Confirmation Required",
+    "CONFIRMATION_REQUIRED_SETDAILYVERSEROLE_EVERYONE": "You are trying to set the daily verse role to @everyone. Do you wish to proceed?"
 }

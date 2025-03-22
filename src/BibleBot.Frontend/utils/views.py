@@ -26,10 +26,54 @@ SOFTWARE.
 from disnake import ui, ButtonStyle
 from logger import VyLogger
 from utils.i18n import i18n as i18n_class
+from . import backend
+import disnake
+from . import statics
 
 i18n = i18n_class()
 
 logger = VyLogger("default")
+
+
+class CreateConfirmationPrompt(ui.View):
+
+    def __init__(self, on_confirm_command: str, author: disnake.User, timeout: float = 0.0):
+        if not timeout:
+            super().__init__()
+        else:
+            super().__init__(timeout=timeout)
+
+        self.author = author
+        self.on_confirm_command = on_confirm_command
+
+    @ui.button(emoji="✅", style=ButtonStyle.green)
+    async def yes(self, button, inter):
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+        try:
+            if inter.author.id != self.author.id:
+                return await inter.send(
+                    localization["PAGINATOR_FORBIDDEN"], ephemeral=True
+                )
+
+            resp = await backend.submit_command(inter.channel, self.author, self.on_confirm_command)
+            await inter.response.edit_message(embed=resp, view=None)
+        except:
+            pass
+
+    @ui.button(emoji="✖️", style=ButtonStyle.red)
+    async def no(self, button, inter):
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+        try:
+            if inter.author.id != self.author.id:
+                return await inter.send(
+                    localization["PAGINATOR_FORBIDDEN"], ephemeral=True
+                )
+
+            resp = backend.create_error_embed(localization["CONFIRMATION_REJECTED_TITLE"], localization["CONFIRMATION_REJECTED_DESC"], localization)
+            await inter.response.edit_message(embed=resp, view=None)
+        except:
+            pass
+
 
 
 class CreatePaginator(ui.View):

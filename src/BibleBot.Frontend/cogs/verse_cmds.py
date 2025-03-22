@@ -11,8 +11,8 @@ from disnake.ext import commands
 import disnake
 from setuptools import Command
 from logger import VyLogger
-from utils import backend, sending
-from utils.paginator import CreatePaginator
+from utils import backend, sending, statics
+from utils.views import CreatePaginator, CreateConfirmationPrompt
 from utils.i18n import i18n as i18n_class
 
 i18n = i18n_class()
@@ -224,7 +224,7 @@ class VerseCommands(commands.Cog):
                 )
                 return
 
-            if not role.mentionable:
+            if not role.is_default() and not role.mentionable:
                 await sending.safe_send_interaction(
                     inter.followup,
                     embed=backend.create_error_embed(
@@ -235,11 +235,24 @@ class VerseCommands(commands.Cog):
                     ephemeral=True,
                 )
 
-            resp = await backend.submit_command(
-                inter.channel, inter.author, f"+dailyverse role {role.id}"
-            )
+            if role.is_default():
+                embed = disnake.Embed()
+                embed.title = localization["CONFIRMATION_REQUIRED_TITLE"]
+                embed.description = localization["CONFIRMATION_REQUIRED_SETDAILYVERSEROLE_EVERYONE"]
 
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+                embed.color = 16776960
+
+                embed.set_footer(
+                    text=localization["EMBED_FOOTER"].replace("<v>", statics.version),
+                    icon_url="https://i.imgur.com/hr4RXpy.png",
+                )
+                await sending.safe_send_interaction(inter.followup, embed=embed, view=CreateConfirmationPrompt(f"+dailyverse role {role.id}", inter.author, 180))
+            else:
+                resp = await backend.submit_command(
+                    inter.channel, inter.author, f"+dailyverse role {role.id}"
+                )
+
+                await sending.safe_send_interaction(inter.followup, embed=resp)
         else:
             await sending.safe_send_interaction(
                 inter.followup,

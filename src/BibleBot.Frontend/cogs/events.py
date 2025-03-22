@@ -12,7 +12,7 @@ from utils import backend, sending
 import aiohttp
 from disnake.ext import commands
 from logger import VyLogger
-from utils.paginator import CreatePaginator
+from utils.views import CreatePaginator
 import re
 import time
 import json

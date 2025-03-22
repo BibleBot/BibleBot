@@ -11,7 +11,7 @@ import disnake
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending
-from utils.paginator import CreatePaginator
+from utils.views import CreatePaginator
 from utils.i18n import i18n as i18n_class
 
 i18n = i18n_class()

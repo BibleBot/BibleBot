@@ -11,7 +11,7 @@ from disnake.ext import commands
 from setuptools import Command
 from logger import VyLogger
 from utils import backend, sending
-from utils.paginator import CreatePaginator
+from utils.views import CreatePaginator
 
 logger = VyLogger("default")
 

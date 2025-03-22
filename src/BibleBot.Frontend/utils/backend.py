@@ -17,7 +17,7 @@ from utils.i18n import i18n as i18n_class
 
 i18n = i18n_class()
 
-from utils.paginator import CreatePaginator
+from utils.views import CreatePaginator
 
 logger = VyLogger("default")
 

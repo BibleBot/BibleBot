@@ -157,7 +157,8 @@ namespace BibleBot.AutomaticServices.Services
                             continue;
                         }
 
-                        string content = guild.DailyVerseRoleId != null ? $"<@&{guild.DailyVerseRoleId}> - {_localizer["AutomaticDailyVerseLeadIn"]}:" : $"{_localizer["AutomaticDailyVerseLeadIn"]}:";
+                        string rolePing = guild.DailyVerseRoleId == guild.GuildId ? "@everyone" : $"<@&{guild.DailyVerseRoleId}>";
+                        string content = guild.DailyVerseRoleId != null ? $"{rolePing} - {_localizer["AutomaticDailyVerseLeadIn"]}:" : $"{_localizer["AutomaticDailyVerseLeadIn"]}:";
                         embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
 
                         if (verse.Reference.Version.Publisher == "biblica")
