@@ -11,16 +11,16 @@ try:
     )
 
     __assembly_info_file__ = open(
-        f"../../src/BibleBot.Backend/obj/{config}/net9.0/BibleBot.Backend.AssemblyInfo.cs",
+        f"../../src/BibleBot.Backend/obj/{config}/net9.0/GitInfo.cache",
         "r",
     ).readlines()
 
     for line in __assembly_info_file__:
-        if "AssemblyInformationalVersionAttribute" in line:
-            quotation_split = line.split('"')
+        if "GitBaseVersion=" in line:
+            split = line.split("=")
 
-            if quotation_split:
-                version = "v" + quotation_split[1].split("+")[0]
+            if split:
+                version = "v" + split[1]
                 verse_footer = verse_footer.replace("<v>", version)
 except:
     pass
