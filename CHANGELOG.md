@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [9.5.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v9.4.0..v9.5.0) - 2025-03-22
+
+### 🚀 Features
+
+- Support @everyone for setdailyverserole, add confirmation prompt when doing so ([2214153](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/221415300e0703ecc83a00262c8d6c7241b9c80a))
 
 ### 🐛 Bug Fixes
 
