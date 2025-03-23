@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -56,7 +57,34 @@ namespace BibleBot.Backend
             ERROR_COLOR = 16723502
         }
 
-        public static readonly string Version = $"v{ThisAssembly.Info.InformationalVersion.Split('+')[0]}";
+        private static readonly string _buildConfiguration = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production" ? "Release" : "Debug";
+        private static readonly string _gitInfoPath = Path.GetFullPath($"./obj/{_buildConfiguration}/net9.0/GitInfo.cache");
+        private static readonly StreamReader _gitInfoReader = new(_gitInfoPath);
+        private static string _cachedVersion;
+
+        private static string GetVersion()
+        {
+            if (_cachedVersion != null)
+            {
+                return _cachedVersion;
+            }
+
+            while (_gitInfoReader.ReadLine() is { } line)
+            {
+                if (!line.Contains("GitBaseVersion="))
+                {
+                    continue;
+                }
+
+                string version = line.Split("=")[1];
+                _cachedVersion = $"v{version[..^1]}";
+            }
+
+
+            return _cachedVersion;
+        }
+
+        public static readonly string Version = GetVersion();
 
         public InternalEmbed Embedify(string title, string description, bool isError) => Embedify(null, title, description, isError, null);
 
