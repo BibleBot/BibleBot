@@ -285,3 +285,4 @@ Cobertura.xml
 .DS_Store
 
 heavy_queries.json
+.runsettings

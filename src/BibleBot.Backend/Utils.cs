@@ -17,6 +17,7 @@ using BibleBot.Backend.InternalModels;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
+using Serilog;
 using Serilog.Extensions.Logging;
 
 namespace BibleBot.Backend
@@ -59,7 +60,7 @@ namespace BibleBot.Backend
 
         private static readonly string _buildConfiguration = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production" ? "Release" : "Debug";
         private static readonly string _gitInfoPath = Path.GetFullPath($"./obj/{_buildConfiguration}/net9.0/GitInfo.cache");
-        private static readonly StreamReader _gitInfoReader = new(_gitInfoPath);
+        private static StreamReader _gitInfoReader;
         private static string _cachedVersion;
 
         private static string GetVersion()
@@ -69,19 +70,29 @@ namespace BibleBot.Backend
                 return _cachedVersion;
             }
 
-            while (_gitInfoReader.ReadLine() is { } line)
+            try
             {
-                if (!line.Contains("GitBaseVersion="))
+                _gitInfoReader = new StreamReader(_gitInfoPath);
+
+                while (_gitInfoReader.ReadLine() is { } line)
                 {
-                    continue;
+                    if (!line.Contains("GitBaseVersion="))
+                    {
+                        continue;
+                    }
+
+                    string version = line.Split("=")[1];
+                    _cachedVersion = $"v{version[..^1]}";
                 }
 
-                string version = line.Split("=")[1];
-                _cachedVersion = $"v{version[..^1]}";
+
+                return _cachedVersion;
             }
-
-
-            return _cachedVersion;
+            catch
+            {
+                Log.Warning("unable to fetch GitInfo.cache for version information, version is now undefined");
+                return "undefined";
+            }
         }
 
         public static readonly string Version = GetVersion();
