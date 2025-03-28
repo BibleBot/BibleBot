@@ -227,12 +227,23 @@ namespace BibleBot.Backend.Services.Providers
 
             // For some reason something like Psalm 1:1-2:1 comes back with the
             // reference Psalm 1:1-21 despite the text itself being correct.
-            if (reference.AsString.EndsWith('1') && reference.AppendedVerses.Count == 0)
+            // if (reference.AppendedVerses.Count == 0)
+            // {
+            //     if (reference.StartingChapter != reference.EndingChapter)
+            //     {
+            //         int referenceStrLen = reference.AsString.Length;
+            //         reference.AsString = $"{reference.AsString.Substring(0, referenceStrLen - 1)}:{reference.AsString.Substring(referenceStrLen - 1)}";
+            //     }
+            // }
+
+            if (reference.StartingChapter != reference.EndingChapter)
             {
-                if (reference.StartingChapter != reference.EndingChapter && reference.EndingVerse == 1)
+                string spanToken = reference.AsString.Split(" ").FirstOrDefault(tok => tok.Contains(':'));
+
+                if (spanToken == $"{reference.StartingChapter}:{reference.StartingVerse}-{reference.EndingChapter}{reference.EndingVerse}")
                 {
-                    int referenceStrLen = reference.AsString.Length;
-                    reference.AsString = $"{reference.AsString.Substring(0, referenceStrLen - 1)}:{reference.AsString.Substring(referenceStrLen - 1)}";
+                    string newSpanToken = $"{reference.StartingChapter}:{reference.StartingVerse}-{reference.EndingChapter}:{reference.EndingVerse}";
+                    reference.AsString = reference.AsString.Replace(spanToken, newSpanToken);
                 }
             }
 

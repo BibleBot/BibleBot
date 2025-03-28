@@ -222,9 +222,17 @@ namespace BibleBot.Backend.Services.Providers
                     }
                 }
             }
-            else if (reference.StartingChapter != reference.EndingChapter && reference.EndingVerse == 1)
+
+            // If a verse is like Book 1:2-3:2, the reference we're given back is Book 1:2-3 despite the text being accurate.
+            // Whatever generates the reference at BibleGateway seems to think the verses are redundant, but we need it to be proper, thus workaround.
+            if (reference.StartingChapter != reference.EndingChapter && reference.StartingVerse == reference.EndingVerse)
             {
-                reference.AsString += ":1";
+                string spanToken = reference.AsString.Split(" ").FirstOrDefault(tok => tok.Contains(':'));
+
+                if (spanToken == $"{reference.StartingChapter}:{reference.StartingVerse}-{reference.EndingChapter}")
+                {
+                    reference.AsString += $":{reference.EndingVerse}";
+                }
             }
 
             bool isISV = reference.Version.Abbreviation == "ISV";
