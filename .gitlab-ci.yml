@@ -1,11 +1,11 @@
 image: mcr.microsoft.com/dotnet/sdk:9.0
 
 variables:
-  SOURCE_CODE_PATH: "src/*"
+  SOURCE_CODE_PATH: "./src/**"
   ASPNETCORE_ENVIRONMENT: "Development"
   HUSKY: 0
   DS_ENFORCE_NEW_ANALYZER: "true"
-  DS_MAX_DEPTH: 3
+  DS_MAX_DEPTH: 10
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
@@ -21,7 +21,6 @@ cache:
   paths:
     - "$SOURCE_CODE_PATH/obj/project.assets.json"
     - "$SOURCE_CODE_PATH/obj/*.csproj.nuget.*"
-    - ".nuget"
   policy: pull-push
 
 build:
