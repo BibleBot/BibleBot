@@ -9,6 +9,7 @@
 import os
 import aiohttp
 import disnake
+import json
 from disnake.ext import commands
 from logger import VyLogger
 from utils import sending
@@ -75,7 +76,11 @@ async def submit_command(
             json=reqbody,
             headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
         ) as resp:
-            respBody = await resp.json()
+            respText = await resp.text()
+
+            respText = respText.replace("\\\\", "\\")
+
+            respBody = json.loads(respText)
 
             if respBody["culture"] is not None:
                 localization = i18n.get_i18n_or_default(
