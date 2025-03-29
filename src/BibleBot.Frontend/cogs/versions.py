@@ -160,7 +160,7 @@ class Versions(commands.Cog):
     async def booklist(
         self,
         inter: CommandInteraction,
-        acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
+        acronym: str = commands.Param(description=Localized(key="VERSION_PARAM"), default=None),
     ):
         await inter.response.defer()
 
