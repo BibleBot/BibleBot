@@ -5,6 +5,7 @@ variables:
   ASPNETCORE_ENVIRONMENT: "Development"
   HUSKY: 0
   DS_ENFORCE_NEW_ANALYZER: "true"
+  DS_MAX_DEPTH: 3
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
