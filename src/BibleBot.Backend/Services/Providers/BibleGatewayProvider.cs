@@ -118,7 +118,7 @@ namespace BibleBot.Backend.Services.Providers
                     if (el.TextContent.Substring(0, el.TextContent.Length - 1) == "1")
                     {
                         IElement parentElement = el.ParentElement;
-                        string verseId = parentElement.ClassList.FirstOrDefault(tok => tok != "text" && VerseIdRegex().Match(tok).Success);
+                        string verseId = parentElement?.ClassList.FirstOrDefault(tok => tok != "text" && VerseIdRegex().Match(tok).Success);
 
                         if (verseId != null)
                         {
