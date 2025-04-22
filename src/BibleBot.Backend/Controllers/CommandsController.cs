@@ -11,11 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using BibleBot.Backend.Controllers.CommandGroups.Information;
-using BibleBot.Backend.Controllers.CommandGroups.Resources;
-using BibleBot.Backend.Controllers.CommandGroups.Settings;
-using BibleBot.Backend.Controllers.CommandGroups.Staff;
-using BibleBot.Backend.Controllers.CommandGroups.Verses;
+using BibleBot.Backend.Controllers.CommandGroups;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
@@ -37,11 +33,11 @@ namespace BibleBot.Backend.Controllers
                 new FormattingCommandGroup(userService, guildService, localizerFactory),
                 new VersionCommandGroup(userService, guildService, versionService, nameFetchingService, localizerFactory),
                 new LanguageCommandGroup(userService, guildService, languageService, localizerFactory),
-                new ResourceCommandGroup(resourceService.GetAllResources(), localizerFactory),
+                new ResourceCommandGroup(resourceService, localizerFactory),
                 new DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider, nltProvider], localizerFactory),
                 new RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider, nltProvider], localizerFactory),
                 new SearchCommandGroup(userService, guildService, versionService, nameFetchingService, [bgProvider, abProvider, nltProvider], localizerFactory),
-                new StaffOnlyCommandGroup()
+                new KDStaffCommandGroup()
             ];
 
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(CommandsController));
