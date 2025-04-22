@@ -12,7 +12,7 @@
     },
     "editor.suggest.insertMode": "insert",
     "dotnet.codeLens.enableReferencesCodeLens": false,
-    "dotnet.unitTests.runSettingsPath": "test/BibleBot.Tests.Backend/.env",
+    "dotnet.unitTests.runSettingsPath": "test/BibleBot.Tests.Backend/.runsettings",
     "dotnet.formatting.organizeImportsOnFormat": true,
     "[markdown]": {
         "editor.unicodeHighlight.ambiguousCharacters": false,
