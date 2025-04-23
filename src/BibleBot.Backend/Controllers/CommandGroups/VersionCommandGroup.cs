@@ -20,7 +20,7 @@ using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
-    public class VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService, IStringLocalizerFactory localizerFactory) : CommandGroup
+    public class VersionCommandGroup(UserService userService, GuildService guildService, VersionService versionService, MetadataFetchingService metadataFetchingService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(VersionCommandGroup));
         private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
@@ -35,7 +35,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 new VersionSetServer(guildService, versionService, _localizer),
                 new VersionInfo(userService, guildService, versionService, _localizer),
                 new VersionList(versionService, _sharedLocalizer),
-                new VersionBookList(userService, guildService, versionService, nameFetchingService, _localizer)
+                new VersionBookList(userService, guildService, versionService, metadataFetchingService, _localizer)
             ]; set => throw new NotImplementedException();
         }
 
@@ -333,7 +333,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class VersionBookList(UserService userService, GuildService guildService, VersionService versionService, NameFetchingService nameFetchingService, IStringLocalizer localizer) : Command
+        public class VersionBookList(UserService userService, GuildService guildService, VersionService versionService, MetadataFetchingService metadataFetchingService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "booklist"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
@@ -384,11 +384,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                     if (idealVersion.Source == "bg")
                     {
-                        names = await nameFetchingService.GetBibleGatewayVersionBookList(idealVersion);
+                        names = await metadataFetchingService.GetBibleGatewayVersionBookList(idealVersion);
                     }
                     else if (idealVersion.Source == "ab")
                     {
-                        names = await nameFetchingService.GetAPIBibleVersionBookList(idealVersion);
+                        names = await metadataFetchingService.GetAPIBibleVersionBookList(idealVersion);
                     }
 
                     if (names != null)

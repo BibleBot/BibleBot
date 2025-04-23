@@ -100,6 +100,7 @@ namespace BibleBot.Backend.Services
             return cursor != null ? await cursor.FirstOrDefaultAsync() : throw new NotImplementedException("No established path for provided type");
         }
 
+        [Obsolete("Does not seem to work as intended, try Get<T>() and filter via LINQ instead.")]
         public async Task<List<T>> Search<T>(SearchDefinition<T> def)
         {
             Type typeOfT = typeof(T);

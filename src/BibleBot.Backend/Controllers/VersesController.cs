@@ -26,7 +26,7 @@ namespace BibleBot.Backend.Controllers
     [Route("api/verses")]
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
-                                          VersionService versionService, LanguageService languageService, NameFetchingService nameFetchingService,
+                                          VersionService versionService, LanguageService languageService, MetadataFetchingService metadataFetchingService,
                                           BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, OptOutService optOutService, IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
     {
         private readonly List<IBibleProvider> _bibleProviders = [bgProvider, abProvider, nltProvider];
@@ -72,7 +72,7 @@ namespace BibleBot.Backend.Controllers
             }
 
             string body = parsingService.PurifyBody(ignoringBrackets, req.Body);
-            Tuple<string, List<BookSearchResult>> tuple = parsingService.GetBooksInString(nameFetchingService.GetBookNames(), nameFetchingService.GetDefaultBookNames(), body);
+            Tuple<string, List<BookSearchResult>> tuple = parsingService.GetBooksInString(metadataFetchingService.GetBookNames(), metadataFetchingService.GetDefaultBookNames(), body);
 
             bool verseNumbersEnabled = true;
             bool titlesEnabled = true;

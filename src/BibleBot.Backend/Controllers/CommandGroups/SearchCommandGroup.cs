@@ -20,7 +20,7 @@ using Serilog;
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
     public class SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                    NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders,
+                                    MetadataFetchingService metadataFetchingService, List<IBibleProvider> bibleProviders,
                                     IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(SearchCommandGroup));
@@ -28,7 +28,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
         public override string Name { get => "search"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
-        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, nameFetchingService, bibleProviders, _localizer, _sharedLocalizer)]; set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, metadataFetchingService, bibleProviders, _localizer, _sharedLocalizer)]; set => throw new NotImplementedException(); }
 
         public enum SubsetFlag
         {
@@ -39,7 +39,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         }
 
         public class Search(UserService userService, GuildService guildService, VersionService versionService,
-                            NameFetchingService nameFetchingService, List<IBibleProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+                            MetadataFetchingService metadataFetchingService, List<IBibleProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -114,7 +114,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     int maxResultsPerPage = 6;
                     List<string> referencesUsed = [];
 
-                    Dictionary<BookCategories, Dictionary<string, string>> categoryMapping = potentialSubset != SubsetFlag.INVALID ? await nameFetchingService.GetBibleGatewayVersionBookList(idealVersion) : null;
+                    Dictionary<BookCategories, Dictionary<string, string>> categoryMapping = potentialSubset != SubsetFlag.INVALID ? await metadataFetchingService.GetBibleGatewayVersionBookList(idealVersion) : null;
 
                     searchResults.RemoveAll(searchResult =>
                     {

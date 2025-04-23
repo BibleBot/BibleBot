@@ -103,16 +103,11 @@ namespace BibleBot.Models
         public string ProperName { get; set; }
 
         /// <summary>
-        /// An array of acceptable book names.
+        /// The preferred name according to the version's source.
+        /// For API.Bible, this corresponds to <see cref="ABBookData.Name"/>.
         /// </summary>
-        [BsonElement("AcceptableNames")]
-        public string[] AcceptableNames { get; set; }
-
-        /// <summary>
-        /// An array of variant data names, used for some deuterocanonicals.
-        /// </summary>
-        [BsonElement("VariantDataNames")]
-        public string[] VariantDataNames { get; set; }
+        [BsonElement("PreferredName")]
+        public string PreferredName { get; set; }
 
         /// <summary>
         /// An array of chapters, which contains an array of verse data.

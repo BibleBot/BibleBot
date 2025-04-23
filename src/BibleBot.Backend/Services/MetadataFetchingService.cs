@@ -23,7 +23,7 @@ using Serilog;
 
 namespace BibleBot.Backend.Services
 {
-    public class NameFetchingService
+    public class MetadataFetchingService
     {
         private Dictionary<string, string> _apiBibleNames;
         private readonly Dictionary<string, List<string>> _abbreviations;
@@ -39,7 +39,7 @@ namespace BibleBot.Backend.Services
         private readonly RestClient _restClient;
         private readonly MongoService _mongoService;
 
-        public NameFetchingService(MongoService mongoService, bool isForAutoServ)
+        public MetadataFetchingService(MongoService mongoService, bool isForAutoServ)
         {
             if (isForAutoServ)
             {
@@ -103,45 +103,48 @@ namespace BibleBot.Backend.Services
             return _apiBibleNames;
         }
 
-        public async Task FetchBookNames(bool isDryRun)
+        public async Task FetchMetadata(bool isDryRun)
         {
             if (isDryRun)
             {
-                Log.Information("NameFetchingService: Dry run enabled, we will not fetch book names for this session.");
+                Log.Information("MetadataFetchingService: Dry run enabled, we will not fetch metadata for this session.");
 
                 if (!File.Exists($"{_filePrefix}/Data/NameFetching/book_names.json"))
                 {
-                    Log.Warning("NameFetchingService: Book names file does NOT exist, some references may not process");
+                    Log.Warning("MetadataFetchingService: Book names file does NOT exist, some references may not process.");
                 }
                 return;
             }
 
-            Log.Information("NameFetchingService: Getting BibleGateway versions...");
+            Log.Information("MetadataFetchingService: Getting BibleGateway versions...");
             Dictionary<string, string> bgVersions = await GetBibleGatewayVersions();
 
-            Log.Information("NameFetchingService: Getting BibleGateway book names...");
+            Log.Information("MetadataFetchingService: Getting BibleGateway book names...");
             Dictionary<string, List<string>> bgNames = await GetBibleGatewayNames(bgVersions);
 
-            Log.Information("NameFetchingService: Getting API.Bible versions...");
-            SearchDefinition<Version> abVersionQuery = Builders<Version>.Search.Equals(version => version.Source, "ab");
-            List<Version> abVersions = await _mongoService.Search(abVersionQuery);
+            Log.Information("MetadataFetchingService: Getting API.Bible versions without book data...");
+            List<Version> abVersions = [.. (await _mongoService.Get<Version>()).Where(version => version.Source == "ab" && version.Books == null)];
 
-            Log.Information("NameFetchingService: Getting API.Bible book names...");
-            Dictionary<string, List<string>> abNames = await GetAPIBibleNames(abVersions);
+            Log.Information("MetadataFetchingService: Getting API.Bible metadata...");
+            Dictionary<Version, ABBooksResponse> abVersionBooksResponse = await GetAPIBibleVersionBookData(abVersions);
+            Dictionary<string, List<string>> abNames = GetAllAPIBibleNames(abVersionBooksResponse);
+
+            Log.Information("MetadataFetchingService: Saving API.Bible book data into database...");
+            await SaveAPIBibleMetadata(abVersionBooksResponse);
 
             if (File.Exists($"{_filePrefix}/Data/NameFetching/book_names.json"))
             {
                 File.Delete($"{_filePrefix}/Data/NameFetching/book_names.json");
-                Log.Information("NameFetchingService: Removed old names file...");
+                Log.Information("MetadataFetchingService: Removed old names file...");
             }
 
             Dictionary<string, List<string>> completedNames = MergeDictionaries([bgNames, abNames, _abbreviations]);
 
-            Log.Information("NameFetchingService: Serializing and writing to file...");
+            Log.Information("MetadataFetchingService: Serializing and writing to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, _serializerOptions);
             File.WriteAllText($"{_filePrefix}/Data/NameFetching/book_names.json", serializedNames);
 
-            Log.Information("NameFetchingService: Finished.");
+            Log.Information("MetadataFetchingService: Finished.");
         }
 
         private async Task<Dictionary<string, string>> GetBibleGatewayVersions()
@@ -243,16 +246,16 @@ namespace BibleBot.Backend.Services
 
                         if (usesVariant && dataName != origDataName)
                         {
-                            Log.Warning($"NameFetchingService: \"{version.Key}\" uses variant data name \"{origDataName}\", replaced with \"{dataName}\".");
+                            Log.Warning($"MetadataFetchingService: \"{version.Key}\" uses variant data name \"{origDataName}\", replaced with \"{dataName}\".");
                         }
                         else if (usesVariant)
                         {
-                            Log.Warning($"NameFetchingService: \"{version.Key}\" uses data name \"{dataName}\".");
+                            Log.Warning($"MetadataFetchingService: \"{version.Key}\" uses data name \"{dataName}\".");
                         }
 
                         if (!_bookMapDataNames.Contains(dataName))
                         {
-                            Log.Warning($"NameFetchingService: Data name \"{dataName}\" for \"{version.Key}\" not in book_map.json.");
+                            Log.Warning($"MetadataFetchingService: Data name \"{dataName}\" for \"{version.Key}\" not in book_map.json.");
                         }
 
                         if (!IsNuisance(bookName))
@@ -375,7 +378,7 @@ namespace BibleBot.Backend.Services
                         }
                         else
                         {
-                            Log.Warning($"NameFetchingService: Data name \"{dataName}\" for \"{version.Name}\" not in book_map.json.");
+                            Log.Warning($"MetadataFetchingService: Data name \"{dataName}\" for \"{version.Name}\" not in book_map.json.");
                             continue;
                         }
 
@@ -397,12 +400,9 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        private async Task<Dictionary<string, List<string>>> GetAPIBibleNames(List<Version> versions)
+        private async Task<Dictionary<Version, ABBooksResponse>> GetAPIBibleVersionBookData(List<Version> versions)
         {
-            Dictionary<string, List<string>> names = [];
-
-            List<string> latterKings = ["3 Kings", "4 Kings"];
-            List<string> workaroundIds = ["DAG", "PS2"];
+            Dictionary<Version, ABBooksResponse> versionBookData = [];
 
             foreach (Version version in versions)
             {
@@ -421,7 +421,7 @@ namespace BibleBot.Backend.Services
                     {
                         for (int i = 0; i < 5; i++)
                         {
-                            Log.Warning("NameFetchingService: Received unauthorized from API.Bible, WE MIGHT BE RATE LIMITED");
+                            Log.Warning("MetadataFetchingService: Received unauthorized from API.Bible, WE MIGHT BE RATE LIMITED");
                         }
                         return [];
                     }
@@ -429,42 +429,60 @@ namespace BibleBot.Backend.Services
 
                 if (resp != null)
                 {
-                    foreach (ABBookData book in resp.Data)
+                    versionBookData.Add(version, resp);
+                }
+            }
+
+            return versionBookData;
+        }
+
+        private Dictionary<string, List<string>> GetAllAPIBibleNames(Dictionary<Version, ABBooksResponse> versionBooksResponse)
+        {
+            Dictionary<string, List<string>> names = [];
+
+            List<string> latterKings = ["3 Kings", "4 Kings"];
+            List<string> workaroundIds = ["DAG", "PS2"];
+
+            foreach (KeyValuePair<Version, ABBooksResponse> kvp in versionBooksResponse)
+            {
+                Version version = kvp.Key;
+                ABBooksResponse resp = kvp.Value;
+
+                foreach (ABBookData book in resp.Data)
+                {
+                    if (book.Name == null || IsNuisance(book.Name))
                     {
-                        if (book.Name == null || IsNuisance(book.Name))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        book.Name = book.Name.Trim();
+                    book.Name = book.Name.Trim();
 
-                        if (!_apiBibleNames.ContainsKey(book.Id) && workaroundIds.Contains(book.Id))
-                        {
-                            Log.Warning($"NameFetchingService: Id \"{book.Id}\" for '{book.Name}' in {version.Name} ({version.ApiBibleId}) does not exist in apibible_names.json.");
-                            continue;
-                        }
+                    if (!_apiBibleNames.ContainsKey(book.Id) && workaroundIds.Contains(book.Id))
+                    {
+                        Log.Warning($"MetadataFetchingService: Id \"{book.Id}\" for '{book.Name}' in {version.Name} ({version.ApiBibleId}) does not exist in apibible_names.json.");
+                        continue;
+                    }
 
-                        string internalId = _apiBibleNames[book.Id];
+                    string internalId = _apiBibleNames[book.Id];
 
-                        if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || latterKings.Contains(book.Abbreviation))
-                        {
-                            // TODO(srp): So, the first two conditions ultimately avoid parsing
-                            // a default name, but I don't know why the third one exists or
-                            // what it achieves.
-                            continue;
-                        }
+                    if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || latterKings.Contains(book.Abbreviation))
+                    {
+                        // TODO(srp): So, the first two conditions ultimately avoid parsing
+                        // a default name, but I don't know why the third one exists or
+                        // what it achieves.
+                        continue;
+                    }
 
-                        if (names.ContainsKey(internalId))
+                    if (names.ContainsKey(internalId))
+                    {
+                        if (!names[internalId].Contains(book.Name))
                         {
-                            if (!names[internalId].Contains(book.Name))
-                            {
-                                names[internalId].Add(book.Name);
-                            }
+                            names[internalId].Add(book.Name);
                         }
-                        else
-                        {
-                            names.Add(internalId, [book.Name]);
-                        }
+                    }
+                    else
+                    {
+                        names.Add(internalId, [book.Name]);
                     }
                 }
             }
@@ -472,8 +490,80 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
+        private async Task SaveAPIBibleMetadata(Dictionary<Version, ABBooksResponse> versionBooksResponse)
+        {
+            List<string> latterKings = ["3 Kings", "4 Kings"];
+            List<string> workaroundIds = ["DAG", "PS2"];
+
+            foreach (KeyValuePair<Version, ABBooksResponse> kvp in versionBooksResponse)
+            {
+                Version version = kvp.Key;
+                ABBooksResponse resp = kvp.Value;
+
+                List<BookData> versionBookData = [];
+
+                foreach (ABBookData book in resp.Data)
+                {
+                    if (!_apiBibleNames.ContainsKey(book.Id) && workaroundIds.Contains(book.Id))
+                    {
+                        // we'll already have a warning log from GetAllAPIBibleNames() about this
+                        continue;
+                    }
+
+                    string properName;
+                    string internalId = _apiBibleNames[book.Id];
+
+                    if (_bookMap["ot"].ContainsKey(internalId))
+                    {
+                        properName = _bookMap["ot"][internalId];
+                    }
+                    else if (_bookMap["nt"].ContainsKey(internalId))
+                    {
+                        properName = _bookMap["nt"][internalId];
+                    }
+                    else if (_bookMap["deu"].ContainsKey(internalId))
+                    {
+                        properName = _bookMap["deu"][internalId];
+                    }
+                    else
+                    {
+                        if ((version.Abbreviation is "ELXX" or "LXX") && internalId == "DAG")
+                        {
+                            properName = _bookMap["deu"]["DAN"];
+                        }
+                        else
+                        {
+                            Log.Warning($"MetadataFetchingService: API.Bible translation \"{book.Id}\" for \"{version.Name}\" not in apibible_names.json.");
+                            continue;
+                        }
+                    }
+
+                    book.Name = IsNuisance(book.Name) ? properName : book.Name.Trim();
+
+                    if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || latterKings.Contains(book.Abbreviation))
+                    {
+                        // TODO(srp): So, the first two conditions ultimately avoid parsing
+                        // a default name, but I don't know why the third one exists or
+                        // what it achieves.
+                        continue;
+                    }
+
+                    versionBookData.Add(new()
+                    {
+                        Name = internalId,
+                        ProperName = properName,
+                        PreferredName = book.Name
+                    });
+                }
+
+                UpdateDefinition<Version> update = Builders<Version>.Update.Set(version => version.Books, [.. versionBookData]);
+                await _mongoService.Update(version.Abbreviation, update);
+            }
+        }
+
         public async Task<Dictionary<BookCategories, Dictionary<string, string>>> GetAPIBibleVersionBookList(Version version)
         {
+            // TODO: Use book data from version.
             // TODO: We need to find a cleaner solution for these booknames that isn't nested Dictionaries.
             Dictionary<BookCategories, Dictionary<string, string>> names = [];
 
@@ -490,7 +580,7 @@ namespace BibleBot.Backend.Services
             {
                 if (ex.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    Log.Warning("NameFetchingService: Received Unauthorized from API.Bible, skipping...");
+                    Log.Warning("MetadataFetchingService: Received Unauthorized from API.Bible, skipping...");
                     return [];
                 }
             }
@@ -541,9 +631,11 @@ namespace BibleBot.Backend.Services
                             category = BookCategories.OldTestament;
                             internalId = "DAN";
                         }
-
-                        Log.Warning($"NameFetchingService: API.Bible translation \"{book.Id}\" for \"{version.Name}\" not in apibible_names.json.");
-                        continue;
+                        else
+                        {
+                            Log.Warning($"MetadataFetchingService: API.Bible translation \"{book.Id}\" for \"{version.Name}\" not in apibible_names.json.");
+                            continue;
+                        }
                     }
 
                     if (version.Abbreviation is "ELXX" or "LXX")

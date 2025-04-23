@@ -44,7 +44,7 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<GuildService>();
             services.AddSingleton<VersionService>();
             services.AddSingleton<LanguageService>();
-            services.AddSingleton(sp => new NameFetchingService(mongoService, true));
+            services.AddSingleton(sp => new MetadataFetchingService(mongoService, true));
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.Configure<RequestLocalizationOptions>(options =>

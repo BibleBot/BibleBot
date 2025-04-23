@@ -81,15 +81,15 @@ namespace BibleBot.Backend
             }
 
             // Add the name fetching service with a predefined instance, since we'll use it later in this function.
-            NameFetchingService nameFetchingService = new(mongoService, false);
-            services.AddSingleton(nameFetchingService);
+            MetadataFetchingService metadataFetchingService = new(mongoService, false);
+            services.AddSingleton(metadataFetchingService);
 
             services.AddResponseCaching();
             services.AddResponseCompression();
             services.AddControllers();
 
-            // Run the NameFetchingService on startup without async.
-            nameFetchingService.FetchBookNames(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
+            // Run the MetadataFetchingService on startup without async.
+            metadataFetchingService.FetchMetadata(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
 
             services.AddSwaggerGen(c =>
             {

@@ -37,11 +37,11 @@ namespace BibleBot.Backend.Services.Providers
         private readonly string _getBookURI = "bibles/{0}/books/{1}";
         private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=100&sort=relevance";
 
-        public APIBibleProvider(NameFetchingService nameFetchingService)
+        public APIBibleProvider(MetadataFetchingService metadataFetchingService)
         {
             Name = "ab";
 
-            _nameMapping = nameFetchingService.GetAPIBibleMapping();
+            _nameMapping = metadataFetchingService.GetAPIBibleMapping();
 
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, false);
             _cachingHttpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));

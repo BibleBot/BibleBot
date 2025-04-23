@@ -46,6 +46,10 @@ namespace BibleBot.Models
         public string Number { get; set; } // no, really, it's a string
         public string BookId { get; set; }
         public string Reference { get; set; }
+        // there is a `int Position` that can exist depending on where this is coming from
+        // but it can be misleading because some versions have an intro "chapter" at position 0
+        // which is technically incorrect. however, these are sorted properly in the result, so
+        // we don't have to worry about position.
     }
 
     public class ABBibleData

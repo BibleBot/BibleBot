@@ -25,18 +25,18 @@ namespace BibleBot.Backend.Controllers
     [Route("api/commands")]
     [ApiController]
     public class CommandsController(UserService userService, OptOutService optOutService, GuildService guildService, VersionService versionService, ResourceService resourceService,
-                              FrontendStatsService frontendStatsService, LanguageService languageService, NameFetchingService nameFetchingService, SpecialVerseProvider svProvider,
+                              FrontendStatsService frontendStatsService, LanguageService languageService, MetadataFetchingService metadataFetchingService, SpecialVerseProvider svProvider,
                               BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
         private readonly List<CommandGroup> _commandGroups = [
                 new InformationCommandGroup(userService, guildService, versionService, frontendStatsService, localizerFactory),
                 new FormattingCommandGroup(userService, guildService, localizerFactory),
-                new VersionCommandGroup(userService, guildService, versionService, nameFetchingService, localizerFactory),
+                new VersionCommandGroup(userService, guildService, versionService, metadataFetchingService, localizerFactory),
                 new LanguageCommandGroup(userService, guildService, languageService, localizerFactory),
                 new ResourceCommandGroup(resourceService, localizerFactory),
                 new DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider, nltProvider], localizerFactory),
                 new RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider, nltProvider], localizerFactory),
-                new SearchCommandGroup(userService, guildService, versionService, nameFetchingService, [bgProvider, abProvider, nltProvider], localizerFactory),
+                new SearchCommandGroup(userService, guildService, versionService, metadataFetchingService, [bgProvider, abProvider, nltProvider], localizerFactory),
                 new KDStaffCommandGroup()
             ];
 
