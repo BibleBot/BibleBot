@@ -36,12 +36,12 @@ namespace BibleBot.Tests.Backend.Mocks
         }
     }
 
-    public class MockKJVA : Version
+    public class MockKJV : Version
     {
-        public MockKJVA()
+        public MockKJV()
         {
-            Name = "King James Version with Apocrypha (KJVA)";
-            Abbreviation = "KJVA";
+            Name = "King James Version with Apocrypha (KJV)";
+            Abbreviation = "KJV";
             Source = "ab";
             SupportsOldTestament = true;
             SupportsNewTestament = true;

@@ -63,13 +63,13 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         [Test]
         public void ShouldProcessAPIBibleReference()
         {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
                 OK = true,
-                LogStatement = "Genesis 1:1 KJVA",
+                LogStatement = "Genesis 1:1 KJV",
                 DisplayStyle = "embed",
                 Verses =
                 [
@@ -262,13 +262,13 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         [Test]
         public void ShouldProcessAPIBibleSpannedReference()
         {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
                 OK = true,
-                LogStatement = "Genesis 1:1-2 KJVA",
+                LogStatement = "Genesis 1:1-2 KJV",
                 DisplayStyle = "embed",
                 Verses =
                 [
@@ -344,13 +344,13 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         [Test]
         public void ShouldProcessAPIBibleSpannedChapterReference()
         {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
                 OK = true,
-                LogStatement = "Genesis 1:31-2:1 KJVA",
+                LogStatement = "Genesis 1:31-2:1 KJV",
                 DisplayStyle = "embed",
                 Verses =
                 [
@@ -426,13 +426,13 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         [Test]
         public void ShouldProcessAPIBibleExpandedReference()
         {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJVA")).GetAwaiter().GetResult().Result as ObjectResult;
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
                 OK = true,
-                LogStatement = "Matthew 1:24- KJVA",
+                LogStatement = "Matthew 1:24- KJV",
                 DisplayStyle = "embed",
                 Verses =
                 [
