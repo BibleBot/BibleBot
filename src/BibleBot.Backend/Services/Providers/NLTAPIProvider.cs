@@ -226,9 +226,7 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString += ":1";
             }
 
-            bool isISV = reference.Version.Abbreviation == "ISV";
-
-            return new VerseResult { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
+            return new VerseResult { Reference = reference, Title = PurifyText(title), PsalmTitle = PurifyText(psalmTitle), Text = PurifyText(text) };
         }
 
         public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
@@ -265,7 +263,7 @@ namespace BibleBot.Backend.Services.Providers
 
                 if (referenceElement != null && textElement != null)
                 {
-                    string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
+                    string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1));
                     text = text.Replace(query, $"**{query}**");
 
                     results.Add(new SearchResult
@@ -281,7 +279,7 @@ namespace BibleBot.Backend.Services.Providers
 
         [GeneratedRegex(@"\s+")]
         private static partial Regex MultipleWhitespacesGeneratedRegex();
-        private static string PurifyText(string text, bool isISV)
+        private static string PurifyText(string text)
         {
             Dictionary<string, string> nuisances = new()
             {
@@ -322,41 +320,6 @@ namespace BibleBot.Backend.Services.Providers
                 if (text.Contains(pair.Key))
                 {
                     text = text.Replace(pair.Key, pair.Value);
-                }
-            }
-
-            // I hate that I have to do this, but if I don't then ISV output gets fscked up...
-            //
-            // If you'd believe it, the ISV inserts Hebrew verse numbers into Exodus 20:1-17.
-            // That's fine and all, but for some reason the subsequent verse number is placed
-            // into the *preceding* verse. It's not even placed into the .versenum class, they
-            // just append it into the previous verse's text. This is so stupidly hacky that
-            // whoever implemented this needs to relearn HTML.
-            //
-            // The kicker? They use the transliterated name of the Hebrew letters in Psalm
-            // 119 titles...
-            if (isISV)
-            {
-                Dictionary<string, string> hebrewChars = new()
-                {
-                    { "א", "" },
-                    { "ב", "" },
-                    { "ג", "" },
-                    { "ד", "" },
-                    { "ה", "" },
-                    { "ו", "" },
-                    { "ז", "" },
-                    { "ח", "" },
-                    { "ט", "" },
-                    { "י", "" },
-                };
-
-                foreach (KeyValuePair<string, string> pair in hebrewChars)
-                {
-                    if (text.Contains(pair.Key))
-                    {
-                        text = text.Replace(pair.Key, pair.Value);
-                    }
                 }
             }
 

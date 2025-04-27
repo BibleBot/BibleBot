@@ -138,6 +138,24 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
+        public void ShouldFailWhenReferencingNewTestamentInOldTestamentOnlyBible()
+        {
+            _ = _versionService.Get("ELXX") ?? _versionService.Create(new MockELXX());
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1 ELXX")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = false,
+                LogStatement = "Brenton's Septuagint (ELXX) does not support the New Testament.",
+                Culture = "en-US"
+            };
+
+            result.StatusCode.Should().Be(400);
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
         public void ShouldIgnoreMultipleVerseReferencesInIgnoringBrackets()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTFE / Matthew 1:1 NTFE / Acts 1:1 NTFE > ipsum John 1:1 dolor < Genesis 1:1 NTFE > sit")).GetAwaiter().GetResult().Result as ObjectResult;
