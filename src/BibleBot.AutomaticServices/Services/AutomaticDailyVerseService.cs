@@ -152,7 +152,7 @@ namespace BibleBot.AutomaticServices.Services
                             continue;
                         }
 
-                        Verse verse = await provider.GetVerse(votdRef, true, true, idealVersion);
+                        VerseResult verse = await provider.GetVerse(votdRef, true, true, idealVersion);
 
                         // If API.Bible gives us a null result...
                         if (verse == null)

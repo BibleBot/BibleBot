@@ -52,7 +52,7 @@ namespace BibleBot.Backend.Services.Providers
         [GeneratedRegex("[a-zA-Z]{2,3}-([0-9]{1,3})-([0-9]{1,3})")]
         private static partial Regex VerseIdRegex();
 
-        public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
+        public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
             if (reference.Book != "str")
             {
@@ -237,10 +237,10 @@ namespace BibleBot.Backend.Services.Providers
 
             bool isISV = reference.Version.Abbreviation == "ISV";
 
-            return new Verse { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
+            return new VerseResult { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
 
-        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Models.Version version)
         {

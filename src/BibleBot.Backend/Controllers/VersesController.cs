@@ -159,7 +159,7 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            List<Verse> results = [];
+            List<VerseResult> results = [];
 
             if (references.Count > 6)
             {
@@ -190,7 +190,7 @@ namespace BibleBot.Backend.Controllers
                     return false;
                 }) ?? throw new ProviderNotFoundException();
 
-                Verse result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
+                VerseResult result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
                 if (result == null)
                 {

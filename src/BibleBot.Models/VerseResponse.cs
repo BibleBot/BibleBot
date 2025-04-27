@@ -29,7 +29,7 @@ namespace BibleBot.Models
         /// <summary>
         /// The content of the response.
         /// </summary>
-        public List<Verse> Verses { get; set; }
+        public List<VerseResult> Verses { get; set; }
 
         /// <summary>
         /// The display style that the content should be displayed in.

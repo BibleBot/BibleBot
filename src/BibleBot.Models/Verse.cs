@@ -11,7 +11,7 @@ namespace BibleBot.Models
     /// <summary>
     /// The model for verse results.
     /// </summary>
-    public class Verse
+    public class VerseResult
     {
         /// <summary>
         /// The <see cref="Reference"/> that this Verse was made from.
@@ -49,12 +49,12 @@ namespace BibleBot.Models
         /// <returns>true if the specified object is equal to the Verse; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            if (obj is null or not Verse)
+            if (obj is null or not VerseResult)
             {
                 return false;
             }
 
-            Verse verse = obj as Verse;
+            VerseResult verse = obj as VerseResult;
 
             return Reference.Equals(verse.Reference) && Title.Equals(verse.Title) &&
                    PsalmTitle.Equals(verse.PsalmTitle) && Text.Equals(verse.Text);

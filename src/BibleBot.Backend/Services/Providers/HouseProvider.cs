@@ -18,9 +18,9 @@ namespace BibleBot.Backend.Services.Providers
 
         public HouseProvider() => Name = "bb";
 
-        public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled) => null;
+        public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled) => null;
 
-        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Models.Version version) => [];
     }

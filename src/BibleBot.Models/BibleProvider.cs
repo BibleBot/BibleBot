@@ -29,8 +29,8 @@ namespace BibleBot.Models
         /// <param name="reference">The reference whose content we are fetching.</param>
         /// <param name="titlesEnabled">Whether the content should include titles and other headings.</param>
         /// <param name="verseNumbersEnabled">Whether the content should include chapter and verse numbers.</param>
-        /// <returns>If the <see cref="Reference"/> is valid, a <see cref="Verse"/> object populated with content according to the parameters given. If not, null.</returns>
-        Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled);
+        /// <returns>If the <see cref="Reference"/> is valid, a <see cref="VerseResult"/> object populated with content according to the parameters given. If not, null.</returns>
+        Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled);
 
         /// <summary>
         /// This serves as a wrapper for <see cref="GetVerse(Reference, bool, bool)"/>, when we have a verse reference
@@ -48,10 +48,10 @@ namespace BibleBot.Models
         /// <param name="verseNumbersEnabled">Whether the content should include chapter and verse numbers.</param>
         /// <param name="version">The version we should fetch the content from.</param>
         /// <returns>
-        /// If the <see cref="Reference"/> is valid, a <see cref="Verse"/> object populated with
+        /// If the <see cref="Reference"/> is valid, a <see cref="VerseResult"/> object populated with
         /// content according to the parameters given. If not, null.
         /// </returns>
-        Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version);
+        Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version);
 
         /// <summary>
         /// Handles search functionality from the provider, if available.

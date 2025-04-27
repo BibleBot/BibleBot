@@ -56,7 +56,7 @@ namespace BibleBot.Backend.Services.Providers
         [GeneratedRegex("[a-zA-Z]{3} ([0-9]{1,3}):([0-9]{1,3})")]
         private static partial Regex VerseIdRegex();
 
-        public async Task<Verse> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
+        public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
             string defaultBookName = reference.Book;
 
@@ -249,10 +249,10 @@ namespace BibleBot.Backend.Services.Providers
 
             reference.Book = defaultBookName;
 
-            return new Verse { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
+            return new VerseResult { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
         }
 
-        public async Task<Verse> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
