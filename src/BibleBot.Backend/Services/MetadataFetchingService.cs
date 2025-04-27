@@ -17,7 +17,6 @@ using AngleSharp;
 using AngleSharp.Dom;
 using BibleBot.Models;
 using MongoDB.Driver;
-using MongoDB.Driver.Search;
 using RestSharp;
 using Serilog;
 
@@ -125,22 +124,27 @@ namespace BibleBot.Backend.Services
             Log.Information("MetadataFetchingService: Getting API.Bible versions without book data...");
             List<Version> abVersions = [.. (await _mongoService.Get<Version>()).Where(version => version.Source == "ab" && version.Books == null)];
 
-            Log.Information("MetadataFetchingService: Getting API.Bible metadata...");
-            Dictionary<Version, ABBooksResponse> abVersionBooksResponse = await GetAPIBibleVersionBookData(abVersions);
-            Dictionary<string, List<string>> abNames = GetAllAPIBibleNames(abVersionBooksResponse);
+            if (abVersions.Count > 0)
+            {
+                Log.Information("MetadataFetchingService: Getting API.Bible metadata...");
+                Dictionary<Version, ABBooksResponse> abVersionBooksResponse = await GetAPIBibleVersionBookData(abVersions);
 
-            Log.Information("MetadataFetchingService: Saving API.Bible book data into database...");
-            await SaveAPIBibleMetadata(abVersionBooksResponse);
+                Log.Information("MetadataFetchingService: Saving API.Bible book data into database...");
+                await SaveAPIBibleMetadata(abVersionBooksResponse);
+            }
+
+            Log.Information("MetadataFetchingService: Getting book names from API.Bible versions...");
+            Dictionary<string, List<string>> abNames = await GetAllAPIBibleNames();
 
             if (File.Exists($"{_filePrefix}/Data/NameFetching/book_names.json"))
             {
+                Log.Information("MetadataFetchingService: Found old names file, removing...");
                 File.Delete($"{_filePrefix}/Data/NameFetching/book_names.json");
-                Log.Information("MetadataFetchingService: Removed old names file...");
             }
 
             Dictionary<string, List<string>> completedNames = MergeDictionaries([bgNames, abNames, _abbreviations]);
 
-            Log.Information("MetadataFetchingService: Serializing and writing to file...");
+            Log.Information("MetadataFetchingService: Serializing and writing book names to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, _serializerOptions);
             File.WriteAllText($"{_filePrefix}/Data/NameFetching/book_names.json", serializedNames);
 
@@ -436,53 +440,28 @@ namespace BibleBot.Backend.Services
             return versionBookData;
         }
 
-        private Dictionary<string, List<string>> GetAllAPIBibleNames(Dictionary<Version, ABBooksResponse> versionBooksResponse)
+        private async Task<Dictionary<string, List<string>>> GetAllAPIBibleNames()
         {
             Dictionary<string, List<string>> names = [];
 
-            List<string> latterKings = ["3 Kings", "4 Kings"];
-            List<string> workaroundIds = ["DAG", "PS2"];
+            List<Version> abVersions = [.. (await _mongoService.Get<Version>()).Where(version => version.Source == "ab")];
 
-            foreach (KeyValuePair<Version, ABBooksResponse> kvp in versionBooksResponse)
+            foreach (Version version in abVersions)
             {
-                Version version = kvp.Key;
-                ABBooksResponse resp = kvp.Value;
+                Book[] bookData = version.Books;
 
-                foreach (ABBookData book in resp.Data)
+                foreach (Book book in bookData)
                 {
-                    if (book.Name == null || IsNuisance(book.Name))
+                    if (names.ContainsKey(book.Name))
                     {
-                        continue;
-                    }
-
-                    book.Name = book.Name.Trim();
-
-                    if (!_apiBibleNames.ContainsKey(book.Id) && workaroundIds.Contains(book.Id))
-                    {
-                        Log.Warning($"MetadataFetchingService: Id \"{book.Id}\" for '{book.Name}' in {version.Name} ({version.ApiBibleId}) does not exist in apibible_names.json.");
-                        continue;
-                    }
-
-                    string internalId = _apiBibleNames[book.Id];
-
-                    if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || latterKings.Contains(book.Abbreviation))
-                    {
-                        // TODO(srp): So, the first two conditions ultimately avoid parsing
-                        // a default name, but I don't know why the third one exists or
-                        // what it achieves.
-                        continue;
-                    }
-
-                    if (names.ContainsKey(internalId))
-                    {
-                        if (!names[internalId].Contains(book.Name))
+                        if (!names[book.Name].Contains(book.PreferredName))
                         {
-                            names[internalId].Add(book.Name);
+                            names[book.Name].Add(book.PreferredName);
                         }
                     }
                     else
                     {
-                        names.Add(internalId, [book.Name]);
+                        names.Add(book.Name, [book.PreferredName]);
                     }
                 }
             }
@@ -500,13 +479,13 @@ namespace BibleBot.Backend.Services
                 Version version = kvp.Key;
                 ABBooksResponse resp = kvp.Value;
 
-                List<BookData> versionBookData = [];
+                List<Book> versionBookData = [];
 
                 foreach (ABBookData book in resp.Data)
                 {
                     if (!_apiBibleNames.ContainsKey(book.Id) && workaroundIds.Contains(book.Id))
                     {
-                        // we'll already have a warning log from GetAllAPIBibleNames() about this
+                        Log.Warning($"MetadataFetchingService: Id \"{book.Id}\" for '{book.Name}' in {version.Name} ({version.ApiBibleId}) does not exist in apibible_names.json, skipping...");
                         continue;
                     }
 
@@ -552,6 +531,7 @@ namespace BibleBot.Backend.Services
                     {
                         Name = internalId,
                         ProperName = properName,
+                        InternalName = book.Id,
                         PreferredName = book.Name
                     });
                 }
@@ -563,136 +543,91 @@ namespace BibleBot.Backend.Services
 
         public async Task<Dictionary<BookCategories, Dictionary<string, string>>> GetAPIBibleVersionBookList(Version version)
         {
-            // TODO: Use book data from version.
             // TODO: We need to find a cleaner solution for these booknames that isn't nested Dictionaries.
             Dictionary<BookCategories, Dictionary<string, string>> names = [];
 
-            RestRequest req = new($"bibles/{version.ApiBibleId}/books");
-            req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-
-            ABBooksResponse resp = null;
-
-            try
+            foreach (Book book in version.Books)
             {
-                resp = await _restClient.GetAsync<ABBooksResponse>(req);
-            }
-            catch (HttpRequestException ex)
-            {
-                if (ex.StatusCode == HttpStatusCode.Unauthorized)
+                // We use these for renaming the ELXX books.
+                bool isOT = false;
+                bool isDEU = false;
+
+                BookCategories category;
+
+                if (_bookMap["ot"].ContainsKey(book.Name))
                 {
-                    Log.Warning("MetadataFetchingService: Received Unauthorized from API.Bible, skipping...");
-                    return [];
+                    isOT = true;
+                    category = BookCategories.OldTestament;
                 }
-            }
-
-            if (resp != null)
-            {
-                foreach (ABBookData book in resp.Data)
+                else if (_bookMap["nt"].ContainsKey(book.Name))
                 {
-                    // We use these for renaming the ELXX books.
-                    bool isOT = false;
-                    bool isDEU = false;
+                    category = BookCategories.NewTestament;
+                }
+                else if (_bookMap["deu"].ContainsKey(book.Name))
+                {
+                    isDEU = true;
+                    category = BookCategories.Deuterocanon;
+                }
+                else
+                {
+                    Log.Information($"MetadataFetchingService: Book '{book.Name}' in '{version.Name}' does not match any known categories, this should never happen...");
+                    continue;
+                }
 
-                    if (book.Name == null || IsNuisance(book.Name))
+                if (version.Abbreviation is "ELXX" or "LXX")
+                {
+                    if (isOT)
                     {
-                        continue;
-                    }
+                        book.PreferredName = _bookMap["ot"][book.Name];
 
-                    book.Name = book.Name.Trim();
-
-                    if (!_apiBibleNames.ContainsKey(book.Id))
-                    {
-                        continue;
-                    }
-
-                    string internalId = _apiBibleNames[book.Id];
-
-                    BookCategories category;
-
-                    if (_bookMap["ot"].ContainsKey(internalId))
-                    {
-                        isOT = true;
-                        category = BookCategories.OldTestament;
-                    }
-                    else if (_bookMap["nt"].ContainsKey(internalId))
-                    {
-                        category = BookCategories.NewTestament;
-                    }
-                    else if (_bookMap["deu"].ContainsKey(internalId))
-                    {
-                        isDEU = true;
-                        category = BookCategories.Deuterocanon;
-                    }
-                    else
-                    {
-                        if ((version.Abbreviation is "ELXX" or "LXX") && internalId == "DAG")
+                        if (book.PreferredName == "Ezra")
                         {
-                            isOT = true;
-                            category = BookCategories.OldTestament;
-                            internalId = "DAN";
+                            book.PreferredName += "/Nehemiah";
                         }
-                        else
+                        else if (book.PreferredName == "Psalm")
                         {
-                            Log.Warning($"MetadataFetchingService: API.Bible translation \"{book.Id}\" for \"{version.Name}\" not in apibible_names.json.");
-                            continue;
+                            book.PreferredName += "s";
                         }
                     }
-
-                    if (version.Abbreviation is "ELXX" or "LXX")
+                    else if (isDEU)
                     {
-                        if (isOT)
-                        {
-                            book.Name = _bookMap["ot"][internalId];
+                        book.PreferredName = _bookMap["deu"][book.Name];
+                    }
+                }
 
-                            if (book.Name == "Ezra")
+                if (book.Name == "ps")
+                {
+                    RestRequest chaptersReq = new($"bibles/{version.ApiBibleId}/books/{book.InternalName}/chapters");
+                    chaptersReq.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+
+                    ABChaptersResponse chaptersResp = await _restClient.GetAsync<ABChaptersResponse>(chaptersReq);
+
+                    foreach (ABChapter chapter in chaptersResp.Data)
+                    {
+                        if (chapter.Number == "151")
+                        {
+                            try
                             {
-                                book.Name += "/Nehemiah";
+                                names[BookCategories.OldTestament]["ps"] = $"{names[BookCategories.OldTestament]["ps"]} <151>";
                             }
-                            else if (book.Name == "Psalm")
+                            catch (KeyNotFoundException)
                             {
-                                book.Name += "s";
-                            }
-                        }
-                        else if (isDEU)
-                        {
-                            book.Name = _bookMap["deu"][internalId];
-                        }
-                    }
-
-                    if (internalId == "ps")
-                    {
-                        RestRequest chaptersReq = new($"bibles/{version.ApiBibleId}/books/{book.Id}/chapters");
-                        chaptersReq.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-
-                        ABChaptersResponse chaptersResp = await _restClient.GetAsync<ABChaptersResponse>(chaptersReq);
-
-                        foreach (ABChapter chapter in chaptersResp.Data)
-                        {
-                            if (chapter.Number == "151")
-                            {
-                                try
-                                {
-                                    names[BookCategories.OldTestament]["ps"] = $"{names[BookCategories.OldTestament]["ps"]} <151>";
-                                }
-                                catch (KeyNotFoundException)
-                                {
-                                    names[BookCategories.OldTestament].Add(internalId, $"{book.Name} <151>");
-                                }
+                                names[BookCategories.OldTestament].Add(book.Name, $"{book.PreferredName} <151>");
                             }
                         }
                     }
+                }
 
-                    if (!names.ContainsKey(category))
-                    {
-                        names.Add(category, []);
-                    }
+                if (!names.ContainsKey(category))
+                {
+                    names.Add(category, []);
+                }
 
-                    names[category].TryAdd(internalId, book.Name);
+                names[category].TryAdd(book.Name, book.PreferredName);
 
-                    if (internalId == "ezek" && version.Abbreviation == "ELXX")
-                    {
-                        names[category].TryAdd("dan", "Daniel");
-                    }
+                if (book.Name == "ezek" && version.Abbreviation == "ELXX")
+                {
+                    names[category].TryAdd("dan", "Daniel");
                 }
             }
 
@@ -701,9 +636,6 @@ namespace BibleBot.Backend.Services
 
         private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");
 
-        private static Dictionary<string, List<string>> MergeDictionaries(List<Dictionary<string, List<string>>> dicts) => dicts.SelectMany(dict => dict)
-                                                                                                                         .ToLookup(pair => pair.Key, pair => pair.Value)
-                                                                                                                         .ToDictionary(group => group.Key,
-                                                                                                                         group => group.SelectMany(list => list).ToList());
+        private static Dictionary<string, List<string>> MergeDictionaries(List<Dictionary<string, List<string>>> dicts) => dicts.SelectMany(dict => dict).ToLookup(pair => pair.Key, pair => pair.Value).ToDictionary(group => group.Key, group => group.SelectMany(list => list).ToList());
     }
 }
