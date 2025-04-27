@@ -82,13 +82,13 @@ namespace BibleBot.Models
         /// An array of books, which contains an array of chapters along with other metadata.
         /// </summary>
         [BsonElement("Books")]
-        public BookData[] Books { get; set; }
+        public Book[] Books { get; set; }
     }
 
     /// <summary>
     /// A representation of a book data object.
     /// </summary>
-    public class BookData
+    public class Book
     {
         /// <summary>
         /// The data name of the book, like "1tim".
@@ -103,6 +103,12 @@ namespace BibleBot.Models
         public string ProperName { get; set; }
 
         /// <summary>
+        /// The internal data name of the book, according to its source.
+        /// </summary>
+        [BsonElement("InternalName")]
+        public string InternalName { get; set; }
+
+        /// <summary>
         /// The preferred name according to the version's source.
         /// For API.Bible, this corresponds to <see cref="ABBookData.Name"/>.
         /// </summary>
@@ -113,25 +119,25 @@ namespace BibleBot.Models
         /// An array of chapters, which contains an array of verse data.
         /// </summary>
         [BsonElement("Chapters")]
-        public ChapterData[] Chapters { get; set; }
+        public Chapter[] Chapters { get; set; }
     }
 
     /// <summary>
     /// A representation of a chapter data object.
     /// </summary>
-    public class ChapterData
+    public class Chapter
     {
         /// <summary>
         /// An array of verse data.
         /// </summary>
         [BsonElement("Verses")]
-        public VerseData[] Verses { get; set; }
+        public Verse[] Verses { get; set; }
     }
 
     /// <summary>
     /// A representation of a verse data object.
     /// </summary>
-    public class VerseData
+    public class Verse
     {
         /// <summary>
         /// The content of a verse.
