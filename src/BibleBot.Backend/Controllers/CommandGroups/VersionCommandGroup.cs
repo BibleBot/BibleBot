@@ -380,7 +380,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     //     };
                     // }
 
-                    Dictionary<BookCategories, Dictionary<string, string>> names = null;
+                    MDVersionBookList names = null;
 
                     if (idealVersion.Source == "bg")
                     {

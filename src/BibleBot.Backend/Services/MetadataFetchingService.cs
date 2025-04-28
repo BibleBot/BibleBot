@@ -24,11 +24,11 @@ namespace BibleBot.Backend.Services
 {
     public class MetadataFetchingService
     {
-        private Dictionary<string, string> _apiBibleNames;
-        private readonly Dictionary<string, List<string>> _abbreviations;
-        private Dictionary<string, List<string>> _bookNames = [];
+        private MDABBookMap _apiBibleNames;
+        private readonly MDBookNames _abbreviations;
+        private MDBookNames _bookNames = [];
         private List<string> _defaultNames;
-        private readonly Dictionary<string, Dictionary<string, string>> _bookMap;
+        private readonly MDBookMap _bookMap;
         private readonly List<string> _bookMapDataNames;
         private readonly List<string> _nuisances;
         private static readonly JsonSerializerOptions _serializerOptions = new() { PropertyNameCaseInsensitive = false };
@@ -46,10 +46,10 @@ namespace BibleBot.Backend.Services
             }
 
             string apibibleNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/apibible_names.json");
-            _apiBibleNames = JsonSerializer.Deserialize<Dictionary<string, string>>(apibibleNamesText);
+            _apiBibleNames = JsonSerializer.Deserialize<MDABBookMap>(apibibleNamesText);
 
             string abbreviationsText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/abbreviations.json");
-            _abbreviations = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(abbreviationsText);
+            _abbreviations = JsonSerializer.Deserialize<MDBookNames>(abbreviationsText);
 
             string defaultNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/default_names.json");
             _defaultNames = JsonSerializer.Deserialize<List<string>>(defaultNamesText);
@@ -58,7 +58,7 @@ namespace BibleBot.Backend.Services
             _nuisances = JsonSerializer.Deserialize<List<string>>(nuisancesText);
 
             string bookMapText = File.ReadAllText($"{_filePrefix}/Data/book_map.json");
-            _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(bookMapText);
+            _bookMap = JsonSerializer.Deserialize<MDBookMap>(bookMapText);
 
             _bookMapDataNames = [.. _bookMap.Select(b => b.Value).SelectMany(b => b.Keys)];
 
@@ -69,12 +69,12 @@ namespace BibleBot.Backend.Services
             _mongoService = mongoService;
         }
 
-        public Dictionary<string, List<string>> GetBookNames()
+        public MDBookNames GetBookNames()
         {
             if (_bookNames.Count == 0)
             {
                 string bookNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/book_names.json");
-                _bookNames = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(bookNamesText);
+                _bookNames = JsonSerializer.Deserialize<MDBookNames>(bookNamesText);
             }
 
             return _bookNames;
@@ -91,12 +91,12 @@ namespace BibleBot.Backend.Services
             return _defaultNames;
         }
 
-        public Dictionary<string, string> GetAPIBibleMapping()
+        public MDABBookMap GetAPIBibleMapping()
         {
             if (_apiBibleNames.Count == 0)
             {
                 string apiBibleNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/apibible_names.json");
-                _apiBibleNames = JsonSerializer.Deserialize<Dictionary<string, string>>(apiBibleNamesText);
+                _apiBibleNames = JsonSerializer.Deserialize<MDABBookMap>(apiBibleNamesText);
             }
 
             return _apiBibleNames;
@@ -119,7 +119,7 @@ namespace BibleBot.Backend.Services
             Dictionary<string, string> bgVersions = await GetBibleGatewayVersions();
 
             Log.Information("MetadataFetchingService: Getting BibleGateway book names...");
-            Dictionary<string, List<string>> bgNames = await GetBibleGatewayNames(bgVersions);
+            MDBookNames bgNames = await GetBibleGatewayNames(bgVersions);
 
             Log.Information("MetadataFetchingService: Getting API.Bible versions without book data...");
             List<Version> abVersions = [.. (await _mongoService.Get<Version>()).Where(version => version.Source == "ab" && version.Books == null)];
@@ -127,14 +127,14 @@ namespace BibleBot.Backend.Services
             if (abVersions.Count > 0)
             {
                 Log.Information("MetadataFetchingService: Getting API.Bible metadata...");
-                Dictionary<Version, ABBooksResponse> abVersionBooksResponse = await GetAPIBibleVersionBookData(abVersions);
+                MDABVersionBookData abVersionBooksResponse = await GetAPIBibleVersionBookData(abVersions);
 
                 Log.Information("MetadataFetchingService: Saving API.Bible book data into database...");
                 await SaveAPIBibleMetadata(abVersionBooksResponse);
             }
 
             Log.Information("MetadataFetchingService: Getting book names from API.Bible versions...");
-            Dictionary<string, List<string>> abNames = await GetAllAPIBibleNames();
+            MDBookNames abNames = await GetAllAPIBibleNames();
 
             if (File.Exists($"{_filePrefix}/Data/NameFetching/book_names.json"))
             {
@@ -142,7 +142,7 @@ namespace BibleBot.Backend.Services
                 File.Delete($"{_filePrefix}/Data/NameFetching/book_names.json");
             }
 
-            Dictionary<string, List<string>> completedNames = MergeDictionaries([bgNames, abNames, _abbreviations]);
+            MDBookNames completedNames = MergeBookNames([bgNames, abNames, _abbreviations]);
 
             Log.Information("MetadataFetchingService: Serializing and writing book names to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, _serializerOptions);
@@ -175,9 +175,9 @@ namespace BibleBot.Backend.Services
             return versions;
         }
 
-        private async Task<Dictionary<string, List<string>>> GetBibleGatewayNames(Dictionary<string, string> versions)
+        private async Task<MDBookNames> GetBibleGatewayNames(Dictionary<string, string> versions)
         {
-            Dictionary<string, List<string>> names = [];
+            MDBookNames names = [];
 
             List<string> threeMaccVariants = ["3ma", "3macc", "3m"];
             List<string> fourMaccVariants = ["4ma", "4macc", "4m"];
@@ -283,10 +283,9 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        public async Task<Dictionary<BookCategories, Dictionary<string, string>>> GetBibleGatewayVersionBookList(Version version)
+        public async Task<MDVersionBookList> GetBibleGatewayVersionBookList(Version version)
         {
-            // TODO: We need to find a cleaner solution for these booknames that isn't nested Dictionaries.
-            Dictionary<BookCategories, Dictionary<string, string>> names = [];
+            MDVersionBookList names = [];
 
             List<string> threeMaccVariants = ["3ma", "3macc", "3m"];
             List<string> fourMaccVariants = ["4ma", "4macc", "4m"];
@@ -404,9 +403,9 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        private async Task<Dictionary<Version, ABBooksResponse>> GetAPIBibleVersionBookData(List<Version> versions)
+        private async Task<MDABVersionBookData> GetAPIBibleVersionBookData(List<Version> versions)
         {
-            Dictionary<Version, ABBooksResponse> versionBookData = [];
+            MDABVersionBookData versionBookData = [];
 
             foreach (Version version in versions)
             {
@@ -440,9 +439,9 @@ namespace BibleBot.Backend.Services
             return versionBookData;
         }
 
-        private async Task<Dictionary<string, List<string>>> GetAllAPIBibleNames()
+        private async Task<MDBookNames> GetAllAPIBibleNames()
         {
-            Dictionary<string, List<string>> names = [];
+            MDBookNames names = [];
 
             List<Version> abVersions = [.. (await _mongoService.Get<Version>()).Where(version => version.Source == "ab")];
 
@@ -541,10 +540,9 @@ namespace BibleBot.Backend.Services
             }
         }
 
-        public async Task<Dictionary<BookCategories, Dictionary<string, string>>> GetAPIBibleVersionBookList(Version version)
+        public async Task<MDVersionBookList> GetAPIBibleVersionBookList(Version version)
         {
-            // TODO: We need to find a cleaner solution for these booknames that isn't nested Dictionaries.
-            Dictionary<BookCategories, Dictionary<string, string>> names = [];
+            MDVersionBookList names = [];
 
             foreach (Book book in version.Books)
             {
@@ -636,6 +634,6 @@ namespace BibleBot.Backend.Services
 
         private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");
 
-        private static Dictionary<string, List<string>> MergeDictionaries(List<Dictionary<string, List<string>>> dicts) => dicts.SelectMany(dict => dict).ToLookup(pair => pair.Key, pair => pair.Value).ToDictionary(group => group.Key, group => group.SelectMany(list => list).ToList());
+        private static MDBookNames MergeBookNames(List<MDBookNames> bookNames) => bookNames.SelectMany(dict => dict).ToLookup(pair => pair.Key, pair => pair.Value).ToDictionary(group => group.Key, group => group.SelectMany(list => list).ToList()) as MDBookNames;
     }
 }

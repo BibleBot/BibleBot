@@ -25,7 +25,7 @@ namespace BibleBot.Backend.Services.Providers
     {
         public string Name { get; set; }
 
-        private readonly Dictionary<string, string> _nameMapping;
+        private readonly MDABBookMap _nameMapping;
 
         private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;

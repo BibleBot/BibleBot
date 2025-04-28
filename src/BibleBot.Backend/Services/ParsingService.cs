@@ -84,7 +84,7 @@ namespace BibleBot.Backend.Services
             List<System.Tuple<int, int>> appendedVerses = [];
             bool expandoVerseUsed = false;
 
-            Dictionary<string, Dictionary<string, string>> _bookMap = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(File.ReadAllText("./Data/book_map.json"));
+            MDBookMap _bookMap = JsonSerializer.Deserialize<MDBookMap>(File.ReadAllText("./Data/book_map.json"));
 
             string[] tokens = str.Split(" ");
 
