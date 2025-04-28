@@ -57,9 +57,14 @@ namespace BibleBot.Backend.Controllers
         {
             OptOutUser potentialOptOut = await optOutService.Get(req.UserId);
 
-            if (potentialOptOut != null)
+            if (potentialOptOut != null || req.Body is null || req.Body.Length == 0)
             {
-                return null;
+                return BadRequest(new CommandResponse
+                {
+                    OK = false,
+                    Pages = null,
+                    LogStatement = null
+                });
             }
 
             IResponse response;
@@ -67,67 +72,47 @@ namespace BibleBot.Backend.Controllers
 
             if (tokenizedBody.Length > 0)
             {
-                string potentialCommand = tokenizedBody[0];
-                string prefix = "+";
+                string potentialCommand = tokenizedBody[0].Substring(1); // trim the prefix off
 
-                if (potentialCommand.StartsWith(prefix))
+                CommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand, _commandGroups.First(grp => grp.Name == "info"));
+
+                string[] staffIds = [
+                    "186046294286925824", "270590533880119297", "304602975446499329", // directors
+                    "394261640335327234", "1029302033993433130", "842427954263752724" // support specialists
+                ];
+
+                if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))
                 {
-                    CommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand.Substring(1));
-
-                    if (grp != null)
+                    return BadRequest(new CommandResponse
                     {
-                        string[] staffIds = [
-                            "186046294286925824", "270590533880119297", "304602975446499329", // directors
-                            "394261640335327234", "1029302033993433130", "842427954263752724" // support specialists
-                        ];
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify(_localizer["PermissionsErrorTitle"], _localizer["StaffOnlyCommandError"], true)
+                        ],
+                        LogStatement = $"Insufficient permissions on +{grp.Name}.",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    });
+                }
 
-                        if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))
-                        {
-                            return BadRequest(new CommandResponse
-                            {
-                                OK = false,
-                                Pages =
-                                [
-                                    Utils.GetInstance().Embedify(_localizer["PermissionsErrorTitle"], _localizer["StaffOnlyCommandError"], true)
-                                ],
-                                LogStatement = $"Insufficient permissions on +{grp.Name}.",
-                                Culture = CultureInfo.CurrentUICulture.Name
-                            });
-                        }
+                if (tokenizedBody.Length > 1)
+                {
+                    Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
 
-                        // TODO: this logic could be simplified. it wouldn't necessarily optimize anything (nor the opposite),
-                        // but it would look visually cleaner
-                        if (tokenizedBody.Length > 1)
-                        {
-                            Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
-
-                            if (idealCommand != null)
-                            {
-                                response = await idealCommand.ProcessCommand(req, [.. tokenizedBody.Skip(2)]);
-                                return response.OK ? Ok(response) : BadRequest(response);
-                            }
-                            else if (grp.Name is "resource" or "search")
-                            {
-                                response = await grp.DefaultCommand.ProcessCommand(req, [.. tokenizedBody.Skip(1)]);
-                                return response.OK ? Ok(response) : BadRequest(response);
-                            }
-                        }
-
-                        response = await grp.DefaultCommand.ProcessCommand(req, []);
+                    if (idealCommand != null)
+                    {
+                        response = await idealCommand.ProcessCommand(req, [.. tokenizedBody.Skip(2)]);
                         return response.OK ? Ok(response) : BadRequest(response);
                     }
-                    else
+                    else if (grp.Name is "resource" or "search")
                     {
-                        // TODO: this logic could be simplified with above TODO also
-                        Command cmd = _commandGroups.FirstOrDefault(grp => grp.Name == "info").Commands.FirstOrDefault(cmd => cmd.Name == potentialCommand.Substring(1));
-
-                        if (cmd != null)
-                        {
-                            response = await cmd.ProcessCommand(req, []);
-                            return response.OK ? Ok(response) : BadRequest(response);
-                        }
+                        response = await grp.DefaultCommand.ProcessCommand(req, [.. tokenizedBody.Skip(1)]);
+                        return response.OK ? Ok(response) : BadRequest(response);
                     }
                 }
+
+                response = await grp.DefaultCommand.ProcessCommand(req, []);
+                return response.OK ? Ok(response) : BadRequest(response);
             }
 
             return BadRequest(new CommandResponse

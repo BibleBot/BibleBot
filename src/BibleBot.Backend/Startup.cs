@@ -89,7 +89,7 @@ namespace BibleBot.Backend
             services.AddControllers();
 
             // Run the MetadataFetchingService on startup without async.
-            metadataFetchingService.FetchMetadata(Configuration.GetSection("BibleBotBackend").GetValue<bool>("NameFetchDryRun")).GetAwaiter().GetResult();
+            metadataFetchingService.FetchMetadata(Configuration.GetSection("BibleBotBackend").GetValue<bool>("MetadataFetchDryRun")).GetAwaiter().GetResult();
 
             services.AddSwaggerGen(c =>
             {

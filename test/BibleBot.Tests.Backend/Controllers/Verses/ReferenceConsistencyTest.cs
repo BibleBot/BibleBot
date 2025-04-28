@@ -5,7 +5,6 @@
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System.Threading.Tasks;
-using BibleBot.Backend;
 using BibleBot.Models;
 using BibleBot.Tests.Backend.Mocks;
 using FluentAssertions;

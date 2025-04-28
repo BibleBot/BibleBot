@@ -6,7 +6,6 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -43,13 +42,6 @@ namespace BibleBot.Models
         /// </summary>
         [BsonElement("Version")]
         public string Version { get; set; } = "RSV";
-
-        /// <summary>
-        /// The default command prefix of the guild.
-        /// </summary>
-        [BsonElement("Prefix")]
-        [Obsolete("Slash commands has made this obsolete. Prefixes have no remaining relevance.")]
-        public string Prefix { get; set; } = "+";
 
         /// <summary>
         /// The default display style for verses sent in the guild.
