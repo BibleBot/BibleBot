@@ -20,7 +20,7 @@ using Microsoft.Extensions.Localization;
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
     public class RandomVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                         SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
+                                         SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(RandomVerseCommandGroup));
         private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
@@ -36,7 +36,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         }
 
         public class RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                           SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+                           SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -76,7 +76,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 string randomRef = await svProvider.GetRandomVerse();
-                IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
+                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
 
                 return new VerseResponse
                 {
@@ -94,7 +94,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         }
 
         public class TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+                                SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "true"; set => throw new NotImplementedException(); }
 
@@ -133,7 +133,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 string trulyRandomRef = await svProvider.GetTrulyRandomVerse();
-                IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
+                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
 
                 return new VerseResponse
                 {

@@ -19,12 +19,16 @@ using BibleBot.Models;
 using MongoDB.Driver;
 using RestSharp;
 using Serilog;
+using MDABVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse>;
+using MDBookMap = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>;
+using MDBookNames = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>;
+using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
 
 namespace BibleBot.Backend.Services
 {
     public class MetadataFetchingService
     {
-        private MDABBookMap _apiBibleNames;
+        private Dictionary<string, string> _apiBibleNames;
         private readonly MDBookNames _abbreviations;
         private MDBookNames _bookNames = [];
         private List<string> _defaultNames;
@@ -46,7 +50,7 @@ namespace BibleBot.Backend.Services
             }
 
             string apibibleNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/apibible_names.json");
-            _apiBibleNames = JsonSerializer.Deserialize<MDABBookMap>(apibibleNamesText);
+            _apiBibleNames = JsonSerializer.Deserialize<Dictionary<string, string>>(apibibleNamesText);
 
             string abbreviationsText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/abbreviations.json");
             _abbreviations = JsonSerializer.Deserialize<MDBookNames>(abbreviationsText);
@@ -91,12 +95,12 @@ namespace BibleBot.Backend.Services
             return _defaultNames;
         }
 
-        public MDABBookMap GetAPIBibleMapping()
+        public Dictionary<string, string> GetAPIBibleMapping()
         {
             if (_apiBibleNames.Count == 0)
             {
                 string apiBibleNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/apibible_names.json");
-                _apiBibleNames = JsonSerializer.Deserialize<MDABBookMap>(apiBibleNamesText);
+                _apiBibleNames = JsonSerializer.Deserialize<Dictionary<string, string>>(apiBibleNamesText);
             }
 
             return _apiBibleNames;
@@ -557,7 +561,7 @@ namespace BibleBot.Backend.Services
             }
         }
 
-        public async Task<MDVersionBookList> GetAPIBibleVersionBookList(Version version)
+        public MDVersionBookList GetAPIBibleVersionBookList(Version version)
         {
             MDVersionBookList names = [];
 
@@ -612,23 +616,15 @@ namespace BibleBot.Backend.Services
 
                 if (book.Name == "ps")
                 {
-                    RestRequest chaptersReq = new($"bibles/{version.ApiBibleId}/books/{book.InternalName}/chapters");
-                    chaptersReq.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-
-                    ABChaptersResponse chaptersResp = await _restClient.GetAsync<ABChaptersResponse>(chaptersReq);
-
-                    foreach (ABChapter chapter in chaptersResp.Data)
+                    if (book.Chapters.Any(chapter => chapter.Number == 151))
                     {
-                        if (chapter.Number == "151")
+                        try
                         {
-                            try
-                            {
-                                names[BookCategories.OldTestament]["ps"] = $"{names[BookCategories.OldTestament]["ps"]} <151>";
-                            }
-                            catch (KeyNotFoundException)
-                            {
-                                names[BookCategories.OldTestament].Add(book.Name, $"{book.PreferredName} <151>");
-                            }
+                            names[BookCategories.OldTestament]["ps"] = $"{names[BookCategories.OldTestament]["ps"]} <151>";
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            names[BookCategories.OldTestament].Add(book.Name, $"{book.PreferredName} <151>");
                         }
                     }
                 }
@@ -651,6 +647,6 @@ namespace BibleBot.Backend.Services
 
         private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");
 
-        private static MDBookNames MergeBookNames(List<MDBookNames> bookNames) => bookNames.SelectMany(dict => dict).ToLookup(pair => pair.Key, pair => pair.Value).ToDictionary(group => group.Key, group => group.SelectMany(list => list).ToList()) as MDBookNames;
+        private static MDBookNames MergeBookNames(List<MDBookNames> bookNames) => bookNames.SelectMany(dict => dict).ToLookup(pair => pair.Key, pair => pair.Value).ToDictionary(group => group.Key, group => group.SelectMany(list => list).ToList());
     }
 }

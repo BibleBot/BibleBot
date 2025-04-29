@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,37 +20,32 @@ using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using BibleBot.Models;
 
-namespace BibleBot.Backend.Services.Providers
+namespace BibleBot.Backend.Services.Providers.Content
 {
-    public partial class BibleGatewayProvider : IBibleProvider, IDisposable
+    public partial class NLTAPIProvider : IContentProvider, IDisposable
     {
         public string Name { get; set; }
-        private readonly VersionService _versionService;
         private CancellationTokenSource _cancellationToken;
         private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
-        private readonly string _baseURL = "https://www.biblegateway.com/";
-        private readonly string _getURI = "passage/?search={0}&version={1}&interface=print";
-        private readonly string _searchURI = "quicksearch/?quicksearch={0}&qs_version={1}&resultspp=5000&interface=print";
+        private readonly string _baseURL = "https://api.nlt.to/api/";
+        private readonly string _getURI = "passages?ref={0}&key={1}&version=NLT";
+        private readonly string _searchURI = "search?text={0}&key={1}&version=NLT";
 
-        public BibleGatewayProvider(VersionService versionService)
+        public NLTAPIProvider()
         {
-            Name = "bg";
-            _versionService = versionService;
+            Name = "nlt";
 
             _cancellationToken = new CancellationTokenSource();
 
-            _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
-            _cachingHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
-
+            _cachingHttpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
             _httpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
-            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
 
             _htmlParser = new HtmlParser();
         }
 
-        [GeneratedRegex("[a-zA-Z]{2,3}-([0-9]{1,3})-([0-9]{1,3})")]
+        [GeneratedRegex("[a-zA-Z0-9]{4}_([0-9]{1,3})_([0-9]{1,3})")]
         private static partial Regex VerseIdRegex();
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
@@ -59,12 +55,7 @@ namespace BibleBot.Backend.Services.Providers
                 reference.AsString = reference.ToString();
             }
 
-            if (reference.Version.Abbreviation == "NRSV")
-            {
-                reference.Version = await _versionService.Get("NRSVA");
-            }
-
-            string url = string.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
+            string url = string.Format(_getURI, reference.AsString, Environment.GetEnvironmentVariable("NLTAPI_TOKEN"));
 
             HttpResponseMessage req = await _cachingHttpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
@@ -85,11 +76,11 @@ namespace BibleBot.Backend.Services.Providers
                 return null;
             }
 
-            foreach (IElement el in document.QuerySelectorAll(".chapternum"))
+            foreach (IElement el in document.QuerySelectorAll(".chapter-number"))
             {
                 if (verseNumbersEnabled)
                 {
-                    string chapterNum = el.TextContent.Substring(0, el.TextContent.Length - 1);
+                    string chapterNum = el.QuerySelector(".cw_ch").TextContent;
 
                     el.TextContent = chapterNum != "1" && chapterNum != $"{reference.StartingChapter}" ? $" <**{chapterNum}:1**> " : " <**1**> ";
 
@@ -100,25 +91,30 @@ namespace BibleBot.Backend.Services.Providers
                 }
             }
 
-            foreach (IElement el in document.QuerySelectorAll(".versenum"))
+            foreach (IElement el in document.QuerySelectorAll(".vn"))
             {
                 if (verseNumbersEnabled)
                 {
-                    IElement previousElement = el.PreviousElementSibling;
+                    IElement previousElement = el.ParentElement.PreviousElementSibling;
 
                     if (previousElement != null)
                     {
-                        if (previousElement.ClassList.Contains("chapternum"))
+                        if (previousElement.ClassList.Contains("subhead"))
+                        {
+                            previousElement = previousElement.PreviousElementSibling;
+                        }
+
+                        if (previousElement.ClassList.Contains("chapter-number"))
                         {
                             // Prevent number duplication for verse 1s.
-                            el.Remove();
+                            previousElement.Remove();
                         }
                     }
 
-                    if (el.TextContent.Substring(0, el.TextContent.Length - 1) == "1")
+                    if (el.TextContent == "1")
                     {
-                        IElement parentElement = el.ParentElement;
-                        string verseId = parentElement?.ClassList.FirstOrDefault(tok => tok != "text" && VerseIdRegex().Match(tok).Success);
+                        IElement parentElement = el.ParentElement.ParentElement;
+                        string verseId = parentElement.GetAttribute("orig");
 
                         if (verseId != null)
                         {
@@ -143,17 +139,17 @@ namespace BibleBot.Backend.Services.Providers
                             }
                             else
                             {
-                                el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
+                                el.TextContent = $" <**{el.TextContent}**> ";
                             }
                         }
                         else
                         {
-                            el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
+                            el.TextContent = $" <**{el.TextContent}**> ";
                         }
                     }
                     else
                     {
-                        el.TextContent = $" <**{el.TextContent.Substring(0, el.TextContent.Length - 1)}**> ";
+                        el.TextContent = $" <**{el.TextContent}**> ";
                     }
                 }
                 else
@@ -168,16 +164,21 @@ namespace BibleBot.Backend.Services.Providers
                 el.Remove();
             }
 
-            foreach (IElement el in document.QuerySelectorAll(
-                ".crossreference, .footnote, .footnotes, .copyright-table, .translation-note, .inline-h3, .psalm-acrostic, .psalm-acrostic-title, .psalm-book, h2"))
+            foreach (IElement el in document.QuerySelectorAll(".a-tn, .tn, .tn-ref"))
             {
                 el.Remove();
             }
 
-            // In the event that the line-break replacements above don't account for everything...
-            foreach (IElement el in document.QuerySelectorAll(".text"))
+            foreach (IElement el in document.GetElementsByClassName("bk_ch_vs_header"))
             {
-                el.TextContent = $" {el.TextContent} ";
+                if (el.ParentElement.TagName == "VERSE_EXPORT")
+                {
+                    IElement nextSection = el.ParentElement.ParentElement.NextElementSibling;
+
+                    nextSection.InsertBefore(el.Clone());
+
+                    el.Remove();
+                }
             }
 
             string title = "";
@@ -188,31 +189,29 @@ namespace BibleBot.Backend.Services.Providers
                 psalmTitle = string.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
             }
 
-            IEnumerable<IElement> headingElements = new[] {
-                document.GetElementsByTagName("h3"), document.GetElementsByTagName("h4"),
-                document.GetElementsByTagName("h5"), document.GetElementsByTagName("h6")
-            }.SelectMany(x => x);
-
-            foreach (IElement el in headingElements)
+            foreach (IElement el in document.GetElementsByTagName("h3"))
             {
                 el.Remove();
             }
 
-            foreach (IElement el in document.GetElementsByClassName("psalm-title"))
+            StringBuilder textBuilder = new();
+            foreach (string textPiece in document.GetElementsByTagName("VERSE_EXPORT").Select(el => el.TextContent.Trim()))
             {
-                el.Remove();
+                if (!textBuilder.ToString().Contains(textPiece))
+                {
+                    textBuilder.AppendLine(textPiece);
+                }
             }
+            string text = textBuilder.ToString().Trim();
 
-            string text = string.Join("\n", document.GetElementsByClassName("text").Select(el => el.TextContent.Trim()));
-
-            // As the verse reference could have a non-English name...
-            reference.AsString = document.GetElementsByClassName("dropdown-display-text").FirstOrDefault().TextContent.Trim();
+            string refString = document.GetElementsByClassName("bk_ch_vs_header").FirstOrDefault().TextContent;
+            reference.AsString = refString.Substring(0, refString.Length - 5);
 
             if (reference.AppendedVerses.Count > 0)
             {
-                foreach (IElement referenceEl in document.GetElementsByClassName("dropdown-display-text").Skip(1))
+                foreach (IElement referenceEl in document.GetElementsByClassName("bk_ch_vs_header").Skip(1))
                 {
-                    string referenceTrimmed = referenceEl.TextContent.Trim();
+                    string referenceTrimmed = referenceEl.TextContent.Substring(0, referenceEl.TextContent.Length - 5);
 
                     if (referenceTrimmed.Contains(':') && referenceTrimmed.Contains(reference.AsString.Split(" ")[0]))
                     {
@@ -222,22 +221,12 @@ namespace BibleBot.Backend.Services.Providers
                     }
                 }
             }
-
-            // If a verse is like Book 1:2-3:2, the reference we're given back is Book 1:2-3 despite the text being accurate.
-            // Whatever generates the reference at BibleGateway seems to think the verses are redundant, but we need it to be proper, thus workaround.
-            if (reference.StartingChapter != reference.EndingChapter && reference.StartingVerse == reference.EndingVerse)
+            else if (reference.StartingChapter != reference.EndingChapter && reference.EndingVerse == 1)
             {
-                string spanToken = reference.AsString.Split(" ").FirstOrDefault(tok => tok.Contains(':'));
-
-                if (spanToken == $"{reference.StartingChapter}:{reference.StartingVerse}-{reference.EndingChapter}")
-                {
-                    reference.AsString += $":{reference.EndingVerse}";
-                }
+                reference.AsString += ":1";
             }
 
-            bool isISV = reference.Version.Abbreviation == "ISV";
-
-            return new VerseResult { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
+            return new VerseResult { Reference = reference, Title = PurifyText(title), PsalmTitle = PurifyText(psalmTitle), Text = PurifyText(text) };
         }
 
         public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
@@ -274,7 +263,7 @@ namespace BibleBot.Backend.Services.Providers
 
                 if (referenceElement != null && textElement != null)
                 {
-                    string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
+                    string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1));
                     text = text.Replace(query, $"**{query}**");
 
                     results.Add(new SearchResult
@@ -290,7 +279,7 @@ namespace BibleBot.Backend.Services.Providers
 
         [GeneratedRegex(@"\s+")]
         private static partial Regex MultipleWhitespacesGeneratedRegex();
-        private static string PurifyText(string text, bool isISV)
+        private static string PurifyText(string text)
         {
             Dictionary<string, string> nuisances = new()
             {
@@ -331,41 +320,6 @@ namespace BibleBot.Backend.Services.Providers
                 if (text.Contains(pair.Key))
                 {
                     text = text.Replace(pair.Key, pair.Value);
-                }
-            }
-
-            // I hate that I have to do this, but if I don't then ISV output gets fscked up...
-            //
-            // If you'd believe it, the ISV inserts Hebrew verse numbers into Exodus 20:1-17.
-            // That's fine and all, but for some reason the subsequent verse number is placed
-            // into the *preceding* verse. It's not even placed into the .versenum class, they
-            // just append it into the previous verse's text. This is so stupidly hacky that
-            // whoever implemented this needs to relearn HTML.
-            //
-            // The kicker? They use the transliterated name of the Hebrew letters in Psalm
-            // 119 titles...
-            if (isISV)
-            {
-                Dictionary<string, string> hebrewChars = new()
-                {
-                    { "א", "" },
-                    { "ב", "" },
-                    { "ג", "" },
-                    { "ד", "" },
-                    { "ה", "" },
-                    { "ו", "" },
-                    { "ז", "" },
-                    { "ח", "" },
-                    { "ט", "" },
-                    { "י", "" },
-                };
-
-                foreach (KeyValuePair<string, string> pair in hebrewChars)
-                {
-                    if (text.Contains(pair.Key))
-                    {
-                        text = text.Replace(pair.Key, pair.Value);
-                    }
                 }
             }
 

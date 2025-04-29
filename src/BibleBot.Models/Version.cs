@@ -40,7 +40,7 @@ namespace BibleBot.Models
         public string Abbreviation { get; set; }
 
         /// <summary>
-        /// The source of the version, correlating to a <see cref="IBibleProvider.Name"/>.
+        /// The source of the version, correlating to a <see cref="IContentProvider.Name"/>.
         /// </summary>
         [BsonElement("Source")]
         public string Source { get; set; }

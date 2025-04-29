@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Models;
 
-namespace BibleBot.Backend.Services.Providers
+namespace BibleBot.Backend.Services.Providers.Content
 {
-    public partial class HouseProvider : IBibleProvider
+    public partial class HouseProvider : IContentProvider
     {
         public string Name { get; set; }
 

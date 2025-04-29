@@ -20,7 +20,7 @@ using Serilog;
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
     public class SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                    MetadataFetchingService metadataFetchingService, List<IBibleProvider> bibleProviders,
+                                    MetadataFetchingService metadataFetchingService, List<IContentProvider> bibleProviders,
                                     IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(SearchCommandGroup));
@@ -39,7 +39,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         }
 
         public class Search(UserService userService, GuildService guildService, VersionService versionService,
-                            MetadataFetchingService metadataFetchingService, List<IBibleProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+                            MetadataFetchingService metadataFetchingService, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -104,7 +104,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 string query = string.Join(" ", args);
 
-                IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
+                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
                 List<SearchResult> searchResults = await provider.Search(query, idealVersion);
 
 

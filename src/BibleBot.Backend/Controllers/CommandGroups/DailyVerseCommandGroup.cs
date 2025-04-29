@@ -22,7 +22,7 @@ using NodaTime;
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
     public class DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                        SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
+                                        SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(DailyVerseCommandGroup));
         private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
@@ -41,7 +41,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         }
 
         public class DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                               SpecialVerseProvider svProvider, List<IBibleProvider> bibleProviders, IStringLocalizer sharedLocalizer) : Command
+                               SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -67,7 +67,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 string votdRef = await svProvider.GetDailyVerse();
-                IBibleProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
+                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
 
                 return new VerseResponse
                 {

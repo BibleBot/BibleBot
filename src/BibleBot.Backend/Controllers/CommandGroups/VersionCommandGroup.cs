@@ -17,6 +17,7 @@ using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
+using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
@@ -388,7 +389,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     }
                     else if (idealVersion.Source == "ab")
                     {
-                        names = await metadataFetchingService.GetAPIBibleVersionBookList(idealVersion);
+                        names = metadataFetchingService.GetAPIBibleVersionBookList(idealVersion);
                     }
 
                     if (names != null)

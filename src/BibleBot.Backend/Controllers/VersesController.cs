@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
+using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,7 @@ namespace BibleBot.Backend.Controllers
                                           VersionService versionService, LanguageService languageService, MetadataFetchingService metadataFetchingService,
                                           BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, OptOutService optOutService, IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
     {
-        private readonly List<IBibleProvider> _bibleProviders = [bgProvider, abProvider, nltProvider];
+        private readonly List<IContentProvider> _bibleProviders = [bgProvider, abProvider, nltProvider];
         private readonly IStringLocalizer _localizer = localizer;
         private readonly IStringLocalizer _sharedLocalizer = sharedLocalizer;
 
@@ -177,7 +177,7 @@ namespace BibleBot.Backend.Controllers
 
             foreach (Reference reference in references)
             {
-                IBibleProvider provider = _bibleProviders.FirstOrDefault(pv =>
+                IContentProvider provider = _bibleProviders.FirstOrDefault(pv =>
                 {
                     if (reference != null)
                     {

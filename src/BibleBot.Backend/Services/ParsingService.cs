@@ -12,12 +12,14 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using BibleBot.Models;
+using MDBookMap = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>;
+using MDBookNames = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>;
 
 namespace BibleBot.Backend.Services
 {
     public partial class ParsingService
     {
-        public System.Tuple<string, List<BookSearchResult>> GetBooksInString(Dictionary<string, List<string>> bookNames, List<string> defaultNames, string str)
+        public System.Tuple<string, List<BookSearchResult>> GetBooksInString(MDBookNames bookNames, List<string> defaultNames, string str)
         {
             List<BookSearchResult> results = [];
 

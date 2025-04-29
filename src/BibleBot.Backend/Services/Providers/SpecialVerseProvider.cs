@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,9 +14,8 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using AngleSharp.Html.Parser;
 using AngleSharp.Html.Dom;
-using System;
+using AngleSharp.Html.Parser;
 
 namespace BibleBot.Backend.Services.Providers
 {

@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using BibleBot.Backend;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
@@ -36,7 +37,7 @@ namespace BibleBot.AutomaticServices.Services
         private readonly LanguageService _languageService;
 
         private readonly SpecialVerseProvider _spProvider;
-        private readonly List<IBibleProvider> _bibleProviders;
+        private readonly List<IContentProvider> _bibleProviders;
 
         private readonly IStringLocalizer<AutomaticDailyVerseService> _localizer;
 
@@ -145,7 +146,7 @@ namespace BibleBot.AutomaticServices.Services
                     else
                     {
                         string votdRef = await _spProvider.GetDailyVerse();
-                        IBibleProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
+                        IContentProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
 
                         if (provider == null)
                         {

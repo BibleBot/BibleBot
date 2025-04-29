@@ -11,6 +11,7 @@ using BibleBot.Backend.Controllers;
 using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
+using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using BibleBot.Tests.Backend.Mocks;
 using Microsoft.Extensions.Localization;
