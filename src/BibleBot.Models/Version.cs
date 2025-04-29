@@ -128,6 +128,12 @@ namespace BibleBot.Models
     public class Chapter
     {
         /// <summary>
+        /// The chapter number. This field exists primarily to aid LINQ queries, as this is ordinarily part of a sorted list.
+        /// </summary>
+        [BsonElement("Number")]
+        public int Number { get; set; }
+
+        /// <summary>
         /// An array of verse data.
         /// </summary>
         [BsonElement("Verses")]
@@ -139,6 +145,12 @@ namespace BibleBot.Models
     /// </summary>
     public class Verse
     {
+        /// <summary>
+        /// The verse number. This field exists primarily to aid LINQ queries, as this is ordinarily part of a sorted list.
+        /// </summary>
+        [BsonElement("Number")]
+        public int Number { get; set; }
+
         /// <summary>
         /// The content of a verse.
         /// </summary>

@@ -126,11 +126,11 @@ namespace BibleBot.Backend.Services
 
             if (abVersions.Count > 0)
             {
-                Log.Information("MetadataFetchingService: Getting API.Bible metadata...");
-                MDABVersionBookData abVersionBooksResponse = await GetAPIBibleVersionBookData(abVersions);
+                Log.Information("MetadataFetchingService: Getting API.Bible version metadata...");
+                MDABVersionData abVersionData = await GetAPIBibleVersionData(abVersions);
 
-                Log.Information("MetadataFetchingService: Saving API.Bible book data into database...");
-                await SaveAPIBibleMetadata(abVersionBooksResponse);
+                Log.Information("MetadataFetchingService: Saving API.Bible version metadata into database...");
+                await SaveAPIBibleMetadata(abVersionData);
             }
 
             Log.Information("MetadataFetchingService: Getting book names from API.Bible versions...");
@@ -403,13 +403,13 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        private async Task<MDABVersionBookData> GetAPIBibleVersionBookData(List<Version> versions)
+        private async Task<MDABVersionData> GetAPIBibleVersionData(List<Version> versions)
         {
-            MDABVersionBookData versionBookData = [];
+            MDABVersionData versionData = [];
 
             foreach (Version version in versions)
             {
-                RestRequest req = new($"bibles/{version.ApiBibleId}/books");
+                RestRequest req = new($"bibles/{version.ApiBibleId}/books?include-chapters=true");
                 req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
                 ABBooksResponse resp = null;
@@ -432,11 +432,11 @@ namespace BibleBot.Backend.Services
 
                 if (resp != null)
                 {
-                    versionBookData.Add(version, resp);
+                    versionData.Add(version, resp);
                 }
             }
 
-            return versionBookData;
+            return versionData;
         }
 
         private async Task<MDBookNames> GetAllAPIBibleNames()
@@ -468,12 +468,12 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        private async Task SaveAPIBibleMetadata(Dictionary<Version, ABBooksResponse> versionBooksResponse)
+        private async Task SaveAPIBibleMetadata(MDABVersionData versionData)
         {
             List<string> latterKings = ["3 Kings", "4 Kings"];
             List<string> workaroundIds = ["DAG", "PS2"];
 
-            foreach (KeyValuePair<Version, ABBooksResponse> kvp in versionBooksResponse)
+            foreach (KeyValuePair<Version, ABBooksResponse> kvp in versionData)
             {
                 Version version = kvp.Key;
                 ABBooksResponse resp = kvp.Value;
@@ -524,6 +524,23 @@ namespace BibleBot.Backend.Services
                         // a default name, but I don't know why the third one exists or
                         // what it achieves.
                         continue;
+                    }
+
+                    List<Chapter> chapters = [];
+
+                    foreach (ABChapter chapter in book.Chapters)
+                    {
+                        if (int.TryParse(chapter.Number, out int parsedNumber))
+                        {
+                            chapters.Add(new()
+                            {
+                                Number = parsedNumber
+                            });
+                        }
+                        else
+                        {
+                            Log.Warning($"MetadataFetchingService: Ignoring chapter '{chapter.Id}' in '{version.Name}' with non-numeric chapter value.");
+                        }
                     }
 
                     versionBookData.Add(new()

@@ -14,6 +14,7 @@ namespace BibleBot.Models
     /// <summary>
     /// The model for guild preferences.
     /// </summary>
+    [BsonIgnoreExtraElements]
     public class Guild : IPreference
     {
         /// <summary>

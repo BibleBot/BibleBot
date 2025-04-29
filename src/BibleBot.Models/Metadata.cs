@@ -7,12 +7,14 @@
 */
 
 using System.Collections.Generic;
-using BibleBot.Models;
 
+namespace BibleBot.Models
+{
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class MDBookMap : Dictionary<string, Dictionary<string, string>>;
-public class MDBookNames : Dictionary<string, List<string>>;
-public class MDABBookMap : Dictionary<string, string>;
-public class MDABVersionBookData : Dictionary<Version, ABBooksResponse>;
-public class MDVersionBookList : Dictionary<BookCategories, Dictionary<string, string>>;
+    public class MDBookMap : Dictionary<string, Dictionary<string, string>>;
+    public class MDBookNames : Dictionary<string, List<string>>;
+    public class MDABBookMap : Dictionary<string, string>;
+    public class MDABVersionData : Dictionary<Version, ABBooksResponse>;
+    public class MDVersionBookList : Dictionary<BookCategories, Dictionary<string, string>>;
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+}
