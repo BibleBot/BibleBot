@@ -46,7 +46,7 @@ namespace BibleBot.Tests.Backend.Mocks
             SupportsOldTestament = true;
             SupportsNewTestament = true;
             SupportsDeuterocanon = true;
-            ApiBibleId = "de4e12af7f28f599-01";
+            InternalId = "de4e12af7f28f599-01";
         }
     }
 
@@ -60,7 +60,7 @@ namespace BibleBot.Tests.Backend.Mocks
             SupportsOldTestament = true;
             SupportsNewTestament = false;
             SupportsDeuterocanon = true;
-            ApiBibleId = "c114c33098c4fef1-01";
+            InternalId = "c114c33098c4fef1-01";
         }
     }
 
@@ -74,7 +74,7 @@ namespace BibleBot.Tests.Backend.Mocks
             SupportsOldTestament = true;
             SupportsNewTestament = false;
             SupportsDeuterocanon = true;
-            ApiBibleId = "65bfdebd704a8324-01";
+            InternalId = "65bfdebd704a8324-01";
         }
     }
 
@@ -88,7 +88,7 @@ namespace BibleBot.Tests.Backend.Mocks
             SupportsOldTestament = false;
             SupportsNewTestament = true;
             SupportsDeuterocanon = false;
-            ApiBibleId = "901dcd9744e1bf69-01";
+            InternalId = "901dcd9744e1bf69-01";
         }
     }
 
@@ -115,7 +115,7 @@ namespace BibleBot.Tests.Backend.Mocks
             SupportsOldTestament = true;
             SupportsNewTestament = true;
             SupportsDeuterocanon = false;
-            ApiBibleId = "78a9f6124f344018-01";
+            InternalId = "78a9f6124f344018-01";
         }
     }
 
