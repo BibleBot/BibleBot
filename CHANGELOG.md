@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [10.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v9.5.0..v10.0.0) - 2025-05-03
+
+### 🚀 Features
+
+- Log when at various points of automatic daily verse sending ([5071c32](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5071c323d53b88b17d27c16ed710253e0ff08f41))
+- Store book names for API.Bible versions ([f3e412b](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/f3e412b736cc39b1c2a492a7963671d5365fde3f))
+- Store the source's internal name for a book in version data, rename some variables ([4eb3f32](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/4eb3f3290191383036045d15c01cab49f9f14443))
+- Use stored API.Bible book names where applicable ([e2413ca](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/e2413ca031442a50c18fbc1b75df7e6fe523b319))
+- Pre-pad chapters in books in API.Bible versions ([e1ffe38](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/e1ffe38e2ea89c76dff2eebfd29957772fe52283))
+- [**breaking**] Rename Version.ApiBibleId to Version.InternalId, add an Active flag to versions to be used later, import BG metadata on first run instead of always fetching on boot ([d8a75c6](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/d8a75c6bae0e62ca551f8984b97a0f7772ff889b))
+
+### 🐛 Bug Fixes
+
+- Use GitInfo data for version number reporting ([67db5d4](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/67db5d42673ca93020880ebee83b1d38f35b9684))
+- Remove the stupid semicolon from the version number ([c6e0eac](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c6e0eac26ec8ae938057c07fe117cb4202207604))
+- Use GitInfo version in backend ([3f1d0ea](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/3f1d0ea5c5224a25523eae0eb5288147eaae4d03))
+- Add fallback for missing GitInfo ([1b3198e](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1b3198e933a5ccca166e83118ab75a05e6ed51f2))
+- Reference inconsistencies on verse output ([a760594](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/a760594402b0ea72f3d0375982a3e90d9f275a45))
+- *(frontend)* Parse newlines from backend properly ([06412d1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/06412d18193a7440b9f98831e762091332898f19))
+- *(frontend)* Make /booklist acronym parameter optional ([cd33f03](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/cd33f037d779d744fc5f0364df9a01d4f0a89524))
+- *(bg)* Check for null before trying to fix verse number ([71f4e80](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/71f4e809de5361de98f6ac254d78a3c1e627a482))
+- [**breaking**] Rename Models.Verse to Models.VerseResult to avoid conflicts ([6c09895](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/6c09895a09a2420029605ed5d86ef12369864bcc))
+
+### 🚜 Refactor
+
+- Remove redundant Linux check for watchdog ([8be7ce9](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8be7ce9056d23a6556d3871434c2b20f38fbfd03))
+- Begin reorganizing commands to reflect frontend structure ([7d6a265](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/7d6a265b4943e4ccd7507fbdfe3fd5980d4eb9ca))
+- Remove isISV check for NLT provider's PurifyText(), add test for NT book in OT-only version ([e153024](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/e153024e8e7f8a0d50ba35e2c481ba9b3ee507c4))
+- Remove unused configuration variables, clean up command controller ([3796105](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/379610599bfad8d1fe05e2ab9bd30ef01fdb5a18))
+- Alias the various dictionaries used in metadata fetching for code readability ([c7b7664](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c7b7664452cdf919eb22b71fb2ee647219ea6abe))
+- Change how metadata dictionaries are aliased, restructure providers to allow for metadata providers ([870ceec](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/870ceecd5f62e6df24cf08ca44a5307165388eaa))
+
 ## [9.5.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v9.4.0..v9.5.0) - 2025-03-22
 
 ### 🚀 Features
