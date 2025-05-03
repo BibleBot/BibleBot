@@ -20,6 +20,7 @@ using MongoDB.Driver;
 using RestSharp;
 using Serilog;
 using MDABVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse>;
+using MDBGVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Version, System.Net.Http.HttpResponseMessage>;
 using MDBookMap = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>;
 using MDBookNames = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>;
 using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
@@ -119,16 +120,13 @@ namespace BibleBot.Backend.Services
                 return;
             }
 
-            Log.Information("MetadataFetchingService: Getting BibleGateway versions...");
-            Dictionary<string, string> bgVersions = await GetBibleGatewayVersions();
+            Log.Information("MetadataFetchingService: Getting versions from DB...");
+            IEnumerable<Version> versions = await _mongoService.Get<Version>();
 
-            Log.Information("MetadataFetchingService: Getting BibleGateway book names...");
-            MDBookNames bgNames = await GetBibleGatewayNames(bgVersions);
+            IEnumerable<Version> abVersions = versions.Where(version => version.Source == "ab" && version.Books == null);
+            IEnumerable<Version> bgVersions = versions.Where(version => version.Source == "bg" && version.Books == null);
 
-            Log.Information("MetadataFetchingService: Getting API.Bible versions without book data...");
-            List<Version> abVersions = [.. (await _mongoService.Get<Version>()).Where(version => version.Source == "ab" && version.Books == null)];
-
-            if (abVersions.Count > 0)
+            if (abVersions.Count() > 0)
             {
                 Log.Information("MetadataFetchingService: Getting API.Bible version metadata...");
                 MDABVersionData abVersionData = await GetAPIBibleVersionData(abVersions);
@@ -137,8 +135,18 @@ namespace BibleBot.Backend.Services
                 await SaveAPIBibleMetadata(abVersionData);
             }
 
-            Log.Information("MetadataFetchingService: Getting book names from API.Bible versions...");
-            MDBookNames abNames = await GetAllAPIBibleNames();
+            if (bgVersions.Count() > 0)
+            {
+                Log.Information("MetadataFetchingService: Getting BibleGateway version metadata...");
+                MDBGVersionData bgVersionData = await GetBibleGatewayVersionData(bgVersions);
+
+                Log.Information("MetadataFetchingService: Saving BibleGateway version metadata into database...");
+                await SaveBibleGatewayMetadata(bgVersionData);
+            }
+
+
+            Log.Information("MetadataFetchingService: Getting book names from versions in database...");
+            MDBookNames names = await GetDBBookNames();
 
             if (File.Exists($"{_filePrefix}/Data/NameFetching/book_names.json"))
             {
@@ -146,7 +154,7 @@ namespace BibleBot.Backend.Services
                 File.Delete($"{_filePrefix}/Data/NameFetching/book_names.json");
             }
 
-            MDBookNames completedNames = MergeBookNames([bgNames, abNames, _abbreviations]);
+            MDBookNames completedNames = MergeBookNames([names, _abbreviations]);
 
             Log.Information("MetadataFetchingService: Serializing and writing book names to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, _serializerOptions);
@@ -155,265 +163,68 @@ namespace BibleBot.Backend.Services
             Log.Information("MetadataFetchingService: Finished.");
         }
 
-        private async Task<Dictionary<string, string>> GetBibleGatewayVersions()
+        private async Task<MDBGVersionData> GetBibleGatewayVersionData(IEnumerable<Version> versions)
         {
-            Dictionary<string, string> versions = [];
+            MDBGVersionData versionData = [];
 
-            string resp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
-            IDocument document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
-
-            IEnumerable<IElement> translationElements = document.All.Where(el => el.ClassList.Contains("translation-name"));
-            foreach (IElement el in translationElements)
+            foreach (Version version in versions)
             {
-                IHtmlCollection<IElement> targets = el.GetElementsByTagName("a");
+                string url = null;
 
-                if (targets.Length == 1)
+                if (version.InternalId == null)
                 {
-                    if (targets[0].HasAttribute("href"))
+                    string versionListResp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
+                    IDocument versionListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(versionListResp));
+                    IEnumerable<IElement> translationElements = versionListDocument.All.Where(el => el.ClassList.Contains("translation-name"));
+
+                    foreach (IElement el in translationElements)
                     {
-                        versions.Add(targets[0].TextContent, $"https://www.biblegateway.com{targets[0].GetAttribute("href")}");
-                    }
-                }
-            }
+                        IHtmlCollection<IElement> targets = el.GetElementsByTagName("a");
 
-            return versions;
-        }
-
-        private async Task<MDBookNames> GetBibleGatewayNames(Dictionary<string, string> versions)
-        {
-            MDBookNames names = [];
-
-            List<string> threeMaccVariants = ["3ma", "3macc", "3m"];
-            List<string> fourMaccVariants = ["4ma", "4macc", "4m"];
-            List<string> greekEstherVariants = ["gkest", "gkesth", "gkes"];
-            List<string> addEstherVariants = ["addesth", "adest"];
-            List<string> prayerAzariahVariants = ["praz", "prazar"];
-            List<string> songThreeYouthsVariants = ["sgthr", "sgthree"];
-
-            foreach (KeyValuePair<string, string> version in versions)
-            {
-                string resp = await _httpClient.GetStringAsync(version.Value);
-                IDocument document = await BrowsingContext.New().OpenAsync(req => req.Content(resp));
-
-                IEnumerable<IElement> bookNames = document.All.Where(el => el.ClassList.Contains("book-name"));
-                foreach (IElement el in bookNames)
-                {
-                    foreach (IElement span in el.GetElementsByTagName("span"))
-                    {
-                        span.Remove();
-                    }
-
-                    if (el.HasAttribute("data-target"))
-                    {
-                        string dataName = el.GetAttribute("data-target").Substring(1, el.GetAttribute("data-target").Length - 6);
-                        string bookName = el.TextContent.Trim();
-
-                        bool usesVariant = false;
-                        string origDataName = "";
-
-                        if (threeMaccVariants.Contains(dataName))
+                        if (targets.Length == 1)
                         {
-                            usesVariant = true;
-                            origDataName = dataName;
-                            dataName = "3ma";
-                        }
-                        else if (fourMaccVariants.Contains(dataName))
-                        {
-                            usesVariant = true;
-                            origDataName = dataName;
-                            dataName = "4ma";
-                        }
-                        else if (greekEstherVariants.Contains(dataName))
-                        {
-                            usesVariant = true;
-                            origDataName = dataName;
-                            dataName = "gkest";
-                        }
-                        else if (addEstherVariants.Contains(dataName))
-                        {
-                            usesVariant = true;
-                            origDataName = dataName;
-                            dataName = "addesth";
-                        }
-                        else if (prayerAzariahVariants.Contains(dataName))
-                        {
-                            usesVariant = true;
-                            origDataName = dataName;
-                            dataName = "praz";
-                        }
-                        else if (songThreeYouthsVariants.Contains(dataName))
-                        {
-                            usesVariant = true;
-                            origDataName = dataName;
-                            dataName = "sgthr";
-                        }
-                        else if (dataName == "epjer")
-                        {
-                            continue;
-                        }
-
-                        if (usesVariant && dataName != origDataName)
-                        {
-                            Log.Warning($"MetadataFetchingService: \"{version.Key}\" uses variant data name \"{origDataName}\", replaced with \"{dataName}\".");
-                        }
-                        else if (usesVariant)
-                        {
-                            Log.Warning($"MetadataFetchingService: \"{version.Key}\" uses data name \"{dataName}\".");
-                        }
-
-                        if (!_bookMapDataNames.Contains(dataName))
-                        {
-                            Log.Warning($"MetadataFetchingService: Data name \"{dataName}\" for \"{version.Key}\" not in book_map.json.");
-                        }
-
-                        if (!IsNuisance(bookName))
-                        {
-                            if (names.ContainsKey(dataName))
+                            if (targets[0].HasAttribute("href") && targets[0].TextContent == version.Name)
                             {
-                                if (!names[dataName].Contains(bookName))
-                                {
-                                    names[dataName].Add(bookName);
-                                }
-                            }
-                            else
-                            {
-                                names[dataName] = [bookName];
+                                url = $"https://www.biblegateway.com{targets[0].GetAttribute("href")}";
                             }
                         }
                     }
                 }
+                else
+                {
+                    url = $"https://www.biblegateway.com/versions/{version.InternalId}/#booklist";
+                }
+
+                if (url == null)
+                {
+                    // This shouldn't happen. If it does, something's gone wrong in the process
+                    // above *or* something's changed with the translation on BibleGateway's end.
+                    Log.Warning($"MetadataFetchingService: Could not obtain BibleGateway booklist URL for '{version.Name}', skipping...");
+                    continue;
+                }
+
+                HttpResponseMessage booklistResp = await _httpClient.GetAsync(url);
+
+                if (booklistResp.IsSuccessStatusCode)
+                {
+                    versionData.Add(version, booklistResp);
+                }
+                else
+                {
+                    Log.Warning($"MetadataFetchingService: Received {booklistResp.StatusCode} when fetching data for '{version.Name}', skipping...");
+                }
             }
 
-            return names;
+            return versionData;
         }
 
-        public async Task<MDVersionBookList> GetBibleGatewayVersionBookList(Version version)
-        {
-            MDVersionBookList names = [];
-
-            List<string> threeMaccVariants = ["3ma", "3macc", "3m"];
-            List<string> fourMaccVariants = ["4ma", "4macc", "4m"];
-            List<string> greekEstherVariants = ["gkest", "gkesth", "gkes"];
-            List<string> addEstherVariants = ["addesth", "adest"];
-            List<string> prayerAzariahVariants = ["praz", "prazar"];
-            List<string> songThreeYouthsVariants = ["sgthr", "sgthree"];
-
-            string versionListResp = await _httpClient.GetStringAsync("https://www.biblegateway.com/versions/");
-            IDocument versionListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(versionListResp));
-
-            IEnumerable<IElement> translationElements = versionListDocument.All.Where(el => el.ClassList.Contains("translation-name"));
-
-            string url = null;
-            foreach (IElement el in translationElements)
-            {
-                IHtmlCollection<IElement> targets = el.GetElementsByTagName("a");
-
-                if (targets.Length == 1)
-                {
-                    if (targets[0].HasAttribute("href") && targets[0].TextContent == version.Name)
-                    {
-                        url = $"https://www.biblegateway.com{targets[0].GetAttribute("href")}";
-                    }
-                }
-            }
-
-            if (url == null)
-            {
-                return null;
-            }
-
-            string bookListResp = await _httpClient.GetStringAsync(url);
-            IDocument bookListDocument = await BrowsingContext.New().OpenAsync(req => req.Content(bookListResp));
-
-            IEnumerable<IElement> bookNames = bookListDocument.All.Where(el => el.ClassList.Contains("book-name"));
-            foreach (IElement el in bookNames)
-            {
-                foreach (IElement span in el.GetElementsByTagName("span"))
-                {
-                    span.Remove();
-                }
-
-                if (el.HasAttribute("data-target"))
-                {
-                    string dataName = el.GetAttribute("data-target").Substring(1, el.GetAttribute("data-target").Length - 6);
-                    string bookName = el.TextContent.Trim();
-
-                    if (threeMaccVariants.Contains(dataName))
-                    {
-                        dataName = "3ma";
-                    }
-                    else if (fourMaccVariants.Contains(dataName))
-                    {
-                        dataName = "4ma";
-                    }
-                    else if (greekEstherVariants.Contains(dataName))
-                    {
-                        dataName = "gkest";
-                    }
-                    else if (addEstherVariants.Contains(dataName))
-                    {
-                        dataName = "addesth";
-                    }
-                    else if (prayerAzariahVariants.Contains(dataName))
-                    {
-                        dataName = "praz";
-                    }
-                    else if (songThreeYouthsVariants.Contains(dataName))
-                    {
-                        dataName = "sgthr";
-                    }
-                    else if (dataName == "epjer")
-                    {
-                        continue;
-                    }
-
-                    if (!IsNuisance(bookName))
-                    {
-                        BookCategories category;
-
-                        if (_bookMap["ot"].ContainsKey(dataName))
-                        {
-                            category = BookCategories.OldTestament;
-                        }
-                        else if (_bookMap["nt"].ContainsKey(dataName))
-                        {
-                            category = BookCategories.NewTestament;
-                        }
-                        else if (_bookMap["deu"].ContainsKey(dataName))
-                        {
-                            category = BookCategories.Deuterocanon;
-                        }
-                        else
-                        {
-                            Log.Warning($"MetadataFetchingService: Data name \"{dataName}\" for \"{version.Name}\" not in book_map.json.");
-                            continue;
-                        }
-
-                        if (dataName == "ps151")
-                        {
-                            names[BookCategories.OldTestament]["ps"] = $"{names[BookCategories.OldTestament]["ps"]} <151>";
-                        }
-
-                        if (!names.ContainsKey(category))
-                        {
-                            names.Add(category, []);
-                        }
-
-                        names[category].Add(dataName, bookName);
-                    }
-                }
-            }
-
-            return names;
-        }
-
-        private async Task<MDABVersionData> GetAPIBibleVersionData(List<Version> versions)
+        private async Task<MDABVersionData> GetAPIBibleVersionData(IEnumerable<Version> versions)
         {
             MDABVersionData versionData = [];
 
             foreach (Version version in versions)
             {
-                RestRequest req = new($"bibles/{version.ApiBibleId}/books?include-chapters=true");
+                RestRequest req = new($"bibles/{version.InternalId}/books?include-chapters=true");
                 req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
                 ABBooksResponse resp = null;
@@ -438,19 +249,28 @@ namespace BibleBot.Backend.Services
                 {
                     versionData.Add(version, resp);
                 }
+                else
+                {
+                    Log.Warning($"MetadataFetchingService: Received null when fetching data for '{version.Name}', skipping...");
+                }
             }
 
             return versionData;
         }
 
-        private async Task<MDBookNames> GetAllAPIBibleNames()
+        private async Task<MDBookNames> GetDBBookNames()
         {
             MDBookNames names = [];
 
-            List<Version> abVersions = [.. (await _mongoService.Get<Version>()).Where(version => version.Source == "ab")];
+            List<Version> versions = await _mongoService.Get<Version>();
 
-            foreach (Version version in abVersions)
+            foreach (Version version in versions)
             {
+                if (version.Books == null)
+                {
+                    continue;
+                }
+
                 Book[] bookData = version.Books;
 
                 foreach (Book book in bookData)
@@ -488,7 +308,7 @@ namespace BibleBot.Backend.Services
                 {
                     if (!_apiBibleNames.ContainsKey(book.Id) && workaroundIds.Contains(book.Id))
                     {
-                        Log.Warning($"MetadataFetchingService: Id \"{book.Id}\" for '{book.Name}' in {version.Name} ({version.ApiBibleId}) does not exist in apibible_names.json, skipping...");
+                        Log.Warning($"MetadataFetchingService: Id \"{book.Id}\" for '{book.Name}' in {version.Name} ({version.InternalId}) does not exist in apibible_names.json, skipping...");
                         continue;
                     }
 
@@ -552,7 +372,8 @@ namespace BibleBot.Backend.Services
                         Name = internalId,
                         ProperName = properName,
                         InternalName = book.Id,
-                        PreferredName = book.Name
+                        PreferredName = book.Name,
+                        Chapters = [.. chapters]
                     });
                 }
 
@@ -561,7 +382,175 @@ namespace BibleBot.Backend.Services
             }
         }
 
-        public MDVersionBookList GetAPIBibleVersionBookList(Version version)
+        private async Task SaveBibleGatewayMetadata(MDBGVersionData versionData)
+        {
+            List<string> threeMaccVariants = ["3ma", "3macc", "3m"];
+            List<string> fourMaccVariants = ["4ma", "4macc", "4m"];
+            List<string> greekEstherVariants = ["gkest", "gkesth", "gkes"];
+            List<string> addEstherVariants = ["addesth", "adest"];
+            List<string> prayerAzariahVariants = ["praz", "prazar"];
+            List<string> songThreeYouthsVariants = ["sgthr", "sgthree"];
+
+            foreach (KeyValuePair<Version, HttpResponseMessage> kvp in versionData)
+            {
+                Version version = kvp.Key;
+                HttpResponseMessage resp = kvp.Value;
+
+                List<Book> versionBookData = [];
+
+                IDocument bookListDocument = await BrowsingContext.New().OpenAsync(async req => req.Content(await resp.Content.ReadAsStringAsync()));
+
+                IEnumerable<IElement> bookNames = bookListDocument.All.Where(el => el.ClassList.Contains("book-name"));
+                foreach (IElement el in bookNames)
+                {
+                    foreach (IElement span in el.GetElementsByTagName("span"))
+                    {
+                        span.Remove();
+                    }
+
+                    if (el.HasAttribute("data-target"))
+                    {
+                        string dataName = el.GetAttribute("data-target").Substring(1, el.GetAttribute("data-target").Length - 6);
+                        string bookName = el.TextContent.Trim();
+
+                        bool usesVariant = false;
+                        string origDataName = "";
+
+                        if (threeMaccVariants.Contains(dataName))
+                        {
+                            usesVariant = true;
+                            origDataName = dataName;
+                            dataName = "3ma";
+                        }
+                        else if (fourMaccVariants.Contains(dataName))
+                        {
+                            usesVariant = true;
+                            origDataName = dataName;
+                            dataName = "4ma";
+                        }
+                        else if (greekEstherVariants.Contains(dataName))
+                        {
+                            usesVariant = true;
+                            origDataName = dataName;
+                            dataName = "gkest";
+                        }
+                        else if (addEstherVariants.Contains(dataName))
+                        {
+                            usesVariant = true;
+                            origDataName = dataName;
+                            dataName = "addesth";
+                        }
+                        else if (prayerAzariahVariants.Contains(dataName))
+                        {
+                            usesVariant = true;
+                            origDataName = dataName;
+                            dataName = "praz";
+                        }
+                        else if (songThreeYouthsVariants.Contains(dataName))
+                        {
+                            usesVariant = true;
+                            origDataName = dataName;
+                            dataName = "sgthr";
+                        }
+                        else if (dataName == "epjer")
+                        {
+                            continue;
+                        }
+
+                        if (usesVariant && dataName != origDataName)
+                        {
+                            Log.Warning($"MetadataFetchingService: \"{version.Name}\" uses variant data name \"{origDataName}\", replaced with \"{dataName}\".");
+                        }
+                        else if (usesVariant)
+                        {
+                            Log.Warning($"MetadataFetchingService: \"{version.Name}\" uses data name \"{dataName}\".");
+                        }
+
+                        if (!_bookMapDataNames.Contains(dataName))
+                        {
+                            Log.Warning($"MetadataFetchingService: Data name \"{dataName}\" for \"{version.Name}\" not in book_map.json.");
+                        }
+
+                        if (!IsNuisance(bookName))
+                        {
+                            string properName;
+                            string preferredName = bookName;
+                            string internalName = dataName;
+                            string internalId = dataName;
+
+                            if (_bookMap["ot"].ContainsKey(internalId))
+                            {
+                                properName = _bookMap["ot"][internalId];
+                            }
+                            else if (_bookMap["nt"].ContainsKey(internalId))
+                            {
+                                properName = _bookMap["nt"][internalId];
+                            }
+                            else if (_bookMap["deu"].ContainsKey(internalId))
+                            {
+                                properName = _bookMap["deu"][internalId];
+                            }
+                            else
+                            {
+                                Log.Warning($"MetadataFetchingService: Data name \"{dataName}\" for \"{version.Name}\" not in book_map.json.");
+                                continue;
+                            }
+
+                            if (dataName == "ps151")
+                            {
+                                Book psalms = versionBookData.First(book => book.Name == "ps");
+                                int indexOfPsalms = versionBookData.IndexOf(psalms);
+
+                                List<Chapter> chaptersList = [.. psalms.Chapters];
+
+                                chaptersList.Add(new()
+                                {
+                                    Number = 151,
+                                });
+
+                                psalms.Chapters = [.. chaptersList];
+                                versionBookData[indexOfPsalms] = psalms;
+
+                                continue;
+                            }
+
+                            List<Chapter> chapters = [];
+
+                            foreach (IElement chapter in el.ParentElement.GetElementsByClassName("chapters")[0].GetElementsByTagName("a"))
+                            {
+                                string chapterNumber = chapter.TextContent;
+                                if (int.TryParse(chapterNumber, out int parsedNumber))
+                                {
+                                    chapters.Add(new()
+                                    {
+                                        Number = parsedNumber
+                                    });
+                                }
+                                else
+                                {
+                                    Log.Warning($"MetadataFetchingService: Ignoring chapter '{internalId}.{chapterNumber}' in '{version.Name}' with non-numeric chapter value.");
+                                }
+                            }
+
+                            versionBookData.Add(new()
+                            {
+                                Name = internalId,
+                                ProperName = properName,
+                                PreferredName = preferredName,
+                                InternalName = internalName,
+                                Chapters = [.. chapters]
+                            });
+                        }
+                    }
+                }
+
+                string versionInternalId = version.InternalId ?? resp.RequestMessage.RequestUri.AbsoluteUri.Replace("https://www.biblegateway.com/versions/", "").Replace("/#booklist", "");
+                UpdateDefinition<Version> update = Builders<Version>.Update.Set(version => version.Books, [.. versionBookData]).Set(version => version.InternalId, versionInternalId);
+                await _mongoService.Update(version.Abbreviation, update);
+            }
+        }
+
+        public MDVersionBookList GetVersionBookList(Version version)
         {
             MDVersionBookList names = [];
 

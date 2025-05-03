@@ -246,9 +246,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         response += $"\n{localizer["VersionInfoPublisher"]}: `{idealVersion.Publisher}`";
                     }
 
-                    if (idealVersion.ApiBibleId != null)
+                    if (idealVersion.InternalId != null)
                     {
-                        response += $"\nAPI.Bible ID: `{idealVersion.ApiBibleId}`";
+                        response += $"\nInternal ID: `{idealVersion.InternalId}`";
                     }
 
                     if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
@@ -381,16 +381,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     //     };
                     // }
 
-                    MDVersionBookList names = null;
-
-                    if (idealVersion.Source == "bg")
-                    {
-                        names = await metadataFetchingService.GetBibleGatewayVersionBookList(idealVersion);
-                    }
-                    else if (idealVersion.Source == "ab")
-                    {
-                        names = metadataFetchingService.GetAPIBibleVersionBookList(idealVersion);
-                    }
+                    MDVersionBookList names = metadataFetchingService.GetVersionBookList(idealVersion);
 
                     if (names != null)
                     {

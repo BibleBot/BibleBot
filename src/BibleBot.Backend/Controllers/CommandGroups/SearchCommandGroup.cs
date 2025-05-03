@@ -114,7 +114,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     int maxResultsPerPage = 6;
                     List<string> referencesUsed = [];
 
-                    Dictionary<BookCategories, Dictionary<string, string>> categoryMapping = potentialSubset != SubsetFlag.INVALID ? await metadataFetchingService.GetBibleGatewayVersionBookList(idealVersion) : null;
+                    Dictionary<BookCategories, Dictionary<string, string>> categoryMapping = potentialSubset != SubsetFlag.INVALID ? metadataFetchingService.GetVersionBookList(idealVersion) : null;
 
                     searchResults.RemoveAll(searchResult =>
                     {

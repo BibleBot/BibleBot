@@ -77,7 +77,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                         // but it actually doesn't exist, so we defer to the "updated" ELXX.
                         if (reference.Version.Abbreviation == "ELXX")
                         {
-                            reference.Version.ApiBibleId = "6bab4d6c61b31b80-01";
+                            reference.Version.InternalId = "6bab4d6c61b31b80-01";
                         }
                     }
                     else if (reference.BookDataName is "ezra" or "neh")
@@ -90,7 +90,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 reference.AsString = reference.ToString();
             }
 
-            string url = string.Format(_getURI, reference.Version.ApiBibleId, reference.AsString);
+            string url = string.Format(_getURI, reference.Version.InternalId, reference.AsString);
 
             ABSearchData resp = await _cachingHttpClient.GetJsonContentAs<ABSearchData>(url, _jsonOptions);
 
@@ -111,7 +111,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 return null;
             }
 
-            if (resp.Passages[0].BibleId != reference.Version.ApiBibleId)
+            if (resp.Passages[0].BibleId != reference.Version.InternalId)
             {
                 Log.Error($"{reference.Version.Abbreviation} machine broke - version no longer available");
                 return null;
@@ -201,7 +201,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             }
 
             // As the verse reference could have a non-English name...
-            string bookUrl = string.Format(_getBookURI, reference.Version.ApiBibleId, resp.Passages[0].BookId);
+            string bookUrl = string.Format(_getBookURI, reference.Version.InternalId, resp.Passages[0].BookId);
             ABBookData bookResp = await _cachingHttpClient.GetJsonContentAs<ABBookData>(bookUrl, _jsonOptions);
 
             string properBookName = bookResp.Name.EndsWith('.') ? bookResp.NameLong : bookResp.Name;
@@ -256,7 +256,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = string.Format(_searchURI, version.ApiBibleId, query);
+            string url = string.Format(_searchURI, version.InternalId, query);
 
             ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
 

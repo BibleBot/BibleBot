@@ -24,6 +24,12 @@ namespace BibleBot.Models
         public string Id { get; set; }
 
         /// <summary>
+        /// Whether the version is active/live on the service.
+        /// </summary>
+        [BsonElement("Active")]
+        public bool Active { get; set; }
+
+        /// <summary>
         /// The name of the version.
         /// </summary>
         [BsonElement("Name")]
@@ -55,10 +61,10 @@ namespace BibleBot.Models
         public string Publisher { get; set; }
 
         /// <summary>
-        /// The API.Bible id for the version.
+        /// The source's internal ID for the version.
         /// </summary>
-        [BsonElement("ApiBibleId")]
-        public string ApiBibleId { get; set; }
+        [BsonElement("InternalId")]
+        public string InternalId { get; set; }
 
         /// <summary>
         /// Indicates whether the version supports Old Testament books.
