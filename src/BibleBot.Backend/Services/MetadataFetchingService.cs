@@ -19,6 +19,7 @@ using BibleBot.Models;
 using MongoDB.Driver;
 using RestSharp;
 using Serilog;
+// using MDABVersionData = System.Collections.Generic.List<System.Tuple<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse, System.Collections.Generic.List<BibleBot.Models.ABVersesResponse>>>;
 using MDABVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse>;
 using MDBGVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Version, System.Net.Http.HttpResponseMessage>;
 using MDBookMap = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>;
@@ -224,7 +225,7 @@ namespace BibleBot.Backend.Services
 
             foreach (Version version in versions)
             {
-                RestRequest req = new($"bibles/{version.InternalId}/books?include-chapters=true");
+                RestRequest req = new($"bibles/{version.InternalId}/books?include-chapters-and-sections=true");
                 req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
                 ABBooksResponse resp = null;
@@ -304,7 +305,7 @@ namespace BibleBot.Backend.Services
 
                 List<Book> versionBookData = [];
 
-                foreach (ABBookData book in resp.Data)
+                foreach (ABBook book in resp.Data)
                 {
                     if (!_apiBibleNames.ContainsKey(book.Id) && workaroundIds.Contains(book.Id))
                     {
@@ -356,9 +357,23 @@ namespace BibleBot.Backend.Services
                     {
                         if (int.TryParse(chapter.Number, out int parsedNumber))
                         {
+                            List<System.Tuple<int, int, string>> titles = [];
+
+                            foreach (ABSection section in chapter.Sections)
+                            {
+                                string[] firstVerseIdSplit = section.FirstVerseId.Split('.');
+                                string[] lastVerseIdSplit = section.LastVerseId.Split('.');
+
+                                int firstVerseNumber = int.Parse(firstVerseIdSplit.Last());
+                                int lastVerseNumber = int.Parse(lastVerseIdSplit.Last());
+
+                                titles.Add(new(firstVerseNumber, lastVerseNumber, section.Title));
+                            }
+
                             chapters.Add(new()
                             {
-                                Number = parsedNumber
+                                Number = parsedNumber,
+                                Titles = titles.Count == 0 ? null : titles
                             });
                         }
                         else

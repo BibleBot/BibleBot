@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -116,7 +117,7 @@ namespace BibleBot.Models
 
         /// <summary>
         /// The preferred name according to the version's source.
-        /// For API.Bible, this corresponds to <see cref="ABBookData.Name"/>.
+        /// For API.Bible, this corresponds to <see cref="ABBook.Name"/>.
         /// </summary>
         [BsonElement("PreferredName")]
         public string PreferredName { get; set; }
@@ -138,6 +139,12 @@ namespace BibleBot.Models
         /// </summary>
         [BsonElement("Number")]
         public int Number { get; set; }
+
+        /// <summary>
+        /// An array of tuples for title headings, where Item1 is the beginning verse number the title exists, Item2 is the ending verse number, and Item3 is the title itself.
+        /// </summary>
+        [BsonElement("Titles")]
+        public List<System.Tuple<int, int, string>> Titles { get; set; }
 
         /// <summary>
         /// An array of verse data.

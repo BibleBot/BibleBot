@@ -92,7 +92,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             string url = string.Format(_getURI, reference.Version.InternalId, reference.AsString);
 
-            ABSearchData resp = await _cachingHttpClient.GetJsonContentAs<ABSearchData>(url, _jsonOptions);
+            ABSearch resp = await _cachingHttpClient.GetJsonContentAs<ABSearch>(url, _jsonOptions);
 
             if (resp == null)
             {
@@ -202,7 +202,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             // As the verse reference could have a non-English name...
             string bookUrl = string.Format(_getBookURI, reference.Version.InternalId, resp.Passages[0].BookId);
-            ABBookData bookResp = await _cachingHttpClient.GetJsonContentAs<ABBookData>(bookUrl, _jsonOptions);
+            ABBook bookResp = await _cachingHttpClient.GetJsonContentAs<ABBook>(bookUrl, _jsonOptions);
 
             string properBookName = bookResp.Name.EndsWith('.') ? bookResp.NameLong : bookResp.Name;
 

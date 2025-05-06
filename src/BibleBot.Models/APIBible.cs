@@ -18,18 +18,19 @@ namespace BibleBot.Models
         public List<T> Data { get; set; }
     }
 
-    public class ABBibleResponse : ABListResponse<ABBibleData> { }
-    public class ABBooksResponse : ABListResponse<ABBookData> { }
+    public class ABBibleResponse : ABListResponse<ABBible> { }
+    public class ABBooksResponse : ABListResponse<ABBook> { }
     public class ABChaptersResponse : ABListResponse<ABChapter> { }
+    public class ABVersesResponse : ABListResponse<ABVerse> { }
 
     public class ABSearchResponse
     {
         public string Query { get; set; }
-        public ABSearchData Data { get; set; }
+        public ABSearch Data { get; set; }
         public ABMetadata Metadata { get; set; }
     }
 
-    public class ABBookData
+    public class ABBook
     {
         public string Id { get; set; }
         public string BibleId { get; set; }
@@ -46,13 +47,14 @@ namespace BibleBot.Models
         public string Number { get; set; } // no, really, it's a string
         public string BookId { get; set; }
         public string Reference { get; set; }
+        public List<ABSection> Sections { get; set; }
         // there is a `int Position` that can exist depending on where this is coming from
         // but it can be misleading because some versions have an intro "chapter" at position 0
         // which is technically incorrect. however, these are sorted properly in the result, so
         // we don't have to worry about position.
     }
 
-    public class ABBibleData
+    public class ABBible
     {
         public string Id { get; set; }
         public string DBLId { get; set; }
@@ -95,7 +97,7 @@ namespace BibleBot.Models
         public string DescriptionLocal { get; set; }
     }
 
-    public class ABSearchData
+    public class ABSearch
     {
         public string Query { get; set; }
         public int Limit { get; set; }
@@ -136,6 +138,18 @@ namespace BibleBot.Models
         public string FUMSJSInclude { get; set; }
         public string FUMSJS { get; set; }
         public string FUMSNoScript { get; set; }
+    }
+
+    public class ABSection
+    {
+        public string Id { get; set; }
+        public string BibleId { get; set; }
+        public string BookId { get; set; }
+        public string Title { get; set; }
+        public string FirstVerseId { get; set; }
+        public string LastVerseId { get; set; }
+        public string FirstVerseOrgId { get; set; }
+        public string LastVerseOrgId { get; set; }
     }
 }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
