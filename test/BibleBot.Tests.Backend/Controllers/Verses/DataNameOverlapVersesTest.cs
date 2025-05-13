@@ -39,7 +39,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> And they walked about in the midst of the flames, singing hymns to God and blessing the Lord.",
                         Reference = new Reference
                         {
-                            Book = "Song of the Three Young Men",
+                            Book = new Book {
+                                ProperName = "Song of the Three Young Men"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -82,7 +84,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> And they walked in the midst of the flame, and praised God, and blessed the Lord. [And they walked in the middle of the flame, praising God, and blessing the Lord.]",
                         Reference = new Reference
                         {
-                            Book = "Song of the Three Young Men",
+                            Book = new Book {
+                                ProperName = "Song of the Three Young Men"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -125,7 +129,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> They walked around in the midst of the flames, singing hymns to God and blessing the Lord.",
                         Reference = new Reference
                         {
-                            Book = "Prayer of Azariah",
+                            Book = new Book {
+                                ProperName = "Prayer of Azariah"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -168,7 +174,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> Shadrach, Meshach, and Abednego walked around in the flames, singing hymns to God, blessing the Lord.",
                         Reference = new Reference
                         {
-                            Book = "Prayer of Azariah",
+                            Book = new Book {
+                                ProperName = "Prayer of Azariah"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -211,7 +219,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**4**> And Mordecai said, These things be done of (or by) God. [And Mordecai said, Of God these things be done.]",
                         Reference = new Reference
                         {
-                            Book = "Additions to Esther",
+                            Book = new Book {
+                                ProperName = "Additions to Esther"
+                            },
                             StartingChapter = 10,
                             StartingVerse = 4,
                             EndingChapter = 10,

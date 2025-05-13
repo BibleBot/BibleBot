@@ -89,7 +89,7 @@ namespace BibleBot.Models
         /// An array of books, which contains an array of chapters along with other metadata.
         /// </summary>
         [BsonElement("Books")]
-        public Book[] Books { get; set; }
+        public List<Book> Books { get; set; }
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ namespace BibleBot.Models
     public class Book
     {
         /// <summary>
-        /// The data name of the book, like "1tim".
+        /// The data name of the book, like "1TI".
         /// </summary>
         [BsonElement("Name")]
         public string Name { get; set; }
@@ -126,7 +126,10 @@ namespace BibleBot.Models
         /// An array of chapters, which contains an array of verse data.
         /// </summary>
         [BsonElement("Chapters")]
-        public Chapter[] Chapters { get; set; }
+        public List<Chapter> Chapters { get; set; }
+
+        /// <inheritdoc/>
+        public override string ToString() => ProperName;
     }
 
     /// <summary>
@@ -150,7 +153,10 @@ namespace BibleBot.Models
         /// An array of verse data.
         /// </summary>
         [BsonElement("Verses")]
-        public Verse[] Verses { get; set; }
+        public List<Verse> Verses { get; set; }
+
+        /// <inheritdoc/>
+        public override string ToString() => Number.ToString();
     }
 
     /// <summary>

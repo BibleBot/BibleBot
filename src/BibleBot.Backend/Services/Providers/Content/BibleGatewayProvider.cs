@@ -54,10 +54,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
-            if (reference.Book != "str")
-            {
-                reference.AsString = reference.ToString();
-            }
+            reference.AsString ??= reference.ToString();
 
             if (reference.Version.Abbreviation == "NRSV")
             {
@@ -240,7 +237,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             return new VerseResult { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
 
-        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = null, Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Models.Version version)
         {

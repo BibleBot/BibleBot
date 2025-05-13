@@ -18,14 +18,9 @@ namespace BibleBot.Models
     public class Reference
     {
         /// <summary>
-        /// The actual, English name of the book being referenced.
+        /// The book being referenced.
         /// </summary>
-        public string Book { get; set; }
-
-        /// <summary>
-        /// The data name of the book.
-        /// </summary>
-        public string BookDataName { get; set; }
+        public Book Book { get; set; }
 
         /// <summary>
         /// The chapter the reference begins in.
@@ -46,6 +41,11 @@ namespace BibleBot.Models
         /// The verses of the chapter the reference ends in.
         /// </summary>
         public int EndingVerse { get; set; }
+
+        /// <summary>
+        /// The chapters used in this reference.
+        /// </summary>
+        public List<Chapter> Chapters { get; set; }
 
         /// <summary>
         /// The appended verses in a reference.
@@ -262,15 +262,15 @@ namespace BibleBot.Models
                 { "Revelation", "REV" }
             };
 
-            string result = $"{nameToId[Book]}.{StartingChapter}.{StartingVerse}";
+            string result = $"{nameToId[Book.ProperName]}.{StartingChapter}.{StartingVerse}";
 
             if (EndingChapter > 0 && EndingChapter != StartingChapter)
             {
-                result += $"-{nameToId[Book]}.{EndingChapter}.{EndingVerse}";
+                result += $"-{nameToId[Book.ProperName]}.{EndingChapter}.{EndingVerse}";
             }
             else if (EndingVerse > 0 && EndingVerse != StartingVerse)
             {
-                result += $"-{nameToId[Book]}.{StartingChapter}.{EndingVerse}";
+                result += $"-{nameToId[Book.ProperName]}.{StartingChapter}.{EndingVerse}";
             }
 
             return result;

@@ -25,8 +25,6 @@ namespace BibleBot.Backend.Services.Providers.Content
     {
         public string Name { get; set; }
 
-        private readonly Dictionary<string, string> _nameMapping;
-
         private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
@@ -37,11 +35,9 @@ namespace BibleBot.Backend.Services.Providers.Content
         private readonly string _getBookURI = "bibles/{0}/books/{1}";
         private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=100&sort=relevance";
 
-        public APIBibleProvider(MetadataFetchingService metadataFetchingService)
+        public APIBibleProvider()
         {
             Name = "ab";
-
-            _nameMapping = metadataFetchingService.GetAPIBibleMapping();
 
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, false);
             _cachingHttpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
@@ -58,20 +54,20 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
-            string defaultBookName = reference.Book;
+            string originalProperName;
 
             string[] solidTextClasses = ["d", "m", "cls", "mi"];
             string[] prefixTextClasses = ["q", "p", "add", "l"];
 
-            if (reference.Book != "str")
+            if (reference.AsString == null)
             {
-                reference.Book = _nameMapping.Keys.FirstOrDefault(key => _nameMapping[key] == reference.BookDataName);
+                originalProperName = reference.Book.ProperName;
 
                 if (reference.Version.Abbreviation is "ELXX" or "LXX")
                 {
-                    if (reference.BookDataName == "dan")
+                    if (reference.Book.Name == "DAN")
                     {
-                        reference.Book = "DAG";
+                        reference.Book.ProperName = "DAG";
 
                         // For whatever reason, the ELXX we use lists Daniel as a book
                         // but it actually doesn't exist, so we defer to the "updated" ELXX.
@@ -80,14 +76,27 @@ namespace BibleBot.Backend.Services.Providers.Content
                             reference.Version.InternalId = "6bab4d6c61b31b80-01";
                         }
                     }
-                    else if (reference.BookDataName is "ezra" or "neh")
+                    else if (reference.Book.Name is "EZR" or "NEH")
                     {
-                        reference.Book = "EZR";
-                        defaultBookName = "Ezra/Nehemiah";
+                        reference.Book.ProperName = "EZR";
+                        originalProperName = "Ezra/Nehemiah";
                     }
+                    else
+                    {
+                        reference.Book.ProperName = reference.Book.Name;
+                    }
+                }
+                else
+                {
+                    reference.Book.ProperName = reference.Book.Name;
                 }
 
                 reference.AsString = reference.ToString();
+            }
+            else
+            {
+                string[] tokenizedReference = reference.AsString.Split(" ");
+                originalProperName = string.Join(" ", tokenizedReference.Take(tokenizedReference.Length - 1));
             }
 
             string url = string.Format(_getURI, reference.Version.InternalId, reference.AsString);
@@ -200,7 +209,11 @@ namespace BibleBot.Backend.Services.Providers.Content
                 text = text.Replace("tuchtmeester geweest tot Christus’ 3:opdat we", "tuchtmeester geweest tot Christus' komst, opdat we");
             }
 
+            reference.Book ??= new Book();
+            reference.Book.ProperName = originalProperName;
+
             // As the verse reference could have a non-English name...
+            // TODO: remove this, use internal book information
             string bookUrl = string.Format(_getBookURI, reference.Version.InternalId, resp.Passages[0].BookId);
             ABBook bookResp = await _cachingHttpClient.GetJsonContentAs<ABBook>(bookUrl, _jsonOptions);
 
@@ -210,7 +223,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             {
                 // Don't like version-specific workarounds, but given the naming convention
                 // wackyness they've got here, this seems like the best course of action.
-                properBookName = defaultBookName;
+                properBookName = originalProperName;
             }
 
             reference.AsString = resp.Passages[0].Reference.Replace(bookResp.Name, properBookName);
@@ -247,12 +260,12 @@ namespace BibleBot.Backend.Services.Providers.Content
                 }
             }
 
-            reference.Book = defaultBookName;
+            reference.Book.Name = originalProperName;
 
             return new VerseResult { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
         }
 
-        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = null, Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {

@@ -153,6 +153,14 @@ namespace BibleBot.Backend.Controllers
                     });
                 }
 
+                if (reference.Book != null)
+                {
+                    if (reference.Book.InternalName is "addesth" or "praz" or "epjer")
+                    {
+                        reference.Book.ProperName = reference.Book.PreferredName;
+                    }
+                }
+
                 if (!references.Contains(reference))
                 {
                     references.Add(reference);

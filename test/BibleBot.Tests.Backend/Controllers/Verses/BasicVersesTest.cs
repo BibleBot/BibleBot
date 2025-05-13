@@ -39,7 +39,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham.",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -80,7 +82,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> In the beginning God created the heaven and the earth.",
                         Reference = new Reference
                         {
-                            Book = "Genesis",
+                            Book = new Book {
+                                ProperName = "Genesis"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -175,7 +179,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> In the beginning was the Word, and the Word was with God, and the Word was God.",
                         Reference = new Reference
                         {
-                            Book = "John",
+                            Book = new Book {
+                                ProperName = "John"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -216,7 +222,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> In the beginning was the Word, and the Word was with God, and the Word was God.",
                         Reference = new Reference
                         {
-                            Book = "John",
+                            Book = new Book {
+                                ProperName = "John"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -257,7 +265,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham. <**2**> Abraham was the father of Isaac, and Isaac the father of Jacob, and Jacob the father of Judah and his brothers,",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -297,7 +307,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> In the beginning God created the heaven and the earth. <**2**> And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.",
                         Reference = new Reference
                         {
-                            Book = "Genesis",
+                            Book = new Book {
+                                ProperName = "Genesis"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -338,7 +350,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**25**> but knew her not until she had borne a son; and he called his name Jesus. <**2:1**> Now when Jesus was born in Bethlehem of Judea in the days of Herod the king, behold, wise men from the East came to Jerusalem, saying,",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 25,
                             EndingChapter = 2,
@@ -379,7 +393,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**31**> And God saw every thing that he had made, and, behold, it was very good. And the evening and the morning were the sixth day. <**2:1**> Thus the heavens and the earth were finished, and all the host of them.",
                         Reference = new Reference
                         {
-                            Book = "Genesis",
+                            Book = new Book {
+                                ProperName = "Genesis"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 31,
                             EndingChapter = 2,
@@ -420,7 +436,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**24**> When Joseph woke from sleep, he did as the angel of the Lord commanded him; he took his wife, <**25**> but knew her not until she had borne a son; and he called his name Jesus.",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 24,
                             EndingChapter = 1,
@@ -461,7 +479,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**24**> Then Joseph being raised from sleep did as the angel of the Lord had bidden him, and took unto him his wife: <**25**> And knew her not till she had brought forth her firstborn son: and he called his name JESUS.",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 24,
                             EndingChapter = 1,
@@ -536,7 +556,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham. <**2**> Abraham was the father of Isaac, and Isaac the father of Jacob, and Jacob the father of Judah and his brothers,",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -577,7 +599,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham.",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -618,7 +642,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> Josi'ah kept the passover to his Lord in Jerusalem; he killed the passover lamb on the fourteenth day of the first month,",
                         Reference = new Reference
                         {
-                            Book = "1 Esdras",
+                            Book = new Book {
+                                ProperName = "1 Esdras"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -659,7 +685,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**6:1**> A copy of a letter which Jeremiah sent to those who were to be taken to Babylon as captives by the king of the Babylonians, to give them the message which God had commanded him.",
                         Reference = new Reference
                         {
-                            Book = "Letter of Jeremiah",
+                            Book = new Book {
+                                ProperName = "Letter of Jeremiah"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -700,7 +728,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> The words of Jeremiah, the son of Hilki'ah, of the priests who were in An'athoth in the land of Benjamin,",
                         Reference = new Reference
                         {
-                            Book = "Jeremiah",
+                            Book = new Book {
+                                ProperName = "Jeremiah"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -722,6 +752,111 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         // TODO: test 1 Esdras + Ezra, Letter of Jeremiah + Jeremiah in same request
+        [Test]
+        public void ShouldProcessMultipleOverlappingBooks()
+        {
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("1 Esdras 1:1 / Ezra 1:1 / Letter of Jeremiah 1:1 / Jeremiah 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "1 Esdras 1:1 RSV / Ezra 1:1 RSV / Letter of Jeremiah 1:1 RSV / Jeremiah 1:1 RSV",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new()
+                    {
+                        Title = "Josiah Celebrates the Passover",
+                        PsalmTitle = "",
+                        Text = "<**1**> Josi'ah kept the passover to his Lord in Jerusalem; he killed the passover lamb on the fourteenth day of the first month,",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "1 Esdras"
+                            },
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = _defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "1 Esdras 1:1"
+                        }
+                    },
+                    new()
+                    {
+                        Title = "End of the Babylonian Captivity",
+                        PsalmTitle = "",
+                        Text = "<**1**> In the first year of Cyrus king of Persia, that the word of the Lord by the mouth of Jeremiah might be accomplished, the Lord stirred up the spirit of Cyrus king of Persia so that he made a proclamation throughout all his kingdom and also put it in writing:",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Ezra"
+                            },
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = _defaultBibleGatewayVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Ezra 1:1"
+                        }
+                    },
+                    new()
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**6:1**> A copy of a letter which Jeremiah sent to those who were to be taken to Babylon as captives by the king of the Babylonians, to give them the message which God had commanded him.",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Letter of Jeremiah"
+                            },
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = _defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = false,
+                            IsDEU = true,
+                            AsString = "Letter of Jeremiah 1:1"
+                        }
+                    },
+                    new()
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**1**> The words of Jeremiah, the son of Hilki'ah, of the priests who were in An'athoth in the land of Benjamin,",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Jeremiah"
+                            },
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = _defaultBibleGatewayVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Jeremiah 1:1"
+                        }
+                    }
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
 
         [Test]
         public void ShouldProcessPsalm151Properly()
@@ -743,7 +878,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> I was small among my brothers, and youngest in my father's house; I tended my father's sheep.",
                         Reference = new Reference
                         {
-                            Book = "Psalm 151",
+                            Book = new Book {
+                                ProperName = "Psalm 151"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -806,7 +943,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> In the beginning was the Word, and the Word was with God, and the Word was God.",
                         Reference = new Reference
                         {
-                            Book = "John",
+                            Book = new Book {
+                                ProperName = "John"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -849,7 +988,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**6**> And I am sure that he who began a good work in you will bring it to completion at the day of Jesus Christ.",
                         Reference = new Reference
                         {
-                            Book = "Philippians",
+                            Book = new Book {
+                                ProperName = "Philippians"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 6,
                             EndingChapter = 1,
@@ -868,7 +1009,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**6**> Of this I'm convinced: the one who began a good work in you will thoroughly complete it by the day of Messiah Jesus.",
                         Reference = new Reference
                         {
-                            Book = "Philippians",
+                            Book = new Book {
+                                ProperName = "Philippians"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 6,
                             EndingChapter = 1,
@@ -909,7 +1052,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> In the days of Ahasu-e'rus, the Ahasu-e'rus who reigned from India to Ethiopia over one hundred and twenty-seven provinces,",
                         Reference = new Reference
                         {
-                            Book = "Greek Esther",
+                            Book = new Book {
+                                ProperName = "Greek Esther"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -952,7 +1097,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**9**> And the roof of your mouth like the best wine. The wine goes down smoothly for my beloved, Moving gently the lips of sleepers. <**10**> I am my beloved's, And his desire is toward me.",
                         Reference = new Reference
                         {
-                            Book = "Song of Songs",
+                            Book = new Book {
+                                ProperName = "Song of Songs"
+                            },
                             StartingChapter = 7,
                             StartingVerse = 9,
                             EndingChapter = 7,
@@ -996,7 +1143,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham. <**3**> and Judah the father of Perez and Zerah by Tamar, and Perez the father of Hezron, and Hezron the father of Ram, <**9**> and Uzzi'ah the father of Jotham, and Jotham the father of Ahaz, and Ahaz the father of Hezeki'ah,",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,
@@ -1039,7 +1188,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham. <**2**> Abraham was the father of Isaac, and Isaac the father of Jacob, and Jacob the father of Judah and his brothers, <**3**> and Judah the father of Perez and Zerah by Tamar, and Perez the father of Hezron, and Hezron the father of Ram, <**5**> and Salmon the father of Bo'az by Rahab, and Bo'az the father of Obed by Ruth, and Obed the father of Jesse, <**6**> and Jesse the father of David the king. And David was the father of Solomon by the wife of Uri'ah, <**7**> and Solomon the father of Rehobo'am, and Rehobo'am the father of Abi'jah, and Abi'jah the father of Asa, <**9**> and Uzzi'ah the father of Jotham, and Jotham the father of Ahaz, and Ahaz the father of Hezeki'ah, <**10**> and Hezeki'ah the father of Manas'seh, and Manas'seh the father of Amos, and Amos the father of Josi'ah, <**11**> and Josi'ah the father of Jechoni'ah and his brothers, at the time of the deportation to Babylon.",
                         Reference = new Reference
                         {
-                            Book = "Matthew",
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
                             StartingChapter = 1,
                             StartingVerse = 1,
                             EndingChapter = 1,

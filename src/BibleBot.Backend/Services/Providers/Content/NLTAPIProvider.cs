@@ -50,10 +50,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
-            if (reference.Book != "str")
-            {
-                reference.AsString = reference.ToString();
-            }
+            reference.AsString ??= reference.ToString();
 
             string url = string.Format(_getURI, reference.AsString, Environment.GetEnvironmentVariable("NLTAPI_TOKEN"));
 
@@ -229,7 +226,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             return new VerseResult { Reference = reference, Title = PurifyText(title), PsalmTitle = PurifyText(psalmTitle), Text = PurifyText(text) };
         }
 
-        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = "str", Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = null, Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Models.Version version)
         {

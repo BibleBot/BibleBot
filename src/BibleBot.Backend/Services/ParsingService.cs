@@ -19,15 +19,18 @@ namespace BibleBot.Backend.Services
 {
     public partial class ParsingService
     {
+        private readonly MDBookMap _bookMap = JsonSerializer.Deserialize<MDBookMap>(File.ReadAllText("./Data/book_map.json"));
+
         public System.Tuple<string, List<BookSearchResult>> GetBooksInString(MDBookNames bookNames, List<string> defaultNames, string str)
         {
             List<BookSearchResult> results = [];
 
             List<string> overlaps =
             [
-                "ezra",
-                "jer",
-                "esth"
+                "EZR",
+                "JER",
+                "EST",
+                "SNG"
             ];
 
             // We want to iterate twice through the booknames
@@ -78,15 +81,13 @@ namespace BibleBot.Backend.Services
 
         public Reference GenerateReference(string str, BookSearchResult bookSearchResult, Version prefVersion, List<Version> versions)
         {
-            string book = bookSearchResult.Name;
+            string bookName = bookSearchResult.Name;
             int startingChapter = 0;
             int startingVerse = 0;
             int endingChapter = 0;
             int endingVerse = 0;
             List<System.Tuple<int, int>> appendedVerses = [];
             bool expandoVerseUsed = false;
-
-            MDBookMap _bookMap = JsonSerializer.Deserialize<MDBookMap>(File.ReadAllText("./Data/book_map.json"));
 
             string[] tokens = str.Split(" ");
 
@@ -246,7 +247,6 @@ namespace BibleBot.Backend.Services
                                         }
                                     }
 
-                                    // TODO(srp): Indicate comma limit to user.
                                     if (commaSplit.Length > 5)
                                     {
                                         throw new VerseLimitationException("too many commas");
@@ -317,30 +317,32 @@ namespace BibleBot.Backend.Services
             bool isNT = false;
             bool isDEU = false;
 
-            if (_bookMap["ot"].ContainsKey(book))
+            if (_bookMap["ot"].ContainsKey(bookName))
             {
                 isOT = true;
-                book = _bookMap["ot"][book];
+                bookName = _bookMap["ot"][bookName];
             }
-            else if (_bookMap["nt"].ContainsKey(book))
+            else if (_bookMap["nt"].ContainsKey(bookName))
             {
                 isNT = true;
-                book = _bookMap["nt"][book];
+                bookName = _bookMap["nt"][bookName];
             }
-            else if (_bookMap["deu"].ContainsKey(book))
+            else if (_bookMap["deu"].ContainsKey(bookName))
             {
                 isDEU = true;
-                book = _bookMap["deu"][book];
+                bookName = _bookMap["deu"][bookName];
             }
 
-            if (book == "Psalm" && startingChapter == 151)
+            Book book = prefVersion.Books?.FirstOrDefault(book => book.ProperName == bookName, new() { Name = bookSearchResult.Name, ProperName = bookName });
+
+            if (bookName == "Psalm" && startingChapter == 151)
             {
                 isOT = false;
                 isDEU = true;
 
                 if (prefVersion.Source == "bg")
                 {
-                    book = _bookMap["deu"]["ps151"];
+                    book.ProperName = "Psalm 151";
                     startingChapter = 1;
                     endingChapter -= 150;
                 }
@@ -349,7 +351,6 @@ namespace BibleBot.Backend.Services
             return new Reference
             {
                 Book = book,
-                BookDataName = bookSearchResult.Name,
                 StartingChapter = startingChapter,
                 StartingVerse = startingVerse,
                 EndingChapter = endingChapter,
