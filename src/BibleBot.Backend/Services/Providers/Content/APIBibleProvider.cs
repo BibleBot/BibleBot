@@ -210,11 +210,10 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             reference.Book ??= new Book();
             reference.Book.ProperName = originalProperName;
+            reference.Book.PreferredName ??= originalProperName;
 
             // As the verse reference could have a non-English name...
-            Book bookWithName = reference.Version.Books.First(book => book.Name == resp.Passages[0].BookId);
-
-            string properBookName = bookWithName.PreferredName;
+            string properBookName = reference.Book.PreferredName;
 
             if (reference.Version.Abbreviation == "ELXX")
             {
@@ -223,7 +222,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 properBookName = originalProperName;
             }
 
-            reference.AsString = resp.Passages[0].Reference.Replace(bookWithName.PreferredName, properBookName);
+            reference.AsString = resp.Passages[0].Reference.Replace(reference.Book.PreferredName, properBookName);
 
             if (resp.Passages.Count > 1)
             {
