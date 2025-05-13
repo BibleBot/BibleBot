@@ -751,7 +751,6 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             resp.Should().BeEquivalentTo(expected);
         }
 
-        // TODO: test 1 Esdras + Ezra, Letter of Jeremiah + Jeremiah in same request
         [Test]
         public void ShouldProcessMultipleOverlappingBooks()
         {

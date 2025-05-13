@@ -32,7 +32,6 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         private readonly string _baseURL = "https://api.scripture.api.bible/v1/";
         private readonly string _getURI = "bibles/{0}/search?query={1}&limit=100";
-        private readonly string _getBookURI = "bibles/{0}/books/{1}";
         private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=100&sort=relevance";
 
         public APIBibleProvider()
@@ -213,11 +212,9 @@ namespace BibleBot.Backend.Services.Providers.Content
             reference.Book.ProperName = originalProperName;
 
             // As the verse reference could have a non-English name...
-            // TODO: remove this, use internal book information
-            string bookUrl = string.Format(_getBookURI, reference.Version.InternalId, resp.Passages[0].BookId);
-            ABBook bookResp = await _cachingHttpClient.GetJsonContentAs<ABBook>(bookUrl, _jsonOptions);
+            Book bookWithName = reference.Version.Books.First(book => book.Name == resp.Passages[0].BookId);
 
-            string properBookName = bookResp.Name.EndsWith('.') ? bookResp.NameLong : bookResp.Name;
+            string properBookName = bookWithName.PreferredName;
 
             if (reference.Version.Abbreviation == "ELXX")
             {
@@ -226,7 +223,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 properBookName = originalProperName;
             }
 
-            reference.AsString = resp.Passages[0].Reference.Replace(bookResp.Name, properBookName);
+            reference.AsString = resp.Passages[0].Reference.Replace(bookWithName.PreferredName, properBookName);
 
             if (resp.Passages.Count > 1)
             {
