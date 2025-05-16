@@ -96,7 +96,17 @@ namespace BibleBot.Backend.Controllers
                     });
                 }
 
-                if (tokenizedBody.Length > 1)
+                if (tokenizedBody.Length == 1)
+                {
+                    Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == potentialCommand);
+
+                    if (idealCommand != null)
+                    {
+                        response = await idealCommand.ProcessCommand(req, []);
+                        return response.OK ? Ok(response) : BadRequest(response);
+                    }
+                }
+                else
                 {
                     Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
 
