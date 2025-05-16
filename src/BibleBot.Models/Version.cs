@@ -62,6 +62,12 @@ namespace BibleBot.Models
         public string Publisher { get; set; }
 
         /// <summary>
+        /// The locale of the version.
+        /// </summary>
+        [BsonElement("Locale")]
+        public string Locale { get; set; }
+
+        /// <summary>
         /// The source's internal ID for the version.
         /// </summary>
         [BsonElement("InternalId")]
