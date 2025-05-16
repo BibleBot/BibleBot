@@ -27,6 +27,7 @@ using NodaTime;
 using RestSharp;
 using RestSharp.Serializers.Json;
 using Serilog;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.AutomaticServices.Services
 {
@@ -128,7 +129,7 @@ namespace BibleBot.AutomaticServices.Services
                     string version = guild.Version ?? "RSV";
                     string culture = guild.Language ?? "en-US";
 
-                    Models.Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
+                    Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
                     Language idealLanguage = await _languageService.Get(culture) ?? await _languageService.Get("en-US");
 
                     CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Culture);

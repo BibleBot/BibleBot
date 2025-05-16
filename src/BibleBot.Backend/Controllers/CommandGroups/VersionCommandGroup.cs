@@ -17,6 +17,7 @@ using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
+using Version = BibleBot.Models.Version;
 using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
@@ -60,10 +61,10 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 List<string> replacements = [];
 
-                Models.Version idealUserVersion = await versionService.GetPreferenceOrDefault(idealUser, false);
+                Version idealUserVersion = await versionService.GetPreferenceOrDefault(idealUser, false);
                 replacements.Add($"**{idealUserVersion.Name}**");
 
-                Models.Version idealGuildVersion = await versionService.GetPreferenceOrDefault(idealGuild, false);
+                Version idealGuildVersion = await versionService.GetPreferenceOrDefault(idealGuild, false);
                 replacements.Add($"**{idealGuildVersion.Name}**");
 
                 response = string.Format(response, [.. replacements]);
@@ -88,7 +89,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                Models.Version idealVersion = await versionService.Get(args[0]);
+                Version idealVersion = await versionService.Get(args[0]);
 
                 if (idealVersion != null)
                 {
@@ -144,7 +145,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                Models.Version idealVersion = await versionService.Get(args[0]);
+                Version idealVersion = await versionService.Get(args[0]);
 
                 if (idealVersion != null)
                 {
@@ -230,7 +231,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     }
                 }
 
-                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
 
                 if (idealVersion != null)
                 {
@@ -289,8 +290,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                List<Models.Version> versions = await versionService.Get();
-                versions.Sort((x, y) => x.Name.CompareTo(y.Name));
+                List<Version> versions = await versionService.Get();
+                versions.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
 
                 List<string> versionsUsed = [];
                 List<InternalEmbed> pages = [];
@@ -306,7 +307,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     int count = 0;
                     StringBuilder versionList = new();
 
-                    foreach (Models.Version version in versions)
+                    foreach (Version version in versions)
                     {
                         if (count < maxResultsPerPage)
                         {
@@ -364,7 +365,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     }
                 }
 
-                Models.Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
+                Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
 
                 if (idealVersion != null)
                 {

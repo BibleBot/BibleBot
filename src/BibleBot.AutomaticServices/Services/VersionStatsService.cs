@@ -21,6 +21,7 @@ using NodaTime;
 using RestSharp;
 using RestSharp.Serializers.Json;
 using Serilog;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.AutomaticServices.Services
 {
@@ -61,11 +62,11 @@ namespace BibleBot.AutomaticServices.Services
             if (dateTimeInStandardTz.Day == 11 && dateTimeInStandardTz.Hour == 11)
             {
                 var preferences = (await _userService.Get()).Concat<IPreference>(await _guildService.Get()).ToList();
-                List<Models.Version> versions = await _versionService.Get();
+                List<Version> versions = await _versionService.Get();
 
                 Dictionary<string, int> versionStats = [];
 
-                foreach (Models.Version version in versions)
+                foreach (Version version in versions)
                 {
                     versionStats.TryAdd(version.Abbreviation, 0);
                 }

@@ -16,6 +16,7 @@ using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using Serilog;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
@@ -86,7 +87,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     }
                 }
 
-                Models.Version idealVersion = versionParam != null ? await versionService.Get(versionParam) : await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
+                Version idealVersion = versionParam != null ? await versionService.Get(versionParam) : await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
 
                 if (idealVersion.Source != "bg" && potentialSubset != SubsetFlag.INVALID)
                 {

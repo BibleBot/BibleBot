@@ -19,6 +19,7 @@ using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -90,9 +91,9 @@ namespace BibleBot.Backend.Controllers
             Language language = await languageService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
             CultureInfo.CurrentUICulture = new CultureInfo(language.Culture);
 
-            Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
+            Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
 
-            List<Models.Version> versions = await versionService.Get();
+            List<Version> versions = await versionService.Get();
             List<Reference> references = [];
 
             foreach (BookSearchResult bsr in tuple.Item2)

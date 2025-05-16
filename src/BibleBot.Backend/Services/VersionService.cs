@@ -6,11 +6,13 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Services
 {
@@ -30,7 +32,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task<List<Version>> Get() => await GetVersions();
-        public async Task<Version> Get(string abbreviation) => (await GetVersions()).FirstOrDefault(version => version.Abbreviation == abbreviation);
+        public async Task<Version> Get(string abbreviation) => (await GetVersions()).FirstOrDefault(version => string.Equals(version.Abbreviation, abbreviation, StringComparison.OrdinalIgnoreCase));
         public async Task<int> GetCount() => (await GetVersions()).Count;
 
         public async Task<Version> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)

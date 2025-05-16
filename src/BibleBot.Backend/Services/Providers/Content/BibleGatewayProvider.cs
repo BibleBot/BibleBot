@@ -18,6 +18,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using BibleBot.Models;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Services.Providers.Content
 {
@@ -237,9 +238,9 @@ namespace BibleBot.Backend.Services.Providers.Content
             return new VerseResult { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
 
-        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Models.Version version) => await GetVerse(new Reference { Book = null, Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = null, Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
-        public async Task<List<SearchResult>> Search(string query, Models.Version version)
+        public async Task<List<SearchResult>> Search(string query, Version version)
         {
             string url = string.Format(_searchURI, query, version.Abbreviation);
 

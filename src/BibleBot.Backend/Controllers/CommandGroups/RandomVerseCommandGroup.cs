@@ -16,6 +16,7 @@ using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
@@ -74,7 +75,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
+                Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 string randomRef = await svProvider.GetRandomVerse();
                 IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
 
@@ -131,7 +132,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     displayStyle = idealGuild.DisplayStyle ?? displayStyle;
                 }
 
-                Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
+                Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 string trulyRandomRef = await svProvider.GetTrulyRandomVerse();
                 IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
 
