@@ -81,7 +81,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealGuild != null)
                 {
-                    replacements.Add(idealGuild.DisplayStyle != null ? $"**`{idealUser.DisplayStyle}`**" : "**`embed`**");
+                    replacements.Add(idealGuild.DisplayStyle != null ? $"**`{idealGuild.DisplayStyle}`**" : "**`embed`**");
                     replacements.Add(idealGuild.IgnoringBrackets != "<>" ? $" / **`{idealGuild.IgnoringBrackets}`**" : "");
                 }
                 else
