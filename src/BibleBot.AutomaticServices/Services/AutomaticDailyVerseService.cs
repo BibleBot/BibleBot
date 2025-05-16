@@ -85,7 +85,7 @@ namespace BibleBot.AutomaticServices.Services
 
             Log.Information($"AutomaticDailyVerseService: Fetching guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}...");
 
-            IEnumerable<Guild> matches = (await _guildService.Get()).Where((guild) =>
+            IEnumerable<Guild> matches = (await _guildService.Get(true)).Where((guild) =>
             {
                 if (isTesting && guild.GuildId != "769709969796628500")
                 {
