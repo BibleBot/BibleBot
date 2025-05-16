@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v10.0.0..v11.0.0) - 2025-05-16
+
+### 🚀 Features
+
+- Fetch section title data from API.Bible ([04ca6cb](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/04ca6cb77a03019999134d66a25f1d51a9cf34d0))
+- [**breaking**] Use API.Bible data names as default internal names. ([5c20755](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5c20755f7385129f4fe944b6ea857f23f4d9b384))
+- Add locale field to versions ([9663575](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/966357596afcc6f5d4ec168606a120a5844cb1b3))
+
+### 🐛 Bug Fixes
+
+- Use internal book information for finding preferred book name of an AB verse ([1fab847](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1fab8479bcdcfdc36a6fbf65dbd35f4051bb5b35))
+- Remove redundant fetch for internal book information ([b81ede8](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b81ede8ef0df75f49ce49c58398e599d0954ad8f))
+
 ## [10.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v9.5.0..v10.0.0) - 2025-05-03
 
 ### 🚀 Features
