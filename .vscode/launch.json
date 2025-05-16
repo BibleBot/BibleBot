@@ -13,7 +13,7 @@
             "request": "attach",
             "pipeTransport": {
                 "pipeCwd": "${workspaceFolder}",
-                "pipeProgram": "/usr/bin/ssh",
+                "pipeProgram": "$(which ssh)",
                 "pipeArgs": [
                     "leviathan"
                 ],
