@@ -30,7 +30,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task<List<Version>> Get() => await GetVersions();
-        public async Task<Version> Get(string abbreviation) => (await GetVersions()).First(version => version.Abbreviation == abbreviation);
+        public async Task<Version> Get(string abbreviation) => (await GetVersions()).FirstOrDefault(version => version.Abbreviation == abbreviation);
         public async Task<int> GetCount() => (await GetVersions()).Count;
 
         public async Task<Version> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)

@@ -30,7 +30,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task<List<Guild>> Get() => await GetGuilds();
-        public async Task<Guild> Get(string guildId) => (await GetGuilds()).First(guild => guild.GuildId == guildId);
+        public async Task<Guild> Get(string guildId) => (await GetGuilds()).FirstOrDefault(guild => guild.GuildId == guildId);
         public async Task<int> GetCount() => (await GetGuilds()).Count;
 
         public async Task<Guild> Create(Guild guild)

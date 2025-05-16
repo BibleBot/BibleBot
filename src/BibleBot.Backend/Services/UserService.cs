@@ -30,7 +30,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task<List<User>> Get() => await GetUsers();
-        public async Task<User> Get(string userId) => (await GetUsers()).First(user => user.UserId == userId);
+        public async Task<User> Get(string userId) => (await GetUsers()).FirstOrDefault(user => user.UserId == userId);
         public async Task<int> GetCount() => (await GetUsers()).Count;
 
         public async Task<User> Create(User user)

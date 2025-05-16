@@ -29,7 +29,7 @@ namespace BibleBot.Backend.Services
         }
 
         public async Task<List<Language>> Get() => await GetLanguages();
-        public async Task<Language> Get(string culture) => (await GetLanguages()).First(language => language.Culture == culture);
+        public async Task<Language> Get(string culture) => (await GetLanguages()).FirstOrDefault(language => language.Culture == culture);
 
         public async Task<Language> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)
         {
