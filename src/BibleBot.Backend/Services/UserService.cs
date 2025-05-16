@@ -43,8 +43,13 @@ namespace BibleBot.Backend.Services
 
         public async Task Update(string userId, UpdateDefinition<User> updateDefinition)
         {
+            User beforeUser = await Get(userId);
             await _mongoService.Update(userId, updateDefinition);
-            await GetUsers(true);
+
+            User afterUser = await _mongoService.Get<User>(userId);
+
+            _users.Remove(beforeUser);
+            _users.Add(afterUser);
         }
         public async Task Remove(User idealUser)
         {

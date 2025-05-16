@@ -36,15 +36,20 @@ namespace BibleBot.Backend.Services
         public async Task<Guild> Create(Guild guild)
         {
             Guild createdGuild = await _mongoService.Create(guild);
-            await GetGuilds(true);
+            _guilds.Add(createdGuild);
 
             return createdGuild;
         }
 
         public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition)
         {
+            Guild beforeGuild = await Get(guildId);
             await _mongoService.Update(guildId, updateDefinition);
-            await GetGuilds(true);
+
+            Guild afterGuild = await _mongoService.Get<Guild>(guildId);
+
+            _guilds.Remove(beforeGuild);
+            _guilds.Add(afterGuild);
         }
         public async Task Remove(Guild idealGuild)
         {

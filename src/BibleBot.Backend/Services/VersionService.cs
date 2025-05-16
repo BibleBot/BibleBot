@@ -85,8 +85,13 @@ namespace BibleBot.Backend.Services
 
         public async Task Update(string abbreviation, UpdateDefinition<Version> updateDefinition)
         {
+            Version beforeVersion = await Get(abbreviation);
             await _mongoService.Update(abbreviation, updateDefinition);
-            await GetVersions(true);
+
+            Version afterVersion = await _mongoService.Get<Version>(abbreviation);
+
+            _versions.Remove(beforeVersion);
+            _versions.Add(afterVersion);
         }
         public async Task Remove(Version idealVersion)
         {
