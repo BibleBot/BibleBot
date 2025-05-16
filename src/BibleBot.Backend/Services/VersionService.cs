@@ -7,6 +7,7 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
@@ -16,10 +17,21 @@ namespace BibleBot.Backend.Services
     public class VersionService(MongoService mongoService)
     {
         private readonly MongoService _mongoService = mongoService;
+        private List<Version> _versions = null;
 
-        public async Task<List<Version>> Get() => await _mongoService.Get<Version>();
-        public async Task<Version> Get(string abbv) => await _mongoService.Get<Version>(abbv);
-        public async Task<long> GetCount() => await _mongoService.GetCount<Version>();
+        private async Task<List<Version>> GetVersions(bool forcePull = false)
+        {
+            if (forcePull || _versions == null)
+            {
+                _versions = await _mongoService.Get<Version>();
+            }
+
+            return _versions;
+        }
+
+        public async Task<List<Version>> Get() => await GetVersions();
+        public async Task<Version> Get(string abbreviation) => (await GetVersions()).First(version => version.Abbreviation == abbreviation);
+        public async Task<int> GetCount() => (await GetVersions()).Count;
 
         public async Task<Version> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)
         {
@@ -61,9 +73,23 @@ namespace BibleBot.Backend.Services
             return idealVersion ?? await Get("RSV");
         }
 
-        public async Task<Version> Create(Version version) => await _mongoService.Create(version);
+        public async Task<Version> Create(Version version)
+        {
+            Version createdVersion = await _mongoService.Create(version);
+            await GetVersions(true);
 
-        public async Task Update(string abbv, UpdateDefinition<Version> updateDefinition) => await _mongoService.Update(abbv, updateDefinition);
-        public async Task Remove(Version idealVersion) => await _mongoService.Remove(idealVersion);
+            return createdVersion;
+        }
+
+        public async Task Update(string abbreviation, UpdateDefinition<Version> updateDefinition)
+        {
+            await _mongoService.Update(abbreviation, updateDefinition);
+            await GetVersions(true);
+        }
+        public async Task Remove(Version idealVersion)
+        {
+            await _mongoService.Remove(idealVersion);
+            await GetVersions(true);
+        }
     }
 }

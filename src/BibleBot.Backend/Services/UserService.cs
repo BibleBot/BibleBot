@@ -7,6 +7,7 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Models;
 using MongoDB.Driver;
@@ -16,14 +17,39 @@ namespace BibleBot.Backend.Services
     public class UserService(MongoService mongoService)
     {
         private readonly MongoService _mongoService = mongoService;
+        private List<User> _users = null;
 
-        public async Task<List<User>> Get() => await _mongoService.Get<User>();
-        public async Task<User> Get(string userId) => await _mongoService.Get<User>(userId);
-        public async Task<long> GetCount() => await _mongoService.GetCount<User>();
+        private async Task<List<User>> GetUsers(bool forcePull = false)
+        {
+            if (forcePull || _users == null)
+            {
+                _users = await _mongoService.Get<User>();
+            }
 
-        public async Task<User> Create(User user) => await _mongoService.Create(user);
+            return _users;
+        }
 
-        public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await _mongoService.Update(userId, updateDefinition);
-        public async Task Remove(User idealUser) => await _mongoService.Remove(idealUser);
+        public async Task<List<User>> Get() => await GetUsers();
+        public async Task<User> Get(string userId) => (await GetUsers()).First(user => user.UserId == userId);
+        public async Task<int> GetCount() => (await GetUsers()).Count;
+
+        public async Task<User> Create(User user)
+        {
+            User createdUser = await _mongoService.Create(user);
+            await GetUsers(true);
+
+            return createdUser;
+        }
+
+        public async Task Update(string userId, UpdateDefinition<User> updateDefinition)
+        {
+            await _mongoService.Update(userId, updateDefinition);
+            await GetUsers(true);
+        }
+        public async Task Remove(User idealUser)
+        {
+            await _mongoService.Remove(idealUser);
+            await GetUsers(true);
+        }
     }
 }

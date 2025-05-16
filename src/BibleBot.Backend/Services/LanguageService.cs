@@ -7,6 +7,7 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Models;
 
@@ -15,9 +16,20 @@ namespace BibleBot.Backend.Services
     public class LanguageService(MongoService mongoService)
     {
         private readonly MongoService _mongoService = mongoService;
+        private List<Language> _languages = null;
 
-        public async Task<List<Language>> Get() => await _mongoService.Get<Language>();
-        public async Task<Language> Get(string culture) => await _mongoService.Get<Language>(culture);
+        private async Task<List<Language>> GetLanguages(bool forcePull = false)
+        {
+            if (forcePull || _languages == null)
+            {
+                _languages = await _mongoService.Get<Language>();
+            }
+
+            return _languages;
+        }
+
+        public async Task<List<Language>> Get() => await GetLanguages();
+        public async Task<Language> Get(string culture) => (await GetLanguages()).First(language => language.Culture == culture);
 
         public async Task<Language> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)
         {

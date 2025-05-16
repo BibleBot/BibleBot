@@ -32,20 +32,9 @@ namespace BibleBot.Backend.Controllers
         private readonly List<IContentProvider> _bibleProviders = [bgProvider, abProvider, nltProvider];
         private readonly IStringLocalizer _localizer = localizer;
         private readonly IStringLocalizer _sharedLocalizer = sharedLocalizer;
-        private List<Models.Version> _versions = null;
 
         [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$")]
         private static partial Regex TruncatedTextRegex();
-
-        private async Task<List<Models.Version>> GetVersions(bool forcePull = false)
-        {
-            if (forcePull || _versions == null)
-            {
-                _versions = await versionService.Get();
-            }
-
-            return _versions;
-        }
 
         /// <summary>
         /// Processes a message to locate verse references, outputting
@@ -103,7 +92,7 @@ namespace BibleBot.Backend.Controllers
 
             Models.Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
 
-            List<Models.Version> versions = await GetVersions();
+            List<Models.Version> versions = await versionService.Get();
             List<Reference> references = [];
 
             foreach (BookSearchResult bsr in tuple.Item2)
