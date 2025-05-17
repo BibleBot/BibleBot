@@ -221,8 +221,7 @@ namespace BibleBot.Backend.Controllers
 
                     if (result.Title.Length > 256)
                     {
-                        result.Title = $"{string.Join("", result.Title.SkipLast(result.Title.Length - 2044))}...";
-                        result.Title = TruncatedTextRegex().Replace(result.Title, "...");
+                        result.Title = $"{string.Join("", result.Title.SkipLast(result.Title.Length - 252))}...";
                     }
                 }
                 else if (displayStyle != "embed")
