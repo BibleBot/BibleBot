@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.0.1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v11.0.0..v11.0.1) - 2025-05-17
+
+### 🐛 Bug Fixes
+
+- Handle InformationCommandGroup calls properly ([ce7ae05](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/ce7ae05c2a20534cf52844907df7822742eb522a))
+- Return null if entry in DB doesn't truly exist ([71bed44](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/71bed4467340e6ca31816fc2b66707828ba880ed))
+- Force pull guilds for Automatic Daily Verses ([36b058a](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/36b058ac19124577e11d99d3b7c9b78217944e7b))
+- Allow lowercase abbreviations for version references, refactor slightly ([847bef1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/847bef11963b5506f0fbe0f13a96ef6b41d5dc17))
+- Server's display style in /formatting accidentally used user's display style ([91bffb3](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/91bffb3d5b7ac234e114cf1f64c93dfd775182f3))
+- Missing localizations ([c2aea5d](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c2aea5d502498d7f857e465918b8e2b76588d136))
+- Optimize DB updating functions ([8b83c05](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8b83c056851f275a0639fca40caa84cba2f028d0))
+- Avoid issues with guild enumerable in AutomaticDailyVerseService, handle non-JSON responses in JSON caching client ([381a04f](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/381a04f3bfc71ccc76210f143c82801bcfbe8a84))
+- Add John to overlapping book names list ([9944680](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/994468042b75b1663dabfe677ad9f2c63a1553fd))
+- Truncate verse titles when length exceeds limit ([e12a05d](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/e12a05d7d2f14594a0ab08e31e2e8febbba993e9))
+
+### 🚜 Refactor
+
+- Optimize version search in reference ([609d151](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/609d151236c4279718bf4ad7944dc9baf848f4d1))
+- Cache DB tables locally, fetch when necessary ([8cb2d36](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8cb2d36371ac6d0863cee549e60e9dac4efec5db))
+
 ## [11.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v10.0.0..v11.0.0) - 2025-05-16
 
 ### 🚀 Features
