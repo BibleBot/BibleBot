@@ -20,18 +20,18 @@ namespace BibleBot.Backend.Services
     public partial class ParsingService
     {
         private readonly MDBookMap _bookMap = JsonSerializer.Deserialize<MDBookMap>(File.ReadAllText("./Data/book_map.json"));
+        private readonly List<string> _overlappingBookNames =
+        [
+            "EZR", // Ezra
+            "JER", // Jeremiah
+            "EST", // Esther
+            "JHN", // John
+            "SNG" // Song of Songs (conflicts with Song of the Three Holy Youths)
+        ];
 
         public System.Tuple<string, List<BookSearchResult>> GetBooksInString(MDBookNames bookNames, List<string> defaultNames, string str)
         {
             List<BookSearchResult> results = [];
-
-            List<string> overlaps =
-            [
-                "EZR",
-                "JER",
-                "EST",
-                "SNG"
-            ];
 
             // We want to iterate twice through the booknames
             // in order to skip Ezra in the first iteration,
@@ -44,7 +44,7 @@ namespace BibleBot.Backend.Services
                     {
                         if (IsValueInString(str, item.ToLowerInvariant()))
                         {
-                            if (!(i == 1 && overlaps.Contains(bookName.Key)))
+                            if (!(i == 1 && _overlappingBookNames.Contains(bookName.Key)))
                             {
                                 str = str.Replace(item.ToLowerInvariant(), bookName.Key);
                             }

@@ -1075,6 +1075,49 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
+        public void ShouldNotProcessJohannineEpistlesAsJohn()
+        {
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("1 John 1:1 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "1 John 1:1 KJV",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new()
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**1**> That which was from the beginning, which we have heard, which we have seen with our eyes, which we have looked upon, and our hands have handled, of the Word of life;",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "1 John"
+                            },
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = _defaultAPIBibleVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "1 John 1:1"
+                        }
+                    }
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
         public async Task ShouldRemoveH4HeadingsInVerseContent()
         {
             Version testVersion = await _versionService.Get("NKJV") ?? await _versionService.Create(new MockNKJV());
