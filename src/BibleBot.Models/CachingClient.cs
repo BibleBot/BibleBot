@@ -15,6 +15,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using CacheCow.Client;
+using Microsoft.Extensions.Logging;
 
 // TODO(srp): Add documentation strings to this.
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -22,13 +23,13 @@ namespace BibleBot.Models
 {
     public static class CachingClient
     {
-        public static readonly int expiryMins = 120; // Change when data expires & is freed from CacheCow.InMemoryCacheStore, min is 60
-        public static readonly int staleMins = 60; // Change when data becomes stale and needs revalidation
+        private static readonly int _expiryMins = 120; // Change when data expires & is freed from CacheCow.InMemoryCacheStore, min is 60
+        public static readonly int _staleMins = 60; // Change when data becomes stale and needs revalidation
 
         public static HttpClient GetCachingClient(string baseURL)
         {
             HttpClient client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler());
 
             client.BaseAddress = new System.Uri(baseURL);
@@ -44,14 +45,14 @@ namespace BibleBot.Models
             if (isHtml)
             {
                 client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler(),
                 new HtmlTrimHandler());
             }
             else
             {
                 client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler(),
                 new JsonTrimHandler());
             }
@@ -69,14 +70,14 @@ namespace BibleBot.Models
             if (isHtml)
             {
                 client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler(),
                 new HtmlTrimHandler());
             }
             else
             {
                 client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler(),
                 new JsonTrimHandler());
             }
@@ -103,7 +104,7 @@ namespace BibleBot.Models
             {
                 response.Headers.CacheControl = new()
                 {
-                    MaxAge = System.TimeSpan.FromMinutes(CachingClient.staleMins)
+                    MaxAge = System.TimeSpan.FromMinutes(CachingClient._staleMins)
                 };
             }
 
@@ -143,8 +144,16 @@ namespace BibleBot.Models
             // Reduces cache response size by ~1kb (~39% less on Phil 4:6-7)
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-            JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
-            response.Content = json["data"] != null ? new StringContent(json["data"].ToJsonString()) : null;
+            try
+            {
+                JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
+                response.Content = json?["data"] != null ? new StringContent(json["data"].ToJsonString()) : new StringContent("{}");
+            }
+            catch (JsonException ex)
+            {
+                response.Content = new StringContent("Unknown error");
+            }
+
 
             return response;
         }
