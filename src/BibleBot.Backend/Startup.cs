@@ -44,17 +44,25 @@ namespace BibleBot.Backend
             services.AddSingleton(mongoService);
 
             UserService userService = new(mongoService);
+            Log.Information("Caching all user preferences from database...");
+            userService.Get().GetAwaiter().GetResult();
             services.AddSingleton(userService);
 
             GuildService guildService = new(mongoService);
+            Log.Information("Caching all guild preferences from database...");
+            guildService.Get().GetAwaiter().GetResult();
             services.AddSingleton(guildService);
 
-            services.AddSingleton<ParsingService>();
-            services.AddSingleton<VersionService>();
+            VersionService versionService = new(mongoService);
+            Log.Information("Caching all versions from database...");
+            versionService.Get().GetAwaiter().GetResult();
+            services.AddSingleton(versionService);
 
             LanguageService languageService = new(mongoService);
+            languageService.Get().GetAwaiter().GetResult();
             services.AddSingleton(languageService);
 
+            services.AddSingleton<ParsingService>();
             services.AddSingleton<ResourceService>();
             services.AddSingleton<FrontendStatsService>();
             services.AddSingleton<OptOutService>();
@@ -82,7 +90,7 @@ namespace BibleBot.Backend
             }
 
             // Add the name fetching service with a predefined instance, since we'll use it later in this function.
-            MetadataFetchingService metadataFetchingService = new(mongoService, false);
+            MetadataFetchingService metadataFetchingService = new(versionService, false);
             services.AddSingleton(metadataFetchingService);
 
             services.AddResponseCaching();

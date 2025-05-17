@@ -41,9 +41,9 @@ namespace BibleBot.Backend.Services
 
         private readonly HttpClient _httpClient;
         private readonly RestClient _restClient;
-        private readonly MongoService _mongoService;
+        private readonly VersionService _versionService;
 
-        public MetadataFetchingService(MongoService mongoService, bool isForAutoServ)
+        public MetadataFetchingService(VersionService versionService, bool isForAutoServ)
         {
             if (isForAutoServ)
             {
@@ -69,7 +69,7 @@ namespace BibleBot.Backend.Services
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
             _restClient = new RestClient("https://api.scripture.api.bible/v1");
 
-            _mongoService = mongoService;
+            _versionService = versionService;
         }
 
         public MDBookNames GetBookNames()
@@ -119,7 +119,7 @@ namespace BibleBot.Backend.Services
             }
 
             Log.Information("MetadataFetchingService: Getting versions from DB...");
-            IEnumerable<Version> versions = await _mongoService.Get<Version>();
+            IEnumerable<Version> versions = await _versionService.Get();
 
             IEnumerable<Version> abVersions = versions.Where(version => version.Source == "ab" && version.Books == null);
             IEnumerable<Version> bgVersions = versions.Where(version => version.Source == "bg" && version.Books == null);
@@ -260,7 +260,7 @@ namespace BibleBot.Backend.Services
         {
             MDBookNames names = [];
 
-            List<Version> versions = await _mongoService.Get<Version>();
+            List<Version> versions = await _versionService.Get();
 
             foreach (Version version in versions)
             {
@@ -410,7 +410,7 @@ namespace BibleBot.Backend.Services
                 }
 
                 UpdateDefinition<Version> update = Builders<Version>.Update.Set(version => version.Books, [.. versionBookData]);
-                await _mongoService.Update(version.Abbreviation, update);
+                await _versionService.Update(version.Abbreviation, update);
             }
         }
 
@@ -574,7 +574,7 @@ namespace BibleBot.Backend.Services
 
                 string versionInternalId = version.InternalId ?? resp.RequestMessage.RequestUri.AbsoluteUri.Replace("https://www.biblegateway.com/versions/", "").Replace("/#booklist", "");
                 UpdateDefinition<Version> update = Builders<Version>.Update.Set(version => version.Books, [.. versionBookData]).Set(version => version.InternalId, versionInternalId);
-                await _mongoService.Update(version.Abbreviation, update);
+                await _versionService.Update(version.Abbreviation, update);
             }
         }
 
