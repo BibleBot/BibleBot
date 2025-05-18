@@ -113,8 +113,9 @@ namespace BibleBot.Backend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MetadataFetchingService metadataFetchingService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MetadataFetchingService metadataFetchingService, VersionService versionService)
         {
+            versionService.Get().GetAwaiter().GetResult();
             metadataFetchingService.FetchMetadata(Configuration.GetSection("BibleBotBackend").GetValue<bool>("MetadataFetchDryRun")).GetAwaiter().GetResult();
 
             if (env.IsDevelopment())
