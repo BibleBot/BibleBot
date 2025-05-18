@@ -6,55 +6,97 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BibleBot.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
+using StackExchange.Redis;
 
 namespace BibleBot.Backend.Services
 {
-    public class GuildService(MongoService mongoService)
+    public class GuildService(IDistributedCache cache, MongoService mongoService)
     {
+        private readonly IDistributedCache _cache = cache;
         private readonly MongoService _mongoService = mongoService;
-        private List<Guild> _guilds = null;
+        private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+        private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
 
-        private async Task<List<Guild>> GetGuilds(bool forcePull = false)
+        public async Task<List<Guild>> Get()
         {
-            if (forcePull || _guilds == null)
+            List<Guild> guilds = [];
+
+            try
             {
-                _guilds = await _mongoService.Get<Guild>();
+                RedisKey[] keys = [.. _redisServer.Keys(pattern: "guild:*")];
+
+                foreach (RedisKey key in keys)
+                {
+                    string cachedGuildStr = await _cache.GetStringAsync(key);
+                    guilds.Add(JsonSerializer.Deserialize<Guild>(cachedGuildStr));
+                }
+            }
+            catch (ArgumentNullException)
+            {
+                guilds = await _mongoService.Get<Guild>();
+
+                foreach (Guild guild in guilds)
+                {
+                    await _cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
+                }
             }
 
-            return _guilds;
+            return guilds;
         }
 
-        public async Task<List<Guild>> Get(bool forcePull = false) => await GetGuilds(forcePull);
-        public async Task<Guild> Get(string guildId) => (await GetGuilds()).FirstOrDefault(guild => guild.GuildId == guildId);
-        public async Task<int> GetCount() => (await GetGuilds()).Count;
+        public async Task<Guild> Get(string guildId)
+        {
+            Guild guild;
+
+            try
+            {
+                string cachedGuildStr = await _cache.GetStringAsync($"guild:{guildId}");
+                guild = JsonSerializer.Deserialize<Guild>(cachedGuildStr);
+            }
+            catch (ArgumentNullException)
+            {
+
+                guild = await _mongoService.Get<Guild>(guildId);
+
+                if (guild != null)
+                {
+                    await _cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
+                }
+            }
+
+            return guild;
+        }
+
+        public async Task<int> GetCount() => (await Get()).Count;
 
         public async Task<Guild> Create(Guild guild)
         {
             Guild createdGuild = await _mongoService.Create(guild);
-            _guilds.Add(createdGuild);
+            await _cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(createdGuild));
 
             return createdGuild;
         }
 
         public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition)
         {
-            Guild beforeGuild = await Get(guildId);
             await _mongoService.Update(guildId, updateDefinition);
 
-            Guild afterGuild = await _mongoService.Get<Guild>(guildId);
-
-            _guilds.Remove(beforeGuild);
-            _guilds.Add(afterGuild);
+            Guild guild = await _mongoService.Get<Guild>(guildId);
+            await _cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
         }
+
         public async Task Remove(Guild idealGuild)
         {
             await _mongoService.Remove(idealGuild);
-            await GetGuilds(true);
+            await _cache.RemoveAsync($"guild:{idealGuild.GuildId}");
         }
     }
 }

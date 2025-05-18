@@ -15,7 +15,6 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using CacheCow.Client;
-using Microsoft.Extensions.Logging;
 
 // TODO(srp): Add documentation strings to this.
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,28 +40,18 @@ namespace BibleBot.Backend
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "127.0.0.1:6379";
+            });
+
             // Instantiate the various services.
-            MongoService mongoService = new(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>());
-            services.AddSingleton(mongoService);
+            services.AddSingleton(sp => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
 
-            UserService userService = new(mongoService);
-            Log.Information("Caching all user preferences from database...");
-            userService.Get().GetAwaiter().GetResult();
-            services.AddSingleton(userService);
-
-            GuildService guildService = new(mongoService);
-            Log.Information("Caching all guild preferences from database...");
-            guildService.Get().GetAwaiter().GetResult();
-            services.AddSingleton(guildService);
-
-            VersionService versionService = new(mongoService);
-            Log.Information("Caching all versions from database...");
-            versionService.Get().GetAwaiter().GetResult();
-            services.AddSingleton(versionService);
-
-            LanguageService languageService = new(mongoService);
-            languageService.Get().GetAwaiter().GetResult();
-            services.AddSingleton(languageService);
+            services.AddSingleton(sp => new UserService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
+            services.AddSingleton(sp => new GuildService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
+            services.AddSingleton(sp => new VersionService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
+            services.AddSingleton(sp => new LanguageService(sp.GetRequiredService<MongoService>()));
 
             services.AddSingleton<ParsingService>();
             services.AddSingleton<ResourceService>();
@@ -68,7 +59,7 @@ namespace BibleBot.Backend
             services.AddSingleton<OptOutService>();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.Configure<RequestLocalizationOptions>(options =>
+            services.AddOptions<RequestLocalizationOptions>().Configure<UserService, GuildService, LanguageService>((options, userService, guildService, languageService) =>
             {
                 string[] supportedCultures = ["en-GB", "en-US", "eo", "pl-PL"];
                 options.SetDefaultCulture(supportedCultures[0])
@@ -89,16 +80,11 @@ namespace BibleBot.Backend
                 services.AddHostedService<SystemdWatchdogService>();
             }
 
-            // Add the name fetching service with a predefined instance, since we'll use it later in this function.
-            MetadataFetchingService metadataFetchingService = new(versionService, false);
-            services.AddSingleton(metadataFetchingService);
+            services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), false));
 
             services.AddResponseCaching();
             services.AddResponseCompression();
             services.AddControllers();
-
-            // Run the MetadataFetchingService on startup without async.
-            metadataFetchingService.FetchMetadata(Configuration.GetSection("BibleBotBackend").GetValue<bool>("MetadataFetchDryRun")).GetAwaiter().GetResult();
 
             services.AddSwaggerGen(c =>
             {
@@ -127,8 +113,10 @@ namespace BibleBot.Backend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MetadataFetchingService metadataFetchingService)
         {
+            metadataFetchingService.FetchMetadata(Configuration.GetSection("BibleBotBackend").GetValue<bool>("MetadataFetchDryRun")).GetAwaiter().GetResult();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

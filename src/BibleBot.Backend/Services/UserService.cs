@@ -6,55 +6,97 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BibleBot.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
+using StackExchange.Redis;
 
 namespace BibleBot.Backend.Services
 {
-    public class UserService(MongoService mongoService)
+    public class UserService(IDistributedCache cache, MongoService mongoService)
     {
+        private readonly IDistributedCache _cache = cache;
         private readonly MongoService _mongoService = mongoService;
-        private List<User> _users = null;
+        private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+        private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
 
-        private async Task<List<User>> GetUsers(bool forcePull = false)
+        public async Task<List<User>> Get()
         {
-            if (forcePull || _users == null)
+            List<User> users = [];
+
+            try
             {
-                _users = await _mongoService.Get<User>();
+                RedisKey[] keys = [.. _redisServer.Keys(pattern: "user:*")];
+
+                foreach (RedisKey key in keys)
+                {
+                    string cachedUserStr = await _cache.GetStringAsync(key);
+                    users.Add(JsonSerializer.Deserialize<User>(cachedUserStr));
+                }
+            }
+            catch (ArgumentNullException)
+            {
+                users = await _mongoService.Get<User>();
+
+                foreach (User user in users)
+                {
+                    await _cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
+                }
             }
 
-            return _users;
+            return users;
         }
 
-        public async Task<List<User>> Get() => await GetUsers();
-        public async Task<User> Get(string userId) => (await GetUsers()).FirstOrDefault(user => user.UserId == userId);
-        public async Task<int> GetCount() => (await GetUsers()).Count;
+        public async Task<User> Get(string userId)
+        {
+            User user;
+
+            try
+            {
+                string cachedUserStr = await _cache.GetStringAsync($"user:{userId}");
+                user = JsonSerializer.Deserialize<User>(cachedUserStr);
+            }
+            catch (ArgumentNullException)
+            {
+
+                user = await _mongoService.Get<User>(userId);
+
+                if (user != null)
+                {
+                    await _cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
+                }
+            }
+
+            return user;
+        }
+
+        public async Task<int> GetCount() => (await Get()).Count;
 
         public async Task<User> Create(User user)
         {
             User createdUser = await _mongoService.Create(user);
-            await GetUsers(true);
+            await _cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(createdUser));
 
             return createdUser;
         }
 
         public async Task Update(string userId, UpdateDefinition<User> updateDefinition)
         {
-            User beforeUser = await Get(userId);
             await _mongoService.Update(userId, updateDefinition);
 
-            User afterUser = await _mongoService.Get<User>(userId);
-
-            _users.Remove(beforeUser);
-            _users.Add(afterUser);
+            User user = await _mongoService.Get<User>(userId);
+            await _cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
         }
+
         public async Task Remove(User idealUser)
         {
             await _mongoService.Remove(idealUser);
-            await GetUsers(true);
+            await _cache.RemoveAsync($"user:{idealUser.UserId}");
         }
     }
 }

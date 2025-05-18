@@ -14,6 +14,8 @@ using BibleBot.Backend.Services.Providers;
 using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using BibleBot.Tests.Backend.Mocks;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -29,6 +31,7 @@ namespace BibleBot.Tests.Backend
         public VersesController _versesController;
 
         private MongoService _mongoService;
+        private IDistributedCache _cache;
         public VersionService _versionService;
         public LanguageService _languageService;
 
@@ -66,16 +69,18 @@ namespace BibleBot.Tests.Backend
                 DatabaseName = "BibleBotBackend"
             };
 
+            _cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+
             _mongoService = new MongoService(_databaseSettings);
             _optOutServiceMock = new Mock<OptOutService>(_mongoService);
-            _userServiceMock = new Mock<UserService>(_mongoService);
-            _guildServiceMock = new Mock<GuildService>(_mongoService);
-            _versionService = new VersionService(_mongoService);
+            _userServiceMock = new Mock<UserService>(_cache, _mongoService);
+            _guildServiceMock = new Mock<GuildService>(_cache, _mongoService);
+            _versionService = new VersionService(_cache, _mongoService);
             _languageService = new LanguageService(_mongoService);
             _resourceServiceMock = new Mock<ResourceService>();
             _parsingServiceMock = new Mock<ParsingService>();
             _frontendStatsServiceMock = new Mock<FrontendStatsService>(_mongoService);
-            _metadataFetchingServiceMock = new Mock<MetadataFetchingService>(_mongoService, false);
+            _metadataFetchingServiceMock = new Mock<MetadataFetchingService>(_versionService, false);
 
             _spProviderMock = new Mock<SpecialVerseProvider>();
             _bgProviderMock = new Mock<BibleGatewayProvider>(_versionService);

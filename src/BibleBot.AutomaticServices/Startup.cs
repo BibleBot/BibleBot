@@ -17,6 +17,7 @@ using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,16 +38,19 @@ namespace BibleBot.AutomaticServices
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
-            // Instantiate the various services.
-            MongoService mongoService = new(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>());
-            services.AddSingleton(mongoService);
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "127.0.0.1:6379";
+            });
 
-            services.AddSingleton<UserService>();
-            services.AddSingleton<GuildService>();
-            VersionService versionService = new(mongoService);
-            services.AddSingleton(versionService);
-            services.AddSingleton<LanguageService>();
-            services.AddSingleton(sp => new MetadataFetchingService(versionService, true));
+            // Instantiate the various services.
+            services.AddSingleton(sp => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
+
+            services.AddSingleton(sp => new UserService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
+            services.AddSingleton(sp => new GuildService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
+            services.AddSingleton(sp => new VersionService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
+            services.AddSingleton(sp => new LanguageService(sp.GetRequiredService<MongoService>()));
+            services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), true));
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.Configure<RequestLocalizationOptions>(options =>
