@@ -40,7 +40,7 @@ unit_tests:
     - "dotnet restore --packages .nuget --verbosity q"
     - 'export PATH="$PATH:/root/.dotnet/tools"'
     - "dotnet tool install dotnet-reportgenerator-globaltool --global --verbosity q"
-    - "apt-get -qqy update && apt-get install -qqy bc valkey && systemctl start valkey"
+    - "apt-get -qqy update && apt-get install -qqy bc redis && systemctl start redis"
   script:
     - dotnet test --collect:"XPlat Code Coverage" --verbosity q --logger "junit;MethodFormat=Class;FailureBodyFormat=Verbose" -- NUnit.Where="namespace == BibleBot.Tests.Backend"
     - reportgenerator -reports:"test/**/TestResults/**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura"
