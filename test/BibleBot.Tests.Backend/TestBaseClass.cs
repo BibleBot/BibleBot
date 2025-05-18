@@ -78,7 +78,7 @@ namespace BibleBot.Tests.Backend
             _optOutServiceMock = new Mock<OptOutService>(_mongoService);
             _userServiceMock = new Mock<UserService>(_cache, _mongoService);
             _guildServiceMock = new Mock<GuildService>(_cache, _mongoService);
-            _versionService = new VersionService(_cache, _mongoService);
+            _versionService = new VersionService(_mongoService);
             _languageService = new LanguageService(_mongoService);
             _resourceServiceMock = new Mock<ResourceService>();
             _parsingServiceMock = new Mock<ParsingService>();

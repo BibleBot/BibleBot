@@ -48,7 +48,7 @@ namespace BibleBot.AutomaticServices
 
             services.AddSingleton(sp => new UserService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
             services.AddSingleton(sp => new GuildService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
-            services.AddSingleton(sp => new VersionService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
+            services.AddSingleton(sp => new VersionService(sp.GetRequiredService<MongoService>()));
             services.AddSingleton(sp => new LanguageService(sp.GetRequiredService<MongoService>()));
             services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), true));
 
