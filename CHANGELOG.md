@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.1.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v11.0.1..v11.1.0) - 2025-05-18
+
+### 🚀 Features
+
+- Pull DB data on startup, use in MetadataFetchingService ([42dc57d](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/42dc57ddb5b95f4c5617d76d15f1e7c7bb2407de))
+- Use redis cache for DB information ([1797042](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1797042514e6d624c696ac88a3025ca422c1972a))
+
+### 🐛 Bug Fixes
+
+- Parameters for MetadataFetchingService in AutoServ's startup sequence ([8ba2ba1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8ba2ba1ed6523a441afe9b14c14f8822322b7057))
+- Don't use redis for version caching ([6e980ac](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/6e980ac97ba5d5073f03caa25833229e0bd0a69b))
+- Versionservice construction ([c3d451f](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c3d451f9b3304dd4847742459d81a2baef1c1e0f))
+
+### 🚜 Refactor
+
+- Fetch automatic daily verse reference before iterating through guilds ([b0d4b68](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b0d4b685d7fbf5db113af4456da7e3e9c92e0623))
+- Remove unused variable ([4f68c78](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/4f68c783f3090aabfab768d9462d1160bdd8f418))
+- Restore version cache prefetch ([fb7e95c](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/fb7e95c2a4d35b1e0e5489241e0ecf30009aeb7c))
+
 ## [11.0.1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v11.0.0..v11.0.1) - 2025-05-17
 
 ### 🐛 Bug Fixes
