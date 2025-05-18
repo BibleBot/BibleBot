@@ -86,7 +86,7 @@ namespace BibleBot.AutomaticServices.Services
 
             Log.Information($"AutomaticDailyVerseService: Fetching guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}...");
 
-            List<Guild> matches = (await _guildService.Get(true)).Where((guild) =>
+            List<Guild> matches = [.. (await _guildService.Get(true)).Where((guild) =>
             {
                 if (isTesting && guild.GuildId != "769709969796628500")
                 {
@@ -112,12 +112,13 @@ namespace BibleBot.AutomaticServices.Services
                 }
 
                 return false;
-            }).ToList();
+            })];
 
             idealCount = matches.Count;
             Log.Information($"AutomaticDailyVerseService: Fetched {idealCount} guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
 
             Stopwatch watch = Stopwatch.StartNew();
+            string votdRef = await _spProvider.GetDailyVerse();
 
             foreach (Guild guild in matches)
             {
@@ -146,7 +147,6 @@ namespace BibleBot.AutomaticServices.Services
                     }
                     else
                     {
-                        string votdRef = await _spProvider.GetDailyVerse();
                         IContentProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
 
                         if (provider == null)
