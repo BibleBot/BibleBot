@@ -149,7 +149,7 @@ namespace BibleBot.Models
                 JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
                 response.Content = json?["data"] != null ? new StringContent(json["data"].ToJsonString()) : new StringContent("{}");
             }
-            catch (JsonException ex)
+            catch (JsonException)
             {
                 response.Content = new StringContent("Unknown error");
             }
