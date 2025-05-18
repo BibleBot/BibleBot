@@ -9,74 +9,31 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using BibleBot.Models;
-using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
-using StackExchange.Redis;
 using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Services
 {
-    public class VersionService(IDistributedCache cache, MongoService mongoService)
+    public class VersionService(MongoService mongoService)
     {
-        private readonly IDistributedCache _cache = cache;
         private readonly MongoService _mongoService = mongoService;
-        private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
-        private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
+        private List<Version> _versions = null;
 
-        public async Task<List<Version>> Get()
+        private async Task<List<Version>> GetVersions(bool forcePull = false)
         {
-            List<Version> versions = [];
-
-            try
+            if (forcePull || _versions == null)
             {
-                RedisKey[] keys = [.. _redisServer.Keys(pattern: "version:*")];
-
-                foreach (RedisKey key in keys)
-                {
-                    string cachedVersionStr = await _cache.GetStringAsync(key);
-                    versions.Add(JsonSerializer.Deserialize<Version>(cachedVersionStr));
-                }
-            }
-            catch (ArgumentNullException)
-            {
-                versions = await _mongoService.Get<Version>();
-
-                foreach (Version version in versions)
-                {
-                    await _cache.SetStringAsync($"version:{version.Abbreviation}", JsonSerializer.Serialize(version));
-                }
+                _versions = await _mongoService.Get<Version>();
             }
 
-            return versions;
+            return _versions;
         }
 
-        public async Task<Version> Get(string abbreviation)
-        {
-            Version version;
-
-            try
-            {
-                string cachedVersionStr = await _cache.GetStringAsync($"version:{abbreviation}");
-                version = JsonSerializer.Deserialize<Version>(cachedVersionStr);
-            }
-            catch (ArgumentNullException)
-            {
-
-                version = await _mongoService.Get<Version>(abbreviation);
-
-                if (version != null)
-                {
-                    await _cache.SetStringAsync($"version:{version.Abbreviation}", JsonSerializer.Serialize(version));
-                }
-            }
-
-            return version;
-        }
-
-        public async Task<int> GetCount() => (await Get()).Count;
+        public async Task<List<Version>> Get() => await GetVersions();
+        public async Task<Version> Get(string abbreviation) => (await GetVersions()).FirstOrDefault(version => string.Equals(version.Abbreviation, abbreviation, StringComparison.OrdinalIgnoreCase));
+        public async Task<int> GetCount() => (await GetVersions()).Count;
 
         public async Task<Version> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)
         {
@@ -121,22 +78,25 @@ namespace BibleBot.Backend.Services
         public async Task<Version> Create(Version version)
         {
             Version createdVersion = await _mongoService.Create(version);
-            await _cache.SetStringAsync($"version:{version.Abbreviation}", JsonSerializer.Serialize(version));
+            await GetVersions(true);
 
             return createdVersion;
         }
 
         public async Task Update(string abbreviation, UpdateDefinition<Version> updateDefinition)
         {
+            Version beforeVersion = await Get(abbreviation);
             await _mongoService.Update(abbreviation, updateDefinition);
 
-            Version version = await _mongoService.Get<Version>(abbreviation);
-            await _cache.SetStringAsync($"version:{abbreviation}", JsonSerializer.Serialize(version));
+            Version afterVersion = await _mongoService.Get<Version>(abbreviation);
+
+            _versions.Remove(beforeVersion);
+            _versions.Add(afterVersion);
         }
         public async Task Remove(Version idealVersion)
         {
             await _mongoService.Remove(idealVersion);
-            await _cache.RemoveAsync($"version:{idealVersion.Abbreviation}");
+            await GetVersions(true);
         }
     }
 }
