@@ -15,7 +15,7 @@ using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using BibleBot.Tests.Backend.Mocks;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -69,7 +69,10 @@ namespace BibleBot.Tests.Backend
                 DatabaseName = "BibleBotBackend"
             };
 
-            _cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+            _cache = new RedisCache(Options.Create(new RedisCacheOptions()
+            {
+                Configuration = "127.0.0.1:6379"
+            }));
 
             _mongoService = new MongoService(_databaseSettings);
             _optOutServiceMock = new Mock<OptOutService>(_mongoService);
