@@ -17,7 +17,6 @@ using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -46,10 +45,11 @@ namespace BibleBot.AutomaticServices
             // Instantiate the various services.
             services.AddSingleton(sp => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
 
-            services.AddSingleton(sp => new UserService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
-            services.AddSingleton(sp => new GuildService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
-            services.AddSingleton(sp => new VersionService(sp.GetRequiredService<MongoService>()));
-            services.AddSingleton(sp => new LanguageService(sp.GetRequiredService<MongoService>()));
+            services.AddSingleton<UserService>();
+            services.AddSingleton<GuildService>();
+            services.AddSingleton<VersionService>();
+            services.AddSingleton<LanguageService>();
+
             services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), true));
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -68,10 +68,8 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<NLTAPIProvider>();
 
             // Add background services.
-            services.AddSingleton<AutomaticDailyVerseService>();
-            services.AddHostedService(sp => sp.GetService<AutomaticDailyVerseService>());
-            services.AddSingleton<VersionStatsService>();
-            services.AddHostedService(sp => sp.GetService<VersionStatsService>());
+            services.AddHostedService<AutomaticDailyVerseService>();
+            services.AddHostedService<VersionStatsService>();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

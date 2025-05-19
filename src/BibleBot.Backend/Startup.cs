@@ -19,7 +19,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,15 +47,15 @@ namespace BibleBot.Backend
             // Instantiate the various services.
             services.AddSingleton(sp => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
 
-            services.AddSingleton(sp => new UserService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
-            services.AddSingleton(sp => new GuildService(sp.GetRequiredService<IDistributedCache>(), sp.GetRequiredService<MongoService>()));
-            services.AddSingleton(sp => new VersionService(sp.GetRequiredService<MongoService>()));
-            services.AddSingleton(sp => new LanguageService(sp.GetRequiredService<MongoService>()));
+            services.AddSingleton<UserService>();
+            services.AddSingleton<GuildService>();
+            services.AddSingleton<VersionService>();
+            services.AddSingleton<LanguageService>();
+            services.AddSingleton<FrontendStatsService>();
+            services.AddSingleton<OptOutService>();
 
             services.AddSingleton<ParsingService>();
             services.AddSingleton<ResourceService>();
-            services.AddSingleton<FrontendStatsService>();
-            services.AddSingleton<OptOutService>();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddOptions<RequestLocalizationOptions>().Configure<UserService, GuildService, LanguageService>((options, userService, guildService, languageService) =>
