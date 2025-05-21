@@ -78,19 +78,12 @@ namespace BibleBot.Backend.Services.Providers.Content
             IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            if (document == null)
-            {
-                return null;
-            }
-
             foreach (IElement el in document.QuerySelectorAll(".chapternum"))
             {
                 if (verseNumbersEnabled)
                 {
-                    string chapterNum = el.TextContent.Substring(0, el.TextContent.Length - 1);
-
+                    string chapterNum = el.TextContent[..^1];
                     el.TextContent = chapterNum != "1" && chapterNum != $"{reference.StartingChapter}" ? $" <**{chapterNum}:1**> " : " <**1**> ";
-
                 }
                 else
                 {
@@ -113,7 +106,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                         }
                     }
 
-                    if (el.TextContent.Substring(0, el.TextContent.Length - 1) == "1")
+                    if (el.TextContent[..^1] == "1")
                     {
                         IElement parentElement = el.ParentElement;
                         string verseId = parentElement?.ClassList.FirstOrDefault(tok => tok != "text" && VerseIdRegex().Match(tok).Success);
@@ -125,11 +118,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 #pragma warning disable IDE0045 // Convert to conditional expression
                             if (matches[0].Groups[2].Value == "1")
                             {
-                                if (matches[0].Groups[1].Value == "1")
-                                {
-                                    el.TextContent = " <**1**> ";
-                                }
-                                else if (matches[0].Groups[1].Value == $"{reference.StartingChapter}")
+                                if (matches[0].Groups[1].Value == "1" || matches[0].Groups[1].Value == $"{reference.StartingChapter}")
                                 {
                                     el.TextContent = " <**1**> ";
                                 }
@@ -204,7 +193,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             string text = string.Join("\n", document.GetElementsByClassName("text").Select(el => el.TextContent.Trim()));
 
             // As the verse reference could have a non-English name...
-            reference.AsString = document.GetElementsByClassName("dropdown-display-text").FirstOrDefault().TextContent.Trim();
+            reference.AsString = document.GetElementsByClassName("dropdown-display-text").FirstOrDefault()!.TextContent.Trim();
 
             if (reference.AppendedVerses.Count > 0)
             {
@@ -212,12 +201,13 @@ namespace BibleBot.Backend.Services.Providers.Content
                 {
                     string referenceTrimmed = referenceEl.TextContent.Trim();
 
-                    if (referenceTrimmed.Contains(':') && referenceTrimmed.Contains(reference.AsString.Split(" ")[0]))
+                    if (!referenceTrimmed.Contains(':') || !referenceTrimmed.Contains(reference.AsString.Split(" ")[0]))
                     {
-                        string[] colonSplit = referenceTrimmed.Split(":");
-
-                        reference.AsString += $", {colonSplit[1]}";
+                        continue;
                     }
+
+                    string[] colonSplit = referenceTrimmed.Split(":");
+                    reference.AsString += $", {colonSplit[1]}";
                 }
             }
 
@@ -270,17 +260,19 @@ namespace BibleBot.Backend.Services.Providers.Content
                 IElement referenceElement = row.GetElementsByClassName("bible-item-title").FirstOrDefault();
                 IElement textElement = row.GetElementsByClassName("bible-item-text").FirstOrDefault();
 
-                if (referenceElement != null && textElement != null)
+                if (referenceElement == null || textElement == null)
                 {
-                    string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
-                    text = text.Replace(query, $"**{query}**");
-
-                    results.Add(new SearchResult
-                    {
-                        Reference = referenceElement.TextContent,
-                        Text = text
-                    });
+                    continue;
                 }
+
+                string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
+                text = text.Replace(query, $"**{query}**");
+
+                results.Add(new SearchResult
+                {
+                    Reference = referenceElement.TextContent,
+                    Text = text
+                });
             }
 
             return results;
@@ -304,7 +296,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 { " .",    "." },
                 { "′",     "'" },
                 { "‘",     "'" },
-                { "’",     "'" }, // Fonts may make it look like this is no different than the line above, but it's a different codepoint in Unicode.
+                { "’",     "'" }, // Fonts may make it look like this is no different from the line above, but it's a different codepoint in Unicode.
                 { "' s",   "'s" },
                 { "' \"",  "'\""},
                 { " . ",   " " },
@@ -324,12 +316,9 @@ namespace BibleBot.Backend.Services.Providers.Content
                 text = text.Replace("Selah", " *(Selah)* ");
             }
 
-            foreach (KeyValuePair<string, string> pair in nuisances)
+            foreach (KeyValuePair<string, string> pair in nuisances.Where(pair => text.Contains(pair.Key)))
             {
-                if (text.Contains(pair.Key))
-                {
-                    text = text.Replace(pair.Key, pair.Value);
-                }
+                text = text.Replace(pair.Key, pair.Value);
             }
 
             // I hate that I have to do this, but if I don't then ISV output gets fscked up...
@@ -358,12 +347,9 @@ namespace BibleBot.Backend.Services.Providers.Content
                     { "י", "" },
                 };
 
-                foreach (KeyValuePair<string, string> pair in hebrewChars)
+                foreach (KeyValuePair<string, string> pair in hebrewChars.Where(pair => text.Contains(pair.Key)))
                 {
-                    if (text.Contains(pair.Key))
-                    {
-                        text = text.Replace(pair.Key, pair.Value);
-                    }
+                    text = text.Replace(pair.Key, pair.Value);
                 }
             }
 
@@ -380,14 +366,13 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing || _cancellationToken == null)
             {
-                if (_cancellationToken != null)
-                {
-                    _cancellationToken.Dispose();
-                    _cancellationToken = null;
-                }
+                return;
             }
+            
+            _cancellationToken.Dispose();
+            _cancellationToken = null;
         }
     }
 }

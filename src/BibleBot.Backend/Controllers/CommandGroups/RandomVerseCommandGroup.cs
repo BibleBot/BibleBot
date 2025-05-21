@@ -36,8 +36,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             ]; set => throw new NotImplementedException();
         }
 
-        public class RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                           SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+        private class RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
+                                  SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -94,8 +94,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+        private class TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
+                                       SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "true"; set => throw new NotImplementedException(); }
 

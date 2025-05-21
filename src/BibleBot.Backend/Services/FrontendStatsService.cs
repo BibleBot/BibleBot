@@ -15,10 +15,8 @@ namespace BibleBot.Backend.Services
 {
     public class FrontendStatsService(MongoService mongoService)
     {
-        private readonly MongoService _mongoService = mongoService;
-
-        public async Task<List<FrontendStats>> Get() => await _mongoService.Get<FrontendStats>();
-        public async Task<FrontendStats> Create(FrontendStats frontendStats) => await _mongoService.Create(frontendStats);
-        public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _mongoService.Update(frontendStats, updateDefinition);
+        public async Task<List<FrontendStats>> Get() => await mongoService.Get<FrontendStats>();
+        public async Task<FrontendStats> Create(FrontendStats frontendStats) => await mongoService.Create(frontendStats);
+        public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await mongoService.Update(frontendStats, updateDefinition);
     }
 }

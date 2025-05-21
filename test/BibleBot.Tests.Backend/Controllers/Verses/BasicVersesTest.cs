@@ -23,7 +23,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessBibleGatewayReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -32,7 +32,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -66,7 +66,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessAPIBibleReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -75,7 +75,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -110,7 +110,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         {
             _ = _versionService.Get("NTFE") ?? _versionService.Create(new MockNTFE());
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTFE")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -128,7 +128,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         {
             _ = _versionService.Get("NTFE") ?? _versionService.Create(new MockNTFE());
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTFE")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -146,7 +146,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         {
             _ = _versionService.Get("ELXX") ?? _versionService.Create(new MockELXX());
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1 ELXX")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -163,7 +163,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldIgnoreMultipleVerseReferencesInIgnoringBrackets()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("lorem < Genesis 1:1 NTFE / Matthew 1:1 NTFE / Acts 1:1 NTFE > ipsum John 1:1 dolor < Genesis 1:1 NTFE > sit")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -172,7 +172,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Word Became Flesh",
                         PsalmTitle = "",
@@ -206,7 +206,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessVerseInNonIgnoringBrackets()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("(John 1:1)")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -215,7 +215,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Word Became Flesh",
                         PsalmTitle = "",
@@ -249,7 +249,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessBibleGatewaySpannedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-2")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -258,7 +258,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -291,7 +291,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessAPIBibleSpannedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -300,7 +300,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -334,7 +334,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessBibleGatewaySpannedChapterReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:25-2:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -343,7 +343,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Visit of the Wise Men",
                         PsalmTitle = "",
@@ -377,7 +377,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessAPIBibleSpannedChapterReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -386,7 +386,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -420,7 +420,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessBibleGatewayExpandedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24-")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -429,7 +429,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -463,7 +463,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessAPIBibleExpandedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -472,7 +472,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -506,7 +506,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldNotProcessReferenceStartingWithVerseZero()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:0")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -523,7 +523,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldNotProcessReferenceWithSpaceBetweenColonAndVerseNumbers()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1: 1-5")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -540,7 +540,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldProcessReferenceWithFullWidthColon()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1：1-2")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -549,7 +549,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -583,7 +583,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldNotProcessSameVerseSpannedReferenceAsExpando()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -592,7 +592,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -611,284 +611,6 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             IsNT = true,
                             IsDEU = false,
                             AsString = "Matthew 1:1"
-                        }
-                    }
-                ],
-                Culture = "en-US",
-                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
-            };
-
-            result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldNotProcessEsdrasBooksAsEzra()
-        {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("1 Esdras 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = true,
-                LogStatement = "1 Esdras 1:1 RSV",
-                DisplayStyle = "embed",
-                Verses =
-                [
-                    new()
-                    {
-                        Title = "Josiah Celebrates the Passover",
-                        PsalmTitle = "",
-                        Text = "<**1**> Josi'ah kept the passover to his Lord in Jerusalem; he killed the passover lamb on the fourteenth day of the first month,",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "1 Esdras"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = false,
-                            IsDEU = true,
-                            AsString = "1 Esdras 1:1"
-                        }
-                    }
-                ],
-                Culture = "en-US",
-                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
-            };
-
-            result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldNotProcessLetterOfJeremiahAsJeremiah()
-        {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Letter of Jeremiah 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = true,
-                LogStatement = "Letter of Jeremiah 1:1 RSV",
-                DisplayStyle = "embed",
-                Verses =
-                [
-                    new()
-                    {
-                        Title = "",
-                        PsalmTitle = "",
-                        Text = "<**6:1**> A copy of a letter which Jeremiah sent to those who were to be taken to Babylon as captives by the king of the Babylonians, to give them the message which God had commanded him.",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "Letter of Jeremiah"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = false,
-                            IsDEU = true,
-                            AsString = "Letter of Jeremiah 1"
-                        }
-                    }
-                ],
-                Culture = "en-US",
-                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
-            };
-
-            result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldProcessJeremiah()
-        {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Jeremiah 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = true,
-                LogStatement = "Jeremiah 1:1 RSV",
-                DisplayStyle = "embed",
-                Verses =
-                [
-                    new()
-                    {
-                        Title = "",
-                        PsalmTitle = "",
-                        Text = "<**1**> The words of Jeremiah, the son of Hilki'ah, of the priests who were in An'athoth in the land of Benjamin,",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "Jeremiah"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = true,
-                            IsNT = false,
-                            IsDEU = false,
-                            AsString = "Jeremiah 1:1"
-                        }
-                    }
-                ],
-                Culture = "en-US",
-                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
-            };
-
-            result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldProcessMultipleOverlappingBooks()
-        {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("1 Esdras 1:1 / Ezra 1:1 / Letter of Jeremiah 1:1 / Jeremiah 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = true,
-                LogStatement = "1 Esdras 1:1 RSV / Ezra 1:1 RSV / Letter of Jeremiah 1:1 RSV / Jeremiah 1:1 RSV",
-                DisplayStyle = "embed",
-                Verses =
-                [
-                    new()
-                    {
-                        Title = "Josiah Celebrates the Passover",
-                        PsalmTitle = "",
-                        Text = "<**1**> Josi'ah kept the passover to his Lord in Jerusalem; he killed the passover lamb on the fourteenth day of the first month,",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "1 Esdras"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = false,
-                            IsDEU = true,
-                            AsString = "1 Esdras 1:1"
-                        }
-                    },
-                    new()
-                    {
-                        Title = "End of the Babylonian Captivity",
-                        PsalmTitle = "",
-                        Text = "<**1**> In the first year of Cyrus king of Persia, that the word of the Lord by the mouth of Jeremiah might be accomplished, the Lord stirred up the spirit of Cyrus king of Persia so that he made a proclamation throughout all his kingdom and also put it in writing:",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "Ezra"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = true,
-                            IsNT = false,
-                            IsDEU = false,
-                            AsString = "Ezra 1:1"
-                        }
-                    },
-                    new()
-                    {
-                        Title = "",
-                        PsalmTitle = "",
-                        Text = "<**6:1**> A copy of a letter which Jeremiah sent to those who were to be taken to Babylon as captives by the king of the Babylonians, to give them the message which God had commanded him.",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "Letter of Jeremiah"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = false,
-                            IsDEU = true,
-                            AsString = "Letter of Jeremiah 1:1"
-                        }
-                    },
-                    new()
-                    {
-                        Title = "",
-                        PsalmTitle = "",
-                        Text = "<**1**> The words of Jeremiah, the son of Hilki'ah, of the priests who were in An'athoth in the land of Benjamin,",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "Jeremiah"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = true,
-                            IsNT = false,
-                            IsDEU = false,
-                            AsString = "Jeremiah 1:1"
-                        }
-                    }
-                ],
-                Culture = "en-US",
-                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
-            };
-
-            result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldProcessPsalm151Properly()
-        {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Psalm 151:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = true,
-                LogStatement = "Psalm 151:1 RSV",
-                DisplayStyle = "embed",
-                Verses =
-                [
-                    new()
-                    {
-                        Title = "",
-                        PsalmTitle = "This psalm is ascribed to David as his own composition (though it is outside the number), after he had fought in single combat with Goliath.",
-                        Text = "<**1**> I was small among my brothers, and youngest in my father's house; I tended my father's sheep.",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "Psalm 151"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = false,
-                            IsDEU = true,
-                            AsString = "Psalm 151 1"
                         }
                     }
                 ],
@@ -926,7 +648,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void ShouldNotReturnDuplicates()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1 / John 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -935,7 +657,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Word Became Flesh",
                         PsalmTitle = "",
@@ -971,7 +693,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             Version testVersion = await _versionService.Get("NTFE") ?? await _versionService.Create(new MockNTFE());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Philippians 1:6 / Philippians 1:6 NTFE")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -980,7 +702,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -1001,7 +723,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             AsString = "Philippians 1:6"
                         }
                     },
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -1032,98 +754,12 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldNotProcessGreekEstherAsEsther()
-        {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Greek Esther 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = true,
-                LogStatement = "Greek Esther 1:1 RSV",
-                DisplayStyle = "embed",
-                Verses =
-                [
-                    new()
-                    {
-                        Title = "King Ahasu-erus Deposes Queen Vashti",
-                        PsalmTitle = "",
-                        Text = "<**1**> In the days of Ahasu-e'rus, the Ahasu-e'rus who reigned from India to Ethiopia over one hundred and twenty-seven provinces,",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "Greek Esther"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultBibleGatewayVersion,
-                            IsOT = false,
-                            IsNT = false,
-                            IsDEU = true,
-                            AsString = "Greek Esther 1:1"
-                        }
-                    }
-                ],
-                Culture = "en-US",
-                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
-            };
-
-            result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void ShouldNotProcessJohannineEpistlesAsJohn()
-        {
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("1 John 1:1 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = true,
-                LogStatement = "1 John 1:1 KJV",
-                DisplayStyle = "embed",
-                Verses =
-                [
-                    new()
-                    {
-                        Title = "",
-                        PsalmTitle = "",
-                        Text = "<**1**> That which was from the beginning, which we have heard, which we have seen with our eyes, which we have looked upon, and our hands have handled, of the Word of life;",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "1 John"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = _defaultAPIBibleVersion,
-                            IsOT = false,
-                            IsNT = true,
-                            IsDEU = false,
-                            AsString = "1 John 1:1"
-                        }
-                    }
-                ],
-                Culture = "en-US",
-                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
-            };
-
-            result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
         public async Task ShouldRemoveH4HeadingsInVerseContent()
         {
             Version testVersion = await _versionService.Get("NKJV") ?? await _versionService.Create(new MockNKJV());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Song of Songs 7:9-10 NKJV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1132,7 +768,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -1166,10 +802,10 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void BGShouldHandleSpanlessCommaNotation()
         {
             ObjectResult spacelessResult = _versesController.ProcessMessage(new MockRequest("Matthew 1:1,3,9")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse spacelessResp = spacelessResult.Value as VerseResponse;
+            VerseResponse spacelessResp = spacelessResult!.Value as VerseResponse;
 
             ObjectResult spacedResult = _versesController.ProcessMessage(new MockRequest("Matthew 1:1, 3, 9")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse spacedResp = spacedResult.Value as VerseResponse;
+            VerseResponse spacedResp = spacedResult!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1178,7 +814,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",
@@ -1214,7 +850,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public void BGShouldHandleSpannedCommaNotation()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-3, 5-7, 9-11")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -1223,7 +859,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Genealogy of Jesus the Messiah",
                         PsalmTitle = "",

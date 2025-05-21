@@ -20,18 +20,7 @@ namespace BibleBot.Models
     }
 
     /// <summary>
-    /// This is/was planned for usage with <see cref="Language"/>s, where this
-    /// exception would be thrown if a particular string didn't exist.
-    /// </summary>
-    public class StringNotFoundException : System.Exception
-    {
-        public StringNotFoundException() { }
-        public StringNotFoundException(string message) : base(message) { }
-        public StringNotFoundException(string message, System.Exception inner) : base(message, inner) { }
-    }
-
-    /// <summary>
-    /// This should be thrown when a limitation is encountered and should be made known to the user..
+    /// This should be thrown when a limitation is encountered and should be made known to the user.
     /// </summary>
     public class VerseLimitationException : System.Exception
     {

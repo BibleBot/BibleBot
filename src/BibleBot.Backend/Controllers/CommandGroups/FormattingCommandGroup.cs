@@ -39,7 +39,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             ]; set => throw new NotImplementedException();
         }
 
-        public class FormattingUsage(UserService userService, GuildService guildService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+        private class FormattingUsage(UserService userService, GuildService guildService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -105,7 +105,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class FormattingSetVerseNumbers(UserService userService, IStringLocalizer localizer) : Command
+        private class FormattingSetVerseNumbers(UserService userService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setversenumbers"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
@@ -159,7 +159,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class FormattingSetTitles(UserService userService, IStringLocalizer localizer) : Command
+        private class FormattingSetTitles(UserService userService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "settitles"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
@@ -213,7 +213,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class FormattingSetPagination(UserService userService, IStringLocalizer localizer) : Command
+        private class FormattingSetPagination(UserService userService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setpagination"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected an `enable` or `disable` parameter."; set => throw new NotImplementedException(); }
@@ -267,7 +267,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class FormattingSetDisplayStyle(UserService userService, IStringLocalizer localizer) : Command
+        private class FormattingSetDisplayStyle(UserService userService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setdisplay"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set => throw new NotImplementedException(); }
@@ -321,7 +321,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class FormattingSetServerDisplayStyle(GuildService guildService, IStringLocalizer localizer) : Command
+        private class FormattingSetServerDisplayStyle(GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setserverdisplay"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a parameter of `embed`, `code`, or `blockquote`."; set => throw new NotImplementedException(); }
@@ -376,7 +376,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class FormattingSetIgnoringBrackets(GuildService guildService, IStringLocalizer localizer) : Command
+        private class FormattingSetIgnoringBrackets(GuildService guildService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setbrackets"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a parameter with two characters, that must be `<>`, `[]`, `{}`, or `()`."; set => throw new NotImplementedException(); }
@@ -398,7 +398,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
-                else if (!acceptableBrackets.Contains(args[0]))
+
+                if (!acceptableBrackets.Contains(args[0]))
                 {
                     return new CommandResponse
                     {

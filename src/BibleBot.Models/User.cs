@@ -1,10 +1,10 @@
 /*
-* Copyright (C) 2016-2025 Kerygma Digital Co.
-*
-* This Source Code Form is subject to the terms of the Mozilla Public
-* License, v. 2.0. If a copy of the MPL was not distributed with this file,
-* You can obtain one at https://mozilla.org/MPL/2.0/.
-*/
+ * Copyright (C) 2016-2025 Kerygma Digital Co.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -30,13 +30,13 @@ namespace BibleBot.Models
         /// The Discord Snowflake identifier of the user.
         /// </summary>
         [BsonElement("UserId")]
-        public string UserId { get; set; }
+        public string UserId { get; init; }
 
         /// <summary>
         /// The default input method of the user.
         /// </summary>
         [BsonElement("InputMethod")]
-        public string InputMethod { get; set; } = "default";
+        public string InputMethod { get; init; } = "default";
 
         /// <summary>
         /// The default language of the user.
@@ -48,13 +48,13 @@ namespace BibleBot.Models
         /// The default version of the user.
         /// </summary>
         [BsonElement("Version")]
-        public string Version { get; set; } = "RSV";
+        public string Version { get; set; }
 
         /// <summary>
         /// Indicates whether the user prefers titles and other headings to be displayed in verse results.
         /// </summary>
         [BsonElement("TitlesEnabled")]
-        public bool TitlesEnabled { get; set; } = true;
+        public bool TitlesEnabled { get; init; } = true;
 
         /// <summary>
         /// Indicates whether the user prefers chapter and verse numbers to be displayed in verse results.
@@ -66,7 +66,7 @@ namespace BibleBot.Models
         /// Indicates whether the user prefers pagination when multiple verse results are sent in one response.
         /// </summary>
         [BsonElement("PaginationEnabled")]
-        public bool PaginationEnabled { get; set; } = false;
+        public bool PaginationEnabled { get; set; }
 
         /// <summary>
         /// The default display style for verses from the user.

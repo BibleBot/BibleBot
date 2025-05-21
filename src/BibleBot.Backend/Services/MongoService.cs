@@ -178,7 +178,7 @@ namespace BibleBot.Backend.Services
         public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await _users.UpdateOneAsync(user => user.UserId == userId, updateDefinition);
         public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition) => await _guilds.UpdateOneAsync(guild => guild.GuildId == guildId, updateDefinition);
         public async Task Update(string abbreviation, UpdateDefinition<Version> updateDefinition) => await _versions.UpdateOneAsync(version => string.Equals(version.Abbreviation, abbreviation, StringComparison.OrdinalIgnoreCase), updateDefinition);
-        public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _frontendStats.UpdateOneAsync(frontendStats => true, updateDefinition);
+        public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _frontendStats.UpdateOneAsync(stats => true, updateDefinition);
         public async Task Update(string userId, UpdateDefinition<OptOutUser> updateDefinition) => await _optOutUsers.UpdateOneAsync(user => user.UserId == userId, updateDefinition);
 
         public async Task Remove(User idealUser) => await Remove<User>(idealUser.UserId);

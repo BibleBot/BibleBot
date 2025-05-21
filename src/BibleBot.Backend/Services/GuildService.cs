@@ -20,8 +20,6 @@ namespace BibleBot.Backend.Services
 {
     public class GuildService(IDistributedCache cache, MongoService mongoService)
     {
-        private readonly IDistributedCache _cache = cache;
-        private readonly MongoService _mongoService = mongoService;
         private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
         private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
 
@@ -35,17 +33,17 @@ namespace BibleBot.Backend.Services
 
                 foreach (RedisKey key in keys)
                 {
-                    string cachedGuildStr = await _cache.GetStringAsync(key);
-                    guilds.Add(JsonSerializer.Deserialize<Guild>(cachedGuildStr));
+                    string cachedGuildStr = await cache.GetStringAsync(key);
+                    guilds.Add(JsonSerializer.Deserialize<Guild>(cachedGuildStr!));
                 }
             }
             catch (ArgumentNullException)
             {
-                guilds = await _mongoService.Get<Guild>();
+                guilds = await mongoService.Get<Guild>();
 
                 foreach (Guild guild in guilds)
                 {
-                    await _cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
+                    await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
                 }
             }
 
@@ -58,17 +56,17 @@ namespace BibleBot.Backend.Services
 
             try
             {
-                string cachedGuildStr = await _cache.GetStringAsync($"guild:{guildId}");
-                guild = JsonSerializer.Deserialize<Guild>(cachedGuildStr);
+                string cachedGuildStr = await cache.GetStringAsync($"guild:{guildId}");
+                guild = JsonSerializer.Deserialize<Guild>(cachedGuildStr!);
             }
             catch (ArgumentNullException)
             {
 
-                guild = await _mongoService.Get<Guild>(guildId);
+                guild = await mongoService.Get<Guild>(guildId);
 
                 if (guild != null)
                 {
-                    await _cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
+                    await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
                 }
             }
 
@@ -79,24 +77,24 @@ namespace BibleBot.Backend.Services
 
         public async Task<Guild> Create(Guild guild)
         {
-            Guild createdGuild = await _mongoService.Create(guild);
-            await _cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(createdGuild));
+            Guild createdGuild = await mongoService.Create(guild);
+            await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(createdGuild));
 
             return createdGuild;
         }
 
         public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition)
         {
-            await _mongoService.Update(guildId, updateDefinition);
+            await mongoService.Update(guildId, updateDefinition);
 
-            Guild guild = await _mongoService.Get<Guild>(guildId);
-            await _cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
+            Guild guild = await mongoService.Get<Guild>(guildId);
+            await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
         }
 
         public async Task Remove(Guild idealGuild)
         {
-            await _mongoService.Remove(idealGuild);
-            await _cache.RemoveAsync($"guild:{idealGuild.GuildId}");
+            await mongoService.Remove(idealGuild);
+            await cache.RemoveAsync($"guild:{idealGuild.GuildId}");
         }
     }
 }

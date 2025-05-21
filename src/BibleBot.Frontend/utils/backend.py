@@ -10,7 +10,6 @@ import os
 import aiohttp
 import disnake
 import json
-from disnake.ext import commands
 from logger import VyLogger
 from utils import sending
 from utils import statics
@@ -37,7 +36,7 @@ async def submit_command(
         #
         # May seem silly to have this, but we've been
         # fooled before.
-        return
+        return None
 
     isDM = ch.type == disnake.ChannelType.private
     isThread = (
@@ -197,6 +196,7 @@ async def submit_command(
                                 else statics.verse_footer
                             ),
                         )
+                    return None
                 elif display_style == "blockquote":
                     for verse in respBody["verses"]:
                         reference_title = (
@@ -212,6 +212,7 @@ async def submit_command(
                         verse_text = verse["text"]
 
                         return f"**{reference_title}**\n\n> {verse_title}{verse_text}"
+                    return None
                 elif display_style == "code":
                     for verse in respBody["verses"]:
                         reference_title = (
@@ -225,6 +226,9 @@ async def submit_command(
                         verse_text = verse["text"].replace("*", "")
 
                         return f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+                    return None
+                return None
+            return None
 
 
 async def submit_command_raw(
@@ -356,19 +360,19 @@ async def submit_verse(
                             "Verse Error", respBody["logStatement"], localization
                         ),
                     )
-                    return (reqbody, respBody)
+                    return reqbody, respBody
                 elif "too many verses" in respBody["logStatement"]:
                     await sending.safe_send_channel(
                         ch, embed=convert_embed(respBody["pages"][0])
                     )
-                    return (reqbody, respBody)
+                    return reqbody, respBody
 
             if "verses" not in respBody:
                 if "pages" in respBody:
                     await sending.safe_send_channel(
                         ch, embed=convert_embed(respBody["pages"][0])
                     )
-                return (reqbody, respBody)
+                return reqbody, respBody
 
             verses = respBody["verses"]
 
@@ -435,7 +439,7 @@ async def submit_verse(
                         f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```",
                     )
 
-            return (reqbody, respBody)
+            return reqbody, respBody
 
 
 def convert_embed(internal_embed):

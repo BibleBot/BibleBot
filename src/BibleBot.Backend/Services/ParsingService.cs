@@ -40,15 +40,9 @@ namespace BibleBot.Backend.Services
             {
                 foreach (KeyValuePair<string, List<string>> bookName in bookNames)
                 {
-                    foreach (string item in bookName.Value)
+                    foreach (string item in bookName.Value.Where(item => IsValueInString(str, item.ToLowerInvariant())).Where(_ => !(i == 1 && _overlappingBookNames.Contains(bookName.Key))))
                     {
-                        if (IsValueInString(str, item.ToLowerInvariant()))
-                        {
-                            if (!(i == 1 && _overlappingBookNames.Contains(bookName.Key)))
-                            {
-                                str = str.Replace(item.ToLowerInvariant(), bookName.Key);
-                            }
-                        }
+                        str = str.Replace(item.ToLowerInvariant(), bookName.Key);
                     }
                 }
             }
@@ -120,180 +114,183 @@ namespace BibleBot.Backend.Services
                         }
                     }
 
-                    if (colonMatches.Count == 2)
+                    switch (colonMatches.Count)
                     {
-                        string[] span = relevantToken.Split("-");
-
-                        foreach (string pairString in span)
-                        {
-                            string[] pairStringSplit = pairString.Split(colonMatches.First().Value);
-
-                            foreach (string pairValue in pairStringSplit)
+                        case 2:
                             {
-                                pairStringSplit[System.Array.IndexOf(pairStringSplit, pairValue)] = RemovePunctuation(pairValue);
-                            }
+                                string[] span = relevantToken.Split("-");
 
-                            try
-                            {
-                                int firstNum = int.Parse(pairStringSplit[0]);
-                                int secondNum = int.Parse(pairStringSplit[1]);
-
-                                if (startingChapter == 0)
+                                foreach (string pairString in span)
                                 {
-                                    startingChapter = firstNum;
-                                    startingVerse = secondNum;
-                                }
-                                else
-                                {
-                                    endingChapter = firstNum;
-                                    endingVerse = secondNum;
-                                }
-                            }
-                            catch
-                            {
-                                return null;
-                            }
-                        }
-                    }
-                    else if (colonMatches.Count == 1)
-                    {
-                        string[] pair = relevantToken.Split(colonMatches.First().Value);
+                                    string[] pairStringSplit = pairString.Split(colonMatches.First().Value);
 
-                        try
-                        {
-                            int num = int.Parse(pair[0]);
-
-                            startingChapter = num;
-                            endingChapter = num;
-                        }
-                        catch
-                        {
-                            return null;
-                        }
-
-                        int spanQuantity = ContainsSpanRegex().Matches(relevantToken).Count;
-
-                        string[] spanSplit = pair[1].Split("-");
-                        foreach (string pairValue in spanSplit)
-                        {
-                            string pairValueCopy = RemovePunctuation(pairValue);
-
-                            try
-                            {
-                                int num = int.Parse(pairValueCopy);
-
-                                switch (System.Array.IndexOf(spanSplit, pairValue))
-                                {
-                                    case 0:
-                                        startingVerse = num;
-                                        break;
-                                    case 1:
-                                        endingVerse = num;
-                                        break;
-                                    default:
-                                        return null;
-                                }
-                            }
-                            catch
-                            {
-                                if (pairValueCopy.Contains(','))
-                                {
-                                    string[] commaSplit = pairValueCopy.Split(",");
-
-                                    if (commaSplit[0] == "")
+                                    foreach (string pairValue in pairStringSplit)
                                     {
-                                        return null;
+                                        pairStringSplit[System.Array.IndexOf(pairStringSplit, pairValue)] = RemovePunctuation(pairValue);
                                     }
 
-                                    int tokenIndexPtr = 2;
-
-                                    while (commaSplit[commaSplit.Length - 1] == "")
+                                    try
                                     {
-                                        pairValueCopy += tokens[bookSearchResult.Index + tokenIndexPtr];
-                                        commaSplit = pairValueCopy.Split(",");
+                                        int firstNum = int.Parse(pairStringSplit[0]);
+                                        int secondNum = int.Parse(pairStringSplit[1]);
 
-                                        tokenIndexPtr++;
-                                    }
-
-                                    foreach (string commaValue in commaSplit)
-                                    {
-                                        try
+                                        if (startingChapter == 0)
                                         {
-                                            int num = int.Parse(commaValue);
-                                            appendedVerses.Add(new System.Tuple<int, int>(num, num));
+                                            startingChapter = firstNum;
+                                            startingVerse = secondNum;
                                         }
-                                        catch
+                                        else
                                         {
-                                            if (commaValue.Contains('-'))
-                                            {
-                                                string[] commaSpanSplit = commaValue.Split("-");
-                                                List<int> pairArray = [];
+                                            endingChapter = firstNum;
+                                            endingVerse = secondNum;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        return null;
+                                    }
+                                }
+                                break;
+                            }
+                        case 1:
+                            {
+                                string[] pair = relevantToken.Split(colonMatches.First().Value);
 
-                                                foreach (string commaSpanPairValue in commaSpanSplit)
+                                try
+                                {
+                                    int num = int.Parse(pair[0]);
+
+                                    startingChapter = num;
+                                    endingChapter = num;
+                                }
+                                catch
+                                {
+                                    return null;
+                                }
+
+                                int spanQuantity = ContainsSpanRegex().Matches(relevantToken).Count;
+
+                                string[] spanSplit = pair[1].Split("-");
+                                foreach (string pairValue in spanSplit)
+                                {
+                                    string pairValueCopy = RemovePunctuation(pairValue);
+
+                                    try
+                                    {
+                                        int num = int.Parse(pairValueCopy);
+
+                                        switch (System.Array.IndexOf(spanSplit, pairValue))
+                                        {
+                                            case 0:
+                                                startingVerse = num;
+                                                break;
+                                            case 1:
+                                                endingVerse = num;
+                                                break;
+                                            default:
+                                                return null;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        if (pairValueCopy.Contains(','))
+                                        {
+                                            string[] commaSplit = pairValueCopy.Split(",");
+
+                                            if (commaSplit[0] == "")
+                                            {
+                                                return null;
+                                            }
+
+                                            int tokenIndexPtr = 2;
+
+                                            while (commaSplit[^1] == "")
+                                            {
+                                                pairValueCopy += tokens[bookSearchResult.Index + tokenIndexPtr];
+                                                commaSplit = pairValueCopy.Split(",");
+
+                                                tokenIndexPtr++;
+                                            }
+
+                                            foreach (string commaValue in commaSplit)
+                                            {
+                                                try
                                                 {
-                                                    try
+                                                    int num = int.Parse(commaValue);
+                                                    appendedVerses.Add(new System.Tuple<int, int>(num, num));
+                                                }
+                                                catch
+                                                {
+                                                    if (commaValue.Contains('-'))
                                                     {
-                                                        int commaSpanPairNum = int.Parse(commaSpanPairValue);
-                                                        pairArray.Add(commaSpanPairNum);
-                                                    }
-                                                    catch
-                                                    {
-                                                        return null;
+                                                        string[] commaSpanSplit = commaValue.Split("-");
+                                                        List<int> pairArray = [];
+
+                                                        foreach (string commaSpanPairValue in commaSpanSplit)
+                                                        {
+                                                            try
+                                                            {
+                                                                int commaSpanPairNum = int.Parse(commaSpanPairValue);
+                                                                pairArray.Add(commaSpanPairNum);
+                                                            }
+                                                            catch
+                                                            {
+                                                                return null;
+                                                            }
+                                                        }
+
+                                                        appendedVerses.Add(new System.Tuple<int, int>(pairArray[0], pairArray[1]));
                                                     }
                                                 }
+                                            }
 
-                                                appendedVerses.Add(new System.Tuple<int, int>(pairArray[0], pairArray[1]));
+                                            if (commaSplit.Length > 5)
+                                            {
+                                                throw new VerseLimitationException("too many commas");
+                                            }
+
+                                            switch (System.Array.IndexOf(spanSplit, pairValue))
+                                            {
+                                                case 0:
+                                                    startingVerse = appendedVerses[0].Item1;
+                                                    appendedVerses = [.. appendedVerses.TakeLast(appendedVerses.Count - 1)];
+                                                    break;
+                                                case 1:
+                                                    endingVerse = appendedVerses[0].Item1;
+                                                    appendedVerses = [.. appendedVerses.Skip(1).TakeLast(appendedVerses.Count - 1)];
+                                                    break;
+                                                default:
+                                                    return null;
                                             }
                                         }
-                                    }
+                                        else
+                                        {
+                                            // Instead of returning null here, we'll break out of the loop
+                                            // in the event that the span exists to extend to the end of a chapter.
+                                            expandoVerseUsed = true;
 
-                                    if (commaSplit.Length > 5)
-                                    {
-                                        throw new VerseLimitationException("too many commas");
-                                    }
+                                            // These providers don't treat the unfinished span like BibleGateway, thus a workaround.
+                                            if (prefVersion.Source is "ab" or "nlt")
+                                            {
+                                                // Largest verse count in any chapter is 176. No harm in rounding up.
+                                                endingVerse = 200;
+                                            }
 
-                                    switch (System.Array.IndexOf(spanSplit, pairValue))
-                                    {
-                                        case 0:
-                                            startingVerse = appendedVerses[0].Item1;
-                                            appendedVerses = [.. appendedVerses.TakeLast(appendedVerses.Count - 1)];
                                             break;
-                                        case 1:
-                                            endingVerse = appendedVerses[0].Item1;
-                                            appendedVerses = [.. appendedVerses.Skip(1).TakeLast(appendedVerses.Count - 1)];
-                                            break;
-                                        default:
-                                            return null;
+                                        }
                                     }
                                 }
-                                else
+
+                                // We set a toggle if we think expando verses are being used, otherwise
+                                // references like "Genesis 1:1-1" act like expando verses.
+                                if (appendedVerses.Count == 0 && endingVerse == 0 && (spanQuantity == 0 || !expandoVerseUsed))
                                 {
-                                    // Instead of returning null here, we'll break out of the loop
-                                    // in the event that the span exists to extend to the end of a chapter.
-                                    expandoVerseUsed = true;
-
-                                    // These providers don't treat the unfinished span like BibleGateway, thus a workaround.
-                                    if (prefVersion.Source is "ab" or "nlt")
-                                    {
-                                        // Largest verse count in any chapter is 176. No harm in rounding up.
-                                        endingVerse = 200;
-                                    }
-
-                                    break;
+                                    endingVerse = startingVerse;
                                 }
+                                break;
                             }
-                        }
-
-                        // We set a toggle if we think expando verses are being used, otherwise
-                        // references like "Genesis 1:1-1" act like expando verses.
-                        if (appendedVerses.Count == 0 && endingVerse == 0 && (spanQuantity == 0 || !expandoVerseUsed))
-                        {
-                            endingVerse = startingVerse;
-                        }
-                    }
-                    else
-                    {
-                        return null;
+                        default:
+                            return null;
                     }
                 }
                 else
@@ -317,23 +314,23 @@ namespace BibleBot.Backend.Services
             bool isNT = false;
             bool isDEU = false;
 
-            if (_bookMap["ot"].ContainsKey(bookName))
+            if (_bookMap["ot"].TryGetValue(bookName, out string otName))
             {
                 isOT = true;
-                bookName = _bookMap["ot"][bookName];
+                bookName = otName;
             }
-            else if (_bookMap["nt"].ContainsKey(bookName))
+            else if (_bookMap["nt"].TryGetValue(bookName, out string ntName))
             {
                 isNT = true;
-                bookName = _bookMap["nt"][bookName];
+                bookName = ntName;
             }
-            else if (_bookMap["deu"].ContainsKey(bookName))
+            else if (_bookMap["deu"].TryGetValue(bookName, out string deuName))
             {
                 isDEU = true;
-                bookName = _bookMap["deu"][bookName];
+                bookName = deuName;
             }
 
-            Book book = prefVersion.Books?.FirstOrDefault(book => book.ProperName == bookName, new() { Name = bookSearchResult.Name, ProperName = bookName });
+            Book book = prefVersion.Books?.FirstOrDefault(book => book.ProperName == bookName, new Book { Name = bookSearchResult.Name, ProperName = bookName });
 
             if (bookName == "Psalm" && startingChapter == 151)
             {
@@ -365,22 +362,13 @@ namespace BibleBot.Backend.Services
             };
         }
 
-        public string PurifyBody(List<string> ignoringBrackets, string str)
+        public static string PurifyBody(List<string> ignoringBrackets, string str)
         {
             str = str.ToLowerInvariant().Replace("\r", " ").Replace("\n", " ");
+            str = ignoringBrackets.Aggregate(str, (current, brackets) => new Regex(@"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1]).Replace(current, ""));
 
-            foreach (string brackets in ignoringBrackets)
-            {
-                str = new Regex(@"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1]).Replace(str, "");
-            }
-
-            string punctuationToIgnore = "!\"#$%&'()*+./;<=>?@[\\]^_`{|}~";
-            foreach (char character in punctuationToIgnore)
-            {
-                str = str.Replace(character, ' ');
-            }
-
-            return str;
+            const string punctuationToIgnore = "!\"#$%&'()*+./;<=>?@[\\]^_`{|}~";
+            return punctuationToIgnore.Aggregate(str, (current, character) => current.Replace(character, ' '));
         }
 
         private static bool IsValueInString(string str, string val) => $" {str} ".Contains($" {val} ");

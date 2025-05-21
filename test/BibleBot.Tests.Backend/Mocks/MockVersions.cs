@@ -183,4 +183,18 @@ namespace BibleBot.Tests.Backend.Mocks
             SupportsDeuterocanon = false;
         }
     }
+
+    public class MockWLC : Version
+    {
+        public MockWLC()
+        {
+            Name = "Westminister Leningrad Codex (WLC)";
+            Abbreviation = "WLC";
+            Source = "ab";
+            SupportsOldTestament = true;
+            SupportsNewTestament = false;
+            SupportsDeuterocanon = false;
+            InternalId = "0b262f1ed7f084a6-01";
+        }
+    }
 }

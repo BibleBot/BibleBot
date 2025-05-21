@@ -11,35 +11,9 @@ using System.Collections.Generic;
 namespace BibleBot.Models
 {
     /// <summary>
-    /// An interface that describes the implementation of a CommandGroup.
-    /// </summary>
-    public interface ICommandGroup
-    {
-        /// <summary>
-        /// The name of the command group.
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// Indicates whether the commands within this group are only for BibleBot staff.
-        /// </summary>
-        bool IsStaffOnly { get; set; }
-
-        /// <summary>
-        /// A list of the <see cref="Command"/>s within this group.
-        /// </summary>
-        List<Command> Commands { get; set; }
-
-        /// <summary>
-        /// The <see cref="Command"/> that should be used as a fallback if this group is invoked by itself.
-        /// </summary>
-        Command DefaultCommand { get; set; }
-    }
-
-    /// <summary>
     /// The base implementation of a CommandGroup.
     /// </summary>
-    public abstract class CommandGroup : ICommandGroup
+    public abstract class CommandGroup
     {
         /// <summary>
         /// The name of the command group.

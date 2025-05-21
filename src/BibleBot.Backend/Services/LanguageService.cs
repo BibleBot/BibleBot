@@ -15,14 +15,13 @@ namespace BibleBot.Backend.Services
 {
     public class LanguageService(MongoService mongoService)
     {
-        private readonly MongoService _mongoService = mongoService;
-        private List<Language> _languages = null;
+        private List<Language> _languages = [];
 
         private async Task<List<Language>> GetLanguages(bool forcePull = false)
         {
-            if (forcePull || _languages == null)
+            if (forcePull || _languages.Count == 0)
             {
-                _languages = await _mongoService.Get<Language>();
+                _languages = await mongoService.Get<Language>();
             }
 
             return _languages;

@@ -6,7 +6,6 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -71,67 +70,66 @@ namespace BibleBot.Backend.Controllers
             IResponse response;
             string[] tokenizedBody = req.Body.Split(" ");
 
-            if (tokenizedBody.Length > 0)
+            if (tokenizedBody.Length <= 0)
             {
-                string potentialCommand = tokenizedBody[0].Substring(1); // trim the prefix off
-
-                CommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand, _commandGroups.First(grp => grp.Name == "info"));
-
-                string[] staffIds = [
-                    "186046294286925824", "270590533880119297", "304602975446499329", // directors
-                    "394261640335327234", "1029302033993433130", "842427954263752724" // support specialists
-                ];
-
-                if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))
+                return BadRequest(new CommandResponse
                 {
-                    return BadRequest(new CommandResponse
-                    {
-                        OK = false,
-                        Pages =
-                        [
-                            Utils.GetInstance().Embedify(_localizer["PermissionsErrorTitle"], _localizer["StaffOnlyCommandError"], true)
-                        ],
-                        LogStatement = $"Insufficient permissions on +{grp.Name}.",
-                        Culture = CultureInfo.CurrentUICulture.Name
-                    });
-                }
+                    OK = false, Pages = null, LogStatement = null
+                });
+            }
+            string potentialCommand = tokenizedBody[0][1..]; // trim the prefix off
 
-                if (tokenizedBody.Length == 1)
+            CommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand, _commandGroups.First(grp => grp.Name == "info"));
+
+            string[] staffIds = [
+                "186046294286925824", "270590533880119297", "304602975446499329", // directors
+                "394261640335327234", "1029302033993433130", "842427954263752724" // support specialists
+            ];
+
+            if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))
+            {
+                return BadRequest(new CommandResponse
                 {
-                    Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == potentialCommand);
-
-                    if (idealCommand != null)
-                    {
-                        response = await idealCommand.ProcessCommand(req, []);
-                        return response.OK ? Ok(response) : BadRequest(response);
-                    }
-                }
-                else
-                {
-                    Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
-
-                    if (idealCommand != null)
-                    {
-                        response = await idealCommand.ProcessCommand(req, [.. tokenizedBody.Skip(2)]);
-                        return response.OK ? Ok(response) : BadRequest(response);
-                    }
-                    else if (grp.Name is "resource" or "search")
-                    {
-                        response = await grp.DefaultCommand.ProcessCommand(req, [.. tokenizedBody.Skip(1)]);
-                        return response.OK ? Ok(response) : BadRequest(response);
-                    }
-                }
-
-                response = await grp.DefaultCommand.ProcessCommand(req, []);
-                return response.OK ? Ok(response) : BadRequest(response);
+                    OK = false,
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify(_localizer["PermissionsErrorTitle"], _localizer["StaffOnlyCommandError"], true)
+                    ],
+                    LogStatement = $"Insufficient permissions on +{grp.Name}.",
+                    Culture = CultureInfo.CurrentUICulture.Name
+                });
             }
 
-            return BadRequest(new CommandResponse
+            if (tokenizedBody.Length == 1)
             {
-                OK = false,
-                Pages = null,
-                LogStatement = null
-            });
+                Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == potentialCommand);
+
+                if (idealCommand != null)
+                {
+                    response = await idealCommand.ProcessCommand(req, []);
+                    return response.OK ? Ok(response) : BadRequest(response);
+                }
+            }
+            else
+            {
+                Command idealCommand = grp.Commands.FirstOrDefault(cmd => cmd.Name == tokenizedBody[1]);
+
+                if (idealCommand != null)
+                {
+                    response = await idealCommand.ProcessCommand(req, [.. tokenizedBody.Skip(2)]);
+                    return response.OK ? Ok(response) : BadRequest(response);
+                }
+
+                if (grp.Name is "resource" or "search")
+                {
+                    response = await grp.DefaultCommand.ProcessCommand(req, [.. tokenizedBody.Skip(1)]);
+                    return response.OK ? Ok(response) : BadRequest(response);
+                }
+            }
+
+            response = await grp.DefaultCommand.ProcessCommand(req, []);
+            return response.OK ? Ok(response) : BadRequest(response);
+
         }
     }
 }

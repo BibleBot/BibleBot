@@ -12,7 +12,7 @@ using System;
 namespace BibleBot.Models
 {
     /// <summary>
-    /// A enum of Discord's permission bitfields (see <seealso href="https://discord.com/developers/docs/topics/permissions"/>).
+    /// An enum of Discord's permission bitfields (see <seealso href="https://discord.com/developers/docs/topics/permissions"/>).
     /// </summary>
     [Flags]
     public enum Permissions : long

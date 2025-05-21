@@ -21,7 +21,7 @@ namespace BibleBot.Tests.Backend.Controllers
         public void ShouldFailWhenBodyIsEmpty()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest()).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -38,7 +38,7 @@ namespace BibleBot.Tests.Backend.Controllers
         public void ShouldNotProcessInvalidVerse()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:125")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {

@@ -52,68 +52,68 @@ namespace BibleBot.AutomaticServices.Services
             return Task.CompletedTask;
         }
 
-        public async void RunVersionStats(object state)
+        private async void RunVersionStats(object state)
         {
-            Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
-            ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["Europe/Amsterdam"]);
-
-            bool sentStats = false;
-
-            if (dateTimeInStandardTz.Day == 11 && dateTimeInStandardTz.Hour == 11)
+            try
             {
-                var preferences = (await _userService.Get()).Concat<IPreference>(await _guildService.Get()).ToList();
-                List<Version> versions = await _versionService.Get();
+                Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
+                ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["Europe/Amsterdam"]);
 
-                Dictionary<string, int> versionStats = [];
+                bool sentStats = false;
 
-                foreach (Version version in versions)
+                if (dateTimeInStandardTz is { Day: 11, Hour: 11 })
                 {
-                    versionStats.TryAdd(version.Abbreviation, 0);
-                }
+                    var preferences = (await _userService.Get()).Concat<IPreference>(await _guildService.Get()).ToList();
+                    List<Version> versions = await _versionService.Get();
 
-                foreach (IPreference preference in preferences)
-                {
-                    try
+                    Dictionary<string, int> versionStats = [];
+
+                    foreach (Version version in versions)
                     {
-                        versionStats[preference.Version] = versionStats[preference.Version] + 1;
+                        versionStats.TryAdd(version.Abbreviation, 0);
                     }
-                    catch (KeyNotFoundException)
+
+                    foreach (IPreference preference in preferences)
                     {
-                        versionStats["RSV"] = versionStats["RSV"] + 1;
+                        try
+                        {
+                            versionStats[preference.Version] = versionStats[preference.Version] + 1;
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            versionStats["RSV"] = versionStats["RSV"] + 1;
+                        }
                     }
+
+                    StringBuilder fileContents = new();
+
+                    var sortedStats = versionStats.ToList();
+                    sortedStats.Sort((p1, p2) => p2.Value.CompareTo(p1.Value));
+
+                    foreach (KeyValuePair<string, int> kvp in sortedStats)
+                    {
+                        fileContents.Append($"{kvp.Key},{kvp.Value}\n");
+                    }
+
+                    WebhookRequestBody webhookRequestBody = new()
+                    {
+                        Content = $"henlo <@304602975446499329>, here are those version stats you asked for:\n\n```\n{fileContents}\n```\n\nthese will be sent out on the 11th day of every month at the 11th hour in ur time zone, <@304602975446499329>. ty have good day",
+                        Username = "BibleBot Version Stats",
+                        AvatarURL = "https://i.imgur.com/hr4RXpy.png"
+                    };
+
+                    RestRequest request = new(Environment.GetEnvironmentVariable("STATS_WEBHOOK"));
+                    request.AddJsonBody(webhookRequestBody);
+
+                    RestResponse resp = await _restClient.PostAsync(request);
+                    sentStats = resp.StatusCode == System.Net.HttpStatusCode.NoContent;
                 }
 
-                StringBuilder fileContents = new();
-
-                var sortedStats = versionStats.ToList();
-                sortedStats.Sort((p1, p2) => p2.Value.CompareTo(p1.Value));
-
-                foreach (KeyValuePair<string, int> kvp in sortedStats)
-                {
-                    fileContents.Append($"{kvp.Key},{kvp.Value}\n");
-                }
-
-                WebhookRequestBody webhookRequestBody = new()
-                {
-                    Content = $"henlo <@304602975446499329>, here are those version stats you asked for:\n\n```\n{fileContents}\n```\n\nthese will be sent out on the 11th day of every month at the 11th hour in ur time zone, <@304602975446499329>. ty have good day",
-                    Username = "BibleBot Version Stats",
-                    AvatarURL = "https://i.imgur.com/hr4RXpy.png"
-                };
-
-                RestRequest request = new(Environment.GetEnvironmentVariable("STATS_WEBHOOK"));
-                request.AddJsonBody(webhookRequestBody);
-
-                RestResponse resp = await _restClient.PostAsync(request);
-                sentStats = resp.StatusCode == System.Net.HttpStatusCode.NoContent;
+                Log.Information(sentStats ? "VersionStatsService: Sent version stats." : "VersionStatsService: Did not send version stats.");
             }
-
-            if (sentStats)
+            catch (Exception e)
             {
-                Log.Information("VersionStatsService: Sent version stats.");
-            }
-            else
-            {
-                Log.Information("VersionStatsService: Did not send version stats.");
+                Log.Error($"VersionStatsService: Exception caught - {e}");
             }
         }
 
@@ -134,14 +134,13 @@ namespace BibleBot.AutomaticServices.Services
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing || _timer == null)
             {
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                    _timer = null;
-                }
+                return;
             }
+            
+            _timer.Dispose();
+            _timer = null;
         }
     }
 }

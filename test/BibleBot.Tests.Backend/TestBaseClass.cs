@@ -27,33 +27,33 @@ namespace BibleBot.Tests.Backend
     [SetUpFixture]
     public class TestBaseClass
     {
-        public CommandsController _commandsController;
-        public VersesController _versesController;
+        protected CommandsController _commandsController;
+        protected VersesController _versesController;
 
         private MongoService _mongoService;
         private IDistributedCache _cache;
-        public VersionService _versionService;
-        public LanguageService _languageService;
+        protected VersionService _versionService;
+        private LanguageService _languageService;
 
-        public Mock<UserService> _userServiceMock;
-        public Mock<OptOutService> _optOutServiceMock;
-        public Mock<GuildService> _guildServiceMock;
-        public Mock<ResourceService> _resourceServiceMock;
-        public Mock<ParsingService> _parsingServiceMock;
-        public Mock<FrontendStatsService> _frontendStatsServiceMock;
-        public Mock<MetadataFetchingService> _metadataFetchingServiceMock;
+        private Mock<UserService> _userServiceMock;
+        private Mock<OptOutService> _optOutServiceMock;
+        private Mock<GuildService> _guildServiceMock;
+        private Mock<ResourceService> _resourceServiceMock;
+        private Mock<ParsingService> _parsingServiceMock;
+        private Mock<FrontendStatsService> _frontendStatsServiceMock;
+        private Mock<MetadataFetchingService> _metadataFetchingServiceMock;
 
-        public Mock<SpecialVerseProvider> _spProviderMock;
-        public Mock<BibleGatewayProvider> _bgProviderMock;
-        public Mock<APIBibleProvider> _abProviderMock;
-        public Mock<NLTAPIProvider> _nltProviderMock;
+        private Mock<SpecialVerseProvider> _spProviderMock;
+        private Mock<BibleGatewayProvider> _bgProviderMock;
+        private Mock<APIBibleProvider> _abProviderMock;
+        private Mock<NLTAPIProvider> _nltProviderMock;
 
         private IDatabaseSettings _databaseSettings;
 
-        public Version _defaultBibleGatewayVersion;
-        public Version _defaultAPIBibleVersion;
+        protected Version _defaultBibleGatewayVersion;
+        protected Version _defaultAPIBibleVersion;
 
-        public IStringLocalizerFactory _localizerFactory = new ResourceManagerStringLocalizerFactory(Options.Create(new LocalizationOptions { ResourcesPath = "Resources" }), new SerilogLoggerFactory());
+        private readonly IStringLocalizerFactory _localizerFactory = new ResourceManagerStringLocalizerFactory(Options.Create(new LocalizationOptions { ResourcesPath = "Resources" }), new SerilogLoggerFactory());
 
         [OneTimeSetUp]
         public async Task RunBeforeAnyTests()
@@ -102,8 +102,6 @@ namespace BibleBot.Tests.Backend
                                                     _parsingServiceMock.Object, _versionService, _languageService,
                                                     _metadataFetchingServiceMock.Object, _bgProviderMock.Object,
                                                     _abProviderMock.Object, _nltProviderMock.Object, _optOutServiceMock.Object, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
-
-            return;
         }
     }
 }

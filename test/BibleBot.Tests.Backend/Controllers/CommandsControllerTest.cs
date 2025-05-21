@@ -22,7 +22,7 @@ namespace BibleBot.Tests.Backend.Controllers
         public async Task ShouldFailWhenBodyIsEmpty()
         {
             ObjectResult result = (await _commandsController.ProcessMessage(new MockRequest())).Result as ObjectResult;
-            CommandResponse resp = result.Value as CommandResponse;
+            CommandResponse resp = result!.Value as CommandResponse;
 
             CommandResponse expected = new()
             {

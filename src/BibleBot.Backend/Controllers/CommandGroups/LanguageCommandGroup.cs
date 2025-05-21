@@ -37,7 +37,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             ]; set => throw new NotImplementedException();
         }
 
-        public class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+        private class LanguageUsage(UserService userService, GuildService guildService, LanguageService languageService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -102,7 +102,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class LanguageSet(UserService userService, LanguageService languageService, IStringLocalizer localizer) : Command
+        private class LanguageSet(UserService userService, LanguageService languageService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "set"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set => throw new NotImplementedException(); }
@@ -111,56 +111,57 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             {
                 Language idealLanguage = await languageService.Get(args[0]);
 
-                if (idealLanguage != null)
+                if (idealLanguage == null)
                 {
-                    User idealUser = await userService.Get(req.UserId);
-
-                    if (idealUser != null)
-                    {
-                        UpdateDefinition<User> update = Builders<User>.Update
-                                     .Set(user => user.Language, idealLanguage.Culture);
-
-                        await userService.Update(req.UserId, update);
-                    }
-                    else
-                    {
-                        User newUser = new()
-                        {
-                            UserId = req.UserId,
-                            Language = idealLanguage.Culture
-                        };
-
-                        await userService.Create(newUser);
-                    }
-
-                    CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Culture);
-
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setlanguage", localizer["SetLanguageSuccess"], false)
+                            Utils.GetInstance().Embedify("/setlanguage", localizer["SetLanguageFailure"], true)
                         ],
-                        LogStatement = $"/setlanguage {args[0]}",
+                        LogStatement = "/setlanguage",
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
+                User idealUser = await userService.Get(req.UserId);
+
+                if (idealUser != null)
+                {
+                    UpdateDefinition<User> update = Builders<User>.Update
+                                                                  .Set(user => user.Language, idealLanguage.Culture);
+
+                    await userService.Update(req.UserId, update);
+                }
+                else
+                {
+                    User newUser = new()
+                    {
+                        UserId = req.UserId,
+                        Language = idealLanguage.Culture
+                    };
+
+                    await userService.Create(newUser);
+                }
+
+                CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Culture);
+
                 return new CommandResponse
                 {
-                    OK = false,
+                    OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setlanguage", localizer["SetLanguageFailure"], true)
+                        Utils.GetInstance().Embedify("/setlanguage", localizer["SetLanguageSuccess"], false)
                     ],
-                    LogStatement = "/setlanguage",
+                    LogStatement = $"/setlanguage {args[0]}",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
+
             }
         }
 
-        public class LanguageSetServer(GuildService guildService, LanguageService languageService, IStringLocalizer localizer) : Command
+        private class LanguageSetServer(GuildService guildService, LanguageService languageService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setserver"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a language parameter, like `english` or `german`."; set => throw new NotImplementedException(); }
@@ -169,62 +170,63 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             {
                 Language idealLanguage = await languageService.Get(args[0]);
 
-                if (idealLanguage != null)
+                if (idealLanguage == null)
                 {
-                    Guild idealGuild = await guildService.Get(req.GuildId);
-
-                    if (idealGuild != null)
-                    {
-                        UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                     .Set(guild => guild.Language, idealLanguage.Culture);
-
-                        await guildService.Update(req.GuildId, update);
-                    }
-                    else
-                    {
-                        Guild newGuild = new()
-                        {
-                            GuildId = req.GuildId,
-                            Language = idealLanguage.Culture,
-                            IsDM = req.IsDM
-                        };
-
-                        await guildService.Create(newGuild);
-                    }
-
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setserverlanguage", localizer["SetServerLanguageSuccess"], false)
+                            Utils.GetInstance().Embedify("/setserverlanguage", localizer["SetServerLanguageFailure"], true)
                         ],
-                        LogStatement = $"/setserverlanguage {args[0]}",
+                        LogStatement = "/setserverlanguage",
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
+                Guild idealGuild = await guildService.Get(req.GuildId);
+
+                if (idealGuild != null)
+                {
+                    UpdateDefinition<Guild> update = Builders<Guild>.Update
+                                                                    .Set(guild => guild.Language, idealLanguage.Culture);
+
+                    await guildService.Update(req.GuildId, update);
+                }
+                else
+                {
+                    Guild newGuild = new()
+                    {
+                        GuildId = req.GuildId,
+                        Language = idealLanguage.Culture,
+                        IsDM = req.IsDM
+                    };
+
+                    await guildService.Create(newGuild);
+                }
+
                 return new CommandResponse
                 {
-                    OK = false,
+                    OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setserverlanguage", localizer["SetServerLanguageFailure"], true)
+                        Utils.GetInstance().Embedify("/setserverlanguage", localizer["SetServerLanguageSuccess"], false)
                     ],
-                    LogStatement = "/setserverlanguage",
+                    LogStatement = $"/setserverlanguage {args[0]}",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
+
             }
         }
 
-        public class LanguageList(LanguageService languageService) : Command
+        private class LanguageList(LanguageService languageService) : Command
         {
             public override string Name { get => "list"; set => throw new NotImplementedException(); }
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 List<Language> languages = await languageService.Get();
-                languages.Sort((x, y) => x.Name.CompareTo(y.Name));
+                languages.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
 
                 StringBuilder content = new();
 

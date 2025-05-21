@@ -28,7 +28,7 @@ namespace BibleBot.Backend.Middleware
                 else
                 {
                     context.Response.StatusCode = 401;
-                    if (context.Request.Path.Value.Contains("verses"))
+                    if (context.Request.Path.Value!.Contains("verses"))
                     {
                         await context.Response.WriteAsJsonAsync(new VerseResponse
                         {
@@ -46,14 +46,12 @@ namespace BibleBot.Backend.Middleware
                             LogStatement = "Unauthorized"
                         });
                     }
-
-                    return;
                 }
             }
             else
             {
                 context.Response.StatusCode = 401;
-                if (context.Request.Path.Value.Contains("verses"))
+                if (context.Request.Path.Value!.Contains("verses"))
                 {
                     await context.Response.WriteAsJsonAsync(new VerseResponse
                     {
@@ -71,14 +69,15 @@ namespace BibleBot.Backend.Middleware
                         LogStatement = "Unauthorized"
                     });
                 }
-
-                return;
             }
         }
     }
 
     public static class HouseAuthorizationMiddlewareExtensions
     {
-        public static IApplicationBuilder UseHouseAuthorization(this IApplicationBuilder builder) => builder.UseMiddleware<HouseAuthorizationMiddleware>();
+        public static void UseHouseAuthorization(this IApplicationBuilder builder)
+        {
+            builder.UseMiddleware<HouseAuthorizationMiddleware>();
+        }
     }
 }

@@ -72,7 +72,7 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            string body = parsingService.PurifyBody(ignoringBrackets, req.Body);
+            string body = ParsingService.PurifyBody(ignoringBrackets, req.Body);
             Tuple<string, List<BookSearchResult>> tuple = parsingService.GetBooksInString(metadataFetchingService.GetBookNames(), metadataFetchingService.GetDefaultBookNames(), body);
 
             bool verseNumbersEnabled = true;
@@ -135,7 +135,8 @@ namespace BibleBot.Backend.Controllers
                         Culture = CultureInfo.CurrentUICulture.Name
                     });
                 }
-                else if (reference.IsNT && !reference.Version.SupportsNewTestament)
+
+                if (reference.IsNT && !reference.Version.SupportsNewTestament)
                 {
                     return BadRequest(new VerseResponse
                     {
@@ -144,7 +145,8 @@ namespace BibleBot.Backend.Controllers
                         Culture = CultureInfo.CurrentUICulture.Name
                     });
                 }
-                else if (reference.IsDEU && !reference.Version.SupportsDeuterocanon)
+
+                if (reference.IsDEU && !reference.Version.SupportsDeuterocanon)
                 {
                     return BadRequest(new VerseResponse
                     {
@@ -154,12 +156,9 @@ namespace BibleBot.Backend.Controllers
                     });
                 }
 
-                if (reference.Book != null)
+                if (reference.Book is { InternalName: "addesth" or "praz" or "epjer" })
                 {
-                    if (reference.Book.InternalName is "addesth" or "praz" or "epjer")
-                    {
-                        reference.Book.ProperName = reference.Book.PreferredName;
-                    }
+                    reference.Book.ProperName = reference.Book.PreferredName;
                 }
 
                 if (!references.Contains(reference))
@@ -188,12 +187,9 @@ namespace BibleBot.Backend.Controllers
             {
                 IContentProvider provider = _bibleProviders.FirstOrDefault(pv =>
                 {
-                    if (reference != null)
+                    if (reference is { Version: not null })
                     {
-                        if (reference.Version != null)
-                        {
-                            return pv.Name == reference.Version.Source;
-                        }
+                        return pv.Name == reference.Version.Source;
                     }
 
                     return false;
@@ -201,12 +197,7 @@ namespace BibleBot.Backend.Controllers
 
                 VerseResult result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
-                if (result == null)
-                {
-                    continue;
-                }
-
-                if (result.Text == null)
+                if (result?.Text == null)
                 {
                     continue;
                 }
@@ -241,36 +232,31 @@ namespace BibleBot.Backend.Controllers
                 }
             }
 
-            if (results.Count > 0)
-            {
-                string logStatement = string.Join(" / ", results.Select(verse => $"{verse.Reference.ToString(true)} {verse.Reference.Version.Abbreviation}"));
-
-                if (logStatement.Contains("Psalm 151"))
-                {
-                    logStatement = logStatement.Replace("Psalm 151 1", "Psalm 151");
-                }
-
-                return Ok(new VerseResponse
-                {
-                    OK = true,
-                    Verses = results,
-                    DisplayStyle = displayStyle,
-                    Paginate = paginateVerses,
-                    LogStatement = logStatement,
-                    Culture = CultureInfo.CurrentUICulture.Name,
-                    CultureFooter = string.Format(_sharedLocalizer["GlobalFooter"], Utils.Version)
-                });
-            }
-            else
+            if (results.Count == 0)
             {
                 return BadRequest(new VerseResponse
                 {
-                    OK = false,
-                    Verses = null,
-                    LogStatement = null,
-                    Culture = CultureInfo.CurrentUICulture.Name
+                    OK = false, Verses = null, LogStatement = null, Culture = CultureInfo.CurrentUICulture.Name
                 });
             }
+
+            string logStatement = string.Join(" / ", results.Select(verse => $"{verse.Reference.ToString(true)} {verse.Reference.Version.Abbreviation}"));
+            if (logStatement.Contains("Psalm 151"))
+            {
+                logStatement = logStatement.Replace("Psalm 151 1", "Psalm 151");
+            }
+
+            return Ok(new VerseResponse
+            {
+                OK = true,
+                Verses = results,
+                DisplayStyle = displayStyle,
+                Paginate = paginateVerses,
+                LogStatement = logStatement,
+                Culture = CultureInfo.CurrentUICulture.Name,
+                CultureFooter = string.Format(_sharedLocalizer["GlobalFooter"], Utils.Version)
+            });
+
         }
     }
 }

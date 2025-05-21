@@ -74,27 +74,31 @@ namespace BibleBot.AutomaticServices.Services
             return Task.CompletedTask;
         }
 
-        public async void RunAutomaticDailyVerses(object state)
+        private async void RunAutomaticDailyVerses(object state)
         {
-            int count = 0;
-            int idealCount = 0;
-            bool isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-            List<string> guildsCleared = [];
-
-            Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
-            ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["America/Detroit"]);
-
-            Log.Information($"AutomaticDailyVerseService: Fetching guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}...");
-
-            List<Guild> matches = [.. (await _guildService.Get()).Where((guild) =>
+            try
             {
-                if (isTesting && guild.GuildId != "769709969796628500")
-                {
-                    return false;
-                }
+                int count = 0;
+                bool isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+                List<string> guildsCleared = [];
 
-                if (guild.DailyVerseTime != null && guild.DailyVerseTimeZone != null && guild.DailyVerseWebhook != null)
+                Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
+                ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["America/Detroit"]);
+
+                Log.Information($"AutomaticDailyVerseService: Fetching guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}...");
+
+                List<Guild> matches = [.. (await _guildService.Get()).Where((guild) =>
                 {
+                    if (isTesting && guild.GuildId != "769709969796628500")
+                    {
+                        return false;
+                    }
+
+                    if (guild.DailyVerseTime == null || guild.DailyVerseTimeZone == null || guild.DailyVerseWebhook == null)
+                    {
+                        return false;
+                    }
+
                     string[] guildTime = guild.DailyVerseTime.Split(":");
                     DateTimeZone preferredTimeZone = DateTimeZoneProviders.Tzdb[guild.DailyVerseTimeZone];
                     ZonedDateTime dateTimeInPreferredTz = currentInstant.InZone(preferredTimeZone);
@@ -102,27 +106,22 @@ namespace BibleBot.AutomaticServices.Services
                     try
                     {
                         return dateTimeInPreferredTz.Hour == int.Parse(guildTime[0])
-                               && dateTimeInPreferredTz.Minute == int.Parse(guildTime[1])
-                               && guild.DailyVerseLastSentDate != dateTimeInStandardTz.ToString("MM/dd/yyyy", null);
+                        && dateTimeInPreferredTz.Minute == int.Parse(guildTime[1])
+                        && guild.DailyVerseLastSentDate != dateTimeInStandardTz.ToString("MM/dd/yyyy", null);
                     }
                     catch
                     {
                         return false;
                     }
-                }
+                })];
 
-                return false;
-            })];
+                int idealCount = matches.Count;
+                Log.Information($"AutomaticDailyVerseService: Fetched {idealCount} guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
 
-            idealCount = matches.Count;
-            Log.Information($"AutomaticDailyVerseService: Fetched {idealCount} guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
+                Stopwatch watch = Stopwatch.StartNew();
+                string votdRef = await _spProvider.GetDailyVerse();
 
-            Stopwatch watch = Stopwatch.StartNew();
-            string votdRef = await _spProvider.GetDailyVerse();
-
-            foreach (Guild guild in matches)
-            {
-                if (!guildsCleared.Contains(guild.GuildId))
+                foreach (Guild guild in matches.Where(guild => !guildsCleared.Contains(guild.GuildId)))
                 {
                     InternalEmbed embed;
                     WebhookRequestBody webhookRequestBody;
@@ -138,7 +137,7 @@ namespace BibleBot.AutomaticServices.Services
                     if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
                     {
                         embed = Utils.GetInstance().Embedify(_localizer["AutomaticDailyVerseWebhookUsernameAlt"], _localizer["AutomaticDailyVerseBothTestamentsWarning"], true);
-                        webhookRequestBody = new()
+                        webhookRequestBody = new WebhookRequestBody
                         {
                             Username = _localizer["AutomaticDailyVerseWebhookUsername"],
                             AvatarURL = embed.Footer.IconURL,
@@ -172,7 +171,7 @@ namespace BibleBot.AutomaticServices.Services
                             embed.Author.URL = "https://biblica.org";
                         }
 
-                        webhookRequestBody = new()
+                        webhookRequestBody = new WebhookRequestBody
                         {
                             Content = content,
                             Username = _localizer["AutomaticDailyVerseWebhookUsername"],
@@ -190,18 +189,22 @@ namespace BibleBot.AutomaticServices.Services
                         count += 1;
 
                         UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                     .Set(guild => guild.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null));
+                                                                        .Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null));
 
                         await _guildService.Update(guild.GuildId, update);
                     }
 
                     guildsCleared.Add(guild.Id);
                 }
-            }
 
-            watch.Stop();
-            string timeToProcess = $"{(watch.Elapsed.Hours != 0 ? $"{watch.Elapsed.Hours} hours, " : "")}{(watch.Elapsed.Minutes != 0 ? $"{watch.Elapsed.Minutes} minutes, " : "")}{watch.Elapsed.Seconds} seconds";
-            Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
+                watch.Stop();
+                string timeToProcess = $"{(watch.Elapsed.Hours != 0 ? $"{watch.Elapsed.Hours} hours, " : "")}{(watch.Elapsed.Minutes != 0 ? $"{watch.Elapsed.Minutes} minutes, " : "")}{watch.Elapsed.Seconds} seconds";
+                Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
+            }
+            catch (Exception e)
+            {
+                Log.Error($"AutomaticDailyVerseService: Exception caught - {e}");
+            }
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
@@ -221,14 +224,13 @@ namespace BibleBot.AutomaticServices.Services
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing || _timer == null)
             {
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                    _timer = null;
-                }
+                return;
             }
+
+            _timer.Dispose();
+            _timer = null;
         }
     }
 }

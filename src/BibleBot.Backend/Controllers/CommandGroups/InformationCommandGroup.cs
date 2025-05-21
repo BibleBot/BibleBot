@@ -36,7 +36,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             ]; set => throw new NotImplementedException();
         }
 
-        public class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService, IStringLocalizer localizer) : Command
+        private class InfoStats(UserService userService, GuildService guildService, VersionService versionService, FrontendStatsService frontendStatsService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "stats"; set => throw new NotImplementedException(); }
 
@@ -49,14 +49,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 string version = Utils.Version;
 
-                string commitBaseEndpoint = $"https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit";
+                const string commitBaseEndpoint = $"https://gitlab.com/kerygmadigital/biblebot/BibleBot/-/commit";
 
                 string frontendShortHash = frontendStats.FrontendRepoCommitHash.Substring(0, 8);
                 string frontendLongHash = frontendStats.FrontendRepoCommitHash;
                 string frontendCommitURL = $"{commitBaseEndpoint}/{frontendLongHash}";
 
+#pragma warning disable CS0618 // Type or member is obsolete
+                // The pragma exists because ThisAssembly devs are assholes who force
+                // a sponsorship in exchange for the library being navigable in an IDE.
+                // The library still works.
                 string backendShortHash = ThisAssembly.Git.Commit;
                 string backendLongHash = ThisAssembly.Git.Sha;
+#pragma warning enable CS0618 // Type or member is obsolete
+
                 string backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
 
                 string resp = $"### {localizer["FrontendStats"]}\n" +
@@ -87,7 +93,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class InfoBibleBot(IStringLocalizer localizer) : Command
+        private class InfoBibleBot(IStringLocalizer localizer) : Command
         {
             public override string Name { get => "biblebot"; set => throw new NotImplementedException(); }
 
@@ -104,11 +110,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     SyndicationItem entry = firstFourEntries[i];
                     if (i < 2)
                     {
-                        newsSb.AppendLine($":new: **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault().GetAbsoluteUri().ToString()}) :new:");
+                        newsSb.AppendLine($":new: **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()}) :new:");
                     }
                     else
                     {
-                        newsSb.AppendLine($"**{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault().GetAbsoluteUri().ToString()})");
+                        newsSb.AppendLine($"**{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()})");
                     }
                 }
 
@@ -124,7 +130,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     },
                     Fields =
                     [
-                        new()
+                        new EmbedField
                         {
                             Name = $":tools: {localizer["Commands"]}",
                             Value = $"`/search` - {localizer["SearchCommandDescription"]}\n" +
@@ -140,7 +146,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                             "─────────────",
                             Inline = false
                         },
-                        new()
+                        new EmbedField
                         {
                             Name = $":link: {localizer["Links"]}",
                             Value = $"**{localizer["Website"]}**: https://biblebot.xyz\n" +
@@ -150,7 +156,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                             $"**{localizer["TermsAndConditions"]}**: https://biblebot.xyz/terms\n\n" +
                             "─────────────"
                         },
-                        new()
+                        new EmbedField
                         {
                             Name = $":newspaper: {localizer["NewsFromBlog"]}",
                             Value = newsSb.ToString().Trim(),
@@ -173,7 +179,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class InfoInvite(IStringLocalizer localizer) : Command
+        private class InfoInvite(IStringLocalizer localizer) : Command
         {
             public override string Name { get => "invite"; set => throw new NotImplementedException(); }
 

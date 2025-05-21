@@ -60,29 +60,44 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             if (reference.AsString == null)
             {
-                originalProperName = reference.Book.ProperName;
+                try
+                {
+                    originalProperName = reference.Book.ProperName;
+                }
+                catch (System.NullReferenceException)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Log.Error($"***** {reference.Version.Name} does not have book data populated, no references will work until resolved! *****");
+                    }
+
+                    return null;
+                }
 
                 if (reference.Version.Abbreviation is "ELXX" or "LXX")
                 {
-                    if (reference.Book.Name == "DAN")
+                    switch (reference.Book.Name)
                     {
-                        reference.Book.ProperName = "DAG";
+                        case "DAN":
+                            {
+                                reference.Book.ProperName = "DAG";
 
-                        // For whatever reason, the ELXX we use lists Daniel as a book
-                        // but it actually doesn't exist, so we defer to the "updated" ELXX.
-                        if (reference.Version.Abbreviation == "ELXX")
-                        {
-                            reference.Version.InternalId = "6bab4d6c61b31b80-01";
-                        }
-                    }
-                    else if (reference.Book.Name is "EZR" or "NEH")
-                    {
-                        reference.Book.ProperName = "EZR";
-                        originalProperName = "Ezra/Nehemiah";
-                    }
-                    else
-                    {
-                        reference.Book.ProperName = reference.Book.Name;
+                                // For whatever reason, the ELXX we use lists Daniel as a book, but
+                                // it actually doesn't exist, so we defer to the "updated" ELXX.
+                                if (reference.Version.Abbreviation == "ELXX")
+                                {
+                                    reference.Version.InternalId = "6bab4d6c61b31b80-01";
+                                }
+
+                                break;
+                            }
+                        case "EZR" or "NEH":
+                            reference.Book.ProperName = "EZR";
+                            originalProperName = "Ezra/Nehemiah";
+                            break;
+                        default:
+                            reference.Book.ProperName = reference.Book.Name;
+                            break;
                     }
                 }
                 else
@@ -107,13 +122,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 return null;
             }
 
-            if (resp.Passages == null)
-            {
-                Log.Error($"{reference.Version.Abbreviation} machine broke");
-                return null;
-            }
-
-            if (resp.Passages.Count == 0)
+            if (resp.Passages == null || resp.Passages.Count == 0)
             {
                 Log.Error($"{reference.Version.Abbreviation} machine broke");
                 return null;
@@ -145,7 +154,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
                     if (verseEl != null)
                     {
-                        el.NextElementSibling.Prepend(verseEl.Clone(true));
+                        el.NextElementSibling.Prepend(verseEl.Clone());
 
                         verseEl.Remove();
                     }
@@ -167,11 +176,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 #pragma warning disable IDE0045 // Convert to conditional expression
                             if (matches[0].Groups[2].Value == "1")
                             {
-                                if (matches[0].Groups[1].Value == "1")
-                                {
-                                    el.TextContent = " <**1**> ";
-                                }
-                                else if (matches[0].Groups[1].Value == $"{reference.StartingChapter}")
+                                if (matches[0].Groups[1].Value == "1" || matches[0].Groups[1].Value == $"{reference.StartingChapter}")
                                 {
                                     el.TextContent = " <**1**> ";
                                 }
@@ -198,7 +203,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 }
 
                 title += titlesEnabled ? string.Join(" / ", document.GetElementsByClassName("s1").Select(el => el.TextContent.Trim())) : "";
-                texts.Add(string.Join("\n", document.GetElementsByTagName("p").Where(el => solidTextClasses.Contains(el.ClassName) || prefixTextClasses.Any(prefix => el.ClassName.StartsWith(prefix))).Select(el => el.TextContent.Trim())));
+                texts.Add(string.Join("\n", document.GetElementsByTagName("p").Where(el => solidTextClasses.Contains(el.ClassName) || prefixTextClasses.Any(prefix => el.ClassName!.StartsWith(prefix))).Select(el => el.TextContent.Trim())));
             }
 
             string text = string.Join("\n", texts);
@@ -271,17 +276,15 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             List<SearchResult> results = [];
 
-            if (resp.Data != null)
+            if (resp.Data == null)
             {
-                foreach (ABVerse verse in resp.Data.Verses)
-                {
-                    results.Add(new SearchResult
-                    {
-                        Reference = verse.Reference,
-                        Text = PurifyText(verse.Text).Replace(query, $"**{query}**")
-                    });
-                }
+                return results;
             }
+
+            results.AddRange(resp.Data.Verses.Select(verse => new SearchResult
+            {
+                Reference = verse.Reference, Text = PurifyText(verse.Text).Replace(query, $"**{query}**")
+            }));
 
             return results;
         }
@@ -304,7 +307,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 { " .",    "." },
                 { "′",     "'" },
                 { "‘",     "'" },
-                { "’",     "'" }, // Fonts may make it look like this is no different than the line above, but it's a different codepoint in Unicode.
+                { "’",     "'" }, // Fonts may make it look like this is no different from the line above, but it's a different codepoint in Unicode.
                 { "' s",   "'s" },
                 { "' \"",  "'\""},
                 { " . ",   " " },
@@ -324,12 +327,9 @@ namespace BibleBot.Backend.Services.Providers.Content
                 text = text.Replace("Selah", " *(Selah)* ");
             }
 
-            foreach (KeyValuePair<string, string> pair in nuisances)
+            foreach (KeyValuePair<string, string> pair in nuisances.Where(pair => text.Contains(pair.Key)))
             {
-                if (text.Contains(pair.Key))
-                {
-                    text = text.Replace(pair.Key, pair.Value);
-                }
+                text = text.Replace(pair.Key, pair.Value);
             }
 
             text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");

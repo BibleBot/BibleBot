@@ -21,16 +21,9 @@ namespace BibleBot.Backend.Services.Providers
 {
     public class SpecialVerseProvider : IDisposable
     {
-        private CancellationTokenSource _cancellationToken;
-        private readonly HttpClient _httpClient;
-        private readonly HtmlParser _htmlParser;
-
-        public SpecialVerseProvider()
-        {
-            _cancellationToken = new CancellationTokenSource();
-            _httpClient = new HttpClient();
-            _htmlParser = new HtmlParser();
-        }
+        private CancellationTokenSource _cancellationToken = new();
+        private readonly HttpClient _httpClient = new();
+        private readonly HtmlParser _htmlParser = new();
 
         public void Dispose()
         {
@@ -40,19 +33,18 @@ namespace BibleBot.Backend.Services.Providers
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing || _cancellationToken == null)
             {
-                if (_cancellationToken != null)
-                {
-                    _cancellationToken.Dispose();
-                    _cancellationToken = null;
-                }
+                return;
             }
+
+            _cancellationToken.Dispose();
+            _cancellationToken = null;
         }
 
         public async Task<string> GetDailyVerse()
         {
-            string url = "https://www.biblegateway.com/reading-plans/verse-of-the-day/next";
+            const string url = "https://www.biblegateway.com/reading-plans/verse-of-the-day/next";
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
@@ -63,12 +55,12 @@ namespace BibleBot.Backend.Services.Providers
             IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            return document.GetElementsByClassName("rp-passage-display").FirstOrDefault().TextContent;
+            return document.GetElementsByClassName("rp-passage-display").FirstOrDefault()!.TextContent;
         }
 
         public async Task<string> GetRandomVerse()
         {
-            string url = "https://dailyverses.net/random-bible-verse";
+            const string url = "https://dailyverses.net/random-bible-verse";
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
@@ -79,9 +71,9 @@ namespace BibleBot.Backend.Services.Providers
             IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            return document.GetElementsByClassName("b1").FirstOrDefault()
-                           .GetElementsByClassName("vr").FirstOrDefault()
-                           .GetElementsByClassName("vc").FirstOrDefault().TextContent;
+            return document.GetElementsByClassName("b1").FirstOrDefault()!
+                           .GetElementsByClassName("vr").FirstOrDefault()!
+                           .GetElementsByClassName("vc").FirstOrDefault()!.TextContent;
         }
 
         public async Task<string> GetTrulyRandomVerse()
@@ -95,7 +87,7 @@ namespace BibleBot.Backend.Services.Providers
             string resp = await req.Content.ReadAsStringAsync();
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            IEnumerable<string> verseArray = resp.Split(" ").Take(2);
+            string[] verseArray = resp.Split(" ").Take(2).ToArray();
 
             Dictionary<string, string> bookMap = new()
             {
@@ -120,9 +112,9 @@ namespace BibleBot.Backend.Services.Providers
 
             string book = verseArray.ElementAt(0);
 
-            if (bookMap.ContainsKey(book))
+            if (bookMap.TryGetValue(book, out string value))
             {
-                book = bookMap[book];
+                book = value;
             }
 
             return $"{book} {verseArray.ElementAt(1)}";

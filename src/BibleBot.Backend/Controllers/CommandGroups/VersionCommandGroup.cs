@@ -41,7 +41,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             ]; set => throw new NotImplementedException();
         }
 
-        public class VersionUsage(UserService userService, GuildService guildService, VersionService versionService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+        private class VersionUsage(UserService userService, GuildService guildService, VersionService versionService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -82,7 +82,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class VersionSet(UserService userService, VersionService versionService, IStringLocalizer localizer) : Command
+        private class VersionSet(UserService userService, VersionService versionService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "set"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
@@ -91,54 +91,55 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             {
                 Version idealVersion = await versionService.Get(args[0]);
 
-                if (idealVersion != null)
+                if (idealVersion == null)
                 {
-                    User idealUser = await userService.Get(req.UserId);
-
-                    if (idealUser != null)
-                    {
-                        UpdateDefinition<User> update = Builders<User>.Update
-                                     .Set(user => user.Version, idealVersion.Abbreviation);
-
-                        await userService.Update(req.UserId, update);
-                    }
-                    else
-                    {
-                        User newUser = new()
-                        {
-                            UserId = req.UserId,
-                            Version = idealVersion.Abbreviation
-                        };
-
-                        await userService.Create(newUser);
-                    }
-
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setversion", localizer["SetVersionSuccess"], false)
+                            Utils.GetInstance().Embedify("/setversion", localizer["SetVersionFailure"], true)
                         ],
-                        LogStatement = $"/setversion {args[0]}",
+                        LogStatement = "/setversion",
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
+                User idealUser = await userService.Get(req.UserId);
+
+                if (idealUser != null)
+                {
+                    UpdateDefinition<User> update = Builders<User>.Update
+                                                                  .Set(user => user.Version, idealVersion.Abbreviation);
+
+                    await userService.Update(req.UserId, update);
+                }
+                else
+                {
+                    User newUser = new()
+                    {
+                        UserId = req.UserId,
+                        Version = idealVersion.Abbreviation
+                    };
+
+                    await userService.Create(newUser);
+                }
+
                 return new CommandResponse
                 {
-                    OK = false,
+                    OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setversion", localizer["SetVersionFailure"], true)
+                        Utils.GetInstance().Embedify("/setversion", localizer["SetVersionSuccess"], false)
                     ],
-                    LogStatement = "/setversion",
+                    LogStatement = $"/setversion {args[0]}",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
+
             }
         }
 
-        public class VersionSetServer(GuildService guildService, VersionService versionService, IStringLocalizer localizer) : Command
+        private class VersionSetServer(GuildService guildService, VersionService versionService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "setserver"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
@@ -147,61 +148,62 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             {
                 Version idealVersion = await versionService.Get(args[0]);
 
-                if (idealVersion != null)
+                if (idealVersion == null)
                 {
-                    Guild idealGuild = await guildService.Get(req.GuildId);
-
-                    if (idealGuild != null)
-                    {
-                        UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                     .Set(guild => guild.Version, idealVersion.Abbreviation);
-
-                        await guildService.Update(req.GuildId, update);
-                    }
-                    else
-                    {
-                        Guild newGuild = new()
-                        {
-                            GuildId = req.GuildId,
-                            Version = idealVersion.Abbreviation,
-                            IsDM = req.IsDM
-                        };
-
-                        await guildService.Create(newGuild);
-                    }
-
-                    string message = localizer["SetServerVersionSuccess"];
-                    if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
-                    {
-                        message += $"\n\n:warning: {localizer["SetServerVersionSuccessDailyVerseWarning"]}";
-                    }
-
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/setserverversion", message, false)
+                            Utils.GetInstance().Embedify("/setserverversion", localizer["SetServerVersionFailure"], true)
                         ],
-                        LogStatement = $"/setserverversion {args[0]}",
+                        LogStatement = "/setserverversion",
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
+                Guild idealGuild = await guildService.Get(req.GuildId);
+
+                if (idealGuild != null)
+                {
+                    UpdateDefinition<Guild> update = Builders<Guild>.Update
+                                                                    .Set(guild => guild.Version, idealVersion.Abbreviation);
+
+                    await guildService.Update(req.GuildId, update);
+                }
+                else
+                {
+                    Guild newGuild = new()
+                    {
+                        GuildId = req.GuildId,
+                        Version = idealVersion.Abbreviation,
+                        IsDM = req.IsDM
+                    };
+
+                    await guildService.Create(newGuild);
+                }
+
+                string message = localizer["SetServerVersionSuccess"];
+                if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
+                {
+                    message += $"\n\n:warning: {localizer["SetServerVersionSuccessDailyVerseWarning"]}";
+                }
+
                 return new CommandResponse
                 {
-                    OK = false,
+                    OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/setserverversion", localizer["SetServerVersionFailure"], true)
+                        Utils.GetInstance().Embedify("/setserverversion", message, false)
                     ],
-                    LogStatement = "/setserverversion",
+                    LogStatement = $"/setserverversion {args[0]}",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
+
             }
         }
 
-        public class VersionInfo(UserService userService, GuildService guildService, VersionService versionService, IStringLocalizer localizer) : Command
+        private class VersionInfo(UserService userService, GuildService guildService, VersionService versionService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "info"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
@@ -233,58 +235,59 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
 
-                if (idealVersion != null)
+                if (idealVersion == null)
                 {
-                    string response = $"### {idealVersion.Name}\n\n" +
-                                $"{localizer["VersionInfoContainsOT"]}: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":x:")}\n" +
-                                $"{localizer["VersionInfoContainsNT"]}: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":x:")}\n" +
-                                $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n\n" +
-                                $"__**{localizer["VersionInfoDeveloperInfoHeader"]}**__\n" +
-                                $"{localizer["VersionInfoSource"]}: `{idealVersion.Source}`";
-
-                    if (idealVersion.Publisher != null)
-                    {
-                        response += $"\n{localizer["VersionInfoPublisher"]}: `{idealVersion.Publisher}`";
-                    }
-
-                    if (idealVersion.InternalId != null)
-                    {
-                        response += $"\nInternal ID: `{idealVersion.InternalId}`";
-                    }
-
-                    if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
-                    {
-                        response += $"\n\n:warning: {localizer["VersionInfoDailyVerseWarning"]}";
-                    }
-
-                    response += $"\n\n{localizer["VersionInfoBookListNotice"]}";
-
                     return new CommandResponse
                     {
-                        OK = true,
+                        OK = false,
                         Pages =
-                            [
-                                Utils.GetInstance().Embedify("/versioninfo", response, false)
-                            ],
-                        LogStatement = $"/versioninfo {version}",
+                        [
+                            Utils.GetInstance().Embedify("/versioninfo", localizer["InvalidVersion"], true)
+                        ],
+                        LogStatement = "/versioninfo",
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
 
+                string response = $"### {idealVersion.Name}\n\n" +
+                $"{localizer["VersionInfoContainsOT"]}: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":x:")}\n" +
+                $"{localizer["VersionInfoContainsNT"]}: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":x:")}\n" +
+                $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n\n" +
+                $"__**{localizer["VersionInfoDeveloperInfoHeader"]}**__\n" +
+                $"{localizer["VersionInfoSource"]}: `{idealVersion.Source}`";
+
+                if (idealVersion.Publisher != null)
+                {
+                    response += $"\n{localizer["VersionInfoPublisher"]}: `{idealVersion.Publisher}`";
+                }
+
+                if (idealVersion.InternalId != null)
+                {
+                    response += $"\nInternal ID: `{idealVersion.InternalId}`";
+                }
+
+                if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
+                {
+                    response += $"\n\n:warning: {localizer["VersionInfoDailyVerseWarning"]}";
+                }
+
+                response += $"\n\n{localizer["VersionInfoBookListNotice"]}";
+
                 return new CommandResponse
                 {
-                    OK = false,
+                    OK = true,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/versioninfo", localizer["InvalidVersion"], true)
+                        Utils.GetInstance().Embedify("/versioninfo", response, false)
                     ],
-                    LogStatement = "/versioninfo",
+                    LogStatement = $"/versioninfo {version}",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
+
             }
         }
 
-        public class VersionList(VersionService versionService, IStringLocalizer sharedLocalizer) : Command
+        private class VersionList(VersionService versionService, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "list"; set => throw new NotImplementedException(); }
 
@@ -296,7 +299,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 List<string> versionsUsed = [];
                 List<InternalEmbed> pages = [];
 
-                int maxResultsPerPage = 25;
+                const int maxResultsPerPage = 25; // TODO: make this an appsettings param
 
                 // We need to add a page here because the for loop won't hit the last one otherwise.
                 // This also prevents situations where the Ceiling() result might equal 0.
@@ -307,17 +310,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     int count = 0;
                     StringBuilder versionList = new();
 
-                    foreach (Version version in versions)
+                    foreach (Version version in versions.Where(version => count < maxResultsPerPage).Where(version => !versionsUsed.Contains(version.Name)))
                     {
-                        if (count < maxResultsPerPage)
-                        {
-                            if (!versionsUsed.Contains(version.Name))
-                            {
-                                versionList.Append($"{version.Name}\n");
-                                versionsUsed.Add(version.Name);
-                                count++;
-                            }
-                        }
+                        versionList.Append($"{version.Name}\n");
+                        versionsUsed.Add(version.Name);
+                        count++;
                     }
 
                     string pageCounter = string.Format(sharedLocalizer["PageCounter"], [i + 1, totalPages]);
@@ -335,7 +332,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        public class VersionBookList(UserService userService, GuildService guildService, VersionService versionService, MetadataFetchingService metadataFetchingService, IStringLocalizer localizer) : Command
+        private class VersionBookList(UserService userService, GuildService guildService, VersionService versionService, MetadataFetchingService metadataFetchingService, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "booklist"; set => throw new NotImplementedException(); }
             public override string ArgumentsError { get => "Expected a version abbreviation parameter, like `RSV` or `KJV`."; set => throw new NotImplementedException(); }
@@ -367,77 +364,76 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 Version idealVersion = await versionService.Get(version) ?? await versionService.Get("RSV");
 
-                if (idealVersion != null)
+                if (idealVersion == null)
                 {
-                    // if (idealVersion.Source != "bg")
-                    // {
-                    //     return new CommandResponse
-                    //     {
-                    //         OK = false,
-                    //         Pages =
-                    //         [
-                    //             Utils.GetInstance().Embedify("/booklist", localizer["BookListVersionIneligible"], true)
-                    //         ],
-                    //         LogStatement = "/booklist - non-bg source"
-                    //     };
-                    // }
-
-                    MDVersionBookList names = metadataFetchingService.GetVersionBookList(idealVersion);
-
-                    if (names != null)
+                    return new CommandResponse
                     {
-                        List<InternalEmbed> pages = [];
-
-                        if (names.ContainsKey(BookCategories.OldTestament))
-                        {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListOTHeader"]}\n* " + string.Join("\n* ", names[BookCategories.OldTestament].Values).Replace("<151>", $"*({localizer["BookListContainsPsalm151"]})*"), false));
-                        }
-
-                        if (names.ContainsKey(BookCategories.NewTestament))
-                        {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListNTHeader"]}\n* " + string.Join("\n* ", names[BookCategories.NewTestament].Values), false));
-                        }
-
-                        if (names.ContainsKey(BookCategories.Deuterocanon))
-                        {
-                            pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListDEUHeader"]}\n* " + string.Join("\n* ", names[BookCategories.Deuterocanon].Values), false));
-                        }
-
-                        return new CommandResponse
-                        {
-                            OK = true,
-                            Pages = pages,
-                            LogStatement = "/booklist"
-                        };
-                    }
-                    else
-                    {
-                        string message = $"{localizer["BookListInternalError"]}\n\n" +
-                        $"```\nVersion: {idealVersion.Abbreviation}\n```";
-
-                        return new CommandResponse
-                        {
-                            OK = false,
-                            Pages =
-                            [
-                                Utils.GetInstance().Embedify("/booklist", message, true)
-                            ],
-                            LogStatement = $"/booklist - internal error on {idealVersion.Abbreviation}",
-                            Culture = CultureInfo.CurrentUICulture.Name
-                        };
-                    }
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify("/booklist", localizer["InvalidVersion"], true)
+                        ],
+                        LogStatement = "/booklist - invalid version",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
                 }
+
+                // if (idealVersion.Source != "bg")
+                // {
+                //     return new CommandResponse
+                //     {
+                //         OK = false,
+                //         Pages =
+                //         [
+                //             Utils.GetInstance().Embedify("/booklist", localizer["BookListVersionIneligible"], true)
+                //         ],
+                //         LogStatement = "/booklist - non-bg source"
+                //     };
+                // }
+
+                MDVersionBookList names = metadataFetchingService.GetVersionBookList(idealVersion);
+
+                if (names != null)
+                {
+                    List<InternalEmbed> pages = [];
+
+                    if (names.TryGetValue(BookCategories.OldTestament, out Dictionary<string, string> otNames))
+                    {
+                        pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListOTHeader"]}\n* " + string.Join("\n* ", otNames.Values).Replace("<151>", $"*({localizer["BookListContainsPsalm151"]})*"), false));
+                    }
+
+                    if (names.TryGetValue(BookCategories.NewTestament, out Dictionary<string, string> ntNames))
+                    {
+                        pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListNTHeader"]}\n* " + string.Join("\n* ", ntNames.Values), false));
+                    }
+
+                    if (names.TryGetValue(BookCategories.Deuterocanon, out Dictionary<string, string> deuNames))
+                    {
+                        pages.Add(Utils.GetInstance().Embedify($"/booklist - {idealVersion.Name}", $"### {localizer["BookListDEUHeader"]}\n* " + string.Join("\n* ", deuNames.Values), false));
+                    }
+
+                    return new CommandResponse
+                    {
+                        OK = true,
+                        Pages = pages,
+                        LogStatement = "/booklist"
+                    };
+                }
+
+                string message = $"{localizer["BookListInternalError"]}\n\n" +
+                $"```\nVersion: {idealVersion.Abbreviation}\n```";
 
                 return new CommandResponse
                 {
                     OK = false,
                     Pages =
                     [
-                        Utils.GetInstance().Embedify("/booklist", localizer["InvalidVersion"], true)
+                        Utils.GetInstance().Embedify("/booklist", message, true)
                     ],
-                    LogStatement = "/booklist - invalid version",
+                    LogStatement = $"/booklist - internal error on {idealVersion.Abbreviation}",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
+
             }
         }
     }

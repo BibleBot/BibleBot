@@ -20,8 +20,6 @@ namespace BibleBot.Backend.Services
 {
     public class UserService(IDistributedCache cache, MongoService mongoService)
     {
-        private readonly IDistributedCache _cache = cache;
-        private readonly MongoService _mongoService = mongoService;
         private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
         private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
 
@@ -35,17 +33,17 @@ namespace BibleBot.Backend.Services
 
                 foreach (RedisKey key in keys)
                 {
-                    string cachedUserStr = await _cache.GetStringAsync(key);
-                    users.Add(JsonSerializer.Deserialize<User>(cachedUserStr));
+                    string cachedUserStr = await cache.GetStringAsync(key);
+                    users.Add(JsonSerializer.Deserialize<User>(cachedUserStr!));
                 }
             }
             catch (ArgumentNullException)
             {
-                users = await _mongoService.Get<User>();
+                users = await mongoService.Get<User>();
 
                 foreach (User user in users)
                 {
-                    await _cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
+                    await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
                 }
             }
 
@@ -58,17 +56,17 @@ namespace BibleBot.Backend.Services
 
             try
             {
-                string cachedUserStr = await _cache.GetStringAsync($"user:{userId}");
-                user = JsonSerializer.Deserialize<User>(cachedUserStr);
+                string cachedUserStr = await cache.GetStringAsync($"user:{userId}");
+                user = JsonSerializer.Deserialize<User>(cachedUserStr!);
             }
             catch (ArgumentNullException)
             {
 
-                user = await _mongoService.Get<User>(userId);
+                user = await mongoService.Get<User>(userId);
 
                 if (user != null)
                 {
-                    await _cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
+                    await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
                 }
             }
 
@@ -79,24 +77,24 @@ namespace BibleBot.Backend.Services
 
         public async Task<User> Create(User user)
         {
-            User createdUser = await _mongoService.Create(user);
-            await _cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(createdUser));
+            User createdUser = await mongoService.Create(user);
+            await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(createdUser));
 
             return createdUser;
         }
 
         public async Task Update(string userId, UpdateDefinition<User> updateDefinition)
         {
-            await _mongoService.Update(userId, updateDefinition);
+            await mongoService.Update(userId, updateDefinition);
 
-            User user = await _mongoService.Get<User>(userId);
-            await _cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
+            User user = await mongoService.Get<User>(userId);
+            await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
         }
 
         public async Task Remove(User idealUser)
         {
-            await _mongoService.Remove(idealUser);
-            await _cache.RemoveAsync($"user:{idealUser.UserId}");
+            await mongoService.Remove(idealUser);
+            await cache.RemoveAsync($"user:{idealUser.UserId}");
         }
     }
 }

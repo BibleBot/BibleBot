@@ -23,7 +23,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "announce"); set => throw new NotImplementedException(); }
         public override List<Command> Commands { get => [new StaffAnnounce(), new StaffPermissionsCheck()]; set => throw new NotImplementedException(); }
 
-        public class StaffAnnounce : Command
+        private class StaffAnnounce : Command
         {
             public override string Name { get => "announce"; set => throw new NotImplementedException(); }
 
@@ -40,7 +40,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             });
         }
 
-        public class StaffPermissionsCheck : Command
+        private class StaffPermissionsCheck : Command
         {
             public override string Name { get => "permscheck"; set => throw new NotImplementedException(); }
 
@@ -51,17 +51,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 InternalEmbed embed = Utils.GetInstance().Embedify("Permissions Check", $"This is a command for support use.\n\n**Channel ID**: {args[0]}\n**Server ID**: {args[1]}\n**Integrated Role (IR)**: {args[5]} ({args[6]})", false);
                 embed.Fields =
                 [
-                    new()
+                    new EmbedField
                     {
                         Name = "Bot User Channel Permissions",
                         Value = results[0].ToString()
                     },
-                    new()
+                    new EmbedField
                     {
                         Name = "IR Channel Permissions",
                         Value = results[1].ToString()
                     },
-                    new()
+                    new EmbedField
                     {
                         Name = "IR Server Permissions",
                         Value = results[2].ToString()

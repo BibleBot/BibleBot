@@ -212,7 +212,7 @@ namespace BibleBot.Models
                 { "Jonah", "JON" },
                 { "Micah", "MIC" },
                 { "Nahum", "NAM" },
-                { "Habukkuk", "HAB" },
+                { "Habakkuk", "HAB" },
                 { "Zephaniah", "ZEP" },
                 { "Haggai", "HAG" },
                 { "Zechariah", "ZEC" },

@@ -34,47 +34,48 @@ namespace BibleBot.Backend.Controllers
         {
             Guild idealGuild = await guildService.Get(req.GuildId);
 
-            if (idealGuild != null)
+            if (idealGuild == null)
             {
-                if (req.Body == "delete")
+                return BadRequest(new CommandResponse
                 {
-                    if (req.ChannelId != idealGuild.DailyVerseChannelId)
-                    {
-                        return BadRequest(new CommandResponse
-                        {
-                            OK = false
-                        });
-                    }
-
-                    UpdateDefinition<Guild> update = Builders<Guild>.Update
-                             .Set(guild => guild.DailyVerseWebhook, null)
-                             .Set(guild => guild.DailyVerseChannelId, null)
-                             .Set(guild => guild.DailyVerseTime, null)
-                             .Set(guild => guild.DailyVerseTimeZone, null)
-                             .Set(guild => guild.DailyVerseLastSentDate, null)
-                             .Set(guild => guild.DailyVerseRoleId, null)
-                             .Set(guild => guild.DailyVerseIsThread, false);
-
-                    await guildService.Update(req.GuildId, update);
-                }
-                else
-                {
-                    UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                 .Set(guild => guild.DailyVerseWebhook, req.Body);
-
-                    await guildService.Update(req.GuildId, update);
-                }
-
-                return Ok(new CommandResponse
-                {
-                    OK = true
+                    OK = false
                 });
             }
-
-            return BadRequest(new CommandResponse
+            
+            if (req.Body == "delete")
             {
-                OK = false
+                if (req.ChannelId != idealGuild.DailyVerseChannelId)
+                {
+                    return BadRequest(new CommandResponse
+                    {
+                        OK = false
+                    });
+                }
+
+                UpdateDefinition<Guild> update = Builders<Guild>.Update
+                                                                .Set(guild => guild.DailyVerseWebhook, null)
+                                                                .Set(guild => guild.DailyVerseChannelId, null)
+                                                                .Set(guild => guild.DailyVerseTime, null)
+                                                                .Set(guild => guild.DailyVerseTimeZone, null)
+                                                                .Set(guild => guild.DailyVerseLastSentDate, null)
+                                                                .Set(guild => guild.DailyVerseRoleId, null)
+                                                                .Set(guild => guild.DailyVerseIsThread, false);
+
+                await guildService.Update(req.GuildId, update);
+            }
+            else
+            {
+                UpdateDefinition<Guild> update = Builders<Guild>.Update
+                                                                .Set(guild => guild.DailyVerseWebhook, req.Body);
+
+                await guildService.Update(req.GuildId, update);
+            }
+
+            return Ok(new CommandResponse
+            {
+                OK = true
             });
+
         }
     }
 }

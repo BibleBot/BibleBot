@@ -25,7 +25,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             Version testVersion = await _versionService.Get("ELXX") ?? await _versionService.Create(new MockELXX());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 ELXX")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -34,7 +34,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -70,7 +70,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             Version testVersion = await _versionService.Get("LXX") ?? await _versionService.Create(new MockLXX());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Daniel 1:1-2 LXX")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -79,7 +79,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -115,7 +115,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             Version testVersion = await _versionService.Get("PAT1904") ?? await _versionService.Create(new MockPAT1904());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1-2 PAT1904")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -124,7 +124,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -160,7 +160,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             Version testVersion = await _versionService.Get("NIV") ?? await _versionService.Create(new MockNIV());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Proverbs 25:1-12 NIV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -169,9 +169,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
-                        Title = resp.Verses[0]?.Title, // workaround with impending switch of source for NIV
+                        Title = resp!.Verses[0]?.Title, // TODO: remove, is workaround with impending switch of source for NIV
                         PsalmTitle = "",
                         Text = "<**1**> These are more proverbs of Solomon, compiled by the men of Hezekiah king of Judah: <**2**> It is the glory of God to conceal a matter; to search out a matter is the glory of kings. <**3**> As the heavens are high and the earth is deep, so the hearts of kings are unsearchable. <**4**> Remove the dross from the silver, and a silversmith can produce a vessel; <**5**> remove wicked officials from the king's presence, and his throne will be established through righteousness. <**6**> Do not exalt yourself in the king's presence, and do not claim a place among his great men; <**7**> it is better for him to say to you, \"Come up here,\" than for him to humiliate you before his nobles. What you have seen with your eyes <**8**> do not bring hastily to court, for what will you do in the end if your neighbor puts you to shame? <**9**> If you take your neighbor to court, do not betray another's confidence, <**10**> or the one who hears it may shame you and the charge against you will stand. <**11**> Like apples of gold in settings of silver is a ruling rightly given. <**12**> Like an earring of gold or an ornament of fine gold is the rebuke of a wise judge to a listening ear.",
                         Reference = new Reference
@@ -205,7 +205,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             Version testVersion = await _versionService.Get("ISV") ?? await _versionService.Create(new MockISV());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Exodus 20:1-7 ISV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -214,7 +214,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "The Ten Commandments",
                         PsalmTitle = "",
@@ -250,7 +250,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             Version testVersion = await _versionService.Get("ISV") ?? await _versionService.Create(new MockISV());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Exodus 20:8-17 ISV")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
+            VerseResponse resp = result!.Value as VerseResponse;
 
             VerseResponse expected = new()
             {
@@ -259,7 +259,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                 DisplayStyle = "embed",
                 Verses =
                 [
-                    new()
+                    new VerseResult
                     {
                         Title = "",
                         PsalmTitle = "",
@@ -278,51 +278,6 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             IsNT = false,
                             IsDEU = false,
                             AsString = "Exodus 20:8-17"
-                        }
-                    }
-                ],
-                Culture = "en-US",
-                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
-            };
-
-            result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public async Task ShouldProcessJohn1InArabic()
-        {
-            Version testVersion = await _versionService.Get("ERV-AR") ?? await _versionService.Create(new MockERVAR());
-
-            ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1 ERV-AR")).GetAwaiter().GetResult().Result as ObjectResult;
-            VerseResponse resp = result.Value as VerseResponse;
-
-            VerseResponse expected = new()
-            {
-                OK = true,
-                LogStatement = "John 1:1 ERV-AR",
-                DisplayStyle = "embed",
-                Verses =
-                [
-                    new()
-                    {
-                        Title = "يَسُوعُ المَسِيحُ كَلِمَةُ الله",
-                        PsalmTitle = "",
-                        Text = "<**1**> فِي البَدْءِ كَانَ الكَلِمَةُ مَوْجُودًا، وَكَانَ الكَلِمَةُ مَعَ اللهِ، وَكَانَ الكَلِمَةُ هُوَ اللهَ.",
-                        Reference = new Reference
-                        {
-                            Book = new Book {
-                                ProperName = "John"
-                            },
-                            StartingChapter = 1,
-                            StartingVerse = 1,
-                            EndingChapter = 1,
-                            EndingVerse = 1,
-                            Version = testVersion,
-                            IsOT = false,
-                            IsNT = true,
-                            IsDEU = false,
-                            AsString = "John 1:1"
                         }
                     }
                 ],

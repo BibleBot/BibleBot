@@ -30,7 +30,7 @@ namespace BibleBot.Backend
 {
     public class Startup(IConfiguration configuration)
     {
-        public IConfiguration Configuration { get; } = configuration;
+        private IConfiguration Configuration { get; } = configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -45,7 +45,7 @@ namespace BibleBot.Backend
             });
 
             // Instantiate the various services.
-            services.AddSingleton(sp => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
+            services.AddSingleton(_ => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
 
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();

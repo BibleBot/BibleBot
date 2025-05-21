@@ -14,8 +14,6 @@ from disnake.ext import commands
 from logger import VyLogger
 from utils.views import CreatePaginator
 import re
-import time
-import json
 from utils import statics
 
 logger = VyLogger("default")
@@ -122,12 +120,11 @@ class EventListeners(commands.Cog):
 
         clean_msg = msg.content.replace("://", "")
         verse_regex = re.compile(
-            r"\ [0-9]{1,3}:[0-9]{1,3}((,[0-9]{1,3})*)?(-)?([0-9]{1,3})?((,[0-9]{1,3})*)?(:[0-9]{1,3})?"
+            r" [0-9]{1,3}:[0-9]{1,3}((,[0-9]{1,3})*)?(-)?([0-9]{1,3})?((,[0-9]{1,3})*)?(:[0-9]{1,3})?"
         )
 
         if verse_regex.search(clean_msg):
             _, resp = await backend.submit_verse(msg.channel, msg.author, clean_msg)
-
         elif "ccc" in clean_msg.lower() and msg.guild:
             if msg.guild.id in [
                 238001909716353025,

@@ -27,7 +27,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands { get => [new ResourceUsage(_resources, _localizer)]; set => throw new NotImplementedException(); }
 
-        public class ResourceUsage(List<IResource> resources, IStringLocalizer localizer) : Command
+        private class ResourceUsage(List<IResource> resources, IStringLocalizer localizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 

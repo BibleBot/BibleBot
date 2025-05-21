@@ -15,15 +15,13 @@ namespace BibleBot.Backend.Services
 {
     public class OptOutService(MongoService mongoService)
     {
-        private readonly MongoService _mongoService = mongoService;
+        public async Task<List<OptOutUser>> Get() => await mongoService.Get<OptOutUser>();
+        public async Task<OptOutUser> Get(string userId) => await mongoService.Get<OptOutUser>(userId);
+        public async Task<long> GetCount() => await mongoService.GetCount<OptOutUser>();
 
-        public async Task<List<OptOutUser>> Get() => await _mongoService.Get<OptOutUser>();
-        public async Task<OptOutUser> Get(string userId) => await _mongoService.Get<OptOutUser>(userId);
-        public async Task<long> GetCount() => await _mongoService.GetCount<OptOutUser>();
+        public async Task<OptOutUser> Create(OptOutUser user) => await mongoService.Create(user);
 
-        public async Task<OptOutUser> Create(OptOutUser user) => await _mongoService.Create(user);
-
-        public async Task Update(string userId, UpdateDefinition<OptOutUser> updateDefinition) => await _mongoService.Update(userId, updateDefinition);
-        public async Task Remove(OptOutUser idealUser) => await _mongoService.Remove(idealUser);
+        public async Task Update(string userId, UpdateDefinition<OptOutUser> updateDefinition) => await mongoService.Update(userId, updateDefinition);
+        public async Task Remove(OptOutUser idealUser) => await mongoService.Remove(idealUser);
     }
 }

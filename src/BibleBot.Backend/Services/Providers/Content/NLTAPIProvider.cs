@@ -69,19 +69,12 @@ namespace BibleBot.Backend.Services.Providers.Content
             IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            if (document == null)
-            {
-                return null;
-            }
-
             foreach (IElement el in document.QuerySelectorAll(".chapter-number"))
             {
                 if (verseNumbersEnabled)
                 {
-                    string chapterNum = el.QuerySelector(".cw_ch").TextContent;
-
+                    string chapterNum = el.QuerySelector(".cw_ch")!.TextContent;
                     el.TextContent = chapterNum != "1" && chapterNum != $"{reference.StartingChapter}" ? $" <**{chapterNum}:1**> " : " <**1**> ";
-
                 }
                 else
                 {
@@ -93,7 +86,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             {
                 if (verseNumbersEnabled)
                 {
-                    IElement previousElement = el.ParentElement.PreviousElementSibling;
+                    IElement previousElement = el.ParentElement!.PreviousElementSibling;
 
                     if (previousElement != null)
                     {
@@ -102,7 +95,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                             previousElement = previousElement.PreviousElementSibling;
                         }
 
-                        if (previousElement.ClassList.Contains("chapter-number"))
+                        if (previousElement!.ClassList.Contains("chapter-number"))
                         {
                             // Prevent number duplication for verse 1s.
                             previousElement.Remove();
@@ -112,7 +105,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                     if (el.TextContent == "1")
                     {
                         IElement parentElement = el.ParentElement.ParentElement;
-                        string verseId = parentElement.GetAttribute("orig");
+                        string verseId = parentElement!.GetAttribute("orig");
 
                         if (verseId != null)
                         {
@@ -121,11 +114,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 #pragma warning disable IDE0045 // Convert to conditional expression
                             if (matches[0].Groups[2].Value == "1")
                             {
-                                if (matches[0].Groups[1].Value == "1")
-                                {
-                                    el.TextContent = " <**1**> ";
-                                }
-                                else if (matches[0].Groups[1].Value == $"{reference.StartingChapter}")
+                                if (matches[0].Groups[1].Value == "1" || matches[0].Groups[1].Value == $"{reference.StartingChapter}")
                                 {
                                     el.TextContent = " <**1**> ";
                                 }
@@ -169,14 +158,15 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             foreach (IElement el in document.GetElementsByClassName("bk_ch_vs_header"))
             {
-                if (el.ParentElement.TagName == "VERSE_EXPORT")
+                if (el.ParentElement!.TagName != "VERSE_EXPORT")
                 {
-                    IElement nextSection = el.ParentElement.ParentElement.NextElementSibling;
-
-                    nextSection.InsertBefore(el.Clone());
-
-                    el.Remove();
+                    continue;
                 }
+
+                IElement nextSection = el.ParentElement.ParentElement!.NextElementSibling;
+                nextSection!.InsertBefore(el.Clone());
+
+                el.Remove();
             }
 
             string title = "";
@@ -202,7 +192,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             }
             string text = textBuilder.ToString().Trim();
 
-            string refString = document.GetElementsByClassName("bk_ch_vs_header").FirstOrDefault().TextContent;
+            string refString = document.GetElementsByClassName("bk_ch_vs_header").FirstOrDefault()!.TextContent;
             reference.AsString = refString.Substring(0, refString.Length - 5);
 
             if (reference.AppendedVerses.Count > 0)
@@ -211,12 +201,13 @@ namespace BibleBot.Backend.Services.Providers.Content
                 {
                     string referenceTrimmed = referenceEl.TextContent.Substring(0, referenceEl.TextContent.Length - 5);
 
-                    if (referenceTrimmed.Contains(':') && referenceTrimmed.Contains(reference.AsString.Split(" ")[0]))
+                    if (!referenceTrimmed.Contains(':') || !referenceTrimmed.Contains(reference.AsString.Split(" ")[0]))
                     {
-                        string[] colonSplit = referenceTrimmed.Split(":");
-
-                        reference.AsString += $", {colonSplit[1]}";
+                        continue;
                     }
+
+                    string[] colonSplit = referenceTrimmed.Split(":");
+                    reference.AsString += $", {colonSplit[1]}";
                 }
             }
             else if (reference.StartingChapter != reference.EndingChapter && reference.EndingVerse == 1)
@@ -259,17 +250,19 @@ namespace BibleBot.Backend.Services.Providers.Content
                 IElement referenceElement = row.GetElementsByClassName("bible-item-title").FirstOrDefault();
                 IElement textElement = row.GetElementsByClassName("bible-item-text").FirstOrDefault();
 
-                if (referenceElement != null && textElement != null)
+                if (referenceElement == null || textElement == null)
                 {
-                    string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1));
-                    text = text.Replace(query, $"**{query}**");
-
-                    results.Add(new SearchResult
-                    {
-                        Reference = referenceElement.TextContent,
-                        Text = text
-                    });
+                    continue;
                 }
+
+                string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1));
+                text = text.Replace(query, $"**{query}**");
+
+                results.Add(new SearchResult
+                {
+                    Reference = referenceElement.TextContent,
+                    Text = text
+                });
             }
 
             return results;
@@ -293,7 +286,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 { " .",    "." },
                 { "′",     "'" },
                 { "‘",     "'" },
-                { "’",     "'" }, // Fonts may make it look like this is no different than the line above, but it's a different codepoint in Unicode.
+                { "’",     "'" }, // Fonts may make it look like this is no different from the line above, but it's a different codepoint in Unicode.
                 { "' s",   "'s" },
                 { "' \"",  "'\""},
                 { " . ",   " " },
@@ -313,12 +306,9 @@ namespace BibleBot.Backend.Services.Providers.Content
                 text = text.Replace("Selah", " *(Selah)* ");
             }
 
-            foreach (KeyValuePair<string, string> pair in nuisances)
+            foreach (KeyValuePair<string, string> pair in nuisances.Where(pair => text.Contains(pair.Key)))
             {
-                if (text.Contains(pair.Key))
-                {
-                    text = text.Replace(pair.Key, pair.Value);
-                }
+                text = text.Replace(pair.Key, pair.Value);
             }
 
             text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");
@@ -334,14 +324,13 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing || _cancellationToken == null)
             {
-                if (_cancellationToken != null)
-                {
-                    _cancellationToken.Dispose();
-                    _cancellationToken = null;
-                }
+                return;
             }
+            
+            _cancellationToken.Dispose();
+            _cancellationToken = null;
         }
     }
 }

@@ -74,82 +74,93 @@ namespace BibleBot.Backend.Services
 
         public List<IResource> GetAllResources() => _resources;
 
-        public IResource GetResource(ResourceType type, string name)
+        private IResource GetResource(ResourceType type, string name)
         {
 
-            if (type == ResourceType.CREED)
+            switch (type)
             {
-                if (_creeds.Contains(name))
-                {
-                    string creedFile = File.ReadAllText($"./Data/Creeds/english.json");
-
-                    CreedFile creedFileObj = JsonSerializer.Deserialize<CreedFile>(creedFile, _jsonSerializerOptions);
-                    CreedResource resource = name switch
+                case ResourceType.CREED when _creeds.Contains(name):
                     {
-                        "apostles" => creedFileObj.Apostles,
-                        "nicene325" => creedFileObj.Nicene325,
-                        "nicene" => creedFileObj.Nicene,
-                        "chalcedon" => creedFileObj.Chalcedon,
-                        _ => throw new KeyNotFoundException(),
-                    };
-                    resource.CommandReference = name;
-                    resource.Type = ResourceType.CREED;
-                    resource.Style = ResourceStyle.FULL_TEXT;
+                        string creedFile = File.ReadAllText($"./Data/Creeds/english.json");
 
-                    return resource;
-                }
-            }
-            else if (type == ResourceType.CATECHISM)
-            {
-                if (_catechismData.ContainsKey(name))
-                {
-                    Tuple<ResourceStyle, string> idealCatechism = _catechismData[name];
+                        CreedFile creedFileObj = JsonSerializer.Deserialize<CreedFile>(creedFile, _jsonSerializerOptions);
+                        CreedResource resource = name switch
+                        {
+                            "apostles" => creedFileObj.Apostles,
+                            "nicene325" => creedFileObj.Nicene325,
+                            "nicene" => creedFileObj.Nicene,
+                            "chalcedon" => creedFileObj.Chalcedon,
+                            _ => throw new KeyNotFoundException(),
+                        };
 
-                    string catechismFile = File.ReadAllText($"./Data/Catechisms/{idealCatechism.Item2}.json");
-
-                    if (idealCatechism.Item1 == ResourceStyle.PARAGRAPHED)
-                    {
-                        ParagraphedResource resource = JsonSerializer.Deserialize<ParagraphedResource>(catechismFile, _jsonSerializerOptions);
                         resource.CommandReference = name;
-                        resource.Type = ResourceType.CATECHISM;
-                        resource.Style = ResourceStyle.PARAGRAPHED;
+                        resource.Type = ResourceType.CREED;
+                        resource.Style = ResourceStyle.FULL_TEXT;
+
                         return resource;
                     }
-                    else if (idealCatechism.Item1 == ResourceStyle.SECTIONED)
+                case ResourceType.CATECHISM:
                     {
-                        SectionedResource resource = JsonSerializer.Deserialize<SectionedResource>(catechismFile, _jsonSerializerOptions);
-                        resource.CommandReference = name;
-                        resource.Type = ResourceType.CATECHISM;
-                        resource.Style = ResourceStyle.SECTIONED;
-                        return resource;
-                    }
-                }
-            }
-            else if (type == ResourceType.CANONS)
-            {
-                if (_canonData.ContainsKey(name))
-                {
-                    Tuple<ResourceStyle, string> idealCanons = _canonData[name];
+                        if (_catechismData.TryGetValue(name, out Tuple<ResourceStyle, string> idealCatechism))
+                        {
+                            string catechismFile = File.ReadAllText($"./Data/Catechisms/{idealCatechism.Item2}.json");
 
-                    string canonsFile = File.ReadAllText($"./Data/Canons/{idealCanons.Item2}.json");
+                            switch (idealCatechism.Item1)
+                            {
+                                case ResourceStyle.PARAGRAPHED:
+                                    {
+                                        ParagraphedResource resource = JsonSerializer.Deserialize<ParagraphedResource>(catechismFile, _jsonSerializerOptions);
+                                        resource.CommandReference = name;
+                                        resource.Type = ResourceType.CATECHISM;
+                                        resource.Style = ResourceStyle.PARAGRAPHED;
+                                        return resource;
+                                    }
+                                case ResourceStyle.SECTIONED:
+                                    {
+                                        SectionedResource resource = JsonSerializer.Deserialize<SectionedResource>(catechismFile, _jsonSerializerOptions);
+                                        resource.CommandReference = name;
+                                        resource.Type = ResourceType.CATECHISM;
+                                        resource.Style = ResourceStyle.SECTIONED;
+                                        return resource;
+                                    }
+                                case ResourceStyle.FULL_TEXT:
+                                default:
+                                    throw new NotImplementedException();
+                            }
+                        }
+                        break;
+                    }
+                case ResourceType.CANONS:
+                    {
+                        if (_canonData.TryGetValue(name, out Tuple<ResourceStyle, string> idealCanons))
+                        {
+                            string canonsFile = File.ReadAllText($"./Data/Canons/{idealCanons.Item2}.json");
 
-                    if (idealCanons.Item1 == ResourceStyle.PARAGRAPHED)
-                    {
-                        ParagraphedResource resource = JsonSerializer.Deserialize<ParagraphedResource>(canonsFile, _jsonSerializerOptions);
-                        resource.CommandReference = name;
-                        resource.Type = ResourceType.CANONS;
-                        resource.Style = ResourceStyle.PARAGRAPHED;
-                        return resource;
+                            switch (idealCanons.Item1)
+                            {
+                                case ResourceStyle.PARAGRAPHED:
+                                    {
+                                        ParagraphedResource resource = JsonSerializer.Deserialize<ParagraphedResource>(canonsFile, _jsonSerializerOptions);
+                                        resource.CommandReference = name;
+                                        resource.Type = ResourceType.CANONS;
+                                        resource.Style = ResourceStyle.PARAGRAPHED;
+                                        return resource;
+                                    }
+                                case ResourceStyle.SECTIONED:
+                                    {
+                                        SectionedResource resource = JsonSerializer.Deserialize<SectionedResource>(canonsFile, _jsonSerializerOptions);
+                                        resource.CommandReference = name;
+                                        resource.Type = ResourceType.CANONS;
+                                        resource.Style = ResourceStyle.SECTIONED;
+                                        return resource;
+                                    }
+                                case ResourceStyle.FULL_TEXT:
+                                default:
+                                    throw new NotImplementedException();
+                            }
+                        }
+                        break;
                     }
-                    else if (idealCanons.Item1 == ResourceStyle.SECTIONED)
-                    {
-                        SectionedResource resource = JsonSerializer.Deserialize<SectionedResource>(canonsFile, _jsonSerializerOptions);
-                        resource.CommandReference = name;
-                        resource.Type = ResourceType.CANONS;
-                        resource.Style = ResourceStyle.SECTIONED;
-                        return resource;
-                    }
-                }
             }
 
             throw new KeyNotFoundException();

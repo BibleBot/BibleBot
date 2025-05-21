@@ -29,9 +29,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
         public override string Name { get => "search"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
-        public override List<Command> Commands { get => [new Search(userService, guildService, versionService, metadataFetchingService, bibleProviders, _localizer, _sharedLocalizer)]; set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new SearchUsage(userService, guildService, versionService, metadataFetchingService, bibleProviders, _localizer, _sharedLocalizer)]; set => throw new NotImplementedException(); }
 
-        public enum SubsetFlag
+        private enum SubsetFlag
         {
             INVALID = 0,
             OT_ONLY = 1,
@@ -39,8 +39,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             DEU_ONLY = 3
         }
 
-        public class Search(UserService userService, GuildService guildService, VersionService versionService,
-                            MetadataFetchingService metadataFetchingService, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+        private class SearchUsage(UserService userService, GuildService guildService, VersionService versionService,
+                             MetadataFetchingService metadataFetchingService, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -108,36 +108,36 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
                 List<SearchResult> searchResults = await provider.Search(query, idealVersion);
 
-
                 if (searchResults.Count > 1)
                 {
                     List<InternalEmbed> pages = [];
-                    int maxResultsPerPage = 6;
+                    const int maxResultsPerPage = 6; // TODO: make this an appsettings param
                     List<string> referencesUsed = [];
 
                     Dictionary<BookCategories, Dictionary<string, string>> categoryMapping = potentialSubset != SubsetFlag.INVALID ? metadataFetchingService.GetVersionBookList(idealVersion) : null;
 
                     searchResults.RemoveAll(searchResult =>
                     {
-                        if (potentialSubset != SubsetFlag.INVALID)
+                        if (potentialSubset == SubsetFlag.INVALID)
                         {
-                            if ((!categoryMapping.ContainsKey(BookCategories.OldTestament) && potentialSubset == SubsetFlag.OT_ONLY) ||
-                                (!categoryMapping.ContainsKey(BookCategories.NewTestament) && potentialSubset == SubsetFlag.NT_ONLY) ||
-                                (!categoryMapping.ContainsKey(BookCategories.Deuterocanon) && potentialSubset == SubsetFlag.DEU_ONLY))
-                            {
-                                return true;
-                            }
-
-                            string bookName = searchResult.Reference.Split(" ")[0];
-
-                            bool notOT = categoryMapping.ContainsKey(BookCategories.OldTestament) && potentialSubset == SubsetFlag.OT_ONLY && !categoryMapping[BookCategories.OldTestament].ContainsValue(bookName);
-                            bool notNT = categoryMapping.ContainsKey(BookCategories.NewTestament) && potentialSubset == SubsetFlag.NT_ONLY && !categoryMapping[BookCategories.NewTestament].ContainsValue(bookName);
-                            bool notDEU = categoryMapping.ContainsKey(BookCategories.Deuterocanon) && potentialSubset == SubsetFlag.DEU_ONLY && !categoryMapping[BookCategories.Deuterocanon].ContainsValue(bookName);
-
-                            return notOT || notNT || notDEU;
+                            return false;
                         }
 
-                        return false;
+                        if ((!categoryMapping!.ContainsKey(BookCategories.OldTestament) && potentialSubset == SubsetFlag.OT_ONLY) ||
+                            (!categoryMapping.ContainsKey(BookCategories.NewTestament) && potentialSubset == SubsetFlag.NT_ONLY) ||
+                            (!categoryMapping.ContainsKey(BookCategories.Deuterocanon) && potentialSubset == SubsetFlag.DEU_ONLY))
+                        {
+                            return true;
+                        }
+
+                        string bookName = searchResult.Reference.Split(" ")[0];
+
+                        bool notOT = categoryMapping.ContainsKey(BookCategories.OldTestament) && potentialSubset == SubsetFlag.OT_ONLY && !categoryMapping[BookCategories.OldTestament].ContainsValue(bookName);
+                        bool notNT = categoryMapping.ContainsKey(BookCategories.NewTestament) && potentialSubset == SubsetFlag.NT_ONLY && !categoryMapping[BookCategories.NewTestament].ContainsValue(bookName);
+                        bool notDEU = categoryMapping.ContainsKey(BookCategories.Deuterocanon) && potentialSubset == SubsetFlag.DEU_ONLY && !categoryMapping[BookCategories.Deuterocanon].ContainsValue(bookName);
+
+                        return notOT || notNT || notDEU;
+
                     });
 
                     if (searchResults.Count == 0 && potentialSubset != SubsetFlag.INVALID)
@@ -166,19 +166,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         totalPages = 1;
                     }
 
-                    string subsetString = "";
-                    if (potentialSubset == SubsetFlag.OT_ONLY)
+                    string subsetString = potentialSubset switch
                     {
-                        subsetString = $"{localizer["SearchSubsetOldTestament"]} ";
-                    }
-                    else if (potentialSubset == SubsetFlag.NT_ONLY)
-                    {
-                        subsetString = $"{localizer["SearchSubsetNewTestament"]} ";
-                    }
-                    else if (potentialSubset == SubsetFlag.DEU_ONLY)
-                    {
-                        subsetString = $"{localizer["SearchSubsetDeuterocanon"]} ";
-                    }
+                        SubsetFlag.OT_ONLY => $"{localizer["SearchSubsetOldTestament"]} ",
+                        SubsetFlag.NT_ONLY => $"{localizer["SearchSubsetNewTestament"]} ",
+                        SubsetFlag.DEU_ONLY => $"{localizer["SearchSubsetDeuterocanon"]} ",
+                        _ => ""
+                    };
 
                     string title = $"{localizer["SearchResultsTitle"]} \"{query}\" {subsetString}({idealVersion.Abbreviation})";
                     string pageCounter = sharedLocalizer["PageCounter"];
@@ -190,23 +184,18 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                         int count = 0;
 
-                        foreach (SearchResult searchResult in searchResults)
+                        foreach (SearchResult searchResult in searchResults.Where(searchResult => searchResult.Text.Length < 700)
+                                                                           .Where(searchResult => count < maxResultsPerPage && !referencesUsed.Contains(searchResult.Reference)))
                         {
-                            if (searchResult.Text.Length < 700)
+                            embed.Fields.Add(new EmbedField
                             {
-                                if (count < maxResultsPerPage && !referencesUsed.Contains(searchResult.Reference))
-                                {
-                                    embed.Fields.Add(new EmbedField
-                                    {
-                                        Name = searchResult.Reference,
-                                        Value = searchResult.Text,
-                                        Inline = false
-                                    });
+                                Name = searchResult.Reference,
+                                Value = searchResult.Text,
+                                Inline = false
+                            });
 
-                                    referencesUsed.Add(searchResult.Reference);
-                                    count++;
-                                }
-                            }
+                            referencesUsed.Add(searchResult.Reference);
+                            count++;
                         }
 
                         pages.Add(embed);
@@ -220,19 +209,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
-                else
+
+                return new CommandResponse
                 {
-                    return new CommandResponse
-                    {
-                        OK = false,
-                        Pages =
-                        [
-                            Utils.GetInstance().Embedify("/search", localizer["SearchNoResults"], true)
-                        ],
-                        LogStatement = "/search",
-                        Culture = CultureInfo.CurrentUICulture.Name
-                    };
-                }
+                    OK = false,
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify("/search", localizer["SearchNoResults"], true)
+                    ],
+                    LogStatement = "/search",
+                    Culture = CultureInfo.CurrentUICulture.Name
+                };
             }
         }
     }

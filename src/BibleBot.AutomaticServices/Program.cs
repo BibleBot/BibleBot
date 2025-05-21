@@ -29,7 +29,7 @@ namespace BibleBot.AutomaticServices
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
+        private static IHostBuilder CreateHostBuilder(string[] args)
         {
             IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
                 .UseSerilog((context, services, configuration) => configuration

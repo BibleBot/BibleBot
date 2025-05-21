@@ -40,11 +40,11 @@ namespace BibleBot.Backend.Controllers
             if (stats != null)
             {
                 UpdateDefinition<FrontendStats> update = Builders<FrontendStats>.Update
-                             .Set(stats => stats.ShardCount, int.Parse(fields[0]))
-                             .Set(stats => stats.ServerCount, int.Parse(fields[1]))
-                             .Set(stats => stats.UserCount, int.Parse(fields[2]))
-                             .Set(stats => stats.ChannelCount, int.Parse(fields[3]))
-                             .Set(stats => stats.FrontendRepoCommitHash, fields[4]);
+                             .Set(statsToUpdate => statsToUpdate.ShardCount, int.Parse(fields[0]))
+                             .Set(statsToUpdate => statsToUpdate.ServerCount, int.Parse(fields[1]))
+                             .Set(statsToUpdate => statsToUpdate.UserCount, int.Parse(fields[2]))
+                             .Set(statsToUpdate => statsToUpdate.ChannelCount, int.Parse(fields[3]))
+                             .Set(statsToUpdate => statsToUpdate.FrontendRepoCommitHash, fields[4]);
 
                 await frontendStatsService.Update(stats, update);
             }

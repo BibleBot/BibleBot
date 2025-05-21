@@ -18,14 +18,13 @@ namespace BibleBot.Backend.Services
 {
     public class VersionService(MongoService mongoService)
     {
-        private readonly MongoService _mongoService = mongoService;
-        private List<Version> _versions = null;
+        private List<Version> _versions = [];
 
         private async Task<List<Version>> GetVersions(bool forcePull = false)
         {
-            if (forcePull || _versions == null)
+            if (forcePull || _versions.Count == 0)
             {
-                _versions = await _mongoService.Get<Version>();
+                _versions = await mongoService.Get<Version>();
             }
 
             return _versions;
@@ -77,7 +76,7 @@ namespace BibleBot.Backend.Services
 
         public async Task<Version> Create(Version version)
         {
-            Version createdVersion = await _mongoService.Create(version);
+            Version createdVersion = await mongoService.Create(version);
             await GetVersions(true);
 
             return createdVersion;
@@ -86,16 +85,16 @@ namespace BibleBot.Backend.Services
         public async Task Update(string abbreviation, UpdateDefinition<Version> updateDefinition)
         {
             Version beforeVersion = await Get(abbreviation);
-            await _mongoService.Update(abbreviation, updateDefinition);
+            await mongoService.Update(abbreviation, updateDefinition);
 
-            Version afterVersion = await _mongoService.Get<Version>(abbreviation);
+            Version afterVersion = await mongoService.Get<Version>(abbreviation);
 
             _versions.Remove(beforeVersion);
             _versions.Add(afterVersion);
         }
         public async Task Remove(Version idealVersion)
         {
-            await _mongoService.Remove(idealVersion);
+            await mongoService.Remove(idealVersion);
             await GetVersions(true);
         }
     }

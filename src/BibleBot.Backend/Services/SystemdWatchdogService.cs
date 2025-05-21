@@ -30,9 +30,9 @@ namespace BibleBot.Backend.Services
             return Task.CompletedTask;
         }
 
-        public void SendWatchdogNotify(object state)
+        private void SendWatchdogNotify(object state)
         {
-            _sdNotifier.Notify(new("WATCHDOG=1"));
+            _sdNotifier.Notify(new ServiceState("WATCHDOG=1"));
             Log.Information("SystemdWatchdogService: WATCHDOG=1");
         }
 
@@ -53,14 +53,13 @@ namespace BibleBot.Backend.Services
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing || _timer == null)
             {
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                    _timer = null;
-                }
+                return;
             }
+
+            _timer.Dispose();
+            _timer = null;
         }
     }
 }

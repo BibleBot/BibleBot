@@ -24,7 +24,7 @@ command_sync_flags = commands.CommandSyncFlags.default()
 command_sync_flags.sync_commands_debug = True
 
 bot = commands.AutoShardedBot(
-    command_prefix=commands.when_mentioned,
+    command_prefix=None,
     intents=intents,
     help_command=None,
     command_sync_flags=command_sync_flags,

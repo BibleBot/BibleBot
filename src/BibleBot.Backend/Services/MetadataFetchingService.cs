@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,7 @@ using MDBGVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Ve
 using MDBookMap = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>;
 using MDBookNames = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>;
 using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Services
 {
@@ -74,33 +76,39 @@ namespace BibleBot.Backend.Services
 
         public MDBookNames GetBookNames()
         {
-            if (_bookNames.Count == 0)
+            if (_bookNames.Count != 0)
             {
-                string bookNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/book_names.json");
-                _bookNames = JsonSerializer.Deserialize<MDBookNames>(bookNamesText);
+                return _bookNames;
             }
+
+            string bookNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/book_names.json");
+            _bookNames = JsonSerializer.Deserialize<MDBookNames>(bookNamesText);
 
             return _bookNames;
         }
 
         public List<string> GetDefaultBookNames()
         {
-            if (_defaultNames.Count == 0)
+            if (_defaultNames.Count != 0)
             {
-                string defaultNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/default_names.json");
-                _defaultNames = JsonSerializer.Deserialize<List<string>>(defaultNamesText);
+                return _defaultNames;
             }
+
+            string defaultNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/default_names.json");
+            _defaultNames = JsonSerializer.Deserialize<List<string>>(defaultNamesText);
 
             return _defaultNames;
         }
 
         public Dictionary<string, string> GetBibleGatewayMapping()
         {
-            if (_bibleGatewayNames.Count == 0)
+            if (_bibleGatewayNames.Count != 0)
             {
-                string bibleGatewayNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/biblegateway_names.json");
-                _bibleGatewayNames = JsonSerializer.Deserialize<Dictionary<string, string>>(bibleGatewayNamesText);
+                return _bibleGatewayNames;
             }
+
+            string bibleGatewayNamesText = File.ReadAllText($"{_filePrefix}/Data/NameFetching/biblegateway_names.json");
+            _bibleGatewayNames = JsonSerializer.Deserialize<Dictionary<string, string>>(bibleGatewayNamesText);
 
             return _bibleGatewayNames;
         }
@@ -119,12 +127,12 @@ namespace BibleBot.Backend.Services
             }
 
             Log.Information("MetadataFetchingService: Getting versions from DB...");
-            IEnumerable<Version> versions = await _versionService.Get();
+            List<Version> versions = await _versionService.Get();
 
-            IEnumerable<Version> abVersions = versions.Where(version => version.Source == "ab" && version.Books == null);
-            IEnumerable<Version> bgVersions = versions.Where(version => version.Source == "bg" && version.Books == null);
+            List<Version> abVersions = versions.Where(version => version.Source == "ab" && version.Books == null) as List<Version>;
+            List<Version> bgVersions = versions.Where(version => version.Source == "bg" && version.Books == null) as List<Version>;
 
-            if (abVersions.Count() > 0)
+            if (abVersions!.Count != 0)
             {
                 Log.Information("MetadataFetchingService: Getting API.Bible version metadata...");
                 MDABVersionData abVersionData = await GetAPIBibleVersionData(abVersions);
@@ -133,7 +141,7 @@ namespace BibleBot.Backend.Services
                 await SaveAPIBibleMetadata(abVersionData);
             }
 
-            if (bgVersions.Count() > 0)
+            if (bgVersions!.Count != 0)
             {
                 Log.Information("MetadataFetchingService: Getting BibleGateway version metadata...");
                 MDBGVersionData bgVersionData = await GetBibleGatewayVersionData(bgVersions);
@@ -156,7 +164,7 @@ namespace BibleBot.Backend.Services
 
             Log.Information("MetadataFetchingService: Serializing and writing book names to file...");
             string serializedNames = JsonSerializer.Serialize(completedNames, _serializerOptions);
-            File.WriteAllText($"{_filePrefix}/Data/NameFetching/book_names.json", serializedNames);
+            await File.WriteAllTextAsync($"{_filePrefix}/Data/NameFetching/book_names.json", serializedNames);
 
             Log.Information("MetadataFetchingService: Finished.");
         }
@@ -223,7 +231,7 @@ namespace BibleBot.Backend.Services
             foreach (Version version in versions)
             {
                 RestRequest req = new($"bibles/{version.InternalId}/books?include-chapters-and-sections=true");
-                req.AddHeader("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+                req.AddHeader("api-key", Environment.GetEnvironmentVariable("APIBIBLE_TOKEN")!);
 
                 ABBooksResponse resp = null;
 
@@ -262,28 +270,18 @@ namespace BibleBot.Backend.Services
 
             List<Version> versions = await _versionService.Get();
 
-            foreach (Version version in versions)
+            foreach (Book book in versions.Where(version => version.Books != null).Select(version => version.Books).SelectMany(bookData => bookData))
             {
-                if (version.Books == null)
+                if (names.ContainsKey(book.Name))
                 {
-                    continue;
+                    if (!names[book.Name].Contains(book.PreferredName))
+                    {
+                        names[book.Name].Add(book.PreferredName);
+                    }
                 }
-
-                List<Book> bookData = version.Books;
-
-                foreach (Book book in bookData)
+                else
                 {
-                    if (names.ContainsKey(book.Name))
-                    {
-                        if (!names[book.Name].Contains(book.PreferredName))
-                        {
-                            names[book.Name].Add(book.PreferredName);
-                        }
-                    }
-                    else
-                    {
-                        names.Add(book.Name, [book.PreferredName]);
-                    }
+                    names.Add(book.Name, [book.PreferredName]);
                 }
             }
 
@@ -294,11 +292,8 @@ namespace BibleBot.Backend.Services
         {
             List<string> latterKings = ["3 Kings", "4 Kings"];
 
-            foreach (KeyValuePair<Version, ABBooksResponse> kvp in versionData)
+            foreach ((Version version, ABBooksResponse resp) in versionData)
             {
-                Version version = kvp.Key;
-                ABBooksResponse resp = kvp.Value;
-
                 List<Book> versionBookData = [];
 
                 foreach (ABBook book in resp.Data)
@@ -306,15 +301,16 @@ namespace BibleBot.Backend.Services
                     bool usesVariant = false;
                     string properDataName = "";
 
-                    if (book.Id == "DAG")
+                    switch (book.Id)
                     {
-                        usesVariant = true;
-                        properDataName = "DAN";
-                    }
-                    else if (book.Id == "PS2")
-                    {
-                        usesVariant = true;
-                        properDataName = "PSA";
+                        case "DAG":
+                            usesVariant = true;
+                            properDataName = "DAN";
+                            break;
+                        case "PS2":
+                            usesVariant = true;
+                            properDataName = "PSA";
+                            break;
                     }
 
                     if (usesVariant)
@@ -332,17 +328,17 @@ namespace BibleBot.Backend.Services
                     string properName;
                     string internalId = book.Id;
 
-                    if (_bookMap["ot"].ContainsKey(internalId))
+                    if (_bookMap["ot"].TryGetValue(internalId, out string otName))
                     {
-                        properName = _bookMap["ot"][internalId];
+                        properName = otName;
                     }
-                    else if (_bookMap["nt"].ContainsKey(internalId))
+                    else if (_bookMap["nt"].TryGetValue(internalId, out string ntName))
                     {
-                        properName = _bookMap["nt"][internalId];
+                        properName = ntName;
                     }
-                    else if (_bookMap["deu"].ContainsKey(internalId))
+                    else if (_bookMap["deu"].TryGetValue(internalId, out string deuName))
                     {
-                        properName = _bookMap["deu"][internalId];
+                        properName = deuName;
                     }
                     else
                     {
@@ -374,20 +370,16 @@ namespace BibleBot.Backend.Services
                     {
                         if (int.TryParse(chapter.Number, out int parsedNumber))
                         {
-                            List<System.Tuple<int, int, string>> titles = [];
+                            List<Tuple<int, int, string>> titles = [];
+                            titles.AddRange(from section in chapter.Sections
+                                let firstVerseIdSplit = section.FirstVerseOrgId.Split('.')
+                                let lastVerseIdSplit = section.FirstVerseOrgId.Split('.')
+                                let firstVerseNumber = int.Parse(firstVerseIdSplit.Last())
+                                let lastVerseNumber = int.Parse(lastVerseIdSplit.Last())
+                                select new Tuple<int, int, string>(firstVerseNumber, lastVerseNumber, section.Title)
+                            );
 
-                            foreach (ABSection section in chapter.Sections)
-                            {
-                                string[] firstVerseIdSplit = section.FirstVerseOrgId.Split('.');
-                                string[] lastVerseIdSplit = section.FirstVerseOrgId.Split('.');
-
-                                int firstVerseNumber = int.Parse(firstVerseIdSplit.Last());
-                                int lastVerseNumber = int.Parse(lastVerseIdSplit.Last());
-
-                                titles.Add(new(firstVerseNumber, lastVerseNumber, section.Title));
-                            }
-
-                            chapters.Add(new()
+                            chapters.Add(new Chapter
                             {
                                 Number = parsedNumber,
                                 Titles = titles.Count == 0 ? null : titles
@@ -399,7 +391,7 @@ namespace BibleBot.Backend.Services
                         }
                     }
 
-                    versionBookData.Add(new()
+                    versionBookData.Add(new Book
                     {
                         Name = internalId,
                         ProperName = properName,
@@ -409,7 +401,7 @@ namespace BibleBot.Backend.Services
                     });
                 }
 
-                UpdateDefinition<Version> update = Builders<Version>.Update.Set(version => version.Books, [.. versionBookData]);
+                UpdateDefinition<Version> update = Builders<Version>.Update.Set(versionToUpdate => versionToUpdate.Books, [.. versionBookData]);
                 await _versionService.Update(version.Abbreviation, update);
             }
         }
@@ -423,14 +415,21 @@ namespace BibleBot.Backend.Services
             List<string> prayerAzariahVariants = ["praz", "prazar"];
             List<string> songThreeYouthsVariants = ["sgthr", "sgthree"];
 
-            foreach (KeyValuePair<Version, HttpResponseMessage> kvp in versionData)
+            foreach ((Version version, HttpResponseMessage resp) in versionData)
             {
-                Version version = kvp.Key;
-                HttpResponseMessage resp = kvp.Value;
-
                 List<Book> versionBookData = [];
 
-                IDocument bookListDocument = await BrowsingContext.New().OpenAsync(async req => req.Content(await resp.Content.ReadAsStringAsync()));
+                IDocument bookListDocument = await BrowsingContext.New().OpenAsync(async void (req) =>
+                {
+                    try
+                    {
+                        req.Content(await resp.Content.ReadAsStringAsync());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error($"MetadataFetchingService: Exception caught - {e}");
+                    }
+                });
 
                 IEnumerable<IElement> bookNames = bookListDocument.All.Where(el => el.ClassList.Contains("book-name"));
                 foreach (IElement el in bookNames)
@@ -440,140 +439,143 @@ namespace BibleBot.Backend.Services
                         span.Remove();
                     }
 
-                    if (el.HasAttribute("data-target"))
+                    if (!el.HasAttribute("data-target"))
                     {
-                        string bgDataName = el.GetAttribute("data-target").Substring(1, el.GetAttribute("data-target").Length - 6);
-                        string bookName = el.TextContent.Trim();
+                        continue;
+                    }
 
-                        bool usesVariant = false;
-                        string origDataName = "";
+                    string bgDataName = el.GetAttribute("data-target").Substring(1, el.GetAttribute("data-target").Length - 6);
+                    string bookName = el.TextContent.Trim();
 
-                        if (threeMaccVariants.Contains(bgDataName))
-                        {
-                            usesVariant = true;
-                            origDataName = bgDataName;
-                            bgDataName = "3ma";
-                        }
-                        else if (fourMaccVariants.Contains(bgDataName))
-                        {
-                            usesVariant = true;
-                            origDataName = bgDataName;
-                            bgDataName = "4ma";
-                        }
-                        else if (greekEstherVariants.Contains(bgDataName))
-                        {
-                            usesVariant = true;
-                            origDataName = bgDataName;
-                            bgDataName = "gkest";
-                        }
-                        else if (addEstherVariants.Contains(bgDataName))
-                        {
-                            usesVariant = true;
-                            origDataName = bgDataName;
-                            bgDataName = "addesth";
-                        }
-                        else if (prayerAzariahVariants.Contains(bgDataName))
-                        {
-                            usesVariant = true;
-                            origDataName = bgDataName;
-                            bgDataName = "praz";
-                        }
-                        else if (songThreeYouthsVariants.Contains(bgDataName))
-                        {
-                            usesVariant = true;
-                            origDataName = bgDataName;
-                            bgDataName = "sgthr";
-                        }
+                    bool usesVariant = false;
+                    string origDataName = "";
 
-                        if (usesVariant && bgDataName != origDataName)
-                        {
+                    if (threeMaccVariants.Contains(bgDataName))
+                    {
+                        usesVariant = true;
+                        origDataName = bgDataName;
+                        bgDataName = "3ma";
+                    }
+                    else if (fourMaccVariants.Contains(bgDataName))
+                    {
+                        usesVariant = true;
+                        origDataName = bgDataName;
+                        bgDataName = "4ma";
+                    }
+                    else if (greekEstherVariants.Contains(bgDataName))
+                    {
+                        usesVariant = true;
+                        origDataName = bgDataName;
+                        bgDataName = "gkest";
+                    }
+                    else if (addEstherVariants.Contains(bgDataName))
+                    {
+                        usesVariant = true;
+                        origDataName = bgDataName;
+                        bgDataName = "addesth";
+                    }
+                    else if (prayerAzariahVariants.Contains(bgDataName))
+                    {
+                        usesVariant = true;
+                        origDataName = bgDataName;
+                        bgDataName = "praz";
+                    }
+                    else if (songThreeYouthsVariants.Contains(bgDataName))
+                    {
+                        usesVariant = true;
+                        origDataName = bgDataName;
+                        bgDataName = "sgthr";
+                    }
+
+                    switch (usesVariant)
+                    {
+                        case true when bgDataName != origDataName:
                             Log.Warning($"MetadataFetchingService: \"{version.Name}\" uses BG variant data name \"{origDataName}\", operating as \"{bgDataName}\".");
-                        }
-                        else if (usesVariant)
-                        {
+                            break;
+                        case true:
                             Log.Warning($"MetadataFetchingService: \"{version.Name}\" uses BG data name \"{bgDataName}\".");
-                        }
+                            break;
+                    }
 
-                        if (!_bibleGatewayNames.Keys.Contains(bgDataName))
+                    if (!_bibleGatewayNames.ContainsKey(bgDataName))
+                    {
+                        Log.Warning($"MetadataFetchingService: BG data name \"{bgDataName}\" for \"{version.Name}\" not in biblegateway_names.json.");
+                    }
+
+                    if (IsNuisance(bookName))
+                    {
+                        continue;
+                    }
+
+                    string properName;
+                    string internalName = bgDataName;
+                    string internalId = _bibleGatewayNames[bgDataName];
+
+                    if (_bookMap["ot"].TryGetValue(internalId, out string otName))
+                    {
+                        properName = otName;
+                    }
+                    else if (_bookMap["nt"].TryGetValue(internalId, out string ntName))
+                    {
+                        properName = ntName;
+                    }
+                    else if (_bookMap["deu"].TryGetValue(internalId, out string deuName))
+                    {
+                        properName = deuName;
+                    }
+                    else
+                    {
+                        Log.Warning($"MetadataFetchingService: Data name \"{bgDataName}\" for \"{version.Name}\" not in book_map.json.");
+                        continue;
+                    }
+
+                    if (bgDataName == "ps151")
+                    {
+                        Book psalms = versionBookData.First(book => book.Name == "PSA");
+                        int indexOfPsalms = versionBookData.IndexOf(psalms);
+
+                        psalms.Chapters = [
+                            .. psalms.Chapters,
+                            new Chapter
+                            {
+                                Number = 151,
+                            }
+                        ];
+
+                        versionBookData[indexOfPsalms] = psalms;
+                        continue;
+                    }
+
+                    List<Chapter> chapters = [];
+
+                    foreach (IElement chapter in el.ParentElement.GetElementsByClassName("chapters")[0].GetElementsByTagName("a"))
+                    {
+                        string chapterNumber = chapter.TextContent;
+                        if (int.TryParse(chapterNumber, out int parsedNumber))
                         {
-                            Log.Warning($"MetadataFetchingService: BG data name \"{bgDataName}\" for \"{version.Name}\" not in biblegateway_names.json.");
-                        }
-
-                        if (!IsNuisance(bookName))
-                        {
-                            string properName;
-                            string preferredName = bookName;
-                            string internalName = bgDataName;
-                            string internalId = _bibleGatewayNames[bgDataName];
-
-                            if (_bookMap["ot"].ContainsKey(internalId))
+                            chapters.Add(new Chapter
                             {
-                                properName = _bookMap["ot"][internalId];
-                            }
-                            else if (_bookMap["nt"].ContainsKey(internalId))
-                            {
-                                properName = _bookMap["nt"][internalId];
-                            }
-                            else if (_bookMap["deu"].ContainsKey(internalId))
-                            {
-                                properName = _bookMap["deu"][internalId];
-                            }
-                            else
-                            {
-                                Log.Warning($"MetadataFetchingService: Data name \"{bgDataName}\" for \"{version.Name}\" not in book_map.json.");
-                                continue;
-                            }
-
-                            if (bgDataName == "ps151")
-                            {
-                                Book psalms = versionBookData.First(book => book.Name == "PSA");
-                                int indexOfPsalms = versionBookData.IndexOf(psalms);
-
-                                List<Chapter> chaptersList = [.. psalms.Chapters];
-
-                                chaptersList.Add(new()
-                                {
-                                    Number = 151,
-                                });
-
-                                psalms.Chapters = [.. chaptersList];
-                                versionBookData[indexOfPsalms] = psalms;
-
-                                continue;
-                            }
-
-                            List<Chapter> chapters = [];
-
-                            foreach (IElement chapter in el.ParentElement.GetElementsByClassName("chapters")[0].GetElementsByTagName("a"))
-                            {
-                                string chapterNumber = chapter.TextContent;
-                                if (int.TryParse(chapterNumber, out int parsedNumber))
-                                {
-                                    chapters.Add(new()
-                                    {
-                                        Number = parsedNumber
-                                    });
-                                }
-                                else
-                                {
-                                    Log.Warning($"MetadataFetchingService: Ignoring chapter '{internalId}.{chapterNumber}' in '{version.Name}' with non-numeric chapter value.");
-                                }
-                            }
-
-                            versionBookData.Add(new()
-                            {
-                                Name = internalId,
-                                ProperName = properName,
-                                PreferredName = preferredName,
-                                InternalName = internalName,
-                                Chapters = [.. chapters]
+                                Number = parsedNumber
                             });
                         }
+                        else
+                        {
+                            Log.Warning($"MetadataFetchingService: Ignoring chapter '{internalId}.{chapterNumber}' in '{version.Name}' with non-numeric chapter value.");
+                        }
                     }
+
+                    versionBookData.Add(new Book
+                    {
+                        Name = internalId,
+                        ProperName = properName,
+                        PreferredName = bookName,
+                        InternalName = internalName,
+                        Chapters = [.. chapters]
+                    });
                 }
 
                 string versionInternalId = version.InternalId ?? resp.RequestMessage.RequestUri.AbsoluteUri.Replace("https://www.biblegateway.com/versions/", "").Replace("/#booklist", "");
-                UpdateDefinition<Version> update = Builders<Version>.Update.Set(version => version.Books, [.. versionBookData]).Set(version => version.InternalId, versionInternalId);
+                UpdateDefinition<Version> update = Builders<Version>.Update.Set(versionToUpdate => versionToUpdate.Books, [.. versionBookData]).Set(versionToUpdate => versionToUpdate.InternalId, versionInternalId);
                 await _versionService.Update(version.Abbreviation, update);
             }
         }
@@ -616,13 +618,14 @@ namespace BibleBot.Backend.Services
                     {
                         book.PreferredName = _bookMap["ot"][book.Name];
 
-                        if (book.PreferredName == "Ezra")
+                        switch (book.PreferredName)
                         {
-                            book.PreferredName += "/Nehemiah";
-                        }
-                        else if (book.PreferredName == "Psalm")
-                        {
-                            book.PreferredName += "s";
+                            case "Ezra":
+                                book.PreferredName += "/Nehemiah";
+                                break;
+                            case "Psalm":
+                                book.PreferredName += "s";
+                                break;
                         }
                     }
                     else if (isDEU)
@@ -646,16 +649,17 @@ namespace BibleBot.Backend.Services
                     }
                 }
 
-                if (!names.ContainsKey(category))
+                if (!names.TryGetValue(category, out Dictionary<string, string> defaultNames))
                 {
-                    names.Add(category, []);
+                    defaultNames = ([]);
+                    names.Add(category, defaultNames);
                 }
 
-                names[category].TryAdd(book.Name, book.PreferredName);
+                defaultNames.TryAdd(book.Name, book.PreferredName);
 
                 if (book.Name == "EZK" && version.Abbreviation == "ELXX")
                 {
-                    names[category].TryAdd("DAN", "Daniel");
+                    defaultNames.TryAdd("DAN", "Daniel");
                 }
             }
 
