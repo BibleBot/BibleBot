@@ -111,6 +111,9 @@ namespace BibleBot.Backend.Services.Providers.Content
             {
                 string[] tokenizedReference = reference.AsString.Split(" ");
                 originalProperName = string.Join(" ", tokenizedReference.Take(tokenizedReference.Length - 1));
+
+                reference.Book = reference.Version.Books.First(book => book.ProperName == originalProperName);
+                reference.AsString = reference.AsString.Replace(originalProperName, reference.Book.Name);
             }
 
             string url = string.Format(_getURI, reference.Version.InternalId, reference.AsString);
@@ -260,8 +263,6 @@ namespace BibleBot.Backend.Services.Providers.Content
                     reference.AsString = reference.AsString.Replace(spanToken, newSpanToken);
                 }
             }
-
-            reference.Book.Name = originalProperName;
 
             return new VerseResult { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
         }
