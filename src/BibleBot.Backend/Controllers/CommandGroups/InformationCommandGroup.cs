@@ -61,7 +61,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 // The library still works.
                 string backendShortHash = ThisAssembly.Git.Commit;
                 string backendLongHash = ThisAssembly.Git.Sha;
-#pragma warning enable CS0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 string backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
 
