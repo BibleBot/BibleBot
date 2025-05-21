@@ -124,13 +124,13 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             if (resp.Passages == null || resp.Passages.Count == 0)
             {
-                Log.Error($"{reference.Version.Abbreviation} machine broke");
+                Log.Error($"APIBibleProvider: Received no passages for '{reference.AsString}' with {reference.Version.Abbreviation}.");
                 return null;
             }
 
             if (resp.Passages[0].BibleId != reference.Version.InternalId)
             {
-                Log.Error($"{reference.Version.Abbreviation} machine broke - version no longer available");
+                Log.Error($"APIBibleProvider: {reference.Version.Abbreviation} is no longer available.");
                 return null;
             }
 
@@ -283,7 +283,8 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             results.AddRange(resp.Data.Verses.Select(verse => new SearchResult
             {
-                Reference = verse.Reference, Text = PurifyText(verse.Text).Replace(query, $"**{query}**")
+                Reference = verse.Reference,
+                Text = PurifyText(verse.Text).Replace(query, $"**{query}**")
             }));
 
             return results;
