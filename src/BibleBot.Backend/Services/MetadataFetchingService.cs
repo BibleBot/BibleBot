@@ -129,8 +129,8 @@ namespace BibleBot.Backend.Services
             Log.Information("MetadataFetchingService: Getting versions from DB...");
             List<Version> versions = await _versionService.Get();
 
-            List<Version> abVersions = versions.Where(version => version.Source == "ab" && version.Books == null) as List<Version>;
-            List<Version> bgVersions = versions.Where(version => version.Source == "bg" && version.Books == null) as List<Version>;
+            List<Version> abVersions = versions.Where(version => version.Source == "ab" && version.Books == null).ToList();
+            List<Version> bgVersions = versions.Where(version => version.Source == "bg" && version.Books == null).ToList();
 
             if (abVersions!.Count != 0)
             {
