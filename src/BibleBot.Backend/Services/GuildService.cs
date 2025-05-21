@@ -23,12 +23,17 @@ namespace BibleBot.Backend.Services
         private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
         private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
 
-        public async Task<List<Guild>> Get()
+        public async Task<List<Guild>> Get(bool isAutoServ = false)
         {
             List<Guild> guilds = [];
 
             try
             {
+                if (isAutoServ)
+                {
+                    throw new Exception();
+                }
+
                 RedisKey[] keys = [.. _redisServer.Keys(pattern: "guild:*")];
 
                 foreach (RedisKey key in keys)
@@ -37,7 +42,7 @@ namespace BibleBot.Backend.Services
                     guilds.Add(JsonSerializer.Deserialize<Guild>(cachedGuildStr!));
                 }
             }
-            catch (ArgumentNullException)
+            catch (Exception)
             {
                 guilds = await mongoService.Get<Guild>();
 
