@@ -230,7 +230,8 @@ namespace BibleBot.Backend.Services.Providers.Content
                 properBookName = originalProperName;
             }
 
-            reference.AsString = resp.Passages[0].Reference.Replace(reference.Book.PreferredName, properBookName);
+            string[] providedReferenceTokenized = resp.Passages[0].Reference.Split(" ");
+            reference.AsString = $"{properBookName} {string.Join(" ", providedReferenceTokenized.TakeLast(1))}";
 
             if (resp.Passages.Count > 1)
             {
