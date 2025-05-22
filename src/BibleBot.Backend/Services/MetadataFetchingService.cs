@@ -354,7 +354,7 @@ namespace BibleBot.Backend.Services
                         }
                     }
 
-                    book.Name = IsNuisance(book.Name) ? properName : book.Name.Trim();
+                    book.Name = (IsNuisance(book.Name) || book.Name.EndsWith('.')) ? properName : book.Name.Trim();
 
                     if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || latterKings.Contains(book.Abbreviation))
                     {
@@ -372,11 +372,11 @@ namespace BibleBot.Backend.Services
                         {
                             List<Tuple<int, int, string>> titles = [];
                             titles.AddRange(from section in chapter.Sections
-                                let firstVerseIdSplit = section.FirstVerseOrgId.Split('.')
-                                let lastVerseIdSplit = section.FirstVerseOrgId.Split('.')
-                                let firstVerseNumber = int.Parse(firstVerseIdSplit.Last())
-                                let lastVerseNumber = int.Parse(lastVerseIdSplit.Last())
-                                select new Tuple<int, int, string>(firstVerseNumber, lastVerseNumber, section.Title)
+                                            let firstVerseIdSplit = section.FirstVerseOrgId.Split('.')
+                                            let lastVerseIdSplit = section.FirstVerseOrgId.Split('.')
+                                            let firstVerseNumber = int.Parse(firstVerseIdSplit.Last())
+                                            let lastVerseNumber = int.Parse(lastVerseIdSplit.Last())
+                                            select new Tuple<int, int, string>(firstVerseNumber, lastVerseNumber, section.Title)
                             );
 
                             chapters.Add(new Chapter
