@@ -17,7 +17,7 @@ db = client.BibleBotBackend
 
 def fix_net_internal_id():
     versions = db.Versions
-    result = versions.update(
+    result = versions.update_one(
         {"Abbreviation": "NET"},
         {"$set": {"InternalId": "New-English-Translation-NET-Bible"}},
     )
@@ -26,7 +26,7 @@ def fix_net_internal_id():
 
 def rename_rvr1977():
     versions = db.Versions
-    result = versions.update(
+    result = versions.update_one(
         {"Abbreviation": "RVR1977"},
         {"$set": {"Name": "Reina Valera Revisada (RVR1977)"}},
     )
