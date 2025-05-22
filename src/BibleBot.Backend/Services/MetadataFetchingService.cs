@@ -189,7 +189,7 @@ namespace BibleBot.Backend.Services
 
                         if (targets.Length == 1)
                         {
-                            if (targets[0].HasAttribute("href") && targets[0].TextContent == version.Name)
+                            if (targets[0].HasAttribute("href") && targets[0].TextContent.Equals(version.Name, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 url = $"https://www.biblegateway.com{targets[0].GetAttribute("href")}";
                             }
