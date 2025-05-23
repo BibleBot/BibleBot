@@ -129,8 +129,8 @@ namespace BibleBot.Backend.Services
             Log.Information("MetadataFetchingService: Getting versions from DB...");
             List<Version> versions = await _versionService.Get();
 
-            List<Version> abVersions = versions.Where(version => version.Source == "ab" && version.Books == null).ToList();
-            List<Version> bgVersions = versions.Where(version => version.Source == "bg" && version.Books == null).ToList();
+            List<Version> abVersions = [.. versions.Where(version => version.Source == "ab" && version.Books == null)];
+            List<Version> bgVersions = [.. versions.Where(version => version.Source == "bg" && version.Books == null)];
 
             if (abVersions!.Count != 0)
             {
@@ -310,6 +310,8 @@ namespace BibleBot.Backend.Services
                         case "PS2":
                             usesVariant = true;
                             properDataName = "PSA";
+                            break;
+                        default:
                             break;
                     }
 
@@ -495,6 +497,8 @@ namespace BibleBot.Backend.Services
                         case true:
                             Log.Warning($"MetadataFetchingService: \"{version.Name}\" uses BG data name \"{bgDataName}\".");
                             break;
+                        default:
+                            break;
                     }
 
                     if (!_bibleGatewayNames.ContainsKey(bgDataName))
@@ -626,6 +630,8 @@ namespace BibleBot.Backend.Services
                             case "Psalm":
                                 book.PreferredName += "s";
                                 break;
+                            default:
+                                break;
                         }
                     }
                     else if (isDEU)
@@ -651,7 +657,7 @@ namespace BibleBot.Backend.Services
 
                 if (!names.TryGetValue(category, out Dictionary<string, string> defaultNames))
                 {
-                    defaultNames = ([]);
+                    defaultNames = [];
                     names.Add(category, defaultNames);
                 }
 
