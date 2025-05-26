@@ -44,7 +44,7 @@ namespace BibleBot.Backend.Services.Providers
 
         public async Task<string> GetDailyVerse()
         {
-            const string url = "https://www.biblegateway.com/reading-plans/verse-of-the-day/next";
+            const string url = "https://www.biblegateway.com/reading-plans/verse-of-the-day/next?version=RSV";
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
@@ -87,27 +87,75 @@ namespace BibleBot.Backend.Services.Providers
             string resp = await req.Content.ReadAsStringAsync();
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            string[] verseArray = resp.Split(" ").Take(2).ToArray();
+            string[] verseArray = [.. resp.Split(" ").Take(2)];
 
             Dictionary<string, string> bookMap = new()
             {
+                { "Gen", "Genesis" },
+                { "Exo", "Exodus" },
+                { "Lev", "Leviticus" },
+                { "Num", "Numbers" },
+                { "Deu", "Deuteronomy" },
+                { "Jos", "Joshua" },
+                { "Jdg", "Judges" },
+                { "Rut", "Ruth" },
                 { "Sa1", "1 Samuel" },
                 { "Sa2", "2 Samuel" },
                 { "Kg1", "1 Kings" },
                 { "Kg2", "2 Kings" },
                 { "Ch1", "1 Chronicles" },
                 { "Ch2", "2 Chronicles" },
+                { "Ezr", "Ezra" },
+                { "Neh", "Nehemiah" },
+                { "Job", "Job" },
+                { "Psa", "Psalm" },
+                { "Pro", "Proverbs" },
+                { "Ecc", "Ecclesiastes" },
+                { "Sol", "Song of Songs" },
+                { "Isa", "Isaiah" },
+                { "Jer", "Jeremiah" },
+                { "Lam", "Lamentations" },
+                { "Eze", "Ezekiel" },
+                { "Dan", "Daniel" },
+                { "Hos", "Hosea" },
+                { "Joe", "Joel" },
+                { "Amo", "Amos" },
+                { "Oba", "Obadiah" },
+                { "Jon", "Jonah" },
+                { "Mic", "Micah" },
+                { "Nah", "Nahum" },
+                { "Hab", "Habakkuk" },
+                { "Zep", "Zephaniah" },
+                { "Hag", "Haggai" },
+                { "Zac", "Zechariah" },
+                { "Mal", "Malachi" },
+                { "Mat", "Matthew" },
+                { "Mar", "Mark" },
+                { "Luk", "Luke" },
+                { "Joh", "John" },
+                { "Act", "Acts" },
+                { "Rom", "Romans" },
                 { "Co1", "1 Corinthians" },
                 { "Co2", "2 Corinthians" },
+                { "Gal", "Galatians" },
+                { "Eph", "Ephesians" },
+                { "Phi", "Philippians" },
+                { "Col", "Colossians" },
                 { "Th1", "1 Thessalonians" },
                 { "Th2", "2 Thessalonians" },
                 { "Ti1", "1 Timothy" },
                 { "Ti2", "2 Timothy" },
+                { "Tit", "Titus" },
+                { "Plm", "Philemon" },
+                { "Heb", "Hebrews" },
+                { "Jam", "James" },
                 { "Pe1", "1 Peter" },
                 { "Pe2", "2 Peter" },
                 { "Jo1", "1 John" },
                 { "Jo2", "2 John" },
-                { "Jo3", "3 John" }
+                { "Jo3", "3 John" },
+                { "Jde", "Jude" },
+                { "Rev", "Revelation" }
             };
 
             string book = verseArray.ElementAt(0);
