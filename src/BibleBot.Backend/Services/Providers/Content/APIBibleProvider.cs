@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -112,8 +113,22 @@ namespace BibleBot.Backend.Services.Providers.Content
                 string[] tokenizedReference = reference.AsString.Split(" ");
                 originalProperName = string.Join(" ", tokenizedReference.Take(tokenizedReference.Length - 1));
 
-                reference.Book = reference.Version.Books.First(book => book.ProperName == originalProperName);
-                reference.AsString = reference.AsString.Replace(originalProperName, reference.Book.Name);
+                try
+                {
+                    reference.Book = reference.Version.Books.First(book => book.ProperName == originalProperName);
+                    reference.AsString = reference.AsString.Replace(originalProperName, reference.Book.Name);
+                }
+                catch (InvalidOperationException ioEx)
+                {
+                    if (ioEx.Message == "Sequence contains no matching element")
+                    {
+                        Log.Error($"couldn't find book '{originalProperName}' in {reference.Version.Name}");
+                    }
+                    else
+                    {
+                        Log.Error($"received unhandled InvalidOperationException for {reference.Version.Name}");
+                    }
+                }
             }
 
             string url = string.Format(_getURI, reference.Version.InternalId, reference.AsString);
