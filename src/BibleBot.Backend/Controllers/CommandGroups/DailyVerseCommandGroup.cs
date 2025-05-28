@@ -368,7 +368,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
-                
+
                 UpdateDefinition<Guild> update = Builders<Guild>.Update
                                                                 .Set(guild => guild.DailyVerseTime, null)
                                                                 .Set(guild => guild.DailyVerseTimeZone, null)

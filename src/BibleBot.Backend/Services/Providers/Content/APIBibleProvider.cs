@@ -19,6 +19,7 @@ using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using BibleBot.Models;
 using Serilog;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Services.Providers.Content
 {
@@ -40,9 +41,9 @@ namespace BibleBot.Backend.Services.Providers.Content
             Name = "ab";
 
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, false);
-            _cachingHttpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-            _httpClient = new HttpClient { BaseAddress = new System.Uri(_baseURL) };
-            _httpClient.DefaultRequestHeaders.Add("api-key", System.Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+            _cachingHttpClient.DefaultRequestHeaders.Add("api-key", Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+            _httpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
+            _httpClient.DefaultRequestHeaders.Add("api-key", Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 
@@ -65,7 +66,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 {
                     originalProperName = reference.Book.ProperName;
                 }
-                catch (System.NullReferenceException)
+                catch (NullReferenceException)
                 {
                     for (int i = 0; i < 5; i++)
                     {
