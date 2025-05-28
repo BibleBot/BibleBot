@@ -46,9 +46,14 @@ namespace BibleBot.Backend.Services
             {
                 guilds = await mongoService.Get<Guild>();
 
-                foreach (Guild guild in guilds)
+                // We don't want all the guilds cached in redis by AutoServ 
+                // and potentially causing desync issues with the backend.
+                if (!isAutoServ)
                 {
-                    await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
+                    foreach (Guild guild in guilds)
+                    {
+                        await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
+                    }
                 }
             }
 
