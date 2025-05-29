@@ -126,6 +126,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 {
                     verseNumbersEnabled = idealUser.VerseNumbersEnabled;
                     titlesEnabled = idealUser.TitlesEnabled;
+                    displayStyle = idealUser.DisplayStyle;
                 }
                 else if (idealGuild != null)
                 {
