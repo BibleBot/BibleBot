@@ -48,6 +48,10 @@ namespace BibleBot.Backend.Middleware
                     }
                 }
             }
+            else if (context.Request.Path.Value! == "/metrics")
+            {
+                await next(context);
+            }
             else
             {
                 context.Response.StatusCode = 401;
@@ -75,9 +79,6 @@ namespace BibleBot.Backend.Middleware
 
     public static class HouseAuthorizationMiddlewareExtensions
     {
-        public static void UseHouseAuthorization(this IApplicationBuilder builder)
-        {
-            builder.UseMiddleware<HouseAuthorizationMiddleware>();
-        }
+        public static void UseHouseAuthorization(this IApplicationBuilder builder) => builder.UseMiddleware<HouseAuthorizationMiddleware>();
     }
 }

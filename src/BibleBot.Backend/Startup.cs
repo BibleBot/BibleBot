@@ -24,6 +24,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 
 namespace BibleBot.Backend
@@ -109,6 +113,31 @@ namespace BibleBot.Backend
                 string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
+            OpenTelemetryBuilder openTelemetry = services.AddOpenTelemetry();
+            openTelemetry.ConfigureResource(res => res.AddService(serviceName: "Backend", serviceNamespace: "BibleBot"));
+            openTelemetry.WithMetrics(metrics =>
+                metrics.AddAspNetCoreInstrumentation() //.AddMeter(customMeter.Name)
+                       .AddMeter("Microsoft.AspNetCore.Hosting")
+                       .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+                       .AddMeter("System.Net.Http")
+                       .AddMeter("System.Net.NameResolution")
+                       .AddPrometheusExporter()
+            );
+            openTelemetry.WithTracing(tracing =>
+            {
+                tracing.AddAspNetCoreInstrumentation();
+                tracing.AddHttpClientInstrumentation();
+                //tracing.AddSource(customActivitySource.Name);
+                tracing.AddSource("MongoDB.Driver");
+                tracing.AddSource("MongoDB.Driver.Core");
+                tracing.AddSource("StackExchange.Redis");
+                tracing.AddRedisInstrumentation();
+                tracing.AddOtlpExporter(oltpOptions =>
+                {
+                    oltpOptions.Endpoint = new Uri("http://localhost:7000");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -149,6 +178,7 @@ namespace BibleBot.Backend
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapPrometheusScrapingEndpoint();
             });
 
             Log.Information("Backend is ready.");
