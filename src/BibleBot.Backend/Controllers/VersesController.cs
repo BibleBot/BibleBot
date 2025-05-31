@@ -81,7 +81,7 @@ namespace BibleBot.Backend.Controllers
 
                 SentrySdk.ConfigureScope(scope =>
                 {
-                    scope.Contexts["guild"] = idealGuild;
+                    scope.Contexts["guildPreference"] = idealGuild;
                 });
             }
 
@@ -102,7 +102,7 @@ namespace BibleBot.Backend.Controllers
 
                 SentrySdk.ConfigureScope(scope =>
                 {
-                    scope.Contexts["user"] = idealUser;
+                    scope.Contexts["userPreference"] = idealUser;
                 });
             }
 
@@ -212,15 +212,7 @@ namespace BibleBot.Backend.Controllers
 
             foreach (Reference reference in references)
             {
-                IContentProvider provider = _bibleProviders.FirstOrDefault(pv =>
-                {
-                    if (reference is { Version: not null })
-                    {
-                        return pv.Name == reference.Version.Source;
-                    }
-
-                    return false;
-                }) ?? throw new ProviderNotFoundException();
+                IContentProvider provider = _bibleProviders.FirstOrDefault(pv => reference is { Version: not null } && pv.Name == reference.Version.Source) ?? throw new ProviderNotFoundException();
 
                 VerseResult result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 

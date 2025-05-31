@@ -62,7 +62,7 @@ namespace BibleBot.Backend
         private static StreamReader _gitInfoReader;
         private static string _cachedVersion;
 
-        private static string GetVersion()
+        public static string GetVersion()
         {
             if (_cachedVersion != null)
             {
@@ -406,7 +406,7 @@ namespace BibleBot.Backend
                 {
                     continue;
                 }
-                
+
                 if ((rolePermissionsInGuild & (long)perm) == (long)perm)
                 {
                     roleGuildPermissionsList.Append($"{permName}: :white_check_mark:\n");
