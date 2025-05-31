@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -39,7 +40,14 @@ namespace BibleBot.Backend
                     .WriteTo.Console(outputTemplate: "[{Level:w4}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code))
                     .UseSystemd();
 
-            return hostBuilder.ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+            return hostBuilder.ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseSentry(options =>
+                {
+                    options.Dsn = Environment.GetEnvironmentVariable("SENTRY_DSN");
+                }
+                ).UseStartup<Startup>();
+            });
         }
     }
 }
