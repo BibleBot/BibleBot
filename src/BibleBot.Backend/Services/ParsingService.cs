@@ -330,6 +330,11 @@ namespace BibleBot.Backend.Services
                 bookName = deuName;
             }
 
+            if (prefVersion.Abbreviation == "NRSV")
+            {
+                prefVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, "NRSVA", System.StringComparison.OrdinalIgnoreCase));
+            }
+
             Book book = prefVersion.Books?.FirstOrDefault(book => book.ProperName == bookName, new Book { Name = bookSearchResult.Name, ProperName = bookName });
 
             if (bookName == "Psalm" && startingChapter == 151)

@@ -57,11 +57,6 @@ namespace BibleBot.Backend.Services.Providers.Content
         {
             reference.AsString ??= reference.ToString();
 
-            if (reference.Version.Abbreviation == "NRSV")
-            {
-                reference.Version = await _versionService.Get("NRSVA");
-            }
-
             string url = string.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
 
             HttpResponseMessage req = await _cachingHttpClient.GetAsync(url);
