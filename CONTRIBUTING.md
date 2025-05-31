@@ -16,9 +16,9 @@ Your commits should not be monolithic, containing multiple major changes in one 
 
 ## Versioning
 
-This project generally follows [Semantic Versioning](https://semver.org/), which we will be more strictly upon v9.3's release. Make sure your commits are SemVer-friendly. **Do not change any version numbers in your PR**, this will be handled by the project maintainers.
+This project follows [Semantic Versioning](https://semver.org/) based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). Make sure your commits are SemVer-friendly. **Do not change any version numbers or changelogs in your PR**, this will be handled by the project maintainers.
 
-We follow the .NET Foundation's [Breaking Change Rules](https://github.com/dotnet/corefx/blob/master/Documentation/coding-guidelines/breaking-change-rules.md) for SemVer compliance.
+We intend to follow the .NET Foundation's [Breaking Change Rules](https://github.com/dotnet/corefx/blob/master/Documentation/coding-guidelines/breaking-change-rules.md) for SemVer compliance.
 
 ## Code Style
 
@@ -28,12 +28,12 @@ We generally conform to the .NET Foundation's [Coding Style](https://github.com/
 
 Please ensure new public members have sufficient documentation, including but not limited to:
 
--   `<summary>` summarizing the purpose of the method.
--   `<param>` or `<typeparam>` explaining the parameter.
--   `<return>` explaining the type of the returned member and what it is.
--   `<exception>` if the method directly throws an exception.
+- `<summary>` summarizing the purpose of the method.
+- `<param>` or `<typeparam>` explaining the parameter.
+- `<return>` explaining the type of the returned member and what it is.
+- `<exception>` if the method directly throws an exception.
 
 #### Recommended Reads
 
--   [Official Microsoft Documentation](https://docs.microsoft.com)
--   [Sandcastle User Manual](https://ewsoftware.github.io/XMLCommentsGuide/html/4268757F-CE8D-4E6D-8502-4F7F2E22DDA3.htm)
+- [Official Microsoft Documentation](https://docs.microsoft.com)
+- [Sandcastle User Manual](https://ewsoftware.github.io/XMLCommentsGuide/html/4268757F-CE8D-4E6D-8502-4F7F2E22DDA3.htm)

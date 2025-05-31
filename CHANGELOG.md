@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.2.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v11.1.0..v11.2.0) - 2025-05-31
+
+### 🚀 Features
+
+- Force pull guilds in autoserv ([c5bfb96](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c5bfb969cc520b03c48a0939d4a8be7eb79d48f2))
+- Foundation work on metrics ([a7ac2de](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/a7ac2dee8363088427bfb117fc92f55785ff56de))
+- Sentry for error tracking ([040c510](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/040c5101fd1c400beb82c077621b4ba33e316c5a))
+
+### 🐛 Bug Fixes
+
+- Typecasting filtered versions ([0accf93](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/0accf937d6122d37784dea6949d93845b1b38288))
+- Handle API.Bible's book name sensitivity ([b580b1d](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b580b1d060d52932b42b0b1d8ed4811b8fa9b086))
+- *(metadata)* Use fallback book name if preferred name is an abbreviation ([525ed29](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/525ed298c9d8683990a4bae703c66044a4594d90))
+- *(ab)* Return proper reference based on book data ([94c9d33](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/94c9d330c0bef393ec0618478995f62166e3123a))
+- *(metadata)* Compare lowercase version names because NRSVue exists... ([b8a8343](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b8a83435693c66c440285a3ff5281c6d4da99957))
+- *(truerandom)* Abbreviated book names not processing ([8fedb77](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8fedb77ebc356fe9c062183b9304303ba62ee717))
+- *(guild)* Don't cache guilds when autoserv fetches all guilds ([9fd7946](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/9fd7946deb4eac03cc48c46aa97c7fd0404b0ccf))
+- *(ab)* Handle InvalidOperationException for special verses ([1861ce6](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1861ce6df525524cce8ce2ddb54edfc1907b95ac))
+- *(ab)* Resolve import collisions ([5c56376](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5c5637689c2d335c67f2807b0e3249c528a825eb))
+- Use user display style in /truerandom ([a211354](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/a2113540470e3802cca94d3945a55cfaa962c35d))
+- Move redirect for NRSV to NRSVA into the reference generation ([47b4f06](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/47b4f06bb03e6f31df2274da483317187286ab98))
+- Catch various unknown exceptions with sentry ([28ed240](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/28ed240b74db385776c117e86917565a6459c533))
+- Don't let dangling commas in verse reference prevent parsing otherwise ([0482aae](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/0482aaed3ea0529204489365c6253e08376253f9))
+
+### 🚜 Refactor
+
+- Remove useless code ([d357eac](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/d357eac6b899f6a9b1a2882a5c3f744cad6ba70e))
+- Yes ([49de6d5](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/49de6d57b944cedcc946f86d4d5bd9e70b960ba7))
+- Use correct keyword ([253487c](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/253487c77c3593ac535893f30de07f00df1688c7))
+- Clarify error messages ([8dc2c66](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8dc2c66b44fb52d2eafd62918dfa7b3ed4480eb8))
+- Light formatting ([00abd64](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/00abd64bf6fd6ac39a23ad718b2c5d35f9533f66))
+- Leverage more sentry options ([fc67091](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/fc67091e1f3fba785a0cba5016e06190a4a77e65))
+- Use proper version info for sentry where possible ([f93af69](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/f93af69769db2654978edab66313d4c7bcada372))
+
 ## [11.1.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v11.0.1..v11.1.0) - 2025-05-18
 
 ### 🚀 Features
