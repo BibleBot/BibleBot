@@ -18,6 +18,7 @@ using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Sentry;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -55,6 +56,11 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
+            SentrySdk.ConfigureScope(scope =>
+            {
+                scope.Contexts["request"] = req;
+            });
+
             OptOutUser potentialOptOut = await optOutService.Get(req.UserId);
 
             if (potentialOptOut != null || req.Body is null || req.Body.Length == 0)
@@ -74,7 +80,9 @@ namespace BibleBot.Backend.Controllers
             {
                 return BadRequest(new CommandResponse
                 {
-                    OK = false, Pages = null, LogStatement = null
+                    OK = false,
+                    Pages = null,
+                    LogStatement = null
                 });
             }
             string potentialCommand = tokenizedBody[0][1..]; // trim the prefix off
