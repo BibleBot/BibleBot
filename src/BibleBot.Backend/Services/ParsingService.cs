@@ -206,6 +206,13 @@ namespace BibleBot.Backend.Services
 
                                             while (commaSplit[^1] == "")
                                             {
+                                                int nextTokenIdx = bookSearchResult.Index + tokenIndexPtr;
+
+                                                if (nextTokenIdx >= tokens.Length)
+                                                {
+                                                    break;
+                                                }
+
                                                 pairValueCopy += tokens[bookSearchResult.Index + tokenIndexPtr];
                                                 commaSplit = pairValueCopy.Split(",");
 
