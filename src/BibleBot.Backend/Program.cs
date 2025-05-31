@@ -47,7 +47,12 @@ namespace BibleBot.Backend
                     options.Dsn = Environment.GetEnvironmentVariable("SENTRY_DSN");
                     options.MaxRequestBodySize = Sentry.Extensibility.RequestSize.None;
                     options.CaptureBlockingCalls = true;
-                    options.Release = Utils.GetVersion();
+
+                    string version = Utils.GetVersion();
+                    if (version != "undefined")
+                    {
+                        options.Release = version;
+                    }
                     options.Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 }).UseStartup<Startup>();
             });
