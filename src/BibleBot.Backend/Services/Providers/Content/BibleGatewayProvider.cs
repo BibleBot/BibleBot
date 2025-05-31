@@ -25,7 +25,6 @@ namespace BibleBot.Backend.Services.Providers.Content
     public partial class BibleGatewayProvider : IContentProvider, IDisposable
     {
         public string Name { get; set; }
-        private readonly VersionService _versionService;
         private CancellationTokenSource _cancellationToken;
         private readonly HttpClient _cachingHttpClient;
         private readonly HttpClient _httpClient;
@@ -34,10 +33,9 @@ namespace BibleBot.Backend.Services.Providers.Content
         private readonly string _getURI = "passage/?search={0}&version={1}&interface=print";
         private readonly string _searchURI = "quicksearch/?quicksearch={0}&qs_version={1}&resultspp=5000&interface=print";
 
-        public BibleGatewayProvider(VersionService versionService)
+        public BibleGatewayProvider()
         {
             Name = "bg";
-            _versionService = versionService;
 
             _cancellationToken = new CancellationTokenSource();
 

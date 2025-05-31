@@ -19,6 +19,7 @@ using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Sentry;
 using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Controllers
@@ -119,6 +120,10 @@ namespace BibleBot.Backend.Controllers
                             Culture = CultureInfo.CurrentUICulture.Name
                         });
                     }
+                }
+                catch (Exception err)
+                {
+                    SentrySdk.CaptureException(err);
                 }
 
                 if (reference == null)
@@ -236,7 +241,10 @@ namespace BibleBot.Backend.Controllers
             {
                 return BadRequest(new VerseResponse
                 {
-                    OK = false, Verses = null, LogStatement = null, Culture = CultureInfo.CurrentUICulture.Name
+                    OK = false,
+                    Verses = null,
+                    LogStatement = null,
+                    Culture = CultureInfo.CurrentUICulture.Name
                 });
             }
 

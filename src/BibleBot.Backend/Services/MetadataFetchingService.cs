@@ -19,6 +19,7 @@ using AngleSharp.Dom;
 using BibleBot.Models;
 using MongoDB.Driver;
 using RestSharp;
+using Sentry;
 using Serilog;
 // using MDABVersionData = System.Collections.Generic.List<System.Tuple<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse, System.Collections.Generic.List<BibleBot.Models.ABVersesResponse>>>;
 using MDABVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse>;
@@ -249,6 +250,7 @@ namespace BibleBot.Backend.Services
                         }
                         return [];
                     }
+                    SentrySdk.CaptureException(ex);
                 }
 
                 if (resp != null)
@@ -429,6 +431,7 @@ namespace BibleBot.Backend.Services
                     }
                     catch (Exception e)
                     {
+                        SentrySdk.CaptureException(e);
                         Log.Error($"MetadataFetchingService: Exception caught - {e}");
                     }
                 });

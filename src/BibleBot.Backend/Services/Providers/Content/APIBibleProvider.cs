@@ -18,6 +18,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using BibleBot.Models;
+using Sentry;
 using Serilog;
 using Version = BibleBot.Models.Version;
 
@@ -66,12 +67,10 @@ namespace BibleBot.Backend.Services.Providers.Content
                 {
                     originalProperName = reference.Book.ProperName;
                 }
-                catch (NullReferenceException)
+                catch (NullReferenceException err)
                 {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Log.Error($"***** {reference.Version.Name} does not have book data populated, no references will work until resolved! *****");
-                    }
+                    // The version used does not have book data populated, no references will work until resolved.
+                    SentrySdk.CaptureException(err);
 
                     return null;
                 }
@@ -124,10 +123,12 @@ namespace BibleBot.Backend.Services.Providers.Content
                     if (ioEx.Message == "Sequence contains no matching element")
                     {
                         Log.Error($"couldn't find book '{originalProperName}' in {reference.Version.Name}");
+                        SentrySdk.CaptureException(ioEx);
                     }
                     else
                     {
                         Log.Error($"received unhandled InvalidOperationException for {reference.Version.Name}");
+                        SentrySdk.CaptureException(ioEx);
                     }
                 }
             }

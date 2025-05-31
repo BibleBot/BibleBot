@@ -86,7 +86,7 @@ namespace BibleBot.Tests.Backend
             _metadataFetchingServiceMock = new Mock<MetadataFetchingService>(_versionService, false);
 
             _spProviderMock = new Mock<SpecialVerseProvider>();
-            _bgProviderMock = new Mock<BibleGatewayProvider>(_versionService);
+            _bgProviderMock = new Mock<BibleGatewayProvider>();
             _abProviderMock = new Mock<APIBibleProvider>();
             _nltProviderMock = new Mock<NLTAPIProvider>();
 
