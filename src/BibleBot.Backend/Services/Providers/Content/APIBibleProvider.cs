@@ -56,6 +56,8 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
+            SentrySdk.ConfigureScope(scope => { scope.Contexts["reference"] = reference; });
+
             string originalProperName;
 
             string[] solidTextClasses = ["d", "m", "cls", "mi"];

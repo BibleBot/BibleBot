@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using BibleBot.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
+using Sentry;
 using StackExchange.Redis;
 
 namespace BibleBot.Backend.Services
@@ -68,6 +69,14 @@ namespace BibleBot.Backend.Services
                 {
                     await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
                 }
+            }
+
+            if (user != null)
+            {
+                SentrySdk.ConfigureScope(scope =>
+                {
+                    scope.Contexts["userPreference"] = user;
+                });
             }
 
             return user;

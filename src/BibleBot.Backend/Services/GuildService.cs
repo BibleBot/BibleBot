@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using BibleBot.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
+using Sentry;
 using StackExchange.Redis;
 
 namespace BibleBot.Backend.Services
@@ -78,6 +79,14 @@ namespace BibleBot.Backend.Services
                 {
                     await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
                 }
+            }
+
+            if (guild != null)
+            {
+                SentrySdk.ConfigureScope(scope =>
+                {
+                    scope.Contexts["guildPreference"] = guild;
+                });
             }
 
             return guild;

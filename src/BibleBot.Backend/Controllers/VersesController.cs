@@ -63,8 +63,6 @@ namespace BibleBot.Backend.Controllers
                 return null;
             }
 
-            SentrySdk.AddBreadcrumb("isn't opt out");
-
             string displayStyle = "embed";
             List<string> ignoringBrackets = ["<>"];
             bool paginateVerses = false;
@@ -78,11 +76,6 @@ namespace BibleBot.Backend.Controllers
                 {
                     ignoringBrackets.Add(idealGuild.IgnoringBrackets);
                 }
-
-                SentrySdk.ConfigureScope(scope =>
-                {
-                    scope.Contexts["guildPreference"] = idealGuild;
-                });
             }
 
             string body = ParsingService.PurifyBody(ignoringBrackets, req.Body);
@@ -99,11 +92,6 @@ namespace BibleBot.Backend.Controllers
                 titlesEnabled = idealUser.TitlesEnabled;
                 displayStyle = idealUser.DisplayStyle;
                 paginateVerses = idealUser.PaginationEnabled;
-
-                SentrySdk.ConfigureScope(scope =>
-                {
-                    scope.Contexts["userPreference"] = idealUser;
-                });
             }
 
             Language language = await languageService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);

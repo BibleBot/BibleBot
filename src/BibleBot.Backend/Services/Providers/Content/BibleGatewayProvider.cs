@@ -18,6 +18,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using BibleBot.Models;
+using Sentry;
 using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Services.Providers.Content
@@ -53,6 +54,8 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
+            SentrySdk.ConfigureScope(scope => { scope.Contexts["reference"] = reference; });
+
             reference.AsString ??= reference.ToString();
 
             string url = string.Format(_getURI, reference.AsString, reference.Version.Abbreviation);
