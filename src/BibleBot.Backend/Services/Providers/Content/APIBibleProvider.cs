@@ -294,19 +294,16 @@ namespace BibleBot.Backend.Services.Providers.Content
             string url = string.Format(_searchURI, version.InternalId, query);
 
             ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
-
             List<SearchResult> results = [];
 
-            if (resp.Data == null)
+            if (resp.Data != null && resp.Data.Verses != null)
             {
-                return results;
+                results.AddRange(resp.Data.Verses.Select(verse => new SearchResult
+                {
+                    Reference = verse.Reference,
+                    Text = PurifyText(verse.Text).Replace(query, $"**{query}**")
+                }));
             }
-
-            results.AddRange(resp.Data.Verses.Select(verse => new SearchResult
-            {
-                Reference = verse.Reference,
-                Text = PurifyText(verse.Text).Replace(query, $"**{query}**")
-            }));
 
             return results;
         }
