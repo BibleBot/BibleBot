@@ -92,7 +92,7 @@ namespace BibleBot.Backend.Services
             return guild;
         }
 
-        public async Task<int> GetCount() => (await Get()).Count;
+        public async Task<long> GetCount() => await mongoService.GetCount<Guild>();
 
         public async Task<Guild> Create(Guild guild)
         {

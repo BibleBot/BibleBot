@@ -24,12 +24,17 @@ namespace BibleBot.Backend.Services
         private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
         private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
 
-        public async Task<List<User>> Get()
+        public async Task<List<User>> Get(bool isAutoServ = false)
         {
             List<User> users = [];
 
             try
             {
+                if (isAutoServ)
+                {
+                    throw new Exception();
+                }
+
                 RedisKey[] keys = [.. _redisServer.Keys(pattern: "user:*")];
 
                 foreach (RedisKey key in keys)
@@ -38,13 +43,18 @@ namespace BibleBot.Backend.Services
                     users.Add(JsonSerializer.Deserialize<User>(cachedUserStr!));
                 }
             }
-            catch (ArgumentNullException)
+            catch (Exception)
             {
                 users = await mongoService.Get<User>();
 
-                foreach (User user in users)
+                // We don't want all the users cached in redis by AutoServ 
+                // and potentially causing desync issues with the backend.
+                if (!isAutoServ)
                 {
-                    await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
+                    foreach (User user in users)
+                    {
+                        await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
+                    }
                 }
             }
 
@@ -82,7 +92,7 @@ namespace BibleBot.Backend.Services
             return user;
         }
 
-        public async Task<int> GetCount() => (await Get()).Count;
+        public async Task<long> GetCount() => await mongoService.GetCount<User>();
 
         public async Task<User> Create(User user)
         {

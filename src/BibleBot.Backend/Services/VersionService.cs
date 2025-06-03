@@ -32,7 +32,7 @@ namespace BibleBot.Backend.Services
 
         public async Task<List<Version>> Get() => await GetVersions();
         public async Task<Version> Get(string abbreviation) => (await GetVersions()).FirstOrDefault(version => string.Equals(version.Abbreviation, abbreviation, StringComparison.OrdinalIgnoreCase));
-        public async Task<int> GetCount() => (await GetVersions()).Count;
+        public async Task<long> GetCount() => await mongoService.GetCount<Version>();
 
         public async Task<Version> GetPreferenceOrDefault(User idealUser, Guild idealGuild, bool isBot)
         {
