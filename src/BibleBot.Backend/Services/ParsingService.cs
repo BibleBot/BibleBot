@@ -256,18 +256,21 @@ namespace BibleBot.Backend.Services
                                                 throw new VerseLimitationException("too many commas");
                                             }
 
-                                            switch (System.Array.IndexOf(spanSplit, pairValue))
+                                            if (appendedVerses.Count > 0)
                                             {
-                                                case 0:
-                                                    startingVerse = appendedVerses[0].Item1;
-                                                    appendedVerses = [.. appendedVerses.TakeLast(appendedVerses.Count - 1)];
-                                                    break;
-                                                case 1:
-                                                    endingVerse = appendedVerses[0].Item1;
-                                                    appendedVerses = [.. appendedVerses.Skip(1).TakeLast(appendedVerses.Count - 1)];
-                                                    break;
-                                                default:
-                                                    return null;
+                                                switch (System.Array.IndexOf(spanSplit, pairValue))
+                                                {
+                                                    case 0:
+                                                        startingVerse = appendedVerses[0].Item1;
+                                                        appendedVerses = [.. appendedVerses.TakeLast(appendedVerses.Count - 1)];
+                                                        break;
+                                                    case 1:
+                                                        endingVerse = appendedVerses[0].Item1;
+                                                        appendedVerses = [.. appendedVerses.Skip(1).TakeLast(appendedVerses.Count - 1)];
+                                                        break;
+                                                    default:
+                                                        return null;
+                                                }
                                             }
                                         }
                                         else
