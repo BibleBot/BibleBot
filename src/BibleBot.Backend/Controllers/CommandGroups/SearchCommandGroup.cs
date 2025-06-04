@@ -88,11 +88,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 }
 
                 Version idealVersion = await versionService.Get(versionParam);
-
-                if (idealVersion == null)
-                {
-                    await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
-                }
+                idealVersion ??= await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
 
                 if (idealVersion.Source != "bg" && potentialSubset != SubsetFlag.INVALID)
                 {
