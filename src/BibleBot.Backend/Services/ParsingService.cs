@@ -381,12 +381,16 @@ namespace BibleBot.Backend.Services
         {
             str = str.ToLowerInvariant().Replace("\r", " ").Replace("\n", " ");
             str = ignoringBrackets.Aggregate(str, (current, brackets) => new Regex(@"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1]).Replace(current, ""));
+            str = VariantDashesRegex().Replace(str, "-");
 
             const string punctuationToIgnore = "!\"#$%&'()*+./;<=>?@[\\]^_`{|}~";
             return punctuationToIgnore.Aggregate(str, (current, character) => current.Replace(character, ' '));
         }
 
         private static bool IsValueInString(string str, string val) => $" {str} ".Contains($" {val} ");
+
+        [GeneratedRegex(@"[\u2013\u2014\u2012\uFF0D]")]
+        private static partial Regex VariantDashesRegex();
 
         [GeneratedRegex(@"[^,\w\s]|_")]
         private static partial Regex NoPunctuationRegex();
