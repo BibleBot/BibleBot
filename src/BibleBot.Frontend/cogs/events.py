@@ -1,9 +1,9 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import os
@@ -120,7 +120,7 @@ class EventListeners(commands.Cog):
 
         clean_msg = msg.content.replace("://", "")
         verse_regex = re.compile(
-            r" [0-9]{1,3}:[0-9]{1,3}((,[0-9]{1,3})*)?(-)?([0-9]{1,3})?((,[0-9]{1,3})*)?(:[0-9]{1,3})?"
+            r" [0-9]{1,3}:[0-9]{1,3}((,[0-9]{1,3})*)?([-–—‒－]{1})?([0-9]{1,3})?((,[0-9]{1,3})*)?(:[0-9]{1,3})?"
         )
 
         if verse_regex.search(clean_msg):
