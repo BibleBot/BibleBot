@@ -17,6 +17,7 @@ using BibleBot.Backend.InternalModels;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
+using Sentry;
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -418,6 +419,103 @@ namespace BibleBot.Backend
             }
 
             return [selfChannelPermissionsList, roleChannelPermissionsList, roleGuildPermissionsList];
+        }
+
+        public Reference ConvertReferenceToSeptuagintNumbering(Reference reference) => ConvertReferencesToSeptuagintNumbering([reference]).FirstOrDefault();
+        public List<Reference> ConvertReferencesToSeptuagintNumbering(List<Reference> references)
+        {
+            // Just a note about this function. This only really concerns itself with Psalms with references that are contained within one Masoretic-numbered chapter.
+            // This makes no provisions for references like 1:1-2:2.
+            List<Reference> referencesToReturn = [];
+
+            foreach (Reference reference in references)
+            {
+                if (reference.Book.Name != "PSA")
+                {
+                    // We currently only support conversions for the Psalms.
+                    continue;
+                }
+
+                int startingChapter = reference.StartingChapter switch
+                {
+                    9 or 10 => 9,
+                    (>= 11 and <= 113) or (>= 117 and <= 146) => reference.StartingChapter - 1,
+                    114 or 115 => 113,
+                    // 116:1-9, 116:10-19, 147:1-11, 147:12-20 are handled outside of this
+                    _ => reference.StartingChapter
+                };
+
+                int endingChapter = reference.EndingChapter switch
+                {
+                    9 or 10 => 9,
+                    (>= 11 and <= 113) or (>= 117 and <= 146) => reference.EndingChapter - 1,
+                    114 or 115 => 113,
+                    // 116:1-9, 116:10-19, 147:1-11, 147:12-20 are handled outside of this
+                    _ => reference.EndingChapter
+                };
+
+                int startingVerse = reference.StartingVerse;
+                int endingVerse = reference.EndingVerse;
+
+                if (reference.StartingChapter == startingChapter && startingChapter != 9 && startingChapter < 148)
+                {
+                    // This is one of the special cases we can't easily fulfill in the switch cases.
+                    if (reference.StartingChapter == 116 && reference.EndingChapter == 116)
+                    {
+                        if (reference.StartingVerse is >= 1 and <= 9 && reference.EndingVerse is >= 1 and <= 9)
+                        {
+                            startingChapter = 114;
+                            endingChapter = 114;
+                        }
+                        else if (reference.StartingVerse is >= 10 and <= 19 && reference.EndingVerse is >= 10 and <= 19)
+                        {
+                            startingChapter = 115;
+                            endingChapter = 115;
+
+                            startingVerse -= 9;
+                            endingVerse -= 9;
+                        }
+                    }
+                    else if (reference.StartingChapter == 147 && reference.EndingChapter == 147)
+                    {
+                        if (reference.StartingVerse is >= 1 and <= 11 && reference.EndingVerse is >= 1 and <= 11)
+                        {
+                            startingChapter = 146;
+                            endingChapter = 146;
+                        }
+                        else if (reference.StartingVerse is >= 10 and <= 19 && reference.EndingVerse is >= 10 and <= 19)
+                        {
+                            startingChapter = 147;
+                            endingChapter = 147;
+
+                            startingVerse -= 11;
+                            endingVerse -= 11;
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            throw new NotImplementedException($"ConvertReferencesToSeptuagintNumbering: did not account for chapter {reference.StartingChapter}");
+                        }
+                        catch (NotImplementedException ex)
+                        {
+                            SentrySdk.CaptureException(ex);
+                            continue;
+                        }
+                    }
+                }
+
+                reference.StartingChapter = startingChapter;
+                reference.EndingChapter = endingChapter;
+
+                reference.StartingVerse = startingVerse;
+                reference.EndingVerse = endingVerse;
+
+                referencesToReturn.Add(reference);
+            }
+
+            return referencesToReturn;
         }
     }
 }

@@ -56,7 +56,7 @@ namespace BibleBot.Models
         /// The publisher of the version.
         /// </summary>
         /// <remarks>
-        /// This is currently only planned for use in the frontend to fulfill license agreement obligations.
+        /// This is currently only intended for use in the frontend to fulfill license agreement obligations.
         /// </remarks>
         [BsonElement("Publisher")]
         public string Publisher { get; set; }
@@ -90,6 +90,17 @@ namespace BibleBot.Models
         /// </summary>
         [BsonElement("SupportsDeuterocanon")]
         public bool SupportsDeuterocanon { get; set; }
+
+        /// <summary>
+        /// Indicates whether the OT follows Septuagint numberings where divergent from the Masoretic.
+        /// </summary>
+        /// <remarks>
+        /// This may be prone to errors in divergences outside the Psalms, as some versions are loose with Septuagint numbering.
+        /// <br/><br/>
+        /// This is also intended primarily for ensuring consistency in Septuagint-numbered versions for special verses.
+        /// </remarks>
+        [BsonElement("FollowsSeptuagintNumbering")]
+        public bool FollowsSeptuagintNumbering { get; set; }
 
         /// <summary>
         /// An array of books, which contains an array of chapters along with other metadata.

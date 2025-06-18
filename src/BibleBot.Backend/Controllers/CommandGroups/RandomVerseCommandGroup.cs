@@ -77,6 +77,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 string randomRef = await svProvider.GetRandomVerse();
+
                 IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
 
                 return new VerseResponse
