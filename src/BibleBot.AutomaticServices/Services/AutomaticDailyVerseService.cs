@@ -154,6 +154,8 @@ namespace BibleBot.AutomaticServices.Services
                             continue;
                         }
 
+                        // TODO(srp): Cache results globally instead of per-minute to save even more trouble.
+                        // Will require keeping track of the current daily verse, however.
                         if (!resultsByVersion.ContainsKey(idealVersion.Abbreviation))
                         {
                             resultsByVersion[idealVersion.Abbreviation] = await provider.GetVerse(votdRef, true, true, idealVersion);
