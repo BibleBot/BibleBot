@@ -120,6 +120,7 @@ namespace BibleBot.AutomaticServices.Services
 
                 Stopwatch watch = Stopwatch.StartNew();
                 string votdRef = await _spProvider.GetDailyVerse();
+                Dictionary<string, VerseResult> resultsByVersion = [];
 
                 foreach (Guild guild in matches.Where(guild => !guildsCleared.Contains(guild.GuildId)))
                 {
@@ -153,9 +154,12 @@ namespace BibleBot.AutomaticServices.Services
                             continue;
                         }
 
-                        VerseResult verse = await provider.GetVerse(votdRef, true, true, idealVersion);
+                        if (!resultsByVersion.ContainsKey(idealVersion.Abbreviation))
+                        {
+                            resultsByVersion[idealVersion.Abbreviation] = await provider.GetVerse(votdRef, true, true, idealVersion);
+                        }
 
-                        // If API.Bible gives us a null result...
+                        VerseResult verse = resultsByVersion[idealVersion.Abbreviation];
                         if (verse == null)
                         {
                             continue;
