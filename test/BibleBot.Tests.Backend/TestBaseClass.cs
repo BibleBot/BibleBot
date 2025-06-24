@@ -32,6 +32,7 @@ namespace BibleBot.Tests.Backend
 
         private MongoService _mongoService;
         private IDistributedCache _cache;
+        private PreferenceService _preferenceService;
         protected VersionService _versionService;
         private LanguageService _languageService;
 
@@ -75,9 +76,10 @@ namespace BibleBot.Tests.Backend
             }));
 
             _mongoService = new MongoService(_databaseSettings);
+            _preferenceService = new PreferenceService(_cache, _mongoService);
             _optOutServiceMock = new Mock<OptOutService>(_mongoService);
-            _userServiceMock = new Mock<UserService>(_cache, _mongoService);
-            _guildServiceMock = new Mock<GuildService>(_cache, _mongoService);
+            _userServiceMock = new Mock<UserService>(_preferenceService);
+            _guildServiceMock = new Mock<GuildService>(_preferenceService);
             _versionService = new VersionService(_mongoService);
             _languageService = new LanguageService(_mongoService);
             _resourceServiceMock = new Mock<ResourceService>();

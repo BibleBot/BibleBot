@@ -51,6 +51,7 @@ namespace BibleBot.Backend
             // Instantiate the various services.
             services.AddSingleton(_ => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
 
+            services.AddSingleton<PreferenceService>();
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();
             services.AddSingleton<VersionService>();

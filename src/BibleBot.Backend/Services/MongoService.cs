@@ -27,7 +27,11 @@ namespace BibleBot.Backend.Services
 
         public MongoService(IDatabaseSettings settings)
         {
-            MongoClient client = new(Environment.GetEnvironmentVariable("MONGODB_CONN"));
+            MongoClientSettings clientSettings = MongoClientSettings.FromConnectionString(Environment.GetEnvironmentVariable("MONGODB_CONN"));
+            clientSettings.ConnectTimeout = TimeSpan.FromSeconds(10);
+            clientSettings.MaxConnectionPoolSize = 200;
+
+            MongoClient client = new(clientSettings);
             IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
             _users = database.GetCollection<User>(settings.UserCollectionName);

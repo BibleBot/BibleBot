@@ -6,114 +6,20 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using BibleBot.Models;
-using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
-using Sentry;
-using StackExchange.Redis;
 
 namespace BibleBot.Backend.Services
 {
-    public class UserService(IDistributedCache cache, MongoService mongoService)
+    public class UserService(PreferenceService preferenceService)
     {
-        private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
-        private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
-
-        public async Task<List<User>> Get(bool isAutoServ = false)
-        {
-            List<User> users = [];
-
-            try
-            {
-                if (isAutoServ)
-                {
-                    throw new Exception();
-                }
-
-                RedisKey[] keys = [.. _redisServer.Keys(pattern: "user:*")];
-
-                foreach (RedisKey key in keys)
-                {
-                    string cachedUserStr = await cache.GetStringAsync(key);
-                    users.Add(JsonSerializer.Deserialize<User>(cachedUserStr!));
-                }
-            }
-            catch (Exception)
-            {
-                users = await mongoService.Get<User>();
-
-                // We don't want all the users cached in redis by AutoServ 
-                // and potentially causing desync issues with the backend.
-                if (!isAutoServ)
-                {
-                    foreach (User user in users)
-                    {
-                        await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
-                    }
-                }
-            }
-
-            return users;
-        }
-
-        public async Task<User> Get(string userId)
-        {
-            User user;
-
-            try
-            {
-                string cachedUserStr = await cache.GetStringAsync($"user:{userId}");
-                user = JsonSerializer.Deserialize<User>(cachedUserStr!);
-            }
-            catch (ArgumentNullException)
-            {
-
-                user = await mongoService.Get<User>(userId);
-
-                if (user != null)
-                {
-                    await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
-                }
-            }
-
-            if (user != null)
-            {
-                SentrySdk.ConfigureScope(scope =>
-                {
-                    scope.Contexts["userPreference"] = user;
-                });
-            }
-
-            return user;
-        }
-
-        public async Task<long> GetCount() => await mongoService.GetCount<User>();
-
-        public async Task<User> Create(User user)
-        {
-            User createdUser = await mongoService.Create(user);
-            await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(createdUser));
-
-            return createdUser;
-        }
-
-        public async Task Update(string userId, UpdateDefinition<User> updateDefinition)
-        {
-            await mongoService.Update(userId, updateDefinition);
-
-            User user = await mongoService.Get<User>(userId);
-            await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
-        }
-
-        public async Task Remove(User idealUser)
-        {
-            await mongoService.Remove(idealUser);
-            await cache.RemoveAsync($"user:{idealUser.UserId}");
-        }
+        public async Task<List<User>> Get(bool isAutoServ = false) => await preferenceService.Get<User>(isAutoServ);
+        public async Task<User> Get(string userId) => await preferenceService.Get<User>(userId);
+        public async Task<long> GetCount() => await preferenceService.GetCount<User>();
+        public async Task<User> Create(User user) => await preferenceService.Create(user);
+        public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await preferenceService.Update(userId, updateDefinition);
+        public async Task Remove(User idealUser) => await preferenceService.Remove(idealUser);
     }
 }

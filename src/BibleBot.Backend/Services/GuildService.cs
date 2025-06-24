@@ -6,114 +6,20 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using BibleBot.Models;
-using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
-using Sentry;
-using StackExchange.Redis;
 
 namespace BibleBot.Backend.Services
 {
-    public class GuildService(IDistributedCache cache, MongoService mongoService)
+    public class GuildService(PreferenceService preferenceService)
     {
-        private static readonly ConnectionMultiplexer _connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
-        private readonly IServer _redisServer = _connectionMultiplexer.GetServer(_connectionMultiplexer.GetEndPoints().First());
-
-        public async Task<List<Guild>> Get(bool isAutoServ = false)
-        {
-            List<Guild> guilds = [];
-
-            try
-            {
-                if (isAutoServ)
-                {
-                    throw new Exception();
-                }
-
-                RedisKey[] keys = [.. _redisServer.Keys(pattern: "guild:*")];
-
-                foreach (RedisKey key in keys)
-                {
-                    string cachedGuildStr = await cache.GetStringAsync(key);
-                    guilds.Add(JsonSerializer.Deserialize<Guild>(cachedGuildStr!));
-                }
-            }
-            catch (Exception)
-            {
-                guilds = await mongoService.Get<Guild>();
-
-                // We don't want all the guilds cached in redis by AutoServ 
-                // and potentially causing desync issues with the backend.
-                if (!isAutoServ)
-                {
-                    foreach (Guild guild in guilds)
-                    {
-                        await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
-                    }
-                }
-            }
-
-            return guilds;
-        }
-
-        public async Task<Guild> Get(string guildId)
-        {
-            Guild guild;
-
-            try
-            {
-                string cachedGuildStr = await cache.GetStringAsync($"guild:{guildId}");
-                guild = JsonSerializer.Deserialize<Guild>(cachedGuildStr!);
-            }
-            catch (ArgumentNullException)
-            {
-
-                guild = await mongoService.Get<Guild>(guildId);
-
-                if (guild != null)
-                {
-                    await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
-                }
-            }
-
-            if (guild != null)
-            {
-                SentrySdk.ConfigureScope(scope =>
-                {
-                    scope.Contexts["guildPreference"] = guild;
-                });
-            }
-
-            return guild;
-        }
-
-        public async Task<long> GetCount() => await mongoService.GetCount<Guild>();
-
-        public async Task<Guild> Create(Guild guild)
-        {
-            Guild createdGuild = await mongoService.Create(guild);
-            await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(createdGuild));
-
-            return createdGuild;
-        }
-
-        public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition)
-        {
-            await mongoService.Update(guildId, updateDefinition);
-
-            Guild guild = await mongoService.Get<Guild>(guildId);
-            await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
-        }
-
-        public async Task Remove(Guild idealGuild)
-        {
-            await mongoService.Remove(idealGuild);
-            await cache.RemoveAsync($"guild:{idealGuild.GuildId}");
-        }
+        public async Task<List<Guild>> Get(bool isAutoServ = false) => await preferenceService.Get<Guild>(isAutoServ);
+        public async Task<Guild> Get(string guildId) => await preferenceService.Get<Guild>(guildId);
+        public async Task<long> GetCount() => await preferenceService.GetCount<Guild>();
+        public async Task<Guild> Create(Guild guild) => await preferenceService.Create(guild);
+        public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition) => await preferenceService.Update(guildId, updateDefinition);
+        public async Task Remove(Guild idealGuild) => await preferenceService.Remove(idealGuild);
     }
 }

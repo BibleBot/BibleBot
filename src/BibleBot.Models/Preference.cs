@@ -11,6 +11,11 @@ namespace BibleBot.Models
         string Id { get; set; }
 
         /// <summary>
+        /// The Snowflake ID.
+        /// </summary>
+        string SnowflakeId { get; }
+
+        /// <summary>
         /// The default version of the preference.
         /// </summary>
         string Version { get; set; }

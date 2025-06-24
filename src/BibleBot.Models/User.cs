@@ -32,6 +32,9 @@ namespace BibleBot.Models
         [BsonElement("UserId")]
         public string UserId { get; init; }
 
+        /// <inheritdoc/>
+        public string SnowflakeId => UserId;
+
         /// <summary>
         /// The default input method of the user.
         /// </summary>

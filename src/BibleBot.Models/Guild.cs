@@ -32,6 +32,9 @@ namespace BibleBot.Models
         [BsonElement("GuildId")]
         public string GuildId { get; init; }
 
+        /// <inheritdoc/>
+        public string SnowflakeId => GuildId;
+
         /// <summary>
         /// The default language of the guild.
         /// </summary>
