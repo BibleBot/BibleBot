@@ -161,6 +161,9 @@ namespace BibleBot.Backend.Services
                         }
                         break;
                     }
+                case ResourceType.CREED:
+                default:
+                    break;
             }
 
             throw new KeyNotFoundException();

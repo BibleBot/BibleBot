@@ -206,6 +206,8 @@ namespace BibleBot.Backend
                                         secondPart = 0;
                                     }
                                     break;
+                                default:
+                                    break;
                             }
 
                             if (firstPart > 0 && secondPart > 0)
@@ -236,10 +238,9 @@ namespace BibleBot.Backend
 
                         }
 
-                        return
-                        [
-                            Embedify(null, $"{pgResource!.Title} - Paragraph {sectionAsIndex}", $"<**{sectionAsIndex}**> {pgResource.Paragraphs.ElementAt(sectionAsIndex - 1).Text}", false, pgResource.Copyright)
-                        ];
+                        return pgResource.Paragraphs.Count >= sectionAsIndex
+                            ? [Embedify(null, $"{pgResource!.Title} - Paragraph {sectionAsIndex}", $"<**{sectionAsIndex}**> {pgResource.Paragraphs.ElementAt(sectionAsIndex - 1).Text}", false, pgResource.Copyright)]
+                            : null;
                     }
                 case ResourceStyle.SECTIONED:
                     {
@@ -296,6 +297,7 @@ namespace BibleBot.Backend
 
                         }
                     }
+                case ResourceStyle.FULL_TEXT:
                 default:
                     return null;
             }
