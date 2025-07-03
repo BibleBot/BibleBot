@@ -85,11 +85,11 @@ namespace BibleBot.Backend.Controllers
                 titlesEnabled = idealUser.TitlesEnabled;
                 displayStyle = idealUser.DisplayStyle;
                 paginateVerses = idealUser.PaginationEnabled;
-            }
 
-            if (idealUser.IsOptOut)
-            {
-                return null;
+                if (idealUser.IsOptOut)
+                {
+                    return null;
+                }
             }
 
             Language language = await languageService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
