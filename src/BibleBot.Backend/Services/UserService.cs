@@ -15,7 +15,7 @@ namespace BibleBot.Backend.Services
 {
     public class UserService(PreferenceService preferenceService)
     {
-        public async Task<List<User>> Get(bool isAutoServ = false) => await preferenceService.Get<User>(isAutoServ);
+        public async Task<List<User>> Get() => await preferenceService.Get<User>();
         public async Task<User> Get(string userId) => await preferenceService.Get<User>(userId);
         public async Task<long> GetCount() => await preferenceService.GetCount<User>();
         public async Task<User> Create(User user) => await preferenceService.Create(user);

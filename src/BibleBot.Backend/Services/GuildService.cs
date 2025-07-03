@@ -15,7 +15,7 @@ namespace BibleBot.Backend.Services
 {
     public class GuildService(PreferenceService preferenceService)
     {
-        public async Task<List<Guild>> Get(bool isAutoServ = false) => await preferenceService.Get<Guild>(isAutoServ);
+        public async Task<List<Guild>> Get() => await preferenceService.Get<Guild>();
         public async Task<Guild> Get(string guildId) => await preferenceService.Get<Guild>(guildId);
         public async Task<long> GetCount() => await preferenceService.GetCount<Guild>();
         public async Task<Guild> Create(Guild guild) => await preferenceService.Create(guild);

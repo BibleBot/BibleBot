@@ -57,7 +57,6 @@ namespace BibleBot.Backend
             services.AddSingleton<VersionService>();
             services.AddSingleton<LanguageService>();
             services.AddSingleton<FrontendStatsService>();
-            services.AddSingleton<OptOutService>();
 
             services.AddSingleton<ParsingService>();
             services.AddSingleton<ResourceService>();

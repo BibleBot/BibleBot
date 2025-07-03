@@ -29,7 +29,7 @@ namespace BibleBot.Backend.Controllers
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
                                           VersionService versionService, LanguageService languageService, MetadataFetchingService metadataFetchingService,
-                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, OptOutService optOutService, IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
+                                          BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
     {
         private readonly List<IContentProvider> _bibleProviders = [bgProvider, abProvider, nltProvider];
         private readonly IStringLocalizer _localizer = localizer;
@@ -55,13 +55,6 @@ namespace BibleBot.Backend.Controllers
             {
                 scope.Contexts["request"] = req;
             });
-
-            OptOutUser potentialOptOut = await optOutService.Get(req.UserId);
-
-            if (potentialOptOut != null)
-            {
-                return null;
-            }
 
             string displayStyle = "embed";
             List<string> ignoringBrackets = ["<>"];
@@ -92,6 +85,11 @@ namespace BibleBot.Backend.Controllers
                 titlesEnabled = idealUser.TitlesEnabled;
                 displayStyle = idealUser.DisplayStyle;
                 paginateVerses = idealUser.PaginationEnabled;
+            }
+
+            if (idealUser.IsOptOut)
+            {
+                return null;
             }
 
             Language language = await languageService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);

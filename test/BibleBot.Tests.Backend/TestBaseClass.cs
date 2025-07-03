@@ -37,7 +37,6 @@ namespace BibleBot.Tests.Backend
         private LanguageService _languageService;
 
         private Mock<UserService> _userServiceMock;
-        private Mock<OptOutService> _optOutServiceMock;
         private Mock<GuildService> _guildServiceMock;
         private Mock<ResourceService> _resourceServiceMock;
         private Mock<ParsingService> _parsingServiceMock;
@@ -77,7 +76,6 @@ namespace BibleBot.Tests.Backend
 
             _mongoService = new MongoService(_databaseSettings);
             _preferenceService = new PreferenceService(_cache, _mongoService);
-            _optOutServiceMock = new Mock<OptOutService>(_mongoService);
             _userServiceMock = new Mock<UserService>(_preferenceService);
             _guildServiceMock = new Mock<GuildService>(_preferenceService);
             _versionService = new VersionService(_mongoService);
@@ -95,7 +93,7 @@ namespace BibleBot.Tests.Backend
             _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
             _defaultAPIBibleVersion = await _versionService.Get("KJV") ?? await _versionService.Create(new MockKJV());
 
-            _commandsController = new CommandsController(_userServiceMock.Object, _optOutServiceMock.Object, _guildServiceMock.Object,
+            _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _versionService, _resourceServiceMock.Object,
                                                     _frontendStatsServiceMock.Object, _languageService, _metadataFetchingServiceMock.Object,
                                                     _spProviderMock.Object, _bgProviderMock.Object, _abProviderMock.Object, _nltProviderMock.Object, _localizerFactory);
@@ -103,7 +101,7 @@ namespace BibleBot.Tests.Backend
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _parsingServiceMock.Object, _versionService, _languageService,
                                                     _metadataFetchingServiceMock.Object, _bgProviderMock.Object,
-                                                    _abProviderMock.Object, _nltProviderMock.Object, _optOutServiceMock.Object, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
+                                                    _abProviderMock.Object, _nltProviderMock.Object, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
         }
     }
 }

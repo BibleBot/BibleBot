@@ -23,12 +23,11 @@ namespace BibleBot.Backend.Services
         private readonly IMongoCollection<Version> _versions;
         private readonly IMongoCollection<Language> _languages;
         private readonly IMongoCollection<FrontendStats> _frontendStats;
-        private readonly IMongoCollection<OptOutUser> _optOutUsers;
 
         public MongoService(IDatabaseSettings settings)
         {
             MongoClientSettings clientSettings = MongoClientSettings.FromConnectionString(Environment.GetEnvironmentVariable("MONGODB_CONN"));
-            clientSettings.ConnectTimeout = TimeSpan.FromSeconds(10);
+            clientSettings.ConnectTimeout = TimeSpan.FromSeconds(5);
             clientSettings.MaxConnectionPoolSize = 200;
 
             MongoClient client = new(clientSettings);
@@ -39,7 +38,6 @@ namespace BibleBot.Backend.Services
             _versions = database.GetCollection<Version>(settings.VersionCollectionName);
             _languages = database.GetCollection<Language>(settings.LanguageCollectionName);
             _frontendStats = database.GetCollection<FrontendStats>(settings.FrontendStatsCollectionName);
-            _optOutUsers = database.GetCollection<OptOutUser>(settings.OptOutUserCollectionName);
         }
 
         public async Task<List<T>> Get<T>()
@@ -67,10 +65,6 @@ namespace BibleBot.Backend.Services
             {
                 cursor = (IAsyncCursor<T>)await _languages.FindAsync(language => true);
             }
-            else if (typeOfT == typeof(OptOutUser))
-            {
-                cursor = (IAsyncCursor<T>)await _optOutUsers.FindAsync(user => true);
-            }
 
             return cursor != null ? await cursor.ToListAsync() : throw new NotImplementedException("No established path for provided type");
         }
@@ -81,25 +75,33 @@ namespace BibleBot.Backend.Services
             Type typeOfT = typeof(T);
             IAsyncCursor<T> cursor = null;
 
+            FindOptions<T> findOptions = new()
+            {
+                AllowDiskUse = true,
+                Limit = 1
+            };
+
             if (typeOfT == typeof(Version))
             {
-                cursor = (IAsyncCursor<T>)await _versions.FindAsync(version => string.Equals(version.Abbreviation, query, StringComparison.OrdinalIgnoreCase));
+                query = query.ToLowerInvariant();
+
+                FilterDefinition<Version> filterDefinition = Builders<Version>.Filter.Eq(version => version.Abbreviation.ToLowerInvariant(), query);
+                cursor = (IAsyncCursor<T>)await _versions.FindAsync(filterDefinition, findOptions as FindOptions<Version>);
             }
             else if (typeOfT == typeof(User))
             {
-                cursor = (IAsyncCursor<T>)await _users.FindAsync(user => user.UserId == query);
+                FilterDefinition<User> filterDefinition = Builders<User>.Filter.Eq(user => user.UserId, query);
+                cursor = (IAsyncCursor<T>)await _users.FindAsync(filterDefinition, findOptions as FindOptions<User>);
             }
             else if (typeOfT == typeof(Guild))
             {
-                cursor = (IAsyncCursor<T>)await _guilds.FindAsync(guild => guild.GuildId == query);
+                FilterDefinition<Guild> filterDefinition = Builders<Guild>.Filter.Eq(guild => guild.GuildId, query);
+                cursor = (IAsyncCursor<T>)await _guilds.FindAsync(filterDefinition, findOptions as FindOptions<Guild>);
             }
             else if (typeOfT == typeof(Language))
             {
-                cursor = (IAsyncCursor<T>)await _languages.FindAsync(language => language.Culture == query);
-            }
-            else if (typeOfT == typeof(OptOutUser))
-            {
-                cursor = (IAsyncCursor<T>)await _optOutUsers.FindAsync(user => user.UserId == query);
+                FilterDefinition<Language> filterDefinition = Builders<Language>.Filter.Eq(language => language.Culture, query);
+                cursor = (IAsyncCursor<T>)await _languages.FindAsync(filterDefinition, findOptions as FindOptions<Language>);
             }
 
             return cursor != null ? await cursor.FirstOrDefaultAsync() : throw new NotImplementedException("No established path for provided type");
@@ -113,15 +115,15 @@ namespace BibleBot.Backend.Services
 
             if (typeOfT == typeof(Version))
             {
-                cursor = (IAsyncCursor<T>)await _versions.Aggregate().Search(def as SearchDefinition<Version>).ToCursorAsync();
+                cursor = (IAsyncCursor<T>)await _versions.Aggregate().Search((SearchDefinition<Version>)Convert.ChangeType(def, typeof(SearchDefinition<Version>))).ToCursorAsync();
             }
             else if (typeOfT == typeof(User))
             {
-                cursor = (IAsyncCursor<T>)await _users.Aggregate().Search(def as SearchDefinition<User>).ToCursorAsync();
+                cursor = (IAsyncCursor<T>)await _users.Aggregate().Search((SearchDefinition<User>)Convert.ChangeType(def, typeof(SearchDefinition<User>))).ToCursorAsync();
             }
             else if (typeOfT == typeof(Guild))
             {
-                cursor = (IAsyncCursor<T>)await _guilds.Aggregate().Search(def as SearchDefinition<Guild>).ToCursorAsync();
+                cursor = (IAsyncCursor<T>)await _guilds.Aggregate().Search((SearchDefinition<Guild>)Convert.ChangeType(def, typeof(SearchDefinition<Guild>))).ToCursorAsync();
             }
 
             return cursor != null ? await cursor.ToListAsync() : throw new NotImplementedException("No established path for provided type");
@@ -142,10 +144,6 @@ namespace BibleBot.Backend.Services
             else if (typeOfT == typeof(Guild))
             {
                 return await _guilds.EstimatedDocumentCountAsync();
-            }
-            else if (typeOfT == typeof(OptOutUser))
-            {
-                return await _optOutUsers.EstimatedDocumentCountAsync();
             }
 
             throw new NotImplementedException("No established path for provided type");
@@ -171,10 +169,6 @@ namespace BibleBot.Backend.Services
             {
                 await _frontendStats.InsertOneAsync(t as FrontendStats);
             }
-            else if (typeOfT == typeof(OptOutUser))
-            {
-                await _optOutUsers.InsertOneAsync(t as OptOutUser);
-            }
 
             return t;
         }
@@ -183,12 +177,10 @@ namespace BibleBot.Backend.Services
         public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition) => await _guilds.UpdateOneAsync(guild => guild.GuildId == guildId, updateDefinition);
         public async Task Update(string abbreviation, UpdateDefinition<Version> updateDefinition) => await _versions.UpdateOneAsync(version => string.Equals(version.Abbreviation, abbreviation, StringComparison.OrdinalIgnoreCase), updateDefinition);
         public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _frontendStats.UpdateOneAsync(stats => true, updateDefinition);
-        public async Task Update(string userId, UpdateDefinition<OptOutUser> updateDefinition) => await _optOutUsers.UpdateOneAsync(user => user.UserId == userId, updateDefinition);
 
         public async Task Remove(User idealUser) => await Remove<User>(idealUser.UserId);
         public async Task Remove(Guild idealGuild) => await Remove<Guild>(idealGuild.GuildId);
         public async Task Remove(Version idealVersion) => await Remove<Version>(idealVersion.Abbreviation);
-        public async Task Remove(OptOutUser idealUser) => await Remove<OptOutUser>(idealUser.UserId);
 
         public async Task<DeleteResult> Remove<T>(string query)
         {
@@ -205,10 +197,6 @@ namespace BibleBot.Backend.Services
             else if (typeOfT == typeof(Guild))
             {
                 return await _guilds.DeleteOneAsync(guild => guild.GuildId == query);
-            }
-            else if (typeOfT == typeof(OptOutUser))
-            {
-                return await _optOutUsers.DeleteOneAsync(user => user.UserId == query);
             }
 
             throw new NotImplementedException("No established path for provided type");

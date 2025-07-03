@@ -76,5 +76,11 @@ namespace BibleBot.Models
         /// </summary>
         [BsonElement("DisplayStyle")]
         public string DisplayStyle { get; set; } = "embed";
+
+        /// <summary>
+        /// Indicates whether the user is opt out of the service.
+        /// </summary>
+        [BsonElement("IsOptOut")]
+        public bool IsOptOut { get; set; } = false;
     }
 }

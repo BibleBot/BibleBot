@@ -25,7 +25,7 @@ namespace BibleBot.Backend.Controllers
     [Produces("application/json")]
     [Route("api/commands")]
     [ApiController]
-    public class CommandsController(UserService userService, OptOutService optOutService, GuildService guildService, VersionService versionService, ResourceService resourceService,
+    public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
                               FrontendStatsService frontendStatsService, LanguageService languageService, MetadataFetchingService metadataFetchingService, SpecialVerseProvider svProvider,
                               BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
@@ -61,9 +61,9 @@ namespace BibleBot.Backend.Controllers
                 scope.Contexts["request"] = req;
             });
 
-            OptOutUser potentialOptOut = await optOutService.Get(req.UserId);
+            bool isUserOptOut = (await userService.Get(req.UserId)) is User user && user.IsOptOut;
 
-            if (potentialOptOut != null || req.Body is null || req.Body.Length == 0)
+            if (isUserOptOut || req.Body is null || req.Body.Length == 0)
             {
                 return BadRequest(new CommandResponse
                 {
