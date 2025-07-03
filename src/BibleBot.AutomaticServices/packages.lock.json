@@ -28,13 +28,13 @@
       },
       "MongoDB.Driver": {
         "type": "Direct",
-        "requested": "[3.1.0, )",
-        "resolved": "3.1.0",
-        "contentHash": "+O7lKaIl7VUHptE0hqTd7UY1G5KDp/o8S4upG7YL4uChMNKD/U6tz9i17nMGHaD/L2AiPLgaJcaDe2XACsegGA==",
+        "requested": "[3.4.0, )",
+        "resolved": "3.4.0",
+        "contentHash": "+8vGdlbbzfPfQzCI00nPX59vH+5Nfumb2lyXf7xdIcAa05JPBdXFc/vWw0rPQOqIWYWfTmvQsxUgUXyzk0AKGw==",
         "dependencies": {
           "DnsClient": "1.6.1",
           "Microsoft.Extensions.Logging.Abstractions": "2.0.0",
-          "MongoDB.Bson": "3.1.0",
+          "MongoDB.Bson": "3.4.0",
           "SharpCompress": "0.30.1",
           "Snappier": "1.0.0",
           "System.Buffers": "4.5.1",
@@ -573,8 +573,8 @@
       },
       "MongoDB.Bson": {
         "type": "Transitive",
-        "resolved": "3.1.0",
-        "contentHash": "3dhaZhz18B5vUoEP13o2j8A6zQfkHdZhwBvLZEjDJum4BTLLv1/Z8bt25UQEtpqvYwLgde4R6ekWZ7XAYUMxuw==",
+        "resolved": "3.4.0",
+        "contentHash": "0fBbXqO/ADhWLcgq0cUNizcKEFAuz5klxUc5CWTWV8vdnlOl5QTeAI7Kh64bCoz654ZN7WWOjz9WRw0QGHcqQA==",
         "dependencies": {
           "System.Memory": "4.5.5",
           "System.Runtime.CompilerServices.Unsafe": "5.0.0"
@@ -1767,7 +1767,7 @@
           "MeiliSearch": "[0.15.5, )",
           "Microsoft.Extensions.Caching.StackExchangeRedis": "[9.0.5, )",
           "Microsoft.Extensions.Hosting.Systemd": "[9.0.1, )",
-          "MongoDB.Driver": "[3.1.0, )",
+          "MongoDB.Driver": "[3.4.0, )",
           "NodaTime": "[3.2.0, )",
           "OpenTelemetry.Exporter.Console": "[1.12.0, )",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.12.0, )",
@@ -1792,7 +1792,7 @@
         "dependencies": {
           "AngleSharp": "[1.1.2, )",
           "CacheCow.Client": "[2.13.1, )",
-          "MongoDB.Driver": "[3.1.0, )"
+          "MongoDB.Driver": "[3.4.0, )"
         }
       }
     }
