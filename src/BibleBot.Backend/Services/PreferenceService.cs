@@ -46,6 +46,10 @@ namespace BibleBot.Backend.Services
                 {
                     await cache.SetStringAsync($"{set}:{result.SnowflakeId}", JsonSerializer.Serialize(result));
                 }
+                else
+                {
+                    await cache.SetStringAsync($"{set}:{query}", "null");
+                }
             }
 
 
