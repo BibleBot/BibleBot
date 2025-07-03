@@ -23,7 +23,6 @@ namespace BibleBot.Backend.Services
         private readonly IMongoCollection<Version> _versions;
         private readonly IMongoCollection<Language> _languages;
         private readonly IMongoCollection<FrontendStats> _frontendStats;
-        private readonly IMongoDatabase _database;
 
         public MongoService(IDatabaseSettings settings)
         {
@@ -32,19 +31,13 @@ namespace BibleBot.Backend.Services
             clientSettings.MaxConnectionPoolSize = 200;
 
             MongoClient client = new(clientSettings);
-            _database = client.GetDatabase(settings.DatabaseName);
+            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
-            _users = _database.GetCollection<User>(settings.UserCollectionName);
-            _users.Indexes.CreateOne(new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(u => u.UserId)));
-
-            _guilds = _database.GetCollection<Guild>(settings.GuildCollectionName);
-            _guilds.Indexes.CreateOne(new CreateIndexModel<Guild>(Builders<Guild>.IndexKeys.Ascending(g => g.GuildId)));
-
-            _versions = _database.GetCollection<Version>(settings.VersionCollectionName);
-            _versions.Indexes.CreateOne(new CreateIndexModel<Version>(Builders<Version>.IndexKeys.Ascending(v => v.Abbreviation)));
-
-            _languages = _database.GetCollection<Language>(settings.LanguageCollectionName);
-            _frontendStats = _database.GetCollection<FrontendStats>(settings.FrontendStatsCollectionName);
+            _users = database.GetCollection<User>(settings.UserCollectionName);
+            _guilds = database.GetCollection<Guild>(settings.GuildCollectionName);
+            _versions = database.GetCollection<Version>(settings.VersionCollectionName);
+            _languages = database.GetCollection<Language>(settings.LanguageCollectionName);
+            _frontendStats = database.GetCollection<FrontendStats>(settings.FrontendStatsCollectionName);
         }
 
         public async Task<List<T>> Get<T>()
