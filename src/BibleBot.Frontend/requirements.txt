@@ -6,7 +6,7 @@ attrs==21.4.0
 black==22.1.0
 Brotli==1.0.9
 cchardet==2.1.7
-certifi==2021.10.8
+certifi==2024.7.4
 cffi==1.15.0
 charset-normalizer==2.0.12
 click==8.0.4
