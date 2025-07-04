@@ -27,5 +27,5 @@ pymongo==4.0.2
 requests==2.27.1
 tomli==2.0.1
 typing_extensions==4.1.1
-urllib3==1.26.9
+urllib3==2.5.0
 yarl==1.7.2
