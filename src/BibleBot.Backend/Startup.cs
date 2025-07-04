@@ -114,6 +114,8 @@ namespace BibleBot.Backend
                 c.IncludeXmlComments(xmlPath);
             });
 
+            services.AddHealthChecks();
+
             OpenTelemetryBuilder openTelemetry = services.AddOpenTelemetry();
             openTelemetry.ConfigureResource(res => res.AddService(serviceName: "Backend", serviceNamespace: "BibleBot"));
             openTelemetry.WithMetrics(metrics =>
@@ -180,6 +182,8 @@ namespace BibleBot.Backend
                 endpoints.MapControllers();
                 endpoints.MapPrometheusScrapingEndpoint();
             });
+
+            app.UseHealthChecks("/healthz");
 
             Log.Information("Backend is ready.");
         }
