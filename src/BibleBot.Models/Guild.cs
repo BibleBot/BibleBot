@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Net;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -114,6 +115,12 @@ namespace BibleBot.Models
         /// </summary>
         [BsonElement("DailyVerseIsThread")]
         public bool DailyVerseIsThread { get; init; }
+
+        /// <summary>
+        /// The last HTTP status code of the webhook response.
+        /// </summary>
+        [BsonElement("DailyVerseLastStatusCode")]
+        public HttpStatusCode DailyVerseLastStatusCode { get; init; }
 
         /// <summary>
         /// Indicates whether this preference represents a Direct Messages channel, instead of a proper guild.

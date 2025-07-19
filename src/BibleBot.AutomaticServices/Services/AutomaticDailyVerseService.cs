@@ -190,17 +190,19 @@ namespace BibleBot.AutomaticServices.Services
                     request.AddJsonBody(webhookRequestBody);
 
                     RestResponse resp = await _restClient.PostAsync(request);
+
+                    UpdateDefinitionBuilder<Guild> update = Builders<Guild>.Update;
+                    List<UpdateDefinition<Guild>> updates = [];
                     if (resp.StatusCode == System.Net.HttpStatusCode.NoContent)
                     {
                         count += 1;
-
-                        UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                                                        .Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null));
-
-                        await _guildService.Update(guild.GuildId, update);
+                        updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null)));
                     }
 
+                    updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastStatusCode, resp.StatusCode));
+
                     guildsCleared.Add(guild.Id);
+                    await _guildService.Update(guild.GuildId, update.Combine(updates));
                 }
 
                 watch.Stop();
