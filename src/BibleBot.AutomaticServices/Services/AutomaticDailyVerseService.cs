@@ -202,10 +202,10 @@ namespace BibleBot.AutomaticServices.Services
                 {
                     statusCode = (HttpStatusCode)ex.StatusCode;
 
-                    Log.Error($"AutomaticDailyVerseService: Caught exception, received {statusCode} for guild {guild.GuildId}. Adding to failures queue...");
 
                     if (!_previousMinuteFailedGuilds.Contains(guild))
                     {
+                        Log.Error($"AutomaticDailyVerseService: Caught exception, received {statusCode} for guild {guild.GuildId}. Adding to failures queue...");
                         _previousMinuteFailedGuilds.Add(guild);
                     }
                     else
