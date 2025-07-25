@@ -44,7 +44,7 @@ namespace BibleBot.AutomaticServices.Services
 
         private readonly IStringLocalizer<AutomaticDailyVerseService> _localizer;
 
-        private List<Guild> _previousMinuteFailedGuilds = [];
+        private readonly List<Guild> _previousMinuteFailedGuilds = [];
 
         private readonly RestClient _restClient;
         private Timer _timer;
@@ -204,7 +204,15 @@ namespace BibleBot.AutomaticServices.Services
 
                     Log.Error($"AutomaticDailyVerseService: Caught exception, received {statusCode} for guild {guild.GuildId}. Adding to failures queue...");
 
-                    _previousMinuteFailedGuilds.Add(guild);
+                    if (!_previousMinuteFailedGuilds.Contains(guild))
+                    {
+                        _previousMinuteFailedGuilds.Add(guild);
+                    }
+                    else
+                    {
+                        Log.Error($"AutomaticDailyVerseService: Failed guild {guild.GuildId} has failed again, removing from queue...");
+                        _previousMinuteFailedGuilds.Remove(guild);
+                    }
                 }
 
 
