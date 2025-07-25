@@ -328,7 +328,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             {
                 return;
             }
-            
+
             _cancellationToken.Dispose();
             _cancellationToken = null;
         }

@@ -7,6 +7,7 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -44,7 +45,7 @@ namespace BibleBot.AutomaticServices.Services
 
         private readonly IStringLocalizer<AutomaticDailyVerseService> _localizer;
 
-        private readonly List<Guild> _previousMinuteFailedGuilds = [];
+        private readonly ConcurrentDictionary<string, Guild> _previousMinuteFailedGuilds = new();
 
         private readonly RestClient _restClient;
         private Timer _timer;
@@ -81,7 +82,6 @@ namespace BibleBot.AutomaticServices.Services
         {
             int count = 0;
             bool isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-            List<string> guildsCleared = [];
 
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
             ZonedDateTime dateTimeInStandardTz = currentInstant.InZone(DateTimeZoneProviders.Tzdb["America/Detroit"]);
@@ -114,7 +114,7 @@ namespace BibleBot.AutomaticServices.Services
                     {
                         return false;
                     }
-                }).Concat(_previousMinuteFailedGuilds)];
+                }).Concat(_previousMinuteFailedGuilds.Values).Distinct()];
 
             int idealCount = matches.Count - _previousMinuteFailedGuilds.Count;
             int previousFailuresCount = _previousMinuteFailedGuilds.Count;
@@ -122,122 +122,144 @@ namespace BibleBot.AutomaticServices.Services
 
             Stopwatch watch = Stopwatch.StartNew();
             string votdRef = await _spProvider.GetDailyVerse();
-            Dictionary<string, VerseResult> resultsByVersion = [];
+            ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion = [];
 
-            foreach (Guild guild in matches.Where(guild => !guildsCleared.Contains(guild.GuildId)))
+            int maxConcurrentRequests = 10;
+            SemaphoreSlim semaphore = new(maxConcurrentRequests);
+
+            List<Task<bool>> tasks = [];
+            tasks = [.. matches.Select(async guild =>
             {
-                InternalEmbed embed;
-                WebhookRequestBody webhookRequestBody;
-
-                string version = guild.Version ?? "RSV";
-                string culture = guild.Language ?? "en-US";
-
-                Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
-                Language idealLanguage = await _languageService.Get(culture) ?? await _languageService.Get("en-US");
-
-                CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Culture);
-
-                if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
-                {
-                    embed = Utils.GetInstance().Embedify(_localizer["AutomaticDailyVerseWebhookUsernameAlt"], _localizer["AutomaticDailyVerseBothTestamentsWarning"], true);
-                    webhookRequestBody = new WebhookRequestBody
-                    {
-                        Username = _localizer["AutomaticDailyVerseWebhookUsername"],
-                        AvatarURL = embed.Footer.IconURL,
-                        Embeds = [embed]
-                    };
-                }
-                else
-                {
-                    IContentProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
-
-                    if (provider == null)
-                    {
-                        continue;
-                    }
-
-                    // TODO(srp): Cache results globally instead of per-minute to save even more trouble.
-                    // Will require keeping track of the current daily verse, however.
-                    if (!resultsByVersion.ContainsKey(idealVersion.Abbreviation))
-                    {
-                        resultsByVersion[idealVersion.Abbreviation] = await provider.GetVerse(votdRef, true, true, idealVersion);
-                    }
-
-                    VerseResult verse = resultsByVersion[idealVersion.Abbreviation];
-                    if (verse == null)
-                    {
-                        continue;
-                    }
-
-                    string rolePing = guild.DailyVerseRoleId == guild.GuildId ? "@everyone" : $"<@&{guild.DailyVerseRoleId}>";
-                    string content = guild.DailyVerseRoleId != null ? $"{rolePing} - {_localizer["AutomaticDailyVerseLeadIn"]}:" : $"{_localizer["AutomaticDailyVerseLeadIn"]}:";
-                    embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
-
-                    if (verse.Reference.Version.Publisher == "biblica")
-                    {
-                        embed.Author.Name += " (Biblica)";
-                        embed.Author.URL = "https://biblica.org";
-                    }
-
-                    webhookRequestBody = new WebhookRequestBody
-                    {
-                        Content = content,
-                        Username = _localizer["AutomaticDailyVerseWebhookUsername"],
-                        AvatarURL = embed.Footer.IconURL,
-                        Embeds = [embed]
-                    };
-                }
-
-                RestRequest request = new(guild.DailyVerseWebhook);
-                request.AddJsonBody(webhookRequestBody);
-
-                RestResponse resp = null;
-                HttpStatusCode statusCode;
+                await semaphore.WaitAsync();
                 try
                 {
-                    resp = await _restClient.PostAsync(request);
-                    statusCode = resp.StatusCode;
+                    return await ProcessGuild(guild, resultsByVersion, votdRef, dateTimeInStandardTz);
                 }
-                catch (HttpRequestException ex)
+                catch (Exception ex)
                 {
-                    statusCode = (HttpStatusCode)ex.StatusCode;
-
-
-                    if (!_previousMinuteFailedGuilds.Contains(guild))
-                    {
-                        Log.Error($"AutomaticDailyVerseService: Caught exception, received {statusCode} for guild {guild.GuildId}. Adding to failures queue...");
-                        _previousMinuteFailedGuilds.Add(guild);
-                    }
-                    else
-                    {
-                        Log.Error($"AutomaticDailyVerseService: Failed guild {guild.GuildId} has failed again, removing from queue...");
-                        _previousMinuteFailedGuilds.Remove(guild);
-                    }
+                    Log.Error($"AutomaticDailyVerseService: Caught unhandled exception, received {ex.Message} for guild {guild.GuildId}.");
+                    return false;
                 }
-
-
-                UpdateDefinitionBuilder<Guild> update = Builders<Guild>.Update;
-                List<UpdateDefinition<Guild>> updates = [];
-                if (statusCode == HttpStatusCode.NoContent)
+                finally
                 {
-                    count += 1;
-                    if (_previousMinuteFailedGuilds.Remove(guild))
-                    {
-                        Log.Information($"Failed guild {guild.GuildId} has been resent successfully.");
-                    }
-
-                    updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null)));
+                    semaphore.Release();
                 }
+            })];
 
-                updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastStatusCode, statusCode));
-
-                guildsCleared.Add(guild.Id);
-                await _guildService.Update(guild.GuildId, update.Combine(updates));
-            }
+            await Task.WhenAll(tasks);
 
             watch.Stop();
             string timeToProcess = $"{(watch.Elapsed.Hours != 0 ? $"{watch.Elapsed.Hours} hours, " : "")}{(watch.Elapsed.Minutes != 0 ? $"{watch.Elapsed.Minutes} minutes, " : "")}{watch.Elapsed.Seconds} seconds";
             Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} (+ {previousFailuresCount}) daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
+        }
+
+        public async Task<bool> ProcessGuild(Guild guild, ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion, string votdRef, ZonedDateTime dateTimeInStandardTz)
+        {
+            InternalEmbed embed;
+            WebhookRequestBody webhookRequestBody;
+            bool isSuccess = false;
+
+            string version = guild.Version ?? "RSV";
+            string culture = guild.Language ?? "en-US";
+
+            Version idealVersion = await _versionService.Get(version) ?? await _versionService.Get("RSV");
+            Language idealLanguage = await _languageService.Get(culture) ?? await _languageService.Get("en-US");
+
+            CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Culture);
+
+            if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
+            {
+                embed = Utils.GetInstance().Embedify(_localizer["AutomaticDailyVerseWebhookUsernameAlt"], _localizer["AutomaticDailyVerseBothTestamentsWarning"], true);
+                webhookRequestBody = new WebhookRequestBody
+                {
+                    Username = _localizer["AutomaticDailyVerseWebhookUsername"],
+                    AvatarURL = embed.Footer.IconURL,
+                    Embeds = [embed]
+                };
+            }
+            else
+            {
+                IContentProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
+
+                if (provider == null)
+                {
+                    return false;
+                }
+
+                Task<VerseResult> verseResultTask = resultsByVersion.GetOrAdd(idealVersion.Abbreviation, _ => provider.GetVerse(votdRef, true, true, idealVersion));
+                VerseResult verse = await verseResultTask;
+
+                if (verse == null)
+                {
+                    return false;
+                }
+
+                string rolePing = guild.DailyVerseRoleId == guild.GuildId ? "@everyone" : $"<@&{guild.DailyVerseRoleId}>";
+                string content = guild.DailyVerseRoleId != null ? $"{rolePing} - {_localizer["AutomaticDailyVerseLeadIn"]}:" : $"{_localizer["AutomaticDailyVerseLeadIn"]}:";
+                embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
+
+                if (verse.Reference.Version.Publisher == "biblica")
+                {
+                    embed.Author.Name += " (Biblica)";
+                    embed.Author.URL = "https://biblica.org";
+                }
+
+                webhookRequestBody = new WebhookRequestBody
+                {
+                    Content = content,
+                    Username = _localizer["AutomaticDailyVerseWebhookUsername"],
+                    AvatarURL = embed.Footer.IconURL,
+                    Embeds = [embed]
+                };
+            }
+
+            RestRequest request = new(guild.DailyVerseWebhook);
+            request.AddJsonBody(webhookRequestBody);
+
+            RestResponse resp = null;
+            HttpStatusCode statusCode = HttpStatusCode.ServiceUnavailable;
+            try
+            {
+                resp = await _restClient.PostAsync(request);
+                statusCode = resp.StatusCode;
+            }
+            catch (HttpRequestException ex)
+            {
+                statusCode = (HttpStatusCode)ex.StatusCode;
+
+
+                if (!_previousMinuteFailedGuilds.ContainsKey(guild.GuildId))
+                {
+                    Log.Error($"AutomaticDailyVerseService: Caught exception, received {statusCode} for guild {guild.GuildId}. Adding to failures queue...");
+                    _previousMinuteFailedGuilds.TryAdd(guild.GuildId, guild);
+                }
+                else
+                {
+                    Log.Error($"AutomaticDailyVerseService: Failed guild {guild.GuildId} has failed again, removing from queue...");
+                    _previousMinuteFailedGuilds.TryRemove(guild.GuildId, out _);
+                }
+
+                isSuccess = false;
+            }
+
+            UpdateDefinitionBuilder<Guild> update = Builders<Guild>.Update;
+            List<UpdateDefinition<Guild>> updates = [];
+            if (statusCode == HttpStatusCode.NoContent)
+            {
+                if (_previousMinuteFailedGuilds.TryRemove(guild.GuildId, out _))
+                {
+                    Log.Information($"Failed guild {guild.GuildId} has been resent successfully.");
+                }
+
+                updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null)));
+                isSuccess = true;
+            }
+
+            updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastStatusCode, statusCode));
+
+            await _guildService.Update(guild.GuildId, update.Combine(updates));
+
+            return isSuccess;
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

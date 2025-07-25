@@ -64,6 +64,52 @@
             "stopAtEntry": false,
             "requireExactSource": false,
             "envFile": "${workspaceFolder}/src/BibleBot.Backend/.env"
+        },
+        {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "name": "Debug Backend (Cursor)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-backend",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/BibleBot.Backend/bin/Debug/net9.0/BibleBot.Backend.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/BibleBot.Backend",
+            "stopAtEntry": false,
+            "requireExactSource": false,
+            "envFile": "${workspaceFolder}/src/BibleBot.Backend/.env",
+            "pipeTransport": {
+                "pipeProgram": "zsh",
+                "pipeArgs": [
+                    "-c"
+                ],
+                "debuggerPath": "/run/current-system/sw/bin/netcoredbg"
+            }
+        },
+        {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "name": "Debug AutoServ (Cursor)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-autoserv",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/BibleBot.AutomaticServices/bin/Debug/net9.0/BibleBot.AutomaticServices.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/BibleBot.AutomaticServices",
+            "stopAtEntry": false,
+            "requireExactSource": false,
+            "envFile": "${workspaceFolder}/src/BibleBot.Backend/.env",
+            "pipeTransport": {
+                "pipeProgram": "zsh",
+                "pipeArgs": [
+                    "-c"
+                ],
+                "debuggerPath": "/run/current-system/sw/bin/netcoredbg"
+            }
         }
     ]
 }
