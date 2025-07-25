@@ -25,5 +25,6 @@
             "other": "off"
         },
         "editor.formatOnSave": false
-    }
+    },
+    "cursorpyright.analysis.typeCheckingMode": "basic"
 }

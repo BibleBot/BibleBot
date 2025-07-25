@@ -80,7 +80,6 @@ namespace BibleBot.AutomaticServices.Services
 
         private async void RunAutomaticDailyVerses(object state)
         {
-            int count = 0;
             bool isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
@@ -147,6 +146,7 @@ namespace BibleBot.AutomaticServices.Services
             })];
 
             await Task.WhenAll(tasks);
+            int count = tasks.Count(t => t.Result);
 
             watch.Stop();
             string timeToProcess = $"{(watch.Elapsed.Hours != 0 ? $"{watch.Elapsed.Hours} hours, " : "")}{(watch.Elapsed.Minutes != 0 ? $"{watch.Elapsed.Minutes} minutes, " : "")}{watch.Elapsed.Seconds} seconds";
