@@ -221,7 +221,10 @@ namespace BibleBot.AutomaticServices.Services
                 if (statusCode == HttpStatusCode.NoContent)
                 {
                     count += 1;
-                    _previousMinuteFailedGuilds.Remove(guild);
+                    if (_previousMinuteFailedGuilds.Remove(guild))
+                    {
+                        Log.Information($"Failed guild {guild.GuildId} has been resent successfully.");
+                    }
 
                     updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null)));
                 }
@@ -234,7 +237,7 @@ namespace BibleBot.AutomaticServices.Services
 
             watch.Stop();
             string timeToProcess = $"{(watch.Elapsed.Hours != 0 ? $"{watch.Elapsed.Hours} hours, " : "")}{(watch.Elapsed.Minutes != 0 ? $"{watch.Elapsed.Minutes} minutes, " : "")}{watch.Elapsed.Seconds} seconds";
-            Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
+            Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} (+ {previousFailuresCount}) daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
