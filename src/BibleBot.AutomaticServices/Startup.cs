@@ -51,6 +51,7 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<GuildService>();
             services.AddSingleton<VersionService>();
             services.AddSingleton<LanguageService>();
+            services.AddSingleton(sp => new ParsingService(true));
 
             services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), true));
 
@@ -75,6 +76,9 @@ namespace BibleBot.AutomaticServices
                 sp.GetRequiredService<APIBibleProvider>(),
                 sp.GetRequiredService<NLTAPIProvider>()
             ]);
+
+            // Register the special verse processing service
+            services.AddSingleton<SpecialVerseProcessingService>();
 
             // Add background services.
             services.AddHostedService<AutomaticDailyVerseService>();

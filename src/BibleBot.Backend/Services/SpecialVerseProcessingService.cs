@@ -29,7 +29,19 @@ namespace BibleBot.Backend.Services
         public async Task<VerseResult> GetDailyVerse(Version version, bool titlesEnabled, bool verseNumbersEnabled)
         {
             string votdRef = await specialVerseProvider.GetDailyVerse();
-            return await ProcessSpecialVerseReference(votdRef, version, titlesEnabled, verseNumbersEnabled);
+            VerseResult result = await ProcessSpecialVerseReference(votdRef, version, titlesEnabled, verseNumbersEnabled);
+
+            // Fallback to string-based approach if proper parsing fails
+            if (result == null)
+            {
+                IContentProvider provider = bibleProviders.FirstOrDefault(p => p.Name == version.Source);
+                if (provider != null)
+                {
+                    result = await provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, version);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -42,7 +54,19 @@ namespace BibleBot.Backend.Services
         public async Task<VerseResult> GetRandomVerse(Version version, bool titlesEnabled, bool verseNumbersEnabled)
         {
             string randomRef = await specialVerseProvider.GetRandomVerse();
-            return await ProcessSpecialVerseReference(randomRef, version, titlesEnabled, verseNumbersEnabled);
+            VerseResult result = await ProcessSpecialVerseReference(randomRef, version, titlesEnabled, verseNumbersEnabled);
+
+            // Fallback to string-based approach if proper parsing fails
+            if (result == null)
+            {
+                IContentProvider provider = bibleProviders.FirstOrDefault(p => p.Name == version.Source);
+                if (provider != null)
+                {
+                    result = await provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, version);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -55,7 +79,19 @@ namespace BibleBot.Backend.Services
         public async Task<VerseResult> GetTrulyRandomVerse(Version version, bool titlesEnabled, bool verseNumbersEnabled)
         {
             string trulyRandomRef = await specialVerseProvider.GetTrulyRandomVerse();
-            return await ProcessSpecialVerseReference(trulyRandomRef, version, titlesEnabled, verseNumbersEnabled);
+            VerseResult result = await ProcessSpecialVerseReference(trulyRandomRef, version, titlesEnabled, verseNumbersEnabled);
+
+            // Fallback to string-based approach if proper parsing fails
+            if (result == null)
+            {
+                IContentProvider provider = bibleProviders.FirstOrDefault(p => p.Name == version.Source);
+                if (provider != null)
+                {
+                    result = await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, version);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -75,11 +111,15 @@ namespace BibleBot.Backend.Services
             Dictionary<string, List<string>> bookNames = metadataFetchingService.GetBookNames();
             List<string> defaultNames = metadataFetchingService.GetDefaultBookNames();
 
+            // Purify the reference string first (same as VersesController)
+            string purifiedReference = ParsingService.PurifyBody(["<>"], referenceString);
+
             // Parse the reference string using the same pipeline as VersesController
-            System.Tuple<string, List<BookSearchResult>> tuple = parsingService.GetBooksInString(bookNames, defaultNames, referenceString);
+            System.Tuple<string, List<BookSearchResult>> tuple = parsingService.GetBooksInString(bookNames, defaultNames, purifiedReference);
 
             if (tuple.Item2.Count == 0)
             {
+                // No books found in the reference string
                 return null;
             }
 

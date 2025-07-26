@@ -20,7 +20,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using BibleBot.Backend;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
@@ -39,8 +38,7 @@ namespace BibleBot.AutomaticServices.Services
         private readonly VersionService _versionService;
         private readonly LanguageService _languageService;
 
-        private readonly SpecialVerseProvider _spProvider;
-        private readonly List<IContentProvider> _bibleProviders;
+        private readonly SpecialVerseProcessingService _specialVerseProcessingService;
 
         private readonly IStringLocalizer<AutomaticDailyVerseService> _localizer;
 
@@ -50,16 +48,14 @@ namespace BibleBot.AutomaticServices.Services
         private Timer _timer;
 
         public AutomaticDailyVerseService(GuildService guildService, VersionService versionService, LanguageService languageService,
-                                          SpecialVerseProvider spProvider, List<IContentProvider> bibleProviders,
+                                          SpecialVerseProcessingService specialVerseProcessingService,
                                           IStringLocalizer<AutomaticDailyVerseService> localizer)
         {
             _guildService = guildService;
             _versionService = versionService;
             _languageService = languageService;
-            _spProvider = spProvider;
+            _specialVerseProcessingService = specialVerseProcessingService;
             _localizer = localizer;
-
-            _bibleProviders = bibleProviders;
 
             _restClient = new RestClient("https://discord.com/api/webhooks", configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
         }
@@ -115,7 +111,6 @@ namespace BibleBot.AutomaticServices.Services
             Log.Information($"AutomaticDailyVerseService: Fetched {idealCount} (+ {previousFailuresCount}) guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}.");
 
             Stopwatch watch = Stopwatch.StartNew();
-            string votdRef = await _spProvider.GetDailyVerse();
             ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion = [];
 
             int maxConcurrentRequests = 10;
@@ -127,7 +122,7 @@ namespace BibleBot.AutomaticServices.Services
                 await semaphore.WaitAsync();
                 try
                 {
-                    return await ProcessGuild(guild, resultsByVersion, votdRef, dateTimeInStandardTz);
+                    return await ProcessGuild(guild, resultsByVersion, dateTimeInStandardTz);
                 }
                 catch (Exception ex)
                 {
@@ -148,7 +143,7 @@ namespace BibleBot.AutomaticServices.Services
             Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} (+ {previousFailuresCount}) daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
         }
 
-        public async Task<bool> ProcessGuild(Guild guild, ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion, string votdRef, ZonedDateTime dateTimeInStandardTz)
+        public async Task<bool> ProcessGuild(Guild guild, ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion, ZonedDateTime dateTimeInStandardTz)
         {
             InternalEmbed embed;
             WebhookRequestBody webhookRequestBody;
@@ -174,14 +169,7 @@ namespace BibleBot.AutomaticServices.Services
             }
             else
             {
-                IContentProvider provider = _bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source);
-
-                if (provider == null)
-                {
-                    return false;
-                }
-
-                Task<VerseResult> verseResultTask = resultsByVersion.GetOrAdd(idealVersion.Abbreviation, _ => provider.GetVerse(votdRef, true, true, idealVersion));
+                Task<VerseResult> verseResultTask = resultsByVersion.GetOrAdd(idealVersion.Abbreviation, _ => _specialVerseProcessingService.GetDailyVerse(idealVersion, true, true));
                 VerseResult verse = await verseResultTask;
 
                 if (verse == null)

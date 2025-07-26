@@ -19,7 +19,14 @@ namespace BibleBot.Backend.Services
 {
     public partial class ParsingService
     {
-        private readonly MDBookMap _bookMap = JsonSerializer.Deserialize<MDBookMap>(File.ReadAllText("./Data/book_map.json"));
+        private readonly MDBookMap _bookMap;
+        private readonly string _filePrefix;
+
+        public ParsingService(bool isForAutoServ = false)
+        {
+            _filePrefix = isForAutoServ ? "../BibleBot.Backend" : ".";
+            _bookMap = JsonSerializer.Deserialize<MDBookMap>(File.ReadAllText($"{_filePrefix}/Data/book_map.json"));
+        }
         private readonly HashSet<string> _overlappingBookNames =
         [
             "EZR", // Ezra

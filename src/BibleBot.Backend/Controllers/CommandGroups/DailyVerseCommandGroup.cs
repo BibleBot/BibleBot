@@ -13,7 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
@@ -70,6 +69,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
                 VerseResult verseResult = await specialVerseProcessingService.GetDailyVerse(idealVersion, titlesEnabled, verseNumbersEnabled);
 
+#pragma warning disable IDE0046 // Convert to conditional expression
                 if (verseResult == null)
                 {
                     return new VerseResponse
@@ -80,6 +80,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         Culture = CultureInfo.CurrentUICulture.Name
                     };
                 }
+#pragma warning restore IDE0046 // Convert to conditional expression
 
                 return new VerseResponse
                 {
