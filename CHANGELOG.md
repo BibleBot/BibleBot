@@ -4,6 +4,47 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [12.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v11.2.0..v12.0.0) - 2025-07-26
+
+### 🚀 Features
+
+- Support common dash variants in references by normalizing them ([1411463](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/141146351e1c02f44abbea3726b0bdecf8abb441))
+- Function for converting Hebrew-numbered Psalm references to the Septuagint-numbered equivalent ([b583ff0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b583ff0d1f2bf3d9fb381a93f2ec7c27d19a919b))
+- Establish indexes for the larger-used collections. ([8e4485b](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8e4485b8c4a92ca85e4062c2cffae337ff4eba58))
+- Add healthcheck endpoint ([fe6b0a0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/fe6b0a0468c5e80e39f37f55af644caab4c1741d))
+- Record status codes for daily verses ([8e21c37](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8e21c37f40ec5d1da23dce350d3a3290d4e9379b))
+- *(autoserv)* Add failed webhook calls to a queue to be retried ([b3f37a8](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b3f37a8af39c45b231a9f43c5c92d0c822355f85))
+- *(autoserv)* Run daily verses in parallel ([d2eff90](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/d2eff90805fcdcafb1bcf5389f486aee29d130e3))
+- *(autoserv)* Remove daily verse preferences when webhook returns 404 ([bb93321](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/bb93321c5ce33716408cea16e19a4923db2852d9))
+- Add /cleardailyverserole ([e263a6e](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/e263a6e27aba348cd7d1a806043c2ccdc5e58512))
+
+### 🐛 Bug Fixes
+
+- Use database count for GetCount() implementations, make sure user prefs aren't cached by autoserv ([4f754b1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/4f754b185b84b459b905a188d3bb17423f22e155))
+- ArgumentNullException for some search queries ([c0f9671](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c0f96713529f5baaebc4ef5997092667e3c6d2f2))
+- NullReferenceException when an invalid version is passed to /search ([8e4736f](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8e4736f4624346c6b7f8df086c0cbe2e06eeee51))
+- ArgumentOutOfRangeException when a comma is on a reference that isn't looking for other verses ([b161177](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b161177475b637c85308de4f47a427922ae58858))
+- Duplicate of LJE in default_names causing invalid parsing for some DEU book names ([3dbfce1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/3dbfce13a51bf736a168dc089934cfaec37f776c))
+- NullReferenceException caused by fallback version in /search not applying correctly ([1d020a9](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1d020a9d187a1e0b9edf9242e8cbe437ee0602c3))
+- Allow variant dashes in frontend ([3de7725](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/3de77254de2c375a4d4650270cf3cb77865d6eac))
+- *(preferences)* Refactor preference cache/db logic, increase timeout and pool size for db ([8b6e0ed](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8b6e0ed77c40ebcd5e1027d2e2e256e260d984dc))
+- *(autoserv)* Save VerseResult to avoid unnecessary outbound connections ([bf2f01e](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/bf2f01ee53181f7445be56decaca8d81a047d919))
+- *(resources)* ArgumentOutOfRangeException when giving a non-existent paragraph number to a resource ([7a9db53](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/7a9db531d0b268e528aad41663effb9190c09511))
+- *(resources)* Some formatting in creeds ([941deba](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/941deba0d716503c594c6897dc971f08fbca2700))
+- [**breaking**] Remove OptOutUser in favor of UserPreference flag, rework MongoService.Get() ([b64e845](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b64e8455de0ed060d572b2cbbb8f7216c1c97bfb))
+- Cache for null values ([c4d67d6](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c4d67d60e7362b4271459b6fed0f2fbaf6e8c3d4))
+- NullReferenceException for optoutuser check ([2a2f93e](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/2a2f93e2d3d8601c3fd6b24d9a13d998f173ddf7))
+- *(autoserv)* Avoid requeuing failed daily verse sends ([ef27206](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/ef272068a7429ccd4f09c74afbfcde55bc2c04db))
+- *(autoserv)* Log when failed webhook works on resend. ([039b87a](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/039b87ab7dfe46642c15a6868c3fdf3de99e6d72))
+- *(autoserv)* Reposition log for failure queue addition ([1a23e86](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1a23e86e9704a90cea0626bad8f38834e6e50ae9))
+- *(autoserv)* Return count of passed daily verses ([9e3a8c2](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/9e3a8c288beb1b737eece0a896a38da715719808))
+
+### 🚜 Refactor
+
+- Add more sentry context ([b0f87ed](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b0f87eda4f86a6a55d75b2496d6b3f24de4c045b))
+- Optimize verse generation code ([3dcb01a](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/3dcb01a15b26c37a328ccf52b3793e3f34953ea6))
+- More optimizations ([0a768d8](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/0a768d897afe5729a5a88a1e48cb45c936d14b4d))
+
 ## [11.2.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v11.1.0..v11.2.0) - 2025-05-31
 
 ### 🚀 Features
