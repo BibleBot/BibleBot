@@ -54,8 +54,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         [GeneratedRegex("[a-zA-Z]{3} ([0-9]{1,3}):([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseIdRegex();
 
-        [GeneratedRegex("^[0-9]{1,3}:([0-9]{1,3})$", RegexOptions.Compiled)]
-        private static partial Regex ChapterInVerseNumberRegex();
+
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
@@ -200,46 +199,18 @@ namespace BibleBot.Backend.Services.Providers.Content
 
                         if (matches.Count > 0)
                         {
-#pragma warning disable IDE0045 // Convert to conditional expression
-                            if (matches[0].Groups[2].Value == "1")
-                            {
-                                if (matches[0].Groups[1].Value == "1" || matches[0].Groups[1].Value == $"{reference.StartingChapter}")
-                                {
-                                    el.TextContent = " <**1**> ";
-                                }
-                                else
-                                {
-                                    el.TextContent = $" <**{matches[0].Groups[1].Value}:1**> ";
-                                }
-                            }
-                            else
-                            {
-                                Match match = ChapterInVerseNumberRegex().Match(el.TextContent);
+                            string chapter = matches[0].Groups[1].Value;
+                            string verse = matches[0].Groups[2].Value;
 
-                                if (match.Success)
-                                {
-                                    el.TextContent = $" <**{match.Groups[1].Value}**> ";
-                                }
-                                else
-                                {
-                                    el.TextContent = $" <**{el.TextContent}**> ";
-                                }
-                            }
+                            bool isSubsequentChapter = int.TryParse(chapter, out int chapterNum) && chapterNum > reference.StartingChapter;
+                            bool shouldShowChapter = reference.StartingChapter != reference.EndingChapter && verse == "1" && isSubsequentChapter;
+
+                            el.TextContent = shouldShowChapter ? $" <**{chapter}:{verse}**> " : $" <**{verse}**> ";
                         }
                         else
                         {
-                            Match match = ChapterInVerseNumberRegex().Match(el.TextContent);
-
-                            if (match.Success)
-                            {
-                                el.TextContent = $" <**{match.Groups[1].Value}**> ";
-                            }
-                            else
-                            {
-                                el.TextContent = $" <**{el.TextContent}**> ";
-                            }
+                            el.TextContent = $" <**{el.TextContent}**> ";
                         }
-#pragma warning restore IDE0045 // Convert to conditional expression
                     }
                     else
                     {
