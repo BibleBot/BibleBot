@@ -26,5 +26,18 @@
         },
         "editor.formatOnSave": false
     },
-    "cursorpyright.analysis.typeCheckingMode": "basic"
+    "cursorpyright.analysis.typeCheckingMode": "basic",
+    "dotnet-test-explorer.testProjectPath": "test/BibleBot.Tests.Backend/",
+    "dotnet-test-explorer.debugger.pipeTransportEnabled": true,
+    "dotnet-test-explorer.debugger.pipeCwd": "${workspaceFolder}",
+    "dotnet-test-explorer.debugger.pipeProgram": "zsh",
+    "dotnet-test-explorer.debugger.pipeArgs": [
+        "-c"
+    ],
+    "dotnet-test-explorer.debugger.debuggerArgs": [
+        "--interpreter=vscode"
+    ],
+    "dotnet-test-explorer.debugger.debuggerPath": "/run/current-system/sw/bin/netcoredbg",
+    "dotnet-test-explorer.debugger.quoteArgs": true,
+    "dotnet-test-explorer.testArguments": "-s .runsettings"
 }
