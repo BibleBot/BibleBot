@@ -75,6 +75,10 @@ namespace BibleBot.Backend
 
             // Instantiate the various providers, which are just services.
             services.AddSingleton<SpecialVerseProvider>();
+            services.AddSingleton<BibleGatewayProvider>();
+            services.AddSingleton<APIBibleProvider>();
+            services.AddSingleton<NLTAPIProvider>();
+            services.AddSingleton<SpecialVerseProvider>();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
