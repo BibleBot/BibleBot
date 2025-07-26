@@ -227,7 +227,6 @@ namespace BibleBot.AutomaticServices.Services
             {
                 statusCode = (HttpStatusCode)ex.StatusCode;
 
-
                 if (!_previousMinuteFailedGuilds.ContainsKey(guild.GuildId))
                 {
                     Log.Error($"AutomaticDailyVerseService: Caught exception, received {statusCode} for guild {guild.GuildId}. Adding to failures queue...");
@@ -248,15 +247,27 @@ namespace BibleBot.AutomaticServices.Services
             {
                 if (_previousMinuteFailedGuilds.TryRemove(guild.GuildId, out _))
                 {
-                    Log.Information($"Failed guild {guild.GuildId} has been resent successfully.");
+                    Log.Information($"AutomaticDailyVerseService: Failed guild {guild.GuildId} has been resent successfully.");
                 }
 
                 updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, dateTimeInStandardTz.ToString("MM/dd/yyyy", null)));
                 isSuccess = true;
             }
+            else if (statusCode == HttpStatusCode.NotFound)
+            {
+                // This webhook no longer exists, so we'll remove the daily verse preferences of the guild.
+                Log.Information($"AutomaticDailyVerseService: Webhook for {guild.GuildId} no longer exists, removing daily verse preferences...");
+
+                updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseTime, null));
+                updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseTimeZone, null));
+                updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseRoleId, null));
+                updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseWebhook, null));
+                updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, null));
+
+                isSuccess = false;
+            }
 
             updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseLastStatusCode, statusCode));
-
             await _guildService.Update(guild.GuildId, update.Combine(updates));
 
             return isSuccess;
