@@ -6,6 +6,8 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
+
 namespace BibleBot.Models
 {
     /// <summary>
@@ -43,7 +45,8 @@ namespace BibleBot.Models
         /// Determines whether the specified object is equal to the Verse.
         /// </summary>
         /// <remarks>
-        /// This is used for caching purposes.
+        /// This is used for deduplication purposes. Two VerseResult objects are considered equal
+        /// if they represent the same verse reference in the same version, regardless of text formatting.
         /// </remarks>
         /// <param name="obj"></param>
         /// <returns>true if the specified object is equal to the Verse; otherwise, false.</returns>
@@ -54,19 +57,19 @@ namespace BibleBot.Models
                 return false;
             }
 
-            VerseResult verse = obj as VerseResult;
+            VerseResult other = obj as VerseResult;
 
-            return Reference.Equals(verse.Reference) && Title.Equals(verse.Title) &&
-                   PsalmTitle.Equals(verse.PsalmTitle) && Text.Equals(verse.Text);
+            return Reference.ToString(true) == other.Reference.ToString(true) &&
+                   Reference.Version.Abbreviation == other.Reference.Version.Abbreviation;
         }
 
         /// <summary>
         /// Serves as the default hash function.
         /// </summary>
         /// <remarks>
-        /// This is used for caching purposes.
+        /// This is used for deduplication purposes. Hash code is based on reference and version only.
         /// </remarks>
-        /// <returns>A hash code created by XOR'ing the properties' hash codes.</returns>
-        public override int GetHashCode() => Reference.GetHashCode() ^ Title.GetHashCode() ^ PsalmTitle.GetHashCode() ^ Text.GetHashCode();
+        /// <returns>A hash code for the verse reference and version.</returns>
+        public override int GetHashCode() => HashCode.Combine(Reference.ToString(true), Reference.Version.Abbreviation);
     }
 }

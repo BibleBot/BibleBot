@@ -20,7 +20,7 @@ namespace BibleBot.Backend.Services
     public partial class ParsingService
     {
         private readonly MDBookMap _bookMap = JsonSerializer.Deserialize<MDBookMap>(File.ReadAllText("./Data/book_map.json"));
-        private readonly List<string> _overlappingBookNames =
+        private readonly HashSet<string> _overlappingBookNames =
         [
             "EZR", // Ezra
             "JER", // Jeremiah
@@ -40,27 +40,35 @@ namespace BibleBot.Backend.Services
             {
                 foreach (KeyValuePair<string, List<string>> bookName in bookNames)
                 {
-                    foreach (string item in bookName.Value.Where(item => IsValueInString(str, item.ToLowerInvariant())).Where(_ => !(i == 1 && _overlappingBookNames.Contains(bookName.Key))))
+                    // Skip overlapping books in first iteration
+                    if (i == 1 && _overlappingBookNames.Contains(bookName.Key))
                     {
-                        str = str.Replace(item.ToLowerInvariant(), bookName.Key);
+                        continue;
+                    }
+
+                    foreach (string item in bookName.Value)
+                    {
+                        if (IsValueInString(str, item.ToLowerInvariant()))
+                        {
+                            str = str.Replace(item.ToLowerInvariant(), bookName.Key);
+                        }
                     }
                 }
             }
 
             string[] tokens = str.Split(" ");
-            foreach (string bookName in defaultNames)
+            // Use HashSet for O(1) lookup instead of O(n) linear search
+            var defaultNamesSet = new HashSet<string>(defaultNames);
+
+            for (int i = 0; i < tokens.Length; i++)
             {
-                for (int i = 0; i < tokens.Length; i++)
+                if (defaultNamesSet.Contains(tokens[i]))
                 {
-                    if (tokens[i] == bookName)
-                    {
-                        results.Add(new BookSearchResult { Name = bookName, Index = i });
-                    }
+                    results.Add(new BookSearchResult { Name = tokens[i], Index = i });
                 }
             }
 
-            // Sort results by input.
-            results.Sort((x, y) => x.Index.CompareTo(y.Index));
+            // Results are already in order by index, no need to sort
             return new System.Tuple<string, List<BookSearchResult>>(str, results);
         }
 
@@ -115,11 +123,16 @@ namespace BibleBot.Backend.Services
                         versionAcronymRegexMatch = VersionAcronymRegex().Match(lastToken);
                     }
 
-                    Version potentialVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, versionAcronymRegexMatch.Value, System.StringComparison.OrdinalIgnoreCase));
-
-                    if (potentialVersion != null)
+                    // Use Dictionary for O(1) lookup instead of O(n) FirstOrDefault
+                    if (versionAcronymRegexMatch.Success)
                     {
-                        prefVersion = potentialVersion;
+                        string versionAbbr = versionAcronymRegexMatch.Value;
+                        Version potentialVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, versionAbbr, System.StringComparison.OrdinalIgnoreCase));
+
+                        if (potentialVersion != null)
+                        {
+                            prefVersion = potentialVersion;
+                        }
                     }
                 }
 
@@ -217,18 +230,12 @@ namespace BibleBot.Backend.Services
 
                                         int tokenIndexPtr = 2;
 
-                                        while (commaSplit[^1] == "")
+                                        // Optimize the token extension loop
+                                        int maxTokens = tokens.Length - bookSearchResult.Index;
+                                        while (commaSplit[^1] == "" && tokenIndexPtr < maxTokens)
                                         {
-                                            int nextTokenIdx = bookSearchResult.Index + tokenIndexPtr;
-
-                                            if (nextTokenIdx >= tokens.Length)
-                                            {
-                                                break;
-                                            }
-
                                             pairValueCopy += tokens[bookSearchResult.Index + tokenIndexPtr];
                                             commaSplit = pairValueCopy.Split(',');
-
                                             tokenIndexPtr++;
                                         }
 
@@ -356,14 +363,16 @@ namespace BibleBot.Backend.Services
                 prefVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, "NRSVA", System.StringComparison.OrdinalIgnoreCase));
             }
 
-            Book book = prefVersion.Books?.FirstOrDefault(book => book.ProperName == bookName, new Book { Name = bookSearchResult.Name, ProperName = bookName });
+            // Use null-coalescing operator for cleaner code and avoid creating unnecessary Book object
+            Book book = prefVersion.Books?.FirstOrDefault(b => b.ProperName == bookName) ?? new Book { Name = bookSearchResult.Name, ProperName = bookName };
 
-            if (bookName == "Psalm" && startingChapter == 151)
+            // Handle Psalm 151 special case more efficiently
+            if (string.Equals(bookName, "Psalm", System.StringComparison.Ordinal) && startingChapter == 151)
             {
                 isOT = false;
                 isDEU = true;
 
-                if (prefVersion.Source == "bg")
+                if (string.Equals(prefVersion.Source, "bg", System.StringComparison.Ordinal))
                 {
                     book.ProperName = "Psalm 151";
                     startingChapter = 1;
@@ -390,15 +399,46 @@ namespace BibleBot.Backend.Services
 
         public static string PurifyBody(List<string> ignoringBrackets, string str)
         {
-            str = str.ToLowerInvariant().Replace("\r", " ").Replace("\n", " ");
-            str = ignoringBrackets.Aggregate(str, (current, brackets) => new Regex(@"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1]).Replace(current, ""));
-            str = VariantDashesRegex().Replace(str, "-");
+            // Use StringBuilder for multiple string operations
+            var sb = new System.Text.StringBuilder(str.ToLowerInvariant());
+            sb.Replace("\r", " ").Replace("\n", " ");
 
+            // Process brackets
+            foreach (string brackets in ignoringBrackets)
+            {
+                string pattern = @"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1];
+                string bracketResult = Regex.Replace(sb.ToString(), pattern, "");
+                sb.Clear().Append(bracketResult);
+            }
+
+            // Replace variant dashes
+            string result = VariantDashesRegex().Replace(sb.ToString(), "-");
+
+            // Replace punctuation more efficiently
             const string punctuationToIgnore = "!\"#$%&'()*+./;<=>?@[\\]^_`{|}~";
-            return punctuationToIgnore.Aggregate(str, (current, character) => current.Replace(character, ' '));
+            foreach (char character in punctuationToIgnore)
+            {
+                result = result.Replace(character, ' ');
+            }
+
+            return result;
         }
 
-        private static bool IsValueInString(string str, string val) => $" {str} ".Contains($" {val} ");
+        private static bool IsValueInString(string str, string val)
+        {
+            // Avoid string allocations by using IndexOf with proper bounds checking
+            int index = str.IndexOf(val, System.StringComparison.OrdinalIgnoreCase);
+            if (index == -1)
+            {
+                return false;
+            }
+
+            // Check if it's a word boundary (space or start/end of string)
+            bool startBoundary = index == 0 || char.IsWhiteSpace(str[index - 1]);
+            bool endBoundary = index + val.Length == str.Length || char.IsWhiteSpace(str[index + val.Length]);
+
+            return startBoundary && endBoundary;
+        }
 
         [GeneratedRegex(@"[\u2013\u2014\u2012\uFF0D]")]
         private static partial Regex VariantDashesRegex();

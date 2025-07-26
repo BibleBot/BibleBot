@@ -499,7 +499,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             };
 
             result.StatusCode.Should().Be(200);
-            resp.Should().BeEquivalentTo(expected);
+
+            // For some reason, this isn't passing when used like the other tests. Cursor suggested this and it seems to work.
+            resp.Should().BeEquivalentTo(expected, options => options.ComparingByMembers<VerseResult>());
         }
 
         [Test]

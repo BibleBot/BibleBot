@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BibleBot.Backend.InternalModels;
@@ -35,7 +36,7 @@ namespace BibleBot.Backend.Controllers
         private readonly IStringLocalizer _localizer = localizer;
         private readonly IStringLocalizer _sharedLocalizer = sharedLocalizer;
 
-        [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$")]
+        [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$", RegexOptions.Compiled)]
         private static partial Regex TruncatedTextRegex();
 
         /// <summary>
@@ -98,7 +99,7 @@ namespace BibleBot.Backend.Controllers
             Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
 
             List<Version> versions = await versionService.Get();
-            List<Reference> references = [];
+            HashSet<Reference> references = [];
 
             foreach (BookSearchResult bsr in tuple.Item2)
             {
@@ -169,10 +170,7 @@ namespace BibleBot.Backend.Controllers
                     reference.Book.ProperName = reference.Book.PreferredName;
                 }
 
-                if (!references.Contains(reference))
-                {
-                    references.Add(reference);
-                }
+                references.Add(reference);
             }
 
             SentrySdk.ConfigureScope(scope =>
@@ -180,7 +178,18 @@ namespace BibleBot.Backend.Controllers
                 scope.Contexts["verseReferences"] = references;
             });
 
-            List<VerseResult> results = [];
+            HashSet<VerseResult> results = [];
+
+            if (references.Count == 0)
+            {
+                return BadRequest(new VerseResponse
+                {
+                    OK = false,
+                    Verses = null,
+                    LogStatement = null,
+                    Culture = CultureInfo.CurrentUICulture.Name
+                });
+            }
 
             if (references.Count > 6)
             {
@@ -196,9 +205,15 @@ namespace BibleBot.Backend.Controllers
                 });
             }
 
+            // Create provider lookup dictionary once
+            Dictionary<string, IContentProvider> providerLookup = _bibleProviders.ToDictionary(p => p.Name);
+
             foreach (Reference reference in references)
             {
-                IContentProvider provider = _bibleProviders.FirstOrDefault(pv => reference is { Version: not null } && pv.Name == reference.Version.Source) ?? throw new ProviderNotFoundException();
+                if (reference.Version?.Source == null || !providerLookup.TryGetValue(reference.Version.Source, out IContentProvider provider))
+                {
+                    throw new ProviderNotFoundException();
+                }
 
                 VerseResult result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
@@ -207,34 +222,31 @@ namespace BibleBot.Backend.Controllers
                     continue;
                 }
 
-                if (displayStyle == "embed")
+                if (string.Equals(displayStyle, "embed", StringComparison.Ordinal))
                 {
                     if (result.Text.Length > 2048)
                     {
-                        result.Text = $"{string.Join("", result.Text.SkipLast(result.Text.Length - 2044))}...";
+                        result.Text = string.Concat(result.Text.AsSpan(0, 2044), "...");
                         result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                     }
 
                     if (result.Title.Length > 256)
                     {
-                        result.Title = $"{string.Join("", result.Title.SkipLast(result.Title.Length - 252))}...";
+                        result.Title = string.Concat(result.Title.AsSpan(0, 252), "...");
                     }
                 }
-                else if (displayStyle != "embed")
+                else if (!string.Equals(displayStyle, "embed", StringComparison.Ordinal))
                 {
                     int combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
 
                     if (combinedTextLength > 2000)
                     {
-                        result.Text = $"{string.Join("", result.Text.SkipLast(combinedTextLength - 1919))}...";
+                        result.Text = string.Concat(result.Text.AsSpan(0, 1919), "...");
                         result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                     }
                 }
 
-                if (!results.Contains(result))
-                {
-                    results.Add(result);
-                }
+                results.Add(result);
             }
 
             SentrySdk.ConfigureScope(scope =>
@@ -253,7 +265,19 @@ namespace BibleBot.Backend.Controllers
                 });
             }
 
-            string logStatement = string.Join(" / ", results.Select(verse => $"{verse.Reference.ToString(true)} {verse.Reference.Version.Abbreviation}"));
+            // Could use StringBuilder for better performance:
+            var logBuilder = new StringBuilder();
+            foreach (VerseResult verse in results)
+            {
+                if (logBuilder.Length > 0)
+                {
+                    logBuilder.Append(" / ");
+                }
+
+                logBuilder.Append(verse.Reference.ToString(true)).Append(' ').Append(verse.Reference.Version.Abbreviation);
+            }
+
+            string logStatement = logBuilder.ToString();
             if (logStatement.Contains("Psalm 151"))
             {
                 logStatement = logStatement.Replace("Psalm 151 1", "Psalm 151");
@@ -262,7 +286,7 @@ namespace BibleBot.Backend.Controllers
             return Ok(new VerseResponse
             {
                 OK = true,
-                Verses = results,
+                Verses = [.. results],
                 DisplayStyle = displayStyle,
                 Paginate = paginateVerses,
                 LogStatement = logStatement,
