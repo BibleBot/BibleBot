@@ -127,7 +127,7 @@
   </data>
   <data name="SetDailyVerseRoleSuccess" xml:space="preserve">
     <value>Ustawiono rolę automatycznego wersetu dnia pomyślnie.</value>
-    <comment>Response for successful usage of /setdailyverse.</comment>
+    <comment>Response for successful usage of /setdailyverserole.</comment>
   </data>
   <data name="SetDailyVerseRoleNotSetup" xml:space="preserve">
     <value>Ten serwer nie ma skonfigurowanego automatycznego dziennego wersetu dnia. Proszę skonfiguruj go za pomocą `/setdailyverse` zanim uruchomisz tę komendę.</value>
@@ -160,5 +160,9 @@
   <data name="ClearDailyVerseSuccess" xml:space="preserve">
     <value>Wyczyszczono wszystkie preferencje wersetu dnia pomyślnie.</value>
     <comment>Response for successful usage of /cleardailyverse.</comment>
+  </data>
+  <data name="ClearDailyVerseRoleSuccess" xml:space="preserve">
+    <value>Wyczyszczono rolę automatycznego wersetu dnia pomyślnie.</value>
+    <comment>Response for successful usage of /cleardailyverserole.</comment>
   </data>
 </root>

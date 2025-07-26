@@ -126,8 +126,8 @@
     <comment>Response when /setdailyverse fails, to direct the user to a helper webpage.</comment>
   </data>
   <data name="SetDailyVerseRoleSuccess" xml:space="preserve">
-    <value>Vi agordis rolon de la aŭtomata ĉiutaga verso sukcese.</value>
-    <comment>Response for successful usage of /setdailyverse.</comment>
+    <value>Vi agordis la rolon de la aŭtomata ĉiutaga verso sukcese.</value>
+    <comment>Response for successful usage of /setdailyverserole.</comment>
   </data>
   <data name="SetDailyVerseRoleNotSetup" xml:space="preserve">
     <value>Ĉi tiu servilo ne agordis por aŭtomataj ĉiutagaj versoj. Bonvolu fari tiel kun `/setdailyverse` antaŭ ol uzanta tio komandon.</value>
@@ -160,5 +160,9 @@
   <data name="ClearDailyVerseSuccess" xml:space="preserve">
     <value>Vi forigis ĉiujn ĉiutagajn versajn preferojn sukcese.</value>
     <comment>Response for successful usage of /cleardailyverse.</comment>
+  </data>
+  <data name="ClearDailyVerseRoleSuccess" xml:space="preserve">
+    <value>Vi forigis la rolon de la aŭtomata ĉiutaga verso sukcese.</value>
+    <comment>Response for successful usage of /cleardailyverserole.</comment>
   </data>
 </root>

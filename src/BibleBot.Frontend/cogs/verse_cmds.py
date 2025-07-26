@@ -1,9 +1,9 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 from disnake import CommandInteraction, Localized, OptionChoice
@@ -238,7 +238,9 @@ class VerseCommands(commands.Cog):
             if role.is_default():
                 embed = disnake.Embed()
                 embed.title = localization["CONFIRMATION_REQUIRED_TITLE"]
-                embed.description = localization["CONFIRMATION_REQUIRED_SETDAILYVERSEROLE_EVERYONE"]
+                embed.description = localization[
+                    "CONFIRMATION_REQUIRED_SETDAILYVERSEROLE_EVERYONE"
+                ]
 
                 embed.color = 16776960
 
@@ -246,7 +248,13 @@ class VerseCommands(commands.Cog):
                     text=localization["EMBED_FOOTER"].replace("<v>", statics.version),
                     icon_url="https://i.imgur.com/hr4RXpy.png",
                 )
-                await sending.safe_send_interaction(inter.followup, embed=embed, view=CreateConfirmationPrompt(f"+dailyverse role {role.id}", inter.author, 180))
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=embed,
+                    view=CreateConfirmationPrompt(
+                        f"+dailyverse role {role.id}", inter.author, 180
+                    ),
+                )
             else:
                 resp = await backend.submit_command(
                     inter.channel, inter.author, f"+dailyverse role {role.id}"
@@ -258,6 +266,44 @@ class VerseCommands(commands.Cog):
                 inter.followup,
                 embed=backend.create_error_embed(
                     "/setdailyverserole",
+                    localization["AUTOMATIC_DAILY_VERSE_NODMS"],
+                    localization,
+                ),
+                ephemeral=True,
+            )
+            return
+
+    @commands.slash_command(description=Localized(key="CMD_CLEARDAILYVERSEROLE_DESC"))
+    async def cleardailyverserole(self, inter: CommandInteraction):
+        await inter.response.defer()
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+
+        if hasattr(inter.channel, "permissions_for") and callable(
+            inter.channel.permissions_for
+        ):
+            if not inter.channel.permissions_for(inter.author).manage_guild:
+                await sending.safe_send_interaction(
+                    inter.followup,
+                    embed=backend.create_error_embed(
+                        localization["PERMS_ERROR_LABEL"],
+                        localization["PERMS_ERROR_DESC"],
+                        localization,
+                    ),
+                    ephemeral=True,
+                )
+                return
+
+            resp = await backend.submit_command(
+                inter.channel, inter.author, "+dailyverse clearrole"
+            )
+
+            await sending.safe_send_interaction(inter.followup, embed=resp)
+        else:
+            await sending.safe_send_interaction(
+                inter.followup,
+                embed=backend.create_error_embed(
+                    "/cleardailyverserole",
                     localization["AUTOMATIC_DAILY_VERSE_NODMS"],
                     localization,
                 ),

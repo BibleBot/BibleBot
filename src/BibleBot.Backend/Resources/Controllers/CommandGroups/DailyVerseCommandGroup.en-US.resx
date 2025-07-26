@@ -161,4 +161,8 @@
     <value>Cleared all daily verse preferences successfully.</value>
     <comment>Response for successful usage of /cleardailyverse.</comment>
   </data>
+  <data name="ClearDailyVerseRoleSuccess" xml:space="preserve">
+    <value>Cleared automatic daily verse role successfully.</value>
+    <comment>Response for successful usage of /cleardailyverserole.</comment>
+  </data>
 </root>

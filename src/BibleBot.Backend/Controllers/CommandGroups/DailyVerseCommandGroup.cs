@@ -37,7 +37,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 new DailyVerseSet(guildService, _localizer),
                 new DailyVerseRole(guildService, _localizer),
                 new DailyVerseStatus(guildService, _localizer),
-                new DailyVerseClear(guildService, _localizer)
+                new DailyVerseClear(guildService, _localizer),
+                new ClearDailyVerseRole(guildService, _localizer)
             ]; set => throw new NotImplementedException();
         }
 
@@ -223,7 +224,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     };
                 }
 
-
                 Guild idealGuild = await guildService.Get(req.GuildId);
 
                 if (idealGuild is not { DailyVerseWebhook: not null })
@@ -240,9 +240,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     };
                 }
 
-                UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                                                .Set(guild => guild.DailyVerseRoleId, args[0]);
-
+                UpdateDefinition<Guild> update = Builders<Guild>.Update.Set(guild => guild.DailyVerseRoleId, args[0]);
                 await guildService.Update(req.GuildId, update);
 
                 return new CommandResponse
@@ -253,6 +251,59 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         Utils.GetInstance().Embedify("/setdailyverserole", localizer["SetDailyVerseRoleSuccess"], false)
                     ],
                     LogStatement = $"/setdailyverserole {args[0]}",
+                    Culture = CultureInfo.CurrentUICulture.Name
+                };
+
+            }
+        }
+
+        private class ClearDailyVerseRole(GuildService guildService, IStringLocalizer localizer) : Command
+        {
+            public override string Name { get => "clearrole"; set => throw new NotImplementedException(); }
+
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            {
+                if (req.IsDM)
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify("/dailyverserole", localizer["AutomaticDailyVerseNoDMs"], true)
+                        ],
+                        LogStatement = "/dailyverserole",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
+
+                Guild idealGuild = await guildService.Get(req.GuildId);
+
+                if (idealGuild is not { DailyVerseWebhook: not null })
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify("/cleardailyverserole", localizer["SetDailyVerseRoleNotSetup"], true)
+                        ],
+                        LogStatement = $"/cleardailyverserole",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
+
+                UpdateDefinition<Guild> update = Builders<Guild>.Update.Set(guild => guild.DailyVerseRoleId, null);
+                await guildService.Update(req.GuildId, update);
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify("/cleardailyverserole", localizer["ClearDailyVerseRoleSuccess"], false)
+                    ],
+                    LogStatement = $"/cleardailyverserole",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
 
