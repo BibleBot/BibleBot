@@ -109,6 +109,8 @@ namespace BibleBot.Backend.Services.Providers.Content
                 }
 
                 reference.AsString = reference.ToString();
+                reference.Book.Name = reference.Book.ProperName;
+                reference.Book.ProperName = originalProperName;
             }
             else
             {
