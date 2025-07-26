@@ -288,5 +288,50 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public async Task ShouldHaveCorrectVerseNumbersInNIV()
+        {
+            Version testVersion = await _versionService.Get("NIV") ?? await _versionService.Create(new MockNIV());
+
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Hebrews 11:1 NIV")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result!.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "Hebrews 11:1 NIV",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new VerseResult
+                    {
+                        Title = "Faith in Action",
+                        PsalmTitle = "",
+                        Text = "<**1**> Now faith is confidence in what we hope for and assurance about what we do not see.",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Hebrews"
+                            },
+                            StartingChapter = 11,
+                            StartingVerse = 1,
+                            EndingChapter = 11,
+                            EndingVerse = 1,
+                            Version = testVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Hebrews 11:1"
+                        }
+                    }
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }
