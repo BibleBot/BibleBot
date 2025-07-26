@@ -85,6 +85,9 @@ namespace BibleBot.Backend
 
             services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), false));
 
+            // Register the special verse processing service
+            services.AddSingleton<SpecialVerseProcessingService>();
+
             services.AddResponseCaching();
             services.AddResponseCompression();
             services.AddControllers();

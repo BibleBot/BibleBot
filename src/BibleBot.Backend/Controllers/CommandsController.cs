@@ -12,7 +12,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers.CommandGroups;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
 using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +25,7 @@ namespace BibleBot.Backend.Controllers
     [Route("api/commands")]
     [ApiController]
     public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
-                              FrontendStatsService frontendStatsService, LanguageService languageService, MetadataFetchingService metadataFetchingService, SpecialVerseProvider svProvider,
+                              FrontendStatsService frontendStatsService, LanguageService languageService, MetadataFetchingService metadataFetchingService, SpecialVerseProcessingService specialVerseProcessingService,
                               BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
         private readonly List<CommandGroup> _commandGroups = [
@@ -35,8 +34,8 @@ namespace BibleBot.Backend.Controllers
                 new VersionCommandGroup(userService, guildService, versionService, metadataFetchingService, localizerFactory),
                 new LanguageCommandGroup(userService, guildService, languageService, localizerFactory),
                 new ResourceCommandGroup(resourceService, localizerFactory),
-                new DailyVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider, nltProvider], localizerFactory),
-                new RandomVerseCommandGroup(userService, guildService, versionService, svProvider, [bgProvider, abProvider, nltProvider], localizerFactory),
+                new DailyVerseCommandGroup(userService, guildService, versionService, specialVerseProcessingService, localizerFactory),
+                new RandomVerseCommandGroup(userService, guildService, versionService, specialVerseProcessingService, localizerFactory),
                 new SearchCommandGroup(userService, guildService, versionService, metadataFetchingService, [bgProvider, abProvider, nltProvider], localizerFactory),
                 new KDStaffCommandGroup()
             ];

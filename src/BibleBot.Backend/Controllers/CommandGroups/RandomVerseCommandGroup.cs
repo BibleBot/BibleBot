@@ -13,7 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.InternalModels;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using Version = BibleBot.Models.Version;
@@ -21,7 +20,7 @@ using Version = BibleBot.Models.Version;
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
     public class RandomVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                         SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
+                                         SpecialVerseProcessingService specialVerseProcessingService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(RandomVerseCommandGroup));
         private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
@@ -31,13 +30,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         public override List<Command> Commands
         {
             get => [
-                new RandomVerse(userService, guildService, versionService, svProvider, bibleProviders, _localizer, _sharedLocalizer),
-                new TrulyRandomVerse(userService, guildService, versionService, svProvider, bibleProviders, _localizer, _sharedLocalizer)
+                new RandomVerse(userService, guildService, versionService, specialVerseProcessingService, _localizer, _sharedLocalizer),
+                new TrulyRandomVerse(userService, guildService, versionService, specialVerseProcessingService, _localizer, _sharedLocalizer)
             ]; set => throw new NotImplementedException();
         }
 
         private class RandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                  SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+                                  SpecialVerseProcessingService specialVerseProcessingService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -76,17 +75,25 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 }
 
                 Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
-                string randomRef = await svProvider.GetRandomVerse();
+                VerseResult verseResult = await specialVerseProcessingService.GetRandomVerse(idealVersion, titlesEnabled, verseNumbersEnabled);
 
-                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{randomRef} {idealVersion.Abbreviation}'");
+#pragma warning disable IDE0046 // Convert to conditional expression
+                if (verseResult == null)
+                {
+                    return new VerseResponse
+                    {
+                        OK = false,
+                        Verses = null,
+                        LogStatement = "/random",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
+#pragma warning restore IDE0046 // Convert to conditional expression
 
                 return new VerseResponse
                 {
                     OK = true,
-                    Verses =
-                    [
-                        await provider.GetVerse(randomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                    ],
+                    Verses = [verseResult],
                     DisplayStyle = displayStyle,
                     LogStatement = "/random",
                     Culture = CultureInfo.CurrentUICulture.Name,
@@ -96,7 +103,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         }
 
         private class TrulyRandomVerse(UserService userService, GuildService guildService, VersionService versionService,
-                                       SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+                                       SpecialVerseProcessingService specialVerseProcessingService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "true"; set => throw new NotImplementedException(); }
 
@@ -135,21 +142,31 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 }
 
                 Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
-                string trulyRandomRef = await svProvider.GetTrulyRandomVerse();
-                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{trulyRandomRef} {idealVersion.Abbreviation}'");
+                VerseResult verseResult = await specialVerseProcessingService.GetTrulyRandomVerse(idealVersion, titlesEnabled, verseNumbersEnabled);
+
+#pragma warning disable IDE0046 // Convert to conditional expression
+                if (verseResult == null)
+                {
+                    return new VerseResponse
+                    {
+                        OK = false,
+                        Verses = null,
+                        LogStatement = "/truerandom",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
+#pragma warning restore IDE0046 // Convert to conditional expression
 
                 return new VerseResponse
                 {
                     OK = true,
-                    Verses =
-                    [
-                        await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                    ],
+                    Verses = [verseResult],
                     DisplayStyle = displayStyle,
                     LogStatement = "/truerandom",
                     Culture = CultureInfo.CurrentUICulture.Name,
                     CultureFooter = string.Format(sharedLocalizer["GlobalFooter"], Utils.Version)
                 };
+
             }
         }
     }

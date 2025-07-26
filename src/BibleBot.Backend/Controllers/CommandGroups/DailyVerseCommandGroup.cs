@@ -23,7 +23,7 @@ using Version = BibleBot.Models.Version;
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
     public class DailyVerseCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                        SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : CommandGroup
+                                        SpecialVerseProcessingService specialVerseProcessingService, IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(DailyVerseCommandGroup));
         private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
@@ -33,7 +33,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         public override List<Command> Commands
         {
             get => [
-                new DailyVerseUsage(userService, guildService, versionService, svProvider, bibleProviders, _sharedLocalizer),
+                new DailyVerseUsage(userService, guildService, versionService, specialVerseProcessingService, _sharedLocalizer),
                 new DailyVerseSet(guildService, _localizer),
                 new DailyVerseRole(guildService, _localizer),
                 new DailyVerseStatus(guildService, _localizer),
@@ -43,7 +43,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         }
 
         private class DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                                      SpecialVerseProvider svProvider, List<IContentProvider> bibleProviders, IStringLocalizer sharedLocalizer) : Command
+                                      SpecialVerseProcessingService specialVerseProcessingService, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -68,16 +68,23 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 }
 
                 Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
-                string votdRef = await svProvider.GetDailyVerse();
-                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '{votdRef} {idealVersion.Abbreviation}'");
+                VerseResult verseResult = await specialVerseProcessingService.GetDailyVerse(idealVersion, titlesEnabled, verseNumbersEnabled);
+
+                if (verseResult == null)
+                {
+                    return new VerseResponse
+                    {
+                        OK = false,
+                        Verses = null,
+                        LogStatement = "/dailyverse",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
 
                 return new VerseResponse
                 {
                     OK = true,
-                    Verses =
-                    [
-                        await provider.GetVerse(votdRef, titlesEnabled, verseNumbersEnabled, idealVersion)
-                    ],
+                    Verses = [verseResult],
                     DisplayStyle = displayStyle,
                     LogStatement = "/dailyverse",
                     Culture = CultureInfo.CurrentUICulture.Name,
