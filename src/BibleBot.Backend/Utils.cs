@@ -485,7 +485,7 @@ namespace BibleBot.Backend
                             startingChapter = 146;
                             endingChapter = 146;
                         }
-                        else if (reference.StartingVerse is >= 10 and <= 19 && reference.EndingVerse is >= 10 and <= 19)
+                        else if (reference.StartingVerse is >= 12 and <= 20 && reference.EndingVerse is >= 12 and <= 20)
                         {
                             startingChapter = 147;
                             endingChapter = 147;
