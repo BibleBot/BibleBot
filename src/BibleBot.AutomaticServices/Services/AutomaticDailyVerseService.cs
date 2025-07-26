@@ -78,6 +78,8 @@ namespace BibleBot.AutomaticServices.Services
 
             Log.Information($"AutomaticDailyVerseService: Fetching guilds to process for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))}...");
 
+            ConcurrentBag<string> removedGuilds = [];
+
             List<Guild> matches = [.. (await _guildService.Get()).Where((guild) =>
                 {
                     if (isTesting && guild.GuildId != "769709969796628500")
@@ -122,7 +124,7 @@ namespace BibleBot.AutomaticServices.Services
                 await semaphore.WaitAsync();
                 try
                 {
-                    return await ProcessGuild(guild, resultsByVersion, dateTimeInStandardTz);
+                    return await ProcessGuild(guild, resultsByVersion, dateTimeInStandardTz, removedGuilds);
                 }
                 catch (Exception ex)
                 {
@@ -140,10 +142,10 @@ namespace BibleBot.AutomaticServices.Services
 
             watch.Stop();
             string timeToProcess = $"{(watch.Elapsed.Hours != 0 ? $"{watch.Elapsed.Hours} hours, " : "")}{(watch.Elapsed.Minutes != 0 ? $"{watch.Elapsed.Minutes} minutes, " : "")}{watch.Elapsed.Seconds} seconds";
-            Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} (+ {previousFailuresCount}) daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
+            Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} (+{previousFailuresCount} / -{removedGuilds.Count}) daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
         }
 
-        public async Task<bool> ProcessGuild(Guild guild, ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion, ZonedDateTime dateTimeInStandardTz)
+        public async Task<bool> ProcessGuild(Guild guild, ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion, ZonedDateTime dateTimeInStandardTz, ConcurrentBag<string> removedGuilds)
         {
             InternalEmbed embed;
             WebhookRequestBody webhookRequestBody;
@@ -239,7 +241,7 @@ namespace BibleBot.AutomaticServices.Services
             else if (statusCode == HttpStatusCode.NotFound)
             {
                 // This webhook no longer exists, so we'll remove the daily verse preferences of the guild.
-                Log.Information($"AutomaticDailyVerseService: Webhook for {guild.GuildId} no longer exists, removing daily verse preferences...");
+                removedGuilds.Add(guild.GuildId);
 
                 updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseTime, null));
                 updates.Add(update.Set(guildToUpdate => guildToUpdate.DailyVerseTimeZone, null));

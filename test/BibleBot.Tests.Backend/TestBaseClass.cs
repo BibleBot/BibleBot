@@ -82,7 +82,7 @@ namespace BibleBot.Tests.Backend
             _versionService = new VersionService(_mongoService);
             _languageService = new LanguageService(_mongoService);
             _resourceServiceMock = new Mock<ResourceService>();
-            _parsingServiceMock = new Mock<ParsingService>();
+            _parsingServiceMock = new Mock<ParsingService>(false);
             _frontendStatsServiceMock = new Mock<FrontendStatsService>(_mongoService);
             _metadataFetchingServiceMock = new Mock<MetadataFetchingService>(_versionService, false);
 
