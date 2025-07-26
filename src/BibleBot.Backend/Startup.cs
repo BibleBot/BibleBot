@@ -7,6 +7,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -74,9 +75,6 @@ namespace BibleBot.Backend
 
             // Instantiate the various providers, which are just services.
             services.AddSingleton<SpecialVerseProvider>();
-            services.AddSingleton<BibleGatewayProvider>();
-            services.AddSingleton<APIBibleProvider>();
-            services.AddSingleton<NLTAPIProvider>();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
@@ -84,6 +82,13 @@ namespace BibleBot.Backend
             }
 
             services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), false));
+
+            // Register the list of content providers
+            services.AddSingleton<List<IContentProvider>>(sp => [
+                sp.GetRequiredService<BibleGatewayProvider>(),
+                sp.GetRequiredService<APIBibleProvider>(),
+                sp.GetRequiredService<NLTAPIProvider>()
+            ]);
 
             // Register the special verse processing service
             services.AddSingleton<SpecialVerseProcessingService>();

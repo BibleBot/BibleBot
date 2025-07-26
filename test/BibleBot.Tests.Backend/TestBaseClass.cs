@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
 using BibleBot.Backend.InternalModels;
@@ -93,15 +94,17 @@ namespace BibleBot.Tests.Backend
             _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
             _defaultAPIBibleVersion = await _versionService.Get("KJV") ?? await _versionService.Create(new MockKJV());
 
+            var bibleProviders = new List<IContentProvider> { _bgProviderMock.Object, _abProviderMock.Object, _nltProviderMock.Object };
+            var specialVerseProcessingService = new SpecialVerseProcessingService(_parsingServiceMock.Object, _metadataFetchingServiceMock.Object, _versionService, _spProviderMock.Object, bibleProviders);
+
             _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _versionService, _resourceServiceMock.Object,
                                                     _frontendStatsServiceMock.Object, _languageService, _metadataFetchingServiceMock.Object,
-                                                    _spProviderMock.Object, _bgProviderMock.Object, _abProviderMock.Object, _nltProviderMock.Object, _localizerFactory);
+                                                    specialVerseProcessingService, bibleProviders, _localizerFactory);
 
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _parsingServiceMock.Object, _versionService, _languageService,
-                                                    _metadataFetchingServiceMock.Object, _bgProviderMock.Object,
-                                                    _abProviderMock.Object, _nltProviderMock.Object, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
+                                                    _metadataFetchingServiceMock.Object, bibleProviders, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
         }
     }
 }

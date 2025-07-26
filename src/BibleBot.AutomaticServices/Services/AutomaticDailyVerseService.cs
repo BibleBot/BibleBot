@@ -21,7 +21,6 @@ using System.Threading.Tasks;
 using BibleBot.Backend;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
-using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
@@ -51,7 +50,7 @@ namespace BibleBot.AutomaticServices.Services
         private Timer _timer;
 
         public AutomaticDailyVerseService(GuildService guildService, VersionService versionService, LanguageService languageService,
-                                          SpecialVerseProvider spProvider, BibleGatewayProvider bgProvider, APIBibleProvider abProvider,
+                                          SpecialVerseProvider spProvider, List<IContentProvider> bibleProviders,
                                           IStringLocalizer<AutomaticDailyVerseService> localizer)
         {
             _guildService = guildService;
@@ -60,11 +59,7 @@ namespace BibleBot.AutomaticServices.Services
             _spProvider = spProvider;
             _localizer = localizer;
 
-            _bibleProviders =
-            [
-                bgProvider,
-                abProvider
-            ];
+            _bibleProviders = bibleProviders;
 
             _restClient = new RestClient("https://discord.com/api/webhooks", configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
         }

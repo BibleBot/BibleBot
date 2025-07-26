@@ -12,7 +12,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers.CommandGroups;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +25,7 @@ namespace BibleBot.Backend.Controllers
     [ApiController]
     public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
                               FrontendStatsService frontendStatsService, LanguageService languageService, MetadataFetchingService metadataFetchingService, SpecialVerseProcessingService specialVerseProcessingService,
-                              BibleGatewayProvider bgProvider, APIBibleProvider abProvider, NLTAPIProvider nltProvider, IStringLocalizerFactory localizerFactory) : ControllerBase
+                              List<IContentProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
         private readonly List<CommandGroup> _commandGroups = [
                 new InformationCommandGroup(userService, guildService, versionService, frontendStatsService, localizerFactory),
@@ -36,7 +35,7 @@ namespace BibleBot.Backend.Controllers
                 new ResourceCommandGroup(resourceService, localizerFactory),
                 new DailyVerseCommandGroup(userService, guildService, versionService, specialVerseProcessingService, localizerFactory),
                 new RandomVerseCommandGroup(userService, guildService, versionService, specialVerseProcessingService, localizerFactory),
-                new SearchCommandGroup(userService, guildService, versionService, metadataFetchingService, [bgProvider, abProvider, nltProvider], localizerFactory),
+                new SearchCommandGroup(userService, guildService, versionService, metadataFetchingService, bibleProviders, localizerFactory),
                 new KDStaffCommandGroup()
             ];
 

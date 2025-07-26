@@ -7,6 +7,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -67,6 +68,13 @@ namespace BibleBot.AutomaticServices
             services.AddSingleton<BibleGatewayProvider>();
             services.AddSingleton<APIBibleProvider>();
             services.AddSingleton<NLTAPIProvider>();
+
+            // Register the list of content providers
+            services.AddSingleton<List<IContentProvider>>(sp => [
+                sp.GetRequiredService<BibleGatewayProvider>(),
+                sp.GetRequiredService<APIBibleProvider>(),
+                sp.GetRequiredService<NLTAPIProvider>()
+            ]);
 
             // Add background services.
             services.AddHostedService<AutomaticDailyVerseService>();
