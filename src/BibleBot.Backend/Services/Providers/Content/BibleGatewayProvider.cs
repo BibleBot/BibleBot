@@ -49,8 +49,10 @@ namespace BibleBot.Backend.Services.Providers.Content
             _htmlParser = new HtmlParser();
         }
 
-        [GeneratedRegex("[a-zA-Z]{2,3}-([0-9]{1,3})-([0-9]{1,3})")]
+        [GeneratedRegex(@"[a-zA-Z]{2,3}-([0-9]{1,3})-([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseIdRegex();
+
+
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
@@ -274,85 +276,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             return results;
         }
 
-        [GeneratedRegex(@"\s+")]
-        private static partial Regex MultipleWhitespacesGeneratedRegex();
-        private static string PurifyText(string text, bool isISV)
-        {
-            Dictionary<string, string> nuisances = new()
-            {
-                { "“",     "\"" },
-                { "”",     "\"" },
-                { "\n",    " " },
-                { "\t",    " " },
-                { "\v",    " " },
-                { "\f",    " " },
-                { "\r",    " " },
-                { "¶ ",    "" },
-                { " , ",   ", " },
-                { " .",    "." },
-                { "′",     "'" },
-                { "‘",     "'" },
-                { "’",     "'" }, // Fonts may make it look like this is no different from the line above, but it's a different codepoint in Unicode.
-                { "' s",   "'s" },
-                { "' \"",  "'\""},
-                { " . ",   " " },
-                { "*",     "\\*" },
-                { "_",     "\\_" },
-                { "\\*\\*", "**" },
-                { "\\_\\_", "__" },
-                { "\\*(Selah)\\*", "*(Selah)*"}
-            };
-
-            if (text.Contains("Selah."))
-            {
-                text = text.Replace("Selah.", " *(Selah)* ");
-            }
-            else if (text.Contains("Selah"))
-            {
-                text = text.Replace("Selah", " *(Selah)* ");
-            }
-
-            foreach (KeyValuePair<string, string> pair in nuisances.Where(pair => text.Contains(pair.Key)))
-            {
-                text = text.Replace(pair.Key, pair.Value);
-            }
-
-            // I hate that I have to do this, but if I don't then ISV output gets fscked up...
-            //
-            // If you'd believe it, the ISV inserts Hebrew verse numbers into Exodus 20:1-17.
-            // That's fine and all, but for some reason the subsequent verse number is placed
-            // into the *preceding* verse. It's not even placed into the .versenum class, they
-            // just append it into the previous verse's text. This is so stupidly hacky that
-            // whoever implemented this needs to relearn HTML.
-            //
-            // The kicker? They use the transliterated name of the Hebrew letters in Psalm
-            // 119 titles...
-            if (isISV)
-            {
-                Dictionary<string, string> hebrewChars = new()
-                {
-                    { "א", "" },
-                    { "ב", "" },
-                    { "ג", "" },
-                    { "ד", "" },
-                    { "ה", "" },
-                    { "ו", "" },
-                    { "ז", "" },
-                    { "ח", "" },
-                    { "ט", "" },
-                    { "י", "" },
-                };
-
-                foreach (KeyValuePair<string, string> pair in hebrewChars.Where(pair => text.Contains(pair.Key)))
-                {
-                    text = text.Replace(pair.Key, pair.Value);
-                }
-            }
-
-            text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");
-
-            return text.Trim();
-        }
+        private static string PurifyText(string text, bool isISV) => TextPurificationService.PurifyText(text, isISV);
 
         public void Dispose()
         {

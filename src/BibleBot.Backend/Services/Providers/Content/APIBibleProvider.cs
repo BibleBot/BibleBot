@@ -302,52 +302,6 @@ namespace BibleBot.Backend.Services.Providers.Content
             return results;
         }
 
-        [GeneratedRegex(@"\s+")]
-        private static partial Regex MultipleWhitespacesGeneratedRegex();
-        private static string PurifyText(string text)
-        {
-            Dictionary<string, string> nuisances = new()
-            {
-                { "“",     "\"" },
-                { "”",     "\"" },
-                { "\n",    " " },
-                { "\t",    " " },
-                { "\v",    " " },
-                { "\f",    " " },
-                { "\r",    " " },
-                { "¶ ",    "" },
-                { " , ",   ", " },
-                { " .",    "." },
-                { "′",     "'" },
-                { "‘",     "'" },
-                { "’",     "'" }, // Fonts may make it look like this is no different from the line above, but it's a different codepoint in Unicode.
-                { "' s",   "'s" },
-                { "' \"",  "'\""},
-                { " . ",   " " },
-                { "*",     "\\*" },
-                { "_",     "\\_" },
-                { "\\*\\*", "**" },
-                { "\\_\\_", "__" },
-                { "\\*(Selah)\\*", "*(Selah)*"}
-            };
-
-            if (text.Contains("Selah."))
-            {
-                text = text.Replace("Selah.", " *(Selah)* ");
-            }
-            else if (text.Contains("Selah"))
-            {
-                text = text.Replace("Selah", " *(Selah)* ");
-            }
-
-            foreach (KeyValuePair<string, string> pair in nuisances.Where(pair => text.Contains(pair.Key)))
-            {
-                text = text.Replace(pair.Key, pair.Value);
-            }
-
-            text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");
-
-            return text.Trim();
-        }
+        private static string PurifyText(string text) => TextPurificationService.PurifyText(text);
     }
 }

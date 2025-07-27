@@ -832,6 +832,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             EndingVerse = 1,
                             AppendedVerses = [new System.Tuple<int, int>(3, 3), new System.Tuple<int, int>(9, 9)],
                             Version = _defaultBibleGatewayVersion,
+                            IsOT = false,
                             IsNT = true,
                             IsDEU = false,
                             AsString = "Matthew 1:1, 3, 9"
@@ -877,9 +878,53 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             EndingVerse = 3,
                             AppendedVerses = [new System.Tuple<int, int>(5, 7), new System.Tuple<int, int>(9, 11)],
                             Version = _defaultBibleGatewayVersion,
+                            IsOT = false,
                             IsNT = true,
                             IsDEU = false,
                             AsString = "Matthew 1:1-3, 5-7, 9-11"
+                        }
+                    }
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ShouldPresentSingleQuotationMarksProperlyInVerseContent()
+        {
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 7:21 RSV")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result!.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "Matthew 7:21 RSV",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new VerseResult
+                    {
+                        Title = "Concerning Self-Deception",
+                        PsalmTitle = "",
+                        Text = "<**21**> \"Not every one who says to me, 'Lord, Lord,' shall enter the kingdom of heaven, but he who does the will of my Father who is in heaven.",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
+                            StartingChapter = 7,
+                            StartingVerse = 21,
+                            EndingChapter = 7,
+                            EndingVerse = 21,
+                            Version = _defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 7:21"
                         }
                     }
                 ],

@@ -55,7 +55,7 @@ namespace BibleBot.Backend.Services
 
                     foreach (string item in bookName.Value)
                     {
-                        if (IsValueInString(str, item.ToLowerInvariant()))
+                        if (TextPurificationService.IsValueInString(str, item.ToLowerInvariant()))
                         {
                             str = str.Replace(item.ToLowerInvariant(), bookName.Key);
                         }
@@ -160,8 +160,8 @@ namespace BibleBot.Backend.Services
                                 string left = pairString.Substring(0, colonIdx);
                                 string right = pairString.Substring(colonIdx + 1);
 
-                                left = RemovePunctuation(left);
-                                right = RemovePunctuation(right);
+                                left = TextPurificationService.RemovePunctuation(left);
+                                right = TextPurificationService.RemovePunctuation(right);
 
                                 if (!int.TryParse(left, out int firstNum) || !int.TryParse(right, out int secondNum))
                                 {
@@ -192,7 +192,7 @@ namespace BibleBot.Backend.Services
                             string left = relevantToken.Substring(0, colonIdx);
                             string right = relevantToken.Substring(colonIdx + 1);
 
-                            left = RemovePunctuation(left);
+                            left = TextPurificationService.RemovePunctuation(left);
                             if (!int.TryParse(left, out int chapterNum))
                             {
                                 return null;
@@ -206,7 +206,7 @@ namespace BibleBot.Backend.Services
                             string[] spanSplit = right.Split('-');
                             foreach (string pairValue in spanSplit)
                             {
-                                string pairValueCopy = RemovePunctuation(pairValue);
+                                string pairValueCopy = TextPurificationService.RemovePunctuation(pairValue);
 
                                 try
                                 {
@@ -404,58 +404,12 @@ namespace BibleBot.Backend.Services
             };
         }
 
-        public static string PurifyBody(List<string> ignoringBrackets, string str)
-        {
-            // Use StringBuilder for multiple string operations
-            var sb = new System.Text.StringBuilder(str.ToLowerInvariant());
-            sb.Replace("\r", " ").Replace("\n", " ");
-
-            // Process brackets
-            foreach (string brackets in ignoringBrackets)
-            {
-                string pattern = @"\" + brackets[0] + @"[^\" + brackets[1] + @"]*\" + brackets[1];
-                string bracketResult = Regex.Replace(sb.ToString(), pattern, "");
-                sb.Clear().Append(bracketResult);
-            }
-
-            // Replace variant dashes
-            string result = VariantDashesRegex().Replace(sb.ToString(), "-");
-
-            // Replace punctuation more efficiently
-            const string punctuationToIgnore = "!\"#$%&'()*+./;<=>?@[\\]^_`{|}~";
-            foreach (char character in punctuationToIgnore)
-            {
-                result = result.Replace(character, ' ');
-            }
-
-            return result;
-        }
-
-        private static bool IsValueInString(string str, string val)
-        {
-            // Avoid string allocations by using IndexOf with proper bounds checking
-            int index = str.IndexOf(val, System.StringComparison.OrdinalIgnoreCase);
-            if (index == -1)
-            {
-                return false;
-            }
-
-            // Check if it's a word boundary (space or start/end of string)
-            bool startBoundary = index == 0 || char.IsWhiteSpace(str[index - 1]);
-            bool endBoundary = index + val.Length == str.Length || char.IsWhiteSpace(str[index + val.Length]);
-
-            return startBoundary && endBoundary;
-        }
-
-        [GeneratedRegex(@"[\u2013\u2014\u2012\uFF0D]")]
-        private static partial Regex VariantDashesRegex();
-
-        [GeneratedRegex(@"[^,\w\s]|_")]
-        private static partial Regex NoPunctuationRegex();
-
-        [GeneratedRegex(@"\s+")]
-        private static partial Regex MinimizeWhitespaceRegex();
-
-        private static string RemovePunctuation(string str) => MinimizeWhitespaceRegex().Replace(NoPunctuationRegex().Replace(str, ""), " ");
+        /// <summary>
+        /// Purifies text for parsing by removing brackets, normalizing dashes, and removing punctuation.
+        /// </summary>
+        /// <param name="ignoringBrackets">List of bracket pairs to remove</param>
+        /// <param name="str">The text to purify</param>
+        /// <returns>The purified text for parsing</returns>
+        public static string PurifyBody(List<string> ignoringBrackets, string str) => TextPurificationService.PurifyBody(ignoringBrackets, str);
     }
 }
