@@ -225,13 +225,13 @@ namespace BibleBot.Backend.Controllers
                 {
                     if (result.Text.Length > 2048)
                     {
-                        result.Text = string.Concat(result.Text.AsSpan(0, 2044), "...");
+                        result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(2044, result.Text.Length)), "...");
                         result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                     }
 
                     if (result.Title.Length > 256)
                     {
-                        result.Title = string.Concat(result.Title.AsSpan(0, 252), "...");
+                        result.Title = string.Concat(result.Title.AsSpan(0, Math.Min(252, result.Title.Length)), "...");
                     }
                 }
                 else if (!string.Equals(displayStyle, "embed", StringComparison.Ordinal))
@@ -240,7 +240,7 @@ namespace BibleBot.Backend.Controllers
 
                     if (combinedTextLength > 2000)
                     {
-                        result.Text = string.Concat(result.Text.AsSpan(0, 1919), "...");
+                        result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(1919, result.Text.Length)), "...");
                         result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                     }
                 }
