@@ -127,7 +127,7 @@
   </data>
   <data name="SetDailyVerseRoleSuccess" xml:space="preserve">
     <value>Set automatic daily verse role successfully.</value>
-    <comment>Response for successful usage of /setdailyverse.</comment>
+    <comment>Response for successful usage of /setdailyverserole.</comment>
   </data>
   <data name="SetDailyVerseRoleNotSetup" xml:space="preserve">
     <value>This server does not have automatic daily verse setup. Please do so with `/setdailyverse` before running this command.</value>
