@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [12.1.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v12.0.0..v12.1.0) - 2025-07-31
+
+### 🚀 Features
+
+- Process daily/random verses more normally ([6f8d563](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/6f8d563b6017c44b0ad3bfb691fe8f7ca50498d0))
+- Use new SpecialVerseProcessingService for autoserv ([56f1d98](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/56f1d98b1bcedccbc2a3992eca73a958c92a1813))
+
+### 🐛 Bug Fixes
+
+- *(ab)* Restore book name to normal after generating reference string ([9d7ca87](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/9d7ca87896d0ede5ff6bd08980a4e6ca4aafcfb1))
+- *(ab)* Address behavior where chapter number gets tagged onto verse number ([82dabcd](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/82dabcd7c90761e4b43b465ef3ed53dc5164beef))
+- *(ab)* Bug where subsequent chapter number behavior was affecting references that don't span chapters ([d0f2f96](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/d0f2f9687d7c6095024d490df82a897073f61d85))
+- Accidentally'd the singletons ([a7c5303](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/a7c5303ae3910d253734730c957bca1e1af406e7))
+- Missed a spot in MT-to-LXX psalm reference handling ([4c2094e](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/4c2094ed6d41efb6b5178da639a8c5b81859442d))
+- *(verses)* Exception when truncating long text ([32b5e73](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/32b5e737e967a6c049f1c9470232689123995060))
+- *(parsing)* Regression in comma parsing ([7d176dd](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/7d176ddce78d22853c8559c3027f521e7af4a792))
+
+### 🚜 Refactor
+
+- Pass providers through dependency injection by a list, as opposed to individually ([6e0fc8f](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/6e0fc8f635225c49da5d6124d43eed7977e5de0b))
+- Just show a count of removed preferences instead of logging each one ([57e3d09](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/57e3d095890c6d6dd6dbc77d0243da228389ff1c))
+- Unify text normalization functions in one class ([99a11a5](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/99a11a5844514ac056e5083831a8b6641f8e9ffc))
+
 ## [12.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v11.2.0..v12.0.0) - 2025-07-26
 
 ### 🚀 Features
