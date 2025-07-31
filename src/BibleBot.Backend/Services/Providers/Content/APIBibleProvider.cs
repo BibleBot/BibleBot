@@ -180,7 +180,14 @@ namespace BibleBot.Backend.Services.Providers.Content
 
                     if (verseEl != null)
                     {
-                        el.NextElementSibling.Prepend(verseEl.Clone());
+                        if (el.NextElementSibling != null)
+                        {
+                            el.NextElementSibling.Prepend(verseEl.Clone());
+                        }
+                        else
+                        {
+                            SentrySdk.CaptureMessage("No next element sibling found for verse number element", SentryLevel.Error);
+                        }
 
                         verseEl.Remove();
                     }
