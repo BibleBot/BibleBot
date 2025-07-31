@@ -935,5 +935,69 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             result.StatusCode.Should().Be(200);
             resp.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void ShouldHandleUnrelatedCommas()
+        {
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1, Matthew 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result!.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "Genesis 1:1 RSV / Matthew 1:1 RSV",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new VerseResult
+                    {
+                        Title = "Six Days of Creation and the Sabbath",
+                        PsalmTitle = "",
+                        Text = "<**1**> In the beginning God created the heavens and the earth.",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Genesis"
+                            },
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = _defaultBibleGatewayVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Genesis 1:1"
+                        }
+                    },
+                    new VerseResult
+                    {
+                        Title = "The Genealogy of Jesus the Messiah",
+                        PsalmTitle = "",
+                        Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham.",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Matthew"
+                            },
+                            StartingChapter = 1,
+                            StartingVerse = 1,
+                            EndingChapter = 1,
+                            EndingVerse = 1,
+                            Version = _defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Matthew 1:1"
+                        }
+                    }
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
     }
 }

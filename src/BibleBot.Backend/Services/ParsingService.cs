@@ -266,11 +266,11 @@ namespace BibleBot.Backend.Services
                                             }
                                             else
                                             {
-                                                if (!int.TryParse(commaValue, out int singleNum))
+                                                // If this is false, then we can assume that there's a comma for an unrelated purpose.
+                                                if (int.TryParse(commaValue, out int singleNum))
                                                 {
-                                                    return null;
+                                                    appendedVerses.Add(new System.Tuple<int, int>(singleNum, singleNum));
                                                 }
-                                                appendedVerses.Add(new System.Tuple<int, int>(singleNum, singleNum));
                                             }
                                         }
 
