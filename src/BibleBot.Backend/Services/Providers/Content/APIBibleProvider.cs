@@ -177,6 +177,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 foreach (IElement el in otherData)
                 {
                     IElement verseEl = el.QuerySelector("span.v");
+                    bool shouldRemoveElements = true;
 
                     if (verseEl != null)
                     {
@@ -186,13 +187,18 @@ namespace BibleBot.Backend.Services.Providers.Content
                         }
                         else
                         {
-                            SentrySdk.CaptureMessage("No next element sibling found for verse number element", SentryLevel.Error);
+                            // This is a scenario where a descriptive title has a verse yet we have
+                            // no other place to put the verse, so we want to preserve the elements.
+                            //
+                            // I could move the verse element removal line to the case above, but
+                            // for the sake of showing what's going on, I'm keeping this.
+                            shouldRemoveElements = false;
                         }
 
-                        verseEl.Remove();
+                        if (shouldRemoveElements) { verseEl.Remove(); }
                     }
 
-                    el.Remove();
+                    if (shouldRemoveElements) { el.Remove(); }
                 }
 
                 IHtmlCollection<IElement> numbers = document.QuerySelectorAll(".v");

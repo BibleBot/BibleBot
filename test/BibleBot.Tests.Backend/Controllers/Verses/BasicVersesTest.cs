@@ -20,7 +20,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
     public class BasicVersesTest : TestBaseClass
     {
         [Test]
-        public void ShouldProcessBibleGatewayReference()
+        public void BG_ShouldProcessReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -63,7 +63,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldProcessAPIBibleReference()
+        public void AB_ShouldProcessReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -246,7 +246,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldProcessBibleGatewaySpannedReference()
+        public void BG_ShouldProcessSpannedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-2")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -288,7 +288,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldProcessAPIBibleSpannedReference()
+        public void AB_ShouldProcessSpannedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1-2 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -331,7 +331,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldProcessBibleGatewaySpannedChapterReference()
+        public void BG_ShouldProcessSpannedChapterReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:25-2:1")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -374,7 +374,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldProcessAPIBibleSpannedChapterReference()
+        public void AB_ShouldProcessSpannedChapterReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:31-2:1 KJV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -417,7 +417,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldProcessBibleGatewayExpandedReference()
+        public void BG_ShouldProcessExpandedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24-")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -460,7 +460,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldProcessAPIBibleExpandedReference()
+        public void AB_ShouldProcessExpandedReference()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:24- KJV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -801,7 +801,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void BGShouldHandleSpanlessCommaNotation()
+        public void BG_ShouldHandleSpanlessCommaNotation()
         {
             ObjectResult spacelessResult = _versesController.ProcessMessage(new MockRequest("Matthew 1:1,3,9")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse spacelessResp = spacelessResult!.Value as VerseResponse;
@@ -850,7 +850,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void BGShouldHandleSpannedCommaNotation()
+        public void BG_ShouldHandleSpannedCommaNotation()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 1:1-3, 5-7, 9-11")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
@@ -956,7 +956,8 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> In the beginning God created the heavens and the earth.",
                         Reference = new Reference
                         {
-                            Book = new Book {
+                            Book = new Book
+                            {
                                 ProperName = "Genesis"
                             },
                             StartingChapter = 1,
@@ -977,7 +978,8 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                         Text = "<**1**> The book of the genealogy of Jesus Christ, the son of David, the son of Abraham.",
                         Reference = new Reference
                         {
-                            Book = new Book {
+                            Book = new Book
+                            {
                                 ProperName = "Matthew"
                             },
                             StartingChapter = 1,
@@ -989,6 +991,52 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
                             IsNT = true,
                             IsDEU = false,
                             AsString = "Matthew 1:1"
+                        }
+                    }
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
+            };
+
+            result.StatusCode.Should().Be(200);
+            resp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public async Task AB_ShouldHandleDescriptiveTitleVerses()
+        {
+            Version testVersion = await _versionService.Get("LXX") ?? await _versionService.Create(new MockLXX());
+
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("Psalm 82:1, 6 LXX")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result!.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "Psalm 82:1, 6 LXX",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new VerseResult
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**1**> Ὠδὴ ψαλμοῦ τῷ Ἀσάφ. <**6**> Ὅτι ἐβουλεύσαντο ἐν ὁμονοίᾳ ἐπιτοαυτὸ, κατὰ σοῦ διαθήκην διέθεντο·",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Psalm"
+                            },
+                            StartingChapter = 82,
+                            StartingVerse = 1,
+                            EndingChapter = 82,
+                            EndingVerse = 1,
+                            AppendedVerses = [new System.Tuple<int, int>(6, 6)],
+                            Version = testVersion,
+                            IsOT = true,
+                            IsNT = false,
+                            IsDEU = false,
+                            AsString = "Psalm 82:1, 6"
                         }
                     }
                 ],
