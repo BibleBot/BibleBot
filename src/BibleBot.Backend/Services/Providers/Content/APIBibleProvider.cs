@@ -303,7 +303,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
             List<SearchResult> results = [];
 
-            if (resp.Data != null && resp.Data.Verses != null)
+            if (resp != null && resp.Data != null && resp.Data.Verses != null)
             {
                 results.AddRange(resp.Data.Verses.Select(verse => new SearchResult
                 {
