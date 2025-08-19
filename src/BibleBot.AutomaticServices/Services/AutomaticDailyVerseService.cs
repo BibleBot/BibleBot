@@ -198,7 +198,8 @@ namespace BibleBot.AutomaticServices.Services
                 };
             }
 
-            RestRequest request = new(guild.DailyVerseWebhook);
+            RestRequest request = new($"{guild.DailyVerseWebhook}?wait=true");
+            request.AddQueryParameter("wait", "true"); // Discord will return a message body instead of 204 No Content
             request.AddJsonBody(webhookRequestBody);
 
             RestResponse resp = null;
@@ -228,7 +229,7 @@ namespace BibleBot.AutomaticServices.Services
 
             UpdateDefinitionBuilder<Guild> update = Builders<Guild>.Update;
             List<UpdateDefinition<Guild>> updates = [];
-            if (statusCode == HttpStatusCode.NoContent)
+            if (statusCode is HttpStatusCode.NoContent or HttpStatusCode.OK)
             {
                 if (_previousMinuteFailedGuilds.TryRemove(guild.GuildId, out _))
                 {
