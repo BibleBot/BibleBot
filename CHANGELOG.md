@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [12.1.1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v12.1.0..v12.1.1) - 2025-08-19
+
+### 🐛 Bug Fixes
+
+- *(autoserv)* Add wait query parameter to confirm Discord webhook reception ([dd09b63](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/dd09b6391d03a993247a35644e040676f3f7fbe7))
+- *(ab)* Prevent descriptive title verses from being erroneously removed ([46e5499](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/46e549948d59dfa5774ba94d6e5967b40caadb3f))
+- *(ab)* NullReferenceException from assuming search response existence ([a00f780](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/a00f7804c5ecce541865c93c24a5bc53c4f937e2))
+
+### 🚜 Refactor
+
+- *(ab)* Add log when verse number element lacks sibling ([2884600](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/2884600a4a7671e10512bb68e38a50e91cdb3cdd))
+
 ## [12.1.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v12.0.0..v12.1.0) - 2025-07-31
 
 ### 🚀 Features
