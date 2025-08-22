@@ -198,7 +198,7 @@ namespace BibleBot.AutomaticServices.Services
                 };
             }
 
-            RestRequest request = new($"{guild.DailyVerseWebhook}?wait=true");
+            RestRequest request = new(guild.DailyVerseWebhook);
             request.AddQueryParameter("wait", "true"); // Discord will return a message body instead of 204 No Content
             request.AddJsonBody(webhookRequestBody);
 
