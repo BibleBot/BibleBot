@@ -223,24 +223,30 @@ namespace BibleBot.Backend.Controllers
 
                 if (string.Equals(displayStyle, "embed", StringComparison.Ordinal))
                 {
-                    if (result.Text.Length > 2048)
+                    const int MAX_TEXT_LENGTH = 4096;
+                    const int MAX_TITLE_LENGTH = 256;
+
+                    if (result.Text.Length > MAX_TEXT_LENGTH)
                     {
-                        result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(2044, result.Text.Length)), "...");
+                        result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(MAX_TEXT_LENGTH - 4, result.Text.Length)), "...");
                         result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                     }
 
-                    if (result.Title.Length > 256)
+                    if (result.Title.Length > MAX_TITLE_LENGTH)
                     {
-                        result.Title = string.Concat(result.Title.AsSpan(0, Math.Min(252, result.Title.Length)), "...");
+                        result.Title = string.Concat(result.Title.AsSpan(0, Math.Min(MAX_TITLE_LENGTH - 4, result.Title.Length)), "...");
                     }
                 }
                 else if (!string.Equals(displayStyle, "embed", StringComparison.Ordinal))
                 {
-                    int combinedTextLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
+                    const int MAX_TEXT_LENGTH = 2000;
 
-                    if (combinedTextLength > 2000)
+                    int combinedLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
+                    int remainingTextLength = MAX_TEXT_LENGTH - result.Title.Length - result.PsalmTitle.Length;
+
+                    if (combinedLength > MAX_TEXT_LENGTH)
                     {
-                        result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(1919, result.Text.Length)), "...");
+                        result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(remainingTextLength - 70, result.Text.Length)), "..."); // 30 as a buffer for any formatting marks
                         result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                     }
                 }

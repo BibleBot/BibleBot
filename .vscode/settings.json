@@ -39,5 +39,6 @@
     ],
     "dotnet-test-explorer.debugger.debuggerPath": "/run/current-system/sw/bin/netcoredbg",
     "dotnet-test-explorer.debugger.quoteArgs": true,
-    "dotnet-test-explorer.testArguments": "-s .runsettings"
+    "dotnet-test-explorer.testArguments": "-s .runsettings",
+    "python-envs.pythonProjects": []
 }
