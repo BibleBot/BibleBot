@@ -62,7 +62,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             string originalProperName;
 
-            string[] solidTextClasses = ["d", "m", "cls", "mi"];
+            string[] solidTextClasses = ["d", "m", "cls", "mi", "nb"];
             string[] prefixTextClasses = ["q", "p", "add", "l"];
 
             if (reference.AsString == null)
