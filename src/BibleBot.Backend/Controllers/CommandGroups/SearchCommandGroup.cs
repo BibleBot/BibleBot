@@ -90,6 +90,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 Version idealVersion = await versionService.Get(versionParam);
                 idealVersion ??= await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
 
+                if (idealVersion.AliasOf != null)
+                {
+                    idealVersion = await versionService.Get(idealVersion.AliasOf);
+                }
+
                 if (idealVersion.Source != "bg" && potentialSubset != SubsetFlag.INVALID)
                 {
                     return new CommandResponse
@@ -172,7 +177,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         SubsetFlag.OT_ONLY => $"{localizer["SearchSubsetOldTestament"]} ",
                         SubsetFlag.NT_ONLY => $"{localizer["SearchSubsetNewTestament"]} ",
                         SubsetFlag.DEU_ONLY => $"{localizer["SearchSubsetDeuterocanon"]} ",
-                        SubsetFlag.INVALID => throw new NotImplementedException(),
+                        SubsetFlag.INVALID => "",
                         _ => ""
                     };
 

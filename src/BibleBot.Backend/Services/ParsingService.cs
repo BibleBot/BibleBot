@@ -364,10 +364,10 @@ namespace BibleBot.Backend.Services
                 bookName = deuName;
             }
 
-            // Use Ordinal comparison for exact string matches (faster than default)
-            if (string.Equals(prefVersion.Abbreviation, "NRSV", System.StringComparison.Ordinal))
+            // Use the proper version if this one serves as an alias
+            if (prefVersion.AliasOf != null)
             {
-                prefVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, "NRSVA", System.StringComparison.OrdinalIgnoreCase));
+                prefVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, prefVersion.AliasOf, System.StringComparison.OrdinalIgnoreCase));
             }
 
             // Use null-coalescing operator for cleaner code and avoid creating unnecessary Book object

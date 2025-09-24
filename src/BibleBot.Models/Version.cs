@@ -31,6 +31,12 @@ namespace BibleBot.Models
         public bool Active { get; set; }
 
         /// <summary>
+        /// The version that this version is an alias for. (ex. NRSV -> NRSVA)
+        /// </summary>
+        [BsonElement("AliasOf")]
+        public string AliasOf { get; set; }
+
+        /// <summary>
         /// The name of the version.
         /// </summary>
         [BsonElement("Name")]

@@ -145,6 +145,20 @@ namespace BibleBot.Tests.Backend.Mocks
         }
     }
 
+    public class MockNRSV : Version
+    {
+        public MockNRSV()
+        {
+            Name = "New Revised Standard Version (NRSV)";
+            Abbreviation = "NRSV";
+            Source = "bg";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = true;
+            AliasOf = "NRSVA";
+        }
+    }
+
     public class MockNRSVA : Version
     {
         public MockNRSVA()

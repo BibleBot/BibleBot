@@ -225,4 +225,12 @@
     <value>Publisher</value>
     <comment>To indicate publisher for version text.</comment>
   </data>
+  <data name="VersionInfoInternalId" xml:space="preserve">
+    <value>Internal ID</value>
+    <comment>The internal ID of the version.</comment>
+  </data>
+  <data name="VersionInfoAlias" xml:space="preserve">
+    <value>This version is an alias of `{0}`.</value>
+    <comment>To indicate a version that is an alias.</comment>
+  </data>
 </root>

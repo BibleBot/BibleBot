@@ -17,8 +17,8 @@ using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
-using Version = BibleBot.Models.Version;
 using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
@@ -250,6 +250,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 }
 
                 string response = $"### {idealVersion.Name}\n\n" +
+                (idealVersion.AliasOf != null ? $"{string.Format(localizer["VersionInfoAlias"], idealVersion.AliasOf)}\n\n" : "") +
                 $"{localizer["VersionInfoContainsOT"]}: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":x:")}\n" +
                 $"{localizer["VersionInfoContainsNT"]}: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":x:")}\n" +
                 $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n\n" +
@@ -263,7 +264,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealVersion.InternalId != null)
                 {
-                    response += $"\nInternal ID: `{idealVersion.InternalId}`";
+                    response += $"\n{localizer["VersionInfoInternalId"]}: `{idealVersion.InternalId}`";
                 }
 
                 if (!idealVersion.SupportsOldTestament || !idealVersion.SupportsNewTestament)
@@ -390,6 +391,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 //         LogStatement = "/booklist - non-bg source"
                 //     };
                 // }
+
+                if (idealVersion.AliasOf != null)
+                {
+                    idealVersion = await versionService.Get(idealVersion.AliasOf);
+                }
 
                 MDVersionBookList names = metadataFetchingService.GetVersionBookList(idealVersion);
 
