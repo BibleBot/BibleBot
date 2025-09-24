@@ -172,6 +172,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         SubsetFlag.OT_ONLY => $"{localizer["SearchSubsetOldTestament"]} ",
                         SubsetFlag.NT_ONLY => $"{localizer["SearchSubsetNewTestament"]} ",
                         SubsetFlag.DEU_ONLY => $"{localizer["SearchSubsetDeuterocanon"]} ",
+                        SubsetFlag.INVALID => throw new NotImplementedException(),
                         _ => ""
                     };
 

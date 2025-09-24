@@ -81,7 +81,7 @@ namespace BibleBot.Backend.Services
 
             // Apply regex replacements
             text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");
-            text = SpaceBeforeClosingQuoteRegex().Replace(text, @"$1 $2");
+            // text = SpaceBeforeClosingQuoteRegex().Replace(text, @"$1 $2");
 
             return text.Trim();
         }
@@ -126,7 +126,7 @@ namespace BibleBot.Backend.Services
 
             // Apply regex replacements
             text = MultipleWhitespacesGeneratedRegex().Replace(text, " ");
-            text = SpaceBeforeClosingQuoteRegex().Replace(text, @"$1 $2");
+            // text = SpaceBeforeClosingQuoteRegex().Replace(text, @"$1 $2");
 
             return text.Trim();
         }
