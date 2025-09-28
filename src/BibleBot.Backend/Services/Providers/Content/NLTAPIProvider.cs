@@ -28,6 +28,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         public string Name { get; set; }
         private CancellationTokenSource _cancellationToken;
         private readonly HttpClient _cachingHttpClient;
+        private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
         private readonly string _baseURL = "https://api.nlt.to/api/";
         private readonly string _getURI = "passages?ref={0}&key={1}&version=NLT";
@@ -40,6 +41,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             _cancellationToken = new CancellationTokenSource();
 
             _cachingHttpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
+            _httpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
 
             _htmlParser = new HtmlParser();
         }
@@ -222,7 +224,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         {
             string url = string.Format(_searchURI, query, version.Abbreviation);
 
-            HttpResponseMessage req = await _cachingHttpClient.GetAsync(url);
+            HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
             Stream resp = await req.Content.ReadAsStreamAsync();

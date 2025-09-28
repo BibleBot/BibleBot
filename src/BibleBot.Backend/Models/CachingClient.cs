@@ -123,7 +123,7 @@ namespace BibleBot.Backend.Models
             HttpResponseMessage response;
             try
             {
-                response = await base.SendAsync(request, cancellationToken); ;
+                response = await base.SendAsync(request, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -159,6 +159,8 @@ namespace BibleBot.Backend.Models
             try
             {
                 response = await base.SendAsync(request, cancellationToken); ;
+                JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
+                response.Content = json?["data"] != null ? new StringContent(json["data"].ToJsonString()) : new StringContent("{}");
             }
             catch (Exception ex)
             {
@@ -169,16 +171,6 @@ namespace BibleBot.Backend.Models
                 {
                     Content = new StringContent("Unknown error")
                 };
-            }
-
-            try
-            {
-                JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
-                response.Content = json?["data"] != null ? new StringContent(json["data"].ToJsonString()) : new StringContent("{}");
-            }
-            catch (JsonException)
-            {
-                response.Content = new StringContent("Unknown error");
             }
 
 

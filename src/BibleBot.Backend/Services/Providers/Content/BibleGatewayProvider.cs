@@ -29,6 +29,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         public string Name { get; set; }
         private CancellationTokenSource _cancellationToken;
         private readonly HttpClient _cachingHttpClient;
+        private readonly HttpClient _httpClient;
         private readonly HtmlParser _htmlParser;
         private readonly string _baseURL = "https://www.biblegateway.com/";
         private readonly string _getURI = "passage/?search={0}&version={1}&interface=print";
@@ -42,6 +43,9 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, true);
             _cachingHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
+
+            _httpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246");
 
             _htmlParser = new HtmlParser();
         }
@@ -227,7 +231,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         {
             string url = string.Format(_searchURI, query, version.Abbreviation);
 
-            HttpResponseMessage req = await _cachingHttpClient.GetAsync(url);
+            HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
             Stream resp = await req.Content.ReadAsStreamAsync();
