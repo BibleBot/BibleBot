@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using BibleBot.Backend.InternalModels;
+using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;

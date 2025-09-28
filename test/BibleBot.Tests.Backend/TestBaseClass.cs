@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
-using BibleBot.Backend.InternalModels;
+using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Backend.Services.Providers.Content;

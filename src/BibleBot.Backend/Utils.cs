@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using BibleBot.Backend.InternalModels;
+using BibleBot.Backend.Models;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
