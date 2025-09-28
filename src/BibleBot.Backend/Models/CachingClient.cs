@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -15,10 +16,12 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using CacheCow.Client;
+using Sentry;
+using Serilog;
 
 // TODO(srp): Add documentation strings to this.
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-namespace BibleBot.Models
+namespace BibleBot.Backend.Models
 {
     public static class CachingClient
     {
@@ -28,10 +31,10 @@ namespace BibleBot.Models
         public static HttpClient GetCachingClient(string baseURL)
         {
             HttpClient client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler());
 
-            client.BaseAddress = new System.Uri(baseURL);
+            client.BaseAddress = new Uri(baseURL);
 
             return client;
         }
@@ -44,19 +47,19 @@ namespace BibleBot.Models
             if (isHtml)
             {
                 client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler(),
                 new HtmlTrimHandler());
             }
             else
             {
                 client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler(),
                 new JsonTrimHandler());
             }
 #pragma warning restore IDE0045
-            client.BaseAddress = new System.Uri(baseURL);
+            client.BaseAddress = new Uri(baseURL);
 
             return client;
         }
@@ -69,14 +72,14 @@ namespace BibleBot.Models
             if (isHtml)
             {
                 client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler(),
                 new HtmlTrimHandler());
             }
             else
             {
                 client = HttpClientFactory.Create(
-                new CachingHandler(new InMemoryCacheStore(System.TimeSpan.FromMinutes(_expiryMins))),
+                new CachingHandler(new InMemoryCacheStore(TimeSpan.FromMinutes(_expiryMins))),
                 new CacheControlHandler(),
                 new JsonTrimHandler());
             }
@@ -103,7 +106,7 @@ namespace BibleBot.Models
             {
                 response.Headers.CacheControl = new()
                 {
-                    MaxAge = System.TimeSpan.FromMinutes(CachingClient._staleMins)
+                    MaxAge = TimeSpan.FromMinutes(CachingClient._staleMins)
                 };
             }
 
@@ -117,7 +120,18 @@ namespace BibleBot.Models
         {
             // In testing, trimming reduces response time by ~20%
             // Reduces cached response size by ~130kb (~99% less on Phil 4:6-7) which reduces need for request splitting
-            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
+            HttpResponseMessage response;
+            try
+            {
+                response = await base.SendAsync(request, cancellationToken); ;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"CachingClient: Encountered {ex.GetType()} with message '{ex.Message}'.");
+                SentrySdk.CaptureException(ex);
+
+                return new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.BadRequest };
+            }
 
             HtmlParser parser = new();
             IHtmlDocument document = await parser.ParseDocumentAsync(await response.Content.ReadAsStreamAsync(cancellationToken));
@@ -141,7 +155,21 @@ namespace BibleBot.Models
         {
             // In testing, trimming's effect is negligible on response time (~10%, <100ms)
             // Reduces cache response size by ~1kb (~39% less on Phil 4:6-7)
-            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
+            HttpResponseMessage response;
+            try
+            {
+                response = await base.SendAsync(request, cancellationToken); ;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"CachingClient: Encountered {ex.GetType()} with message '{ex.Message}'.");
+                SentrySdk.CaptureException(ex);
+
+                return new HttpResponseMessage
+                {
+                    Content = new StringContent("Unknown error")
+                };
+            }
 
             try
             {

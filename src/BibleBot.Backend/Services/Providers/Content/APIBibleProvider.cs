@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
+using BibleBot.Backend.Models;
 using BibleBot.Models;
 using Sentry;
 using Serilog;
@@ -29,7 +30,6 @@ namespace BibleBot.Backend.Services.Providers.Content
         public string Name { get; set; }
 
         private readonly HttpClient _cachingHttpClient;
-        private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly HtmlParser _htmlParser;
 
@@ -43,8 +43,6 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, false);
             _cachingHttpClient.DefaultRequestHeaders.Add("api-key", Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
-            _httpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
-            _httpClient.DefaultRequestHeaders.Add("api-key", Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
 
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 
@@ -53,8 +51,6 @@ namespace BibleBot.Backend.Services.Providers.Content
 
         [GeneratedRegex("[a-zA-Z]{3} ([0-9]{1,3}):([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseIdRegex();
-
-
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
@@ -156,7 +152,10 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             if (resp.Passages[0].BibleId != reference.Version.InternalId)
             {
-                Log.Error($"APIBibleProvider: {reference.Version.Abbreviation} is no longer available.");
+                VersionUnavailableException ex = new($"{reference.Version.Abbreviation} is no longer available in API.Bible.");
+                Log.Error(ex.Message);
+
+                SentrySdk.CaptureException(ex);
                 return null;
             }
 
@@ -239,6 +238,8 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             if (reference.Version.Abbreviation == "NLD1939" && text.Contains("tuchtmeester geweest tot Christus’ 3:opdat we"))
             {
+                // TODO(srp): If more version-specific content adjustments come
+                // about, we should implement a generic handler that can process these.
                 text = text.Replace("tuchtmeester geweest tot Christus’ 3:opdat we", "tuchtmeester geweest tot Christus' komst, opdat we");
             }
 
@@ -300,7 +301,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         {
             string url = string.Format(_searchURI, version.InternalId, query);
 
-            ABSearchResponse resp = await _httpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
+            ABSearchResponse resp = await _cachingHttpClient.GetJsonContentAs<ABSearchResponse>(url, _jsonOptions);
             List<SearchResult> results = [];
 
             if (resp != null && resp.Data != null && resp.Data.Verses != null)

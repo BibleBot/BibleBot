@@ -1,0 +1,1 @@
+This folder is for models internal to the backend that have no reusability in other projects, like a potential .NET frontend or what have you.

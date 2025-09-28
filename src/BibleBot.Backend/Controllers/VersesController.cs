@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using BibleBot.Backend.InternalModels;
+using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;

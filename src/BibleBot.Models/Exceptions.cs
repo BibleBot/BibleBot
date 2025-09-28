@@ -28,6 +28,16 @@ namespace BibleBot.Models
         public VerseLimitationException(string message) : base(message) { }
         public VerseLimitationException(string message, System.Exception inner) : base(message, inner) { }
     }
+
+    /// <summary>
+    /// This should be thrown when a limitation is encountered and should be made known to the user.
+    /// </summary>
+    public class VersionUnavailableException : System.Exception
+    {
+        public VersionUnavailableException() { }
+        public VersionUnavailableException(string message) : base(message) { }
+        public VersionUnavailableException(string message, System.Exception inner) : base(message, inner) { }
+    }
 }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
