@@ -17,6 +17,8 @@ using System.Xml;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
+using Sentry;
+using Serilog;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
@@ -99,23 +101,33 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
             public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                XmlReader reader = XmlReader.Create("https://biblebot.xyz/feed/");
-                SyndicationFeed blogRssFeed = SyndicationFeed.Load(reader);
-                SyndicationItem[] firstFourEntries = [.. blogRssFeed.Items.Take(4)];
-
                 StringBuilder newsSb = new();
 
-                for (int i = 0; i < firstFourEntries.Length; i++)
+                try
                 {
-                    SyndicationItem entry = firstFourEntries[i];
-                    if (i < 2)
+                    XmlReader reader = XmlReader.Create("https://biblebot.xyz/feed/");
+                    SyndicationFeed blogRssFeed = SyndicationFeed.Load(reader);
+                    SyndicationItem[] firstFourEntries = [.. blogRssFeed.Items.Take(4)];
+
+                    for (int i = 0; i < firstFourEntries.Length; i++)
                     {
-                        newsSb.AppendLine($":new: **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()}) :new:");
+                        SyndicationItem entry = firstFourEntries[i];
+                        if (i < 2)
+                        {
+                            newsSb.AppendLine($":new: **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()}) :new:");
+                        }
+                        else
+                        {
+                            newsSb.AppendLine($"**{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()})");
+                        }
                     }
-                    else
-                    {
-                        newsSb.AppendLine($"**{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()})");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"InformationCommandGroup: Encountered {ex.GetType()} in parsing blog RSS.");
+                    SentrySdk.CaptureException(ex);
+
+                    newsSb = new StringBuilder().AppendLine("Unable to parse RSS feed, visit https://biblebot.xyz/blog.");
                 }
 
                 InternalEmbed embed = new()
