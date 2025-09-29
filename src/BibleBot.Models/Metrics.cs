@@ -146,7 +146,6 @@ namespace BibleBot.Models
         /// <summary>
         /// The appended verse ranges, if applicable.
         /// </summary>
-        [Column("appended_verses")]
         public List<AppendedVerse> AppendedVerses { get; set; } = [];
     }
 
@@ -179,7 +178,6 @@ namespace BibleBot.Models
         /// <summary>
         /// The verse metric entry this belongs to.
         /// </summary>
-        [Column("verse_metric")]
         public VerseMetric VerseMetric { get; set; }
     }
 }
