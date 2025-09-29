@@ -108,6 +108,12 @@ namespace BibleBot.Models
         public string Version { get; set; }
 
         /// <summary>
+        /// The publisher of the version, if applicable.
+        /// </summary>
+        [Column("publisher")]
+        public string Publisher { get; set; }
+
+        /// <summary>
         /// Indicates whether the reference is of the Old Testament.
         /// </summary>
         /// <remarks>
