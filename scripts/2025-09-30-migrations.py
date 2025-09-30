@@ -24,12 +24,21 @@ versionsMissingPublisher = {
     "LSB": "lockman",
 }
 
+versionAliases = {"NRSV": "NRSVA"}
+
 
 def addMissingPublishers():
     versions = db.Versions
     for abbv, publisher in versionsMissingPublisher.items():
         versions.update_one({"Abbreviation": abbv}, {"$set": {"Publisher": publisher}})
         print(f"added publisher '{publisher}' to {abbv}")
+
+
+def addVersionAliases():
+    versions = db.Versions
+    for abbv, aliases in versionAliases.items():
+        versions.update_one({"Abbreviation": abbv}, {"$set": {"AliasOf": aliases}})
+        print(f"added aliasof '{aliases}' to {abbv}")
 
 
 addMissingPublishers()
