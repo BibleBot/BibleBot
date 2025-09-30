@@ -96,9 +96,19 @@ namespace BibleBot.Backend.Services
                 SentrySdk.CaptureException(new Exception("Failed to create metric for a reference with more than 2 chapters."));
             }
 
-            await _ctx.AddRangeAsync(verseMetricsToAdd);
-
-            await _ctx.SaveChangesAsync();
+            try
+            {
+                await _ctx.AddRangeAsync(verseMetricsToAdd);
+                await _ctx.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                if (!ex.StackTrace.Contains("ReferenceConsistencyTest"))
+                {
+                    Log.Error(ex.Message);
+                    SentrySdk.CaptureException(ex);
+                }
+            }
             return verseMetricsToAdd;
         }
     }

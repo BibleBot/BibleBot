@@ -13,6 +13,7 @@ variables:
   HUSKY: 0
   DS_ENFORCE_NEW_ANALYZER: "true"
   DS_MAX_DEPTH: 10
+  IS_GITLAB: "true"
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
