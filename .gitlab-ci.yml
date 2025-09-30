@@ -7,7 +7,7 @@ variables:
   POSTGRES_DB: postgres
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
-  POSTGRES_CONN: "Host=postgres;User=postgres;Password=postgres;Database=postgres;"
+  POSTGRES_CONN: "Host=postgres;Username=postgres;Password=postgres;Database=postgres;"
   SOURCE_CODE_PATH: "./src/**"
   ASPNETCORE_ENVIRONMENT: "Development"
   HUSKY: 0
