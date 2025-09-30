@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [13.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v12.1.1..v13.0.0) - 2025-09-30
+
+### 🚀 Features
+
+- Version aliases ([5a06e86](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5a06e8636ee1955ebf6c99e888ed39a610fc30f8))
+- Starting work on verse reference metrics ([c6143c8](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c6143c8a73acac89be20e07ebe59c08bc4feb2cc))
+- Add publisher to the verse reference metric class ([aa4bb38](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/aa4bb38e9fde12da7edbb8bd8b78404dace0073b))
+- [**breaking**] Verse reference metrics ([aba00d6](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/aba00d67b257df28b0dffcdcfbe1511a8ac8cb7e))
+
+### 🐛 Bug Fixes
+
+- *(autoserv)* Accidental duplication for wait=true ([def72d6](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/def72d668ddf4e3c84f9f13d47012e3095a25a2b))
+- *(verses)* Non-embed display styles not truncating text properly ([b93499b](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b93499b920d47a793c85c5622b0b6dea97d35ac3))
+- *(ab)* Scenario where some translations fail from using a deprecated specifier for certain verse content ([428f5df](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/428f5df75cf81637b1902c4be98e19a93babab80))
+- *(verses)* Remove use of quotation mark regex ([8628b1d](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8628b1dfe53452fc1e2d261166f8cd1da2388aaa))
+- Add exception handling to HTTP cache client, reorganize backend models ([f3d1000](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/f3d10001e81dd4e1bedd9fae7ffad61b9431552c))
+- *(commands)* Handle exceptions from pulling blog posts in /biblebot ([1ef87be](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1ef87beb3026cdb293655d27ac2f987f7c63366f))
+- Use new namespace for internal models ([5428232](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/542823258222d1730ba96effb87f1564a4207f75))
+- Revert use of caching client for search responses ([57aef70](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/57aef70398988673a356f95544762587768e3ea3))
+- Apparently i shouldn't use column name attributes on navigation properties ([0cd877a](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/0cd877a3aeb17c10bf5ab807dce3dc1576e28e60))
+
 ## [12.1.1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v12.1.0..v12.1.1) - 2025-08-19
 
 ### 🐛 Bug Fixes
