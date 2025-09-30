@@ -4,6 +4,9 @@ services:
   - postgres:18.0
 
 variables:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
   POSTGRES_CONN: "Host=postgres;User=postgres;Password=postgres;Database=postgres;"
   SOURCE_CODE_PATH: "./src/**"
   ASPNETCORE_ENVIRONMENT: "Development"
