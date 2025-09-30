@@ -1,6 +1,10 @@
 image: mcr.microsoft.com/dotnet/sdk:9.0
 
+services:
+  - postgres:18.0
+
 variables:
+  POSTGRES_CONN: "Host=postgres;User=postgres;Password=postgres;Database=postgres;"
   SOURCE_CODE_PATH: "./src/**"
   ASPNETCORE_ENVIRONMENT: "Development"
   HUSKY: 0
