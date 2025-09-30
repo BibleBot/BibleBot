@@ -51,6 +51,10 @@ namespace BibleBot.Models
             modelBuilder.Entity<AppendedVerse>()
                 .Property(a => a.VerseRange)
                 .HasColumnType("int4range");
+
+            modelBuilder.Entity<VerseMetric>()
+                .Property(v => v.TimeGenerated)
+                .HasDefaultValueSql("now()");
         }
     }
 
@@ -75,9 +79,22 @@ namespace BibleBot.Models
         /// <summary>
         /// The time that the object was generated.
         /// </summary>
-        [Required]
         [Column("time_generated")]
         public Instant TimeGenerated { get; set; }
+
+        /// <summary>
+        /// The ID of the user that invoked the reference.
+        /// </summary>
+        [Required]
+        [Column("user_id")]
+        public string UserId { get; set; }
+
+        /// <summary>
+        /// The ID of the guild that invoked the reference.
+        /// </summary>
+        [Required]
+        [Column("guild_id")]
+        public string GuildId { get; set; }
 
         /// <summary>
         /// The internal name of the book.

@@ -98,6 +98,16 @@
           "Npgsql": "9.0.3"
         }
       },
+      "Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime": {
+        "type": "Direct",
+        "requested": "[9.0.4, )",
+        "resolved": "9.0.4",
+        "contentHash": "QZ80CL3c9xzC83eVMWYWa1RcFZA6HJtpMAKFURlmz+1p0OyysSe8R6f/4sI9vk/nwqF6Fkw3lDgku/xH6HcJYg==",
+        "dependencies": {
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.4",
+          "Npgsql.NodaTime": "9.0.3"
+        }
+      },
       "OpenTelemetry.Exporter.Console": {
         "type": "Direct",
         "requested": "[1.12.0, )",
@@ -800,6 +810,15 @@
         "contentHash": "tPvY61CxOAWxNsKLEBg+oR646X4Bc8UmyQ/tJszL/7mEmIXQnnBhVJZrZEEUv0Bstu0mEsHZD5At3EO8zQRAYw==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
+        }
+      },
+      "Npgsql.NodaTime": {
+        "type": "Transitive",
+        "resolved": "9.0.3",
+        "contentHash": "PMWXCft/iw+5A7eCeMcy6YZXBst6oeisbCkv2JMQVG4SAFa5vQaf6K2voXzUJCqzwOFcCWs+oT42w2uMDFpchw==",
+        "dependencies": {
+          "NodaTime": "3.2.0",
+          "Npgsql": "9.0.3"
         }
       },
       "OpenTelemetry": {

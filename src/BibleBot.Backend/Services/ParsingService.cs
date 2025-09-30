@@ -321,6 +321,10 @@ namespace BibleBot.Backend.Services
                             {
                                 endingVerse = startingVerse;
                             }
+                            else if (appendedVerses.Count > 0 && endingVerse == 0)
+                            {
+                                endingVerse = startingVerse;
+                            }
                             break;
                         }
                     default:

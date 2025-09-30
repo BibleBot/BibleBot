@@ -27,7 +27,7 @@ namespace BibleBot.Backend.Controllers
     [Produces("application/json")]
     [Route("api/verses")]
     [ApiController]
-    public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService,
+    public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VerseMetricsService verseMetricsService,
                                           VersionService versionService, LanguageService languageService, MetadataFetchingService metadataFetchingService,
                                           List<IContentProvider> bibleProviders, IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
     {
@@ -37,6 +37,9 @@ namespace BibleBot.Backend.Controllers
 
         [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$", RegexOptions.Compiled)]
         private static partial Regex TruncatedTextRegex();
+
+        [GeneratedRegex(@"<\*\*(.*?)\*\*>", RegexOptions.Compiled)]
+        private static partial Regex VerseNumberRegex();
 
         /// <summary>
         /// Processes a message to locate verse references, outputting
@@ -280,6 +283,22 @@ namespace BibleBot.Backend.Controllers
                 }
 
                 logBuilder.Append(verse.Reference.ToString(true)).Append(' ').Append(verse.Reference.Version.Abbreviation);
+
+                int startingChapterEndingVerse = 0;
+                if (verse.Reference.IsExpandoVerse)
+                {
+                    MatchCollection verseNumbers = VerseNumberRegex().Matches(verse.Text);
+                    startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
+                }
+                else if (verse.Reference.StartingChapter != verse.Reference.EndingChapter)
+                {
+                    string firstChapterText = verse.Text.Split($"<**{verse.Reference.EndingChapter}:")[0];
+
+                    MatchCollection verseNumbers = VerseNumberRegex().Matches(firstChapterText);
+                    startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
+                }
+
+                await verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, startingChapterEndingVerse);
             }
 
             string logStatement = logBuilder.ToString();

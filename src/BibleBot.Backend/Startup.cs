@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -51,7 +52,15 @@ namespace BibleBot.Backend
 
             // Instantiate the various services.
             services.AddSingleton(_ => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
+            services.AddDbContextPool<MetricsContext>(options =>
+                options.UseNpgsql(
+                    Environment.GetEnvironmentVariable("POSTGRES_CONN"),
+                    o => o.SetPostgresVersion(18, 0)
+                          .UseNodaTime()
+                )
+            );
 
+            services.AddSingleton<VerseMetricsService>();
             services.AddSingleton<PreferenceService>();
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();
