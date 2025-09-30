@@ -41,7 +41,7 @@ namespace BibleBot.Backend.Controllers
                     OK = false
                 });
             }
-            
+
             if (req.Body == "delete")
             {
                 if (req.ChannelId != idealGuild.DailyVerseChannelId)

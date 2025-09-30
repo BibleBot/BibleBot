@@ -57,7 +57,7 @@ namespace BibleBot.Backend.Services
                 verseMetric.AppendedVerses.Add(appendedVerse);
             }
 
-            verseMetric.Chapter = reference.StartingChapter;
+            verseMetric.Chapter = reference.Book.ProperName == "Psalm 151" ? 151 : reference.StartingChapter;
 
             if (startingChapterEndingVerse == 0)
             {

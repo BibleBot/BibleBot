@@ -192,6 +192,12 @@ namespace BibleBot.Backend.Services.Providers.Content
             // As the verse reference could have a non-English name...
             reference.AsString = document.GetElementsByClassName("dropdown-display-text").FirstOrDefault()!.TextContent.Trim();
 
+            if (reference.Book.ProperName == "Psalm 151")
+            {
+                string[] tokRef = reference.AsString.Split(" ");
+                reference.AsString = $"{string.Join(" ", tokRef.Take(tokRef.Length - 1))}:{tokRef.Last()}";
+            }
+
             if (reference.AppendedVerses.Count > 0)
             {
                 foreach (IElement referenceEl in document.GetElementsByClassName("dropdown-display-text").Skip(1))
