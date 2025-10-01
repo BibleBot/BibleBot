@@ -284,21 +284,25 @@ namespace BibleBot.Backend.Controllers
 
                 logBuilder.Append(verse.Reference.ToString(true)).Append(' ').Append(verse.Reference.Version.Abbreviation);
 
-                int startingChapterEndingVerse = 0;
-                if (verse.Reference.IsExpandoVerse)
+                // We don't want the metric logging to contribute to the response times, so we'll make it a background task.
+                _ = Task.Run(() =>
                 {
-                    MatchCollection verseNumbers = VerseNumberRegex().Matches(verse.Text);
-                    startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
-                }
-                else if (verse.Reference.StartingChapter != verse.Reference.EndingChapter)
-                {
-                    string firstChapterText = verse.Text.Split($"<**{verse.Reference.EndingChapter}:")[0];
+                    int startingChapterEndingVerse = 0;
+                    if (verse.Reference.IsExpandoVerse)
+                    {
+                        MatchCollection verseNumbers = VerseNumberRegex().Matches(verse.Text);
+                        startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
+                    }
+                    else if (verse.Reference.StartingChapter != verse.Reference.EndingChapter)
+                    {
+                        string firstChapterText = verse.Text.Split($"<**{verse.Reference.EndingChapter}:")[0];
 
-                    MatchCollection verseNumbers = VerseNumberRegex().Matches(firstChapterText);
-                    startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
-                }
+                        MatchCollection verseNumbers = VerseNumberRegex().Matches(firstChapterText);
+                        startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
+                    }
 
-                await verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, startingChapterEndingVerse);
+                    _ = verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, startingChapterEndingVerse);
+                });
             }
 
             string logStatement = logBuilder.ToString();
