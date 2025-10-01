@@ -83,10 +83,7 @@ namespace BibleBot.Backend.Services
 
             if (typeOfT == typeof(Version))
             {
-                query = query.ToLowerInvariant();
-
-                FilterDefinition<Version> filterDefinition = Builders<Version>.Filter.Eq(version => version.Abbreviation.ToLowerInvariant(), query);
-                cursor = (IAsyncCursor<T>)await _versions.FindAsync(filterDefinition, findOptions as FindOptions<Version>);
+                cursor = (IAsyncCursor<T>)await _versions.FindAsync(version => query.ToLowerInvariant() == version.Abbreviation.ToLowerInvariant(), findOptions as FindOptions<Version>);
             }
             else if (typeOfT == typeof(User))
             {
