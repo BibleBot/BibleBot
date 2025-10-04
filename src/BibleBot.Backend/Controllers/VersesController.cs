@@ -298,7 +298,7 @@ namespace BibleBot.Backend.Controllers
                     startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
                 }
 
-                _ = verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, startingChapterEndingVerse);
+                await verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, startingChapterEndingVerse);
             }
 
             string logStatement = logBuilder.ToString();
