@@ -285,7 +285,7 @@ namespace BibleBot.Backend.Controllers
                 logBuilder.Append(verse.Reference.ToString(true)).Append(' ').Append(verse.Reference.Version.Abbreviation);
 
                 int startingChapterEndingVerse = 0;
-                if (verse.Reference.IsExpandoVerse)
+                if (verse.Reference.IsExpandoVerse || verse.Reference.StartingChapter == verse.Reference.EndingChapter)
                 {
                     MatchCollection verseNumbers = VerseNumberRegex().Matches(verse.Text);
                     startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
