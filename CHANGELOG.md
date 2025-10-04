@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [13.1.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v13.0.0..v13.1.0) - 2025-10-04
+
+### 🚀 Features
+
+- Ensure verse metrics don't contribute to longer response times ([9c2c321](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/9c2c32102074c1829c5be644f6a3de2bbcabae08))
+
+### 🐛 Bug Fixes
+
+- *(verses)* Fix reference.AsString result for Psalm 151 responses, handle Psalm 151 properly in verse metrics ([d93c3ea](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/d93c3ea599a4108a44808db0819479e0ef21e3f7))
+- MongoDB doesn't like ToLowerInvariant() in FilterDefinition anymore? ([60e18cb](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/60e18cb6b068eb2f0aae296f3e67ee2a2eb48565))
+- *(bg)* Letter of Jeremiah incorrectly mapped to Baruch ([55ee2b0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/55ee2b0725d41c3628e66db33c6fe002e0159c07))
+
+### 🚜 Refactor
+
+- *(metadata)* Move source-specific functions to respective metadata provider classes ([c672a7f](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c672a7f856acf24c8e4ef6dbb8ab848140048f69))
+
 ## [13.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v12.1.1..v13.0.0) - 2025-09-30
 
 ### 🚀 Features
