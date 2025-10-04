@@ -64,11 +64,6 @@ namespace BibleBot.Backend.Services
                 verseMetric.VerseRange = new NpgsqlRange<int>(reference.StartingVerse, true, reference.EndingVerse, true);
                 verseMetricsToAdd.Add(verseMetric);
             }
-            else if (reference.IsExpandoVerse)
-            {
-                verseMetric.VerseRange = new NpgsqlRange<int>(reference.StartingVerse, true, startingChapterEndingVerse, true);
-                verseMetricsToAdd.Add(verseMetric);
-            }
             else if (startingChapterEndingVerse != 0 && (reference.EndingChapter - reference.StartingChapter) == 1)
             {
                 verseMetric.VerseRange = new NpgsqlRange<int>(reference.StartingVerse, true, startingChapterEndingVerse, true);
@@ -86,6 +81,11 @@ namespace BibleBot.Backend.Services
                     IsNT = reference.IsNT,
                     IsDEU = reference.IsDEU
                 });
+            }
+            else if (reference.IsExpandoVerse || startingChapterEndingVerse > 0)
+            {
+                verseMetric.VerseRange = new NpgsqlRange<int>(reference.StartingVerse, true, startingChapterEndingVerse, true);
+                verseMetricsToAdd.Add(verseMetric);
             }
 
             if (verseMetricsToAdd.Count == 0 && (reference.EndingChapter - reference.StartingChapter) > 1)

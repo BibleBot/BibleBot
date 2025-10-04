@@ -41,6 +41,15 @@ namespace BibleBot.Backend.Controllers
         [GeneratedRegex(@"<\*\*(.*?)\*\*>", RegexOptions.Compiled)]
         private static partial Regex VerseNumberRegex();
 
+        [GeneratedRegex(@"[0-9]{1,3}-([0-9]{1,3})", RegexOptions.Compiled)]
+        private static partial Regex VerseNumberWithHyphenRegex();
+
+        [GeneratedRegex(@"\((.*?)\)", RegexOptions.Compiled)]
+        private static partial Regex VerseNumberInParenthesesRegex();
+
+        [GeneratedRegex(@"[0-9]{1,3}, ([0-9]{1,3})", RegexOptions.Compiled)]
+        private static partial Regex VerseNumberWithCommaRegex();
+
         /// <summary>
         /// Processes a message to locate verse references, outputting
         /// the corresponding text.
@@ -287,15 +296,12 @@ namespace BibleBot.Backend.Controllers
                 int startingChapterEndingVerse = 0;
                 if (verse.Reference.IsExpandoVerse || verse.Reference.StartingChapter == verse.Reference.EndingChapter)
                 {
-                    MatchCollection verseNumbers = VerseNumberRegex().Matches(verse.Text);
-                    startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
+                    startingChapterEndingVerse = GetLastVerseNumber(verse.Text);
                 }
                 else if (verse.Reference.StartingChapter != verse.Reference.EndingChapter)
                 {
                     string firstChapterText = verse.Text.Split($"<**{verse.Reference.EndingChapter}:")[0];
-
-                    MatchCollection verseNumbers = VerseNumberRegex().Matches(firstChapterText);
-                    startingChapterEndingVerse = int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
+                    startingChapterEndingVerse = GetLastVerseNumber(firstChapterText);
                 }
 
                 await verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, startingChapterEndingVerse);
@@ -318,6 +324,36 @@ namespace BibleBot.Backend.Controllers
                 CultureFooter = string.Format(_sharedLocalizer["GlobalFooter"], Utils.Version)
             });
 
+        }
+
+        private static int GetLastVerseNumber(string text)
+        {
+            MatchCollection verseNumbers = VerseNumberRegex().Matches(text);
+
+            if (verseNumbers.Count > 0)
+            {
+                string target = verseNumbers[verseNumbers.Count - 1].Groups[1].Value;
+
+                if (target.Contains('-'))
+                {
+                    MatchCollection correctedVerseNumbers = VerseNumberWithHyphenRegex().Matches(target);
+                    return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+                }
+                else if (target.Contains('('))
+                {
+                    MatchCollection correctedVerseNumbers = VerseNumberInParenthesesRegex().Matches(target);
+                    return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+                }
+                else if (target.Contains(','))
+                {
+                    MatchCollection correctedVerseNumbers = VerseNumberWithCommaRegex().Matches(target);
+                    return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+                }
+
+                return int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
+            }
+
+            return 0;
         }
     }
 }
