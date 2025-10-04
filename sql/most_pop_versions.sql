@@ -2,8 +2,8 @@ SELECT version,
        publisher,
        COUNT(*) AS reference_count
 FROM
-    (SELECT version
-            publisher,
+    (SELECT version,
+            publisher
      FROM verse_metrics
      UNION ALL SELECT m.version, m.publisher
      FROM appended_verses a
