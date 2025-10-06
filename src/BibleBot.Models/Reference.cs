@@ -140,9 +140,14 @@ namespace BibleBot.Models
         public List<Tuple<int, int>> AppendedVerses { get; set; } = [];
 
         /// <summary>
-        /// The <see cref="Version"/> that the reference requests.
+        /// The <see cref="Models.Version"/> that the reference requests.
         /// </summary>
         public Version Version { get; set; }
+
+        /// <summary>
+        /// The <see cref="Models.Version"/> that aliases the actual version.
+        /// </summary>
+        public Version AliasingVersion { get; set; }
 
         /// <summary>
         /// Indicates whether the reference is of the Old Testament.

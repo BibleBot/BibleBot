@@ -36,7 +36,7 @@ namespace BibleBot.Backend.Services
                 UserId = userId,
                 GuildId = guildId,
                 Book = reference.Book.Name,
-                Version = reference.Version.Abbreviation,
+                Version = reference.AliasingVersion != null ? reference.AliasingVersion.Abbreviation : reference.Version.Abbreviation,
                 IsOT = reference.IsOT,
                 IsNT = reference.IsNT,
                 IsDEU = reference.IsDEU

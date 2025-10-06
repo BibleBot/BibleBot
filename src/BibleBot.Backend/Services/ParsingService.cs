@@ -88,6 +88,7 @@ namespace BibleBot.Backend.Services
             int startingChapter = 0, startingVerse = 0, endingChapter = 0, endingVerse = 0;
             List<System.Tuple<int, int>> appendedVerses = [];
             bool expandoVerseUsed = false;
+            Version aliasingVersion = null;
 
             string[] tokens = str.Split(' ');
 
@@ -371,6 +372,7 @@ namespace BibleBot.Backend.Services
             // Use the proper version if this one serves as an alias
             if (prefVersion.AliasOf != null)
             {
+                aliasingVersion = prefVersion;
                 prefVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, prefVersion.AliasOf, System.StringComparison.OrdinalIgnoreCase));
             }
 
@@ -400,6 +402,7 @@ namespace BibleBot.Backend.Services
                 EndingVerse = endingVerse,
                 AppendedVerses = appendedVerses,
                 Version = prefVersion,
+                AliasingVersion = aliasingVersion,
                 IsExpandoVerse = expandoVerseUsed,
 
                 IsOT = isOT,
