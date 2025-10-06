@@ -50,6 +50,9 @@ namespace BibleBot.Backend.Controllers
         [GeneratedRegex(@"[0-9]{1,3}, ([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseNumberWithCommaRegex();
 
+        [GeneratedRegex(@"[0-9]{1,3}:([0-9]{1,3})", RegexOptions.Compiled)]
+        private static partial Regex VerseNumberWithChapterRegex();
+
         /// <summary>
         /// Processes a message to locate verse references, outputting
         /// the corresponding text.
@@ -347,6 +350,11 @@ namespace BibleBot.Backend.Controllers
                 else if (target.Contains(','))
                 {
                     MatchCollection correctedVerseNumbers = VerseNumberWithCommaRegex().Matches(target);
+                    return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+                }
+                else if (target.Contains(':'))
+                {
+                    MatchCollection correctedVerseNumbers = VerseNumberWithChapterRegex().Matches(target);
                     return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
                 }
 
