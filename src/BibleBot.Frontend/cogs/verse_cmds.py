@@ -109,6 +109,11 @@ class VerseCommands(commands.Cog):
                 for item in resp:
                     await sending.safe_send_interaction(inter.followup, item)
 
+    @commands.message_command(name=Localized(key="CMD_VERSE_MSG_NAME"))
+    @commands.install_types(user=True)
+    async def verse_msg(self, inter: CommandInteraction, msg: disnake.Message):
+        await self.verse(inter, msg.content)
+
     @commands.slash_command(description=Localized(key="CMD_RANDOM_DESC"))
     async def random(self, inter: CommandInteraction):
         await inter.response.defer()
