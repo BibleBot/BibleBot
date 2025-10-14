@@ -5,6 +5,13 @@
     "editor.rulers": [
         120
     ],
+    "pylint.interpreter": [
+        "${workspaceFolder}/src/BibleBot.Frontend/venv/bin/python"
+    ],
+    "pylint.args": [
+        "--disable-wrong-import-order"
+    ],
+    "pylint.cwd": "${workspaceFolder}/src/BibleBot.Frontend",
     "python.defaultInterpreterPath": "${workspaceFolder}/src/BibleBot.Frontend/venv/bin/python",
     "python.analysis.typeCheckingMode": "basic",
     "[python]": {
@@ -25,20 +32,5 @@
             "other": "off"
         },
         "editor.formatOnSave": false
-    },
-    "cursorpyright.analysis.typeCheckingMode": "basic",
-    "dotnet-test-explorer.testProjectPath": "test/BibleBot.Tests.Backend/",
-    "dotnet-test-explorer.debugger.pipeTransportEnabled": true,
-    "dotnet-test-explorer.debugger.pipeCwd": "${workspaceFolder}",
-    "dotnet-test-explorer.debugger.pipeProgram": "zsh",
-    "dotnet-test-explorer.debugger.pipeArgs": [
-        "-c"
-    ],
-    "dotnet-test-explorer.debugger.debuggerArgs": [
-        "--interpreter=vscode"
-    ],
-    "dotnet-test-explorer.debugger.debuggerPath": "/run/current-system/sw/bin/netcoredbg",
-    "dotnet-test-explorer.debugger.quoteArgs": true,
-    "dotnet-test-explorer.testArguments": "-s .runsettings",
-    "python-envs.pythonProjects": []
+    }
 }

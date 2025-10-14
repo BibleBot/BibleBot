@@ -1,16 +1,16 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 from disnake import CommandInteraction, Localized
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend, sending
+from utils import backend, sending, checks
 from utils.views import CreatePaginator
 from utils.i18n import i18n as i18n_class
 
@@ -34,7 +34,7 @@ class Languages(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_LANGUAGE_DESC"))
     async def language(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+language")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
@@ -44,13 +44,14 @@ class Languages(commands.Cog):
         inter: CommandInteraction,
         language: str = Language,
     ):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+language set {language}"
         )
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SETSERVERLANGUAGE_DESC"))
+    @commands.install_types(guild=True)
     async def setserverlanguage(
         self,
         inter: CommandInteraction,
@@ -91,7 +92,7 @@ class Languages(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_LISTLANGUAGES_DESC"))
     async def listlanguages(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel, inter.author, "+language list"
         )

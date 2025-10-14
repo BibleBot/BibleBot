@@ -7,19 +7,21 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import os
+import json
+from typing import Optional, Union
 import aiohttp
 import disnake
-import json
 from logger import VyLogger
 from utils import sending
 from utils import statics
+from utils import webhooks
+from utils.views import CreatePaginator
 from utils.i18n import i18n as i18n_class
+from utils import channels
 
 i18n = i18n_class()
-
-from utils.views import CreatePaginator
-
 logger = VyLogger("default")
+aiohttp_headers = {"Authorization": os.environ.get("ENDPOINT_TOKEN", "")}
 
 
 async def submit_command(
@@ -27,265 +29,176 @@ async def submit_command(
     user: disnake.abc.User,
     body: str,
 ):
-    try:
-        ch = await rch._get_channel()
-    except AttributeError:
-        # In this scenario, we've got something that
-        # should inherit Messageable in disnake but
-        # has not been implemented.
-        #
-        # May seem silly to have this, but we've been
-        # fooled before.
+    """Submits a command to the backend and processes the result."""
+
+    ctx = await channels.get_channel_context_from_messageable(rch)
+
+    if ctx is None or ctx.channel is None:
         return None
 
-    isDM = ch.type == disnake.ChannelType.private
-    isThread = (
-        True
-        if ch.type
-        in [
-            disnake.ChannelType.news_thread,
-            disnake.ChannelType.public_thread,
-            disnake.ChannelType.private_thread,
-        ]
-        else False
-    )
-
-    guildId = ch.id if isDM else ch.guild.id
-    channelId = ch.id
-
-    if isThread:
-        channelId = ch.parent.id
-
-    reqbody = {
+    req_body = {
         "UserId": str(user.id),
-        "GuildId": str(guildId),
-        "ChannelId": str(channelId),
-        "ThreadId": str(ch.id),
-        "IsThread": isThread,
+        "GuildId": ctx.guild_id,
+        "ChannelId": ctx.channel_id,
+        "ThreadId": ctx.thread_id,
+        "IsThread": ctx.is_thread,
         "IsBot": user.bot,
-        "IsDM": isDM,
+        "IsDM": ctx.is_thread,
         "Body": body,
     }
 
-    endpoint = os.environ.get("ENDPOINT")
+    endpoint = os.environ.get("ENDPOINT", "")
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            f"{endpoint}/commands/process",
-            json=reqbody,
-            headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
-        ) as resp:
-            respText = await resp.text()
+    resp_body = await submit_command_raw(endpoint, req_body)
 
-            respText = respText.replace("\\\\", "\\")
+    if resp_body["culture"] is not None:
+        localization = i18n.get_i18n_or_default(resp_body["culture"].replace("-", "_"))
+    else:
+        localization = i18n.get_i18n_or_default("en_US")
 
-            respBody = json.loads(respText)
+    if resp_body["ok"]:
+        logger.info(
+            f"<{user.id}@{ctx.guild_id}#{ctx.channel_id}> " + resp_body["logStatement"]
+        )
+    else:
+        logger.error(
+            f"<{user.id}@{ctx.guild_id}#{ctx.channel_id}> " + resp_body["logStatement"]
+        )
 
-            if respBody["culture"] is not None:
-                localization = i18n.get_i18n_or_default(
-                    respBody["culture"].replace("-", "_")
-                )
-            else:
-                localization = i18n.get_i18n_or_default("en_US")
-
-            if respBody["ok"]:
-                logger.info(
-                    f"<{user.id}@{guildId}#{ch.id}> " + respBody["logStatement"]
-                )
-            else:
-                logger.error(
-                    f"<{user.id}@{guildId}#{ch.id}> " + respBody["logStatement"]
-                )
-
-            if respBody["type"] == "cmd":
-                if len(respBody["pages"]) == 1:
-                    # todo: webhook stuff should not be dailyverse-specific
-                    if respBody["removeWebhook"] and not isDM:
-                        try:
-                            webhooks = await ch.guild.webhooks()
-
-                            for webhook in webhooks:
-                                if webhook.user is not None:
-                                    if webhook.user.id == ch.guild.me.id:
-                                        await webhook.delete(
-                                            reason=f"User ID {user.id} performed a command that removes BibleBot-related webhooks."
-                                        )
-                        except disnake.errors.Forbidden:
-                            await sending.safe_send_channel(
-                                ch,
-                                embed=create_error_embed(
-                                    localization["PERMS_ERROR_LABEL"],
-                                    localization["WEBHOOK_REMOVAL_FAILURE"],
-                                    localization,
-                                ),
-                            )
-
-                    if respBody["createWebhook"] and not isDM:
-                        try:
-                            webhook_service_body = None
-                            # Unlike other libraries, we have to convert an
-                            # image into bytes to pass as the webhook avatar.
-                            with open("./data/avatar.png", "rb") as image:
-                                if isThread:
-                                    webhook = await ch.parent.create_webhook(  # type: ignore
-                                        name="BibleBot Automatic Daily Verses",
-                                        avatar=bytearray(image.read()),
-                                        reason="For automatic daily verses from BibleBot.",
-                                    )
-                                    webhook_service_body = f"{webhook.id}/{webhook.token}?thread_id={ch.id}"
-                                else:
-                                    webhook = await ch.create_webhook(  # type: ignore
-                                        name="BibleBot Automatic Daily Verses",
-                                        avatar=bytearray(image.read()),
-                                        reason="For automatic daily verses from BibleBot.",
-                                    )
-                                    webhook_service_body = (
-                                        f"{webhook.id}/{webhook.token}"
-                                    )
-
-                            # Send a request to the webhook controller, which will update the DB.
-                            reqbody["Body"] = webhook_service_body
-                            async with aiohttp.ClientSession() as subsession:
-                                async with subsession.post(
-                                    f"{endpoint}/webhooks/process",
-                                    json=reqbody,
-                                    headers={
-                                        "Authorization": os.environ.get(
-                                            "ENDPOINT_TOKEN"
-                                        )
-                                    },
-                                ) as subresp:
-                                    if subresp.status != 200:
-                                        logger.error("couldn't submit webhook")
-                                    else:
-                                        return convert_embed(respBody["pages"][0])
-                        except disnake.errors.Forbidden:
-                            try:
-                                await sending.safe_send_channel(
-                                    ch,
-                                    embed=create_error_embed(
-                                        "/dailyverseset",
-                                        localization["WEBHOOK_CREATION_FAILURE"],
-                                        localization,
-                                    ),
-                                )
-                            except disnake.errors.Forbidden:
-                                logger.error(
-                                    f"unable to add webhook for <{user.id}@{guildId}#{ch.id}>"
-                                )
-
-                    return convert_embed(respBody["pages"][0])
-                else:
-                    return create_pagination_embeds(respBody["pages"], localization)
-            elif respBody["type"] == "verse":
-                if "does not support the" in respBody["logStatement"]:
-                    return create_error_embed(
-                        "Verse Error", respBody["logStatement"], localization
+    if resp_body["type"] == "cmd":
+        if len(resp_body["pages"]) == 1:
+            # todo: webhook stuff should not be dailyverse-specific
+            if resp_body["removeWebhook"] and ctx.guild is not None:
+                try:
+                    webhook_service_body = await webhooks.remove_webhooks(
+                        user, ctx.guild
                     )
-                elif "too many verses" in respBody["logStatement"]:
-                    return convert_embed(respBody["pages"][0])
 
-                display_style = respBody["displayStyle"]
-                if display_style == "embed":
-                    for verse in respBody["verses"]:
-                        return create_embed_from_verse(
-                            verse,
-                            (
-                                respBody["cultureFooter"]
-                                if respBody["cultureFooter"] is not None
-                                else statics.verse_footer
+                    req_body["Body"] = webhook_service_body
+                    async with aiohttp.ClientSession() as subsession:
+                        async with subsession.post(
+                            f"{endpoint}/webhooks/process",
+                            json=req_body,
+                            headers=aiohttp_headers,
+                        ) as subresp:
+                            if subresp.status != 200:
+                                logger.error("couldn't submit webhook")
+                            else:
+                                return convert_embed(resp_body["pages"][0])
+                except disnake.errors.Forbidden:
+                    await sending.safe_send_channel(
+                        ctx.channel,
+                        embed=create_error_embed(
+                            localization["PERMS_ERROR_LABEL"],
+                            localization["WEBHOOK_REMOVAL_FAILURE"],
+                            localization,
+                        ),
+                    )
+
+            if resp_body["createWebhook"] and ctx.guild is not None:
+                try:
+                    webhook_service_body = await webhooks.create_webhook(ctx)
+
+                    # Send a request to the webhook controller, which will update the DB.
+                    req_body["Body"] = webhook_service_body
+                    async with aiohttp.ClientSession() as subsession:
+                        async with subsession.post(
+                            f"{endpoint}/webhooks/process",
+                            json=req_body,
+                            headers=aiohttp_headers,
+                        ) as subresp:
+                            if subresp.status != 200:
+                                logger.error("couldn't submit webhook")
+                            else:
+                                return convert_embed(resp_body["pages"][0])
+                except disnake.errors.Forbidden:
+                    try:
+                        await sending.safe_send_channel(
+                            ctx.channel,
+                            embed=create_error_embed(
+                                "/dailyverseset",
+                                localization["WEBHOOK_CREATION_FAILURE"],
+                                localization,
                             ),
                         )
-                    return None
-                elif display_style == "blockquote":
-                    for verse in respBody["verses"]:
-                        reference_title = (
-                            verse["reference"]["asString"]
-                            + " - "
-                            + verse["reference"]["version"]["name"]
+                    except disnake.errors.Forbidden:
+                        logger.error(
+                            f"unable to add webhook for <{user.id}@{ctx.guild_id}#{ctx.channel_id}>"
                         )
-                        verse_title = (
-                            ("**" + verse["title"] + "**\n> \n> ")
-                            if len(verse["title"]) > 0
-                            else ""
-                        )
-                        verse_text = verse["text"]
 
-                        return f"**{reference_title}**\n\n> {verse_title}{verse_text}"
-                    return None
-                elif display_style == "code":
-                    for verse in respBody["verses"]:
-                        reference_title = (
-                            verse["reference"]["asString"]
-                            + " - "
-                            + verse["reference"]["version"]["name"]
-                        )
-                        verse_title = (
-                            (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
-                        )
-                        verse_text = verse["text"].replace("*", "")
+            return convert_embed(resp_body["pages"][0])
+        else:
+            return create_pagination_embeds(resp_body["pages"], localization)
+    elif resp_body["type"] == "verse":
+        if "does not support the" in resp_body["logStatement"]:
+            return create_error_embed(
+                "Verse Error", resp_body["logStatement"], localization
+            )
+        elif "too many verses" in resp_body["logStatement"]:
+            return convert_embed(resp_body["pages"][0])
 
-                        return f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
-                    return None
-                return None
+        display_style = resp_body["displayStyle"]
+        if display_style == "embed":
+            for verse in resp_body["verses"]:
+                return create_embed_from_verse(
+                    verse,
+                    (
+                        resp_body["cultureFooter"]
+                        if resp_body["cultureFooter"] is not None
+                        else statics.verse_footer
+                    ),
+                )
             return None
+        elif display_style == "blockquote":
+            for verse in resp_body["verses"]:
+                reference_title = (
+                    verse["reference"]["asString"]
+                    + " - "
+                    + verse["reference"]["version"]["name"]
+                )
+                verse_title = (
+                    ("**" + verse["title"] + "**\n> \n> ")
+                    if len(verse["title"]) > 0
+                    else ""
+                )
+                verse_text = verse["text"]
+
+                return f"**{reference_title}**\n\n> {verse_title}{verse_text}"
+            return None
+        elif display_style == "code":
+            for verse in resp_body["verses"]:
+                reference_title = (
+                    verse["reference"]["asString"]
+                    + " - "
+                    + verse["reference"]["version"]["name"]
+                )
+                verse_title = (
+                    (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
+                )
+                verse_text = verse["text"].replace("*", "")
+
+                return (
+                    f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+                )
+            return None
+        return None
+    return None
 
 
-async def submit_command_raw(
-    rch: disnake.abc.Messageable,
-    user: disnake.abc.User,
-    body: str,
-):
-    try:
-        ch = await rch._get_channel()
-    except AttributeError:
-        # In this scenario, we've got something that
-        # should inherit Messageable in disnake but
-        # has not been implemented.
-        #
-        # May seem silly to have this, but we've been
-        # fooled before.
-        return
-
-    isDM = ch.type == disnake.ChannelType.private
-    isThread = (
-        True
-        if ch.type
-        in [
-            disnake.ChannelType.news_thread,
-            disnake.ChannelType.public_thread,
-            disnake.ChannelType.private_thread,
-        ]
-        else False
-    )
-
-    guildId = ch.id if isDM else ch.guild.id
-    channelId = ch.id
-
-    if isThread:
-        channelId = ch.parent.id
-
-    reqbody = {
-        "UserId": str(user.id),
-        "GuildId": str(guildId),
-        "ChannelId": str(channelId),
-        "ThreadId": str(ch.id),
-        "IsThread": isThread,
-        "IsBot": user.bot,
-        "IsDM": isDM,
-        "Body": body,
-    }
-
-    endpoint = os.environ.get("ENDPOINT")
+async def submit_command_raw(endpoint: str, req_body: dict):
+    """Submits a command to the backend and returns the result."""
 
     async with aiohttp.ClientSession() as session:
         async with session.post(
             f"{endpoint}/commands/process",
-            json=reqbody,
-            headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
+            json=req_body,
+            headers=aiohttp_headers,
         ) as resp:
-            respBody = await resp.json()
-            return respBody
+            resp_text = await resp.text()
+            resp_text = resp_text.replace("\\\\", "\\")
+
+            resp_body = json.loads(resp_text)
+            return resp_body
 
 
 async def submit_verse(
@@ -293,153 +206,142 @@ async def submit_verse(
     user: disnake.abc.User,
     body: str,
 ):
-    try:
-        ch = await rch._get_channel()
-    except AttributeError:
-        # In this scenario, we've got something that
-        # should inherit Messageable in disnake but
-        # has not been implemented.
-        #
-        # May seem silly to have this, but we've been
-        # fooled before.
-        return None, None
+    """Submits a verse to the backend and processes the result."""
+    ctx = await channels.get_channel_context_from_messageable(rch)
 
-    isDM = ch.type == disnake.ChannelType.private
-    isThread = (
-        True
-        if ch.type
-        in [
-            disnake.ChannelType.news_thread,
-            disnake.ChannelType.public_thread,
-            disnake.ChannelType.private_thread,
-        ]
-        else False
-    )
+    if ctx is None or ctx.channel is None:
+        return None
 
-    guildId = ch.id if isDM else ch.guild.id
-    channelId = ch.parent_id if isThread else ch.id
-
-    reqbody = {
+    req_body = {
         "UserId": str(user.id),
-        "GuildId": str(guildId),
-        "ChannelId": str(channelId),
-        "ThreadId": str(ch.id),
-        "IsThread": isThread,
+        "GuildId": ctx.guild_id,
+        "ChannelId": ctx.channel_id,
+        "ThreadId": ctx.thread_id,
+        "IsThread": ctx.is_thread,
         "IsBot": user.bot,
-        "IsDM": isDM,
+        "IsDM": ctx.is_thread,
         "Body": body,
     }
 
-    endpoint = os.environ.get("ENDPOINT")
+    endpoint = os.environ.get("ENDPOINT", "")
+
+    resp_body = await submit_verse_raw(endpoint, req_body)
+
+    if isinstance(resp_body, disnake.Embed):
+        await sending.safe_send_channel(ctx.channel, embed=resp_body)
+    elif isinstance(resp_body, CreatePaginator):
+        await sending.safe_send_channel(
+            ctx.channel, embed=resp_body.embeds[0], view=resp_body
+        )
+    elif isinstance(resp_body, list):
+        if isinstance(resp_body[0], disnake.Embed):
+            await sending.safe_send_channel(ctx.channel, embeds=resp_body)
+        elif isinstance(resp_body[0], str):
+            for item in resp_body:
+                await sending.safe_send_channel(ctx.channel, item)
+
+    return req_body, resp_body
+
+
+async def submit_verse_raw(
+    endpoint: str, req_body: dict, is_command: bool = False
+) -> Optional[Union[disnake.Embed, list[str], list[disnake.Embed], CreatePaginator]]:
+    """Submits a verse to the backend and returns the result."""
+
+    resp_body = None
 
     async with aiohttp.ClientSession() as session:
         async with session.post(
             f"{endpoint}/verses/process",
-            json=reqbody,
-            headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
+            json=req_body,
+            headers=aiohttp_headers,
         ) as resp:
-            respBody = await resp.json()
+            resp_body = await resp.json()
 
-            if respBody["culture"] is not None:
-                localization = i18n.get_i18n_or_default(
-                    respBody["culture"].replace("-", "_")
-                )
-            else:
-                localization = i18n.get_i18n_or_default("en_US")
+    if resp_body["culture"] is not None:
+        localization = i18n.get_i18n_or_default(resp_body["culture"].replace("-", "_"))
+    else:
+        localization = i18n.get_i18n_or_default("en_US")
 
-            if respBody["logStatement"]:
-                logger.info(
-                    f"<{user.id}@{guildId}#{ch.id}> " + respBody["logStatement"]
-                )
+    if resp_body["logStatement"]:
+        logger.info(
+            f"<{req_body["UserId"]}@{req_body["GuildId"]}#{req_body["ChannelId"]}> "
+            + resp_body["logStatement"]
+        )
 
-            if respBody["logStatement"]:
-                if "does not support the" in respBody["logStatement"]:
-                    await sending.safe_send_channel(
-                        ch,
-                        embed=create_error_embed(
-                            "Verse Error", respBody["logStatement"], localization
-                        ),
-                    )
-                    return reqbody, respBody
-                elif "too many verses" in respBody["logStatement"]:
-                    await sending.safe_send_channel(
-                        ch, embed=convert_embed(respBody["pages"][0])
-                    )
-                    return reqbody, respBody
+    if resp_body["logStatement"]:
+        if "does not support the" in resp_body["logStatement"]:
+            return create_error_embed(
+                "Verse Error", resp_body["logStatement"], localization
+            )
+        elif "too many verses" in resp_body["logStatement"]:
+            return convert_embed(resp_body["pages"][0])
 
-            if "verses" not in respBody:
-                if "pages" in respBody:
-                    await sending.safe_send_channel(
-                        ch, embed=convert_embed(respBody["pages"][0])
-                    )
-                return reqbody, respBody
+    if "verses" not in resp_body:
+        if "pages" in resp_body:
+            return convert_embed(resp_body["pages"][0])
+        return
 
-            verses = respBody["verses"]
+    verses = resp_body["verses"]
+    processed_verses = []
 
-            display_style = respBody["displayStyle"]
-            if display_style == "embed":
-                if respBody["paginate"] and len(verses) > 1:
-                    embeds = create_pagination_embeds(
-                        verses,
+    display_style = resp_body["displayStyle"]
+    if display_style == "embed":
+        if resp_body["paginate"] and len(verses) > 1:
+            embeds = create_pagination_embeds(
+                verses,
+                (
+                    resp_body["cultureFooter"]
+                    if resp_body["cultureFooter"] is not None
+                    else statics.verse_footer
+                ),
+                is_verses=True,
+            )
+            return CreatePaginator(embeds, int(req_body["user_id"]), 180)
+        else:
+            for verse in verses:
+                processed_verses.append(
+                    create_embed_from_verse(
+                        verse,
                         (
-                            respBody["cultureFooter"]
-                            if respBody["cultureFooter"] is not None
+                            resp_body["cultureFooter"]
+                            if resp_body["cultureFooter"] is not None
                             else statics.verse_footer
                         ),
-                        is_verses=True,
-                    )
-                    paginator = CreatePaginator(embeds, user.id, 180)
+                    ),
+                )
+    elif display_style == "blockquote":
+        for verse in verses:
+            reference_title = (
+                verse["reference"]["asString"]
+                + " - "
+                + verse["reference"]["version"]["name"]
+            )
+            verse_title = (
+                ("**" + verse["title"] + "**\n> \n> ")
+                if len(verse["title"]) > 0
+                else ""
+            )
+            verse_text = verse["text"]
 
-                    await sending.safe_send_channel(ch, embed=embeds[0], view=paginator)
-                else:
-                    for verse in verses:
-                        await sending.safe_send_channel(
-                            ch,
-                            embed=create_embed_from_verse(
-                                verse,
-                                (
-                                    respBody["cultureFooter"]
-                                    if respBody["cultureFooter"] is not None
-                                    else statics.verse_footer
-                                ),
-                            ),
-                        )
-            elif display_style == "blockquote":
-                for verse in verses:
-                    reference_title = (
-                        verse["reference"]["asString"]
-                        + " - "
-                        + verse["reference"]["version"]["name"]
-                    )
-                    verse_title = (
-                        ("**" + verse["title"] + "**\n> \n> ")
-                        if len(verse["title"]) > 0
-                        else ""
-                    )
-                    verse_text = verse["text"]
+            processed_verses.append(
+                f"**{reference_title}**\n\n> {verse_title}{verse_text}"
+            )
+    elif display_style == "code":
+        for verse in verses:
+            reference_title = (
+                verse["reference"]["asString"]
+                + " - "
+                + verse["reference"]["version"]["name"]
+            )
+            verse_title = (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
+            verse_text = verse["text"].replace("*", "")
 
-                    await sending.safe_send_channel(
-                        ch,
-                        f"**{reference_title}**\n\n> {verse_title}{verse_text}",
-                    )
-            elif display_style == "code":
-                for verse in verses:
-                    reference_title = (
-                        verse["reference"]["asString"]
-                        + " - "
-                        + verse["reference"]["version"]["name"]
-                    )
-                    verse_title = (
-                        (verse["title"] + "\n\n") if len(verse["title"]) > 0 else ""
-                    )
-                    verse_text = verse["text"].replace("*", "")
+            processed_verses.append(
+                f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+            )
 
-                    await sending.safe_send_channel(
-                        ch,
-                        f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```",
-                    )
-
-            return reqbody, respBody
+    return processed_verses
 
 
 def convert_embed(internal_embed):

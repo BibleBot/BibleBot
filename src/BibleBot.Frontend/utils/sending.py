@@ -1,9 +1,9 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import disnake
@@ -16,6 +16,21 @@ logger = VyLogger("default")
 async def safe_send_interaction(receiver: disnake.Webhook, *args, **kwargs):
     try:
         await receiver.send(*args, **kwargs)
+    except disnake.errors.Forbidden:
+        message = "unable to send response to previous interaction"
+
+        if "embed" in kwargs.keys():
+            if str(kwargs["embed"].color) == "#ff2e2e":
+                message += " - this was an error embed"
+
+        logger.error(message)
+
+
+async def safe_send_interaction_ephemeral(
+    resp: disnake.InteractionResponse, *args, **kwargs
+):
+    try:
+        await resp.send_message(*args, **kwargs)
     except disnake.errors.Forbidden:
         message = "unable to send response to previous interaction"
 

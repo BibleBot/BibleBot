@@ -1,9 +1,9 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import os
@@ -12,7 +12,7 @@ from disnake import CommandInteraction, Localized
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend, sending, statics
+from utils import backend, sending, statics, checks
 from utils.i18n import i18n as i18n_class
 import patreon
 import subprocess
@@ -29,13 +29,13 @@ class Information(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_BIBLEBOT_DESC"))
     async def biblebot(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+biblebot")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description=Localized(key="CMD_STATS_DESC"))
     async def stats(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         if not inter.author.bot:
             await send_stats(self.bot)
 
@@ -44,11 +44,12 @@ class Information(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_INVITE_DESC"))
     async def invite(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description=Localized(key="CMD_PERMSCHECK_DESC"))
+    @commands.install_types(guild=True)
     async def permscheck(
         self,
         inter: CommandInteraction,
@@ -125,7 +126,7 @@ class Information(commands.Cog):
         # The way they've positioned the types and how they actually work are not the same thing.
         # Thus, we ignore type checking in some lines to compensate for their... [redacted].
 
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
 

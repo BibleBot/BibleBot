@@ -1,16 +1,16 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 from disnake import CommandInteraction, Localized
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend, sending
+from utils import backend, sending, checks
 from utils.views import CreatePaginator
 from utils.i18n import i18n as i18n_class
 
@@ -69,7 +69,7 @@ class Versions(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_VERSION_DESC"))
     async def version(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+version")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
@@ -79,13 +79,14 @@ class Versions(commands.Cog):
         inter: CommandInteraction,
         acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+version set {acronym}"
         )
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SETSERVERVERSION_DESC"))
+    @commands.install_types(guild=True)
     async def setserverversion(
         self,
         inter: CommandInteraction,
@@ -130,7 +131,7 @@ class Versions(commands.Cog):
         inter: CommandInteraction,
         acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
 
         command = "+version info"
 
@@ -142,7 +143,7 @@ class Versions(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_LISTVERSIONS_DESC"))
     async def listversions(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel, inter.author, "+version list"
         )
@@ -160,9 +161,11 @@ class Versions(commands.Cog):
     async def booklist(
         self,
         inter: CommandInteraction,
-        acronym: str = commands.Param(description=Localized(key="VERSION_PARAM"), default=None),
+        acronym: str = commands.Param(
+            description=Localized(key="VERSION_PARAM"), default=None
+        ),
     ):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
 
         command = "+version booklist"
 

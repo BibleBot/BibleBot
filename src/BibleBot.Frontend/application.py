@@ -1,9 +1,9 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import disnake
@@ -23,11 +23,10 @@ intents.message_content = True
 command_sync_flags = commands.CommandSyncFlags.default()
 command_sync_flags.sync_commands_debug = True
 
-bot = commands.AutoShardedBot(
-    command_prefix=None,
+bot = commands.AutoShardedInteractionBot(
     intents=intents,
-    help_command=None,
     command_sync_flags=command_sync_flags,
+    default_install_types=disnake.ApplicationInstallTypes.all(),
 )
 
 bot.load_extension("cogs")

@@ -1,16 +1,16 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import disnake
 from disnake import CommandInteraction, Localized
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend, sending
+from utils import backend, sending, checks
 from utils.i18n import i18n as i18n_class
 
 i18n = i18n_class()
@@ -18,12 +18,13 @@ i18n = i18n_class()
 logger = VyLogger("default")
 
 
-class DisplayStyleSelect(disnake.ui.Select):
+class DisplayStyleSelect(disnake.ui.StringSelect):
     def __init__(self, author_id: int, is_server: bool, loc) -> None:
         self.author_id = author_id
         self.custom_id = "formatting " + (
             "setserverdisplay" if is_server else "setdisplay"
         )
+        self.is_ephemeral = False
 
         options = [
             disnake.SelectOption(
@@ -58,20 +59,20 @@ class DisplayStyleSelect(disnake.ui.Select):
             inter.channel, inter.author, f"+{self.custom_id} {value}"
         )
 
-        await inter.message.edit(embed=resp, components=None, content=None)  # type: ignore
+        await inter.response.edit_message(embed=resp, components=None, content=None)  # type: ignore
 
     async def on_error(
         self, error: Exception, inter: disnake.MessageInteraction
     ) -> None:
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
-        await inter.message.edit(
+        await inter.response.edit_message(
             content=localization["DISPLAY_STYLE_FAILURE"],
             components=None,
         )
 
 
-class BracketsSelect(disnake.ui.Select):
+class BracketsSelect(disnake.ui.StringSelect):
     def __init__(self, author_id: int, loc: dict[str, str]) -> None:
         self.author_id = author_id
         self.custom_id = "formatting setbrackets"
@@ -113,14 +114,14 @@ class BracketsSelect(disnake.ui.Select):
             inter.channel, inter.author, f"+{self.custom_id} {value}"
         )
 
-        await inter.message.edit(embed=resp, components=None, content=None)  # type: ignore
+        await inter.response.edit_message(embed=resp, components=None, content=None)  # type: ignore
 
     async def on_error(
         self, error: Exception, inter: disnake.MessageInteraction
     ) -> None:
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
-        await inter.message.edit(
+        await inter.response.edit_message(
             content=localization["BRACKETS_FAILURE"],
             components=None,
         )
@@ -132,7 +133,7 @@ class Formatting(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_FORMATTING_DESC"))
     async def formatting(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+formatting")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 
@@ -153,7 +154,7 @@ class Formatting(commands.Cog):
             ]
         ),
     ):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+formatting setversenumbers {val}"
         )
@@ -177,7 +178,7 @@ class Formatting(commands.Cog):
             ]
         ),
     ):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+formatting settitles {val}"
         )
@@ -201,7 +202,7 @@ class Formatting(commands.Cog):
             ]
         ),
     ):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+formatting setpagination {val}"
         )
@@ -210,7 +211,7 @@ class Formatting(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_SETDISPLAY_DESC"))
     async def setdisplay(self, inter: CommandInteraction, style: str = ""):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
         if style == "":
@@ -232,6 +233,7 @@ class Formatting(commands.Cog):
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SETSERVERDISPLAY_DESC"))
+    @commands.install_types(guild=True)
     async def setserverdisplay(self, inter: CommandInteraction, style: str = ""):
         await inter.response.defer()
 
@@ -282,6 +284,7 @@ class Formatting(commands.Cog):
             return
 
     @commands.slash_command(description=Localized(key="CMD_SETBRACKETS_DESC"))
+    @commands.install_types(guild=True)
     async def setbrackets(self, inter: CommandInteraction, brackets: str = ""):
         await inter.response.defer()
 

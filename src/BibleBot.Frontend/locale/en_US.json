@@ -78,5 +78,7 @@
     "AUTOMATIC_DAILY_VERSE_NODMS": "The automatic daily verse cannot be used in DMs, as DMs do not allow for webhooks.",
     "CMD_NODMS": "This command can only be used in a server.",
     "PAGINATOR_FORBIDDEN": "You cannot interact with these buttons.",
-    "CHANNELID_PARAM": "The ID of the channel (optional)"
+    "CHANNELID_PARAM": "The ID of the channel (optional)",
+    "CMD_VERSE_DESC": "Fetch verse content, just like you would with messages. (user app only)",
+    "CMD_VERSE_FAIL": "Couldn't find any content that matches the input."
 }

@@ -1,16 +1,16 @@
 """
-    Copyright (C) 2016-2025 Kerygma Digital Co.
+Copyright (C) 2016-2025 Kerygma Digital Co.
 
-    This Source Code Form is subject to the terms of the Mozilla Public
-    License, v. 2.0. If a copy of the MPL was not distributed with this file,
-    You can obtain one at https://mozilla.org/MPL/2.0/.
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 from disnake import CommandInteraction, Localized, OptionChoice
 from disnake.ext import commands
 from setuptools import Command
 from logger import VyLogger
-from utils import backend, sending
+from utils import backend, sending, checks
 from utils.views import CreatePaginator
 
 logger = VyLogger("default")
@@ -22,7 +22,7 @@ class Resources(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_LISTRESOURCES_DESC"))
     async def listresources(self, inter: CommandInteraction):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, f"+resource")
         await sending.safe_send_interaction(inter.followup, embed=resp)
 

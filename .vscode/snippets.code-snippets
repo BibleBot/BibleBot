@@ -10,7 +10,7 @@
         "prefix": [
             "pycopyright"
         ],
-        "body": "\"\"\"\n\tCopyright (C) 2016-$CURRENT_YEAR Kerygma Digital Co.\n\n\tThis Source Code Form is subject to the terms of the Mozilla Public\n\tLicense, v. 2.0. If a copy of the MPL was not distributed with this file,\n\tYou can obtain one at https://mozilla.org/MPL/2.0/.\n\"\"\"",
+        "body": "\"\"\"\nCopyright (C) 2016-$CURRENT_YEAR Kerygma Digital Co.\n\nThis Source Code Form is subject to the terms of the Mozilla Public\nLicense, v. 2.0. If a copy of the MPL was not distributed with this file,\nYou can obtain one at https://mozilla.org/MPL/2.0/.\n\"\"\"",
         "description": "The copyright notice for the project."
     }
 }

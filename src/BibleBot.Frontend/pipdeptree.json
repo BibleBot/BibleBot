@@ -134,7 +134,7 @@
             {
                 "key": "packaging",
                 "package_name": "packaging",
-                "installed_version": "24.2",
+                "installed_version": "25.0",
                 "required_version": ">=22.0"
             },
             {
@@ -218,7 +218,7 @@
         "package": {
             "key": "disnake",
             "package_name": "disnake",
-            "installed_version": "2.9.3"
+            "installed_version": "2.11.0"
         },
         "dependencies": [
             {
@@ -226,6 +226,12 @@
                 "package_name": "aiohttp",
                 "installed_version": "3.11.10",
                 "required_version": ">=3.7.0,<4.0"
+            },
+            {
+                "key": "typing-extensions",
+                "package_name": "typing_extensions",
+                "installed_version": "4.12.2",
+                "required_version": ">=4.1"
             }
         ]
     },
@@ -296,7 +302,7 @@
         "package": {
             "key": "packaging",
             "package_name": "packaging",
-            "installed_version": "24.2"
+            "installed_version": "25.0"
         },
         "dependencies": []
     },
@@ -327,7 +333,7 @@
         "package": {
             "key": "pip",
             "package_name": "pip",
-            "installed_version": "24.3.1"
+            "installed_version": "25.2"
         },
         "dependencies": []
     },
@@ -335,20 +341,20 @@
         "package": {
             "key": "pipdeptree",
             "package_name": "pipdeptree",
-            "installed_version": "2.26.0"
+            "installed_version": "2.29.0"
         },
         "dependencies": [
             {
                 "key": "packaging",
                 "package_name": "packaging",
-                "installed_version": "24.2",
-                "required_version": ">=24.1"
+                "installed_version": "25.0",
+                "required_version": ">=25"
             },
             {
                 "key": "pip",
                 "package_name": "pip",
-                "installed_version": "24.3.1",
-                "required_version": ">=24.2"
+                "installed_version": "25.2",
+                "required_version": ">=25.2"
             }
         ]
     },
@@ -458,7 +464,7 @@
         "package": {
             "key": "setuptools",
             "package_name": "setuptools",
-            "installed_version": "77.0.3"
+            "installed_version": "80.9.0"
         },
         "dependencies": []
     },

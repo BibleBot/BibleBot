@@ -78,5 +78,7 @@
     "AUTOMATIC_DAILY_VERSE_NODMS": "Automatyczne wersety dnia nie mogą być używane w DM-ach, ponieważ DMy nie pozwalają na korzystanie z webhooków.",
     "CMD_NODMS": "Ta komenda może zostać użyta jedynie na serwerze.",
     "PAGINATOR_FORBIDDEN": "Nie możesz oddziaływać na te guziki.",
-    "CHANNELID_PARAM": "Identyfikator kanału (opcjonalne)"
+    "CHANNELID_PARAM": "Identyfikator kanału (opcjonalne)",
+    "CMD_VERSE_DESC": "Fetch verse content, just like you would with messages. (user app only)",
+    "CMD_VERSE_FAIL": "Couldn't find any content that matches the input."
 }

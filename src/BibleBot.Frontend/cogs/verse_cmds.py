@@ -6,12 +6,12 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+import os
 from disnake import CommandInteraction, Localized, OptionChoice
 from disnake.ext import commands
 import disnake
-from setuptools import Command
 from logger import VyLogger
-from utils import backend, sending, statics
+from utils import backend, sending, statics, channels, checks
 from utils.views import CreatePaginator, CreateConfirmationPrompt
 from utils.i18n import i18n as i18n_class
 
@@ -45,7 +45,7 @@ class VerseCommands(commands.Cog):
         ),
         version: str = "null",
     ):
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel,
             inter.author,
@@ -60,6 +60,54 @@ class VerseCommands(commands.Cog):
             )
         else:
             await sending.safe_send_interaction(inter.followup, embed=resp)
+
+    @commands.slash_command(description=Localized(key="CMD_VERSE_DESC"))
+    @commands.install_types(user=True)
+    async def verse(self, inter: CommandInteraction, reference: str):
+        await inter.response.defer()
+
+        ctx = await channels.get_channel_context_from_interaction(inter)
+
+        if ctx is None:
+            return None
+
+        req_body = {
+            "UserId": str(inter.author.id),
+            "GuildId": ctx.guild_id,
+            "ChannelId": ctx.channel_id,
+            "ThreadId": ctx.thread_id,
+            "IsThread": ctx.is_thread,
+            "IsBot": inter.author.bot,
+            "IsDM": ctx.is_thread,
+            "Body": reference,
+        }
+
+        endpoint = os.environ.get("ENDPOINT", "")
+
+        resp = await backend.submit_verse_raw(endpoint, req_body)
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+
+        if resp is None:
+            await sending.safe_send_interaction(
+                inter.followup, localization["CMD_VERSE_FAIL"], ephemeral=True
+            )
+        elif isinstance(resp, disnake.Embed):
+            await sending.safe_send_interaction(inter.followup, embed=resp)
+        elif isinstance(resp, CreatePaginator):
+            await sending.safe_send_interaction(
+                inter.followup, embed=resp.embeds[0], view=resp
+            )
+        elif isinstance(resp, list):
+            if len(resp) == 0:
+                await sending.safe_send_interaction(
+                    inter.followup, localization["CMD_VERSE_FAIL"], ephemeral=True
+                )
+            elif isinstance(resp[0], disnake.Embed):
+                await sending.safe_send_interaction(inter.followup, embeds=resp)
+            elif isinstance(resp[0], str):
+                for item in resp:
+                    await sending.safe_send_interaction(inter.followup, item)
 
     @commands.slash_command(description=Localized(key="CMD_RANDOM_DESC"))
     async def random(self, inter: CommandInteraction):
@@ -94,6 +142,7 @@ class VerseCommands(commands.Cog):
             await sending.safe_send_interaction(inter.followup, embed=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SETDAILYVERSE_DESC"))
+    @commands.install_types(guild=True)
     async def setdailyverse(
         self, inter: CommandInteraction, time: str = "", tz: str = ""
     ):
@@ -140,6 +189,7 @@ class VerseCommands(commands.Cog):
             return
 
     @commands.slash_command(description=Localized(key="CMD_DAILYVERSESTATUS_DESC"))
+    @commands.install_types(guild=True)
     async def dailyversestatus(self, inter: CommandInteraction):
         await inter.response.defer()
 
@@ -166,6 +216,7 @@ class VerseCommands(commands.Cog):
             return
 
     @commands.slash_command(description=Localized(key="CMD_CLEARDAILYVERSE_DESC"))
+    @commands.install_types(guild=True)
     async def cleardailyverse(self, inter: CommandInteraction):
         await inter.response.defer()
 
@@ -204,6 +255,7 @@ class VerseCommands(commands.Cog):
             return
 
     @commands.slash_command(description=Localized(key="CMD_SETDAILYVERSEROLE_DESC"))
+    @commands.install_types(guild=True)
     async def setdailyverserole(self, inter: CommandInteraction, role: disnake.Role):
         await inter.response.defer()
 
@@ -274,6 +326,7 @@ class VerseCommands(commands.Cog):
             return
 
     @commands.slash_command(description=Localized(key="CMD_CLEARDAILYVERSEROLE_DESC"))
+    @commands.install_types(guild=True)
     async def cleardailyverserole(self, inter: CommandInteraction):
         await inter.response.defer()
 
