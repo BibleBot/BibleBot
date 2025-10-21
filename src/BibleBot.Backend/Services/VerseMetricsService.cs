@@ -33,6 +33,11 @@ namespace BibleBot.Backend.Services
 
         public async Task<List<VerseMetric>> Create(string userId, string guildId, Reference reference, int startingChapterEndingVerse = 0)
         {
+            SentrySdk.ConfigureScope(scope =>
+            {
+                scope.Contexts["VerseMetricReference"] = reference;
+            });
+
             List<VerseMetric> verseMetricsToAdd = [];
 
             VerseMetric verseMetric = new()
@@ -65,7 +70,6 @@ namespace BibleBot.Backend.Services
                 catch (VerseRangeInvalidException ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    return [];
                 }
             }
 
@@ -81,7 +85,6 @@ namespace BibleBot.Backend.Services
                 catch (VerseRangeInvalidException ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    return [];
                 }
             }
             else if (startingChapterEndingVerse != 0 && (reference.EndingChapter - reference.StartingChapter) == 1)
@@ -107,7 +110,6 @@ namespace BibleBot.Backend.Services
                 catch (VerseRangeInvalidException ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    return [];
                 }
             }
             else if (reference.IsExpandoVerse || startingChapterEndingVerse > 0)
@@ -120,7 +122,6 @@ namespace BibleBot.Backend.Services
                 catch (VerseRangeInvalidException ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    return [];
                 }
             }
 
