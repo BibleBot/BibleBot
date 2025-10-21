@@ -38,6 +38,16 @@ namespace BibleBot.Models
         public VersionUnavailableException(string message) : base(message) { }
         public VersionUnavailableException(string message, System.Exception inner) : base(message, inner) { }
     }
+
+    /// <summary>
+    /// This should be thrown when a verse range is illogical in sequence.
+    /// </summary>
+    public class VerseRangeInvalidException : System.Exception
+    {
+        public VerseRangeInvalidException() { }
+        public VerseRangeInvalidException(string message) : base(message) { }
+        public VerseRangeInvalidException(string message, System.Exception inner) : base(message, inner) { }
+    }
 }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

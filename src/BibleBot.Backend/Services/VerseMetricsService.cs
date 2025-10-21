@@ -27,6 +27,10 @@ namespace BibleBot.Backend.Services
             _ctx.Database.EnsureCreated();
         }
 
+        private static NpgsqlRange<int> CreateRange(int first, int last) => last < first
+                ? throw new VerseRangeInvalidException("Verse range has an illogical sequence.")
+                : new NpgsqlRange<int>(first, true, last, true);
+
         public async Task<List<VerseMetric>> Create(string userId, string guildId, Reference reference, int startingChapterEndingVerse = 0)
         {
             List<VerseMetric> verseMetricsToAdd = [];
@@ -49,43 +53,75 @@ namespace BibleBot.Backend.Services
 
             foreach (Tuple<int, int> appendedVerseTuple in reference.AppendedVerses)
             {
-                AppendedVerse appendedVerse = new()
+                try
                 {
-                    VerseRange = new NpgsqlRange<int>(appendedVerseTuple.Item1, true, appendedVerseTuple.Item2, true)
-                };
+                    AppendedVerse appendedVerse = new()
+                    {
+                        VerseRange = CreateRange(appendedVerseTuple.Item1, appendedVerseTuple.Item2)
+                    };
 
-                verseMetric.AppendedVerses.Add(appendedVerse);
+                    verseMetric.AppendedVerses.Add(appendedVerse);
+                }
+                catch (VerseRangeInvalidException ex)
+                {
+                    SentrySdk.CaptureException(ex);
+                    return [];
+                }
             }
 
             verseMetric.Chapter = reference.Book.ProperName == "Psalm 151" ? 151 : reference.StartingChapter;
 
             if (startingChapterEndingVerse == 0)
             {
-                verseMetric.VerseRange = new NpgsqlRange<int>(reference.StartingVerse, true, reference.EndingVerse, true);
-                verseMetricsToAdd.Add(verseMetric);
+                try
+                {
+                    verseMetric.VerseRange = CreateRange(reference.StartingVerse, reference.EndingVerse);
+                    verseMetricsToAdd.Add(verseMetric);
+                }
+                catch (VerseRangeInvalidException ex)
+                {
+                    SentrySdk.CaptureException(ex);
+                    return [];
+                }
             }
             else if (startingChapterEndingVerse != 0 && (reference.EndingChapter - reference.StartingChapter) == 1)
             {
-                verseMetric.VerseRange = new NpgsqlRange<int>(reference.StartingVerse, true, startingChapterEndingVerse, true);
-                verseMetricsToAdd.Add(verseMetric);
-
-                verseMetricsToAdd.Add(new()
+                try
                 {
-                    UserId = userId,
-                    GuildId = guildId,
-                    Book = reference.Book.Name,
-                    Chapter = reference.EndingChapter,
-                    VerseRange = new NpgsqlRange<int>(1, true, reference.EndingVerse, true),
-                    Version = reference.Version.Abbreviation,
-                    IsOT = reference.IsOT,
-                    IsNT = reference.IsNT,
-                    IsDEU = reference.IsDEU
-                });
+                    verseMetric.VerseRange = CreateRange(reference.StartingVerse, startingChapterEndingVerse);
+                    verseMetricsToAdd.Add(verseMetric);
+
+                    verseMetricsToAdd.Add(new()
+                    {
+                        UserId = userId,
+                        GuildId = guildId,
+                        Book = reference.Book.Name,
+                        Chapter = reference.EndingChapter,
+                        VerseRange = CreateRange(1, reference.EndingVerse),
+                        Version = reference.Version.Abbreviation,
+                        IsOT = reference.IsOT,
+                        IsNT = reference.IsNT,
+                        IsDEU = reference.IsDEU
+                    });
+                }
+                catch (VerseRangeInvalidException ex)
+                {
+                    SentrySdk.CaptureException(ex);
+                    return [];
+                }
             }
             else if (reference.IsExpandoVerse || startingChapterEndingVerse > 0)
             {
-                verseMetric.VerseRange = new NpgsqlRange<int>(reference.StartingVerse, true, startingChapterEndingVerse, true);
-                verseMetricsToAdd.Add(verseMetric);
+                try
+                {
+                    verseMetric.VerseRange = CreateRange(reference.StartingVerse, startingChapterEndingVerse);
+                    verseMetricsToAdd.Add(verseMetric);
+                }
+                catch (VerseRangeInvalidException ex)
+                {
+                    SentrySdk.CaptureException(ex);
+                    return [];
+                }
             }
 
             if (verseMetricsToAdd.Count == 0 && (reference.EndingChapter - reference.StartingChapter) > 1)
