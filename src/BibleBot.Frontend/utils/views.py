@@ -48,6 +48,7 @@ class BracketsView(ui.View):
         self.add_item(components.BracketsSelect(author_id, localization))
 
 
+# TODO: rewrite this into components
 class ConfirmationPromptView(ui.View):
     def __init__(
         self,
