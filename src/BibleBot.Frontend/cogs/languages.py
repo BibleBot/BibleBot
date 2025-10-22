@@ -7,11 +7,10 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 from disnake import CommandInteraction, Localized
-import disnake
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend, sending, checks
-from utils.views import CreatePaginator
+from utils import backend, sending, checks, containers
+from utils.paginator import ComponentPaginator
 from utils.i18n import i18n as i18n_class
 
 i18n = i18n_class()
@@ -36,7 +35,7 @@ class Languages(commands.Cog):
     async def language(self, inter: CommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+language")
-        await sending.safe_send_interaction(inter.followup, embed=resp)
+        await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SETLANGUAGE_DESC"))
     async def setlanguage(
@@ -48,7 +47,7 @@ class Languages(commands.Cog):
         resp = await backend.submit_command(
             inter.channel, inter.author, f"+language set {language}"
         )
-        await sending.safe_send_interaction(inter.followup, embed=resp)
+        await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SETSERVERLANGUAGE_DESC"))
     @commands.install_types(guild=True)
@@ -67,7 +66,7 @@ class Languages(commands.Cog):
             if not inter.channel.permissions_for(inter.author).manage_guild:
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=backend.create_error_embed(
+                    components=containers.create_error_container(
                         localization["PERMS_ERROR_LABEL"],
                         localization["PERMS_ERROR_DESC"],
                         localization,
@@ -79,11 +78,11 @@ class Languages(commands.Cog):
             resp = await backend.submit_command(
                 inter.channel, inter.author, f"+language setserver {language}"
             )
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
         else:
             await sending.safe_send_interaction(
                 inter.followup,
-                embed=backend.create_error_embed(
+                components=containers.create_error_container(
                     "/setserverlanguage", localization["CMD_NODMS"], localization
                 ),
                 ephemeral=True,
@@ -98,10 +97,7 @@ class Languages(commands.Cog):
         )
 
         if isinstance(resp, list):
-            await sending.safe_send_interaction(
-                inter.followup,
-                embed=resp[0],
-                view=CreatePaginator(resp, inter.author.id, 180),
-            )
+            paginator = ComponentPaginator(resp, inter.author.id)
+            await paginator.send(inter)
         else:
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)

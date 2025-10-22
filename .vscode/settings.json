@@ -32,5 +32,8 @@
             "other": "off"
         },
         "editor.formatOnSave": false
-    }
+    },
+    "debugpy.debugJustMyCode": false,
+    "csharp.debug.justMyCode": true,
+    "python-envs.pythonProjects": []
 }

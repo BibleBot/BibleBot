@@ -2,6 +2,12 @@ import os
 
 version = "undefined"
 verse_footer = "BibleBot <v> by Kerygma Digital"
+logo_emoji = "<:biblebot_circle:1430289427300614184>"
+
+publisher_to_url = {
+    "biblica": {"name": "Biblica", "url": "https://biblica.com"},
+    "lockman": {"name": "The Lockman Foundation", "url": "https://www.lockman.org"},
+}
 
 try:
     config = (

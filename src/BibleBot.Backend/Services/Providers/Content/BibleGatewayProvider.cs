@@ -168,8 +168,28 @@ namespace BibleBot.Backend.Services.Providers.Content
             string psalmTitle = "";
             if (titlesEnabled)
             {
-                title = string.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
-                psalmTitle = string.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
+                // title = string.Join(" / ", document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim()));
+                // psalmTitle = string.Join(" / ", document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim()));
+                List<string> titleElements = [.. document.GetElementsByTagName("h3").Select(el => el.TextContent.Trim())];
+                List<string> psalmTitles = [.. document.GetElementsByClassName("psalm-title").Select(el => el.TextContent.Trim())];
+
+                if (titleElements.Count > 3)
+                {
+                    title = string.Join(" / ", titleElements.Take(3)) + "...";
+                }
+                else if (titleElements.Count <= 3)
+                {
+                    title = string.Join(" / ", titleElements);
+                }
+
+                if (psalmTitles.Count > 3)
+                {
+                    psalmTitle = string.Join(" / ", psalmTitles.Take(3)) + "...";
+                }
+                else if (psalmTitles.Count <= 3)
+                {
+                    psalmTitle = string.Join(" / ", psalmTitles);
+                }
             }
 
             IEnumerable<IElement> headingElements = new[] {
@@ -269,7 +289,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                 }
 
                 string text = PurifyText(textElement.TextContent.Substring(1, textElement.TextContent.Length - 1), version.Abbreviation == "ISV");
-                text = text.Replace(query, $"**{query}**");
+                text = text.Replace(query, $"__**{query}**__");
 
                 results.Add(new SearchResult
                 {

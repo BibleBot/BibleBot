@@ -234,7 +234,21 @@ namespace BibleBot.Backend.Services.Providers.Content
                     }
                 }
 
-                title += titlesEnabled ? string.Join(" / ", document.GetElementsByClassName("s1").Select(el => el.TextContent.Trim())) : "";
+                // title += titlesEnabled ? string.Join(" / ", document.GetElementsByClassName("s1").Select(el => el.TextContent.Trim())) : "";
+                if (titlesEnabled)
+                {
+                    List<string> titleElements = [.. document.GetElementsByTagName("s1").Select(el => el.TextContent.Trim())];
+
+                    if (titleElements.Count > 3)
+                    {
+                        title = string.Join(" / ", titleElements.Take(3)) + "...";
+                    }
+                    else if (titleElements.Count <= 3)
+                    {
+                        title = string.Join(" / ", titleElements);
+                    }
+                }
+
                 texts.Add(string.Join("\n", document.GetElementsByTagName("p").Where(el => solidTextClasses.Contains(el.ClassName) || prefixTextClasses.Any(prefix => el.ClassName!.StartsWith(prefix))).Select(el => el.TextContent.Trim())));
             }
 

@@ -110,7 +110,7 @@ namespace BibleBot.Backend
 
                 Footer = new Footer
                 {
-                    Text = copyright != null ? $"{copyright}\n{footerText}" : footerText,
+                    Text = footerText,
                     IconURL = "https://i.imgur.com/hr4RXpy.png"
                 }
             };
@@ -118,6 +118,15 @@ namespace BibleBot.Backend
             if (description != null)
             {
                 embed.Description = description;
+
+                if (copyright != null)
+                {
+                    embed.Description += $"\n\n-# {copyright}";
+                }
+            }
+            else if (copyright != null)
+            {
+                embed.Description = $"-# {copyright}";
             }
 
             if (author != null)
@@ -336,7 +345,7 @@ namespace BibleBot.Backend
             {
                 embed.Thumbnail = new Media
                 {
-                    URL = $"https://i.imgur.com/{imageRef}.png"
+                    URL = $"https://i.imgur.com/{imageRef}.jpeg"
                 };
             }
 

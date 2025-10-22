@@ -12,7 +12,7 @@ from disnake import CommandInteraction, Localized
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
-from utils import backend, sending, statics, checks
+from utils import backend, sending, statics, checks, containers
 from utils.i18n import i18n as i18n_class
 import patreon
 import subprocess
@@ -31,7 +31,7 @@ class Information(commands.Cog):
     async def biblebot(self, inter: CommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+biblebot")
-        await sending.safe_send_interaction(inter.followup, embed=resp)
+        await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_STATS_DESC"))
     async def stats(self, inter: CommandInteraction):
@@ -40,13 +40,13 @@ class Information(commands.Cog):
             await send_stats(self.bot)
 
         resp = await backend.submit_command(inter.channel, inter.author, "+stats")
-        await sending.safe_send_interaction(inter.followup, embed=resp)
+        await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_INVITE_DESC"))
     async def invite(self, inter: CommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
-        await sending.safe_send_interaction(inter.followup, embed=resp)
+        await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_PERMSCHECK_DESC"))
     @commands.install_types(guild=True)
@@ -75,7 +75,7 @@ class Information(commands.Cog):
                 else:
                     await sending.safe_send_interaction(
                         inter.followup,
-                        embed=backend.create_error_embed(
+                        components=containers.create_error_container(
                             localization["PERMSCHECK_ERROR_LABEL"],
                             localization["PERMSCHECK_ERROR_DM"],
                             localization,
@@ -84,7 +84,7 @@ class Information(commands.Cog):
             except (disnake.NotFound, disnake.Forbidden):
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=backend.create_error_embed(
+                    components=containers.create_error_container(
                         localization["PERMSCHECK_ERROR_LABEL"],
                         localization["PERMSCHECK_ERROR_NOCHAN"],
                         localization,
@@ -94,7 +94,7 @@ class Information(commands.Cog):
             except:
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=backend.create_error_embed(
+                    components=containers.create_error_container(
                         localization["PERMSCHECK_ERROR_LABEL"],
                         localization["PERMSCHECK_ERROR_UNKNOWN"],
                         localization,
@@ -118,13 +118,13 @@ class Information(commands.Cog):
             f"+staff permscheck {channel.id} {guild.id} {channel_perms_for_self} {channel_perms_for_role} {guild_perms} {integrated_role.name} {integrated_role.id}",
         )
 
-        await sending.safe_send_interaction(inter.followup, embed=resp)
+        await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SUPPORTERS_DESC"))
     async def supporters(self, inter: CommandInteraction):
         # Patreon's development utilities are pretty garbage.
         # The way they've positioned the types and how they actually work are not the same thing.
-        # Thus, we ignore type checking in some lines to compensate for their... [redacted].
+        # Thus, we ignore type checking in some lines to compensate for their... stupidity.
 
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
 
@@ -149,24 +149,34 @@ class Information(commands.Cog):
             x.relationship("patron").attribute("full_name").strip() for x in pledges
         ]
 
-        embed = disnake.Embed()
+        container = disnake.ui.Container()
+        container.accent_colour = 6709986
 
-        embed.title = localization["SUPPORTERS_TITLE"]
-        embed.description = (
-            localization["SUPPORTERS_LEADIN"] + f":\n\n**" + "**\n**".join(names) + "**"
+        container.children.append(
+            disnake.ui.TextDisplay(f"### {localization["SUPPORTERS_TITLE"]}")
         )
-        embed.color = 6709986
+        container.children.append(
+            disnake.ui.TextDisplay(
+                f"{localization["SUPPORTERS_LEADIN"] + f":\n\n**" + "**\n**".join(names) + "**"}"
+            )
+        )
 
-        embed.set_footer(
-            text=localization["EMBED_FOOTER"].replace("<v>", statics.version),
-            icon_url="https://i.imgur.com/hr4RXpy.png",
+        container.children.append(
+            disnake.ui.Separator(divider=True, spacing=disnake.SeparatorSpacing.large)
         )
-        await sending.safe_send_interaction(inter.followup, embed=embed)
+
+        container.children.append(
+            disnake.ui.TextDisplay(
+                f"-# {statics.logo_emoji}  **{localization["EMBED_FOOTER"].replace("<v>", statics.version)}**"
+            )
+        )
+
+        await sending.safe_send_interaction(inter.followup, components=container)
 
 
 async def send_stats(bot: disnake.AutoShardedClient):
     endpoint = os.environ.get("ENDPOINT")
-    token = os.environ.get("ENDPOINT_TOKEN")
+    token = os.environ.get("ENDPOINT_TOKEN", "")
 
     shard_count = bot.shard_count
     guild_count = len(bot.guilds)

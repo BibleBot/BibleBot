@@ -11,8 +11,9 @@ from disnake import CommandInteraction, Localized, OptionChoice
 from disnake.ext import commands
 import disnake
 from logger import VyLogger
-from utils import backend, sending, statics, channels, checks
-from utils.views import CreatePaginator, CreateConfirmationPrompt
+from utils import backend, sending, containers, channels, checks
+from utils.views import ConfirmationPromptView
+from utils.paginator import ComponentPaginator
 from utils.i18n import i18n as i18n_class
 
 i18n = i18n_class()
@@ -53,13 +54,10 @@ class VerseCommands(commands.Cog):
         )
 
         if isinstance(resp, list):
-            await sending.safe_send_interaction(
-                inter.followup,
-                embed=resp[0],
-                view=CreatePaginator(resp, inter.author.id, 180),
-            )
+            paginator = ComponentPaginator(resp, inter.author.id)
+            await paginator.send(inter)
         else:
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_VERSE_DESC"))
     @commands.install_types(user=True)
@@ -92,19 +90,17 @@ class VerseCommands(commands.Cog):
             await sending.safe_send_interaction(
                 inter.followup, localization["CMD_VERSE_FAIL"], ephemeral=True
             )
-        elif isinstance(resp, disnake.Embed):
-            await sending.safe_send_interaction(inter.followup, embed=resp)
-        elif isinstance(resp, CreatePaginator):
-            await sending.safe_send_interaction(
-                inter.followup, embed=resp.embeds[0], view=resp
-            )
+        elif isinstance(resp, disnake.ui.Container):
+            await sending.safe_send_interaction(inter.followup, components=resp)
+        elif isinstance(resp, ComponentPaginator):
+            await resp.send(inter)
         elif isinstance(resp, list):
             if len(resp) == 0:
                 await sending.safe_send_interaction(
                     inter.followup, localization["CMD_VERSE_FAIL"], ephemeral=True
                 )
-            elif isinstance(resp[0], disnake.Embed):
-                await sending.safe_send_interaction(inter.followup, embeds=resp)
+            elif isinstance(resp[0], disnake.ui.Container):
+                await sending.safe_send_interaction(inter.followup, components=resp)
             elif isinstance(resp[0], str):
                 for item in resp:
                     await sending.safe_send_interaction(inter.followup, item)
@@ -123,7 +119,7 @@ class VerseCommands(commands.Cog):
         if isinstance(resp, str):
             await sending.safe_send_interaction(inter.followup, content=resp)
         else:
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_TRUERANDOM_DESC"))
     async def truerandom(self, inter: CommandInteraction):
@@ -134,7 +130,7 @@ class VerseCommands(commands.Cog):
         if isinstance(resp, str):
             await sending.safe_send_interaction(inter.followup, content=resp)
         else:
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_DAILYVERSE_DESC"))
     async def dailyverse(self, inter: CommandInteraction):
@@ -144,7 +140,7 @@ class VerseCommands(commands.Cog):
         if isinstance(resp, str):
             await sending.safe_send_interaction(inter.followup, content=resp)
         else:
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SETDAILYVERSE_DESC"))
     @commands.install_types(guild=True)
@@ -161,7 +157,7 @@ class VerseCommands(commands.Cog):
             if not inter.channel.permissions_for(inter.author).manage_guild:
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=backend.create_error_embed(
+                    components=containers.create_error_container(
                         localization["PERMS_ERROR_LABEL"],
                         localization["PERMS_ERROR_DESC"],
                         localization,
@@ -180,11 +176,11 @@ class VerseCommands(commands.Cog):
                     inter.channel, inter.author, f"+dailyverse set {time} {tz}"
                 )
 
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
         else:
             await sending.safe_send_interaction(
                 inter.followup,
-                embed=backend.create_error_embed(
+                components=containers.create_error_container(
                     "/setdailyverse",
                     localization["AUTOMATIC_DAILY_VERSE_NODMS"],
                     localization,
@@ -207,11 +203,11 @@ class VerseCommands(commands.Cog):
                 inter.channel, inter.author, "+dailyverse status"
             )
 
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
         else:
             await sending.safe_send_interaction(
                 inter.followup,
-                embed=backend.create_error_embed(
+                components=containers.create_error_container(
                     "/dailyversestatus",
                     localization["AUTOMATIC_DAILY_VERSE_NODMS"],
                     localization,
@@ -233,7 +229,7 @@ class VerseCommands(commands.Cog):
             if not inter.channel.permissions_for(inter.author).manage_guild:
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=backend.create_error_embed(
+                    components=containers.create_error_container(
                         localization["PERMS_ERROR_LABEL"],
                         localization["PERMS_ERROR_DESC"],
                         localization,
@@ -246,11 +242,11 @@ class VerseCommands(commands.Cog):
                 inter.channel, inter.author, "+dailyverse clear"
             )
 
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
         else:
             await sending.safe_send_interaction(
                 inter.followup,
-                embed=backend.create_error_embed(
+                components=containers.create_error_container(
                     "/cleardailyverse",
                     localization["AUTOMATIC_DAILY_VERSE_NODMS"],
                     localization,
@@ -272,7 +268,7 @@ class VerseCommands(commands.Cog):
             if not inter.channel.permissions_for(inter.author).manage_guild:
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=backend.create_error_embed(
+                    components=containers.create_error_container(
                         localization["PERMS_ERROR_LABEL"],
                         localization["PERMS_ERROR_DESC"],
                         localization,
@@ -284,7 +280,7 @@ class VerseCommands(commands.Cog):
             if not role.is_default() and not role.mentionable:
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=backend.create_error_embed(
+                    components=containers.create_error_container(
                         "/setdailyverserole",
                         localization["SETDAILYVERSEROLE_UNMENTIONABLE"],
                         localization,
@@ -293,35 +289,25 @@ class VerseCommands(commands.Cog):
                 )
 
             if role.is_default():
-                embed = disnake.Embed()
-                embed.title = localization["CONFIRMATION_REQUIRED_TITLE"]
-                embed.description = localization[
-                    "CONFIRMATION_REQUIRED_SETDAILYVERSEROLE_EVERYONE"
-                ]
-
-                embed.color = 16776960
-
-                embed.set_footer(
-                    text=localization["EMBED_FOOTER"].replace("<v>", statics.version),
-                    icon_url="https://i.imgur.com/hr4RXpy.png",
+                prompt = ConfirmationPromptView(
+                    f"+dailyverse role {role.id}", inter.author, localization, 180
                 )
+
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=embed,
-                    view=CreateConfirmationPrompt(
-                        f"+dailyverse role {role.id}", inter.author, 180
-                    ),
+                    components=prompt.container,
+                    view=prompt,
                 )
             else:
                 resp = await backend.submit_command(
                     inter.channel, inter.author, f"+dailyverse role {role.id}"
                 )
 
-                await sending.safe_send_interaction(inter.followup, embed=resp)
+                await sending.safe_send_interaction(inter.followup, components=resp)
         else:
             await sending.safe_send_interaction(
                 inter.followup,
-                embed=backend.create_error_embed(
+                components=containers.create_error_container(
                     "/setdailyverserole",
                     localization["AUTOMATIC_DAILY_VERSE_NODMS"],
                     localization,
@@ -343,7 +329,7 @@ class VerseCommands(commands.Cog):
             if not inter.channel.permissions_for(inter.author).manage_guild:
                 await sending.safe_send_interaction(
                     inter.followup,
-                    embed=backend.create_error_embed(
+                    components=containers.create_error_container(
                         localization["PERMS_ERROR_LABEL"],
                         localization["PERMS_ERROR_DESC"],
                         localization,
@@ -356,11 +342,11 @@ class VerseCommands(commands.Cog):
                 inter.channel, inter.author, "+dailyverse clearrole"
             )
 
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
         else:
             await sending.safe_send_interaction(
                 inter.followup,
-                embed=backend.create_error_embed(
+                components=containers.create_error_container(
                     "/cleardailyverserole",
                     localization["AUTOMATIC_DAILY_VERSE_NODMS"],
                     localization,

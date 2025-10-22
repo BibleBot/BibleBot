@@ -8,15 +8,16 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import os
 import disnake
-from utils import backend, sending
+from utils import backend, sending, statics
 import aiohttp
 from disnake.ext import commands
 from logger import VyLogger
-from utils.views import CreatePaginator
+from utils.paginator import ComponentPaginator
 import re
-from utils import statics
 
 logger = VyLogger("default")
+
+is_ready = False
 
 
 class EventListeners(commands.Cog):
@@ -37,6 +38,8 @@ class EventListeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_shard_ready(self, shard_id):
+        is_ready = True
+
         await self.bot.change_presence(
             status=disnake.Status.online,
             activity=disnake.Game(
@@ -106,12 +109,21 @@ class EventListeners(commands.Cog):
             async with session.post(
                 f"{endpoint}/webhooks/process",
                 json=reqbody,
-                headers={"Authorization": os.environ.get("ENDPOINT_TOKEN")},
+                headers={"Authorization": os.environ.get("ENDPOINT_TOKEN", "")},
             ) as resp:
                 if resp.status == 200:
                     logger.info(
                         f"<global@{guild.id}#global> we've left this server, deleting webhook..."
                     )
+
+    @commands.Cog.listener()
+    async def on_button_click(self, inter: disnake.MessageInteraction):
+        await inter.response.defer()
+        if not inter.data or not getattr(inter.data, "custom_id", None):
+            return
+
+        if inter.data.custom_id.startswith("pagination:"):
+            await ComponentPaginator._handle_click(inter)
 
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):
@@ -124,7 +136,7 @@ class EventListeners(commands.Cog):
         )
 
         if verse_regex.search(clean_msg):
-            _, resp = await backend.submit_verse(msg.channel, msg.author, clean_msg)
+            await backend.submit_verse(msg.channel, msg.author, clean_msg)
         elif "ccc" in clean_msg.lower() and msg.guild:
             if msg.guild.id in [
                 238001909716353025,
@@ -143,21 +155,20 @@ class EventListeners(commands.Cog):
 
                     if isinstance(resp, list):
                         if len(resp) > 3:
-                            await sending.safe_send_channel(
-                                msg.channel,
-                                embed=resp[0],
-                                view=CreatePaginator(resp, msg.author.id, 180),
-                            )
+                            paginator = ComponentPaginator(resp, msg.author.id)
+                            await paginator.send(msg.channel)
                         else:
-                            await sending.safe_send_channel(msg.channel, embeds=resp)
+                            await sending.safe_send_channel(
+                                msg.channel, components=resp
+                            )
                     else:
-                        await sending.safe_send_channel(msg.channel, embed=resp)
+                        await sending.safe_send_channel(msg.channel, components=resp)
 
 
 async def update_topgg(bot: disnake.AutoShardedClient):
     topgg_auth = os.environ.get("TOPGG_TOKEN")
 
-    if topgg_auth:
+    if topgg_auth and is_ready:
         body = {"server_count": len(bot.guilds)}
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -177,7 +188,7 @@ async def update_topgg(bot: disnake.AutoShardedClient):
 async def update_discordbotlist(bot: disnake.AutoShardedClient):
     discordbotlist_auth = os.environ.get("DISCORDBOTLIST_TOKEN")
 
-    if discordbotlist_auth:
+    if discordbotlist_auth and is_ready:
         body = {
             "users": sum([x.member_count for x in bot.guilds]),
             "guilds": len(bot.guilds),

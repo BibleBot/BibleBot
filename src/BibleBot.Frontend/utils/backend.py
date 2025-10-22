@@ -12,12 +12,9 @@ from typing import Optional, Union
 import aiohttp
 import disnake
 from logger import VyLogger
-from utils import sending
-from utils import statics
-from utils import webhooks
-from utils.views import CreatePaginator
-from utils.i18n import i18n as i18n_class
-from utils import channels
+from . import sending, statics, webhooks, containers, channels
+from .paginator import ComponentPaginator
+from .i18n import i18n as i18n_class
 
 i18n = i18n_class()
 logger = VyLogger("default")
@@ -84,11 +81,13 @@ async def submit_command(
                             if subresp.status != 200:
                                 logger.error("couldn't submit webhook")
                             else:
-                                return convert_embed(resp_body["pages"][0])
+                                return containers.convert_embed_to_container(
+                                    resp_body["pages"][0]
+                                )
                 except disnake.errors.Forbidden:
                     await sending.safe_send_channel(
                         ctx.channel,
-                        embed=create_error_embed(
+                        components=containers.create_error_container(
                             localization["PERMS_ERROR_LABEL"],
                             localization["WEBHOOK_REMOVAL_FAILURE"],
                             localization,
@@ -110,12 +109,14 @@ async def submit_command(
                             if subresp.status != 200:
                                 logger.error("couldn't submit webhook")
                             else:
-                                return convert_embed(resp_body["pages"][0])
+                                return containers.convert_embed_to_container(
+                                    resp_body["pages"][0]
+                                )
                 except disnake.errors.Forbidden:
                     try:
                         await sending.safe_send_channel(
                             ctx.channel,
-                            embed=create_error_embed(
+                            components=containers.create_error_container(
                                 "/dailyverseset",
                                 localization["WEBHOOK_CREATION_FAILURE"],
                                 localization,
@@ -126,21 +127,21 @@ async def submit_command(
                             f"unable to add webhook for <{user.id}@{ctx.guild_id}#{ctx.channel_id}>"
                         )
 
-            return convert_embed(resp_body["pages"][0])
+            return containers.convert_embed_to_container(resp_body["pages"][0])
         else:
-            return create_pagination_embeds(resp_body["pages"], localization)
+            return containers.mass_create_containers(resp_body["pages"], localization)
     elif resp_body["type"] == "verse":
         if "does not support the" in resp_body["logStatement"]:
-            return create_error_embed(
+            return containers.create_error_container(
                 "Verse Error", resp_body["logStatement"], localization
             )
         elif "too many verses" in resp_body["logStatement"]:
-            return convert_embed(resp_body["pages"][0])
+            return containers.convert_embed_to_container(resp_body["pages"][0])
 
         display_style = resp_body["displayStyle"]
         if display_style == "embed":
             for verse in resp_body["verses"]:
-                return create_embed_from_verse(
+                return containers.convert_verse_to_container(
                     verse,
                     (
                         resp_body["cultureFooter"]
@@ -195,7 +196,7 @@ async def submit_command_raw(endpoint: str, req_body: dict):
             headers=aiohttp_headers,
         ) as resp:
             resp_text = await resp.text()
-            resp_text = resp_text.replace("\\\\", "\\")
+            resp_text = resp_text.replace("\\\\n", "\\n")
 
             resp_body = json.loads(resp_text)
             return resp_body
@@ -227,15 +228,19 @@ async def submit_verse(
 
     resp_body = await submit_verse_raw(endpoint, req_body)
 
-    if isinstance(resp_body, disnake.Embed):
-        await sending.safe_send_channel(ctx.channel, embed=resp_body)
-    elif isinstance(resp_body, CreatePaginator):
+    if isinstance(resp_body, disnake.ui.Container):
         await sending.safe_send_channel(
-            ctx.channel, embed=resp_body.embeds[0], view=resp_body
+            ctx.channel,
+            components=resp_body,
         )
+    elif isinstance(resp_body, ComponentPaginator):
+        await resp_body.send(ctx.channel)
     elif isinstance(resp_body, list):
-        if isinstance(resp_body[0], disnake.Embed):
-            await sending.safe_send_channel(ctx.channel, embeds=resp_body)
+        if isinstance(resp_body[0], disnake.ui.Container):
+            await sending.safe_send_channel(
+                ctx.channel,
+                components=resp_body,
+            )
         elif isinstance(resp_body[0], str):
             for item in resp_body:
                 await sending.safe_send_channel(ctx.channel, item)
@@ -245,7 +250,11 @@ async def submit_verse(
 
 async def submit_verse_raw(
     endpoint: str, req_body: dict, is_command: bool = False
-) -> Optional[Union[disnake.Embed, list[str], list[disnake.Embed], CreatePaginator]]:
+) -> Optional[
+    Union[
+        disnake.ui.Container, list[str], list[disnake.ui.Container], ComponentPaginator
+    ]
+]:
     """Submits a verse to the backend and returns the result."""
 
     resp_body = None
@@ -271,15 +280,15 @@ async def submit_verse_raw(
 
     if resp_body["logStatement"]:
         if "does not support the" in resp_body["logStatement"]:
-            return create_error_embed(
+            return containers.create_error_container(
                 "Verse Error", resp_body["logStatement"], localization
             )
         elif "too many verses" in resp_body["logStatement"]:
-            return convert_embed(resp_body["pages"][0])
+            return containers.convert_embed_to_container(resp_body["pages"][0])
 
     if "verses" not in resp_body:
         if "pages" in resp_body:
-            return convert_embed(resp_body["pages"][0])
+            return containers.convert_embed_to_container(resp_body["pages"][0])
         return
 
     verses = resp_body["verses"]
@@ -288,7 +297,7 @@ async def submit_verse_raw(
     display_style = resp_body["displayStyle"]
     if display_style == "embed":
         if resp_body["paginate"] and len(verses) > 1:
-            embeds = create_pagination_embeds(
+            components = containers.mass_create_containers(
                 verses,
                 (
                     resp_body["cultureFooter"]
@@ -297,11 +306,11 @@ async def submit_verse_raw(
                 ),
                 is_verses=True,
             )
-            return CreatePaginator(embeds, int(req_body["user_id"]), 180)
+            return ComponentPaginator(components, int(req_body["user_id"]))
         else:
             for verse in verses:
                 processed_verses.append(
-                    create_embed_from_verse(
+                    containers.convert_verse_to_container(
                         verse,
                         (
                             resp_body["cultureFooter"]
@@ -342,76 +351,3 @@ async def submit_verse_raw(
             )
 
     return processed_verses
-
-
-def convert_embed(internal_embed):
-    embed = disnake.Embed()
-
-    embed.title = internal_embed["title"]
-    embed.description = internal_embed["description"]
-    embed.url = internal_embed["url"]
-    embed.color = internal_embed["color"]
-
-    if internal_embed["fields"] is not None:
-        for field in internal_embed["fields"]:
-            embed.add_field(
-                name=field["name"], value=field["value"], inline=field["inline"]
-            )
-
-    embed.set_footer(
-        text=internal_embed["footer"]["text"],
-        icon_url=internal_embed["footer"]["icon_url"],
-    )
-
-    return embed
-
-
-def create_embed_from_verse(verse, localization):
-    embed = disnake.Embed()
-
-    reference_title = (
-        verse["reference"]["asString"] + " - " + verse["reference"]["version"]["name"]
-    )
-
-    if verse["reference"]["version"]["publisher"] == "biblica":
-        embed.set_author(name=reference_title + " (Biblica)", url="https://biblica.com")
-    else:
-        embed.set_author(name=reference_title)
-
-    embed.title = verse["title"]
-    embed.description = verse["text"]
-    embed.color = 6709986
-
-    embed.set_footer(
-        text=localization.replace("{0}", statics.version),
-        icon_url="https://i.imgur.com/hr4RXpy.png",
-    )
-
-    return embed
-
-
-def create_error_embed(title, description, localization):
-    embed = disnake.Embed()
-
-    embed.title = title
-    embed.description = description
-    embed.color = 16723502
-
-    embed.set_footer(
-        text=localization["EMBED_FOOTER"].replace("<v>", statics.version),
-        icon_url="https://i.imgur.com/hr4RXpy.png",
-    )
-
-    return embed
-
-
-def create_pagination_embeds(pages, localization, is_verses=False):
-    embeds = []
-
-    for page in pages:
-        if is_verses:
-            embeds.append(create_embed_from_verse(page, localization))
-        else:
-            embeds.append(convert_embed(page))
-
-    return embeds

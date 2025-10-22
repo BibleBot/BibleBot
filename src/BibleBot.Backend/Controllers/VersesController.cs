@@ -238,18 +238,19 @@ namespace BibleBot.Backend.Controllers
 
                 if (string.Equals(displayStyle, "embed", StringComparison.Ordinal))
                 {
-                    const int MAX_TEXT_LENGTH = 4096;
-                    const int MAX_TITLE_LENGTH = 256;
+                    const int MAX_TITLE_LENGTH = 200;
+
+                    if (result.Title.Length > MAX_TITLE_LENGTH)
+                    {
+                        result.Title = string.Concat(result.Title.AsSpan(0, Math.Min(MAX_TITLE_LENGTH - 4, result.Title.Length)), "...");
+                    }
+
+                    int MAX_TEXT_LENGTH = 4000 - (result.Title.Length + result.Reference.AsString.Length + result.Reference.Version.Name.Length + 100);
 
                     if (result.Text.Length > MAX_TEXT_LENGTH)
                     {
                         result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(MAX_TEXT_LENGTH - 4, result.Text.Length)), "...");
                         result.Text = TruncatedTextRegex().Replace(result.Text, "...");
-                    }
-
-                    if (result.Title.Length > MAX_TITLE_LENGTH)
-                    {
-                        result.Title = string.Concat(result.Title.AsSpan(0, Math.Min(MAX_TITLE_LENGTH - 4, result.Title.Length)), "...");
                     }
                 }
                 else if (!string.Equals(displayStyle, "embed", StringComparison.Ordinal))

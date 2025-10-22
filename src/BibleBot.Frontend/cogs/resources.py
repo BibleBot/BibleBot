@@ -8,10 +8,9 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 
 from disnake import CommandInteraction, Localized, OptionChoice
 from disnake.ext import commands
-from setuptools import Command
 from logger import VyLogger
 from utils import backend, sending, checks
-from utils.views import CreatePaginator
+from utils.paginator import ComponentPaginator
 
 logger = VyLogger("default")
 
@@ -24,7 +23,7 @@ class Resources(commands.Cog):
     async def listresources(self, inter: CommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, f"+resource")
-        await sending.safe_send_interaction(inter.followup, embed=resp)
+        await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_RESOURCE_DESC"))
     async def resource(
@@ -78,12 +77,9 @@ class Resources(commands.Cog):
 
         if isinstance(resp, list):
             if resource in ["lsc"] or len(resp) > 3:
-                await sending.safe_send_interaction(
-                    inter.followup,
-                    embed=resp[0],
-                    view=CreatePaginator(resp, inter.author.id, 180),
-                )
+                paginator = ComponentPaginator(resp, inter.author.id)
+                await paginator.send(inter)
             else:
-                await sending.safe_send_interaction(inter.followup, embeds=resp)
+                await sending.safe_send_interaction(inter.followup, components=resp)
         else:
-            await sending.safe_send_interaction(inter.followup, embed=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)
