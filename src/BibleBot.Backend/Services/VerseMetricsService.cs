@@ -28,7 +28,7 @@ namespace BibleBot.Backend.Services
         }
 
         private static NpgsqlRange<int> CreateRange(int first, int last) => last < first
-                ? throw new VerseRangeInvalidException("Verse range has an illogical sequence.")
+                ? throw new VerseRangeInvalidException($"Verse range has an illogical sequence, {last} is lesser than {first}.")
                 : new NpgsqlRange<int>(first, true, last, true);
 
         public async Task<List<VerseMetric>> Create(string userId, string guildId, Reference reference, int startingChapterEndingVerse = 0)
@@ -133,6 +133,11 @@ namespace BibleBot.Backend.Services
                 SentrySdk.CaptureException(new Exception("Failed to create metric for a reference with more than 2 chapters."));
             }
 
+            SentrySdk.ConfigureScope(scope =>
+            {
+                scope.Contexts["VerseMetricObjects"] = verseMetricsToAdd;
+            });
+
             try
             {
                 await _ctx.AddRangeAsync(verseMetricsToAdd);
@@ -146,6 +151,7 @@ namespace BibleBot.Backend.Services
                     SentrySdk.CaptureException(ex);
                 }
             }
+
             return verseMetricsToAdd;
         }
     }
