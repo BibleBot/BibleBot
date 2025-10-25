@@ -12,7 +12,7 @@ from disnake.ext import commands
 import disnake
 from logger import VyLogger
 from utils import backend, sending, containers, channels, checks
-from utils.views import ConfirmationPromptView
+from utils.confirmation_prompt import ConfirmationPrompt
 from utils.paginator import ComponentPaginator
 from utils.i18n import i18n as i18n_class
 
@@ -289,15 +289,11 @@ class VerseCommands(commands.Cog):
                 )
 
             if role.is_default():
-                prompt = ConfirmationPromptView(
-                    f"+dailyverse role {role.id}", inter.author, localization, 180
+                prompt = ConfirmationPrompt(
+                    f"+dailyverse role {role.id}", inter.author, localization
                 )
 
-                await sending.safe_send_interaction(
-                    inter.followup,
-                    components=prompt.container,
-                    view=prompt,
-                )
+                await prompt.send(inter)
             else:
                 resp = await backend.submit_command(
                     inter.channel, inter.author, f"+dailyverse role {role.id}"

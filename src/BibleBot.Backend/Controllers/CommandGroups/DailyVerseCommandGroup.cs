@@ -225,7 +225,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         OK = false,
                         Pages =
                         [
-                            Utils.GetInstance().Embedify("/dailyverserole", localizer["AutomaticDailyVerseNoDMs"], true)
+                            Utils.GetInstance().Embedify("/setdailyverserole", localizer["AutomaticDailyVerseNoDMs"], true)
                         ],
                         LogStatement = "/dailyverserole",
                         Culture = CultureInfo.CurrentUICulture.Name
@@ -383,7 +383,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 string timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
 
-                string mentionClause = idealGuild.DailyVerseRoleId != null ? string.Format($" {localizer["DailyVerseStatusRoleAddenda"]} ", $"<@&{idealGuild.DailyVerseRoleId}>") : "<rm>";
+                string mentionClause = idealGuild.DailyVerseRoleId != null
+                    ? idealGuild.DailyVerseRoleId == idealGuild.GuildId
+                        ? string.Format($" {localizer["DailyVerseStatusRoleAddenda"]} ", $"@everyone")
+                        : string.Format($" {localizer["DailyVerseStatusRoleAddenda"]} ", $"<@&{idealGuild.DailyVerseRoleId}>")
+                    : "<rm>";
                 string resp = $"{localizer["DailyVerseStatusDetail"]}\n\n" +
                 $"{localizer["DailyVerseStatusHelpSet"]}\n" +
                 $"{localizer["DailyVerseStatusHelpSetRole"]}\n" +

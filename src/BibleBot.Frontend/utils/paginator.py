@@ -35,7 +35,6 @@ class PaginationState:
     message: Message
     index: int = 0
     pages: List[Container] = field(default_factory=list)
-    created_at: float = field(default_factory=time.time)
     last_interacted: float = field(default_factory=time.time)
     task: Optional[asyncio.Task] = field(default=None)
 

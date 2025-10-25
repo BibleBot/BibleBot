@@ -13,6 +13,7 @@ import aiohttp
 from disnake.ext import commands
 from logger import VyLogger
 from utils.paginator import ComponentPaginator
+from utils.confirmation_prompt import ConfirmationPrompt
 import re
 
 logger = VyLogger("default")
@@ -124,6 +125,8 @@ class EventListeners(commands.Cog):
 
         if inter.data.custom_id.startswith("pagination:"):
             await ComponentPaginator._handle_click(inter)
+        elif inter.data.custom_id.startswith("confirmation:"):
+            await ConfirmationPrompt._handle_click(inter)
 
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):

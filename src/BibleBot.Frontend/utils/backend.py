@@ -67,23 +67,7 @@ async def submit_command(
             # todo: webhook stuff should not be dailyverse-specific
             if resp_body["removeWebhook"] and ctx.guild is not None:
                 try:
-                    webhook_service_body = await webhooks.remove_webhooks(
-                        user, ctx.guild
-                    )
-
-                    req_body["Body"] = webhook_service_body
-                    async with aiohttp.ClientSession() as subsession:
-                        async with subsession.post(
-                            f"{endpoint}/webhooks/process",
-                            json=req_body,
-                            headers=aiohttp_headers,
-                        ) as subresp:
-                            if subresp.status != 200:
-                                logger.error("couldn't submit webhook")
-                            else:
-                                return containers.convert_embed_to_container(
-                                    resp_body["pages"][0]
-                                )
+                    await webhooks.remove_webhooks(user, ctx.guild)
                 except disnake.errors.Forbidden:
                     await sending.safe_send_channel(
                         ctx.channel,
