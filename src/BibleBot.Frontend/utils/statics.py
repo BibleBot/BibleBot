@@ -2,7 +2,7 @@ import os
 
 version = "undefined"
 verse_footer = "BibleBot <v> by Kerygma Digital"
-logo_emoji = "<:biblebot_circle:1430289427300614184>"
+logo_emoji = "<:biblebot_circle_new:1431798383307260065>"
 
 publisher_to_url = {
     "biblica": {"name": "Biblica", "url": "https://biblica.com"},
