@@ -142,19 +142,7 @@ class Versions(commands.Cog):
     async def listversions(
         self,
         inter: CommandInteraction,
-        sort_by_language: bool = commands.Param(
-            choices=[
-                disnake.OptionChoice(
-                    Localized("TOGGLE_PARAM_ENABLE", key="TOGGLE_PARAM_ENABLE"),
-                    True,
-                ),
-                disnake.OptionChoice(
-                    Localized("TOGGLE_PARAM_DISABLE", key="TOGGLE_PARAM_DISABLE"),
-                    False,
-                ),
-            ],
-            default=False,
-        ),
+        sort_by_language: bool,
     ):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(

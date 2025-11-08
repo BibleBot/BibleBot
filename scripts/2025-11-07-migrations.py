@@ -53,6 +53,7 @@ versionToLocale = {
     "DHH": "spa-419",
     "DN1933": "dan-DK",
     "DNB1930": "nor-NO",
+    "DRA": "eng-US",
     "EHV": "eng-US",
     "ELXX": "grc-GR",
     "ERV": "eng-US",
@@ -62,6 +63,7 @@ versionToLocale = {
     "ERV-PA": "pan-IN",
     "ERV-RU": "rus-RU",
     "ERV-SR": "srp-RS",
+    "ERV-TA": "tam-IN",
     "ERV-TH": "tha-TH",
     "ESV": "eng-US",
     "ESVUK": "eng-GB",
@@ -181,8 +183,8 @@ def addLocalesToVersions():
     versions = db.Versions
     unmatched_languages = []
     #  nop1_languages = []
+
     for abbv, locale in versionToLocale.items():
-        print(f"[info] attempting to parse locale '{locale}' into {abbv}")
         language_part, country_part = locale.split("-")
 
         try:
@@ -217,7 +219,13 @@ def addLocalesToVersions():
                 unmatched_languages.append(language_part)
 
     if len(unmatched_languages) > 0:
-        print(f"[info] could not find matches for {", ".join(unmatched_languages)}")
+        print(f"[info] could not find matches for {', '.join(unmatched_languages)}")
+
+    versions_without_locale = versions.find({"Locale": {"$exists": False}}).to_list()
+    if len(versions_without_locale) > 0:
+        print(
+            f"[info] versions without locale set: {', '.join([v['Abbreviation'] for v in versions_without_locale])}"
+        )
 
 
 deleteUnusedVersions()
