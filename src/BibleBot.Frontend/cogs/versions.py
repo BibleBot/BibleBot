@@ -7,6 +7,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 from disnake import CommandInteraction, Localized
+import disnake
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending, checks, containers
@@ -138,10 +139,28 @@ class Versions(commands.Cog):
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_LISTVERSIONS_DESC"))
-    async def listversions(self, inter: CommandInteraction):
+    async def listversions(
+        self,
+        inter: CommandInteraction,
+        sort_by_language: bool = commands.Param(
+            choices=[
+                disnake.OptionChoice(
+                    Localized("TOGGLE_PARAM_ENABLE", key="TOGGLE_PARAM_ENABLE"),
+                    True,
+                ),
+                disnake.OptionChoice(
+                    Localized("TOGGLE_PARAM_DISABLE", key="TOGGLE_PARAM_DISABLE"),
+                    False,
+                ),
+            ],
+            default=False,
+        ),
+    ):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
-            inter.channel, inter.author, "+version list"
+            inter.channel,
+            inter.author,
+            "+version list" + (" language" if sort_by_language else ""),
         )
 
         if isinstance(resp, list):

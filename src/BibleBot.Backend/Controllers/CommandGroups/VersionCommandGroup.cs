@@ -17,6 +17,7 @@ using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
 using MongoDB.Driver;
+using Serilog;
 using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
 using Version = BibleBot.Models.Version;
 
@@ -294,42 +295,186 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
+                bool isByLanguage = args.Count == 1 && args[0] == "language";
+
                 List<Version> versions = await versionService.Get();
-                versions.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
 
-                List<string> versionsUsed = [];
-                List<InternalEmbed> pages = [];
-
-                const int maxResultsPerPage = 25; // TODO: make this an appsettings param
-
-                // We need to add a page here because the for loop won't hit the last one otherwise.
-                // This also prevents situations where the Ceiling() result might equal 0.
-                int totalPages = (int)Math.Ceiling((decimal)(versions.Count / maxResultsPerPage));
-
-                for (int i = 0; i < totalPages; i++)
+                if (!isByLanguage)
                 {
-                    int count = 0;
-                    StringBuilder versionList = new();
+                    versions.Sort((x, y) => string.Compare(x.Name, y.Name, StringComparison.Ordinal));
 
-                    foreach (Version version in versions.Where(version => count < maxResultsPerPage).Where(version => !versionsUsed.Contains(version.Name)))
+                    List<string> versionsUsed = [];
+                    List<InternalEmbed> pages = [];
+
+                    const int maxResultsPerPage = 25; // TODO: make this an appsettings param
+
+                    // We need to add a page here because the for loop won't hit the last one otherwise.
+                    // This also prevents situations where the Ceiling() result might equal 0.
+                    int totalPages = (int)Math.Ceiling((decimal)(versions.Count / maxResultsPerPage));
+
+                    for (int i = 0; i < totalPages; i++)
                     {
-                        versionList.Append($"{version.Name}\n");
-                        versionsUsed.Add(version.Name);
-                        count++;
+                        int count = 0;
+                        StringBuilder versionList = new();
+
+                        foreach (Version version in versions.Where(version => count < maxResultsPerPage).Where(version => !versionsUsed.Contains(version.Name)))
+                        {
+                            versionList.Append($"{version.Name}\n");
+                            versionsUsed.Add(version.Name);
+                            count++;
+                        }
+
+                        string pageCounter = string.Format(sharedLocalizer["PageCounter"], [i + 1, totalPages]);
+                        InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - {pageCounter}", versionList.ToString(), false);
+                        pages.Add(embed);
                     }
 
-                    string pageCounter = string.Format(sharedLocalizer["PageCounter"], [i + 1, totalPages]);
-                    InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - {pageCounter}", versionList.ToString(), false);
-                    pages.Add(embed);
+                    return new CommandResponse
+                    {
+                        OK = true,
+                        Pages = pages,
+                        LogStatement = "/listversions",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
                 }
-
-                return new CommandResponse
+                else
                 {
-                    OK = true,
-                    Pages = pages,
-                    LogStatement = "/listversions",
-                    Culture = CultureInfo.CurrentUICulture.Name
-                };
+                    SortedDictionary<string, List<string>> localesToVersionBeforeEnglish = new(StringComparer.Ordinal);
+                    List<string> englishVersions = [];
+                    SortedDictionary<string, List<string>> localesToVersionAfterEnglish = new(StringComparer.Ordinal);
+
+                    versions.ForEach((version) =>
+                    {
+                        string localeDisplayName = null;
+                        bool shouldSkip = false;
+
+                        try
+                        {
+                            localeDisplayName = CultureInfo.GetCultureInfo(version.Locale).DisplayName.Split(" (")[0];
+                        }
+                        catch (CultureNotFoundException)
+                        {
+                            localeDisplayName = version.Locale;
+                        }
+                        catch (ArgumentNullException)
+                        {
+                            Log.Error($"[err] {version.Abbreviation} does not have a locale");
+                            shouldSkip = true;
+                        }
+
+                        if (!shouldSkip)
+                        {
+                            if (localeDisplayName == "cak")
+                            {
+                                localeDisplayName = "Kaqchikel";
+                            }
+
+                            if (localeDisplayName == "English")
+                            {
+                                englishVersions.Add(version.Name);
+                            }
+
+                            if (string.CompareOrdinal(localeDisplayName, "English") < 0)
+                            {
+                                if (localesToVersionBeforeEnglish.ContainsKey(localeDisplayName))
+                                {
+                                    if (!localesToVersionBeforeEnglish[localeDisplayName].Contains(version.Name))
+                                    {
+                                        localesToVersionBeforeEnglish[localeDisplayName].Add(version.Name);
+                                    }
+                                }
+                                else
+                                {
+                                    localesToVersionBeforeEnglish[localeDisplayName] = [version.Name];
+                                }
+                            }
+                            else if (string.CompareOrdinal(localeDisplayName, "English") > 0)
+                            {
+                                if (localesToVersionAfterEnglish.ContainsKey(localeDisplayName))
+                                {
+                                    if (!localesToVersionAfterEnglish[localeDisplayName].Contains(version.Name))
+                                    {
+                                        localesToVersionAfterEnglish[localeDisplayName].Add(version.Name);
+                                    }
+                                }
+                                else
+                                {
+                                    localesToVersionAfterEnglish[localeDisplayName] = [version.Name];
+                                }
+                            }
+                        }
+                    });
+
+                    List<string> localeDisplayNamesProcessed = [];
+                    List<InternalEmbed> pages = [];
+
+                    const int maxResultsPerPage = 5; // TODO: make this an appsettings param
+
+                    // Separate page counts for before/after groups so English can be inserted between them
+                    int beforeCount = localesToVersionBeforeEnglish.Keys.Count;
+                    int afterCount = localesToVersionAfterEnglish.Keys.Count;
+
+                    int pagesForBefore = (int)Math.Ceiling(decimal.Divide(beforeCount, maxResultsPerPage));
+                    int pagesForAfter = (int)Math.Ceiling(decimal.Divide(afterCount, maxResultsPerPage));
+
+                    // English versions are always present; reserve one dedicated page for English.
+                    int totalPages = pagesForBefore + 1 + pagesForAfter;
+
+                    // Build pages for the "before English" locale groups first.
+                    for (int i = 0; i < pagesForBefore; i++)
+                    {
+                        int count = 0;
+                        StringBuilder versionList = new();
+
+                        foreach (KeyValuePair<string, List<string>> kvp in localesToVersionBeforeEnglish.Where(kvp => count < maxResultsPerPage).Where(kvp => !localeDisplayNamesProcessed.Contains(kvp.Key)))
+                        {
+                            kvp.Value.Sort(StringComparer.Ordinal);
+                            versionList.Append($"__**{kvp.Key}**__\n{string.Join("\n", kvp.Value)}\n\n");
+                            localeDisplayNamesProcessed.Add(kvp.Key);
+                            count++;
+                        }
+
+                        int pageIndex = i + 1; // before pages start at 1
+                        string pageCounter = string.Format(sharedLocalizer["PageCounter"], [pageIndex, totalPages]);
+                        InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - {pageCounter}", versionList.ToString(), false);
+                        pages.Add(embed);
+                    }
+
+                    // Insert a dedicated English page after the before-English pages (always its own page).
+                    englishVersions.Sort(StringComparer.Ordinal);
+                    int englishPageIndex = pagesForBefore + 1;
+                    string englishPageCounter = string.Format(sharedLocalizer["PageCounter"], [englishPageIndex, totalPages]);
+                    InternalEmbed englishEmbed = Utils.GetInstance().Embedify($"/listversions - {englishPageCounter}", $"__**English**__\n{string.Join("\n", englishVersions)}\n\n", false);
+                    pages.Add(englishEmbed);
+
+                    // Build pages for the "after English" locale groups.
+                    for (int i = 0; i < pagesForAfter; i++)
+                    {
+                        int count = 0;
+                        StringBuilder versionList = new();
+
+                        foreach (KeyValuePair<string, List<string>> kvp in localesToVersionAfterEnglish.Where(kvp => count < maxResultsPerPage).Where(kvp => !localeDisplayNamesProcessed.Contains(kvp.Key)))
+                        {
+                            kvp.Value.Sort(StringComparer.Ordinal);
+                            versionList.Append($"__**{kvp.Key}**__\n{string.Join("\n", kvp.Value)}\n\n");
+                            localeDisplayNamesProcessed.Add(kvp.Key);
+                            count++;
+                        }
+
+                        int pageIndex = pagesForBefore + i + 2;
+                        string pageCounterAfter = string.Format(sharedLocalizer["PageCounter"], [pageIndex, totalPages]);
+                        InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - {pageCounterAfter}", versionList.ToString(), false);
+                        pages.Add(embed);
+                    }
+
+                    return new CommandResponse
+                    {
+                        OK = true,
+                        Pages = pages,
+                        LogStatement = "/listversions",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
             }
         }
 
