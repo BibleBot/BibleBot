@@ -37,6 +37,19 @@
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
             // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "name": "Debug Migration Script",
+            "type": "debugpy",
+            "request": "launch",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/scripts/2025-11-07-migrations.py",
+            "args": [],
+            "cwd": "${workspaceFolder}/scripts",
+            "envFile": "${workspaceFolder}/src/BibleBot.Frontend/.env"
+        },
+        {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
             "name": "Debug Backend",
             "type": "coreclr",
             "request": "launch",
