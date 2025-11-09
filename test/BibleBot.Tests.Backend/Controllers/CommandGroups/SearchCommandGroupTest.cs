@@ -50,7 +50,7 @@ namespace BibleBot.Tests.Backend.Controllers.CommandGroups
         [Test]
         public async Task ShouldNotAllowNonBibleGatewayVersionForSubsets()
         {
-            ObjectResult result = (await _commandsController.ProcessMessage(new MockRequest("+search subset:2 version:KJVA Sadducees"))).Result as ObjectResult;
+            ObjectResult result = (await _commandsController.ProcessMessage(new MockRequest("+search subset:2 version:KJV Sadducees"))).Result as ObjectResult;
             CommandResponse resp = result.Value as CommandResponse;
 
             result.StatusCode.Should().Be(400);
