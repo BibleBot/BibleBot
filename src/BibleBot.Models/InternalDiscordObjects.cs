@@ -248,12 +248,15 @@ namespace BibleBot.Models
     /// <summary>
     /// The interface for Discord components (see <seealso href="https://discord.com/developers/docs/components/reference#anatomy-of-a-component"/>).
     /// </summary>
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+    [JsonDerivedType(typeof(InternalContainer), 17)]
+    [JsonDerivedType(typeof(TextDisplayComponent), 10)]
+    [JsonDerivedType(typeof(SeparatorComponent), 14)]
     public interface IDiscordComponent
     {
         /// <summary>
         /// The component type.
         /// </summary>
-        [JsonPropertyName("type")]
         int Type { get; set; }
     }
 
@@ -270,20 +273,20 @@ namespace BibleBot.Models
         /// <summary>
         /// The component type. For containers, this is always 17.
         /// </summary>
-        [JsonPropertyName("type")]
-        public int Type { get => 17; set { } }
+        [JsonIgnore]
+        public int Type { get; set; } = 17;
 
         /// <summary>
         /// Child components contained within this container.
         /// </summary>
         [JsonPropertyName("components")]
-        public List<IDiscordComponent> Components = [];
+        public List<IDiscordComponent> Components { get; set; } = [];
 
         /// <summary>
         /// The accent color of the container.
         /// </summary>
         [JsonPropertyName("accent_color")]
-        public uint AccentColor = 0x000000;
+        public uint AccentColor { get; set; } = 0x000000;
     }
 
     /// <summary>
@@ -294,14 +297,14 @@ namespace BibleBot.Models
         /// <summary>
         /// The component type. For text display components, this is always 10.
         /// </summary>
-        [JsonPropertyName("type")]
-        public int Type { get => 10; set { } }
+        [JsonIgnore]
+        public int Type { get; set; } = 10;
 
         /// <summary>
         /// The text content of the component.
         /// </summary>
         [JsonPropertyName("content")]
-        public string Content = content;
+        public string Content { get; set; } = content;
     }
 
     /// <summary>
@@ -312,19 +315,19 @@ namespace BibleBot.Models
         /// <summary>
         /// The component type. For separator components, this is always 14.
         /// </summary>
-        [JsonPropertyName("type")]
-        public int Type { get => 14; set { } }
+        [JsonIgnore]
+        public int Type { get; set; } = 14;
 
         /// <summary>
         /// Whether a visual divider should be shown.
         /// </summary>
         [JsonPropertyName("divider")]
-        public bool Divider = true;
+        public bool Divider { get; set; } = true;
 
         /// <summary>
         /// The spacing size around the separator. 1 for small, 2 for large.
         /// </summary>
         [JsonPropertyName("spacing")]
-        public int Spacing = 1;
+        public int Spacing { get; set; } = 1;
     }
 }

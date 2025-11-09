@@ -86,5 +86,11 @@ namespace BibleBot.Models
         /// </remarks>
         [JsonPropertyName("allowed_mentions")]
         public string AllowedMentions { get; set; }
+
+        /// <summary>
+        /// Bitwise value of flags to control message behavior.
+        /// </summary>
+        [JsonPropertyName("flags")]
+        public int? Flags { get; set; }
     }
 }

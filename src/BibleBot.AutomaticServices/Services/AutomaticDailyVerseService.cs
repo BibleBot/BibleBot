@@ -57,7 +57,7 @@ namespace BibleBot.AutomaticServices.Services
             _specialVerseProcessingService = specialVerseProcessingService;
             _localizer = localizer;
 
-            _restClient = new RestClient("https://discord.com/api/webhooks", configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
+            _restClient = new RestClient("https://discord.com/api/webhooks", configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, IncludeFields = true }));
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -193,10 +193,10 @@ namespace BibleBot.AutomaticServices.Services
 
                     webhookRequestBody = new WebhookRequestBody
                     {
-                        Content = content,
                         Username = _localizer["AutomaticDailyVerseWebhookUsername"],
                         AvatarURL = Utils.GetIconURL(),
-                        Components = [container]
+                        Components = [new TextDisplayComponent(content), container],
+                        Flags = 32768 // 1 << 15 (IS_COMPONENTS_V2)
                     };
                 }
                 else if (displayStyle == "blockquote")
@@ -244,8 +244,6 @@ namespace BibleBot.AutomaticServices.Services
             RestRequest request = new(guild.DailyVerseWebhook);
             request.AddQueryParameter("wait", "true"); // Discord will return a message body instead of 204 No Content
             request.AddJsonBody(webhookRequestBody);
-
-            string json_string = JsonSerializer.Serialize(webhookRequestBody);
 
             RestResponse resp = null;
             HttpStatusCode statusCode = HttpStatusCode.ServiceUnavailable;
