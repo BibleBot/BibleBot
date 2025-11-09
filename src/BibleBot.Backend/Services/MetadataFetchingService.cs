@@ -277,6 +277,16 @@ namespace BibleBot.Backend.Services
             return names;
         }
 
-        private static MDBookNames MergeBookNames(List<MDBookNames> bookNames) => bookNames.SelectMany(dict => dict).ToLookup(pair => pair.Key, pair => pair.Value).ToDictionary(group => group.Key, group => group.SelectMany(list => list).ToList());
+        private static MDBookNames MergeBookNames(List<MDBookNames> bookNames) => bookNames
+                .SelectMany(dict => dict)
+                .ToLookup(pair => pair.Key, pair => pair.Value)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group
+                        .SelectMany(list => list)
+                        .OrderByDescending(s => s?.Length ?? 0)
+                        .DistinctBy(s => s.ToLowerInvariant())
+                        .ToList()
+                );
     }
 }
