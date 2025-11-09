@@ -35,8 +35,7 @@ namespace BibleBot.Backend.Controllers
         private readonly IStringLocalizer _localizer = localizer;
         private readonly IStringLocalizer _sharedLocalizer = sharedLocalizer;
 
-        [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$", RegexOptions.Compiled)]
-        private static partial Regex TruncatedTextRegex();
+
 
         [GeneratedRegex(@"<\*\*(.*?)\*\*>", RegexOptions.Compiled)]
         private static partial Regex VerseNumberRegex();
@@ -236,36 +235,8 @@ namespace BibleBot.Backend.Controllers
                     continue;
                 }
 
-                if (string.Equals(displayStyle, "embed", StringComparison.Ordinal))
-                {
-                    const int MAX_TITLE_LENGTH = 200;
-
-                    if (result.Title.Length > MAX_TITLE_LENGTH)
-                    {
-                        result.Title = string.Concat(result.Title.AsSpan(0, Math.Min(MAX_TITLE_LENGTH - 4, result.Title.Length)), "...");
-                    }
-
-                    int MAX_TEXT_LENGTH = 4000 - (result.Title.Length + result.Reference.AsString.Length + result.Reference.Version.Name.Length + 100);
-
-                    if (result.Text.Length > MAX_TEXT_LENGTH)
-                    {
-                        result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(MAX_TEXT_LENGTH - 4, result.Text.Length)), "...");
-                        result.Text = TruncatedTextRegex().Replace(result.Text, "...");
-                    }
-                }
-                else if (!string.Equals(displayStyle, "embed", StringComparison.Ordinal))
-                {
-                    const int MAX_TEXT_LENGTH = 2000;
-
-                    int combinedLength = result.Title.Length + result.PsalmTitle.Length + result.Text.Length;
-                    int remainingTextLength = MAX_TEXT_LENGTH - result.Title.Length - result.PsalmTitle.Length;
-
-                    if (combinedLength > MAX_TEXT_LENGTH)
-                    {
-                        result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(remainingTextLength - 70, result.Text.Length)), "..."); // 30 as a buffer for any formatting marks
-                        result.Text = TruncatedTextRegex().Replace(result.Text, "...");
-                    }
-                }
+                // Apply display-style-specific trimming/formatting. Use shared Utils method
+                result = Utils.GetInstance().FormatVerseForDisplay(result, displayStyle);
 
                 results.Add(result);
             }

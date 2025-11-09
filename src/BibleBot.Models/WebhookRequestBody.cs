@@ -66,6 +66,12 @@ namespace BibleBot.Models
         public List<InternalEmbed> Embeds { get; set; }
 
         /// <summary>
+        /// Components attached to the message.
+        /// </summary>
+        [JsonPropertyName("components")]
+        public List<IDiscordComponent> Components { get; set; }
+
+        /// <summary>
         /// Discord describes this as "JSON encoded body of non-file params", used only when sending the request
         /// as <c>multipart/form-data</c>.
         /// </summary>

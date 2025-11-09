@@ -148,7 +148,8 @@ namespace BibleBot.AutomaticServices.Services
         public async Task<bool> ProcessGuild(Guild guild, ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion, ZonedDateTime dateTimeInStandardTz, ConcurrentBag<string> removedGuilds)
         {
             InternalEmbed embed;
-            WebhookRequestBody webhookRequestBody;
+            InternalContainer container;
+            WebhookRequestBody webhookRequestBody = null;
             bool isSuccess = false;
 
             string version = guild.Version ?? "RSV";
@@ -181,26 +182,70 @@ namespace BibleBot.AutomaticServices.Services
 
                 string rolePing = guild.DailyVerseRoleId == guild.GuildId ? "@everyone" : $"<@&{guild.DailyVerseRoleId}>";
                 string content = guild.DailyVerseRoleId != null ? $"{rolePing} - {_localizer["AutomaticDailyVerseLeadIn"]}:" : $"{_localizer["AutomaticDailyVerseLeadIn"]}:";
-                embed = Utils.GetInstance().Embedify($"{verse.Reference.AsString} - {verse.Reference.Version.Name}", verse.Title, verse.Text, false, null);
 
-                if (verse.Reference.Version.Publisher == "biblica")
+                // Ensure verse is formatted according to guild preference for display.
+                string displayStyle = guild.DisplayStyle ?? "embed";
+                verse = Utils.GetInstance().FormatVerseForDisplay(verse, displayStyle);
+
+                if (displayStyle == "embed")
                 {
-                    embed.Author.Name += " (Biblica)";
-                    embed.Author.URL = "https://biblica.org";
+                    container = Utils.GetInstance().VerseToContainer(verse);
+
+                    webhookRequestBody = new WebhookRequestBody
+                    {
+                        Content = content,
+                        Username = _localizer["AutomaticDailyVerseWebhookUsername"],
+                        AvatarURL = Utils.GetIconURL(),
+                        Components = [container]
+                    };
                 }
-
-                webhookRequestBody = new WebhookRequestBody
+                else if (displayStyle == "blockquote")
                 {
-                    Content = content,
-                    Username = _localizer["AutomaticDailyVerseWebhookUsername"],
-                    AvatarURL = embed.Footer.IconURL,
-                    Embeds = [embed]
-                };
+                    string blockquoteText = $"**{verse.Reference.AsString} - {verse.Reference.Version.Name}**\n\n> {verse.Text.Replace("\n", "\n> ")}\n\n-# <:biblebot_circle_new:1431798383307260065>  {Utils.GetInstance().GetLocalizedFooterString()}";
+
+                    if (verse.Reference.Version.Publisher == "biblica")
+                    {
+                        blockquoteText += " ∙ [Biblica](<https://biblica.com>)";
+                    }
+                    else if (verse.Reference.Version.Publisher == "lockman")
+                    {
+                        blockquoteText += " ∙ [The Lockman Foundation](<https://www.lockman.org>)";
+                    }
+
+                    webhookRequestBody = new WebhookRequestBody
+                    {
+                        Content = $"{content}\n\n{blockquoteText}",
+                        Username = _localizer["AutomaticDailyVerseWebhookUsername"],
+                        AvatarURL = Utils.GetIconURL()
+                    };
+                }
+                else if (displayStyle == "code")
+                {
+                    string codeBlockText = $"**{verse.Reference.AsString} - {verse.Reference.Version.Name}**\n\n```json\n{verse.Text.Replace("*", "")}\n```\n\n-# <:biblebot_circle_new:1431798383307260065>  {Utils.GetInstance().GetLocalizedFooterString()}";
+
+                    if (verse.Reference.Version.Publisher == "biblica")
+                    {
+                        codeBlockText += " ∙ [Biblica](<https://biblica.com>)";
+                    }
+                    else if (verse.Reference.Version.Publisher == "lockman")
+                    {
+                        codeBlockText += " ∙ [The Lockman Foundation](<https://www.lockman.org>)";
+                    }
+
+                    webhookRequestBody = new WebhookRequestBody
+                    {
+                        Content = $"{content}\n\n{codeBlockText}",
+                        Username = _localizer["AutomaticDailyVerseWebhookUsername"],
+                        AvatarURL = Utils.GetIconURL()
+                    };
+                }
             }
 
             RestRequest request = new(guild.DailyVerseWebhook);
             request.AddQueryParameter("wait", "true"); // Discord will return a message body instead of 204 No Content
             request.AddJsonBody(webhookRequestBody);
+
+            string json_string = JsonSerializer.Serialize(webhookRequestBody);
 
             RestResponse resp = null;
             HttpStatusCode statusCode = HttpStatusCode.ServiceUnavailable;

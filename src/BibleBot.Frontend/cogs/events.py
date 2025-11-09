@@ -133,6 +133,14 @@ class EventListeners(commands.Cog):
         if msg.author == self.bot.user:
             return
 
+        if msg.webhook_id is not None:
+            if msg.channel.webhooks is not None:
+                webhooks = await msg.channel.webhooks()
+                for webhook in webhooks:
+                    if webhook.id == msg.webhook_id:
+                        if webhook.user.id == self.bot.user.id:
+                            return
+
         clean_msg = msg.content.replace("://", "")
         verse_regex = re.compile(
             r" [0-9]{1,3}:[0-9]{1,3}((,[0-9]{1,3})*)?([-–—‒－]{1})?([0-9]{1,3})?((,[0-9]{1,3})*)?(:[0-9]{1,3})?"

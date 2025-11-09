@@ -148,7 +148,19 @@ async def submit_command(
                 )
                 verse_text = verse["text"]
 
-                return f"**{reference_title}**\n\n> {verse_title}{verse_text}"
+                returning_text = f"**{reference_title}**\n\n> {verse_title}{verse_text}\n\n-# {statics.logo_emoji} {resp_body['cultureFooter']}"
+
+                if verse["reference"]["version"]["publisher"] is not None:
+                    publisher_info = statics.publisher_to_url[
+                        verse["reference"]["version"]["publisher"]
+                    ]
+
+                    if publisher_info is not None:
+                        returning_text += (
+                            f" ∙ [{publisher_info['name']}]({publisher_info['url']})"
+                        )
+
+                return returning_text
             return None
         elif display_style == "code":
             for verse in resp_body["verses"]:
@@ -162,9 +174,19 @@ async def submit_command(
                 )
                 verse_text = verse["text"].replace("*", "")
 
-                return (
-                    f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
-                )
+                returning_text = f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```\n\n-# {statics.logo_emoji} {resp_body['cultureFooter']}"
+
+                if verse["reference"]["version"]["publisher"] is not None:
+                    publisher_info = statics.publisher_to_url[
+                        verse["reference"]["version"]["publisher"]
+                    ]
+
+                    if publisher_info is not None:
+                        returning_text += (
+                            f" ∙ [{publisher_info['name']}]({publisher_info['url']})"
+                        )
+
+                return returning_text
             return None
         return None
     return None
@@ -318,7 +340,12 @@ async def submit_verse_raw(
             verse_text = verse["text"]
 
             processed_verses.append(
-                f"**{reference_title}**\n\n> {verse_title}{verse_text}"
+                f"**{reference_title}**\n\n> {verse_title}{verse_text}\n\n-# {statics.logo_emoji}  {resp_body['cultureFooter']}"
+                + (
+                    f" ∙ [{statics.publisher_to_url[verse['reference']['version']['publisher']]['name']}](<{statics.publisher_to_url[verse['reference']['version']['publisher']]['url']}>)"
+                    if verse["reference"]["version"]["publisher"] is not None
+                    else ""
+                )
             )
     elif display_style == "code":
         for verse in verses:
@@ -331,7 +358,12 @@ async def submit_verse_raw(
             verse_text = verse["text"].replace("*", "")
 
             processed_verses.append(
-                f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```"
+                f"**{reference_title}**\n\n```json\n{verse_title} {verse_text}```\n\n-# {statics.logo_emoji}  {resp_body['cultureFooter']}"
+                + (
+                    f" ∙ [{statics.publisher_to_url[verse['reference']['version']['publisher']]['name']}](<{statics.publisher_to_url[verse['reference']['version']['publisher']]['url']}>)"
+                    if verse["reference"]["version"]["publisher"] is not None
+                    else ""
+                )
             )
 
     return processed_verses

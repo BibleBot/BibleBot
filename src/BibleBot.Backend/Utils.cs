@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using BibleBot.Backend.Models;
 using BibleBot.Models;
@@ -23,7 +24,7 @@ using Serilog.Extensions.Logging;
 
 namespace BibleBot.Backend
 {
-    public class Utils
+    public partial class Utils
     {
         private static Utils _instance;
         private static readonly Lock _lock = new();
@@ -49,6 +50,8 @@ namespace BibleBot.Backend
 
             return _instance;
         }
+
+        public static string GetIconURL() => "https://i.imgur.com/hr4RXpy.png";
 
         private static readonly string[] _creeds = ["apostles", "nicene"];
 
@@ -95,7 +98,45 @@ namespace BibleBot.Backend
             }
         }
 
+
         public static readonly string Version = GetVersion();
+        public string GetLocalizedFooterString() => string.Format(_localizer["GlobalFooter"], Version);
+
+        public InternalContainer VerseToContainer(VerseResult verse)
+        {
+            InternalContainer container = new()
+            {
+                AccentColor = (uint)Colors.NORMAL_COLOR,
+            };
+
+            string referenceTitle = $"{verse.Reference.AsString} - {verse.Reference.Version.Name}";
+
+            container.Components.Add(new TextDisplayComponent($"### {referenceTitle}"));
+
+            if (verse.Title.Length > 0)
+            {
+                container.Components.Add(new TextDisplayComponent($"**{verse.Title}**"));
+            }
+
+            container.Components.Add(new TextDisplayComponent(verse.Text));
+
+            container.Components.Add(new SeparatorComponent() { Divider = true, Spacing = 2 });
+
+            if (verse.Reference.Version.Publisher == "biblica")
+            {
+                container.Components.Add(new TextDisplayComponent($"-# <:biblebot_circle_new:1431798383307260065> {string.Format(_localizer["GlobalFooter"], Version)} ∙ [Biblica](https://biblica.com)"));
+            }
+            else if (verse.Reference.Version.Publisher == "lockman")
+            {
+                container.Components.Add(new TextDisplayComponent($"-# <:biblebot_circle_new:1431798383307260065> {string.Format(_localizer["GlobalFooter"], Version)} ∙ [The Lockman Foundation](https://www.lockman.org)"));
+            }
+            else
+            {
+                container.Components.Add(new TextDisplayComponent($"-# <:biblebot_circle_new:1431798383307260065> {string.Format(_localizer["GlobalFooter"], Version)}"));
+            }
+
+            return container;
+        }
 
         public InternalEmbed Embedify(string title, string description, bool isError) => Embedify(null, title, description, isError, null);
 
@@ -111,7 +152,7 @@ namespace BibleBot.Backend
                 Footer = new Footer
                 {
                     Text = footerText,
-                    IconURL = "https://i.imgur.com/hr4RXpy.png"
+                    IconURL = GetIconURL()
                 }
             };
 
@@ -527,6 +568,58 @@ namespace BibleBot.Backend
             }
 
             return referencesToReturn;
+        }
+
+        [GeneratedRegex(@"(\.*\s*<*\**\d*\**>*\.\.\.)$", RegexOptions.Compiled)]
+        private static partial Regex TruncatedTextRegex();
+
+        // Formats/truncates a VerseResult according to the provided display style.
+        // This encapsulates the same logic used by the VersesController so other
+        // projects (like AutomaticServices) can reuse the behaviour without
+        // duplicating code.
+        public VerseResult FormatVerseForDisplay(VerseResult result, string displayStyle)
+        {
+            if (result == null)
+            {
+                return null;
+            }
+
+            if (string.Equals(displayStyle, "embed", StringComparison.Ordinal))
+            {
+                const int MAX_TITLE_LENGTH = 200;
+
+                if (result.Title?.Length > MAX_TITLE_LENGTH)
+                {
+                    result.Title = string.Concat(result.Title.AsSpan(0, Math.Min(MAX_TITLE_LENGTH - 4, result.Title.Length)), "...");
+                }
+
+                int MAX_TEXT_LENGTH = 4000 - ((result.Title?.Length ?? 0) + (result.Reference?.AsString.Length ?? 0) + (result.Reference?.Version?.Name.Length ?? 0) + 100);
+
+                if (result.Text != null && result.Text.Length > MAX_TEXT_LENGTH)
+                {
+                    result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(MAX_TEXT_LENGTH - 4, result.Text.Length)), "...");
+                    result.Text = TruncatedTextRegex().Replace(result.Text, "...");
+                }
+            }
+            else
+            {
+                const int MAX_TEXT_LENGTH = 2000;
+
+                int titleLen = result.Title?.Length ?? 0;
+                int psalmTitleLen = result.PsalmTitle?.Length ?? 0;
+                int textLen = result.Text?.Length ?? 0;
+
+                int combinedLength = titleLen + psalmTitleLen + textLen;
+                int remainingTextLength = MAX_TEXT_LENGTH - titleLen - psalmTitleLen;
+
+                if (combinedLength > MAX_TEXT_LENGTH && result.Text != null)
+                {
+                    result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(Math.Max(0, remainingTextLength - 70), result.Text.Length)), "..."); // 70 as a buffer for formatting
+                    result.Text = TruncatedTextRegex().Replace(result.Text, "...");
+                }
+            }
+
+            return result;
         }
     }
 }
