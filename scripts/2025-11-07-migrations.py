@@ -228,5 +228,14 @@ def addLocalesToVersions():
         )
 
 
+def deleteAllBookData():
+    versions = db.Versions
+    update_changes = versions.update_many({}, {"$set": {"Books": None}})
+    print(
+        f"[info] cleared book data for {update_changes.modified_count} of {versions.estimated_document_count()} versions "
+    )
+
+
 deleteUnusedVersions()
 addLocalesToVersions()
+deleteAllBookData()
