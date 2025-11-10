@@ -228,6 +228,17 @@ namespace BibleBot.Backend.Controllers
                     throw new ProviderNotFoundException();
                 }
 
+                if (reference.Version.Books != null && !(reference.Version.Abbreviation is "ELXX" or "LXX" && reference.Book.Name == "DAN"))
+                {
+                    List<Chapter> chapters = reference.Book?.Chapters;
+
+                    if (chapters?.Exists(ch => ch.Number == reference.StartingChapter) == false ||
+                        chapters?.Exists(ch => ch.Number == reference.EndingChapter) == false)
+                    {
+                        continue;
+                    }
+                }
+
                 VerseResult result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
 
                 if (result?.Text == null)
