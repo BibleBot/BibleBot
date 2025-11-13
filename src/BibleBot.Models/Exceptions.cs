@@ -48,6 +48,18 @@ namespace BibleBot.Models
         public VerseRangeInvalidException(string message) : base(message) { }
         public VerseRangeInvalidException(string message, System.Exception inner) : base(message, inner) { }
     }
+
+    /// <summary>
+    /// This should be thrown when a verse is referencing a book in a section that the version lacks.
+    /// </summary>
+    public class SectionNotFoundException : System.Exception
+    {
+        public string Section;
+
+        public SectionNotFoundException() { }
+        public SectionNotFoundException(string section) : base(section) => Section = section;
+        public SectionNotFoundException(string section, System.Exception inner) : base(section, inner) => Section = section;
+    }
 }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

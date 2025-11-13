@@ -134,17 +134,17 @@ namespace BibleBot.Backend.Services
             // Validate version support
             if (reference.IsOT && !reference.Version.SupportsOldTestament)
             {
-                return null;
+                throw new SectionNotFoundException("ot");
             }
 
             if (reference.IsNT && !reference.Version.SupportsNewTestament)
             {
-                return null;
+                throw new SectionNotFoundException("nt");
             }
 
             if (reference.IsDEU && !reference.Version.SupportsDeuterocanon)
             {
-                return null;
+                throw new SectionNotFoundException("deu");
             }
 
             // Handle special book cases

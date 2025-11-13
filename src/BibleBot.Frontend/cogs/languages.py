@@ -21,7 +21,7 @@ Language = commands.Param(
     choices={
         "English (UK)": "en-GB",
         "English (US)": "en-US",
-        "Esperanto": "eo",
+        "Esperanto": "eo-UY",
         "Polski": "pl-PL",
     }
 )

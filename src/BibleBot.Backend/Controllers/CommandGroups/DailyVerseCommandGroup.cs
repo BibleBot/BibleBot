@@ -26,13 +26,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(DailyVerseCommandGroup));
         private readonly IStringLocalizer _sharedLocalizer = localizerFactory.Create(typeof(SharedResource));
+        private readonly IStringLocalizer _versesControllerLocalizer = localizerFactory.Create(typeof(VersesController));
 
         public override string Name { get => "dailyverse"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
         public override List<Command> Commands
         {
             get => [
-                new DailyVerseUsage(userService, guildService, versionService, specialVerseProcessingService, _sharedLocalizer),
+                new DailyVerseUsage(userService, guildService, versionService, specialVerseProcessingService, _sharedLocalizer, _versesControllerLocalizer),
                 new DailyVerseSet(guildService, _localizer),
                 new DailyVerseRole(guildService, _localizer),
                 new DailyVerseStatus(guildService, _localizer),
@@ -42,7 +43,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
         }
 
         private class DailyVerseUsage(UserService userService, GuildService guildService, VersionService versionService,
-                                      SpecialVerseProcessingService specialVerseProcessingService, IStringLocalizer sharedLocalizer) : Command
+                                      SpecialVerseProcessingService specialVerseProcessingService, IStringLocalizer sharedLocalizer, IStringLocalizer versesControllerLocalizer) : Command
         {
             public override string Name { get => "usage"; set => throw new NotImplementedException(); }
 
@@ -67,7 +68,32 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 }
 
                 Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
-                VerseResult verseResult = await specialVerseProcessingService.GetDailyVerse(idealVersion, titlesEnabled, verseNumbersEnabled);
+                VerseResult verseResult;
+
+                try
+                {
+                    verseResult = await specialVerseProcessingService.GetDailyVerse(idealVersion, titlesEnabled, verseNumbersEnabled);
+                }
+                catch (SectionNotFoundException ex)
+                {
+                    string sectionErrorTemplate = ex.Section switch
+                    {
+                        "ot" => versesControllerLocalizer["VersionNoSupportOT"],
+                        "nt" => versesControllerLocalizer["VersionNoSupportNT"],
+                        "deu" => versesControllerLocalizer["VersionNoSupportDEU"],
+                        _ => throw new NotImplementedException(),
+                    };
+
+                    InternalEmbed embed = Utils.GetInstance().Embedify("/dailyverse", string.Format(sectionErrorTemplate, idealVersion.Name), true);
+
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages = [embed],
+                        LogStatement = $"/dailyverse - version does not support {ex.Section}",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
 
 #pragma warning disable IDE0046 // Convert to conditional expression
                 if (verseResult == null)
