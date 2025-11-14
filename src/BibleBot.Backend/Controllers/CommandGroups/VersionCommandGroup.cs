@@ -252,9 +252,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 string response = $"### {idealVersion.Name}\n\n" +
                 (idealVersion.AliasOf != null ? $"{string.Format(localizer["VersionInfoAlias"], idealVersion.AliasOf)}\n\n" : "") +
-                $"{localizer["VersionInfoContainsOT"]}: {(idealVersion.SupportsOldTestament ? ":white_check_mark:" : ":x:")}\n" +
-                $"{localizer["VersionInfoContainsNT"]}: {(idealVersion.SupportsNewTestament ? ":white_check_mark:" : ":x:")}\n" +
-                $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? ":white_check_mark:" : ":x:")}\n\n" +
+                $"{localizer["VersionInfoContainsOT"]}: {(idealVersion.SupportsOldTestament ? Utils.GetInstance().emoji["check_emoji"] : Utils.GetInstance().emoji["xmark_emoji"])}\n" +
+                $"{localizer["VersionInfoContainsNT"]}: {(idealVersion.SupportsNewTestament ? Utils.GetInstance().emoji["check_emoji"] : Utils.GetInstance().emoji["xmark_emoji"])}\n" +
+                $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? Utils.GetInstance().emoji["check_emoji"] : Utils.GetInstance().emoji["xmark_emoji"])}\n\n" +
                 $"__**{localizer["VersionInfoDeveloperInfoHeader"]}**__\n" +
                 $"{localizer["VersionInfoSource"]}: `{idealVersion.Source}`";
 

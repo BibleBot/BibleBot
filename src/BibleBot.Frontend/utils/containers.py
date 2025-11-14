@@ -99,6 +99,10 @@ def convert_embed_to_container(internal_embed) -> Container:
             if section is None:
                 container.children.append(field_name)
                 container.children.append(field_value)
+                if field["add_separator_after"]:
+                    container.children.append(
+                        Separator(divider=True, spacing=SeparatorSpacing.large)
+                    )
             else:
                 section_text += f"\n\n{field_name.content}"
                 section_text += f"\n{field_value.content}"

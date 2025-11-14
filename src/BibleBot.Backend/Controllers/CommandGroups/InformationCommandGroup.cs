@@ -114,11 +114,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         SyndicationItem entry = firstFourEntries[i];
                         if (i < 2)
                         {
-                            newsSb.AppendLine($":new: **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()}) :new:");
+                            newsSb.AppendLine($"{Utils.GetInstance().emoji["new_emoji"]} **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()}) {Utils.GetInstance().emoji["new_emoji"]}");
                         }
                         else
                         {
-                            newsSb.AppendLine($"**{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()})");
+                            newsSb.AppendLine($"**{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault().GetAbsoluteUri().ToString()})");
                         }
                     }
                 }
@@ -137,14 +137,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     Color = 6709986,
                     Footer = new Footer
                     {
-                        Text = localizer["BibleBotCommandFooter"],
+                        Text = localizer["BibleBotCommandFooter"].ToString().Replace("Kerygma Digital", "[Kerygma Digital](https://kerygma.digital)"),
                         IconURL = "https://i.imgur.com/hr4RXpy.png"
                     },
                     Fields =
                     [
                         new EmbedField
                         {
-                            Name = $":tools: {localizer["Commands"]}",
+                            Name = $"{Utils.GetInstance().emoji["commands_emoji"]} {localizer["Commands"]}",
                             Value = $"`/search` - {localizer["SearchCommandDescription"]}\n" +
                             $"`/version` - {localizer["VersionCommandDescription"]}\n" +
                             $"`/language` - {localizer["LanguageCommandDescription"]}\n" +
@@ -154,23 +154,23 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                             $"`/resource` - {localizer["ResourceCommandDescription"]}\n" +
                             $"`/stats` - {localizer["StatsCommandDescription"]}\n" +
                             $"`/invite` - {localizer["InviteCommandDescription"]}\n\n" +
-                            $"{localizer["CommandsAddenda"]}\n\n" +
-                            "─────────────",
+                            $"{localizer["CommandsAddenda"]}",
+                            AddSeparatorAfter = true,
                             Inline = false
                         },
                         new EmbedField
                         {
-                            Name = $":link: {localizer["Links"]}",
+                            Name = $"{Utils.GetInstance().emoji["link_emoji"]} {localizer["Links"]}",
                             Value = $"**{localizer["Website"]}**: https://biblebot.xyz\n" +
                             $"**{localizer["Copyrights"]}**: https://biblebot.xyz/copyright\n" +
                             $"**{localizer["SourceCode"]}**: https://gitlab.com/KerygmaDigital/BibleBot/BibleBot\n" +
                             $"**{localizer["OfficialDiscordServer"]}**: https://biblebot.xyz/discord\n" +
-                            $"**{localizer["TermsAndConditions"]}**: https://biblebot.xyz/terms\n\n" +
-                            "─────────────"
+                            $"**{localizer["TermsAndConditions"]}**: https://biblebot.xyz/terms",
+                            AddSeparatorAfter = true
                         },
                         new EmbedField
                         {
-                            Name = $":newspaper: {localizer["NewsFromBlog"]}",
+                            Name = $"{Utils.GetInstance().emoji["news_emoji"]} {localizer["NewsFromBlog"]}",
                             Value = newsSb.ToString().Trim(),
                             Inline = false,
                         }

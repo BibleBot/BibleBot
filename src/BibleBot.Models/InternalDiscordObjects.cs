@@ -243,6 +243,13 @@ namespace BibleBot.Models
         /// </summary>
         [JsonPropertyName("inline")]
         public bool Inline { get; set; }
+
+        /// <summary>
+        /// Indicates whether a separator should be added after this field.
+        /// </summary>
+        [JsonPropertyName("add_separator_after")]
+        public bool AddSeparatorAfter { get; set; } = false;
+
     }
 
     /// <summary>

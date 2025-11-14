@@ -2,7 +2,11 @@ import os
 
 version = "undefined"
 verse_footer = "BibleBot <v> by Kerygma Digital"
-logo_emoji = "<:biblebot_circle_new:1431798383307260065>"
+
+logo_emoji = "<:biblebot:1438705100515184762>"
+
+if os.environ.get("ASPNETCORE_ENVIRONMENT") == "Development":
+    logo_emoji = "<:biblebot:1438598262234808381>"
 
 publisher_to_url = {
     "biblica": {"name": "Biblica", "url": "https://biblica.com"},

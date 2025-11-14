@@ -36,6 +36,19 @@ namespace BibleBot.Backend
             _localizer = localizerFactory.Create(typeof(SharedResource));
 
             _instance = this;
+
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                emoji["logo_emoji"] = "<:biblebot:1438598262234808381>";
+                emoji["check_emoji"] = "<:checkmark:1438706677758169249>";
+                emoji["xmark_emoji"] = "<:xmark:1438706674843127949>";
+                emoji["news_emoji"] = "<:news:1438706666165239998>";
+                emoji["commands_emoji"] = "<:commands:1438706673694015528>";
+                emoji["info_emoji"] = "<:info:1438706668589547611>";
+                emoji["guide_emoji"] = "<:guide:1438706670061490256>";
+                emoji["new_emoji"] = "<:new:1438706667293249567>";
+                emoji["link_emoji"] = "<:link:1438706676093161613>";
+            }
         }
 
         public static Utils GetInstance()
@@ -51,7 +64,7 @@ namespace BibleBot.Backend
             return _instance;
         }
 
-        public static string GetIconURL() => "https://i.imgur.com/hr4RXpy.png";
+        public static string GetIconURL() => "https://i.imgur.com/IGRctv9.png";
 
         private static readonly string[] _creeds = ["apostles", "nicene"];
 
@@ -65,6 +78,18 @@ namespace BibleBot.Backend
         private static readonly string _gitInfoPath = Path.GetFullPath($"{Directory.GetCurrentDirectory()}/obj/{_buildConfiguration}/net9.0/GitInfo.cache");
         private static StreamReader _gitInfoReader;
         private static string _cachedVersion;
+
+        public Dictionary<string, string> emoji = new()
+        {
+            { "check_emoji", "<:checkmark:1438705527466233927>" },
+            { "xmark_emoji", "<:xmark:1438706299134021755>" },
+            { "news_emoji", "<:news:1438706296919691388>" },
+            { "commands_emoji", "<:commands:1438706295338438738>" },
+            { "info_emoji", "<:info:1438706293740408984>" },
+            { "guide_emoji", "<:guide:1438706291953500312>" },
+            { "new_emoji", "<:new:1438706287293501530>" },
+            { "link_emoji", "<:link:1438706285703991377>" },
+        };
 
         public static string GetVersion()
         {
