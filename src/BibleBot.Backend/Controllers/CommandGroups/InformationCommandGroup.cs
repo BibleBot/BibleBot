@@ -114,7 +114,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         SyndicationItem entry = firstFourEntries[i];
                         if (i < 2)
                         {
-                            newsSb.AppendLine($"{Utils.GetInstance().emoji["new_emoji"]} **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault()!.GetAbsoluteUri().ToString()}) {Utils.GetInstance().emoji["new_emoji"]}");
+                            newsSb.AppendLine($"{Utils.GetInstance().emoji["new_emoji"]} **{entry.PublishDate.ToString("d MMMM yyy")}** - [{entry.Title.Text}]({entry.Links.FirstOrDefault().GetAbsoluteUri().ToString()}) {Utils.GetInstance().emoji["new_emoji"]}");
                         }
                         else
                         {
