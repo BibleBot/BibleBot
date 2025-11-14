@@ -81,6 +81,7 @@ namespace BibleBot.Backend
 
         public Dictionary<string, string> emoji = new()
         {
+            { "logo_emoji", "<:biblebot:1438705100515184762>" },
             { "check_emoji", "<:checkmark:1438705527466233927>" },
             { "xmark_emoji", "<:xmark:1438706299134021755>" },
             { "news_emoji", "<:news:1438706296919691388>" },
@@ -149,15 +150,15 @@ namespace BibleBot.Backend
 
             if (verse.Reference.Version.Publisher == "biblica")
             {
-                container.Components.Add(new TextDisplayComponent($"-# <:biblebot_circle_new:1431798383307260065> {string.Format(_localizer["GlobalFooter"], Version)} ∙ [Biblica](https://biblica.com)"));
+                container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)} ∙ [Biblica](https://biblica.com)"));
             }
             else if (verse.Reference.Version.Publisher == "lockman")
             {
-                container.Components.Add(new TextDisplayComponent($"-# <:biblebot_circle_new:1431798383307260065> {string.Format(_localizer["GlobalFooter"], Version)} ∙ [The Lockman Foundation](https://www.lockman.org)"));
+                container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)} ∙ [The Lockman Foundation](https://www.lockman.org)"));
             }
             else
             {
-                container.Components.Add(new TextDisplayComponent($"-# <:biblebot_circle_new:1431798383307260065> {string.Format(_localizer["GlobalFooter"], Version)}"));
+                container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)}"));
             }
 
             return container;

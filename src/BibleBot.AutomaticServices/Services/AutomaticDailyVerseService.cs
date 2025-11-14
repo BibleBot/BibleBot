@@ -201,7 +201,7 @@ namespace BibleBot.AutomaticServices.Services
                 }
                 else if (displayStyle == "blockquote")
                 {
-                    string blockquoteText = $"**{verse.Reference.AsString} - {verse.Reference.Version.Name}**\n\n> {verse.Text.Replace("\n", "\n> ")}\n\n-# <:biblebot_circle_new:1431798383307260065>  {Utils.GetInstance().GetLocalizedFooterString()}";
+                    string blockquoteText = $"**{verse.Reference.AsString} - {verse.Reference.Version.Name}**\n\n> {verse.Text.Replace("\n", "\n> ")}\n\n-# {Utils.GetInstance().emoji["logo_emoji"]}  {Utils.GetInstance().GetLocalizedFooterString()}";
 
                     if (verse.Reference.Version.Publisher == "biblica")
                     {
@@ -221,7 +221,7 @@ namespace BibleBot.AutomaticServices.Services
                 }
                 else if (displayStyle == "code")
                 {
-                    string codeBlockText = $"**{verse.Reference.AsString} - {verse.Reference.Version.Name}**\n\n```json\n{verse.Text.Replace("*", "")}\n```\n\n-# <:biblebot_circle_new:1431798383307260065>  {Utils.GetInstance().GetLocalizedFooterString()}";
+                    string codeBlockText = $"**{verse.Reference.AsString} - {verse.Reference.Version.Name}**\n\n```json\n{verse.Text.Replace("*", "")}\n```\n\n-# {Utils.GetInstance().emoji["logo_emoji"]}  {Utils.GetInstance().GetLocalizedFooterString()}";
 
                     if (verse.Reference.Version.Publisher == "biblica")
                     {
