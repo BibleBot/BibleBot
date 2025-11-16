@@ -36,9 +36,6 @@ class Information(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_STATS_DESC"))
     async def stats(self, inter: CommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
-        if not inter.author.bot:
-            await send_stats(self.bot)
-
         resp = await backend.submit_command(inter.channel, inter.author, "+stats")
         await sending.safe_send_interaction(inter.followup, components=resp)
 
@@ -125,6 +122,7 @@ class Information(commands.Cog):
         # Patreon's development utilities are pretty garbage.
         # The way they've positioned the types and how they actually work are not the same thing.
         # Thus, we ignore type checking in some lines to compensate for their... stupidity.
+        # TODO: Replace with direct API calls, since Patreon hardly maintains this library.
 
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
 
@@ -172,28 +170,3 @@ class Information(commands.Cog):
         )
 
         await sending.safe_send_interaction(inter.followup, components=container)
-
-
-async def send_stats(bot: disnake.AutoShardedClient):
-    endpoint = os.environ.get("ENDPOINT")
-    token = os.environ.get("ENDPOINT_TOKEN", "")
-
-    shard_count = bot.shard_count
-    guild_count = len(bot.guilds)
-    user_count = sum([x.member_count for x in bot.guilds])
-    channel_count = sum([len(x.channels) for x in bot.guilds])
-
-    repo_sha = (
-        subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
-    )
-
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            f"{endpoint}/stats/process",
-            json={
-                "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}||{repo_sha}",
-            },
-            headers={"Authorization": token},
-        ) as resp:
-            if resp.status != 200:
-                logger.error("couldn't submit stats to backend")

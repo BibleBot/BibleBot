@@ -14,6 +14,7 @@ from cogs import languages
 from cogs import info
 from cogs import verse_cmds
 from cogs import resources
+from cogs import tasks
 
 
 def setup(bot: commands.Bot):
@@ -24,3 +25,4 @@ def setup(bot: commands.Bot):
     bot.add_cog(info.Information(bot))
     bot.add_cog(verse_cmds.VerseCommands(bot))
     bot.add_cog(resources.Resources(bot))
+    bot.add_cog(tasks.Tasks(bot))

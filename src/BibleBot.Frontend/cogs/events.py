@@ -10,15 +10,15 @@ import os
 import disnake
 from utils import backend, sending, statics
 import aiohttp
-from disnake.ext import commands
+from disnake.ext import commands, tasks
 from logger import VyLogger
 from utils.paginator import ComponentPaginator
 from utils.confirmation_prompt import ConfirmationPrompt
 import re
+import subprocess
+import asyncio
 
 logger = VyLogger("default")
-
-is_ready = False
 
 
 class EventListeners(commands.Cog):
@@ -39,8 +39,6 @@ class EventListeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_shard_ready(self, shard_id):
-        is_ready = True
-
         await self.bot.change_presence(
             status=disnake.Status.online,
             activity=disnake.Game(
@@ -92,30 +90,23 @@ class EventListeners(commands.Cog):
     #         pass
 
     @commands.Cog.listener()
-    async def on_guild_join(self, guild: disnake.Guild):
-        await update_topgg(self.bot)
-        await update_discordbotlist(self.bot)
-
-    @commands.Cog.listener()
     async def on_guild_remove(self, guild: disnake.Guild):
-        await update_topgg(self.bot)
-        await update_discordbotlist(self.bot)
+        if self.bot.is_ready():
+            # yeet the webhook from the database, if applicable
+            reqbody = {"GuildId": str(guild.id), "Body": "delete"}
 
-        # yeet the webhook from the database, if applicable
-        reqbody = {"GuildId": str(guild.id), "Body": "delete"}
+            endpoint = os.environ.get("ENDPOINT")
 
-        endpoint = os.environ.get("ENDPOINT")
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"{endpoint}/webhooks/process",
-                json=reqbody,
-                headers={"Authorization": os.environ.get("ENDPOINT_TOKEN", "")},
-            ) as resp:
-                if resp.status == 200:
-                    logger.info(
-                        f"<global@{guild.id}#global> we've left this server, deleting webhook..."
-                    )
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    f"{endpoint}/webhooks/process",
+                    json=reqbody,
+                    headers={"Authorization": os.environ.get("ENDPOINT_TOKEN", "")},
+                ) as resp:
+                    if resp.status == 200:
+                        logger.info(
+                            f"<global@{guild.id}#global> we've left this server, deleting webhook..."
+                        )
 
     @commands.Cog.listener()
     async def on_button_click(self, inter: disnake.MessageInteraction):
@@ -174,46 +165,3 @@ class EventListeners(commands.Cog):
                             )
                     else:
                         await sending.safe_send_channel(msg.channel, components=resp)
-
-
-async def update_topgg(bot: disnake.AutoShardedClient):
-    topgg_auth = os.environ.get("TOPGG_TOKEN")
-
-    if topgg_auth and is_ready:
-        body = {"server_count": len(bot.guilds)}
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"https://top.gg/api/bots/{bot.user.id}/stats",
-                json=body,
-                headers={"Authorization": topgg_auth},
-            ) as resp:
-                if resp.status != 200:
-                    if resp.status != 429:
-                        logger.warning(
-                            "couldn't submit stats to top.gg, it may be offline"
-                        )
-                else:
-                    logger.info("submitted stats to top.gg")
-
-
-async def update_discordbotlist(bot: disnake.AutoShardedClient):
-    discordbotlist_auth = os.environ.get("DISCORDBOTLIST_TOKEN")
-
-    if discordbotlist_auth and is_ready:
-        body = {
-            "users": sum([x.member_count for x in bot.guilds]),
-            "guilds": len(bot.guilds),
-        }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"https://discordbotlist.com/api/v1/bots/{bot.user.id}/stats",
-                json=body,
-                headers={"Authorization": discordbotlist_auth},
-            ) as resp:
-                if resp.status != 200:
-                    if resp.status != 429:
-                        logger.warning(
-                            "couldn't submit stats to discordbotlist.com, it may be offline"
-                        )
-                else:
-                    logger.info("submitted stats to discordbotlist.com")
