@@ -10,13 +10,11 @@ import os
 import disnake
 from utils import backend, sending, statics
 import aiohttp
-from disnake.ext import commands, tasks
+from disnake.ext import commands
 from logger import VyLogger
 from utils.paginator import ComponentPaginator
 from utils.confirmation_prompt import ConfirmationPrompt
 import re
-import subprocess
-import asyncio
 
 logger = VyLogger("default")
 
