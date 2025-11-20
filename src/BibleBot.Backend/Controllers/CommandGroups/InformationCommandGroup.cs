@@ -68,15 +68,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 string backendCommitURL = $"{commitBaseEndpoint}/{backendLongHash}";
 
                 string resp = $"### {localizer["FrontendStats"]}\n" +
-                $"**{localizer["ShardCount"]}**: {frontendStats.ShardCount}\n" +
-                $"**{localizer["ServerCount"]}**: {frontendStats.ServerCount}\n" +
-                $"**{localizer["UserCount"]}**: {frontendStats.UserCount}\n" +
-                $"**{localizer["ChannelCount"]}**: {frontendStats.ChannelCount}\n" +
-                $"**{localizer["UserInstallCount"]}**: {frontendStats.UserInstallCount}\n\n" +
+                $"**{localizer["ShardCount"]}**: {frontendStats.ShardCount:N0}\n" +
+                $"**{localizer["ServerCount"]}**: {frontendStats.ServerCount:N0}\n" +
+                $"**{localizer["UserCount"]}**: {frontendStats.UserCount:N0}\n" +
+                $"**{localizer["ChannelCount"]}**: {frontendStats.ChannelCount:N0}\n" +
+                $"**{localizer["UserInstallCount"]}**: ~{frontendStats.UserInstallCount:N0}\n\n" +
                 $"### {localizer["BackendStats"]}\n" +
-                $"**{localizer["UserPreferenceCount"]}**: {userPrefs}\n" +
-                $"**{localizer["GuildPreferenceCount"]}**: {guildPrefs}\n" +
-                $"**{localizer["VersionCount"]}**: {versions}\n\n" +
+                $"**{localizer["UserPreferenceCount"]}**: {userPrefs:N0}\n" +
+                $"**{localizer["GuildPreferenceCount"]}**: {guildPrefs:N0}\n" +
+                $"**{localizer["VersionCount"]}**: {versions:N0}\n\n" +
                 $"*{localizer["StatisticsSheetAddenda"]}*\n\n" +
                 $"### {localizer["Metadata"]}\n" +
                 $"**{localizer["Frontend"]}**: {version} ([{frontendShortHash}]({frontendCommitURL}))\n" +
