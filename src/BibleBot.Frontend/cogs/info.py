@@ -148,7 +148,7 @@ class Information(commands.Cog):
         ]
 
         container = disnake.ui.Container()
-        container.accent_colour = 6709986
+        container.accent_color = 6709986
 
         container.children.append(
             disnake.ui.TextDisplay(f"### {localization["SUPPORTERS_TITLE"]}")

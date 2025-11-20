@@ -20,7 +20,7 @@ async def safe_send_interaction(receiver: disnake.Webhook, *args, **kwargs):
         message = "unable to send response to previous interaction"
 
         if "components" in kwargs.keys():
-            if str(kwargs["components"].accent_colour) == "#ff2e2e":
+            if str(kwargs["components"].accent_color) == "#ff2e2e":
                 message += " - this was an error embed"
 
         logger.error(message)
@@ -35,7 +35,7 @@ async def safe_send_interaction_ephemeral(
         message = "unable to send response to previous interaction"
 
         if "components" in kwargs.keys():
-            if str(kwargs["components"].accent_colour) == "#ff2e2e":
+            if str(kwargs["components"].accent_color) == "#ff2e2e":
                 message += " - this was an error"
 
         logger.error(message)
@@ -48,7 +48,7 @@ async def safe_send_channel(receiver: abc.Messageable, *args, **kwargs):
         message = "unable to send response to channel"
 
         if "components" in kwargs.keys():
-            if str(kwargs["components"].accent_colour) == "#ff2e2e":
+            if str(kwargs["components"].accent_color) == "#ff2e2e":
                 message += " - this was an error"
 
         logger.error(message)

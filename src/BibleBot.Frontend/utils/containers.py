@@ -15,7 +15,7 @@ from . import statics
 def convert_verse_to_container(verse, localization) -> Container:
     container = Container()
 
-    container.accent_colour = 6709986
+    container.accent_color = 6709986
 
     reference_title = (
         verse["reference"]["asString"] + " - " + verse["reference"]["version"]["name"]
@@ -63,7 +63,7 @@ def convert_embed_to_container(internal_embed) -> Container:
     section = None
     section_text = ""
 
-    container.accent_colour = internal_embed["color"]
+    container.accent_color = internal_embed["color"]
 
     if internal_embed["thumbnail"] is not None:
         section = Section(accessory=Thumbnail(media=internal_embed["thumbnail"]["url"]))
@@ -124,7 +124,7 @@ def convert_embed_to_container(internal_embed) -> Container:
 def create_error_container(title, description, localization) -> Container:
     container = Container()
 
-    container.accent_colour = 16723502
+    container.accent_color = 16723502
 
     container.children.append(TextDisplay(f"### {title}"))
     container.children.append(TextDisplay(f"{description}"))

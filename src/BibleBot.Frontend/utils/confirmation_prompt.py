@@ -58,7 +58,7 @@ class ConfirmationPrompt:
             return [response]
 
         container = Container()
-        container.accent_colour = 16776960
+        container.accent_color = 16776960
 
         container.children.append(
             ui.TextDisplay(f"### {self.localization["CONFIRMATION_REQUIRED_TITLE"]}")
