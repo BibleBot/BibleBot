@@ -408,7 +408,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     List<string> localeDisplayNamesProcessed = [];
                     List<InternalEmbed> pages = [];
 
-                    const int maxResultsPerPage = 5; // TODO: make this an appsettings param
+                    const int maxResultsPerPage = 8; // TODO: make this an appsettings param
 
                     // Separate page counts for before/after groups so English can be inserted between them
                     int beforeCount = localesToVersionBeforeEnglish.Keys.Count;
