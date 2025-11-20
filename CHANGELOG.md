@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [14.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v13.1.0..v14.0.0) - 2025-11-20
+
+### 🚀 Features
+
+- [**breaking**] User-installed app support, implement /verse for user-installed app ([2988b30](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/2988b302cbd6344912b088579cc822e8084017a8))
+- *(frontend)* Message command for fetching verse content ([bee39d0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/bee39d06c753f4e7bca923a535502d0b98c642d0))
+- Utilize v2 components in frontend ([b9c5193](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b9c519396c8051df2f298ffc2f76a7d1e16ae4f2))
+- Add language sorting option to /listversions ([3913968](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/391396824dc8b50c978128e657c8af24f84102cd))
+- Support alternate display styles for automatic daily verses ([af02969](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/af02969d20d5ac7fb3bfb094d9f81777dda773db))
+- Support components in automatic daily verse ([b89ca84](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b89ca84def4b4c584fa72c5def7a9d4770f6081d))
+- Run frontend stats update every 15 minutes ([6c4d53b](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/6c4d53b79ad4e436900159eff466709dc14209c6))
+
+### 🐛 Bug Fixes
+
+- *(verses)* Making metric sending a background task causes failures ([81d5787](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/81d5787aa02d5e428bf4b53c75197698e3db9136))
+- *(verses)* Forgot a keyword ([4d061f0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/4d061f06f6140cb02ad80cc7e4015a920a62b3cd))
+- *(metrics)* Don't trust input to accurately represent output ([f574ec3](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/f574ec3847d4c959b12edd7ea1fca1d6d9bab336))
+- *(metrics)* Handle some verse number variants ([ba26369](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/ba263692f9e703592bb0a53f8a4750fd4dafbd71))
+- *(metadata)* Ignore alias versions for name fetching ([028dfae](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/028dfaeef4228bf178686091f2e366637a072abf))
+- *(metrics)* Account for version aliases ([9c7b637](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/9c7b6377f1b7ff3c1fe5061d2fb6651e801b2ae8))
+- *(metrics)* Accept verse numbers where the chapter is redirected ([245a3a6](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/245a3a6b2f1a97aea0676b914e11cf340aa5d11e))
+- Capture exceptions for invalid verse ranges when making verse metric entries ([1c37e6d](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1c37e6d0b218f5c5027869754ac994ecf4a5cf87))
+- Add reference to sentry context in verse metric creation ([5744bc7](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5744bc7427322847ed926ebdedc9e1bf590ab869))
+- Clarify invalid verse range message, add greater context to verse metric error handling ([c1dd50b](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c1dd50b4df3ca399a6413d142550a45ac0340093))
+- Convert confirmation prompt to components, restore missing i18ns ([70fc1e1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/70fc1e12d9a317e09c608f7ca8b8660059ffd994))
+- *(verses)* Handle grave marks in verse text ([cfd27b8](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/cfd27b8dca70a9a9be6194665a6f377c533f8194))
+- *(metadata)* Order book names in JSON by length and remove duplicates ([4386564](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/43865646107e2e8b6d025fd14cb09a152f8eac33))
+- Use chapter information to avoid requesting invalid chapters ([c4234fc](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c4234fc0e82bc3a403dd5548309214726db9dcdf))
+- Show an error when version doesn't have relevant section for /dailyverse ([47c8478](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/47c8478df1e5fe9fc5e75b6738adce6d754cd158))
+- Use saner method for emojis ([7899aae](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/7899aaeab62d703c90dfccc04fe5beff1bdd2054))
+- Ensure autoserv uses proper emojis ([e3520b1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/e3520b13d6b998b9ee8d0833a38a447658ad8f95))
+
 ## [13.1.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v13.0.0..v13.1.0) - 2025-10-04
 
 ### 🚀 Features
@@ -293,5 +325,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Update changelog [ci skip] ([2767998](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/27679985beb4a0b21884aa01bf4ba65c00acb0ea))
 - Change 9.3 release date to planned release [ci skip] ([d26647b](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/d26647bb17b24f442ea91c2fe10bbace153297b8))
 - Fix some formatting [ci skip] ([31df4a7](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/31df4a78e2590b118c1061469a8293bd2eb59de7))
+
+## [7.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/..v7.0.0) - 2018-08-14
 
 <!-- generated by git-cliff -->
