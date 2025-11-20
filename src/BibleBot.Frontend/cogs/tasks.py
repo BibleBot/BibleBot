@@ -82,6 +82,9 @@ class Tasks(commands.Cog):
         guild_count = len(bot.guilds)
         user_count = sum([x.member_count for x in bot.guilds])
         channel_count = sum([len(x.channels) for x in bot.guilds])
+        user_install_count = (
+            await bot.application_info()
+        ).approximate_user_install_count
 
         repo_sha = (
             subprocess.check_output(["git", "rev-parse", "HEAD"])
@@ -93,9 +96,11 @@ class Tasks(commands.Cog):
             async with session.post(
                 f"{endpoint}/stats/process",
                 json={
-                    "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}||{repo_sha}",
+                    "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}||{user_install_count}||{repo_sha}",
                 },
                 headers={"Authorization": token},
             ) as resp:
                 if resp.status != 200:
                     logger.error("couldn't submit stats to backend")
+                elif resp.status == 200:
+                    logger.info("submitted stats to backend")

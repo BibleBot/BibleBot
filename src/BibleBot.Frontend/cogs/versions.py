@@ -142,7 +142,9 @@ class Versions(commands.Cog):
     async def listversions(
         self,
         inter: CommandInteraction,
-        sort_by_language: bool = False,
+        sort_by_language: bool = commands.Param(
+            description=Localized(key="LISTVERSIONS_LANGUAGE_PARAM"), default=False
+        ),
     ):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(

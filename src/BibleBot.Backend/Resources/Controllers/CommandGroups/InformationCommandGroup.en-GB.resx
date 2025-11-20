@@ -137,6 +137,10 @@
     <value>Channel Count</value>
     <comment>The aggregated number of channels in all servers with BibleBot.</comment>
   </data>
+  <data name="UserInstallCount" xml:space="preserve">
+    <value>User Install Count</value>
+    <comment>The approximate number of users who have installed the bot as a user app.</comment>
+  </data>
   <data name="BackendStats" xml:space="preserve">
     <value>Backend Stats</value>
     <comment>Header above various backend-related statistics.</comment>

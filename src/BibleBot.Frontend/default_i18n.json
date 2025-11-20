@@ -86,5 +86,8 @@
     "CMD_CLEARDAILYVERSEROLE_DESC": "Clear the automatic daily verse role.",
     "CMD_VERSE_MSG_NAME": "Fetch Verse Content",
     "CMD_VERSE_DESC": "Fetch verse content, just like you would with messages. (user app only)",
-    "CMD_VERSE_FAIL": "Couldn't find any content that matches the input."
+    "CMD_VERSE_FAIL": "Couldn't find any content that matches the input.",
+    "LISTVERSIONS_LANGUAGE_PARAM": "Whether to sort the versions by language.",
+    "VERSE_PARAM": "The verse reference to fetch.",
+    "RESOURCE_PARAM": "The resource to reference."
 }

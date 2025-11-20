@@ -30,6 +30,7 @@ class Resources(commands.Cog):
         self,
         inter: CommandInteraction,
         resource: str = commands.Param(
+            description=Localized(key="RESOURCE_PARAM"),
             choices=[
                 OptionChoice(
                     Localized("RESOURCE_CIC_TITLE", key="RESOURCE_CIC_TITLE"), "cic"
@@ -63,7 +64,7 @@ class Resources(commands.Cog):
                     Localized("RESOURCE_NICENE_TITLE", key="RESOURCE_NICENE_TITLE"),
                     "nicene",
                 ),
-            ]
+            ],
         ),
         input: str = "",
     ):

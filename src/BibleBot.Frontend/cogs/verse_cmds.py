@@ -61,7 +61,11 @@ class VerseCommands(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_VERSE_DESC"))
     @commands.install_types(user=True)
-    async def verse(self, inter: CommandInteraction, reference: str):
+    async def verse(
+        self,
+        inter: CommandInteraction,
+        reference: str = commands.Param(description=Localized(key="VERSE_PARAM")),
+    ):
         await inter.response.defer()
 
         ctx = await channels.get_channel_context_from_interaction(inter)

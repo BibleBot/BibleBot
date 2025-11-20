@@ -56,6 +56,12 @@ namespace BibleBot.Models
         public int ChannelCount { get; set; }
 
         /// <summary>
+        /// The approximate number of users who have installed the bot as a user app.
+        /// </summary>
+        [BsonElement("UserInstallCount")]
+        public int UserInstallCount { get; set; }
+
+        /// <summary>
         /// The current commit hash of the repo that frontend is running from.
         /// </summary>
         /// <remarks>

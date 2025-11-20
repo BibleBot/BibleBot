@@ -44,7 +44,8 @@ namespace BibleBot.Backend.Controllers
                              .Set(statsToUpdate => statsToUpdate.ServerCount, int.Parse(fields[1]))
                              .Set(statsToUpdate => statsToUpdate.UserCount, int.Parse(fields[2]))
                              .Set(statsToUpdate => statsToUpdate.ChannelCount, int.Parse(fields[3]))
-                             .Set(statsToUpdate => statsToUpdate.FrontendRepoCommitHash, fields[4]);
+                             .Set(statsToUpdate => statsToUpdate.UserInstallCount, int.Parse(fields[4]))
+                             .Set(statsToUpdate => statsToUpdate.FrontendRepoCommitHash, fields[5]);
 
                 await frontendStatsService.Update(stats, update);
             }

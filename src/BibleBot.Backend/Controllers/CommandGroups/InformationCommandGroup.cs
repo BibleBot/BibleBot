@@ -71,7 +71,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 $"**{localizer["ShardCount"]}**: {frontendStats.ShardCount}\n" +
                 $"**{localizer["ServerCount"]}**: {frontendStats.ServerCount}\n" +
                 $"**{localizer["UserCount"]}**: {frontendStats.UserCount}\n" +
-                $"**{localizer["ChannelCount"]}**: {frontendStats.ChannelCount}\n\n" +
+                $"**{localizer["ChannelCount"]}**: {frontendStats.ChannelCount}\n" +
+                $"**{localizer["UserInstallCount"]}**: {frontendStats.UserInstallCount}\n\n" +
                 $"### {localizer["BackendStats"]}\n" +
                 $"**{localizer["UserPreferenceCount"]}**: {userPrefs}\n" +
                 $"**{localizer["GuildPreferenceCount"]}**: {guildPrefs}\n" +
