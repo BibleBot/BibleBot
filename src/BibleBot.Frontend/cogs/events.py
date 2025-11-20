@@ -123,12 +123,15 @@ class EventListeners(commands.Cog):
             return
 
         if msg.webhook_id is not None:
-            if msg.channel.webhooks is not None:
-                webhooks = await msg.channel.webhooks()
-                for webhook in webhooks:
-                    if webhook.id == msg.webhook_id:
-                        if webhook.user.id == self.bot.user.id:
-                            return
+            try:
+                if msg.channel.webhooks is not None:
+                    webhooks = await msg.channel.webhooks()
+                    for webhook in webhooks:
+                        if webhook.id == msg.webhook_id:
+                            if webhook.user.id == self.bot.user.id:
+                                return
+            except (AttributeError, disnake.errors.Forbidden):
+                pass
 
         clean_msg = msg.content.replace("://", "")
         verse_regex = re.compile(

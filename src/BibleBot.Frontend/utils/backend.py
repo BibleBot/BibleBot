@@ -241,7 +241,7 @@ async def submit_verse(
         )
     elif isinstance(resp_body, ComponentPaginator):
         await resp_body.send(ctx.channel)
-    elif isinstance(resp_body, list):
+    elif isinstance(resp_body, list) and len(resp_body) > 0:
         if isinstance(resp_body[0], disnake.ui.Container):
             await sending.safe_send_channel(
                 ctx.channel,
