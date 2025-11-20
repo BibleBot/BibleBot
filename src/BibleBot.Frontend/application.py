@@ -27,6 +27,7 @@ bot = commands.AutoShardedInteractionBot(
     intents=intents,
     command_sync_flags=command_sync_flags,
     default_install_types=disnake.ApplicationInstallTypes.all(),
+    default_contexts=disnake.InteractionContextTypes.all(),
 )
 
 bot.load_extension("cogs")
