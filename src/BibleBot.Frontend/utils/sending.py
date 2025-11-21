@@ -9,6 +9,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 import disnake
 from disnake import abc
 from logger import VyLogger
+import aiohttp
 
 logger = VyLogger("default")
 
@@ -20,9 +21,9 @@ async def safe_send_interaction(receiver: disnake.Webhook, *args, **kwargs):
         message = "unable to send response to previous interaction"
 
         if "components" in kwargs.keys():
-            # TODO: the following doesn't work, need to clearly identify error embeds
-            if str(kwargs["components"].accent_color) == "#ff2e2e":
-                message += " - this was an error embed"
+            if hasattr(kwargs["components"], "accent_color"):
+                if str(kwargs["components"].accent_color) == "#ff2e2e":
+                    message += " - this was an error embed"
 
         logger.error(message)
 
