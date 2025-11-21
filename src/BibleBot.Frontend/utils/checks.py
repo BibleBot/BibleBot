@@ -19,12 +19,16 @@ def inter_is_user(inter: CommandInteraction) -> bool:
 
 
 def author_has_manage_server_permission(inter: CommandInteraction) -> bool:
-    if inter.guild and inter.author:
-        member = inter.guild.get_member(inter.author.id)
-
-        if member is not None:
-            return member.guild_permissions.manage_guild
-
+    if isinstance(
+        inter.channel,
+        (
+            disnake.TextChannel,
+            disnake.VoiceChannel,
+            disnake.Thread,
+            disnake.StageChannel,
+        ),
+    ) and isinstance(inter.author, disnake.Member):
+        return inter.channel.permissions_for(inter.author).manage_guild
     return False
 
 
