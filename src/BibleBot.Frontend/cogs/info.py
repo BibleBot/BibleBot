@@ -47,6 +47,7 @@ class Information(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_PERMSCHECK_DESC"))
     @commands.install_types(guild=True)
+    @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def permscheck(
         self,
         inter: CommandInteraction,
@@ -78,6 +79,7 @@ class Information(commands.Cog):
                             localization,
                         ),
                     )
+                    return
             except (disnake.NotFound, disnake.Forbidden):
                 await sending.safe_send_interaction(
                     inter.followup,
@@ -99,11 +101,52 @@ class Information(commands.Cog):
                 )
                 return
 
-        integrated_role = [
+        if guild is None:
+            # This case should ideally not be reached due to context decorators
+            # and channel fetching logic, but as a safeguard:
+            await sending.safe_send_interaction(
+                inter.followup,
+                components=containers.create_error_container(
+                    localization["PERMSCHECK_ERROR_LABEL"],
+                    "Could not determine the guild for this check.",
+                    localization,
+                ),
+            )
+            return
+
+        integrated_roles = [
             x
             for x in guild.me.roles
             if x.is_bot_managed and x.is_integration and x.name != "@everyone"
-        ][0]
+        ]
+
+        if not integrated_roles:
+            # Handle case where bot has no integration role.
+            # This might involve sending an error or using a default.
+            # For now, we can assume the first role is the one we want if it exists.
+            # Or we can send an error message.
+            await sending.safe_send_interaction(
+                inter.followup,
+                components=containers.create_error_container(
+                    localization["PERMSCHECK_ERROR_LABEL"],
+                    "Bot integration role not found.",
+                    localization,
+                ),
+            )
+            return
+
+        integrated_role = integrated_roles[0]
+
+        if not isinstance(channel, disnake.abc.GuildChannel):
+            await sending.safe_send_interaction(
+                inter.followup,
+                components=containers.create_error_container(
+                    localization["PERMSCHECK_ERROR_LABEL"],
+                    "Permissions check cannot be performed on this channel type.",
+                    localization,
+                ),
+            )
+            return
 
         channel_perms_for_self = channel.permissions_for(guild.me).value
         channel_perms_for_role = channel.permissions_for(integrated_role).value

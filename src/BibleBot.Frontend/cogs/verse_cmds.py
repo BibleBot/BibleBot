@@ -148,6 +148,7 @@ class VerseCommands(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_SETDAILYVERSE_DESC"))
     @commands.install_types(guild=True)
+    @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setdailyverse(
         self, inter: CommandInteraction, time: str = "", tz: str = ""
     ):
@@ -155,10 +156,8 @@ class VerseCommands(commands.Cog):
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
-        if hasattr(inter.channel, "permissions_for") and callable(
-            inter.channel.permissions_for
-        ):
-            if not inter.channel.permissions_for(inter.author).manage_guild:
+        if checks.inter_is_not_dm(inter):
+            if not checks.author_has_manage_server_permission(inter):
                 await sending.safe_send_interaction(
                     inter.followup,
                     components=containers.create_error_container(
@@ -195,14 +194,13 @@ class VerseCommands(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_DAILYVERSESTATUS_DESC"))
     @commands.install_types(guild=True)
+    @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def dailyversestatus(self, inter: CommandInteraction):
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
-        if hasattr(inter.channel, "permissions_for") and callable(
-            inter.channel.permissions_for
-        ):
+        if checks.inter_is_not_dm(inter):
             resp = await backend.submit_command(
                 inter.channel, inter.author, "+dailyverse status"
             )
@@ -222,15 +220,14 @@ class VerseCommands(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_CLEARDAILYVERSE_DESC"))
     @commands.install_types(guild=True)
+    @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def cleardailyverse(self, inter: CommandInteraction):
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
-        if hasattr(inter.channel, "permissions_for") and callable(
-            inter.channel.permissions_for
-        ):
-            if not inter.channel.permissions_for(inter.author).manage_guild:
+        if checks.inter_is_not_dm(inter):
+            if not checks.author_has_manage_server_permission(inter):
                 await sending.safe_send_interaction(
                     inter.followup,
                     components=containers.create_error_container(
@@ -261,15 +258,14 @@ class VerseCommands(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_SETDAILYVERSEROLE_DESC"))
     @commands.install_types(guild=True)
+    @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setdailyverserole(self, inter: CommandInteraction, role: disnake.Role):
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
-        if hasattr(inter.channel, "permissions_for") and callable(
-            inter.channel.permissions_for
-        ):
-            if not inter.channel.permissions_for(inter.author).manage_guild:
+        if checks.inter_is_not_dm(inter):
+            if not checks.author_has_manage_server_permission(inter):
                 await sending.safe_send_interaction(
                     inter.followup,
                     components=containers.create_error_container(
@@ -318,15 +314,14 @@ class VerseCommands(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_CLEARDAILYVERSEROLE_DESC"))
     @commands.install_types(guild=True)
+    @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def cleardailyverserole(self, inter: CommandInteraction):
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
-        if hasattr(inter.channel, "permissions_for") and callable(
-            inter.channel.permissions_for
-        ):
-            if not inter.channel.permissions_for(inter.author).manage_guild:
+        if checks.inter_is_not_dm(inter):
+            if not checks.author_has_manage_server_permission(inter):
                 await sending.safe_send_interaction(
                     inter.followup,
                     components=containers.create_error_container(

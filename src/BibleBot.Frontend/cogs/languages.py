@@ -51,6 +51,7 @@ class Languages(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_SETSERVERLANGUAGE_DESC"))
     @commands.install_types(guild=True)
+    @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setserverlanguage(
         self,
         inter: CommandInteraction,
@@ -60,10 +61,8 @@ class Languages(commands.Cog):
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
-        if hasattr(inter.channel, "permissions_for") and callable(
-            inter.channel.permissions_for
-        ):
-            if not inter.channel.permissions_for(inter.author).manage_guild:
+        if checks.inter_is_not_dm(inter):
+            if not checks.author_has_manage_server_permission(inter):
                 await sending.safe_send_interaction(
                     inter.followup,
                     components=containers.create_error_container(

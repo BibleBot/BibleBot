@@ -7,6 +7,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 from disnake import CommandInteraction
+import disnake
 
 
 def inter_is_user(inter: CommandInteraction) -> bool:
@@ -15,3 +16,17 @@ def inter_is_user(inter: CommandInteraction) -> bool:
         getattr(inter.authorizing_integration_owners, "user_id", None) is not None
         and getattr(inter.authorizing_integration_owners, "guild_id", None) is None
     )
+
+
+def author_has_manage_server_permission(inter: CommandInteraction) -> bool:
+    if inter.guild and inter.author:
+        member = inter.guild.get_member(inter.author.id)
+
+        if member is not None:
+            return member.guild_permissions.manage_guild
+
+    return False
+
+
+def inter_is_not_dm(inter: CommandInteraction) -> bool:
+    return not isinstance(inter.channel, disnake.DMChannel)
