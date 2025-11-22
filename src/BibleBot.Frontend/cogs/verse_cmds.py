@@ -29,8 +29,9 @@ class VerseCommands(commands.Cog):
     async def search(
         self,
         inter: CommandInteraction,
-        query: str,
+        query: str,  # TODO: add description to param
         subset: str = commands.Param(
+            # TODO: add description to param
             choices=[
                 OptionChoice(
                     Localized("SEARCH_SUBSET_OT", key="SEARCH_SUBSET_OT"), "1"
@@ -150,8 +151,13 @@ class VerseCommands(commands.Cog):
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setdailyverse(
-        self, inter: CommandInteraction, time: str = "", tz: str = ""
+        self,
+        inter: CommandInteraction,
+        time: str = "",  # TODO: add description to param
+        tz: str = "",  # TODO: add description to param
     ):
+        # POTENTIAL TODO: use modal for configuring this?
+        # although may be limited in max options for timezone
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
@@ -259,7 +265,9 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SETDAILYVERSEROLE_DESC"))
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
-    async def setdailyverserole(self, inter: CommandInteraction, role: disnake.Role):
+    async def setdailyverserole(
+        self, inter: CommandInteraction, role: disnake.Role
+    ):  # TODO: add description to param
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)

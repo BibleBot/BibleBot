@@ -19,6 +19,7 @@ def inter_is_user(inter: CommandInteraction) -> bool:
 
 
 def author_has_manage_server_permission(inter: CommandInteraction) -> bool:
+    """Returns whether the author of an interaction has the Manage Server permission in the guild of the interaction."""
     if isinstance(inter.channel, disnake.abc.GuildChannel) and isinstance(
         inter.author, disnake.Member
     ):
@@ -27,4 +28,5 @@ def author_has_manage_server_permission(inter: CommandInteraction) -> bool:
 
 
 def inter_is_not_dm(inter: CommandInteraction) -> bool:
+    """Returns whether an interaction is triggered in a guild app context."""
     return not isinstance(inter.channel, disnake.DMChannel)

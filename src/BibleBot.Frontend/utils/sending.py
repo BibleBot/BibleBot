@@ -9,12 +9,12 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 import disnake
 from disnake import abc
 from logger import VyLogger
-import aiohttp
 
 logger = VyLogger("default")
 
 
 async def safe_send_interaction(receiver: disnake.Webhook, *args, **kwargs):
+    """A wrapper around interaction responses to ensure proper error handling."""
     try:
         await receiver.send(*args, **kwargs)
     except disnake.errors.Forbidden:
@@ -31,26 +31,30 @@ async def safe_send_interaction(receiver: disnake.Webhook, *args, **kwargs):
 async def safe_send_interaction_ephemeral(
     resp: disnake.InteractionResponse, *args, **kwargs
 ):
+    """A wrapper around ephemeral interaction responses to ensure proper error handling."""
     try:
         await resp.send_message(*args, **kwargs)
     except disnake.errors.Forbidden:
         message = "unable to send response to previous interaction"
 
         if "components" in kwargs.keys():
-            if str(kwargs["components"].accent_color) == "#ff2e2e":
-                message += " - this was an error"
+            if hasattr(kwargs["components"], "accent_color"):
+                if str(kwargs["components"].accent_color) == "#ff2e2e":
+                    message += " - this was an error embed"
 
         logger.error(message)
 
 
 async def safe_send_channel(receiver: abc.Messageable, *args, **kwargs):
+    """A wrapper around channel responses to ensure proper error handling."""
     try:
         await receiver.send(*args, **kwargs)
     except disnake.errors.Forbidden:
         message = "unable to send response to channel"
 
         if "components" in kwargs.keys():
-            if str(kwargs["components"].accent_color) == "#ff2e2e":
-                message += " - this was an error"
+            if hasattr(kwargs["components"], "accent_color"):
+                if str(kwargs["components"].accent_color) == "#ff2e2e":
+                    message += " - this was an error embed"
 
         logger.error(message)

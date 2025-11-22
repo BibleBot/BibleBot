@@ -32,6 +32,7 @@ class Formatting(commands.Cog):
         self,
         inter: CommandInteraction,
         val: str = commands.Param(
+            # TODO: add description to param
             choices=[
                 disnake.OptionChoice(
                     Localized("TOGGLE_PARAM_ENABLE", key="TOGGLE_PARAM_ENABLE"),
@@ -56,6 +57,7 @@ class Formatting(commands.Cog):
         self,
         inter: CommandInteraction,
         val: str = commands.Param(
+            # TODO: add description to param
             choices=[
                 disnake.OptionChoice(
                     Localized("TOGGLE_PARAM_ENABLE", key="TOGGLE_PARAM_ENABLE"),
@@ -80,6 +82,7 @@ class Formatting(commands.Cog):
         self,
         inter: CommandInteraction,
         val: str = commands.Param(
+            # TODO: add description to param
             choices=[
                 disnake.OptionChoice(
                     Localized("TOGGLE_PARAM_ENABLE", key="TOGGLE_PARAM_ENABLE"),
@@ -100,7 +103,9 @@ class Formatting(commands.Cog):
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SETDISPLAY_DESC"))
-    async def setdisplay(self, inter: CommandInteraction, style: str = ""):
+    async def setdisplay(
+        self, inter: CommandInteraction, style: str = ""
+    ):  # TODO: add description to param
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
@@ -120,7 +125,9 @@ class Formatting(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SETSERVERDISPLAY_DESC"))
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
-    async def setserverdisplay(self, inter: CommandInteraction, style: str = ""):
+    async def setserverdisplay(
+        self, inter: CommandInteraction, style: str = ""
+    ):  # TODO: add description to param
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
@@ -165,7 +172,9 @@ class Formatting(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SETBRACKETS_DESC"))
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
-    async def setbrackets(self, inter: CommandInteraction, brackets: str = ""):
+    async def setbrackets(
+        self, inter: CommandInteraction, brackets: str = ""
+    ):  # TODO: add description to param
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)

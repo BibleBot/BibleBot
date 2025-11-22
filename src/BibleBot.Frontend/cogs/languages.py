@@ -41,7 +41,7 @@ class Languages(commands.Cog):
     async def setlanguage(
         self,
         inter: CommandInteraction,
-        language: str = Language,
+        language: str = Language,  # TODO: add description to param
     ):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
@@ -55,7 +55,7 @@ class Languages(commands.Cog):
     async def setserverlanguage(
         self,
         inter: CommandInteraction,
-        language: str = Language,
+        language: str = Language,  # TODO: add description to param
     ):
         await inter.response.defer()
 
