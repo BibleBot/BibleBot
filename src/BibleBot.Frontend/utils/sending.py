@@ -26,6 +26,26 @@ async def safe_send_interaction(receiver: disnake.Webhook, *args, **kwargs):
                     message += " - this was an error embed"
 
         logger.error(message)
+    except disnake.errors.HTTPException as ex:
+        if (
+            "Components displayable text size exceeds maximum size of 4000" in ex.text
+            and isinstance(kwargs["components"], list)
+        ):
+            components_list = kwargs["components"]
+            del kwargs["components"]
+
+            for component in components_list:
+                kwargs["components"] = component
+                await receiver.send(*args, **kwargs)
+        else:
+            message = "unable to send response to channel"
+
+            if "components" in kwargs.keys():
+                if hasattr(kwargs["components"], "accent_color"):
+                    if str(kwargs["components"].accent_color) == "#ff2e2e":
+                        message += " - this was an error embed"
+
+            logger.error(message)
 
 
 async def safe_send_interaction_ephemeral(
@@ -43,6 +63,26 @@ async def safe_send_interaction_ephemeral(
                     message += " - this was an error embed"
 
         logger.error(message)
+    except disnake.errors.HTTPException as ex:
+        if (
+            "Components displayable text size exceeds maximum size of 4000" in ex.text
+            and isinstance(kwargs["components"], list)
+        ):
+            components_list = kwargs["components"]
+            del kwargs["components"]
+
+            for component in components_list:
+                kwargs["components"] = component
+                await resp.send_message(*args, **kwargs)
+        else:
+            message = "unable to send response to channel"
+
+            if "components" in kwargs.keys():
+                if hasattr(kwargs["components"], "accent_color"):
+                    if str(kwargs["components"].accent_color) == "#ff2e2e":
+                        message += " - this was an error embed"
+
+            logger.error(message)
 
 
 async def safe_send_channel(receiver: abc.Messageable, *args, **kwargs):
@@ -58,3 +98,23 @@ async def safe_send_channel(receiver: abc.Messageable, *args, **kwargs):
                     message += " - this was an error embed"
 
         logger.error(message)
+    except disnake.errors.HTTPException as ex:
+        if (
+            "Components displayable text size exceeds maximum size of 4000" in ex.text
+            and isinstance(kwargs["components"], list)
+        ):
+            components_list = kwargs["components"]
+            del kwargs["components"]
+
+            for component in components_list:
+                kwargs["components"] = component
+                await receiver.send(*args, **kwargs)
+        else:
+            message = "unable to send response to channel"
+
+            if "components" in kwargs.keys():
+                if hasattr(kwargs["components"], "accent_color"):
+                    if str(kwargs["components"].accent_color) == "#ff2e2e":
+                        message += " - this was an error embed"
+
+            logger.error(message)
