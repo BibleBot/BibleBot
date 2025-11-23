@@ -38,6 +38,7 @@ namespace BibleBot.Tests.Backend
         private PreferenceService _preferenceService;
         protected VersionService _versionService;
         private LanguageService _languageService;
+        private ExperimentService _experimentService;
         private VerseMetricsService _verseMetricsService;
 
         private Mock<UserService> _userServiceMock;
@@ -70,6 +71,7 @@ namespace BibleBot.Tests.Backend
                 LanguageCollectionName = "Languages",
                 FrontendStatsCollectionName = "FrontendStats",
                 OptOutUserCollectionName = "OptOutUsers",
+                ExperimentCollectionName = "Experiments",
                 DatabaseName = "BibleBotBackend"
             };
 
@@ -93,6 +95,7 @@ namespace BibleBot.Tests.Backend
             _guildServiceMock = new Mock<GuildService>(_preferenceService);
             _versionService = new VersionService(_mongoService);
             _languageService = new LanguageService(_mongoService);
+            _experimentService = new ExperimentService(_mongoService);
             _verseMetricsService = new VerseMetricsService(serviceCollection.BuildServiceProvider());
             _resourceServiceMock = new Mock<ResourceService>();
             _parsingServiceMock = new Mock<ParsingService>(false);
@@ -113,11 +116,11 @@ namespace BibleBot.Tests.Backend
             _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _versionService, _resourceServiceMock.Object,
                                                     _frontendStatsServiceMock.Object, _languageService, _metadataFetchingServiceMock.Object,
-                                                    specialVerseProcessingService, new ExperimentService(_mongoService), bibleProviders, _localizerFactory);
+                                                    specialVerseProcessingService, _experimentService, bibleProviders, _localizerFactory);
 
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _parsingServiceMock.Object, _verseMetricsService, _versionService, _languageService,
-                                                    _metadataFetchingServiceMock.Object, new ExperimentService(_mongoService), bibleProviders, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
+                                                    _metadataFetchingServiceMock.Object, _experimentService, bibleProviders, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
         }
     }
 }
