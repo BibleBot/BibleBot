@@ -7,6 +7,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace BibleBot.Models
@@ -83,5 +84,11 @@ namespace BibleBot.Models
         /// </summary>
         [JsonPropertyName("body")]
         public string Body { get; set; }
+
+        /// <summary>
+        /// The active experiments for the user.
+        /// </summary>
+        [JsonPropertyName("activeExperiments")]
+        public Dictionary<Experiment, string> ActiveExperiments { get; set; }
     }
 }

@@ -21,7 +21,7 @@ intents = disnake.Intents.default()
 intents.message_content = True
 
 command_sync_flags = commands.CommandSyncFlags.default()
-command_sync_flags.sync_commands_debug = True
+command_sync_flags.sync_commands_debug = False
 
 bot = commands.AutoShardedInteractionBot(
     intents=intents,
@@ -32,5 +32,4 @@ bot = commands.AutoShardedInteractionBot(
 
 bot.load_extension("cogs")
 bot.i18n.load("locale/")
-
 bot.run(os.environ.get("DISCORD_TOKEN"))

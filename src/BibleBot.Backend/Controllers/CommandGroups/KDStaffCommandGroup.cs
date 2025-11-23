@@ -12,16 +12,17 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BibleBot.Backend.Services;
 using BibleBot.Models;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
-    public class KDStaffCommandGroup : CommandGroup
+    public class KDStaffCommandGroup(VersionService versionService, LanguageService languageService, ExperimentService experimentService) : CommandGroup
     {
         public override string Name { get => "staff"; set => throw new NotImplementedException(); }
         public override bool IsStaffOnly { get => true; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "announce"); set => throw new NotImplementedException(); }
-        public override List<Command> Commands { get => [new StaffAnnounce(), new StaffPermissionsCheck()]; set => throw new NotImplementedException(); }
+        public override List<Command> Commands { get => [new StaffAnnounce(), new StaffPermissionsCheck(), new StaffReloadVersions(versionService), new StaffReloadLanguages(languageService), new StaffReloadExperiments(experimentService)]; set => throw new NotImplementedException(); }
 
         private class StaffAnnounce : Command
         {
@@ -79,6 +80,72 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     SendAnnouncement = false,
                     Culture = CultureInfo.CurrentUICulture.Name
                 });
+            }
+        }
+
+        private class StaffReloadVersions(VersionService versionService) : Command
+        {
+            public override string Name { get => "reload_versions"; set => throw new NotImplementedException(); }
+
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            {
+                await versionService.GetVersions(forcePull: true);
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    LogStatement = "/reload_versions",
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify("/reload_versions", "Versions have been reloaded.", false)
+                    ],
+                    SendAnnouncement = false,
+                    Culture = CultureInfo.CurrentUICulture.Name
+                };
+            }
+        }
+
+        private class StaffReloadLanguages(LanguageService languageService) : Command
+        {
+            public override string Name { get => "reload_languages"; set => throw new NotImplementedException(); }
+
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            {
+                await languageService.GetLanguages(forcePull: true);
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    LogStatement = "/reload_languages",
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify("/reload_languages", "Languages have been reloaded.", false)
+                    ],
+                    SendAnnouncement = false,
+                    Culture = CultureInfo.CurrentUICulture.Name
+                };
+            }
+        }
+
+        private class StaffReloadExperiments(ExperimentService experimentService) : Command
+        {
+            public override string Name { get => "reload_experiments"; set => throw new NotImplementedException(); }
+
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            {
+                await experimentService.GetExperiments(forcePull: true);
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    LogStatement = "/reload_experiments",
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify("/reload_experiments", "Experiments have been reloaded.", false)
+                    ],
+                    SendAnnouncement = false,
+                    Culture = CultureInfo.CurrentUICulture.Name
+                };
             }
         }
     }

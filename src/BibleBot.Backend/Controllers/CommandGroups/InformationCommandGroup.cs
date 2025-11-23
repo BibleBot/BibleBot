@@ -23,7 +23,8 @@ using Serilog;
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
     public class InformationCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                         FrontendStatsService frontendStatsService, IStringLocalizerFactory localizerFactory) : CommandGroup
+                                         FrontendStatsService frontendStatsService, IStringLocalizerFactory localizerFactory,
+                                         ExperimentService experimentService) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(InformationCommandGroup));
 
@@ -34,7 +35,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             get => [
                 new InfoStats(userService, guildService, versionService, frontendStatsService, _localizer),
                 new InfoBibleBot(_localizer),
-                new InfoInvite(_localizer)
+                new InfoInvite(_localizer),
+                new InfoExperiments(experimentService)
             ]; set => throw new NotImplementedException();
         }
 
@@ -206,6 +208,56 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 LogStatement = "/invite",
                 Culture = CultureInfo.CurrentUICulture.Name
             });
+        }
+
+        private class InfoExperiments(ExperimentService experimentService) : Command
+        {
+            public override string Name { get => "experiments"; set => throw new NotImplementedException(); }
+
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            {
+                StringBuilder description = new StringBuilder().AppendLine("Experiments are features that are currently in development and may not be stable. The experiments that apply to you (or this server) are shown in bold.\n");
+
+                foreach (KeyValuePair<Experiment, string> experiment in await experimentService.GetExperimentVariantsForUser(req.UserId))
+                {
+                    if (experiment.Value != "Control")
+                    {
+                        description.AppendLine($"- **{experiment.Key.Name}** ({experiment.Key.Description})");
+                    }
+                    else
+                    {
+                        description.AppendLine($"- {experiment.Key.Name} ({experiment.Key.Description})");
+                    }
+                }
+
+                foreach (KeyValuePair<Experiment, string> experiment in await experimentService.GetExperimentVariantsForGuild(req.GuildId))
+                {
+                    if (description.ToString().Contains(experiment.Key.Name))
+                    {
+                        continue;
+                    }
+
+                    if (experiment.Value != "Control")
+                    {
+                        description.AppendLine($"- **{experiment.Key.Name}** ({experiment.Key.Description})");
+                    }
+                    else
+                    {
+                        description.AppendLine($"- {experiment.Key.Name} ({experiment.Key.Description})");
+                    }
+                }
+
+                return new CommandResponse
+                {
+                    OK = true,
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify("/experiments", description.ToString(), false)
+                    ],
+                    LogStatement = "/experiments",
+                    Culture = CultureInfo.CurrentUICulture.Name
+                };
+            }
         }
     }
 }

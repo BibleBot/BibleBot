@@ -23,6 +23,7 @@ namespace BibleBot.Backend.Services
         private readonly IMongoCollection<Version> _versions;
         private readonly IMongoCollection<Language> _languages;
         private readonly IMongoCollection<FrontendStats> _frontendStats;
+        private readonly IMongoCollection<Experiment> _experiments;
 
         public MongoService(IDatabaseSettings settings)
         {
@@ -38,6 +39,7 @@ namespace BibleBot.Backend.Services
             _versions = database.GetCollection<Version>(settings.VersionCollectionName);
             _languages = database.GetCollection<Language>(settings.LanguageCollectionName);
             _frontendStats = database.GetCollection<FrontendStats>(settings.FrontendStatsCollectionName);
+            _experiments = database.GetCollection<Experiment>(settings.ExperimentCollectionName);
         }
 
         public async Task<List<T>> Get<T>()
@@ -64,6 +66,10 @@ namespace BibleBot.Backend.Services
             else if (typeOfT == typeof(Language))
             {
                 cursor = (IAsyncCursor<T>)await _languages.FindAsync(language => true);
+            }
+            else if (typeOfT == typeof(Experiment))
+            {
+                cursor = (IAsyncCursor<T>)await _experiments.FindAsync(experiment => true);
             }
 
             return cursor != null ? await cursor.ToListAsync() : throw new NotImplementedException("No established path for provided type");
@@ -99,6 +105,11 @@ namespace BibleBot.Backend.Services
             {
                 FilterDefinition<Language> filterDefinition = Builders<Language>.Filter.Eq(language => language.Culture, query);
                 cursor = (IAsyncCursor<T>)await _languages.FindAsync(filterDefinition, findOptions as FindOptions<Language>);
+            }
+            else if (typeOfT == typeof(Experiment))
+            {
+                FilterDefinition<Experiment> filterDefinition = Builders<Experiment>.Filter.Eq(experiment => experiment.Name, query);
+                cursor = (IAsyncCursor<T>)await _experiments.FindAsync(filterDefinition, findOptions as FindOptions<Experiment>);
             }
 
             return cursor != null ? await cursor.FirstOrDefaultAsync() : throw new NotImplementedException("No established path for provided type");
@@ -166,6 +177,10 @@ namespace BibleBot.Backend.Services
             {
                 await _frontendStats.InsertOneAsync(t as FrontendStats);
             }
+            else if (typeOfT == typeof(Experiment))
+            {
+                await _experiments.InsertOneAsync(t as Experiment);
+            }
 
             return t;
         }
@@ -173,11 +188,13 @@ namespace BibleBot.Backend.Services
         public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await _users.UpdateOneAsync(user => user.UserId == userId, updateDefinition);
         public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition) => await _guilds.UpdateOneAsync(guild => guild.GuildId == guildId, updateDefinition);
         public async Task Update(string abbreviation, UpdateDefinition<Version> updateDefinition) => await _versions.UpdateOneAsync(version => string.Equals(version.Abbreviation, abbreviation, StringComparison.OrdinalIgnoreCase), updateDefinition);
+        public async Task Update(string experimentName, UpdateDefinition<Experiment> updateDefinition) => await _experiments.UpdateOneAsync(experiment => experiment.Name == experimentName, updateDefinition);
         public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await _frontendStats.UpdateOneAsync(stats => true, updateDefinition);
 
         public async Task Remove(User idealUser) => await Remove<User>(idealUser.UserId);
         public async Task Remove(Guild idealGuild) => await Remove<Guild>(idealGuild.GuildId);
         public async Task Remove(Version idealVersion) => await Remove<Version>(idealVersion.Abbreviation);
+        public async Task Remove(Experiment idealExperiment) => await Remove<Experiment>(idealExperiment.Name);
 
         public async Task<DeleteResult> Remove<T>(string query)
         {
@@ -194,6 +211,10 @@ namespace BibleBot.Backend.Services
             else if (typeOfT == typeof(Guild))
             {
                 return await _guilds.DeleteOneAsync(guild => guild.GuildId == query);
+            }
+            else if (typeOfT == typeof(Experiment))
+            {
+                return await _experiments.DeleteOneAsync(experiment => experiment.Name == query);
             }
 
             throw new NotImplementedException("No established path for provided type");

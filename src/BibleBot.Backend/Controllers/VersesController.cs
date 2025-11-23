@@ -28,14 +28,12 @@ namespace BibleBot.Backend.Controllers
     [Route("api/verses")]
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VerseMetricsService verseMetricsService,
-                                          VersionService versionService, LanguageService languageService, MetadataFetchingService metadataFetchingService,
+                                          VersionService versionService, LanguageService languageService, MetadataFetchingService metadataFetchingService, ExperimentService experimentService,
                                           List<IContentProvider> bibleProviders, IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
     {
         private readonly List<IContentProvider> _bibleProviders = bibleProviders;
         private readonly IStringLocalizer _localizer = localizer;
         private readonly IStringLocalizer _sharedLocalizer = sharedLocalizer;
-
-
 
         [GeneratedRegex(@"<\*\*(.*?)\*\*>", RegexOptions.Compiled)]
         private static partial Regex VerseNumberRegex();
@@ -65,6 +63,8 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
+            req.ActiveExperiments = await experimentService.GetExperimentVariantsForUser(req.UserId);
+
             SentrySdk.ConfigureScope(scope =>
             {
                 scope.Contexts["request"] = req;

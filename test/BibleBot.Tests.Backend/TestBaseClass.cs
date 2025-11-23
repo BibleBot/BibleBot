@@ -113,11 +113,11 @@ namespace BibleBot.Tests.Backend
             _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _versionService, _resourceServiceMock.Object,
                                                     _frontendStatsServiceMock.Object, _languageService, _metadataFetchingServiceMock.Object,
-                                                    specialVerseProcessingService, bibleProviders, _localizerFactory);
+                                                    specialVerseProcessingService, new ExperimentService(_mongoService), bibleProviders, _localizerFactory);
 
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _parsingServiceMock.Object, _verseMetricsService, _versionService, _languageService,
-                                                    _metadataFetchingServiceMock.Object, bibleProviders, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
+                                                    _metadataFetchingServiceMock.Object, new ExperimentService(_mongoService), bibleProviders, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
         }
     }
 }

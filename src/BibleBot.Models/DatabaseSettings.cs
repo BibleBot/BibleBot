@@ -17,6 +17,7 @@ namespace BibleBot.Models
         public string LanguageCollectionName { get; set; }
         public string FrontendStatsCollectionName { get; set; }
         public string OptOutUserCollectionName { get; set; }
+        public string ExperimentCollectionName { get; set; }
         public string DatabaseName { get; set; }
     }
 
@@ -28,6 +29,7 @@ namespace BibleBot.Models
         string LanguageCollectionName { get; set; }
         string FrontendStatsCollectionName { get; set; }
         string OptOutUserCollectionName { get; set; }
+        string ExperimentCollectionName { get; set; }
         string DatabaseName { get; set; }
     }
 }

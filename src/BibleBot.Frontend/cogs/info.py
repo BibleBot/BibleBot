@@ -45,121 +45,6 @@ class Information(commands.Cog):
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
         await sending.safe_send_interaction(inter.followup, components=resp)
 
-    @commands.slash_command(description=Localized(key="CMD_PERMSCHECK_DESC"))
-    @commands.install_types(guild=True)
-    @commands.contexts(guild=True, bot_dm=False, private_channel=False)
-    async def permscheck(
-        self,
-        inter: CommandInteraction,
-        channel_id: str = commands.Param(
-            default=None,
-            description="The ID of the channel (optional)",
-        ),
-    ):
-        await inter.response.defer()
-
-        localization = i18n.get_i18n_or_default(inter.locale.name)
-
-        channel = inter.channel
-        guild = inter.guild
-
-        if channel_id is not None:
-            try:
-                channel_to_be = await self.bot.fetch_channel(channel_id)
-
-                if not isinstance(channel_to_be, disnake.abc.PrivateChannel):
-                    channel = channel_to_be
-                    guild = channel_to_be.guild
-                else:
-                    await sending.safe_send_interaction(
-                        inter.followup,
-                        components=containers.create_error_container(
-                            localization["PERMSCHECK_ERROR_LABEL"],
-                            localization["PERMSCHECK_ERROR_DM"],
-                            localization,
-                        ),
-                    )
-                    return
-            except (disnake.NotFound, disnake.Forbidden):
-                await sending.safe_send_interaction(
-                    inter.followup,
-                    components=containers.create_error_container(
-                        localization["PERMSCHECK_ERROR_LABEL"],
-                        localization["PERMSCHECK_ERROR_NOCHAN"],
-                        localization,
-                    ),
-                )
-                return
-            except:
-                await sending.safe_send_interaction(
-                    inter.followup,
-                    components=containers.create_error_container(
-                        localization["PERMSCHECK_ERROR_LABEL"],
-                        localization["PERMSCHECK_ERROR_UNKNOWN"],
-                        localization,
-                    ),
-                )
-                return
-
-        if guild is None:
-            # This case should ideally not be reached due to context decorators
-            # and channel fetching logic, but as a safeguard:
-            await sending.safe_send_interaction(
-                inter.followup,
-                components=containers.create_error_container(
-                    localization["PERMSCHECK_ERROR_LABEL"],
-                    "Could not determine the guild for this check.",
-                    localization,
-                ),
-            )
-            return
-
-        integrated_roles = [
-            x
-            for x in guild.me.roles
-            if x.is_bot_managed and x.is_integration and x.name != "@everyone"
-        ]
-
-        if not integrated_roles:
-            # Handle case where bot has no integration role.
-            # This might involve sending an error or using a default.
-            # For now, we can assume the first role is the one we want if it exists.
-            # Or we can send an error message.
-            await sending.safe_send_interaction(
-                inter.followup,
-                components=containers.create_error_container(
-                    localization["PERMSCHECK_ERROR_LABEL"],
-                    "Bot integration role not found.",
-                    localization,
-                ),
-            )
-            return
-
-        integrated_role = integrated_roles[0]
-
-        if not isinstance(channel, disnake.abc.GuildChannel):
-            await sending.safe_send_interaction(
-                inter.followup,
-                components=containers.create_error_container(
-                    localization["PERMSCHECK_ERROR_LABEL"],
-                    "Permissions check cannot be performed on this channel type.",
-                    localization,
-                ),
-            )
-            return
-
-        channel_perms_for_self = channel.permissions_for(guild.me).value
-        channel_perms_for_role = channel.permissions_for(integrated_role).value
-        guild_perms = integrated_role.permissions.value
-
-        resp = await backend.submit_command(
-            inter.channel,
-            inter.author,
-            f"+staff permscheck {channel.id} {guild.id} {channel_perms_for_self} {channel_perms_for_role} {guild_perms} {integrated_role.name} {integrated_role.id}",
-        )
-
-        await sending.safe_send_interaction(inter.followup, components=resp)
-
     @commands.slash_command(description=Localized(key="CMD_SUPPORTERS_DESC"))
     async def supporters(self, inter: CommandInteraction):
         # Patreon's development utilities are pretty garbage.
@@ -213,3 +98,9 @@ class Information(commands.Cog):
         )
 
         await sending.safe_send_interaction(inter.followup, components=container)
+
+    @commands.slash_command(description=Localized(key="CMD_EXPERIMENTS_DESC"))
+    async def experiments(self, inter: CommandInteraction):
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
+        resp = await backend.submit_command(inter.channel, inter.author, "+experiments")
+        await sending.safe_send_interaction(inter.followup, components=resp)

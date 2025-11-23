@@ -20,7 +20,7 @@ namespace BibleBot.Backend.Services
     {
         private List<Version> _versions = [];
 
-        private async Task<List<Version>> GetVersions(bool forcePull = false)
+        public async Task<List<Version>> GetVersions(bool forcePull = false)
         {
             if (forcePull || _versions.Count == 0)
             {
@@ -92,6 +92,7 @@ namespace BibleBot.Backend.Services
             _versions.Remove(beforeVersion);
             _versions.Add(afterVersion);
         }
+
         public async Task Remove(Version idealVersion)
         {
             await mongoService.Remove(idealVersion);

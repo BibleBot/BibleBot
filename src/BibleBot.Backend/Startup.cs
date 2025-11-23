@@ -67,6 +67,7 @@ namespace BibleBot.Backend
             services.AddSingleton<VersionService>();
             services.AddSingleton<LanguageService>();
             services.AddSingleton<FrontendStatsService>();
+            services.AddSingleton<ExperimentService>();
 
             services.AddSingleton<ParsingService>();
             services.AddSingleton<ResourceService>();
@@ -112,10 +113,10 @@ namespace BibleBot.Backend
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v9", new OpenApiInfo
+                c.SwaggerDoc("v14", new OpenApiInfo
                 {
                     Title = "BibleBot.Backend",
-                    Version = "9",
+                    Version = "14",
                     Description = "The Backend of BibleBot",
                     Contact = new OpenApiContact
                     {

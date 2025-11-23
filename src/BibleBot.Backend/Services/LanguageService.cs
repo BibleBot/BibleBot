@@ -17,7 +17,7 @@ namespace BibleBot.Backend.Services
     {
         private List<Language> _languages = [];
 
-        private async Task<List<Language>> GetLanguages(bool forcePull = false)
+        public async Task<List<Language>> GetLanguages(bool forcePull = false)
         {
             if (forcePull || _languages.Count == 0)
             {

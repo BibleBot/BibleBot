@@ -25,10 +25,10 @@ namespace BibleBot.Backend.Controllers
     [ApiController]
     public class CommandsController(UserService userService, GuildService guildService, VersionService versionService, ResourceService resourceService,
                               FrontendStatsService frontendStatsService, LanguageService languageService, MetadataFetchingService metadataFetchingService, SpecialVerseProcessingService specialVerseProcessingService,
-                              List<IContentProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : ControllerBase
+                              ExperimentService experimentService, List<IContentProvider> bibleProviders, IStringLocalizerFactory localizerFactory) : ControllerBase
     {
         private readonly List<CommandGroup> _commandGroups = [
-                new InformationCommandGroup(userService, guildService, versionService, frontendStatsService, localizerFactory),
+                new InformationCommandGroup(userService, guildService, versionService, frontendStatsService, localizerFactory, experimentService),
                 new FormattingCommandGroup(userService, guildService, localizerFactory),
                 new VersionCommandGroup(userService, guildService, versionService, metadataFetchingService, localizerFactory),
                 new LanguageCommandGroup(userService, guildService, languageService, localizerFactory),
@@ -36,7 +36,7 @@ namespace BibleBot.Backend.Controllers
                 new DailyVerseCommandGroup(userService, guildService, versionService, specialVerseProcessingService, localizerFactory),
                 new RandomVerseCommandGroup(userService, guildService, versionService, specialVerseProcessingService, localizerFactory),
                 new SearchCommandGroup(userService, guildService, versionService, metadataFetchingService, bibleProviders, localizerFactory),
-                new KDStaffCommandGroup()
+                new KDStaffCommandGroup(versionService, languageService, experimentService)
             ];
 
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(CommandsController));
@@ -54,6 +54,8 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IResponse>> ProcessMessage([FromBody] Request req)
         {
+            req.ActiveExperiments = await experimentService.GetExperimentVariantsForUser(req.UserId);
+
             SentrySdk.ConfigureScope(scope =>
             {
                 scope.Contexts["request"] = req;

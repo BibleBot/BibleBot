@@ -64,18 +64,31 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 List<string> replacements = [];
 
+                string enabledEmoji = ":white_check_mark:";
+                string disabledEmoji = ":no_entry_sign:";
+
+                if (req.ActiveExperiments != null && req.ActiveExperiments.Count != 0)
+                {
+                    req.ActiveExperiments.TryGetValue(req.ActiveExperiments.First(ex => ex.Key.Name == "FormattingCmdEmojiExperiment").Key, out string variant);
+                    if (variant == "NewEmojis")
+                    {
+                        enabledEmoji = Utils.GetInstance().emoji["check_emoji"];
+                        disabledEmoji = Utils.GetInstance().emoji["xmark_emoji"];
+                    }
+                }
+
                 if (idealUser != null)
                 {
-                    replacements.AddRange(idealUser.VerseNumbersEnabled ? [":white_check_mark:", $"**{localizer["Enabled"]}**"] : [":no_entry_sign:", $"**{localizer["Disabled"]}**"]);
-                    replacements.AddRange(idealUser.TitlesEnabled ? [":white_check_mark:", $"**{localizer["Enabled"]}**"] : [":no_entry_sign:", $"**{localizer["Disabled"]}**"]);
-                    replacements.AddRange(idealUser.PaginationEnabled ? [":white_check_mark:", $"**{localizer["Enabled"]}**"] : [":no_entry_sign:", $"**{localizer["Disabled"]}**"]);
+                    replacements.AddRange(idealUser.VerseNumbersEnabled ? [enabledEmoji, $"**{localizer["Enabled"]}**"] : [disabledEmoji, $"**{localizer["Disabled"]}**"]);
+                    replacements.AddRange(idealUser.TitlesEnabled ? [enabledEmoji, $"**{localizer["Enabled"]}**"] : [disabledEmoji, $"**{localizer["Disabled"]}**"]);
+                    replacements.AddRange(idealUser.PaginationEnabled ? [enabledEmoji, $"**{localizer["Enabled"]}**"] : [disabledEmoji, $"**{localizer["Disabled"]}**"]);
                     replacements.Add(idealUser.DisplayStyle != null ? $"**`{idealUser.DisplayStyle}`**" : "**`embed`**");
                 }
                 else
                 {
-                    replacements.AddRange([":white_check_mark:", $"**{localizer["Enabled"]}**"]);
-                    replacements.AddRange([":white_check_mark:", $"**{localizer["Enabled"]}**"]);
-                    replacements.AddRange([":white_check_mark:", $"**{localizer["Disabled"]}**"]);
+                    replacements.AddRange([enabledEmoji, $"**{localizer["Enabled"]}**"]);
+                    replacements.AddRange([enabledEmoji, $"**{localizer["Enabled"]}**"]);
+                    replacements.AddRange([enabledEmoji, $"**{localizer["Disabled"]}**"]);
                     replacements.Add("**`embed`**");
                 }
 
