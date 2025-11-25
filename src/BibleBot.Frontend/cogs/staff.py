@@ -15,7 +15,7 @@ from utils import backend, sending, statics, checks, containers
 from utils.i18n import i18n as i18n_class
 from disnake.ext import commands
 from disnake.abc import GuildChannel, PrivateChannel
-import experiments
+from cogs import experiments
 
 i18n = i18n_class()
 

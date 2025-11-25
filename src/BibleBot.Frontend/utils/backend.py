@@ -12,9 +12,9 @@ from typing import Optional, Union
 import aiohttp
 import disnake
 from logger import VyLogger
-from . import sending, statics, webhooks, containers, channels
-from .paginator import ComponentPaginator
-from .i18n import i18n as i18n_class
+from utils import sending, statics, webhooks, containers, channels
+from utils.paginator import ComponentPaginator
+from utils.i18n import i18n as i18n_class
 
 i18n = i18n_class()
 logger = VyLogger("default")

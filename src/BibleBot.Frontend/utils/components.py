@@ -8,8 +8,8 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 
 from disnake import SelectOption, MessageInteraction
 from disnake.ui import StringSelect
-from .i18n import i18n as i18n_class
-from . import backend
+from utils.i18n import i18n as i18n_class
+from utils import backend
 
 i18n = i18n_class()
 

@@ -22,7 +22,7 @@ from disnake import (
 from disnake.interactions import MessageInteraction, ApplicationCommandInteraction
 from disnake.ui._types import MessageComponents
 from disnake.ui import Container, Button, ActionRow
-from i18n import i18n as i18n_class
+from utils.i18n import i18n as i18n_class
 from typing import List, Dict, Optional
 
 i18n = i18n_class()

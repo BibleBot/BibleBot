@@ -9,7 +9,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 from disnake import ui, User, Member
 from disnake.ui import Container, TextDisplay, Button, ActionRow
 from dataclasses import dataclass, field
-from i18n import i18n as i18n_class
+from utils.i18n import i18n as i18n_class
 from typing import List, Dict, Optional
 from disnake.ui._types import MessageComponents
 from disnake import (
@@ -27,8 +27,6 @@ from disnake.interactions import MessageInteraction, ApplicationCommandInteracti
 import time
 import asyncio
 import backend, containers, statics
-
-from i18n import i18n as i18n_class
 
 i18n = i18n_class()
 

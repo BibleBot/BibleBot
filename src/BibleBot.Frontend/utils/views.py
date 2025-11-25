@@ -9,7 +9,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 from disnake import ui
 from logger import VyLogger
 from .i18n import i18n as i18n_class
-from . import components
+from utils import components
 
 i18n = i18n_class()
 logger = VyLogger("default")

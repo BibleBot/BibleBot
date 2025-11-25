@@ -8,7 +8,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 
 from disnake import SeparatorSpacing
 from disnake.ui import Container, TextDisplay, Separator, Section, Thumbnail
-from . import statics
+from utils import statics
 
 
 @staticmethod
