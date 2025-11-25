@@ -9,15 +9,13 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 from disnake import ui, User, Member
 from disnake.ui import Container, TextDisplay, Button, ActionRow
 from dataclasses import dataclass, field
-from .i18n import i18n as i18n_class
+from i18n import i18n as i18n_class
 from typing import List, Dict, Optional
 from disnake.ui._types import MessageComponents
 from disnake import (
-    MessageInteraction,
     ButtonStyle,
     DMChannel,
     GroupChannel,
-    CommandInteraction,
     Message,
     TextChannel,
     Thread,
@@ -25,11 +23,12 @@ from disnake import (
     StageChannel,
     SeparatorSpacing,
 )
+from disnake.interactions import MessageInteraction, ApplicationCommandInteraction
 import time
 import asyncio
-from . import backend, containers, statics
+import backend, containers, statics
 
-from .i18n import i18n as i18n_class
+from i18n import i18n as i18n_class
 
 i18n = i18n_class()
 
@@ -106,12 +105,12 @@ class ConfirmationPrompt:
             | DMChannel
             | GroupChannel
             | MessageInteraction
-            | CommandInteraction
+            | ApplicationCommandInteraction
         ),
     ):
         components = self._render()
 
-        if isinstance(sendable, (MessageInteraction, CommandInteraction)):
+        if isinstance(sendable, (MessageInteraction, ApplicationCommandInteraction)):
             msg = await sendable.followup.send(components=components, wait=True)
         else:
             msg = await sendable.send(components=components)

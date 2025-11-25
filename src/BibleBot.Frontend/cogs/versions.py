@@ -6,7 +6,8 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import CommandInteraction, Localized
+from disnake import Localized
+from disnake.interactions import ApplicationCommandInteraction
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
@@ -65,7 +66,7 @@ class Versions(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(description=Localized(key="CMD_VERSION_DESC"))
-    async def version(self, inter: CommandInteraction):
+    async def version(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+version")
         await sending.safe_send_interaction(inter.followup, components=resp)
@@ -73,7 +74,7 @@ class Versions(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SETVERSION_DESC"))
     async def setversion(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
@@ -87,7 +88,7 @@ class Versions(commands.Cog):
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setserverversion(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
         await inter.response.defer()
@@ -124,7 +125,7 @@ class Versions(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_VERSIONINFO_DESC"))
     async def versioninfo(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         acronym: str = commands.Param(description=Localized(key="VERSION_PARAM")),
     ):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
@@ -140,7 +141,7 @@ class Versions(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_LISTVERSIONS_DESC"))
     async def listversions(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         sort_by_language: bool = commands.Param(
             description=Localized(key="LISTVERSIONS_LANGUAGE_PARAM"), default=False
         ),
@@ -161,7 +162,7 @@ class Versions(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_BOOKLIST_DESC"))
     async def booklist(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         acronym: str = commands.Param(
             description=Localized(key="VERSION_PARAM"), default=None
         ),

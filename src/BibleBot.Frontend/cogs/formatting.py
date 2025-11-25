@@ -7,7 +7,8 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import disnake
-from disnake import CommandInteraction, Localized
+from disnake import Localized
+from disnake.interactions import ApplicationCommandInteraction
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending, checks, views, containers
@@ -22,7 +23,7 @@ class Formatting(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(description=Localized(key="CMD_FORMATTING_DESC"))
-    async def formatting(self, inter: CommandInteraction):
+    async def formatting(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+formatting")
         await sending.safe_send_interaction(inter.followup, components=resp)
@@ -30,7 +31,7 @@ class Formatting(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SETVERSENUMBERS_DESC"))
     async def setversenumbers(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         val: str = commands.Param(
             # TODO: add description to param
             choices=[
@@ -55,7 +56,7 @@ class Formatting(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SETTITLES_DESC"))
     async def settitles(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         val: str = commands.Param(
             # TODO: add description to param
             choices=[
@@ -80,7 +81,7 @@ class Formatting(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SETPAGINATION_DESC"))
     async def setpagination(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         val: str = commands.Param(
             # TODO: add description to param
             choices=[
@@ -104,7 +105,7 @@ class Formatting(commands.Cog):
 
     @commands.slash_command(description=Localized(key="CMD_SETDISPLAY_DESC"))
     async def setdisplay(
-        self, inter: CommandInteraction, style: str = ""
+        self, inter: ApplicationCommandInteraction, style: str = ""
     ):  # TODO: add description to param
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         localization = i18n.get_i18n_or_default(inter.locale.name)
@@ -126,7 +127,7 @@ class Formatting(commands.Cog):
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setserverdisplay(
-        self, inter: CommandInteraction, style: str = ""
+        self, inter: ApplicationCommandInteraction, style: str = ""
     ):  # TODO: add description to param
         await inter.response.defer()
 
@@ -173,7 +174,7 @@ class Formatting(commands.Cog):
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setbrackets(
-        self, inter: CommandInteraction, brackets: str = ""
+        self, inter: ApplicationCommandInteraction, brackets: str = ""
     ):  # TODO: add description to param
         await inter.response.defer()
 

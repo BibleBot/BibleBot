@@ -7,6 +7,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import aiohttp
+import os
 
 endpoint = os.environ.get("ENDPOINT", "")
 aiohttp_headers = {"Authorization": os.environ.get("ENDPOINT_TOKEN", "")}

@@ -7,7 +7,8 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import os
-from disnake import CommandInteraction, Localized, OptionChoice
+from disnake import Localized, OptionChoice
+from disnake.interactions import ApplicationCommandInteraction
 from disnake.ext import commands
 import disnake
 from logger import VyLogger
@@ -28,7 +29,7 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SEARCH_DESC"))
     async def search(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         query: str,  # TODO: add description to param
         subset: str = commands.Param(
             # TODO: add description to param
@@ -64,7 +65,7 @@ class VerseCommands(commands.Cog):
     @commands.install_types(user=True)
     async def verse(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         reference: str = commands.Param(description=Localized(key="VERSE_PARAM")),
     ):
         await inter.response.defer()
@@ -112,11 +113,13 @@ class VerseCommands(commands.Cog):
 
     @commands.message_command(name=Localized(key="CMD_VERSE_MSG_NAME"))
     @commands.install_types(user=True)
-    async def verse_msg(self, inter: CommandInteraction, msg: disnake.Message):
+    async def verse_msg(
+        self, inter: ApplicationCommandInteraction, msg: disnake.Message
+    ):
         await self.verse(inter, msg.content)
 
     @commands.slash_command(description=Localized(key="CMD_RANDOM_DESC"))
-    async def random(self, inter: CommandInteraction):
+    async def random(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
 
         resp = await backend.submit_command(inter.channel, inter.author, "+random")
@@ -127,7 +130,7 @@ class VerseCommands(commands.Cog):
             await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_TRUERANDOM_DESC"))
-    async def truerandom(self, inter: CommandInteraction):
+    async def truerandom(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
 
         resp = await backend.submit_command(inter.channel, inter.author, "+random true")
@@ -138,7 +141,7 @@ class VerseCommands(commands.Cog):
             await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_DAILYVERSE_DESC"))
-    async def dailyverse(self, inter: CommandInteraction):
+    async def dailyverse(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(inter.channel, inter.author, "+dailyverse")
 
@@ -152,7 +155,7 @@ class VerseCommands(commands.Cog):
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setdailyverse(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         time: str = "",  # TODO: add description to param
         tz: str = "",  # TODO: add description to param
     ):
@@ -201,7 +204,7 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_DAILYVERSESTATUS_DESC"))
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
-    async def dailyversestatus(self, inter: CommandInteraction):
+    async def dailyversestatus(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
@@ -227,7 +230,7 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_CLEARDAILYVERSE_DESC"))
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
-    async def cleardailyverse(self, inter: CommandInteraction):
+    async def cleardailyverse(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
@@ -266,7 +269,7 @@ class VerseCommands(commands.Cog):
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setdailyverserole(
-        self, inter: CommandInteraction, role: disnake.Role
+        self, inter: ApplicationCommandInteraction, role: disnake.Role
     ):  # TODO: add description to param
         await inter.response.defer()
 
@@ -323,7 +326,7 @@ class VerseCommands(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_CLEARDAILYVERSEROLE_DESC"))
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
-    async def cleardailyverserole(self, inter: CommandInteraction):
+    async def cleardailyverserole(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)

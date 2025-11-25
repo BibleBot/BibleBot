@@ -8,7 +8,8 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import os
 import aiohttp
-from disnake import CommandInteraction, Localized
+from disnake import Localized
+from disnake.interactions import ApplicationCommandInteraction
 import disnake
 from disnake.ext import commands
 from logger import VyLogger
@@ -28,25 +29,25 @@ class Information(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(description=Localized(key="CMD_BIBLEBOT_DESC"))
-    async def biblebot(self, inter: CommandInteraction):
+    async def biblebot(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+biblebot")
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_STATS_DESC"))
-    async def stats(self, inter: CommandInteraction):
+    async def stats(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+stats")
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_INVITE_DESC"))
-    async def invite(self, inter: CommandInteraction):
+    async def invite(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+invite")
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_SUPPORTERS_DESC"))
-    async def supporters(self, inter: CommandInteraction):
+    async def supporters(self, inter: ApplicationCommandInteraction):
         # Patreon's development utilities are pretty garbage.
         # The way they've positioned the types and how they actually work are not the same thing.
         # Thus, we ignore type checking in some lines to compensate for their... stupidity.
@@ -100,7 +101,7 @@ class Information(commands.Cog):
         await sending.safe_send_interaction(inter.followup, components=container)
 
     @commands.slash_command(description=Localized(key="CMD_EXPERIMENTS_DESC"))
-    async def experiments(self, inter: CommandInteraction):
+    async def experiments(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+experiments")
         await sending.safe_send_interaction(inter.followup, components=resp)

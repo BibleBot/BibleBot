@@ -15,7 +15,8 @@ from disnake.channel import (
     GroupChannel,
     PartialMessageable,
 )
-from disnake import Thread, ChannelType, Guild, CommandInteraction
+from disnake import Thread, ChannelType, Guild
+from disnake.interactions import ApplicationCommandInteraction
 from typing import NamedTuple, Optional
 
 
@@ -91,6 +92,10 @@ async def get_channel_context_from_messageable(
             guild_id = channel.guild.id
             channel_id = channel.parent_id
             thread_id = channel.id
+        case ChannelType.group:
+            is_dm = True
+            guild_id = channel.id
+            channel_id = channel.id
         case _:
             guild = channel.guild
             guild_id = channel.guild.id
@@ -106,13 +111,23 @@ async def get_channel_context_from_messageable(
 
 
 async def get_channel_context_from_interaction(
-    interaction: CommandInteraction,
+    interaction: ApplicationCommandInteraction,
 ) -> Optional[ChannelContext]:
     """Get a ChannelContext object from a disnake.CommandInteraction object."""
 
     channel = (
         interaction.channel
-        if isinstance(interaction.channel, (GuildChannel, Thread))
+        if isinstance(
+            interaction.channel,
+            (
+                TextChannel,
+                VoiceChannel,
+                StageChannel,
+                Thread,
+                DMChannel,
+                GroupChannel,
+            ),
+        )
         else None
     )
     guild = interaction.guild

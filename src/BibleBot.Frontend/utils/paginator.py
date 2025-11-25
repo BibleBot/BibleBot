@@ -10,20 +10,19 @@ import time
 import asyncio
 from dataclasses import dataclass, field
 from disnake import (
-    MessageInteraction,
     ButtonStyle,
     DMChannel,
     GroupChannel,
-    CommandInteraction,
     Message,
     TextChannel,
     Thread,
     VoiceChannel,
     StageChannel,
 )
+from disnake.interactions import MessageInteraction, ApplicationCommandInteraction
 from disnake.ui._types import MessageComponents
 from disnake.ui import Container, Button, ActionRow
-from .i18n import i18n as i18n_class
+from i18n import i18n as i18n_class
 from typing import List, Dict, Optional
 
 i18n = i18n_class()
@@ -85,12 +84,12 @@ class ComponentPaginator:
             | DMChannel
             | GroupChannel
             | MessageInteraction
-            | CommandInteraction
+            | ApplicationCommandInteraction
         ),
     ):
         components = self._render(0)
 
-        if isinstance(sendable, (MessageInteraction, CommandInteraction)):
+        if isinstance(sendable, (MessageInteraction, ApplicationCommandInteraction)):
             msg = await sendable.followup.send(components=components, wait=True)
         else:
             msg = await sendable.send(components=components)

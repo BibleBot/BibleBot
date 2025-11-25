@@ -6,11 +6,16 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import CommandInteraction, Localized
+from disnake.ui.text_display import TextDisplay
+from disnake.ui import Container
+import disnake
+from disnake import Localized
+from disnake.interactions import ApplicationCommandInteraction
 from utils import backend, sending, statics, checks, containers
 from utils.i18n import i18n as i18n_class
 from disnake.ext import commands
-from . import experiments
+from disnake.abc import GuildChannel, PrivateChannel
+import experiments
 
 i18n = i18n_class()
 
@@ -24,8 +29,8 @@ class Staff(commands.Cog):
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def permscheck(
         self,
-        inter: CommandInteraction,
-        channel_id: str = commands.Param(
+        inter: ApplicationCommandInteraction,
+        channel_id: int = commands.Param(
             default=None,
             description="The ID of the channel (optional)",
         ),
@@ -41,7 +46,7 @@ class Staff(commands.Cog):
             try:
                 channel_to_be = await self.bot.fetch_channel(channel_id)
 
-                if not isinstance(channel_to_be, disnake.abc.PrivateChannel):
+                if not isinstance(channel_to_be, PrivateChannel):
                     channel = channel_to_be
                     guild = channel_to_be.guild
                 else:
@@ -54,7 +59,7 @@ class Staff(commands.Cog):
                         ),
                     )
                     return
-            except (disnake.NotFound, disnake.Forbidden):
+            except (disnake.errors.NotFound, disnake.errors.Forbidden):
                 await sending.safe_send_interaction(
                     inter.followup,
                     components=containers.create_error_container(
@@ -111,7 +116,7 @@ class Staff(commands.Cog):
 
         integrated_role = integrated_roles[0]
 
-        if not isinstance(channel, disnake.abc.GuildChannel):
+        if not isinstance(channel, GuildChannel):
             await sending.safe_send_interaction(
                 inter.followup,
                 components=containers.create_error_container(
@@ -135,7 +140,7 @@ class Staff(commands.Cog):
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_RELOAD_VERSIONS_DESC"))
-    async def reload_versions(self, inter: CommandInteraction):
+    async def reload_versions(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(
             inter.channel, inter.author, "+staff reload_versions"
@@ -143,7 +148,7 @@ class Staff(commands.Cog):
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_RELOAD_LANGUAGES_DESC"))
-    async def reload_languages(self, inter: CommandInteraction):
+    async def reload_languages(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
         resp = await backend.submit_command(
             inter.channel, inter.author, "+staff reload_languages"
@@ -151,15 +156,17 @@ class Staff(commands.Cog):
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_RELOAD_EXPERIMENTS_DESC"))
-    async def reload_experiments(self, inter: CommandInteraction):
+    async def reload_experiments(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
 
         resp = await backend.submit_command(
             inter.channel, inter.author, "+staff reload_experiments"
         )
 
-        if resp.children[1].content == "Experiments have been reloaded.":
-            self.bot.remove_cog("Experiments")
-            self.bot.add_cog(experiments.Experiments(self.bot))
+        if resp is not None and isinstance(resp, Container):
+            if isinstance(resp.children[1], TextDisplay):
+                if resp.children[1].content == "Experiments have been reloaded.":
+                    self.bot.remove_cog("Experiments")
+                    self.bot.add_cog(experiments.Experiments(self.bot))
 
-        await sending.safe_send_interaction(inter.followup, components=resp)
+            await sending.safe_send_interaction(inter.followup, components=resp)

@@ -6,7 +6,8 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import CommandInteraction, Localized, OptionChoice
+from disnake import Localized, OptionChoice
+from disnake.interactions import ApplicationCommandInteraction
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending, checks
@@ -20,7 +21,7 @@ class Resources(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(description=Localized(key="CMD_LISTRESOURCES_DESC"))
-    async def listresources(self, inter: CommandInteraction):
+    async def listresources(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, f"+resource")
         await sending.safe_send_interaction(inter.followup, components=resp)
@@ -28,7 +29,7 @@ class Resources(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_RESOURCE_DESC"))
     async def resource(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         resource: str = commands.Param(
             description=Localized(key="RESOURCE_PARAM"),
             choices=[

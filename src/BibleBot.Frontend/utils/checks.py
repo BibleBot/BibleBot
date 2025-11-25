@@ -6,11 +6,11 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import CommandInteraction
+from disnake.interactions import ApplicationCommandInteraction
 import disnake
 
 
-def inter_is_user(inter: CommandInteraction) -> bool:
+def inter_is_user(inter: ApplicationCommandInteraction) -> bool:
     """Returns whether an interaction is triggered in a user app context."""
     return (
         getattr(inter.authorizing_integration_owners, "user_id", None) is not None
@@ -18,7 +18,7 @@ def inter_is_user(inter: CommandInteraction) -> bool:
     )
 
 
-def author_has_manage_server_permission(inter: CommandInteraction) -> bool:
+def author_has_manage_server_permission(inter: ApplicationCommandInteraction) -> bool:
     """Returns whether the author of an interaction has the Manage Server permission in the guild of the interaction."""
     if isinstance(inter.channel, disnake.abc.GuildChannel) and isinstance(
         inter.author, disnake.Member
@@ -27,6 +27,6 @@ def author_has_manage_server_permission(inter: CommandInteraction) -> bool:
     return False
 
 
-def inter_is_not_dm(inter: CommandInteraction) -> bool:
+def inter_is_not_dm(inter: ApplicationCommandInteraction) -> bool:
     """Returns whether an interaction is triggered in a guild app context."""
     return not isinstance(inter.channel, disnake.DMChannel)

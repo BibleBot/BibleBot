@@ -6,7 +6,8 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import CommandInteraction, Localized
+from disnake import Localized
+from disnake.interactions import ApplicationCommandInteraction
 from disnake.ext import commands
 from logger import VyLogger
 from utils import backend, sending, checks, containers
@@ -32,7 +33,7 @@ class Languages(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(description=Localized(key="CMD_LANGUAGE_DESC"))
-    async def language(self, inter: CommandInteraction):
+    async def language(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+language")
         await sending.safe_send_interaction(inter.followup, components=resp)
@@ -40,7 +41,7 @@ class Languages(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_SETLANGUAGE_DESC"))
     async def setlanguage(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         language: str = Language,  # TODO: add description to param
     ):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
@@ -54,7 +55,7 @@ class Languages(commands.Cog):
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setserverlanguage(
         self,
-        inter: CommandInteraction,
+        inter: ApplicationCommandInteraction,
         language: str = Language,  # TODO: add description to param
     ):
         await inter.response.defer()
@@ -89,7 +90,7 @@ class Languages(commands.Cog):
             return
 
     @commands.slash_command(description=Localized(key="CMD_LISTLANGUAGES_DESC"))
-    async def listlanguages(self, inter: CommandInteraction):
+    async def listlanguages(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(
             inter.channel, inter.author, "+language list"

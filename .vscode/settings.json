@@ -14,6 +14,7 @@
     "pylint.cwd": "${workspaceFolder}/src/BibleBot.Frontend",
     "python.defaultInterpreterPath": "${workspaceFolder}/src/BibleBot.Frontend/venv/bin/python",
     "python.analysis.typeCheckingMode": "basic",
+    "python.pyrefly.displayTypeErrors": "force-on",
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
