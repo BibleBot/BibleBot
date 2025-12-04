@@ -121,7 +121,15 @@ namespace BibleBot.Backend.Services
                 }
                 catch (VerseRangeInvalidException ex)
                 {
-                    SentrySdk.CaptureException(ex);
+                    if (startingChapterEndingVerse == verseMetric.AppendedVerses[^1].VerseRange.UpperBound)
+                    {
+                        verseMetric.VerseRange = CreateRange(reference.StartingVerse, reference.EndingVerse);
+                        verseMetricsToAdd.Add(verseMetric);
+                    }
+                    else
+                    {
+                        SentrySdk.CaptureException(ex);
+                    }
                 }
             }
 

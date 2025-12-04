@@ -26,7 +26,7 @@ from disnake import (
 from disnake.interactions import MessageInteraction, ApplicationCommandInteraction
 import time
 import asyncio
-import backend, containers, statics
+from utils import backend, containers, statics
 
 i18n = i18n_class()
 
