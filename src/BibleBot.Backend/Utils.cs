@@ -619,7 +619,7 @@ namespace BibleBot.Backend
                     result.Title = string.Concat(result.Title.AsSpan(0, Math.Min(MAX_TITLE_LENGTH - 4, result.Title.Length)), "...");
                 }
 
-                int MAX_TEXT_LENGTH = 4000 - ((result.Title?.Length ?? 0) + (result.Reference?.AsString.Length ?? 0) + (result.Reference?.Version?.Name.Length ?? 0) + 100);
+                int MAX_TEXT_LENGTH = 4000 - ((result.Title?.Length ?? 0) + (result.Reference?.AsString.Length ?? 0) + (result.Reference?.Version?.Name.Length ?? 0) + 150);
 
                 if (result.Text != null && result.Text.Length > MAX_TEXT_LENGTH)
                 {
