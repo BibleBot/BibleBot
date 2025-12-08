@@ -32,5 +32,5 @@ try:
             if split:
                 version = "v" + split[1][0:-2]
                 verse_footer = verse_footer.replace("<v>", version)
-except:
+except Exception:
     pass

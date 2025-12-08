@@ -6,18 +6,17 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake.ui.text_display import TextDisplay
-from disnake.ui import Container
 import disnake
+from core.i18n import bb_i18n
 from disnake import Localized
-from disnake.interactions import ApplicationCommandInteraction
-from utils import backend, sending, statics, checks, containers
-from utils.i18n import i18n as i18n_class
-from disnake.ext import commands
 from disnake.abc import GuildChannel, PrivateChannel
-from cogs import experiments
+from disnake.ext import commands
+from disnake.interactions import ApplicationCommandInteraction
+from helpers import sending
+from services import backend
+from ui import renderers as containers
 
-i18n = i18n_class()
+i18n = bb_i18n()
 
 
 class Staff(commands.Cog):
@@ -69,7 +68,7 @@ class Staff(commands.Cog):
                     ),
                 )
                 return
-            except:
+            except Exception:
                 await sending.safe_send_interaction(
                     inter.followup,
                     components=containers.create_error_container(
@@ -163,10 +162,4 @@ class Staff(commands.Cog):
             inter.channel, inter.author, "+staff reload_experiments"
         )
 
-        if resp is not None and isinstance(resp, Container):
-            if isinstance(resp.children[1], TextDisplay):
-                if resp.children[1].content == "Experiments have been reloaded.":
-                    self.bot.remove_cog("Experiments")
-                    self.bot.add_cog(experiments.Experiments(self.bot))
-
-            await sending.safe_send_interaction(inter.followup, components=resp)
+        await sending.safe_send_interaction(inter.followup, components=resp)

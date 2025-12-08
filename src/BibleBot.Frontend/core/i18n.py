@@ -1,8 +1,7 @@
 import json
-import pathlib
 
 
-class i18n:
+class bb_i18n:
     def __init__(self):
         self.default = json.loads(open("./default_i18n.json").read())
         self.en_US = json.loads(open("./locale/en_US.json").read())

@@ -6,9 +6,9 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+from core import constants
 from disnake import SeparatorSpacing
-from disnake.ui import Container, TextDisplay, Separator, Section, Thumbnail
-from utils import statics
+from disnake.ui import Container, Section, Separator, TextDisplay, Thumbnail
 
 
 @staticmethod
@@ -24,33 +24,33 @@ def convert_verse_to_container(verse, localization) -> Container:
     container.children.append(TextDisplay(f"### {reference_title}"))
 
     if len(verse["title"]) > 0:
-        container.children.append(TextDisplay(f"**{verse["title"]}**"))
+        container.children.append(TextDisplay(f"**{verse['title']}**"))
 
-    container.children.append(TextDisplay(f"{verse["text"]}"))
+    container.children.append(TextDisplay(f"{verse['text']}"))
 
     container.children.append(Separator(divider=True, spacing=SeparatorSpacing.large))
 
     if verse["reference"]["version"]["publisher"] is not None:
-        publisher_info = statics.publisher_to_url[
+        publisher_info = constants.publisher_to_url[
             verse["reference"]["version"]["publisher"]
         ]
 
         if publisher_info is not None:
             container.children.append(
                 TextDisplay(
-                    f"-# {statics.logo_emoji}  **{localization.replace("{0}", statics.version)} ∙ [{publisher_info["name"]}]({publisher_info["url"]})**"
+                    f"-# {constants.logo_emoji}  **{localization.replace('{0}', constants.version)} ∙ [{publisher_info['name']}](<{publisher_info['url']}>)**"
                 )
             )
         else:
             container.children.append(
                 TextDisplay(
-                    f"-# {statics.logo_emoji}  **{localization.replace("{0}", statics.version)}**"
+                    f"-# {constants.logo_emoji}  **{localization.replace('{0}', constants.version)}**"
                 )
             )
     else:
         container.children.append(
             TextDisplay(
-                f"-# {statics.logo_emoji}  **{localization.replace("{0}", statics.version)}**"
+                f"-# {constants.logo_emoji}  **{localization.replace('{0}', constants.version)}**"
             )
         )
 
@@ -69,9 +69,9 @@ def convert_embed_to_container(internal_embed) -> Container:
         section = Section(accessory=Thumbnail(media=internal_embed["thumbnail"]["url"]))
 
     if internal_embed["url"] is not None:
-        title = TextDisplay(f"### [{internal_embed["title"]}]({internal_embed["url"]})")
+        title = TextDisplay(f"### [{internal_embed['title']}]({internal_embed['url']})")
     else:
-        title = TextDisplay(f"### {internal_embed["title"]}")
+        title = TextDisplay(f"### {internal_embed['title']}")
 
     if section is None:
         container.children.append(title)
@@ -79,7 +79,7 @@ def convert_embed_to_container(internal_embed) -> Container:
         section_text += title.content
 
     if internal_embed["description"] is not None:
-        description = TextDisplay(f"{internal_embed["description"]}")
+        description = TextDisplay(f"{internal_embed['description']}")
 
         if section is None:
             container.children.append(description)
@@ -93,8 +93,8 @@ def convert_embed_to_container(internal_embed) -> Container:
             )
 
         for field in internal_embed["fields"]:
-            field_name = TextDisplay(f"**{field["name"]}**")
-            field_value = TextDisplay(f"{field["value"]}")
+            field_name = TextDisplay(f"**{field['name']}**")
+            field_value = TextDisplay(f"{field['value']}")
 
             if section is None:
                 container.children.append(field_name)
@@ -114,7 +114,9 @@ def convert_embed_to_container(internal_embed) -> Container:
     container.children.append(Separator(divider=True, spacing=SeparatorSpacing.large))
 
     container.children.append(
-        TextDisplay(f"-# {statics.logo_emoji}  **{internal_embed["footer"]["text"]}**")
+        TextDisplay(
+            f"-# {constants.logo_emoji}  **{internal_embed['footer']['text']}**"
+        )
     )
 
     return container
@@ -133,7 +135,27 @@ def create_error_container(title, description, localization) -> Container:
 
     container.children.append(
         TextDisplay(
-            f"-# {statics.logo_emoji}  **{localization["EMBED_FOOTER"].replace("<v>", statics.version)}**"
+            f"-# {constants.logo_emoji}  **{localization['EMBED_FOOTER'].replace('<v>', constants.version)}**"
+        )
+    )
+
+    return container
+
+
+@staticmethod
+def create_success_container(title, description, localization) -> Container:
+    container = Container()
+
+    container.accent_color = 6709986
+
+    container.children.append(TextDisplay(f"### {title}"))
+    container.children.append(TextDisplay(f"{description}"))
+
+    container.children.append(Separator(divider=True, spacing=SeparatorSpacing.large))
+
+    container.children.append(
+        TextDisplay(
+            f"-# {constants.logo_emoji}  **{localization['EMBED_FOOTER'].replace('<v>', constants.version)}**"
         )
     )
 

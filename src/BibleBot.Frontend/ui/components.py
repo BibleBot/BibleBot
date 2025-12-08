@@ -6,12 +6,12 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import SelectOption, MessageInteraction
+from core.i18n import bb_i18n
+from disnake import MessageInteraction, SelectOption
 from disnake.ui import StringSelect
-from utils.i18n import i18n as i18n_class
-from utils import backend
+from services import backend
 
-i18n = i18n_class()
+i18n = bb_i18n()
 
 
 class DisplayStyleSelect(StringSelect):

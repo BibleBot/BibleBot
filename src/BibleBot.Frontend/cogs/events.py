@@ -7,14 +7,18 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import os
-import disnake
-from utils import backend, sending, statics
-import aiohttp
-from disnake.ext import commands
-from logger import VyLogger
-from utils.paginator import ComponentPaginator
-from utils.confirmation_prompt import ConfirmationPrompt
 import re
+
+import aiohttp
+import disnake
+from core import constants
+from disnake.ext import commands
+from helpers import sending
+from logger import VyLogger
+from services import backend
+from ui.confirmation_prompt import ConfirmationPrompt
+from ui.helpfulness_prompt import HelpfulnessPrompt
+from ui.paginator import ComponentPaginator
 
 logger = VyLogger("default")
 
@@ -40,7 +44,7 @@ class EventListeners(commands.Cog):
         await self.bot.change_presence(
             status=disnake.Status.online,
             activity=disnake.Game(
-                f"/biblebot {statics.version} - shard {shard_id + 1}"
+                f"/biblebot {constants.version} - shard {shard_id + 1}"
             ),
             shard_id=shard_id,
         )
@@ -116,6 +120,8 @@ class EventListeners(commands.Cog):
             await ComponentPaginator._handle_click(inter)
         elif inter.data.custom_id.startswith("confirmation:"):
             await ConfirmationPrompt._handle_click(inter)
+        elif inter.data.custom_id.startswith("helpfulness:"):
+            await HelpfulnessPrompt._handle_click(inter)
 
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):

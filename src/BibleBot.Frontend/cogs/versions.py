@@ -6,16 +6,18 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+from core import checks
+from core.i18n import bb_i18n
 from disnake import Localized
-from disnake.interactions import ApplicationCommandInteraction
-import disnake
 from disnake.ext import commands
+from disnake.interactions import ApplicationCommandInteraction
+from helpers import sending
 from logger import VyLogger
-from utils import backend, sending, checks, containers
-from utils.paginator import ComponentPaginator
-from utils.i18n import i18n as i18n_class
+from services import backend
+from ui import renderers
+from ui.paginator import ComponentPaginator
 
-i18n = i18n_class()
+i18n = bb_i18n()
 logger = VyLogger("default")
 
 # -- This is all commented out since select menus can only have 25 options, sadly. -- #
@@ -99,7 +101,7 @@ class Versions(commands.Cog):
             if not checks.author_has_manage_server_permission(inter):
                 await sending.safe_send_interaction(
                     inter.followup,
-                    components=containers.create_error_container(
+                    components=renderers.create_error_container(
                         localization["PERMS_ERROR_LABEL"],
                         localization["PERMS_ERROR_DESC"],
                         localization,
@@ -115,7 +117,7 @@ class Versions(commands.Cog):
         else:
             await sending.safe_send_interaction(
                 inter.followup,
-                components=containers.create_error_container(
+                components=renderers.create_error_container(
                     "/setserverversion", localization["CMD_NODMS"], localization
                 ),
                 ephemeral=True,

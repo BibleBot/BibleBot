@@ -7,14 +7,18 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import disnake
+from core import checks
+from core.i18n import bb_i18n
 from disnake import Localized
-from disnake.interactions import ApplicationCommandInteraction
 from disnake.ext import commands
+from disnake.interactions import ApplicationCommandInteraction
+from helpers import sending
 from logger import VyLogger
-from utils import backend, sending, checks, views, containers
-from utils.i18n import i18n as i18n_class
+from services import backend
+from ui import renderers as containers
+from ui import views
 
-i18n = i18n_class()
+i18n = bb_i18n()
 logger = VyLogger("default")
 
 

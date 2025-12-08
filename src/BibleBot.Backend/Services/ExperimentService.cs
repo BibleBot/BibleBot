@@ -54,6 +54,9 @@ namespace BibleBot.Backend.Services
             _experiments.Add(afterExperiment);
         }
 
+        public async Task Helped(string experimentName, string userId) => await mongoService.Update(experimentName, Builders<Experiment>.Update.AddToSet("Helped", userId));
+        public async Task DidNotHelp(string experimentName, string userId) => await mongoService.Update(experimentName, Builders<Experiment>.Update.AddToSet("DidNotHelp", userId));
+
         public async Task Remove(Experiment experiment)
         {
             await mongoService.Remove(experiment);
@@ -75,8 +78,9 @@ namespace BibleBot.Backend.Services
         public async Task<Dictionary<Experiment, string>> GetExperimentVariantsForId(ulong id, bool isUser, bool frontendOnly = false, bool backendOnly = false, bool autoServOnly = false)
         {
             Dictionary<Experiment, string> variants = [];
+            List<Experiment> experiments = await GetExperiments();
 
-            foreach (Experiment experiment in await GetExperiments())
+            foreach (Experiment experiment in experiments)
             {
                 if (frontendOnly && experiment.Type is not "Frontend" and not "Universal")
                 {

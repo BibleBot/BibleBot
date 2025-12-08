@@ -6,8 +6,8 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake.interactions import ApplicationCommandInteraction
 import disnake
+from disnake.interactions import ApplicationCommandInteraction
 
 
 def inter_is_user(inter: ApplicationCommandInteraction) -> bool:

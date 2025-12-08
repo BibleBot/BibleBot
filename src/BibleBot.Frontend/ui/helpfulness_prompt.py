@@ -6,49 +6,65 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake import ui, User, Member
-from disnake.ui import Container, TextDisplay, Button, ActionRow
+import asyncio
+import time
 from dataclasses import dataclass, field
-from utils.i18n import i18n as i18n_class
-from typing import List, Dict, Optional
-from disnake.ui._types import MessageComponents
+from typing import Dict, Optional
+
+from core import constants
+from core.i18n import bb_i18n
 from disnake import (
     ButtonStyle,
     DMChannel,
     GroupChannel,
+    Member,
     Message,
+    SeparatorSpacing,
+    StageChannel,
     TextChannel,
     Thread,
+    User,
     VoiceChannel,
-    StageChannel,
-    SeparatorSpacing,
+    ui,
 )
-from disnake.interactions import MessageInteraction, ApplicationCommandInteraction
-import time
-import asyncio
-from utils import backend, containers, statics
+from disnake.interactions import ApplicationCommandInteraction, MessageInteraction
+from disnake.ui import ActionRow, Button, Container
+from disnake.ui._types import MessageComponents
+from services import experiments
+from ui import renderers
 
-i18n = i18n_class()
+i18n = bb_i18n()
 
 
 @dataclass
-class ConfirmationPromptState:
+class HelpfulnessPromptState:
     author: User | Member
     message: Message
-    on_confirm_command: str
+    experiment_name: str
+    title: str
+    description: str
     created_at: float = field(default_factory=time.time)
     task: Optional[asyncio.Task] = field(default=None)
     localization: Dict[str, str] = field(default_factory=Dict[str, str])
 
 
-class ConfirmationPrompt:
-    _registry: Dict[int, ConfirmationPromptState] = {}
+class HelpfulnessPrompt:
+    _registry: Dict[int, HelpfulnessPromptState] = {}
     _timeout = 20.0
 
-    def __init__(self, on_confirm_command: str, author: User | Member, localization):
+    def __init__(
+        self,
+        author: User | Member,
+        experiment_name: str,
+        title: str,
+        description: str,
+        localization,
+    ):
         self.author = author
-        self.on_confirm_command = on_confirm_command
+        self.experiment_name = experiment_name
         self.localization = localization
+        self.title = title
+        self.description = description
 
     def _render(self, response=None) -> MessageComponents:
         if response is not None:
@@ -57,17 +73,8 @@ class ConfirmationPrompt:
         container = Container()
         container.accent_color = 16776960
 
-        container.children.append(
-            ui.TextDisplay(f"### {self.localization["CONFIRMATION_REQUIRED_TITLE"]}")
-        )
-
-        container.children.append(
-            ui.TextDisplay(
-                f"{self.localization[
-                    "CONFIRMATION_REQUIRED_SETDAILYVERSEROLE_EVERYONE"
-                ]}"
-            )
-        )
+        container.children.append(ui.TextDisplay(f"### {self.title}"))
+        container.children.append(ui.TextDisplay(f"{self.description}"))
 
         container.children.append(
             ui.Separator(divider=True, spacing=SeparatorSpacing.large)
@@ -75,19 +82,19 @@ class ConfirmationPrompt:
 
         container.children.append(
             ui.TextDisplay(
-                f"-# {statics.logo_emoji}  **{self.localization["EMBED_FOOTER"].replace("<v>", statics.version)}**"
+                f"-# {constants.logo_emoji}  **{self.localization['EMBED_FOOTER'].replace('<v>', constants.version)}**"
             )
         )
 
         yes_button = Button(
             emoji="✅",
             style=ButtonStyle.green,
-            custom_id="confirmation:yes",
+            custom_id="helpfulness:yes",
         )
         no_button = Button(
             emoji="✖️",
             style=ButtonStyle.red,
-            custom_id="confirmation:no",
+            custom_id="helpfulness:no",
         )
 
         row = ActionRow(yes_button, no_button)
@@ -113,10 +120,12 @@ class ConfirmationPrompt:
         else:
             msg = await sendable.send(components=components)
 
-        self._registry[msg.id] = ConfirmationPromptState(
+        self._registry[msg.id] = HelpfulnessPromptState(
             author=self.author,
-            on_confirm_command=self.on_confirm_command,
             message=msg,
+            experiment_name=self.experiment_name,
+            title=self.title,
+            description=self.description,
             task=asyncio.create_task(self._auto_disable_runner(msg.id)),
             localization=self.localization,
         )
@@ -138,18 +147,18 @@ class ConfirmationPrompt:
         if state.task and not state.task.done():
             state.task.cancel()
 
-        components_to_send = None
+        components_to_send = renderers.create_success_container(
+            "Thanks!",
+            "Your feedback has been submitted.",
+            localization,
+        )
 
         custom_id = inter.data.custom_id
-        if custom_id == "confirmation:yes":
-            components_to_send = await backend.submit_command(
-                inter.channel, state.author, state.on_confirm_command
-            )
-        elif custom_id == "confirmation:no":
-            components_to_send = containers.create_error_container(
-                localization["CONFIRMATION_REJECTED_TITLE"],
-                localization["CONFIRMATION_REJECTED_DESC"],
-                localization,
+        if custom_id == "helpfulness:yes":
+            await experiments.experiment_helped(state.experiment_name, state.author.id)
+        elif custom_id == "helpfulness:no":
+            await experiments.experiment_did_not_help(
+                state.experiment_name, state.author.id
             )
         else:
             return
@@ -157,7 +166,11 @@ class ConfirmationPrompt:
         await inter.followup.edit_message(
             inter.message.id,
             components=cls(
-                state.on_confirm_command, state.author, localization
+                state.author,
+                state.experiment_name,
+                state.title,
+                state.description,
+                localization,
             )._render(response=components_to_send),
         )
 
@@ -177,18 +190,8 @@ class ConfirmationPrompt:
 
                 await asyncio.sleep(min(remaining, 5))
 
-            components_to_send = containers.create_error_container(
-                state.localization["CONFIRMATION_REJECTED_TITLE"],
-                state.localization["CONFIRMATION_REJECTED_DESC"],
-                state.localization,
-            )
-
-            disabled = cls(
-                state.on_confirm_command, state.author, state.localization
-            )._render(response=components_to_send)
-
             try:
-                await state.message.edit(components=disabled)
+                await state.message.delete()
             except Exception:
                 pass
 

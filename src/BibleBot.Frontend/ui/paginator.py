@@ -6,26 +6,27 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-import time
 import asyncio
+import time
 from dataclasses import dataclass, field
+from typing import Dict, List, Optional
+
+from core.i18n import bb_i18n
 from disnake import (
     ButtonStyle,
     DMChannel,
     GroupChannel,
     Message,
+    StageChannel,
     TextChannel,
     Thread,
     VoiceChannel,
-    StageChannel,
 )
-from disnake.interactions import MessageInteraction, ApplicationCommandInteraction
+from disnake.interactions import ApplicationCommandInteraction, MessageInteraction
+from disnake.ui import ActionRow, Button, Container
 from disnake.ui._types import MessageComponents
-from disnake.ui import Container, Button, ActionRow
-from utils.i18n import i18n as i18n_class
-from typing import List, Dict, Optional
 
-i18n = i18n_class()
+i18n = bb_i18n()
 
 
 @dataclass

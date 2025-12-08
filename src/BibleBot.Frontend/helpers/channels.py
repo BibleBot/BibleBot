@@ -6,18 +6,19 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-from disnake.abc import Messageable, GuildChannel
+from typing import NamedTuple, Optional
+
+from disnake import ChannelType, Guild, Thread
+from disnake.abc import Messageable
 from disnake.channel import (
-    TextChannel,
-    VoiceChannel,
     DMChannel,
-    StageChannel,
     GroupChannel,
     PartialMessageable,
+    StageChannel,
+    TextChannel,
+    VoiceChannel,
 )
-from disnake import Thread, ChannelType, Guild
 from disnake.interactions import ApplicationCommandInteraction
-from typing import NamedTuple, Optional
 
 
 # remind me to get away from this accursed language

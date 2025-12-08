@@ -13,11 +13,17 @@
     ],
     "pylint.cwd": "${workspaceFolder}/src/BibleBot.Frontend",
     "python.defaultInterpreterPath": "${workspaceFolder}/src/BibleBot.Frontend/venv/bin/python",
-    "python.analysis.typeCheckingMode": "basic",
-    "python.pyrefly.displayTypeErrors": "force-on",
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports.ruff": "always",
+            "source.fixAll.ruff": "always"
+        },
+        "editor.defaultFormatter": "ms-python.black-formatter",
     },
+    "autoflake-extension.remove-all-unused-imports": true,
+    "autoflake-extension.remove-unused-variables": true,
+    "autoflake-extension.remove-duplicate-keys": true,
     "editor.suggest.insertMode": "insert",
     "dotnet.codeLens.enableReferencesCodeLens": false,
     "dotnet.unitTests.runSettingsPath": "test/BibleBot.Tests.Backend/.runsettings",

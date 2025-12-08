@@ -6,18 +6,24 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+import json
 import os
-from disnake import Localized, OptionChoice
-from disnake.interactions import ApplicationCommandInteraction
-from disnake.ext import commands
-import disnake
-from logger import VyLogger
-from utils import backend, sending, containers, channels, checks
-from utils.confirmation_prompt import ConfirmationPrompt
-from utils.paginator import ComponentPaginator
-from utils.i18n import i18n as i18n_class
+from pathlib import Path
 
-i18n = i18n_class()
+from core import checks
+from core.i18n import bb_i18n
+from disnake import Localized, Message, OptionChoice, Role
+from disnake.ext import commands
+from disnake.interactions import ApplicationCommandInteraction
+from disnake.ui import Container
+from helpers import channels, sending
+from logger import VyLogger
+from services import backend
+from ui import renderers as containers
+from ui.confirmation_prompt import ConfirmationPrompt
+from ui.paginator import ComponentPaginator
+
+i18n = bb_i18n()
 
 logger = VyLogger("default")
 
@@ -25,6 +31,80 @@ logger = VyLogger("default")
 class VerseCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        # Load book names for autocompletion
+        try:
+            cwd = Path(__file__).parent
+            json_path = cwd / "../../BibleBot.Backend/Data/NameFetching/book_names.json"
+            with open(json_path.resolve(), "r", encoding="utf-8") as f:
+                data = json.load(f)
+                # Flatten the list of lists into a single list of names
+                self.book_names = sorted(
+                    list(set(name for names in data.values() for name in names))
+                )
+        except Exception as e:
+            logger.error(f"Failed to load book names for autocomplete: {e}")
+            self.book_names = []
+
+    # async def verse_autocomplete(
+    #     self, inter: ApplicationCommandInteraction, string: str
+    # ) -> Optional[list[str]]:
+    #     user_experiments = await experiments.get_user_frontend_experiments(
+    #         inter.author.id
+    #     )
+    #     if "VerseCmdAutocompleteExperiment" not in user_experiments:
+    #         return []
+    #     elif (
+    #         user_experiments["VerseCmdAutocompleteExperiment"] == "Control"
+    #         and inter.author.id != 186046294286925824
+    #     ):
+    #         return []
+
+    #     try:
+    #         if not hasattr(self, "book_names") or not self.book_names:
+    #             return []
+
+    #         string_lower = string.lower()
+    #         suggestions = []
+
+    #         # Find the last word boundary to use as a potential start for a book name
+    #         # We search backwards for spaces or the start of the string
+    #         potential_starts = [0]
+    #         for i, char in enumerate(string):
+    #             if char == " " or char == "/":
+    #                 potential_starts.append(i + 1)
+
+    #         # Iterate potential starts from right to left
+    #         for start_index in reversed(potential_starts):
+    #             query = string_lower[start_index:].strip()
+    #             if not query:
+    #                 continue
+
+    #             # If the query is just a number (e.g. "1"), don't autocomplete yet
+    #             # This prevents "Genesis 1" from suggesting "Genesis 1 Corinthians"
+    #             if query.isdigit():
+    #                 continue
+
+    #             prefix = string[:start_index]
+
+    #             # Check if this query matches any book name
+    #             matches = []
+    #             for name in self.book_names:
+    #                 if name.lower().startswith(query):
+    #                     matches.append(prefix + name)
+
+    #             if matches:
+    #                 suggestions = matches
+    #                 break  # Found the most specific suffix match
+
+    #         if not string:
+    #             return self.book_names[:25]
+
+    #         return suggestions[:25]
+    #     except Exception as e:
+    #         sentry_sdk.set_context("experiment", "VerseCmdAutocompleteExperiment")
+    #         sentry_sdk.capture_exception(error=e)
+    #         return []
 
     @commands.slash_command(description=Localized(key="CMD_SEARCH_DESC"))
     async def search(
@@ -96,7 +176,7 @@ class VerseCommands(commands.Cog):
             await sending.safe_send_interaction(
                 inter.followup, localization["CMD_VERSE_FAIL"], ephemeral=True
             )
-        elif isinstance(resp, disnake.ui.Container):
+        elif isinstance(resp, Container):
             await sending.safe_send_interaction(inter.followup, components=resp)
         elif isinstance(resp, ComponentPaginator):
             await resp.send(inter)
@@ -105,7 +185,7 @@ class VerseCommands(commands.Cog):
                 await sending.safe_send_interaction(
                     inter.followup, localization["CMD_VERSE_FAIL"], ephemeral=True
                 )
-            elif isinstance(resp[0], disnake.ui.Container):
+            elif isinstance(resp[0], Container):
                 await sending.safe_send_interaction(inter.followup, components=resp)
             elif isinstance(resp[0], str):
                 for item in resp:
@@ -113,9 +193,7 @@ class VerseCommands(commands.Cog):
 
     @commands.message_command(name=Localized(key="CMD_VERSE_MSG_NAME"))
     @commands.install_types(user=True)
-    async def verse_msg(
-        self, inter: ApplicationCommandInteraction, msg: disnake.Message
-    ):
+    async def verse_msg(self, inter: ApplicationCommandInteraction, msg: Message):
         await self.verse(inter, msg.content)
 
     @commands.slash_command(description=Localized(key="CMD_RANDOM_DESC"))
@@ -269,7 +347,7 @@ class VerseCommands(commands.Cog):
     @commands.install_types(guild=True)
     @commands.contexts(guild=True, bot_dm=False, private_channel=False)
     async def setdailyverserole(
-        self, inter: ApplicationCommandInteraction, role: disnake.Role
+        self, inter: ApplicationCommandInteraction, role: Role
     ):  # TODO: add description to param
         await inter.response.defer()
 

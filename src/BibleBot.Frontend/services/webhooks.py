@@ -6,12 +6,10 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-import os
-import aiohttp
-from disnake.abc import User
 from disnake import Guild, Thread
-from disnake.channel import TextChannel, StageChannel, VoiceChannel
-from utils.channels import ChannelContext
+from disnake.abc import User
+from disnake.channel import StageChannel, TextChannel, VoiceChannel
+from helpers.channels import ChannelContext
 
 
 async def remove_webhooks(user: User, guild: Guild):

@@ -81,5 +81,17 @@ namespace BibleBot.Models
         /// </summary>
         [BsonElement("Sphere")]
         public string Sphere { get; set; } = "User";
+
+        /// <summary>
+        /// The users who found the experiment helpful.
+        /// </summary>
+        [BsonElement("Helped")]
+        public HashSet<string> Helped { get; set; } = [];
+
+        /// <summary>
+        /// The users who found the experiment unhelpful.
+        /// </summary>
+        [BsonElement("DidNotHelp")]
+        public HashSet<string> DidNotHelp { get; set; } = [];
     }
 }

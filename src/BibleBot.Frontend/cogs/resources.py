@@ -6,12 +6,14 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+from core import checks
 from disnake import Localized, OptionChoice
-from disnake.interactions import ApplicationCommandInteraction
 from disnake.ext import commands
+from disnake.interactions import ApplicationCommandInteraction
+from helpers import sending
 from logger import VyLogger
-from utils import backend, sending, checks
-from utils.paginator import ComponentPaginator
+from services import backend
+from ui.paginator import ComponentPaginator
 
 logger = VyLogger("default")
 
@@ -23,7 +25,7 @@ class Resources(commands.Cog):
     @commands.slash_command(description=Localized(key="CMD_LISTRESOURCES_DESC"))
     async def listresources(self, inter: ApplicationCommandInteraction):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
-        resp = await backend.submit_command(inter.channel, inter.author, f"+resource")
+        resp = await backend.submit_command(inter.channel, inter.author, "+resource")
         await sending.safe_send_interaction(inter.followup, components=resp)
 
     @commands.slash_command(description=Localized(key="CMD_RESOURCE_DESC"))

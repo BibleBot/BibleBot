@@ -6,11 +6,13 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+import os
+import subprocess
+
+import aiohttp
 import disnake
 from disnake.ext import commands, tasks
-import aiohttp, subprocess
 from logger import VyLogger
-import os
 
 logger = VyLogger("default")
 

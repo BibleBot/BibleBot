@@ -7,18 +7,19 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import os
-import aiohttp
-from disnake import Localized
-from disnake.interactions import ApplicationCommandInteraction
-import disnake
-from disnake.ext import commands
-from logger import VyLogger
-from utils import backend, sending, statics, checks, containers
-from utils.i18n import i18n as i18n_class
-import patreon
-import subprocess
 
-i18n = i18n_class()
+import disnake
+import patreon
+from core import checks, constants
+from core.i18n import bb_i18n
+from disnake import Localized
+from disnake.ext import commands
+from disnake.interactions import ApplicationCommandInteraction
+from helpers import sending
+from logger import VyLogger
+from services import backend
+
+i18n = bb_i18n()
 
 logger = VyLogger("default")
 patreon_api = patreon.API(os.environ.get("PATREON_TOKEN"))
@@ -80,11 +81,11 @@ class Information(commands.Cog):
         container.accent_color = 6709986
 
         container.children.append(
-            disnake.ui.TextDisplay(f"### {localization["SUPPORTERS_TITLE"]}")
+            disnake.ui.TextDisplay(f"### {localization['SUPPORTERS_TITLE']}")
         )
         container.children.append(
             disnake.ui.TextDisplay(
-                f"{localization["SUPPORTERS_LEADIN"] + f":\n\n**" + "**\n**".join(names) + "**"}"
+                f"{localization['SUPPORTERS_LEADIN'] + ':\n\n**' + '**\n**'.join(names) + '**'}"
             )
         )
 
@@ -94,7 +95,7 @@ class Information(commands.Cog):
 
         container.children.append(
             disnake.ui.TextDisplay(
-                f"-# {statics.logo_emoji}  **{localization["EMBED_FOOTER"].replace("<v>", statics.version)}**"
+                f"-# {constants.logo_emoji}  **{localization['EMBED_FOOTER'].replace('<v>', constants.version)}**"
             )
         )
 
