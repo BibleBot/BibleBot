@@ -287,3 +287,4 @@ Cobertura.xml
 heavy_queries.json
 .runsettings
 dump.rdb
+.netcoredbg_hist
