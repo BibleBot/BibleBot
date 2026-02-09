@@ -161,6 +161,10 @@
     <value>Ta wersja nie będzie działać z automatycznymi dziennymi wersetami, ponieważ nie wspiera Starego i Nowego Testamentu naraz. Jeśli to jest dla Ciebie niepokojące, skorzystaj z `/versioninfo`, aby pomóc Ci zidentyfikować wersje, które wspierają oby dwie.</value>
     <comment>Appended message for successful usage of /setserverversion if version does not have both testaments.</comment>
   </data>
+  <data name="SetServerVersionSuccessSeptuagintPsalmsNumberingWarning" xml:space="preserve">
+    <value>This version uses Septuagint-style Psalm numbering, which may cause issues with some automatic daily verses that use the book of Psalms. If this is a concern to you, use `/versioninfo` to help you identify versions that do not use Septuagint-style Psalm numbering.</value>
+    <comment>Appended message for successful usage of /setserverversion if version uses Septuagint-style psalm numbering.</comment>
+  </data>
   <data name="SetServerVersionFailure" xml:space="preserve">
     <value>Nie można ustawić wersji dla serwera, zobacz `/listversions`.</value>
     <comment>Response for failed usage of /setserverversion.</comment>

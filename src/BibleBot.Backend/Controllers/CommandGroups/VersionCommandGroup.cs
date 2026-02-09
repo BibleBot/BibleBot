@@ -190,6 +190,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     message += $"\n\n:warning: {localizer["SetServerVersionSuccessDailyVerseWarning"]}";
                 }
 
+                if (idealVersion.FollowsSeptuagintNumbering)
+                {
+                    message += $"\n\n:warning: {localizer["SetServerVersionSuccessSeptuagintPsalmsNumberingWarning"]}";
+                }
+
                 return new CommandResponse
                 {
                     OK = true,

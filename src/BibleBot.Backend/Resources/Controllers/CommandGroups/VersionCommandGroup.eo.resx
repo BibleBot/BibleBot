@@ -161,6 +161,10 @@
     <value>Ĉi tiu traduko ne funkcios kun aŭtomataj ĉiutagaj versoj, ĉar ĝi subtenas ambaŭ Malnovan kaj Novan Testamenton. Se tio koncernas vin, uzu `/versioninfo` por helpi identigi tradukojn ke subtenas ambaŭ.</value>
     <comment>Appended message for successful usage of /setserverversion if version does not have both testaments.</comment>
   </data>
+  <data name="SetServerVersionSuccessSeptuagintPsalmsNumberingWarning" xml:space="preserve">
+    <value>Ĉi tiu traduko kalkulas Psalmojn per Septuaginto-stilaj numeroj, kiu povas krei problemojn kun aŭtomataj ĉiutagaj versoj kiuj uzas librojn de Psalmoj. Se tio koncernas vin, uzu `/versioninfo` por helpi identigi tradukojn kiuj ne uzas Septuaginto-stilaj numerojn por Psalmoj.</value>
+    <comment>Appended message for successful usage of /setserverversion if version uses Septuagint-style psalm numbering.</comment>
+  </data>
   <data name="SetServerVersionFailure" xml:space="preserve">
     <value>Malsukceso agordi tradukon de la servilo, vidu `/listlanguages`.</value>
     <comment>Response for failed usage of /setserverversion.</comment>
