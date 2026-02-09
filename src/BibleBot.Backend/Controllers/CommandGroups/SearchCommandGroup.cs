@@ -21,7 +21,7 @@ using Version = BibleBot.Models.Version;
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
     public class SearchCommandGroup(UserService userService, GuildService guildService, VersionService versionService,
-                                    MetadataFetchingService metadataFetchingService, List<IContentProvider> bibleProviders,
+                                    MetadataFetchingService metadataFetchingService, ResourceService resourceService, List<IContentProvider> bibleProviders,
                                     IStringLocalizerFactory localizerFactory) : CommandGroup
     {
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(SearchCommandGroup));
@@ -29,7 +29,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
         public override string Name { get => "search"; set => throw new NotImplementedException(); }
         public override Command DefaultCommand { get => Commands.FirstOrDefault(cmd => cmd.Name == "usage"); set => throw new NotImplementedException(); }
-        public override List<Command> Commands { get => [new SearchUsage(userService, guildService, versionService, metadataFetchingService, bibleProviders, _localizer, _sharedLocalizer)]; set => throw new NotImplementedException(); }
+        public override List<Command> Commands
+        {
+            get => [
+                new SearchUsage(userService, guildService, versionService, metadataFetchingService, bibleProviders, _localizer, _sharedLocalizer),
+                new SearchResource(resourceService, _localizer, _sharedLocalizer)
+            ]; set => throw new NotImplementedException();
+        }
 
         private enum SubsetFlag
         {
@@ -129,7 +135,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                             return false;
                         }
 
-                        if ((!categoryMapping!.ContainsKey(BookCategories.OldTestament) && potentialSubset == SubsetFlag.OT_ONLY) ||
+                        if ((!categoryMapping.ContainsKey(BookCategories.OldTestament) && potentialSubset == SubsetFlag.OT_ONLY) ||
                             (!categoryMapping.ContainsKey(BookCategories.NewTestament) && potentialSubset == SubsetFlag.NT_ONLY) ||
                             (!categoryMapping.ContainsKey(BookCategories.Deuterocanon) && potentialSubset == SubsetFlag.DEU_ONLY))
                         {
@@ -160,7 +166,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         };
                     }
 
-                    int totalPages = (int)Math.Ceiling((decimal)(searchResults.Count / maxResultsPerPage));
+                    int totalPages = (int)Math.Ceiling(decimal.Divide(searchResults.Count, maxResultsPerPage));
 
                     if (totalPages > 100)
                     {
@@ -225,6 +231,168 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         Utils.GetInstance().Embedify("/search", localizer["SearchNoResults"], true)
                     ],
                     LogStatement = "/search",
+                    Culture = CultureInfo.CurrentUICulture.Name
+                };
+            }
+        }
+
+        private class SearchResource(ResourceService resourceService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
+        {
+            public override string Name { get => "resource"; set => throw new NotImplementedException(); }
+            private readonly List<IResource> _resources = resourceService.GetAllResources();
+
+            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            {
+                string resourceParam = null;
+
+                for (int i = 0; i < args.Count; i++)
+                {
+                    if (args[i].StartsWith("resource:"))
+                    {
+                        string[] resourceSplit = args[i].Split(":");
+
+                        try
+                        {
+                            resourceParam = resourceSplit[1] != "null" ? resourceSplit[1] : null;
+                        }
+                        catch
+                        {
+                            return new CommandResponse
+                            {
+                                OK = false,
+                                Pages =
+                                [
+                                    Utils.GetInstance().Embedify("/searchresource", localizer["SearchInvalidResource"], true)
+                                ],
+                                LogStatement = "/searchresource",
+                                Culture = CultureInfo.CurrentUICulture.Name
+                            };
+                        }
+
+                        args.Remove(args[i]);
+                    }
+                }
+
+                IResource idealResource = _resources.FirstOrDefault(resource => resource.CommandReference == resourceParam);
+
+                if (idealResource == null)
+                {
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify("/searchresource", localizer["SearchResourceInvalidResource"], true)
+                        ],
+                        LogStatement = "/searchresource",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
+
+                if (idealResource.Style != ResourceStyle.PARAGRAPHED)
+                {
+                    // TODO: list paragraphed resources in error message
+                    return new CommandResponse
+                    {
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify("/searchresource", localizer["SearchResourceNotParagraphed"], true)
+                        ],
+                        LogStatement = "/searchresource",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
+
+                string query = string.Join(" ", args);
+                int contextWindow = 7;
+
+                ParagraphedResource paragraphedResource = idealResource as ParagraphedResource;
+                List<SearchResult> searchResults = [.. paragraphedResource.Paragraphs
+                    .Select((paragraph, index) => new { paragraph.Text, Index = index })
+                    .Where(match => match.Text.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .Select(match =>
+                    {
+                        string[] tokens = match.Text.Split([' ', '\r', '\n', '\t'], StringSplitOptions.RemoveEmptyEntries);
+
+                        int firstWordIndex = Array.FindIndex(tokens, t => t.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+                        int start = Math.Max(0, firstWordIndex - contextWindow);
+                        int end = Math.Min(tokens.Length - start, (contextWindow * 2) + 1);
+
+                        string snippet = string.Join(" ", tokens.Skip(start).Take(end));
+                        string prefacingWords = start > 0 ? "..." : "";
+                        string followingWords = (start + end) < tokens.Length ? "..." : "";
+
+                        return new SearchResult
+                        {
+                            Reference = $"{idealResource.CommandReference.ToUpperInvariant()} {match.Index + 1}",
+                            Text = $"{prefacingWords}{snippet}{followingWords}".Replace(query, $"__**{query}**__")
+                        };
+                    })];
+
+                if (searchResults.Count > 1)
+                {
+                    List<InternalEmbed> pages = [];
+                    const int maxResultsPerPage = 6; // TODO: make this an appsettings param
+                    List<string> referencesUsed = [];
+
+                    int totalPages = (int)Math.Ceiling(decimal.Divide(searchResults.Count, maxResultsPerPage));
+
+                    if (totalPages > 100)
+                    {
+                        totalPages = 100;
+                    }
+
+                    if (totalPages == 0)
+                    {
+                        totalPages = 1;
+                    }
+
+                    string title = $"{localizer["SearchResultsTitle"]} \"{query}\" ({idealResource.Title})";
+                    string pageCounter = sharedLocalizer["PageCounter"];
+
+                    for (int i = 0; i < totalPages; i++)
+                    {
+                        InternalEmbed embed = Utils.GetInstance().Embedify(title, string.Format(pageCounter, i + 1, totalPages), false);
+                        embed.Fields = [];
+
+                        int count = 0;
+
+                        foreach (SearchResult searchResult in searchResults.Where(searchResult => searchResult.Text.Length < 700)
+                                                                           .Where(searchResult => count < maxResultsPerPage && !referencesUsed.Contains(searchResult.Reference)))
+                        {
+                            embed.Fields.Add(new EmbedField
+                            {
+                                Name = searchResult.Reference,
+                                Value = searchResult.Text,
+                                Inline = false
+                            });
+
+                            referencesUsed.Add(searchResult.Reference);
+                            count++;
+                        }
+
+                        pages.Add(embed);
+                    }
+
+                    return new CommandResponse
+                    {
+                        OK = true,
+                        Pages = pages,
+                        LogStatement = $"/searchresource resource:{idealResource.CommandReference} {query}",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    };
+                }
+
+                return new CommandResponse
+                {
+                    OK = false,
+                    Pages =
+                    [
+                        Utils.GetInstance().Embedify("/searchresource", localizer["SearchNoResults"], true)
+                    ],
+                    LogStatement = "/searchresource",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
             }

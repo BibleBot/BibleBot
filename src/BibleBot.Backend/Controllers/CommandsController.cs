@@ -35,7 +35,7 @@ namespace BibleBot.Backend.Controllers
                 new ResourceCommandGroup(resourceService, localizerFactory),
                 new DailyVerseCommandGroup(userService, guildService, versionService, specialVerseProcessingService, localizerFactory),
                 new RandomVerseCommandGroup(userService, guildService, versionService, specialVerseProcessingService, localizerFactory),
-                new SearchCommandGroup(userService, guildService, versionService, metadataFetchingService, bibleProviders, localizerFactory),
+                new SearchCommandGroup(userService, guildService, versionService, metadataFetchingService, resourceService, bibleProviders, localizerFactory),
                 new KDStaffCommandGroup(versionService, languageService, experimentService)
             ];
 

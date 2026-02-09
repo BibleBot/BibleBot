@@ -145,4 +145,12 @@
     <value>Via serĉdemandado produktis neniujn rezultojn.</value>
     <comment>Error message sent when no search results are found (no subset used).</comment>
   </data>
+  <data name="SearchResourceInvalidResource" xml:space="preserve">
+    <value>No valid resource was provided.</value>
+    <comment>Error message sent when using /searchresource with a resource that doesn't exist.</comment>
+  </data>
+  <data name="SearchResourceNotParagraphed" xml:space="preserve">
+    <value>This resource is not divided into paragraphs. It cannot be used with this command.</value>
+    <comment>Error message sent when using /searchresource with a resource that isn't divided into paragraphs.</comment>
+  </data>
 </root>

@@ -87,3 +87,36 @@ class Resources(commands.Cog):
                 await sending.safe_send_interaction(inter.followup, components=resp)
         else:
             await sending.safe_send_interaction(inter.followup, components=resp)
+
+    @commands.slash_command(description=Localized(key="CMD_SEARCHRESOURCE_DESC"))
+    async def searchresource(
+        self,
+        inter: ApplicationCommandInteraction,
+        resource: str = commands.Param(
+            description=Localized(key="RESOURCE_PARAM"),
+            choices=[
+                OptionChoice(
+                    Localized("RESOURCE_CIC_TITLE", key="RESOURCE_CIC_TITLE"), "cic"
+                ),
+                OptionChoice(
+                    Localized("RESOURCE_CCEO_TITLE", key="RESOURCE_CCEO_TITLE"), "cceo"
+                ),
+                OptionChoice(
+                    Localized("RESOURCE_CCC_TITLE", key="RESOURCE_CCC_TITLE"), "ccc"
+                ),
+            ],
+        ),
+        query: str = "",
+    ):
+        await inter.response.defer(ephemeral=checks.inter_is_user(inter))
+        resp = await backend.submit_command(
+            inter.channel,
+            inter.author,
+            f"+search resource resource:{resource} {query}",
+        )
+
+        if isinstance(resp, list):
+            paginator = ComponentPaginator(resp, inter.author.id)
+            await paginator.send(inter)
+        else:
+            await sending.safe_send_interaction(inter.followup, components=resp)

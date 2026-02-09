@@ -55,6 +55,7 @@
     "CMD_LISTRESOURCES_DESC": "Zobacz wszystkie dostępne zasoby.",
     "CMD_RESOURCE_DESC": "Użyj zasobu.",
     "CMD_SEARCH_DESC": "Szukaj wersetów poprzez słowa kluczowe.",
+    "CMD_SEARCHRESOURCE_DESC": "Search for paragraphs in a resource by keyword.",
     "SEARCH_SUBSET_OT": "Tylko Stary Testament",
     "SEARCH_SUBSET_NT": "Tylko Nowy Testament",
     "SEARCH_SUBSET_DEU": "Tylko Apokryfa/Deuterokanon",

@@ -55,6 +55,7 @@
     "CMD_LISTRESOURCES_DESC": "See all available resources.",
     "CMD_RESOURCE_DESC": "Use a resource.",
     "CMD_SEARCH_DESC": "Search for verses by keyword.",
+    "CMD_SEARCHRESOURCE_DESC": "Search for paragraphs in a resource by keyword.",
     "SEARCH_SUBSET_OT": "Old Testament only",
     "SEARCH_SUBSET_NT": "New Testament only",
     "SEARCH_SUBSET_DEU": "Apocrypha/Deuterocanon only",
