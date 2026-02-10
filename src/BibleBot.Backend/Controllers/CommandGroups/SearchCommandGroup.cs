@@ -241,7 +241,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             public override string Name { get => "resource"; set => throw new NotImplementedException(); }
             private readonly List<IResource> _resources = resourceService.GetAllResources();
 
-            public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
+            public override Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
                 string resourceParam = null;
 
@@ -257,7 +257,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         }
                         catch
                         {
-                            return new CommandResponse
+                            return Task.FromResult<IResponse>(new CommandResponse
                             {
                                 OK = false,
                                 Pages =
@@ -266,7 +266,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                                 ],
                                 LogStatement = "/searchresource",
                                 Culture = CultureInfo.CurrentUICulture.Name
-                            };
+                            });
                         }
 
                         args.Remove(args[i]);
@@ -277,7 +277,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealResource == null)
                 {
-                    return new CommandResponse
+                    return Task.FromResult<IResponse>(new CommandResponse
                     {
                         OK = false,
                         Pages =
@@ -286,13 +286,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         ],
                         LogStatement = "/searchresource",
                         Culture = CultureInfo.CurrentUICulture.Name
-                    };
+                    });
                 }
 
                 if (idealResource.Style != ResourceStyle.PARAGRAPHED)
                 {
                     // TODO: list paragraphed resources in error message
-                    return new CommandResponse
+                    return Task.FromResult<IResponse>(new CommandResponse
                     {
                         OK = false,
                         Pages =
@@ -301,7 +301,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         ],
                         LogStatement = "/searchresource",
                         Culture = CultureInfo.CurrentUICulture.Name
-                    };
+                    });
                 }
 
                 string query = string.Join(" ", args);
@@ -376,16 +376,16 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         pages.Add(embed);
                     }
 
-                    return new CommandResponse
+                    return Task.FromResult<IResponse>(new CommandResponse
                     {
                         OK = true,
                         Pages = pages,
                         LogStatement = $"/searchresource resource:{idealResource.CommandReference} {query}",
                         Culture = CultureInfo.CurrentUICulture.Name
-                    };
+                    });
                 }
 
-                return new CommandResponse
+                return Task.FromResult<IResponse>(new CommandResponse
                 {
                     OK = false,
                     Pages =
@@ -394,7 +394,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     ],
                     LogStatement = "/searchresource",
                     Culture = CultureInfo.CurrentUICulture.Name
-                };
+                });
             }
         }
     }
