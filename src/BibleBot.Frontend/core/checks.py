@@ -20,8 +20,10 @@ def inter_is_user(inter: ApplicationCommandInteraction) -> bool:
 
 def author_has_manage_server_permission(inter: ApplicationCommandInteraction) -> bool:
     """Returns whether the author of an interaction has the Manage Server permission in the guild of the interaction."""
-    if isinstance(inter.channel, disnake.abc.GuildChannel) and isinstance(
-        inter.author, disnake.Member
+    if (
+        hasattr(inter.channel, "permissions_for")
+        and callable(inter.channel.permissions_for)
+        and isinstance(inter.author, disnake.Member)
     ):
         return inter.channel.permissions_for(inter.author).manage_guild
     return False
