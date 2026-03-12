@@ -128,8 +128,6 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 catch (Exception ex)
                 {
                     Log.Error($"InformationCommandGroup: Encountered {ex.GetType()} in parsing blog RSS.");
-                    SentrySdk.CaptureException(ex);
-
                     newsSb = new StringBuilder().AppendLine("Unable to parse RSS feed, visit https://biblebot.xyz/blog.");
                 }
 
