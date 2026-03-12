@@ -37,9 +37,11 @@ sentry_sdk.init(
 logger = VyLogger("default")
 
 intents = disnake.Intents.default()
+# noinspection PyDunderSlots, PyUnresolvedReferences
 intents.message_content = True
 
 command_sync_flags = commands.CommandSyncFlags.default()
+# noinspection PyDunderSlots, PyUnresolvedReferences
 command_sync_flags.sync_commands_debug = False
 
 bot = commands.AutoShardedInteractionBot(

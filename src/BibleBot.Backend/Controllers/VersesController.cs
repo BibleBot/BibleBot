@@ -218,7 +218,7 @@ namespace BibleBot.Backend.Controllers
                 });
             }
 
-            // Create provider lookup dictionary once
+            // Create provider lookup dictionary once, this avoids allocating for each reference
             Dictionary<string, IContentProvider> providerLookup = _bibleProviders.ToDictionary(p => p.Name);
 
             foreach (Reference reference in references)
@@ -316,35 +316,36 @@ namespace BibleBot.Backend.Controllers
         {
             MatchCollection verseNumbers = VerseNumberRegex().Matches(text);
 
-            if (verseNumbers.Count > 0)
+            if (verseNumbers.Count <= 0)
             {
-                string target = verseNumbers[verseNumbers.Count - 1].Groups[1].Value;
-
-                if (target.Contains('-'))
-                {
-                    MatchCollection correctedVerseNumbers = VerseNumberWithHyphenRegex().Matches(target);
-                    return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
-                }
-                else if (target.Contains('('))
-                {
-                    MatchCollection correctedVerseNumbers = VerseNumberInParenthesesRegex().Matches(target);
-                    return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
-                }
-                else if (target.Contains(','))
-                {
-                    MatchCollection correctedVerseNumbers = VerseNumberWithCommaRegex().Matches(target);
-                    return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
-                }
-                else if (target.Contains(':'))
-                {
-                    MatchCollection correctedVerseNumbers = VerseNumberWithChapterRegex().Matches(target);
-                    return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
-                }
-
-                return int.Parse(verseNumbers[verseNumbers.Count - 1].Groups[1].Value);
+                return 0;
             }
 
-            return 0;
+            string target = verseNumbers[^1].Groups[1].Value;
+
+            if (target.Contains('-'))
+            {
+                MatchCollection correctedVerseNumbers = VerseNumberWithHyphenRegex().Matches(target);
+                return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+            }
+            else if (target.Contains('('))
+            {
+                MatchCollection correctedVerseNumbers = VerseNumberInParenthesesRegex().Matches(target);
+                return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+            }
+            else if (target.Contains(','))
+            {
+                MatchCollection correctedVerseNumbers = VerseNumberWithCommaRegex().Matches(target);
+                return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+            }
+            else if (target.Contains(':'))
+            {
+                MatchCollection correctedVerseNumbers = VerseNumberWithChapterRegex().Matches(target);
+                return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+            }
+
+            return int.Parse(verseNumbers[^1].Groups[1].Value);
+
         }
     }
 }

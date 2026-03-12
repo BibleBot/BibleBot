@@ -316,7 +316,7 @@ async def submit_verse_raw(
                 ),
                 is_verses=True,
             )
-            return ComponentPaginator(components, int(req_body["user_id"]))
+            return ComponentPaginator(components, int(req_body["UserId"]))
         else:
             for verse in verses:
                 processed_verses.append(

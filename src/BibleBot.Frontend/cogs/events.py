@@ -11,6 +11,8 @@ import re
 
 import aiohttp
 import disnake
+from disnake import Thread, DMChannel, GroupChannel
+
 from core import constants
 from disnake.ext import commands
 from helpers import sending
@@ -68,7 +70,7 @@ class EventListeners(commands.Cog):
     #         # thus we inform backend just in case
     #         if len(biblebot_webhooks) == 0:
     #             # yeet the webhook from the database, if applicable
-    #             reqbody = {
+    #             req_body = {
     #                 "GuildId": str(ch.guild.id),
     #                 "ChannelId": str(ch.id),
     #                 "Body": "delete",
@@ -79,7 +81,7 @@ class EventListeners(commands.Cog):
 
     #             async with aiohttp.ClientSession() as session:
     #                 async with session.post(
-    #                     f"{endpoint}/webhooks/process", json=reqbody
+    #                     f"{endpoint}/webhooks/process", json=req_body
     #                 ) as resp:
     #                     if resp.status == 200:
     #                         logger.info(
@@ -95,14 +97,14 @@ class EventListeners(commands.Cog):
     async def on_guild_remove(self, guild: disnake.Guild):
         if self.bot.is_ready():
             # yeet the webhook from the database, if applicable
-            reqbody = {"GuildId": str(guild.id), "Body": "delete"}
+            req_body = {"GuildId": str(guild.id), "Body": "delete"}
 
             endpoint = os.environ.get("ENDPOINT")
 
             async with aiohttp.ClientSession() as session:
                 async with session.post(
                     f"{endpoint}/webhooks/process",
-                    json=reqbody,
+                    json=req_body,
                     headers={"Authorization": os.environ.get("ENDPOINT_TOKEN", "")},
                 ) as resp:
                     if resp.status == 200:
@@ -117,11 +119,11 @@ class EventListeners(commands.Cog):
             return
 
         if inter.data.custom_id.startswith("pagination:"):
-            await ComponentPaginator._handle_click(inter)
+            await ComponentPaginator.handle_click(inter)
         elif inter.data.custom_id.startswith("confirmation:"):
-            await ConfirmationPrompt._handle_click(inter)
+            await ConfirmationPrompt.handle_click(inter)
         elif inter.data.custom_id.startswith("helpfulness:"):
-            await HelpfulnessPrompt._handle_click(inter)
+            await HelpfulnessPrompt.handle_click(inter)
 
     @commands.Cog.listener()
     async def on_message(self, msg: disnake.Message):
@@ -130,18 +132,18 @@ class EventListeners(commands.Cog):
 
         if msg.webhook_id is not None:
             try:
-                if msg.channel.webhooks is not None:
+                if not isinstance(msg.channel, (Thread, DMChannel, GroupChannel)) and msg.channel.webhooks is not None:
                     webhooks = await msg.channel.webhooks()
                     for webhook in webhooks:
                         if webhook.id == msg.webhook_id:
-                            if webhook.user.id == self.bot.user.id:
+                            if webhook.user is not None and webhook.user.id == self.bot.user.id:
                                 return
             except (AttributeError, disnake.errors.Forbidden):
                 pass
 
         clean_msg = msg.content.replace("://", "")
         verse_regex = re.compile(
-            r" [0-9]{1,3}:[0-9]{1,3}((,[0-9]{1,3})*)?([-–—‒－]{1})?([0-9]{1,3})?((,[0-9]{1,3})*)?(:[0-9]{1,3})?"
+            r" [0-9]{1,3}:[0-9]{1,3}((,[0-9]{1,3})*)?([-–—‒－])?([0-9]{1,3})?((,[0-9]{1,3})*)?(:[0-9]{1,3})?"
         )
 
         if verse_regex.search(clean_msg):

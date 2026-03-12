@@ -106,7 +106,7 @@ class ComponentPaginator:
         return msg
 
     @classmethod
-    async def _handle_click(cls, inter: MessageInteraction):
+    async def handle_click(cls, inter: MessageInteraction):
         localization = i18n.get_i18n_or_default(inter.locale.name)
 
         state = cls._registry.get(inter.message.id)

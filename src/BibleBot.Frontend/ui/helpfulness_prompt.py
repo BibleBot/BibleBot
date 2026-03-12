@@ -133,7 +133,7 @@ class HelpfulnessPrompt:
         return msg
 
     @classmethod
-    async def _handle_click(cls, inter: MessageInteraction):
+    async def handle_click(cls, inter: MessageInteraction):
         state = cls._registry.get(inter.message.id)
         if state is None:
             return
