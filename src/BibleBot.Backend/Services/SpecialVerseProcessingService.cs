@@ -54,7 +54,25 @@ namespace BibleBot.Backend.Services
         public async Task<VerseResult> GetRandomVerse(Version version, bool titlesEnabled, bool verseNumbersEnabled)
         {
             string randomRef = await specialVerseProvider.GetRandomVerse();
-            VerseResult result = await ProcessSpecialVerseReference(randomRef, version, titlesEnabled, verseNumbersEnabled);
+            VerseResult result = null;
+
+            const int maxRetries = 3;
+            for (int retryCount = 0; retryCount < maxRetries; retryCount++)
+            {
+                try
+                {
+                    result =
+                        await ProcessSpecialVerseReference(randomRef, version, titlesEnabled, verseNumbersEnabled);
+                }
+                catch (SectionNotFoundException)
+                {
+                    // TODO(srp): Handle SectionNotFoundException when retries have been exhausted
+                    randomRef = await specialVerseProvider.GetRandomVerse();
+                    continue;
+                }
+
+                break;
+            }
 
             // Fallback to string-based approach if proper parsing fails
             if (result == null)
@@ -79,16 +97,36 @@ namespace BibleBot.Backend.Services
         public async Task<VerseResult> GetTrulyRandomVerse(Version version, bool titlesEnabled, bool verseNumbersEnabled)
         {
             string trulyRandomRef = await specialVerseProvider.GetTrulyRandomVerse();
-            VerseResult result = await ProcessSpecialVerseReference(trulyRandomRef, version, titlesEnabled, verseNumbersEnabled);
+            VerseResult result = null;
+
+            const int maxRetries = 3;
+            for (int retryCount = 0; retryCount < maxRetries; retryCount++)
+            {
+                try
+                {
+                    result =
+                        await ProcessSpecialVerseReference(trulyRandomRef, version, titlesEnabled, verseNumbersEnabled);
+                }
+                catch (SectionNotFoundException)
+                {
+                    // TODO(srp): Handle SectionNotFoundException when retries have been exhausted
+                    trulyRandomRef = await specialVerseProvider.GetTrulyRandomVerse();
+                    continue;
+                }
+
+                break;
+            }
 
             // Fallback to string-based approach if proper parsing fails
-            if (result == null)
+            if (result != null)
             {
-                IContentProvider provider = bibleProviders.FirstOrDefault(p => p.Name == version.Source);
-                if (provider != null)
-                {
-                    result = await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, version);
-                }
+                return result;
+            }
+
+            IContentProvider provider = bibleProviders.FirstOrDefault(p => p.Name == version.Source);
+            if (provider != null)
+            {
+                result = await provider.GetVerse(trulyRandomRef, titlesEnabled, verseNumbersEnabled, version);
             }
 
             return result;
