@@ -50,6 +50,9 @@ namespace BibleBot.Backend.Controllers
         [GeneratedRegex(@"[0-9]{1,3}:([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseNumberWithChapterRegex();
 
+        [GeneratedRegex(@"<\*\*([0-9]{1,3}):([0-9]{1,3})\*\*>", RegexOptions.Compiled)]
+        private static partial Regex ChapterVerseNumberRegex();
+
         /// <summary>
         /// Processes a message to locate verse references, outputting
         /// the corresponding text.
@@ -279,18 +282,8 @@ namespace BibleBot.Backend.Controllers
 
                 logBuilder.Append(verse.Reference.ToString(true)).Append(' ').Append(verse.Reference.Version.Abbreviation);
 
-                int startingChapterEndingVerse = 0;
-                if (verse.Reference.IsExpandoVerse || verse.Reference.StartingChapter == verse.Reference.EndingChapter)
-                {
-                    startingChapterEndingVerse = GetLastVerseNumber(verse.Text);
-                }
-                else if (verse.Reference.StartingChapter != verse.Reference.EndingChapter)
-                {
-                    string firstChapterText = verse.Text.Split($"<**{verse.Reference.EndingChapter}:")[0];
-                    startingChapterEndingVerse = GetLastVerseNumber(firstChapterText);
-                }
-
-                await verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, startingChapterEndingVerse);
+                Dictionary<int, int> chapterEndingVerses = GetChapterEndingVerses(verse.Text, verse.Reference);
+                await verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, chapterEndingVerses);
             }
 
             string logStatement = logBuilder.ToString();
@@ -345,7 +338,90 @@ namespace BibleBot.Backend.Controllers
             }
 
             return int.Parse(verseNumbers[^1].Groups[1].Value);
+        }
 
+        /// <summary>
+        /// Extracts the ending verse number for each chapter in the verse text.
+        /// </summary>
+        private static Dictionary<int, int> GetChapterEndingVerses(string text, Reference reference)
+        {
+            Dictionary<int, int> result = [];
+
+            int startingChapter = reference.StartingChapter;
+            int endingChapter = reference.EndingChapter > 0 ? reference.EndingChapter : startingChapter;
+
+            if (startingChapter == endingChapter)
+            {
+                // Single chapter - just get the last verse
+                int lastVerse = GetLastVerseNumber(text);
+                if (lastVerse > 0)
+                {
+                    result[startingChapter] = lastVerse;
+                }
+                return result;
+            }
+
+            // Multi-chapter reference - parse chapter:verse markers
+            MatchCollection chapterVerseMatches = ChapterVerseNumberRegex().Matches(text);
+
+            if (chapterVerseMatches.Count == 0)
+            {
+                // Fallback: try to split by chapter markers and get last verse in each section
+                for (int chapter = startingChapter; chapter <= endingChapter; chapter++)
+                {
+                    string chapterMarker = $"<**{chapter}:";
+                    string nextChapterMarker = chapter < endingChapter ? $"<**{chapter + 1}:" : null;
+
+                    int startIdx = text.IndexOf(chapterMarker, StringComparison.InvariantCulture);
+                    if (startIdx < 0 && chapter == startingChapter)
+                    {
+                        // First chapter might not have chapter prefix
+                        startIdx = 0;
+                    }
+
+                    if (startIdx >= 0)
+                    {
+                        int endIdx = nextChapterMarker != null ? text.IndexOf(nextChapterMarker, StringComparison.InvariantCulture) : text.Length;
+                        if (endIdx < 0) endIdx = text.Length;
+
+                        string chapterText = text[startIdx..endIdx];
+                        int lastVerse = GetLastVerseNumber(chapterText);
+                        if (lastVerse > 0)
+                        {
+                            result[chapter] = lastVerse;
+                        }
+                    }
+                }
+                return result;
+            }
+
+            // Track the last verse seen for each chapter
+            foreach (Match match in chapterVerseMatches)
+            {
+                if (int.TryParse(match.Groups[1].Value, out int chapter) &&
+                    int.TryParse(match.Groups[2].Value, out int verse))
+                {
+                    result[chapter] = verse; // Will overwrite, keeping the last (highest) verse per chapter
+                }
+            }
+
+            // Also check for verses in the starting chapter that might not have chapter prefix
+            if (!result.ContainsKey(startingChapter))
+            {
+                string firstChapterMarker = $"<**{startingChapter + 1}:";
+                int splitIdx = text.IndexOf(firstChapterMarker, StringComparison.InvariantCulture);
+                if (splitIdx > 0)
+                {
+                    string firstChapterText = text[..splitIdx];
+                    int lastVerse = GetLastVerseNumber(firstChapterText);
+                    if (lastVerse > 0)
+                    {
+                        result[startingChapter] = lastVerse;
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

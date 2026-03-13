@@ -39,7 +39,7 @@ namespace BibleBot.Tests.Backend
         protected VersionService _versionService;
         private LanguageService _languageService;
         private ExperimentService _experimentService;
-        private VerseMetricsService _verseMetricsService;
+        protected VerseMetricsService _verseMetricsService;
 
         private Mock<UserService> _userServiceMock;
         private Mock<GuildService> _guildServiceMock;

@@ -31,7 +31,14 @@ namespace BibleBot.Backend.Services
                 ? throw new VerseRangeInvalidException($"Verse range has an illogical sequence, {last} is lesser than {first}.")
                 : new NpgsqlRange<int>(first, true, last, true);
 
-        public async Task<List<VerseMetric>> Create(string userId, string guildId, Reference reference, int startingChapterEndingVerse = 0)
+        /// <summary>
+        /// Creates verse metrics for a reference. Supports multi-chapter references.
+        /// </summary>
+        /// <param name="userId">The user ID</param>
+        /// <param name="guildId">The guild ID</param>
+        /// <param name="reference">The verse reference</param>
+        /// <param name="chapterEndingVerses">Dictionary mapping chapter numbers to their ending verse in the reference</param>
+        public async Task<List<VerseMetric>> Create(string userId, string guildId, Reference reference, Dictionary<int, int> chapterEndingVerses = null, bool isTest = false)
         {
             SentrySdk.ConfigureScope(scope =>
             {
@@ -39,47 +46,48 @@ namespace BibleBot.Backend.Services
             });
 
             List<VerseMetric> verseMetricsToAdd = [];
+            chapterEndingVerses ??= [];
 
-            VerseMetric verseMetric = new()
-            {
-                UserId = userId,
-                GuildId = guildId,
-                Book = reference.Book.Name,
-                Version = reference.AliasingVersion != null ? reference.AliasingVersion.Abbreviation : reference.Version.Abbreviation,
-                IsOT = reference.IsOT,
-                IsNT = reference.IsNT,
-                IsDEU = reference.IsDEU
-            };
+            string versionAbbreviation = reference.AliasingVersion != null
+                ? reference.AliasingVersion.Abbreviation
+                : reference.Version.Abbreviation;
+            string publisher = reference.Version.Publisher;
 
-            if (reference.Version.Publisher != null)
-            {
-                verseMetric.Publisher = reference.Version.Publisher;
-            }
+            int startingChapter = reference.Book.ProperName == "Psalm 151" ? 151 : reference.StartingChapter;
+            int endingChapter = reference.Book.ProperName == "Psalm 151" ? 151 : reference.EndingChapter;
+            int chapterSpan = endingChapter - startingChapter;
 
-            foreach (Tuple<int, int> appendedVerseTuple in reference.AppendedVerses)
+            // Single chapter reference
+            if (chapterSpan == 0 || endingChapter == 0)
             {
                 try
                 {
-                    AppendedVerse appendedVerse = new()
+                    VerseMetric verseMetric = CreateBaseMetric(startingChapter);
+
+                    // Add appended verses to first metric only
+                    foreach (Tuple<int, int> appendedVerseTuple in reference.AppendedVerses)
                     {
-                        VerseRange = CreateRange(appendedVerseTuple.Item1, appendedVerseTuple.Item2)
-                    };
+                        try
+                        {
+                            AppendedVerse appendedVerse = new()
+                            {
+                                VerseRange = CreateRange(appendedVerseTuple.Item1, appendedVerseTuple.Item2)
+                            };
+                            verseMetric.AppendedVerses.Add(appendedVerse);
+                        }
+                        catch (VerseRangeInvalidException ex)
+                        {
+                            SentrySdk.CaptureException(ex);
+                        }
+                    }
 
-                    verseMetric.AppendedVerses.Add(appendedVerse);
-                }
-                catch (VerseRangeInvalidException ex)
-                {
-                    SentrySdk.CaptureException(ex);
-                }
-            }
+                    int endingVerse = reference.EndingVerse;
+                    if (reference.IsExpandoVerse && chapterEndingVerses.TryGetValue(startingChapter, out int expandoEnding))
+                    {
+                        endingVerse = expandoEnding;
+                    }
 
-            verseMetric.Chapter = reference.Book.ProperName == "Psalm 151" ? 151 : reference.StartingChapter;
-
-            if (startingChapterEndingVerse == 0)
-            {
-                try
-                {
-                    verseMetric.VerseRange = CreateRange(reference.StartingVerse, reference.EndingVerse);
+                    verseMetric.VerseRange = CreateRange(reference.StartingVerse, endingVerse);
                     verseMetricsToAdd.Add(verseMetric);
                 }
                 catch (VerseRangeInvalidException ex)
@@ -87,64 +95,69 @@ namespace BibleBot.Backend.Services
                     SentrySdk.CaptureException(ex);
                 }
             }
-            else if (startingChapterEndingVerse != 0 && (reference.EndingChapter - reference.StartingChapter) == 1)
+            // Multi-chapter reference
+            else
             {
-                try
+                for (int chapter = startingChapter; chapter <= endingChapter; chapter++)
                 {
-                    verseMetric.VerseRange = CreateRange(reference.StartingVerse, startingChapterEndingVerse);
-                    verseMetricsToAdd.Add(verseMetric);
+                    try
+                    {
+                        VerseMetric verseMetric = CreateBaseMetric(chapter);
+                        int startVerse;
+                        int endVerse;
 
-                    verseMetricsToAdd.Add(new()
-                    {
-                        UserId = userId,
-                        GuildId = guildId,
-                        Book = reference.Book.Name,
-                        Chapter = reference.EndingChapter,
-                        VerseRange = CreateRange(1, reference.EndingVerse),
-                        Version = reference.Version.Abbreviation,
-                        IsOT = reference.IsOT,
-                        IsNT = reference.IsNT,
-                        IsDEU = reference.IsDEU
-                    });
-                }
-                catch (VerseRangeInvalidException ex)
-                {
-                    SentrySdk.CaptureException(ex);
-                }
-            }
-            else if (reference.IsExpandoVerse || startingChapterEndingVerse > 0)
-            {
-                try
-                {
-                    verseMetric.VerseRange = CreateRange(reference.StartingVerse, startingChapterEndingVerse);
-                    verseMetricsToAdd.Add(verseMetric);
-                }
-                catch (VerseRangeInvalidException ex)
-                {
-                    if (startingChapterEndingVerse == verseMetric.AppendedVerses[^1].VerseRange.UpperBound)
-                    {
-                        verseMetric.VerseRange = CreateRange(reference.StartingVerse, reference.EndingVerse);
+                        if (chapter == startingChapter)
+                        {
+                            // First chapter: starts at reference.StartingVerse, ends at chapter's last verse
+                            startVerse = reference.StartingVerse;
+                            endVerse = chapterEndingVerses.TryGetValue(chapter, out int firstEnd) ? firstEnd : reference.StartingVerse;
+
+                            // Add appended verses to first metric only
+                            foreach (Tuple<int, int> appendedVerseTuple in reference.AppendedVerses)
+                            {
+                                try
+                                {
+                                    AppendedVerse appendedVerse = new()
+                                    {
+                                        VerseRange = CreateRange(appendedVerseTuple.Item1, appendedVerseTuple.Item2)
+                                    };
+                                    verseMetric.AppendedVerses.Add(appendedVerse);
+                                }
+                                catch (VerseRangeInvalidException ex)
+                                {
+                                    SentrySdk.CaptureException(ex);
+                                }
+                            }
+                        }
+                        else if (chapter == endingChapter)
+                        {
+                            // Last chapter: starts at verse 1, ends at reference.EndingVerse
+                            startVerse = 1;
+                            endVerse = reference.EndingVerse;
+                        }
+                        else
+                        {
+                            // Middle chapters: verse 1 to last verse of chapter
+                            startVerse = 1;
+                            endVerse = chapterEndingVerses.TryGetValue(chapter, out int midEnd) ? midEnd : 1;
+                        }
+
+                        verseMetric.VerseRange = CreateRange(startVerse, endVerse);
                         verseMetricsToAdd.Add(verseMetric);
                     }
-                    else
+                    catch (VerseRangeInvalidException ex)
                     {
                         SentrySdk.CaptureException(ex);
                     }
                 }
             }
 
-            if (verseMetricsToAdd.Count == 0 && (reference.EndingChapter - reference.StartingChapter) > 1)
-            {
-                // Despite not having the functionality for it, we can still gauge the need to implement metrics
-                // for these scenarios. I'm assuming it isn't very commonplace, so I'm making it a TODO.
-                Log.Information("VerseMetricsService: Ignoring metrics on references with more than 2 chapters.");
-                SentrySdk.CaptureException(new Exception("Failed to create metric for a reference with more than 2 chapters."));
-            }
-
             SentrySdk.ConfigureScope(scope =>
             {
                 scope.Contexts["VerseMetricObjects"] = verseMetricsToAdd;
             });
+
+            if (isTest) return verseMetricsToAdd;
 
             try
             {
@@ -161,6 +174,20 @@ namespace BibleBot.Backend.Services
             }
 
             return verseMetricsToAdd;
+
+            // Helper to create a base VerseMetric with common properties
+            VerseMetric CreateBaseMetric(int chapter) => new()
+            {
+                UserId = userId,
+                GuildId = guildId,
+                Book = reference.Book.Name,
+                Chapter = chapter,
+                Version = versionAbbreviation,
+                Publisher = publisher,
+                IsOT = reference.IsOT,
+                IsNT = reference.IsNT,
+                IsDEU = reference.IsDEU
+            };
         }
     }
 }
