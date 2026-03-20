@@ -17,16 +17,8 @@ using Serilog;
 
 namespace BibleBot.Backend.Services
 {
-    public class VerseMetricsService
+    public class VerseMetricsService(MetricsContext ctx)
     {
-        private readonly MetricsContext _ctx;
-
-        public VerseMetricsService(IServiceProvider serviceProvider)
-        {
-            _ctx = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<MetricsContext>();
-            _ctx.Database.EnsureCreated();
-        }
-
         private static NpgsqlRange<int> CreateRange(int first, int last) => last < first
                 ? throw new VerseRangeInvalidException($"Verse range has an illogical sequence, {last} is lesser than {first}.")
                 : new NpgsqlRange<int>(first, true, last, true);
@@ -161,8 +153,8 @@ namespace BibleBot.Backend.Services
 
             try
             {
-                await _ctx.AddRangeAsync(verseMetricsToAdd);
-                await _ctx.SaveChangesAsync();
+                await ctx.AddRangeAsync(verseMetricsToAdd);
+                await ctx.SaveChangesAsync();
             }
             catch (Exception ex)
             {

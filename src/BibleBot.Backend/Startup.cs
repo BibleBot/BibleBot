@@ -60,7 +60,7 @@ namespace BibleBot.Backend
                 )
             );
 
-            services.AddSingleton<VerseMetricsService>();
+            services.AddScoped<VerseMetricsService>();
             services.AddSingleton<PreferenceService>();
             services.AddSingleton<UserService>();
             services.AddSingleton<GuildService>();

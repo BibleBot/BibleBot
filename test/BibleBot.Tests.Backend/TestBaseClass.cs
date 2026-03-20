@@ -80,14 +80,11 @@ namespace BibleBot.Tests.Backend
                 Configuration = "127.0.0.1:6379"
             }));
 
-            ServiceCollection serviceCollection = new();
-            serviceCollection.AddDbContextPool<MetricsContext>(options =>
-                options.UseNpgsql(
-                    System.Environment.GetEnvironmentVariable("POSTGRES_CONN"),
-                    o => o.SetPostgresVersion(18, 0)
-                          .UseNodaTime()
+            DbContextOptions<MetricsContext> metricsCtxOptions = new DbContextOptionsBuilder<MetricsContext>()
+                .UseNpgsql(System.Environment.GetEnvironmentVariable("POSTGRES_CONN"),
+                    o => o.SetPostgresVersion(18, 0).UseNodaTime()
                 )
-            );
+                .Options;
 
             _mongoService = new MongoService(_databaseSettings);
             _preferenceService = new PreferenceService(_cache, _mongoService);
@@ -96,7 +93,7 @@ namespace BibleBot.Tests.Backend
             _versionService = new VersionService(_mongoService);
             _languageService = new LanguageService(_mongoService);
             _experimentService = new ExperimentService(_mongoService);
-            _verseMetricsService = new VerseMetricsService(serviceCollection.BuildServiceProvider());
+            _verseMetricsService = new VerseMetricsService(new MetricsContext(metricsCtxOptions));
             _resourceServiceMock = new Mock<ResourceService>();
             _parsingServiceMock = new Mock<ParsingService>(false);
             _frontendStatsServiceMock = new Mock<FrontendStatsService>(_mongoService);
