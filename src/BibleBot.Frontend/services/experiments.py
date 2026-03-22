@@ -9,7 +9,9 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 import os
 
 import aiohttp
-from services import backend
+from logger import VyLogger
+
+logger = VyLogger("default")
 
 endpoint = os.environ.get("ENDPOINT", "")
 aiohttp_headers = {"Authorization": os.environ.get("ENDPOINT_TOKEN", "")}
@@ -26,7 +28,17 @@ async def get_active_experiments_for_user(user_id: int) -> dict[str, str]:
 
 
 async def get_user_frontend_experiments(user_id: int):
-    return await backend.get_user_frontend_experiments(user_id)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"{endpoint}/experiments/active_user",
+            headers=aiohttp_headers,
+            params={"user_id": user_id, "frontend": True},
+        ) as resp:
+            if resp.status != 200:
+                logger.error("couldn't get user frontend experiments")
+                return None
+            else:
+                return await resp.json()
 
 
 async def get_active_experiments_for_guild(guild_id: int) -> dict[str, str]:

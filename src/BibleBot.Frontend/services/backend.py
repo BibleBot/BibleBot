@@ -371,17 +371,3 @@ async def submit_verse_raw(
             )
 
     return processed_verses
-
-
-async def get_user_frontend_experiments(user_id: int):
-    endpoint = os.environ.get("ENDPOINT", "")
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
-            f"{endpoint}/experiments/active_user?user_id={user_id}&frontend=true",
-            headers=aiohttp_headers,
-        ) as resp:
-            if resp.status != 200:
-                logger.error("couldn't get user frontend experiments")
-                return None
-            else:
-                return await resp.json()
