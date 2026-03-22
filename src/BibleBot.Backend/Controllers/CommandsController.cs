@@ -61,7 +61,7 @@ namespace BibleBot.Backend.Controllers
                 scope.Contexts["request"] = req;
             });
 
-            bool isUserOptOut = (await userService.Get(req.UserId)) is User user && user.IsOptOut;
+            bool isUserOptOut = (await userService.Get(req.UserId)) is { IsOptOut: true };
 
             if (isUserOptOut || req.Body is null || req.Body.Length == 0)
             {
