@@ -242,15 +242,12 @@ namespace BibleBot.Backend.Controllers
                     }
                 }
 
-                VerseResult result = await provider.GetVerse(reference, titlesEnabled, verseNumbersEnabled);
+                VerseResult result = await provider.GetVerse(reference, titlesEnabled);
 
                 if (result?.Text == null)
                 {
                     continue;
                 }
-
-                // Apply display-style-specific trimming/formatting. Use shared Utils method
-                result = Utils.GetInstance().FormatVerseForDisplay(result, displayStyle);
 
                 results.Add(result);
             }
@@ -284,6 +281,14 @@ namespace BibleBot.Backend.Controllers
 
                 Dictionary<int, int> chapterEndingVerses = GetChapterEndingVerses(verse.Text, verse.Reference);
                 await verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, chapterEndingVerses);
+
+                if (!verseNumbersEnabled)
+                {
+                    verse.Text = VerseNumberRegex().Replace(verse.Text, "");
+                    verse.Text = TextPurificationService.PurifyText(verse.Text);
+                }
+
+                Utils.GetInstance().FormatVerseForDisplay(verse, displayStyle);
             }
 
             string logStatement = logBuilder.ToString();

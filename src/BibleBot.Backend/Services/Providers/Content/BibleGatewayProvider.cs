@@ -53,6 +53,8 @@ namespace BibleBot.Backend.Services.Providers.Content
         [GeneratedRegex(@"[a-zA-Z]{2,3}-([0-9]{1,3})-([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseIdRegex();
 
+        public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled) => await GetVerse(reference, titlesEnabled, false);
+
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
             SentrySdk.ConfigureScope(scope => { scope.Contexts["reference"] = reference; });
@@ -250,6 +252,8 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             return new VerseResult { Reference = reference, Title = PurifyText(title, isISV), PsalmTitle = PurifyText(psalmTitle, isISV), Text = PurifyText(text, isISV) };
         }
+
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, Version version) => await GetVerse(reference, titlesEnabled, false, version);
 
         public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = null, Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
