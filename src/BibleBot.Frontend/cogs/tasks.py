@@ -11,6 +11,7 @@ import subprocess
 
 import aiohttp
 import disnake
+import sentry_sdk
 from disnake.ext import commands, tasks
 from logger import VyLogger
 
@@ -80,13 +81,18 @@ class Tasks(commands.Cog):
         endpoint = os.environ.get("ENDPOINT")
         token = os.environ.get("ENDPOINT_TOKEN", "")
 
-        shard_count = bot.shard_count
-        guild_count = len(bot.guilds)
-        user_count = sum([x.member_count for x in bot.guilds])
-        channel_count = sum([len(x.channels) for x in bot.guilds])
-        user_install_count = (
-            await bot.application_info()
-        ).approximate_user_install_count
+        try:
+            shard_count = bot.shard_count
+            guild_count = len(bot.guilds)
+            user_count = sum([x.member_count for x in bot.guilds])
+            channel_count = sum([len(x.channels) for x in bot.guilds])
+            user_install_count = (
+                await bot.application_info()
+            ).approximate_user_install_count
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            logger.error(f"couldn't get stats, caused by {e.__class__.__name__}, bailing out")
+            return
 
         repo_sha = (
             subprocess.check_output(["git", "rev-parse", "HEAD"])
