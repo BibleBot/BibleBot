@@ -35,7 +35,7 @@ namespace BibleBot.Models
         /// <summary>
         /// The content of the resource.
         /// </summary>
-        public List<Paragraph> Paragraphs { get; set; }
+        public List<Paragraph> Paragraphs { get; set; } = [];
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ namespace BibleBot.Models
         /// <summary>
         /// The content of the resource.
         /// </summary>
-        public List<Section> Sections { get; set; }
+        public List<Section> Sections { get; set; } = [];
     }
 
     /// <summary>
@@ -185,12 +185,12 @@ namespace BibleBot.Models
         /// <summary>
         /// The slug(s) of the content.
         /// </summary>
-        public List<string> Slugs { get; set; }
+        public List<string> Slugs { get; set; } = [];
 
         /// <summary>
         /// The content of the section.
         /// </summary>
-        public List<string> Pages { get; set; }
+        public List<string> Pages { get; set; } = [];
     }
 
     /// <summary>

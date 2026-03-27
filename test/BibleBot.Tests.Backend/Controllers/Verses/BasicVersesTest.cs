@@ -106,9 +106,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldFailWhenReferencingDeuterocanonInProtestantBible()
+        public async Task ShouldFailWhenReferencingDeuterocanonInProtestantBible()
         {
-            _ = _versionService.Get("NTFE") ?? _versionService.Create(new MockNTFE());
+            _ = await _versionService.Get("NTFE") ?? await _versionService.Create(new MockNTFE());
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Sirach 1:1 NTFE")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
 
@@ -124,9 +124,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldFailWhenReferencingOldTestamentInNewTestamentOnlyBible()
+        public async Task ShouldFailWhenReferencingOldTestamentInNewTestamentOnlyBible()
         {
-            _ = _versionService.Get("NTFE") ?? _versionService.Create(new MockNTFE());
+            _ = await _versionService.Get("NTFE") ?? await _versionService.Create(new MockNTFE());
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 NTFE")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
 
@@ -142,9 +142,9 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
-        public void ShouldFailWhenReferencingNewTestamentInOldTestamentOnlyBible()
+        public async Task ShouldFailWhenReferencingNewTestamentInOldTestamentOnlyBible()
         {
-            _ = _versionService.Get("ELXX") ?? _versionService.Create(new MockELXX());
+            _ = await _versionService.Get("ELXX") ?? await _versionService.Create(new MockELXX());
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1 ELXX")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;
 
@@ -514,7 +514,8 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             {
                 OK = false,
                 LogStatement = null,
-                Culture = "en-US"
+                Culture = "en-US",
+                Verses = null
             };
 
             result.StatusCode.Should().Be(400);
@@ -531,7 +532,8 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             {
                 OK = false,
                 LogStatement = null,
-                Culture = "en-US"
+                Culture = "en-US",
+                Verses = null
             };
 
             result.StatusCode.Should().Be(400);
@@ -630,7 +632,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
             Version testVersion = await _versionService.Get("TEST") ?? await _versionService.Create(new Version
             {
                 Name = "A Test Version (TEST)",
-                Abbreviation = "TEST",
+                Id = "TEST",
                 Source = "test",
                 SupportsOldTestament = true,
                 SupportsNewTestament = true,

@@ -288,3 +288,4 @@ heavy_queries.json
 .runsettings
 dump.rdb
 .netcoredbg_hist
+scripts/*migration-data/*.json

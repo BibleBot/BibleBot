@@ -338,6 +338,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         public async Task ShouldProcessWithVersionAlias()
         {
             Version testVersion = await _versionService.Get("NRSVA") ?? await _versionService.Create(new MockNRSVA());
+            Version _ = await _versionService.Get("NRSV") ?? await _versionService.Create(new MockNRSV());
 
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Genesis 1:1 NRSV")).GetAwaiter().GetResult().Result as ObjectResult;
             VerseResponse resp = result!.Value as VerseResponse;

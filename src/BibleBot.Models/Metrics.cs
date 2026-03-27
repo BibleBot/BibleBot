@@ -16,49 +16,6 @@ using NpgsqlTypes;
 namespace BibleBot.Models
 {
     /// <summary>
-    /// The DB context for verse metrics.
-    /// </summary>
-    /// <param name="options">Options to be used for the context.</param>
-    public class MetricsContext(DbContextOptions<MetricsContext> options) : DbContext(options)
-    {
-        /// <summary>
-        /// The verse metrics table.
-        /// </summary>
-        public DbSet<VerseMetric> VerseMetrics { get; set; }
-
-        /// <summary>
-        /// The appended verses table, each entry linked to a verse metric.
-        /// </summary>
-        public DbSet<AppendedVerse> AppendedVerses { get; set; }
-
-        /// <summary>
-        /// An override to model creation to assert type adherence and
-        /// aligned behaviors between VerseMetric and AppendedVerse entries.
-        /// </summary>
-        /// <param name="modelBuilder">The model builder being utilized.</param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<VerseMetric>()
-                .HasMany(v => v.AppendedVerses)
-                .WithOne(a => a.VerseMetric)
-                .HasForeignKey(a => a.VerseMetricId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<VerseMetric>()
-                .Property(v => v.VerseRange)
-                .HasColumnType("int4range");
-
-            modelBuilder.Entity<AppendedVerse>()
-                .Property(a => a.VerseRange)
-                .HasColumnType("int4range");
-
-            modelBuilder.Entity<VerseMetric>()
-                .Property(v => v.TimeGenerated)
-                .HasDefaultValueSql("now()");
-        }
-    }
-
-    /// <summary>
     /// A verse metric class, which outlines the verse referenced and the version used.
     /// </summary>
     /// <remarks>
@@ -87,14 +44,14 @@ namespace BibleBot.Models
         /// </summary>
         [Required]
         [Column("user_id")]
-        public string UserId { get; set; }
+        public long UserId { get; set; }
 
         /// <summary>
         /// The ID of the guild that invoked the reference.
         /// </summary>
         [Required]
         [Column("guild_id")]
-        public string GuildId { get; set; }
+        public long GuildId { get; set; }
 
         /// <summary>
         /// The internal name of the book.
@@ -187,7 +144,7 @@ namespace BibleBot.Models
         public int VerseMetricId { get; set; }
 
         /// <summary>
-        /// The verse range 
+        /// The verse range
         /// </summary>
         [Column("verse_range", TypeName = "int4range")]
         public NpgsqlRange<int> VerseRange { get; set; }

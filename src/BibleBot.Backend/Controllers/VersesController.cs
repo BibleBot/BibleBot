@@ -110,7 +110,7 @@ namespace BibleBot.Backend.Controllers
             }
 
             Language language = await languageService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
-            CultureInfo.CurrentUICulture = new CultureInfo(language.Culture);
+            CultureInfo.CurrentUICulture = new CultureInfo(language.Id);
 
             Version idealVersion = await versionService.GetPreferenceOrDefault(idealUser, idealGuild, req.IsBot);
 
@@ -231,7 +231,7 @@ namespace BibleBot.Backend.Controllers
                     throw new ProviderNotFoundException();
                 }
 
-                if (reference.Version.Books != null && !(reference.Version.Abbreviation is "ELXX" or "LXX" && reference.Book.Name == "DAN"))
+                if (reference.Version.Books != null && !(reference.Version.Id is "ELXX" or "LXX" && reference.Book.Name == "DAN"))
                 {
                     List<Chapter> chapters = reference.Book?.Chapters;
 
@@ -277,7 +277,7 @@ namespace BibleBot.Backend.Controllers
                     logBuilder.Append(" / ");
                 }
 
-                logBuilder.Append(verse.Reference.ToString(true)).Append(' ').Append(verse.Reference.Version.Abbreviation);
+                logBuilder.Append(verse.Reference.ToString(true)).Append(' ').Append(verse.Reference.Version.Id);
 
                 Dictionary<int, int> chapterEndingVerses = GetChapterEndingVerses(verse.Text, verse.Reference);
                 await verseMetricsService.Create(req.UserId, req.GuildId, verse.Reference, chapterEndingVerses);

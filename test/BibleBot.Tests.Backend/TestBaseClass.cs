@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
@@ -22,8 +23,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Moq;
+using Npgsql;
 using NUnit.Framework;
 using Serilog.Extensions.Logging;
+
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Tests.Backend
 {
@@ -33,7 +37,11 @@ namespace BibleBot.Tests.Backend
         protected CommandsController _commandsController;
         protected VersesController _versesController;
 
-        private MongoService _mongoService;
+        private Mock<IServiceProvider> _serviceProviderMock;
+        private Mock<IServiceScopeFactory> _serviceScopeFactoryMock;
+        private Mock<IServiceScope> _serviceScopeMock;
+
+        private PostgresService _postgresService;
         private IDistributedCache _cache;
         private PreferenceService _preferenceService;
         protected VersionService _versionService;
@@ -53,8 +61,7 @@ namespace BibleBot.Tests.Backend
         private Mock<APIBibleProvider> _abProviderMock;
         private Mock<NLTAPIProvider> _nltProviderMock;
 
-        private IDatabaseSettings _databaseSettings;
-
+        protected Language _defaultLanguage;
         protected Version _defaultBibleGatewayVersion;
         protected Version _defaultAPIBibleVersion;
 
@@ -63,40 +70,46 @@ namespace BibleBot.Tests.Backend
         [OneTimeSetUp]
         public async Task RunBeforeAnyTests()
         {
-            _databaseSettings = new DatabaseSettings
-            {
-                UserCollectionName = "Users",
-                GuildCollectionName = "Guilds",
-                VersionCollectionName = "Versions",
-                LanguageCollectionName = "Languages",
-                FrontendStatsCollectionName = "FrontendStats",
-                OptOutUserCollectionName = "OptOutUsers",
-                ExperimentCollectionName = "Experiments",
-                DatabaseName = "BibleBotBackend"
-            };
-
             _cache = new RedisCache(Options.Create(new RedisCacheOptions()
             {
                 Configuration = "127.0.0.1:6379"
             }));
 
-            DbContextOptions<MetricsContext> metricsCtxOptions = new DbContextOptionsBuilder<MetricsContext>()
-                .UseNpgsql(System.Environment.GetEnvironmentVariable("POSTGRES_CONN"),
+            string connectionString = System.Environment.GetEnvironmentVariable("POSTGRES_CONN");
+            NpgsqlDataSourceBuilder dataSourceBuilder = new(connectionString);
+            dataSourceBuilder.UseNodaTime();
+            dataSourceBuilder.EnableDynamicJson();
+            NpgsqlDataSource dataSource = dataSourceBuilder.Build();
+
+            DbContextOptions<PgContext> pgOptions = new DbContextOptionsBuilder<PgContext>()
+                .UseNpgsql(dataSource,
                     o => o.SetPostgresVersion(18, 0).UseNodaTime()
                 )
                 .Options;
 
-            _mongoService = new MongoService(_databaseSettings);
-            _preferenceService = new PreferenceService(_cache, _mongoService);
+            PgContext pgContext = new(pgOptions);
+            await pgContext.Database.MigrateAsync();
+            _postgresService = new PostgresService(pgContext);
+
+            _serviceProviderMock = new Mock<IServiceProvider>();
+            _serviceProviderMock.Setup(sp => sp.GetService(typeof(PostgresService))).Returns(_postgresService);
+
+            _serviceScopeMock = new Mock<IServiceScope>();
+            _serviceScopeMock.Setup(s => s.ServiceProvider).Returns(_serviceProviderMock.Object);
+
+            _serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            _serviceScopeFactoryMock.Setup(sf => sf.CreateScope()).Returns(_serviceScopeMock.Object);
+
+            _preferenceService = new PreferenceService(_cache, _postgresService);
             _userServiceMock = new Mock<UserService>(_preferenceService);
             _guildServiceMock = new Mock<GuildService>(_preferenceService);
-            _versionService = new VersionService(_mongoService);
-            _languageService = new LanguageService(_mongoService);
-            _experimentService = new ExperimentService(_mongoService);
-            _verseMetricsService = new VerseMetricsService(new MetricsContext(metricsCtxOptions));
+            _versionService = new VersionService(_serviceScopeFactoryMock.Object);
+            _languageService = new LanguageService(_serviceScopeFactoryMock.Object);
+            _experimentService = new ExperimentService(_serviceScopeFactoryMock.Object);
+            _verseMetricsService = new VerseMetricsService(pgContext);
             _resourceServiceMock = new Mock<ResourceService>();
             _parsingServiceMock = new Mock<ParsingService>(false);
-            _frontendStatsServiceMock = new Mock<FrontendStatsService>(_mongoService);
+            _frontendStatsServiceMock = new Mock<FrontendStatsService>(_postgresService);
             _metadataFetchingServiceMock = new Mock<MetadataFetchingService>(_versionService, false);
 
             _spProviderMock = new Mock<SpecialVerseProvider>();
@@ -104,6 +117,7 @@ namespace BibleBot.Tests.Backend
             _abProviderMock = new Mock<APIBibleProvider>();
             _nltProviderMock = new Mock<NLTAPIProvider>();
 
+            _defaultLanguage = await _languageService.Get("en-US") ?? await _languageService.Create(new MockEnglish());
             _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
             _defaultAPIBibleVersion = await _versionService.Get("KJV") ?? await _versionService.Create(new MockKJV());
 

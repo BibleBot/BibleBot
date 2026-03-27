@@ -132,7 +132,7 @@ namespace BibleBot.Models
         /// <summary>
         /// The chapters used in this reference.
         /// </summary>
-        public List<Chapter> Chapters { get; set; }
+        public List<Chapter> Chapters { get; set; } = [];
 
         /// <summary>
         /// The appended verses in a reference.
@@ -282,7 +282,7 @@ namespace BibleBot.Models
                    StartingVerse == other.StartingVerse &&
                    EndingChapter == other.EndingChapter &&
                    EndingVerse == other.EndingVerse &&
-                   Version.Abbreviation == other.Version.Abbreviation;
+                   Version.Id == other.Version.Id;
 
         /// <summary>
         /// Serves as the default hash function.
@@ -292,7 +292,7 @@ namespace BibleBot.Models
         /// </remarks>
         /// <returns>A hash code for the string representing the reference.</returns>
         public override int GetHashCode() => HashCode.Combine(Book.ProperName, StartingChapter, StartingVerse,
-                           EndingChapter, EndingVerse, Version.Abbreviation);
+                           EndingChapter, EndingVerse, Version.Id);
     }
 }
 

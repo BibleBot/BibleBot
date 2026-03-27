@@ -220,28 +220,28 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 {
                     if (experiment.Value != "Control")
                     {
-                        description.AppendLine($"- **{experiment.Key.Name}** ({experiment.Key.Description})");
+                        description.AppendLine($"- **{experiment.Key.Id}** ({experiment.Key.Description})");
                     }
                     else
                     {
-                        description.AppendLine($"- {experiment.Key.Name} ({experiment.Key.Description})");
+                        description.AppendLine($"- {experiment.Key.Id} ({experiment.Key.Description})");
                     }
                 }
 
                 foreach (KeyValuePair<Experiment, string> experiment in await experimentService.GetExperimentVariantsForGuild(req.GuildId))
                 {
-                    if (description.ToString().Contains(experiment.Key.Name))
+                    if (description.ToString().Contains(experiment.Key.Id))
                     {
                         continue;
                     }
 
                     if (experiment.Value != "Control")
                     {
-                        description.AppendLine($"- **{experiment.Key.Name}** ({experiment.Key.Description})");
+                        description.AppendLine($"- **{experiment.Key.Id}** ({experiment.Key.Description})");
                     }
                     else
                     {
-                        description.AppendLine($"- {experiment.Key.Name} ({experiment.Key.Description})");
+                        description.AppendLine($"- {experiment.Key.Id} ({experiment.Key.Description})");
                     }
                 }
 

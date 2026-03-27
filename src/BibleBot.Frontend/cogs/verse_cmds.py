@@ -156,7 +156,7 @@ class VerseCommands(commands.Cog):
             return None
 
         req_body = {
-            "UserId": str(inter.author.id),
+            "UserId": inter.author.id,
             "GuildId": ctx.guild_id,
             "ChannelId": ctx.channel_id,
             "ThreadId": ctx.thread_id,

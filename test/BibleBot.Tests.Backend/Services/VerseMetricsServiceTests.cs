@@ -26,7 +26,7 @@ namespace BibleBot.Tests.Backend.Services
         {
             _version = new Version
             {
-                Abbreviation = "KJV",
+                Id = "KJV",
                 Source = "bg"
             };
 
@@ -53,7 +53,7 @@ namespace BibleBot.Tests.Backend.Services
                 IsOT = true
             };
 
-            List<VerseMetric> metrics = await _verseMetricsService.Create("user1", "guild1", reference, isTest: true);
+            List<VerseMetric> metrics = await _verseMetricsService.Create(111111, 111111, reference, isTest: true);
 
             metrics.Should().HaveCount(1);
             metrics[0].Chapter.Should().Be(1);
@@ -80,7 +80,7 @@ namespace BibleBot.Tests.Backend.Services
             // We need to provide ending verses for chapters that aren't the last one
             Dictionary<int, int> chapterEndingVerses = new() { { 1, 6 } }; // Psalm 1 has 6 verses
 
-            List<VerseMetric> metrics = await _verseMetricsService.Create("user1", "guild1", reference, chapterEndingVerses, true);
+            List<VerseMetric> metrics = await _verseMetricsService.Create(111111, 111111, reference, chapterEndingVerses, true);
 
             metrics.Should().HaveCount(2);
 
@@ -112,7 +112,7 @@ namespace BibleBot.Tests.Backend.Services
             };
             Dictionary<int, int> chapterEndingVerses = new() { { 1, 6 }, { 2, 12 } };
 
-            List<VerseMetric> metrics = await _verseMetricsService.Create("user1", "guild1", reference, chapterEndingVerses, true);
+            List<VerseMetric> metrics = await _verseMetricsService.Create(111111, 111111, reference, chapterEndingVerses, true);
 
             metrics.Should().HaveCount(3);
 
@@ -150,7 +150,7 @@ namespace BibleBot.Tests.Backend.Services
             };
             Dictionary<int, int> chapterEndingVerses = new() { { 1, 6 } };
 
-            List<VerseMetric> metrics = await _verseMetricsService.Create("user1", "guild1", reference, chapterEndingVerses, true);
+            List<VerseMetric> metrics = await _verseMetricsService.Create(111111, 111111, reference, chapterEndingVerses, true);
 
             metrics.Should().HaveCount(1);
             metrics[0].Chapter.Should().Be(1);

@@ -20,7 +20,7 @@ namespace BibleBot.Models
         /// <summary>
         /// The list of data items returned by the API.
         /// </summary>
-        public List<T> Data { get; set; }
+        public List<T> Data { get; set; } = [];
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ namespace BibleBot.Models
         /// <summary>
         /// List of chapters in this book.
         /// </summary>
-        public List<ABChapter> Chapters { get; set; }
+        public List<ABChapter> Chapters { get; set; } = [];
     }
 
     /// <summary>
@@ -134,7 +134,7 @@ namespace BibleBot.Models
         /// <summary>
         /// List of sections within this chapter.
         /// </summary>
-        public List<ABSection> Sections { get; set; }
+        public List<ABSection> Sections { get; set; } = [];
 
         // Note: There is an optional `int Position` property that can exist depending on the API response,
         // but it can be misleading because some versions have an intro "chapter" at position 0
@@ -175,7 +175,7 @@ namespace BibleBot.Models
         /// <summary>
         /// List of countries where this Bible version is used.
         /// </summary>
-        public List<ABCountry> Countries { get; set; }
+        public List<ABCountry> Countries { get; set; } = [];
 
         /// <summary>
         /// Standard name of the Bible version (e.g., "King James Version").
@@ -215,7 +215,7 @@ namespace BibleBot.Models
         /// <summary>
         /// List of audio Bible versions associated with this text version.
         /// </summary>
-        public List<ABAudioBible> AudioBibles { get; set; }
+        public List<ABAudioBible> AudioBibles { get; set; } = [];
     }
 
     /// <summary>
@@ -334,12 +334,12 @@ namespace BibleBot.Models
         /// <summary>
         /// List of individual verses found in the search.
         /// </summary>
-        public List<ABVerse> Verses { get; set; }
+        public List<ABVerse> Verses { get; set; } = [];
 
         /// <summary>
         /// List of passages found in the search (grouped verses).
         /// </summary>
-        public List<ABPassage> Passages { get; set; }
+        public List<ABPassage> Passages { get; set; } = [];
     }
 
     /// <summary>

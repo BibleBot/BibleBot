@@ -49,7 +49,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         [GeneratedRegex("[a-zA-Z0-9]{4}_([0-9]{1,3})_([0-9]{1,3})")]
         private static partial Regex VerseIdRegex();
 
-        public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled) => await GetVerse(reference, titlesEnabled, false);
+        public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled) => await GetVerse(reference, titlesEnabled, true);
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
@@ -220,13 +220,13 @@ namespace BibleBot.Backend.Services.Providers.Content
             return new VerseResult { Reference = reference, Title = PurifyText(title), PsalmTitle = PurifyText(psalmTitle), Text = PurifyText(text) };
         }
 
-        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, Version version) => await GetVerse(reference, titlesEnabled, false, version);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, Version version) => await GetVerse(reference, titlesEnabled, true, version);
 
         public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = null, Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 
         public async Task<List<SearchResult>> Search(string query, Version version)
         {
-            string url = string.Format(_searchURI, query, version.Abbreviation);
+            string url = string.Format(_searchURI, query, version.Id);
 
             HttpResponseMessage req = await _httpClient.GetAsync(url);
             _cancellationToken.Token.ThrowIfCancellationRequested();

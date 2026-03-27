@@ -38,7 +38,7 @@ async def submit_command(
         return None
 
     req_body = {
-        "UserId": str(user.id),
+        "UserId": user.id,
         "GuildId": ctx.guild_id,
         "ChannelId": ctx.channel_id,
         "ThreadId": ctx.thread_id,
@@ -208,8 +208,12 @@ async def submit_command_raw(endpoint: str, req_body: dict):
             resp_text = await resp.text()
             resp_text = resp_text.replace("\\\\n", "\\n")
 
-            resp_body = json.loads(resp_text)
-            return resp_body
+            try:
+                resp_body = json.loads(resp_text)
+                return resp_body
+            except json.JSONDecodeError:
+                logger.error(f"couldn't parse response from backend: {resp_text}")
+                return {"ok": False, "logStatement": "couldn't parse response"}
 
 
 async def submit_verse(
@@ -224,7 +228,7 @@ async def submit_verse(
         return None
 
     req_body = {
-        "UserId": str(user.id),
+        "UserId": user.id,
         "GuildId": ctx.guild_id,
         "ChannelId": ctx.channel_id,
         "ThreadId": ctx.thread_id,

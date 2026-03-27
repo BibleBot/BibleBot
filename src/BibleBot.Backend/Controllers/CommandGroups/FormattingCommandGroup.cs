@@ -15,7 +15,6 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
-using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
@@ -69,7 +68,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (req.ActiveExperiments != null && req.ActiveExperiments.Count != 0)
                 {
-                    req.ActiveExperiments.TryGetValue(req.ActiveExperiments.First(ex => ex.Key.Name == "FormattingCmdEmojiExperiment").Key, out string variant);
+                    req.ActiveExperiments.TryGetValue(req.ActiveExperiments.First(ex => ex.Key.Id == "FormattingCmdEmojiExperiment").Key, out string variant);
                     if (variant == "NewEmojis")
                     {
                         enabledEmoji = Utils.GetInstance().emoji["check_emoji"];
@@ -143,16 +142,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealUser != null)
                 {
-                    UpdateDefinition<User> update = Builders<User>.Update
-                                 .Set(user => user.VerseNumbersEnabled, args[0] is "enable" and not "disable");
-
+                    UpdateDef<User> update = UpdateDef<User>.Set(user => user.VerseNumbersEnabled, args[0] is "enable" and not "disable");
                     await userService.Update(req.UserId, update);
                 }
                 else
                 {
                     User newUser = new()
                     {
-                        UserId = req.UserId,
+                        Id = req.UserId,
                         VerseNumbersEnabled = args[0] is "enable" and not "disable"
                     };
 
@@ -197,16 +194,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealUser != null)
                 {
-                    UpdateDefinition<User> update = Builders<User>.Update
-                                 .Set(user => user.TitlesEnabled, args[0] is "enable" and not "disable");
-
+                    UpdateDef<User> update = UpdateDef<User>.Set(user => user.TitlesEnabled, args[0] is "enable" and not "disable");
                     await userService.Update(req.UserId, update);
                 }
                 else
                 {
                     User newUser = new()
                     {
-                        UserId = req.UserId,
+                        Id = req.UserId,
                         TitlesEnabled = args[0] is "enable" and not "disable"
                     };
 
@@ -251,16 +246,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealUser != null)
                 {
-                    UpdateDefinition<User> update = Builders<User>.Update
-                                 .Set(user => user.PaginationEnabled, args[0] is "enable" and not "disable");
-
+                    UpdateDef<User> update = UpdateDef<User>.Set(user => user.PaginationEnabled, args[0] is "enable" and not "disable");
                     await userService.Update(req.UserId, update);
                 }
                 else
                 {
                     User newUser = new()
                     {
-                        UserId = req.UserId,
+                        Id = req.UserId,
                         PaginationEnabled = args[0] is "enable" and not "disable"
                     };
 
@@ -305,16 +298,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealUser != null)
                 {
-                    UpdateDefinition<User> update = Builders<User>.Update
-                                 .Set(user => user.DisplayStyle, args[0]);
-
+                    UpdateDef<User> update = UpdateDef<User>.Set(user => user.DisplayStyle, args[0]);
                     await userService.Update(req.UserId, update);
                 }
                 else
                 {
                     User newUser = new()
                     {
-                        UserId = req.UserId,
+                        Id = req.UserId,
                         DisplayStyle = args[0]
                     };
 
@@ -359,16 +350,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealGuild != null)
                 {
-                    UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                 .Set(guild => guild.DisplayStyle, args[0]);
-
+                    UpdateDef<Guild> update = UpdateDef<Guild>.Set(guild => guild.DisplayStyle, args[0]);
                     await guildService.Update(req.GuildId, update);
                 }
                 else
                 {
                     Guild newGuild = new()
                     {
-                        GuildId = req.GuildId,
+                        Id = req.GuildId,
                         DisplayStyle = args[0],
                         IsDM = req.IsDM
                     };
@@ -431,16 +420,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealGuild != null)
                 {
-                    UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                 .Set(guild => guild.IgnoringBrackets, args[0]);
-
+                    UpdateDef<Guild> update = UpdateDef<Guild>.Set(guild => guild.IgnoringBrackets, args[0]);
                     await guildService.Update(req.GuildId, update);
                 }
                 else
                 {
                     Guild newGuild = new()
                     {
-                        GuildId = req.GuildId,
+                        Id = req.GuildId,
                         IgnoringBrackets = args[0],
                         IsDM = req.IsDM
                     };

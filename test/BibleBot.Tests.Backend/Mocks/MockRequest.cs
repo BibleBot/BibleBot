@@ -14,16 +14,16 @@ namespace BibleBot.Tests.Backend.Mocks
     {
         public MockRequest(string body)
         {
-            UserId = "000000";
-            GuildId = "000000";
+            UserId = 000000;
+            GuildId = 000000;
             IsDM = false;
             Body = body;
         }
 
         public MockRequest()
         {
-            UserId = "000000";
-            GuildId = "000000";
+            UserId = 000000;
+            GuildId = 000000;
             IsDM = false;
             Body = "";
         }

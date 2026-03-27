@@ -15,7 +15,6 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
-using MongoDB.Driver;
 using NodaTime;
 using Version = BibleBot.Models.Version;
 
@@ -167,14 +166,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                         if (idealGuild != null)
                         {
-                            UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                                                            .Set(guild => guild.DailyVerseTime, args[0])
-                                                                            .Set(guild => guild.DailyVerseTimeZone, args[1])
-                                                                            .Set(guild => guild.DailyVerseChannelId, req.IsThread ? req.ThreadId : req.ChannelId)
-                                                                            .Set(guild => guild.DailyVerseIsThread, req.IsThread)
-                                                                            .Set(guild => guild.DailyVerseLastSentDate, null);
+                            List<UpdateDef<Guild>> update =
+                            [
+                                UpdateDef<Guild>.Set(guild => guild.DailyVerseTime, args[0]),
+                                UpdateDef<Guild>.Set(guild => guild.DailyVerseTimeZone, args[1]),
+                                UpdateDef<Guild>.Set(guild => guild.DailyVerseChannelId,
+                                    req.IsThread ? req.ThreadId : req.ChannelId),
+                                UpdateDef<Guild>.Set(guild => guild.DailyVerseIsThread, req.IsThread),
+                                UpdateDef<Guild>.Set(guild => guild.DailyVerseLastSentDate, null)
+                            ];
 
-                            await guildService.Update(req.GuildId, update);
+                            await guildService.Update(req.GuildId, update.Combine());
                         }
                         else
                         {
@@ -184,7 +186,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                             // variables being set in the preference by WebhooksController.
                             Guild newGuild = new()
                             {
-                                GuildId = req.GuildId,
+                                Id = req.GuildId,
                                 DailyVerseTime = args[0],
                                 DailyVerseTimeZone = args[1],
                                 DailyVerseChannelId = req.IsThread ? req.ThreadId : req.ChannelId,
@@ -274,8 +276,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     };
                 }
 
-                UpdateDefinition<Guild> update = Builders<Guild>.Update.Set(guild => guild.DailyVerseRoleId, args[0]);
-                await guildService.Update(req.GuildId, update);
+                await guildService.Update(req.GuildId, UpdateDef<Guild>.Set(guild => guild.DailyVerseRoleId, long.Parse(args[0])));
 
                 return new CommandResponse
                 {
@@ -327,8 +328,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     };
                 }
 
-                UpdateDefinition<Guild> update = Builders<Guild>.Update.Set(guild => guild.DailyVerseRoleId, null);
-                await guildService.Update(req.GuildId, update);
+                await guildService.Update(req.GuildId, UpdateDef<Guild>.Set(guild => guild.DailyVerseRoleId, 0));
 
                 return new CommandResponse
                 {
@@ -352,7 +352,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             {
                 Guild idealGuild = await guildService.Get(req.GuildId);
 
-                if (idealGuild?.DailyVerseChannelId == null || idealGuild.DailyVerseTime == null ||
+                if (idealGuild?.DailyVerseChannelId == 0 || idealGuild?.DailyVerseTime == null ||
                     idealGuild.DailyVerseTimeZone == null || idealGuild.DailyVerseWebhook == null)
                 {
                     return new CommandResponse
@@ -409,8 +409,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 string timeFormatted = currentTime.ToString("h:mm tt", new CultureInfo("en-US"));
 
-                string mentionClause = idealGuild.DailyVerseRoleId != null
-                    ? idealGuild.DailyVerseRoleId == idealGuild.GuildId
+                string mentionClause = idealGuild.DailyVerseRoleId != 0
+                    ? idealGuild.DailyVerseRoleId == idealGuild.Id
                         ? string.Format($" {localizer["DailyVerseStatusRoleAddenda"]} ", $"@everyone")
                         : string.Format($" {localizer["DailyVerseStatusRoleAddenda"]} ", $"<@&{idealGuild.DailyVerseRoleId}>")
                     : "<rm>";
@@ -458,16 +458,18 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     };
                 }
 
-                UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                                                .Set(guild => guild.DailyVerseTime, null)
-                                                                .Set(guild => guild.DailyVerseTimeZone, null)
-                                                                .Set(guild => guild.DailyVerseWebhook, null)
-                                                                .Set(guild => guild.DailyVerseChannelId, null)
-                                                                .Set(guild => guild.DailyVerseIsThread, false)
-                                                                .Set(guild => guild.DailyVerseLastSentDate, null)
-                                                                .Set(guild => guild.DailyVerseRoleId, null);
+                List<UpdateDef<Guild>> updates =
+                [
+                    UpdateDef<Guild>.Set(guildToUpdate => guildToUpdate.DailyVerseTime, null),
+                    UpdateDef<Guild>.Set(guildToUpdate => guildToUpdate.DailyVerseTimeZone, null),
+                    UpdateDef<Guild>.Set(guildToUpdate => guildToUpdate.DailyVerseChannelId, 0),
+                    UpdateDef<Guild>.Set(guildToUpdate => guildToUpdate.DailyVerseRoleId, 0),
+                    UpdateDef<Guild>.Set(guildToUpdate => guildToUpdate.DailyVerseWebhook, null),
+                    UpdateDef<Guild>.Set(guildToUpdate => guildToUpdate.DailyVerseLastSentDate, null),
+                    UpdateDef<Guild>.Set(guildToUpdate => guildToUpdate.DailyVerseIsThread, false),
+                ];
 
-                await guildService.Update(req.GuildId, update);
+                await guildService.Update(req.GuildId, updates.Combine());
 
                 return new CommandResponse
                 {

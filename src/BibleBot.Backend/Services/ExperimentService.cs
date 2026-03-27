@@ -14,68 +14,126 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using BibleBot.Models;
-using MongoDB.Driver;
+
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
 
 namespace BibleBot.Backend.Services
 {
-    public class ExperimentService(MongoService mongoService)
+    public class ExperimentService(IServiceScopeFactory scopeFactory)
     {
         private List<Experiment> _experiments = [];
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public async Task<List<Experiment>> GetExperiments(bool forcePull = false)
         {
-            if (forcePull || _experiments.Count == 0)
+            if (!forcePull && _experiments.Count != 0)
             {
-                _experiments = await mongoService.Get<Experiment>();
+                return [.. _experiments];
             }
 
-            return _experiments;
+            await _semaphore.WaitAsync();
+            try
+            {
+                if (!forcePull && _experiments.Count != 0)
+                {
+                    return [.. _experiments];
+                }
+
+                using IServiceScope scope = scopeFactory.CreateScope();
+                PostgresService postgresService = scope.ServiceProvider.GetRequiredService<PostgresService>();
+                _experiments = await postgresService.Get<Experiment>();
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+
+            return [.. _experiments];
         }
 
         public async Task<List<Experiment>> Get() => await GetExperiments();
-        public async Task<Experiment> Get(string name) => (await GetExperiments()).FirstOrDefault(experiment => string.Equals(experiment.Name, name, StringComparison.OrdinalIgnoreCase));
+        public async Task<Experiment> Get(string id) => (await GetExperiments()).FirstOrDefault(experiment => string.Equals(experiment.Id, id, StringComparison.OrdinalIgnoreCase));
 
         public async Task<Experiment> Create(Experiment experiment)
         {
-            Experiment createdExperiment = await mongoService.Create(experiment);
+            using IServiceScope scope = scopeFactory.CreateScope();
+            PostgresService postgresService = scope.ServiceProvider.GetRequiredService<PostgresService>();
+            Experiment createdExperiment = await postgresService.Create(experiment);
             await GetExperiments(true);
 
             return createdExperiment;
         }
 
-        public async Task Update(string name, UpdateDefinition<Experiment> updateDefinition)
+        public async Task Update(string name, UpdateDef<Experiment> updateDef)
         {
+            using IServiceScope scope = scopeFactory.CreateScope();
+            PostgresService postgresService = scope.ServiceProvider.GetRequiredService<PostgresService>();
+
             Experiment beforeExperiment = await Get(name);
-            await mongoService.Update(name, updateDefinition);
+            await postgresService.Update(name, updateDef);
 
-            Experiment afterExperiment = await mongoService.Get<Experiment>(name);
+            Experiment afterExperiment = await postgresService.Get<Experiment>(name);
 
-            _experiments.Remove(beforeExperiment);
-            _experiments.Add(afterExperiment);
+            await _semaphore.WaitAsync();
+            try
+            {
+                _experiments.Remove(beforeExperiment);
+                _experiments.Add(afterExperiment);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
-        public async Task Helped(string experimentName, string userId) => await mongoService.Update(experimentName, Builders<Experiment>.Update.AddToSet("Helped", userId));
-        public async Task DidNotHelp(string experimentName, string userId) => await mongoService.Update(experimentName, Builders<Experiment>.Update.AddToSet("DidNotHelp", userId));
+        public async Task Helps(string experimentId, long userId, bool helped)
+        {
+            using IServiceScope scope = scopeFactory.CreateScope();
+            PostgresService postgresService = scope.ServiceProvider.GetRequiredService<PostgresService>();
+
+            Experiment exp = (await GetExperiments()).FirstOrDefault(experiment =>
+                string.Equals(experiment.Id, experimentId, StringComparison.OrdinalIgnoreCase));
+
+            if (exp != null)
+            {
+                if (helped)
+                {
+                    exp.Feedback.Helped.Add(userId);
+                }
+                else
+                {
+                    exp.Feedback.DidNotHelp.Add(userId);
+                }
+
+                await this.Update(experimentId, UpdateDef<Experiment>.Set(experiment => experiment.Feedback, exp.Feedback));
+            }
+        }
+
+        public async Task Helped(string experimentId, long userId) => await Helps(experimentId, userId, true);
+
+        public async Task DidNotHelp(string experimentId, long userId) => await Helps(experimentId, userId, false);
 
         public async Task Remove(Experiment experiment)
         {
-            await mongoService.Remove(experiment);
+            using IServiceScope scope = scopeFactory.CreateScope();
+            PostgresService postgresService = scope.ServiceProvider.GetRequiredService<PostgresService>();
+
+            await postgresService.Remove(experiment);
             await GetExperiments(true);
         }
 
-        public async Task<Dictionary<Experiment, string>> GetFrontendExperimentVariantsForUser(string userId) => await GetExperimentVariantsForId(userId, isUser: true, frontendOnly: true);
+        public async Task<Dictionary<Experiment, string>> GetFrontendExperimentVariantsForUser(long userId) => await GetExperimentVariantsForId(userId, isUser: true, frontendOnly: true);
 
-        public async Task<Dictionary<Experiment, string>> GetFrontendExperimentVariantsForGuild(string guildId) => await GetExperimentVariantsForId(guildId, isUser: false, frontendOnly: true);
+        public async Task<Dictionary<Experiment, string>> GetFrontendExperimentVariantsForGuild(long guildId) => await GetExperimentVariantsForId(guildId, isUser: false, frontendOnly: true);
 
-        public async Task<Dictionary<Experiment, string>> GetAutoServExperimentVariantsForGuild(string guildId) => await GetExperimentVariantsForId(guildId, isUser: false, autoServOnly: true);
+        public async Task<Dictionary<Experiment, string>> GetAutoServExperimentVariantsForGuild(long guildId) => await GetExperimentVariantsForId(guildId, isUser: false, autoServOnly: true);
 
-        public async Task<Dictionary<Experiment, string>> GetExperimentVariantsForUser(string userId) => await GetExperimentVariantsForId(userId, isUser: true);
+        public async Task<Dictionary<Experiment, string>> GetExperimentVariantsForUser(long userId) => await GetExperimentVariantsForId(userId, isUser: true);
 
-        public async Task<Dictionary<Experiment, string>> GetExperimentVariantsForGuild(string guildId) => await GetExperimentVariantsForId(guildId, isUser: false);
+        public async Task<Dictionary<Experiment, string>> GetExperimentVariantsForGuild(long guildId) => await GetExperimentVariantsForId(guildId, isUser: false);
 
-        public async Task<Dictionary<Experiment, string>> GetExperimentVariantsForId(string id, bool isUser, bool frontendOnly = false, bool backendOnly = false, bool autoServOnly = false) => !ulong.TryParse(id, out ulong idInt) ? [] : await GetExperimentVariantsForId(idInt, isUser, frontendOnly, backendOnly, autoServOnly);
-
-        public async Task<Dictionary<Experiment, string>> GetExperimentVariantsForId(ulong id, bool isUser, bool frontendOnly = false, bool backendOnly = false, bool autoServOnly = false)
+        private async Task<Dictionary<Experiment, string>> GetExperimentVariantsForId(long id, bool isUser, bool frontendOnly = false, bool backendOnly = false, bool autoServOnly = false)
         {
             Dictionary<Experiment, string> variants = [];
             List<Experiment> experiments = await GetExperiments();
@@ -102,7 +160,7 @@ namespace BibleBot.Backend.Services
                     continue;
                 }
 
-                byte[] hashInput = Encoding.UTF8.GetBytes($"{id}:{experiment.Name}");
+                byte[] hashInput = Encoding.UTF8.GetBytes($"{id}:{experiment.Id}");
                 byte[] hashBytes = MD5.HashData(hashInput);
 
                 // Python's int(hexdigest, 16) treats the hash as a big-endian number.

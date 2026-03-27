@@ -89,9 +89,9 @@ namespace BibleBot.Backend.Controllers
 
             CommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand, _commandGroups.First(grp => grp.Name == "info"));
 
-            string[] staffIds = [
-                "186046294286925824", "270590533880119297", "304602975446499329", // directors
-                "394261640335327234", "1029302033993433130", "842427954263752724" // support specialists
+            long[] staffIds = [
+                186046294286925824, 270590533880119297, 304602975446499329, // directors
+                394261640335327234, 1029302033993433130, 842427954263752724 // support specialists
             ];
 
             if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))

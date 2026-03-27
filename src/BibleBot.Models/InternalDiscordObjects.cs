@@ -100,7 +100,7 @@ namespace BibleBot.Models
         /// The fields of the embed. There can be a maximum of 25 fields in a single embed.
         /// </summary>
         [JsonPropertyName("fields")]
-        public List<EmbedField> Fields { get; set; }
+        public List<EmbedField> Fields { get; set; } = [];
     }
 
     /// <summary>

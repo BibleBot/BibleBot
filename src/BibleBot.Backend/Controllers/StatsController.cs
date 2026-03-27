@@ -6,13 +6,13 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -34,20 +34,22 @@ namespace BibleBot.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CommandResponse>> ProcessMessage([FromBody] Request req)
         {
-            FrontendStats stats = (await frontendStatsService.Get()).First();
+            FrontendStats stats = (await frontendStatsService.Get()).FirstOrDefault();
             string[] fields = req.Body.Split("||");
 
             if (stats != null)
             {
-                UpdateDefinition<FrontendStats> update = Builders<FrontendStats>.Update
-                             .Set(statsToUpdate => statsToUpdate.ShardCount, int.Parse(fields[0]))
-                             .Set(statsToUpdate => statsToUpdate.ServerCount, int.Parse(fields[1]))
-                             .Set(statsToUpdate => statsToUpdate.UserCount, int.Parse(fields[2]))
-                             .Set(statsToUpdate => statsToUpdate.ChannelCount, int.Parse(fields[3]))
-                             .Set(statsToUpdate => statsToUpdate.UserInstallCount, int.Parse(fields[4]))
-                             .Set(statsToUpdate => statsToUpdate.FrontendRepoCommitHash, fields[5]);
+                List<UpdateDef<FrontendStats>> update =
+                [
+                    UpdateDef<FrontendStats>.Set(statsToUpdate => statsToUpdate.ShardCount, int.Parse(fields[0])),
+                    UpdateDef<FrontendStats>.Set(statsToUpdate => statsToUpdate.ServerCount, int.Parse(fields[1])),
+                    UpdateDef<FrontendStats>.Set(statsToUpdate => statsToUpdate.UserCount, int.Parse(fields[2])),
+                    UpdateDef<FrontendStats>.Set(statsToUpdate => statsToUpdate.ChannelCount, int.Parse(fields[3])),
+                    UpdateDef<FrontendStats>.Set(statsToUpdate => statsToUpdate.UserInstallCount, int.Parse(fields[4])),
+                    UpdateDef<FrontendStats>.Set(statsToUpdate => statsToUpdate.FrontendRepoCommitHash, fields[5])
+                ];
 
-                await frontendStatsService.Update(stats, update);
+                await frontendStatsService.Update(stats, update.Combine());
             }
             else
             {

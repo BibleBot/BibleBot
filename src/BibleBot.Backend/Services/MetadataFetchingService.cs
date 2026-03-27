@@ -15,7 +15,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services.Providers.Metadata;
 using BibleBot.Models;
-using MongoDB.Driver;
 using Serilog;
 // using MDABVersionData = System.Collections.Generic.List<System.Tuple<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse, System.Collections.Generic.List<BibleBot.Models.ABVersesResponse>>>;
 using MDABVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse>;
@@ -111,8 +110,8 @@ namespace BibleBot.Backend.Services
             Log.Information("MetadataFetchingService: Getting versions from DB...");
             List<Version> versions = await _versionService.Get();
 
-            List<Version> abVersions = [.. versions.Where(version => version.Source == "ab" && version.Books == null && version.AliasOf == null)];
-            List<Version> bgVersions = [.. versions.Where(version => version.Source == "bg" && version.Books == null && version.AliasOf == null)];
+            List<Version> abVersions = [.. versions.Where(version => version.Source == "ab" && version.Books.Count == 0 && version.AliasOfId == null)];
+            List<Version> bgVersions = [.. versions.Where(version => version.Source == "bg" && version.Books.Count == 0 && version.AliasOfId == null)];
 
             if (abVersions!.Count != 0)
             {
@@ -178,14 +177,14 @@ namespace BibleBot.Backend.Services
         {
             foreach ((Version version, T resp) in versionData)
             {
-                UpdateDefinition<Version> update = typeof(T).Name switch
+                UpdateDef<Version> update = typeof(T).Name switch
                 {
                     nameof(HttpResponseMessage) => await _bibleGatewayProvider.GenerateMetadataUpdate(version, resp as HttpResponseMessage),
                     nameof(ABBooksResponse) => _apiBibleProvider.GenerateMetadataUpdate(version, resp as ABBooksResponse),
                     _ => throw new NotSupportedException("Attempted to save metadata with an unknown response type."),
                 };
 
-                await _versionService.Update(version.Abbreviation, update);
+                await _versionService.Update(version.Id, update);
             }
         }
 
@@ -221,7 +220,7 @@ namespace BibleBot.Backend.Services
                     continue;
                 }
 
-                if (version.Abbreviation is "ELXX" or "LXX")
+                if (version.Id is "ELXX" or "LXX")
                 {
                     if (isOT)
                     {
@@ -245,7 +244,7 @@ namespace BibleBot.Backend.Services
                     }
                 }
 
-                if (book.Name == "ps")
+                if (string.Equals(book.Name, "PSA", StringComparison.Ordinal))
                 {
                     if (book.Chapters.Any(chapter => chapter.Number == 151))
                     {
@@ -268,7 +267,7 @@ namespace BibleBot.Backend.Services
 
                 defaultNames.TryAdd(book.Name, book.PreferredName);
 
-                if (book.Name == "EZK" && version.Abbreviation == "ELXX")
+                if (book.Name == "EZK" && version.Id == "ELXX")
                 {
                     defaultNames.TryAdd("DAN", "Daniel");
                 }

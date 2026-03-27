@@ -14,16 +14,21 @@ using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BibleBot.Backend.Middleware
 {
-    public class PreferenceRequestCultureProvider(UserService userService, GuildService guildService, LanguageService languageService) : RequestCultureProvider
+    public class PreferenceRequestCultureProvider : RequestCultureProvider
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions = new() { PropertyNameCaseInsensitive = true };
 
         public override async Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
         {
             ArgumentNullException.ThrowIfNull(httpContext);
+
+            UserService userService = httpContext.RequestServices.GetRequiredService<UserService>();
+            GuildService guildService = httpContext.RequestServices.GetRequiredService<GuildService>();
+            LanguageService languageService = httpContext.RequestServices.GetRequiredService<LanguageService>();
 
             HttpRequest request = httpContext.Request;
             if (request.Method != HttpMethods.Post || !(request.ContentLength > 0))

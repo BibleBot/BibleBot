@@ -13,7 +13,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BibleBot.Models;
-using MongoDB.Driver;
 using RestSharp;
 using Sentry;
 using Serilog;
@@ -74,7 +73,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
             return versionData;
         }
 
-        public UpdateDefinition<Version> GenerateMetadataUpdate(Version version, ABBooksResponse resp)
+        public UpdateDef<Version> GenerateMetadataUpdate(Version version, ABBooksResponse resp)
         {
             List<Book> versionBookData = [];
 
@@ -126,7 +125,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
                 }
                 else
                 {
-                    if ((version.Abbreviation is "ELXX" or "LXX") && internalId == "DAG")
+                    if ((version.Id is "ELXX" or "LXX") && internalId == "DAG")
                     {
                         // TODO: remove these branches, there's no scenario where this will happen.
                         properName = _bookMap["deu"]["DAN"];
@@ -185,7 +184,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
                 });
             }
 
-            return Builders<Version>.Update.Set(versionToUpdate => versionToUpdate.Books, [.. versionBookData]);
+            return UpdateDef<Version>.Set(versionToUpdate => versionToUpdate.Books, [.. versionBookData]);
         }
 
         private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");

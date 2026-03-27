@@ -60,7 +60,7 @@ namespace BibleBot.Models
             VerseResult other = obj as VerseResult;
 
             return Reference.ToString(true) == other.Reference.ToString(true) &&
-                   Reference.Version.Abbreviation == other.Reference.Version.Abbreviation;
+                   Reference.Version.Id == other.Reference.Version.Id;
         }
 
         /// <summary>
@@ -70,6 +70,6 @@ namespace BibleBot.Models
         /// This is used for deduplication purposes. Hash code is based on reference and version only.
         /// </remarks>
         /// <returns>A hash code for the verse reference and version.</returns>
-        public override int GetHashCode() => HashCode.Combine(Reference.ToString(true), Reference.Version.Abbreviation);
+        public override int GetHashCode() => HashCode.Combine(Reference.ToString(true), Reference.Version.Id);
     }
 }

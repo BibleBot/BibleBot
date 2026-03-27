@@ -14,14 +14,9 @@ namespace BibleBot.Models
     public interface IPreference
     {
         /// <summary>
-        /// The internal database ID.
+        /// The Discord Snowflake identifier of the preference.
         /// </summary>
-        string Id { get; set; }
-
-        /// <summary>
-        /// The Snowflake ID.
-        /// </summary>
-        string SnowflakeId { get; }
+        long Id { get; set; }
 
         /// <summary>
         /// The default version of the preference.

@@ -9,61 +9,53 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BibleBot.Models;
 using Microsoft.Extensions.Caching.Distributed;
-using MongoDB.Driver;
 using Sentry;
 
 namespace BibleBot.Backend.Services
 {
-    public class PreferenceService(IDistributedCache cache, MongoService mongoService)
+    public class PreferenceService(IDistributedCache cache, PostgresService postgresService)
     {
-        public async Task<List<T>> Get<T>() where T : IPreference => await mongoService.Get<T>();
+        public async Task<List<T>> Get<T>() where T : class => await postgresService.Get<T>();
 
-        public async Task<T> Get<T>(string query) where T : IPreference
+        public async Task<T> Get<T>(long query) where T : class
         {
-            Type typeOfT = typeof(T);
-            T result;
+            string typeName = typeof(T).Name.ToLower();
+            string cacheKey = $"{typeName}:{query}";
 
-            string set = typeOfT.Name switch
-            {
-                nameof(User) => "user",
-                nameof(Guild) => "guild",
-                _ => throw new NotImplementedException("No established path for provided type")
-            };
+            string cachedStr = await cache.GetStringAsync(cacheKey);
 
-            try
+            if (!string.IsNullOrEmpty(cachedStr))
             {
-                string cachedStr = await cache.GetStringAsync($"{set}:{query}");
-                result = JsonSerializer.Deserialize<T>(cachedStr!);
-            }
-            catch (ArgumentNullException)
-            {
-                result = await mongoService.Get<T>(query);
+                if (cachedStr == "null") return null;
+                T cachedResult = JsonSerializer.Deserialize<T>(cachedStr, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowReadingFromString });
 
-                if (result != null)
+                SentrySdk.ConfigureScope(scope =>
                 {
-                    await cache.SetStringAsync($"{set}:{result.SnowflakeId}", JsonSerializer.Serialize(result));
-                }
-                else
-                {
-                    await cache.SetStringAsync($"{set}:{query}", "null");
-                }
+                    scope.Contexts[$"{typeName}Preference"] = cachedResult;
+                });
+
+                return cachedResult;
             }
 
+            T result = await postgresService.Get<T>(query);
+            string valueToCache = result != null ? JsonSerializer.Serialize(result) : "null";
+            await cache.SetStringAsync(cacheKey, valueToCache);
 
             SentrySdk.ConfigureScope(scope =>
             {
-                scope.Contexts[$"{set}Preference"] = result;
+                scope.Contexts[$"{typeName}Preference"] = result;
             });
 
             return result;
         }
 
-        public async Task<long> GetCount<T>() => await mongoService.GetCount<T>();
+        public async Task<int> GetCount<T>() where T : class => await postgresService.GetCount<T>();
 
-        public async Task<T> Create<T>(T t) where T : IPreference
+        public async Task<T> Create<T>(T t) where T : class, IPreference
         {
             Type typeOfT = typeof(T);
 
@@ -74,42 +66,44 @@ namespace BibleBot.Backend.Services
                 _ => throw new NotImplementedException("No established path for provided type")
             };
 
-            T createdT = await mongoService.Create(t);
-            await cache.SetStringAsync($"{set}:{createdT.SnowflakeId}", JsonSerializer.Serialize(createdT));
+            T createdT = await postgresService.Create(t);
+            await cache.SetStringAsync($"{set}:{createdT.Id}", JsonSerializer.Serialize(createdT));
 
             return createdT;
         }
 
-        public async Task Update(string userId, UpdateDefinition<User> updateDefinition)
+        public async Task Update(long userId, UpdateDef<User> updateDef)
         {
-            await mongoService.Update(userId, updateDefinition);
+            await postgresService.Update(userId, updateDef);
 
-            User user = await mongoService.Get<User>(userId);
-            await cache.SetStringAsync($"user:{user.UserId}", JsonSerializer.Serialize(user));
+            User user = await postgresService.Get<User>(userId);
+            await cache.SetStringAsync($"user:{user.Id}", JsonSerializer.Serialize(user));
         }
 
-        public async Task Update(string guildId, UpdateDefinition<Guild> updateDefinition)
+        public async Task Update(long guildId, UpdateDef<Guild> updateDef)
         {
-            await mongoService.Update(guildId, updateDefinition);
+            await postgresService.Update(guildId, updateDef);
 
-            Guild guild = await mongoService.Get<Guild>(guildId);
-            await cache.SetStringAsync($"guild:{guild.GuildId}", JsonSerializer.Serialize(guild));
+            Guild guild = await postgresService.Get<Guild>(guildId);
+            await cache.SetStringAsync($"guild:{guild.Id}", JsonSerializer.Serialize(guild));
         }
 
         public async Task Remove<T>(T t) where T : IPreference
         {
-            await mongoService.Remove<T>(t.SnowflakeId);
-
             Type typeOfT = typeof(T);
 
-            string set = typeOfT.Name switch
+            if (typeOfT == typeof(User))
             {
-                nameof(User) => "user",
-                nameof(Guild) => "guild",
-                _ => throw new NotImplementedException("No established path for provided type")
-            };
+                await postgresService.Remove(t as User);
+                await cache.RemoveAsync($"user:{t.Id}");
+            }
+            else if (typeOfT == typeof(Guild))
+            {
+                await postgresService.Remove(t as Guild);
+                await cache.RemoveAsync($"guild:{t.Id}");
+            }
 
-            await cache.RemoveAsync($"{set}:{t.SnowflakeId}");
+            throw new NotImplementedException("No established path for provided type");
         }
     }
 }

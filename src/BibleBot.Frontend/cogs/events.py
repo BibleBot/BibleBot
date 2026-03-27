@@ -97,7 +97,7 @@ class EventListeners(commands.Cog):
     async def on_guild_remove(self, guild: disnake.Guild):
         if self.bot.is_ready():
             # yeet the webhook from the database, if applicable
-            req_body = {"GuildId": str(guild.id), "Body": "delete"}
+            req_body = {"GuildId": guild.id, "Body": "delete"}
 
             endpoint = os.environ.get("ENDPOINT")
 

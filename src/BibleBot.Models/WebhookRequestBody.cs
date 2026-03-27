@@ -63,13 +63,13 @@ namespace BibleBot.Models
         /// Embeds attached to the message. There can be a maximum of 10 embeds in a single message.
         /// </summary>
         [JsonPropertyName("embeds")]
-        public List<InternalEmbed> Embeds { get; set; }
+        public List<InternalEmbed> Embeds { get; set; } = [];
 
         /// <summary>
         /// Components attached to the message.
         /// </summary>
         [JsonPropertyName("components")]
-        public List<IDiscordComponent> Components { get; set; }
+        public List<IDiscordComponent> Components { get; set; } = [];
 
         /// <summary>
         /// Discord describes this as "JSON encoded body of non-file params", used only when sending the request

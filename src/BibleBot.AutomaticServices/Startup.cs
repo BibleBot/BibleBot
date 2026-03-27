@@ -18,11 +18,12 @@ using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Serilog;
 
 namespace BibleBot.AutomaticServices
@@ -34,23 +35,26 @@ namespace BibleBot.AutomaticServices
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Link settings in appsettings.json to a database settings model.
-            services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
-            services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = "127.0.0.1:6379";
             });
 
             // Instantiate the various services.
-            services.AddSingleton(_ => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
+            services.AddDbContextPool<PgContext>(options =>
+                options.UseNpgsql(
+                    Environment.GetEnvironmentVariable("POSTGRES_CONN"),
+                    o => o.SetPostgresVersion(18, 0)
+                        .UseNodaTime()
+                )
+            );
 
-            services.AddSingleton<PreferenceService>();
-            services.AddSingleton<UserService>();
-            services.AddSingleton<GuildService>();
-            services.AddSingleton<VersionService>();
-            services.AddSingleton<LanguageService>();
+            services.AddScoped<PostgresService>();
+            services.AddScoped<PreferenceService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<GuildService>();
+            services.AddScoped<VersionService>();
+            services.AddScoped<LanguageService>();
             services.AddSingleton(sp => new ParsingService(true));
 
             services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), true));
@@ -78,7 +82,7 @@ namespace BibleBot.AutomaticServices
             ]);
 
             // Register the special verse processing service
-            services.AddSingleton<SpecialVerseProcessingService>();
+            services.AddScoped<SpecialVerseProcessingService>();
 
             // Add background services.
             services.AddHostedService<AutomaticDailyVerseService>();

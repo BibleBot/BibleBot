@@ -6,12 +6,12 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers
 {
@@ -52,22 +52,22 @@ namespace BibleBot.Backend.Controllers
                     });
                 }
 
-                UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                                                .Set(guild => guild.DailyVerseWebhook, null)
-                                                                .Set(guild => guild.DailyVerseChannelId, null)
-                                                                .Set(guild => guild.DailyVerseTime, null)
-                                                                .Set(guild => guild.DailyVerseTimeZone, null)
-                                                                .Set(guild => guild.DailyVerseLastSentDate, null)
-                                                                .Set(guild => guild.DailyVerseRoleId, null)
-                                                                .Set(guild => guild.DailyVerseIsThread, false);
+                List<UpdateDef<Guild>> update =
+                [
+                    UpdateDef<Guild>.Set(guild => guild.DailyVerseWebhook, null),
+                    UpdateDef<Guild>.Set(guild => guild.DailyVerseChannelId, 0),
+                    UpdateDef<Guild>.Set(guild => guild.DailyVerseTime, null),
+                    UpdateDef<Guild>.Set(guild => guild.DailyVerseTimeZone, null),
+                    UpdateDef<Guild>.Set(guild => guild.DailyVerseLastSentDate, null),
+                    UpdateDef<Guild>.Set(guild => guild.DailyVerseRoleId, 0),
+                    UpdateDef<Guild>.Set(guild => guild.DailyVerseIsThread, false),
+                ];
 
-                await guildService.Update(req.GuildId, update);
+                await guildService.Update(req.GuildId, update.Combine());
             }
             else
             {
-                UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                                                .Set(guild => guild.DailyVerseWebhook, req.Body);
-
+                UpdateDef<Guild> update = UpdateDef<Guild>.Set(guild => guild.DailyVerseWebhook, req.Body);
                 await guildService.Update(req.GuildId, update);
             }
 

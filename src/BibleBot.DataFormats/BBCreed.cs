@@ -6,24 +6,17 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
 namespace BibleBot.DataFormats
 {
     public class BBCreed
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [BsonElement("Title")]
         public string Title { get; set; }
 
-        [BsonElement("Origin")]
         public string Origin { get; set; }
 
-        [BsonElement("Text")]
         public string Text { get; set; }
     }
 }

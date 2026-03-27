@@ -16,7 +16,6 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
-using MongoDB.Driver;
 
 namespace BibleBot.Backend.Controllers.CommandGroups
 {
@@ -129,8 +128,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealUser != null)
                 {
-                    UpdateDefinition<User> update = Builders<User>.Update
-                                                                  .Set(user => user.Language, idealLanguage.Culture);
+                    UpdateDef<User> update = UpdateDef<User>.Set(user => user.Language, idealLanguage.Id);
 
                     await userService.Update(req.UserId, update);
                 }
@@ -138,14 +136,14 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 {
                     User newUser = new()
                     {
-                        UserId = req.UserId,
-                        Language = idealLanguage.Culture
+                        Id = req.UserId,
+                        Language = idealLanguage.Id
                     };
 
                     await userService.Create(newUser);
                 }
 
-                CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Culture);
+                CultureInfo.CurrentUICulture = new CultureInfo(idealLanguage.Id);
 
                 return new CommandResponse
                 {
@@ -188,17 +186,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealGuild != null)
                 {
-                    UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                                                    .Set(guild => guild.Language, idealLanguage.Culture);
-
+                    UpdateDef<Guild> update = UpdateDef<Guild>.Set(guild => guild.Language, idealLanguage.Id);
                     await guildService.Update(req.GuildId, update);
                 }
                 else
                 {
                     Guild newGuild = new()
                     {
-                        GuildId = req.GuildId,
-                        Language = idealLanguage.Culture,
+                        Id = req.GuildId,
+                        Language = idealLanguage.Id,
                         IsDM = req.IsDM
                     };
 
@@ -232,7 +228,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 foreach (Language lang in languages)
                 {
-                    content.Append($"{lang.Name} `[{lang.Culture}]`\n");
+                    content.Append($"{lang.Name} `[{lang.Id}]`\n");
                 }
 
                 return new CommandResponse

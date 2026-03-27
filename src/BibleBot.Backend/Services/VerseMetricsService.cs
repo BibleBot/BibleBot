@@ -17,7 +17,7 @@ using Serilog;
 
 namespace BibleBot.Backend.Services
 {
-    public class VerseMetricsService(MetricsContext ctx)
+    public class VerseMetricsService(PgContext ctx)
     {
         private static NpgsqlRange<int> CreateRange(int first, int last) => last < first
                 ? throw new VerseRangeInvalidException($"Verse range has an illogical sequence, {last} is lesser than {first}.")
@@ -30,7 +30,7 @@ namespace BibleBot.Backend.Services
         /// <param name="guildId">The guild ID</param>
         /// <param name="reference">The verse reference</param>
         /// <param name="chapterEndingVerses">Dictionary mapping chapter numbers to their ending verse in the reference</param>
-        public async Task<List<VerseMetric>> Create(string userId, string guildId, Reference reference, Dictionary<int, int> chapterEndingVerses = null, bool isTest = false)
+        public async Task<List<VerseMetric>> Create(long userId, long guildId, Reference reference, Dictionary<int, int> chapterEndingVerses = null, bool isTest = false)
         {
             SentrySdk.ConfigureScope(scope =>
             {
@@ -40,9 +40,9 @@ namespace BibleBot.Backend.Services
             List<VerseMetric> verseMetricsToAdd = [];
             chapterEndingVerses ??= [];
 
-            string versionAbbreviation = reference.AliasingVersion != null
-                ? reference.AliasingVersion.Abbreviation
-                : reference.Version.Abbreviation;
+            string versionId = reference.AliasingVersion != null
+                ? reference.AliasingVersion.Id
+                : reference.Version.Id;
             string publisher = reference.Version.Publisher;
 
             int startingChapter = reference.Book.ProperName == "Psalm 151" ? 151 : reference.StartingChapter;
@@ -174,7 +174,7 @@ namespace BibleBot.Backend.Services
                 GuildId = guildId,
                 Book = reference.Book.Name,
                 Chapter = chapter,
-                Version = versionAbbreviation,
+                Version = versionId,
                 Publisher = publisher,
                 IsOT = reference.IsOT,
                 IsNT = reference.IsNT,

@@ -24,7 +24,6 @@ from disnake.interactions import ApplicationCommandInteraction
 # remind me to get away from this accursed language
 class ChannelContext(NamedTuple):
     """A channel and its pertinent information."""
-
     channel: (
         TextChannel
         | VoiceChannel
@@ -35,9 +34,9 @@ class ChannelContext(NamedTuple):
         | None
     )
     guild: Guild | None
-    guild_id: str
-    channel_id: str
-    thread_id: str
+    guild_id: int
+    channel_id: int
+    thread_id: int
     is_dm: bool = False
     is_thread: bool = False
 
@@ -102,9 +101,9 @@ async def get_channel_context_from_messageable(
             guild_id = channel.guild.id
             channel_id = channel.id
 
-    guild_id = str(guild_id)
-    channel_id = str(channel_id)
-    thread_id = str(thread_id)
+    guild_id = guild_id
+    channel_id = channel_id
+    thread_id = thread_id
 
     return ChannelContext(
         channel, guild, guild_id, channel_id, thread_id, is_dm, is_thread
@@ -146,9 +145,9 @@ async def get_channel_context_from_interaction(
     is_dm = isinstance(interaction.channel, PartialMessageable)
     is_thread = isinstance(interaction.channel, Thread)
 
-    guild_id = str(guild_id)
-    channel_id = str(channel_id)
-    thread_id = str(thread_id)
+    guild_id = guild_id
+    channel_id = channel_id
+    thread_id = thread_id
 
     return ChannelContext(
         channel, guild, guild_id, channel_id, thread_id, is_dm, is_thread

@@ -25,7 +25,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
+using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -41,46 +42,47 @@ namespace BibleBot.Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Link settings in appsettings.json to a database settings model.
-            services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
-            services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = "127.0.0.1:6379";
             });
 
+            string connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONN");
+            NpgsqlDataSourceBuilder dataSourceBuilder = new(connectionString);
+            dataSourceBuilder.UseNodaTime();
+            dataSourceBuilder.EnableDynamicJson();
+            NpgsqlDataSource dataSource = dataSourceBuilder.Build();
+
             // Instantiate the various services.
-            services.AddSingleton(_ => new MongoService(Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()));
-            services.AddDbContextPool<MetricsContext>(options =>
-                options.UseNpgsql(
-                    Environment.GetEnvironmentVariable("POSTGRES_CONN"),
-                    o => o.SetPostgresVersion(18, 0)
-                          .UseNodaTime()
+            services.AddSingleton(dataSource);
+            services.AddDbContextPool<PgContext>(options =>
+                options.UseNpgsql(dataSource,
+                    o => o.SetPostgresVersion(18, 0).UseNodaTime()
                 )
             );
 
+            services.AddScoped<PostgresService>();
             services.AddScoped<VerseMetricsService>();
-            services.AddSingleton<PreferenceService>();
-            services.AddSingleton<UserService>();
-            services.AddSingleton<GuildService>();
+            services.AddScoped<PreferenceService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<GuildService>();
             services.AddSingleton<VersionService>();
             services.AddSingleton<LanguageService>();
-            services.AddSingleton<FrontendStatsService>();
+            services.AddScoped<FrontendStatsService>();
             services.AddSingleton<ExperimentService>();
 
             services.AddSingleton<ParsingService>();
             services.AddSingleton<ResourceService>();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddOptions<RequestLocalizationOptions>().Configure<UserService, GuildService, LanguageService>((options, userService, guildService, languageService) =>
+            services.AddOptions<RequestLocalizationOptions>().Configure(options =>
             {
                 string[] supportedCultures = ["en-GB", "en-US", "eo", "pl-PL"];
                 options.SetDefaultCulture(supportedCultures[0])
                        .AddSupportedCultures(supportedCultures)
                        .AddSupportedUICultures(supportedCultures);
 
-                options.AddInitialRequestCultureProvider(new PreferenceRequestCultureProvider(userService, guildService, languageService));
+                options.AddInitialRequestCultureProvider(new PreferenceRequestCultureProvider());
             });
 
             // Instantiate the various providers, which are just services.
@@ -95,7 +97,7 @@ namespace BibleBot.Backend
                 services.AddHostedService<SystemdWatchdogService>();
             }
 
-            services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), false));
+            services.AddScoped(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), false));
 
             // Register the list of content providers
             services.AddSingleton<List<IContentProvider>>(sp => [
@@ -105,7 +107,7 @@ namespace BibleBot.Backend
             ]);
 
             // Register the special verse processing service
-            services.AddSingleton<SpecialVerseProcessingService>();
+            services.AddScoped<SpecialVerseProcessingService>();
 
             services.AddResponseCaching();
             services.AddResponseCompression();
@@ -113,10 +115,10 @@ namespace BibleBot.Backend
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v14", new OpenApiInfo
+                c.SwaggerDoc("v15", new OpenApiInfo
                 {
                     Title = "BibleBot.Backend",
-                    Version = "14",
+                    Version = "15",
                     Description = "The Backend of BibleBot",
                     Contact = new OpenApiContact
                     {
@@ -153,8 +155,6 @@ namespace BibleBot.Backend
                 tracing.AddAspNetCoreInstrumentation();
                 tracing.AddHttpClientInstrumentation();
                 //tracing.AddSource(customActivitySource.Name);
-                tracing.AddSource("MongoDB.Driver");
-                tracing.AddSource("MongoDB.Driver.Core");
                 tracing.AddSource("StackExchange.Redis");
                 tracing.AddRedisInstrumentation();
                 tracing.AddOtlpExporter(oltpOptions =>
@@ -174,7 +174,7 @@ namespace BibleBot.Backend
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v9/swagger.json", "BibleBot.Backend"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v15/swagger.json", "BibleBot.Backend"));
             }
             else
             {
@@ -192,8 +192,9 @@ namespace BibleBot.Backend
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            IOptions<RequestLocalizationOptions> localizationOption = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
-            app.UseRequestLocalization(localizationOption.Value);
+            // IOptions<RequestLocalizationOptions> localizationOption = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            // app.UseRequestLocalization(localizationOption.Value);
+            app.UseRequestLocalization();
 
             app.UseHouseAuthorization();
 

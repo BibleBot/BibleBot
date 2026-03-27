@@ -96,9 +96,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 Version idealVersion = await versionService.Get(versionParam);
                 idealVersion ??= await versionService.GetPreferenceOrDefault(idealUser, idealGuild, false);
 
-                if (idealVersion.AliasOf != null)
+                if (idealVersion.AliasOfId != null)
                 {
-                    idealVersion = await versionService.Get(idealVersion.AliasOf);
+                    idealVersion = await versionService.Get(idealVersion.AliasOfId);
                 }
 
                 if (idealVersion.Source != "bg" && potentialSubset != SubsetFlag.INVALID)
@@ -117,7 +117,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 string query = string.Join(" ", args);
 
-                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Abbreviation}.");
+                IContentProvider provider = bibleProviders.FirstOrDefault(pv => pv.Name == idealVersion.Source) ?? throw new ProviderNotFoundException($"Couldn't find provider for '/search' with {idealVersion.Id}.");
                 List<SearchResult> searchResults = await provider.Search(query, idealVersion);
 
                 if (searchResults.Count > 1)
@@ -187,7 +187,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         _ => ""
                     };
 
-                    string title = $"{localizer["SearchResultsTitle"]} \"{query}\" {subsetString}({idealVersion.Abbreviation})";
+                    string title = $"{localizer["SearchResultsTitle"]} \"{query}\" {subsetString}({idealVersion.Id})";
                     string pageCounter = sharedLocalizer["PageCounter"];
 
                     for (int i = 0; i < totalPages; i++)

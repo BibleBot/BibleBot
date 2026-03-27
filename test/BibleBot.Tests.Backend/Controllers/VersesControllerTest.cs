@@ -27,7 +27,8 @@ namespace BibleBot.Tests.Backend.Controllers
             {
                 OK = false,
                 LogStatement = null,
-                Culture = "en-US"
+                Culture = "en-US",
+                Verses = null
             };
 
             result.StatusCode.Should().Be(400);
@@ -44,7 +45,8 @@ namespace BibleBot.Tests.Backend.Controllers
             {
                 OK = false,
                 LogStatement = null,
-                Culture = "en-US"
+                Culture = "en-US",
+                Verses = null
             };
 
             result.StatusCode.Should().Be(400);

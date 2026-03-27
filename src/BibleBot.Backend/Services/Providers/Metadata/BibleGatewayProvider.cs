@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Dom;
 using BibleBot.Models;
-using MongoDB.Driver;
 using Sentry;
 using Serilog;
 using MDBGVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Version, System.Net.Http.HttpResponseMessage>;
@@ -116,7 +115,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
             return versionData;
         }
 
-        public async Task<UpdateDefinition<Version>> GenerateMetadataUpdate(Version version, HttpResponseMessage resp)
+        public async Task<UpdateDef<Version>> GenerateMetadataUpdate(Version version, HttpResponseMessage resp)
         {
             List<Book> versionBookData = [];
 
@@ -279,7 +278,10 @@ namespace BibleBot.Backend.Services.Providers.Metadata
             }
 
             string versionInternalId = version.InternalId ?? resp.RequestMessage.RequestUri.AbsoluteUri.Replace("https://www.biblegateway.com/versions/", "").Replace("/#booklist", "");
-            return Builders<Version>.Update.Set(versionToUpdate => versionToUpdate.Books, [.. versionBookData]).Set(versionToUpdate => versionToUpdate.InternalId, versionInternalId);
+            return new List<UpdateDef<Version>> {
+                UpdateDef<Version>.Set(versionToUpdate => versionToUpdate.Books, [.. versionBookData]),
+                UpdateDef<Version>.Set(versionToUpdate => versionToUpdate.InternalId, versionInternalId)
+            }.Combine();
         }
 
         private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");

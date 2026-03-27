@@ -16,7 +16,6 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
-using MongoDB.Driver;
 using Serilog;
 using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
 using Version = BibleBot.Models.Version;
@@ -110,17 +109,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealUser != null)
                 {
-                    UpdateDefinition<User> update = Builders<User>.Update
-                                                                  .Set(user => user.Version, idealVersion.Abbreviation);
-
+                    UpdateDef<User> update = UpdateDef<User>.Set(user => user.Version, idealVersion.Id);
                     await userService.Update(req.UserId, update);
                 }
                 else
                 {
                     User newUser = new()
                     {
-                        UserId = req.UserId,
-                        Version = idealVersion.Abbreviation
+                        Id = req.UserId,
+                        Version = idealVersion.Id
                     };
 
                     await userService.Create(newUser);
@@ -167,17 +164,15 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 if (idealGuild != null)
                 {
-                    UpdateDefinition<Guild> update = Builders<Guild>.Update
-                                                                    .Set(guild => guild.Version, idealVersion.Abbreviation);
-
+                    UpdateDef<Guild> update = UpdateDef<Guild>.Set(guild => guild.Version, idealVersion.Id);
                     await guildService.Update(req.GuildId, update);
                 }
                 else
                 {
                     Guild newGuild = new()
                     {
-                        GuildId = req.GuildId,
-                        Version = idealVersion.Abbreviation,
+                        Id = req.GuildId,
+                        Version = idealVersion.Id,
                         IsDM = req.IsDM
                     };
 
@@ -256,7 +251,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 }
 
                 string response = $"### {idealVersion.Name}\n\n" +
-                (idealVersion.AliasOf != null ? $"{string.Format(localizer["VersionInfoAlias"], idealVersion.AliasOf)}\n\n" : "") +
+                (idealVersion.AliasOfId != null ? $"{string.Format(localizer["VersionInfoAlias"], idealVersion.AliasOfId)}\n\n" : "") +
                 $"{localizer["VersionInfoContainsOT"]}: {(idealVersion.SupportsOldTestament ? Utils.GetInstance().emoji["check_emoji"] : Utils.GetInstance().emoji["xmark_emoji"])}\n" +
                 $"{localizer["VersionInfoContainsNT"]}: {(idealVersion.SupportsNewTestament ? Utils.GetInstance().emoji["check_emoji"] : Utils.GetInstance().emoji["xmark_emoji"])}\n" +
                 $"{localizer["VersionInfoContainsDEU"]}: {(idealVersion.SupportsDeuterocanon ? Utils.GetInstance().emoji["check_emoji"] : Utils.GetInstance().emoji["xmark_emoji"])}\n\n" +
@@ -363,7 +358,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         }
                         catch (ArgumentNullException)
                         {
-                            Log.Error($"[err] {version.Abbreviation} does not have a locale");
+                            Log.Error($"[err] {version.Id} does not have a locale");
                             shouldSkip = true;
                         }
 
@@ -542,9 +537,9 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 //     };
                 // }
 
-                if (idealVersion.AliasOf != null)
+                if (idealVersion.AliasOfId != null)
                 {
-                    idealVersion = await versionService.Get(idealVersion.AliasOf);
+                    idealVersion = await versionService.Get(idealVersion.AliasOfId);
                 }
 
                 MDVersionBookList names = metadataFetchingService.GetVersionBookList(idealVersion);
@@ -577,7 +572,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 }
 
                 string message = $"{localizer["BookListInternalError"]}\n\n" +
-                $"```\nVersion: {idealVersion.Abbreviation}\n```";
+                $"```\nVersion: {idealVersion.Id}\n```";
 
                 return new CommandResponse
                 {
@@ -586,7 +581,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     [
                         Utils.GetInstance().Embedify("/booklist", message, true)
                     ],
-                    LogStatement = $"/booklist - internal error on {idealVersion.Abbreviation}",
+                    LogStatement = $"/booklist - internal error on {idealVersion.Id}",
                     Culture = CultureInfo.CurrentUICulture.Name
                 };
 

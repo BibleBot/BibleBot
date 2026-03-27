@@ -9,14 +9,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Models;
-using MongoDB.Driver;
 
 namespace BibleBot.Backend.Services
 {
-    public class FrontendStatsService(MongoService mongoService)
+    public class FrontendStatsService(PostgresService postgresService)
     {
-        public async Task<List<FrontendStats>> Get() => await mongoService.Get<FrontendStats>();
-        public async Task<FrontendStats> Create(FrontendStats frontendStats) => await mongoService.Create(frontendStats);
-        public async Task Update(FrontendStats frontendStats, UpdateDefinition<FrontendStats> updateDefinition) => await mongoService.Update(frontendStats, updateDefinition);
+        public async Task<List<FrontendStats>> Get() => await postgresService.Get<FrontendStats>();
+        public async Task<FrontendStats> Create(FrontendStats frontendStats) => await postgresService.Create(frontendStats);
+        public async Task Update(FrontendStats frontendStats, UpdateDef<FrontendStats> updateDef) => await postgresService.Update(frontendStats, updateDef);
     }
 }

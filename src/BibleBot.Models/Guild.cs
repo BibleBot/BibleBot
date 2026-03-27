@@ -7,52 +7,35 @@
 */
 
 using System.Net;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+using Microsoft.EntityFrameworkCore;
+using NpgsqlTypes;
 
 namespace BibleBot.Models
 {
     /// <summary>
     /// The model for guild preferences.
     /// </summary>
-    [BsonIgnoreExtraElements]
     public class Guild : IPreference
     {
         /// <summary>
-        /// The internal database ID.
-        /// <br/><br/>
-        /// <b>DO NOT USE THIS AS IF IT IS THE DISCORD ID OF THE GUILD.</b>
-        /// </summary>
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
-        /// <summary>
         /// The Discord Snowflake identifier of the guild.
         /// </summary>
-        [BsonElement("GuildId")]
-        public string GuildId { get; init; }
-
-        /// <inheritdoc/>
-        public string SnowflakeId => GuildId;
+        public long Id { get; set; }
 
         /// <summary>
         /// The default language of the guild.
         /// </summary>
-        [BsonElement("Language")]
         public string Language { get; set; }
 
         /// <summary>
         /// The default version of the guild.
         /// </summary>
-        [BsonElement("Version")]
         public string Version { get; set; }
 
         /// <summary>
         /// The default display style for verses sent in the guild.
         /// </summary>
-        [BsonElement("DisplayStyle")]
-        public string DisplayStyle { get; init; } = "embed";
+        public string DisplayStyle { get; set; } = "embed";
 
         /// <summary>
         /// The default brackets that BibleBot will ignore verse references within.
@@ -61,8 +44,7 @@ namespace BibleBot.Models
         /// <c>&lt;&gt;</c> are persistent, changing this setting will only add another
         /// set of brackets to ignore within.
         /// </remarks>
-        [BsonElement("IgnoringBrackets")]
-        public string IgnoringBrackets { get; init; } = "<>";
+        public string IgnoringBrackets { get; set; } = "<>";
 
         /// <summary>
         /// The Discord Snowflake identifier of the channel that the guild desires the daily verses be sent to.
@@ -70,8 +52,7 @@ namespace BibleBot.Models
         /// <remarks>
         /// This is used to compose the webhook URL in AutomaticServices.
         /// </remarks>
-        [BsonElement("DailyVerseChannelId")]
-        public string DailyVerseChannelId { get; init; }
+        public long DailyVerseChannelId { get; set; }
 
         /// <summary>
         /// The identifier of the webhook that frontend created. Surprisingly, this is one of the few Discord
@@ -80,20 +61,17 @@ namespace BibleBot.Models
         /// <remarks>
         /// This is used to compose the webhook URL in AutomaticServices.
         /// </remarks>
-        [BsonElement("DailyVerseWebhook")]
-        public string DailyVerseWebhook { get; init; }
+        public string DailyVerseWebhook { get; set; }
 
         /// <summary>
         /// The 24-hour timestamp when the daily verse should be sent in <see cref="DailyVerseTimeZone"/>.
         /// </summary>
-        [BsonElement("DailyVerseTime")]
-        public string DailyVerseTime { get; init; }
+        public string DailyVerseTime { get; set; }
 
         /// <summary>
         /// The TZ-database identifier for the time zone that should be consulted when sending daily verses.
         /// </summary>
-        [BsonElement("DailyVerseTimeZone")]
-        public string DailyVerseTimeZone { get; init; }
+        public string DailyVerseTimeZone { get; set; }
 
         /// <summary>
         /// The local date that the daily verse was last sent in.
@@ -101,26 +79,22 @@ namespace BibleBot.Models
         /// <remarks>
         /// This is used to avoid duplicate daily verses.
         /// </remarks>
-        [BsonElement("DailyVerseLastSentDate")]
-        public string DailyVerseLastSentDate { get; init; }
+        public string DailyVerseLastSentDate { get; set; }
 
         /// <summary>
         /// The Discord Snowflake identifier of the role that should be @mention'd when the daily verse is sent.
         /// </summary>
-        [BsonElement("DailyVerseRoleId")]
-        public string DailyVerseRoleId { get; init; }
+        public long DailyVerseRoleId { get; set; }
 
         /// <summary>
         /// Whether the DailyVerse channel is a thread.
         /// </summary>
-        [BsonElement("DailyVerseIsThread")]
-        public bool DailyVerseIsThread { get; init; }
+        public bool DailyVerseIsThread { get; set; }
 
         /// <summary>
         /// The last HTTP status code of the webhook response.
         /// </summary>
-        [BsonElement("DailyVerseLastStatusCode")]
-        public HttpStatusCode DailyVerseLastStatusCode { get; init; }
+        public HttpStatusCode DailyVerseLastStatusCode { get; set; }
 
         /// <summary>
         /// Indicates whether this preference represents a Direct Messages channel, instead of a proper guild.
@@ -129,7 +103,6 @@ namespace BibleBot.Models
         /// As of writing (Jan. 8, 2024), this is only used to ensure that automatic daily verses cannot be
         /// setup in DMs as they do not support webhooks.
         /// </remarks>
-        [BsonElement("IsDM")]
-        public bool IsDM { get; init; }
+        public bool IsDM { get; set; }
     }
 }

@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,17 +15,17 @@ using System.Text.RegularExpressions;
 using BibleBot.Models;
 using MDBookMap = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>;
 using MDBookNames = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>;
+using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Backend.Services
 {
     public partial class ParsingService
     {
         private readonly MDBookMap _bookMap;
-        private readonly string _filePrefix;
 
         public ParsingService(bool isForAutoServ = false)
         {
-            _filePrefix = isForAutoServ ? "../BibleBot.Backend" : ".";
+            string _filePrefix = isForAutoServ ? "../BibleBot.Backend" : ".";
             _bookMap = JsonSerializer.Deserialize<MDBookMap>(File.ReadAllText($"{_filePrefix}/Data/book_map.json"));
         }
         private readonly HashSet<string> _overlappingBookNames =
@@ -135,7 +136,7 @@ namespace BibleBot.Backend.Services
                     if (versionAcronymRegexMatch.Success)
                     {
                         string versionAbbr = versionAcronymRegexMatch.Value;
-                        Version potentialVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, versionAbbr, System.StringComparison.OrdinalIgnoreCase));
+                        Version potentialVersion = versions.FirstOrDefault(version => string.Equals(version.Id, versionAbbr, System.StringComparison.OrdinalIgnoreCase));
 
                         if (potentialVersion != null)
                         {
@@ -370,10 +371,10 @@ namespace BibleBot.Backend.Services
             }
 
             // Use the proper version if this one serves as an alias
-            if (prefVersion.AliasOf != null)
+            if (prefVersion.AliasOfId != null)
             {
                 aliasingVersion = prefVersion;
-                prefVersion = versions.FirstOrDefault(version => string.Equals(version.Abbreviation, prefVersion.AliasOf, System.StringComparison.OrdinalIgnoreCase));
+                prefVersion = versions.FirstOrDefault(version => string.Equals(version.Id, prefVersion.AliasOfId, System.StringComparison.OrdinalIgnoreCase));
             }
 
             // Use null-coalescing operator for cleaner code and avoid creating unnecessary Book object
@@ -387,7 +388,17 @@ namespace BibleBot.Backend.Services
 
                 if (string.Equals(prefVersion.Source, "bg", System.StringComparison.Ordinal))
                 {
-                    book.ProperName = "Psalm 151";
+                    // modifying the original book like before causes the DB book entry to be modified
+                    // so we'll just allocate a separate one
+                    book = new Book
+                    {
+                        Id = book.Id,
+                        Name = "PSA",
+                        ProperName = "Psalm 151",
+                        VersionId = prefVersion.Id,
+                        Chapters = book.Chapters
+                    };
+
                     startingChapter = 1;
                     endingChapter -= 150;
                 }

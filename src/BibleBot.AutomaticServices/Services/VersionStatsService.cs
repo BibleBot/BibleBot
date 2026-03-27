@@ -70,7 +70,7 @@ namespace BibleBot.AutomaticServices.Services
 
                     foreach (Version version in versions)
                     {
-                        versionStats.TryAdd(version.Abbreviation, 0);
+                        versionStats.TryAdd(version.Id, 0);
                     }
 
                     foreach (IPreference preference in preferences)

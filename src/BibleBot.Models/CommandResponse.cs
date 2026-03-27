@@ -29,7 +29,7 @@ namespace BibleBot.Models
         /// <summary>
         /// The content of the response.
         /// </summary>
-        public List<InternalEmbed> Pages { get; set; }
+        public List<InternalEmbed> Pages { get; set; } = [];
 
         /// <summary>
         /// Indicates whether frontend should create a new webhook and inform the backend of the webhook's URL.

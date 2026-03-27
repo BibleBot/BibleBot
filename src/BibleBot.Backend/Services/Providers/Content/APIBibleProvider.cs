@@ -56,7 +56,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         [GeneratedRegex("[a-zA-Z]{3} ([0-9]{1,3}):([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseIdRegex();
 
-        public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled) => await GetVerse(reference, titlesEnabled, false);
+        public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled) => await GetVerse(reference, titlesEnabled, true);
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled, bool verseNumbersEnabled)
         {
@@ -81,7 +81,7 @@ namespace BibleBot.Backend.Services.Providers.Content
                     return null;
                 }
 
-                if (reference.Version.Abbreviation is "ELXX" or "LXX")
+                if (reference.Version.Id is "ELXX" or "LXX")
                 {
                     switch (reference.Book.Name)
                     {
@@ -91,7 +91,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
                                 // For whatever reason, the ELXX we use lists Daniel as a book, but
                                 // it actually doesn't exist, so we defer to the "updated" ELXX.
-                                if (reference.Version.Abbreviation == "ELXX")
+                                if (reference.Version.Id == "ELXX")
                                 {
                                     reference.Version.InternalId = "6bab4d6c61b31b80-01";
                                 }
@@ -152,13 +152,13 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             if (resp.Passages == null || resp.Passages.Count == 0)
             {
-                Log.Error($"APIBibleProvider: Received no passages for '{reference.AsString}' with {reference.Version.Abbreviation}.");
+                Log.Error($"APIBibleProvider: Received no passages for '{reference.AsString}' with {reference.Version.Id}.");
                 return null;
             }
 
             if (resp.Passages[0].BibleId != reference.Version.InternalId)
             {
-                VersionUnavailableException ex = new($"{reference.Version.Abbreviation} is no longer available in API.Bible.");
+                VersionUnavailableException ex = new($"{reference.Version.Id} is no longer available in API.Bible.");
                 Log.Error(ex.Message);
 
                 SentrySdk.CaptureException(ex);
@@ -256,7 +256,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
             string text = string.Join("\n", texts);
 
-            if (reference.Version.Abbreviation == "NLD1939" && text.Contains("tuchtmeester geweest tot Christus’ 3:opdat we"))
+            if (reference.Version.Id == "NLD1939" && text.Contains("tuchtmeester geweest tot Christus’ 3:opdat we"))
             {
                 // TODO(srp): If more version-specific content adjustments come
                 // about, we should implement a generic handler that can process these.
@@ -270,7 +270,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             // As the verse reference could have a non-English name...
             string properBookName = reference.Book.PreferredName;
 
-            if (reference.Version.Abbreviation == "ELXX")
+            if (reference.Version.Id == "ELXX")
             {
                 // Don't like version-specific workarounds, but given the naming convention
                 // wackyness they've got here, this seems like the best course of action.
@@ -315,7 +315,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             return new VerseResult { Reference = reference, Title = PurifyText(title), PsalmTitle = "", Text = PurifyText(text) };
         }
 
-        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, Version version) => await GetVerse(reference, titlesEnabled, false, version);
+        public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, Version version) => await GetVerse(reference, titlesEnabled, true, version);
 
         public async Task<VerseResult> GetVerse(string reference, bool titlesEnabled, bool verseNumbersEnabled, Version version) => await GetVerse(new Reference { Book = null, Version = version, AsString = reference }, titlesEnabled, verseNumbersEnabled);
 

@@ -18,10 +18,10 @@ namespace BibleBot.Models
     public class Request
     {
         /// <summary>
-        /// The Discord Snowflake identifier of the <see cref="User"/> that created the request. 
+        /// The Discord Snowflake identifier of the <see cref="User"/> that created the request.
         /// </summary>
         [JsonPropertyName("userId")]
-        public string UserId { get; set; }
+        public long UserId { get; set; }
 
         /// <summary>
         /// The Discord Snowflake identifier of the <see cref="Guild"/> that the request was made in.
@@ -29,7 +29,7 @@ namespace BibleBot.Models
         /// is the ID of the Direct Messages channel that the request was made in.
         /// </summary>
         [JsonPropertyName("guildId")]
-        public string GuildId { get; set; }
+        public long GuildId { get; set; }
 
         /// <summary>
         /// The Discord Snowflake identifier of the channel that the request was made in.
@@ -37,7 +37,7 @@ namespace BibleBot.Models
         /// <see cref="GuildId"/> will match this value.
         /// </summary>
         [JsonPropertyName("channelId")]
-        public string ChannelId { get; set; }
+        public long ChannelId { get; set; }
 
         /// <summary>
         /// The Discord Snowflake identifier of the thread that the request was made in.
@@ -45,7 +45,7 @@ namespace BibleBot.Models
         /// <see cref="ChannelId"/> will match this value.
         /// </summary>
         [JsonPropertyName("threadId")]
-        public string ThreadId { get; set; }
+        public long ThreadId { get; set; }
 
         /// <summary>
         /// This indicates whether the request came from a thread.
@@ -89,6 +89,6 @@ namespace BibleBot.Models
         /// The active experiments for the user.
         /// </summary>
         [JsonPropertyName("activeExperiments")]
-        public Dictionary<Experiment, string> ActiveExperiments { get; set; }
+        public Dictionary<Experiment, string> ActiveExperiments { get; set; } = [];
     }
 }

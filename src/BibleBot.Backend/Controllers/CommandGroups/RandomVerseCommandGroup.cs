@@ -42,7 +42,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                if (req.GuildId == "238001909716353025")
+                if (req.GuildId == 238001909716353025)
                 {
                     return new CommandResponse
                     {
@@ -109,7 +109,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
             public override async Task<IResponse> ProcessCommand(Request req, List<string> args)
             {
-                if (req.GuildId == "238001909716353025")
+                if (req.GuildId == 238001909716353025)
                 {
                     return new CommandResponse
                     {

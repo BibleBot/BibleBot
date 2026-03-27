@@ -9,17 +9,16 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Models;
-using MongoDB.Driver;
 
 namespace BibleBot.Backend.Services
 {
     public class UserService(PreferenceService preferenceService)
     {
         public async Task<List<User>> Get() => await preferenceService.Get<User>();
-        public async Task<User> Get(string userId) => await preferenceService.Get<User>(userId);
-        public async Task<long> GetCount() => await preferenceService.GetCount<User>();
+        public async Task<User> Get(long userId) => await preferenceService.Get<User>(userId);
+        public async Task<int> GetCount() => await preferenceService.GetCount<User>();
         public async Task<User> Create(User user) => await preferenceService.Create(user);
-        public async Task Update(string userId, UpdateDefinition<User> updateDefinition) => await preferenceService.Update(userId, updateDefinition);
+        public async Task Update(long userId, UpdateDef<User> updateDef) => await preferenceService.Update(userId, updateDef);
         public async Task Remove(User idealUser) => await preferenceService.Remove(idealUser);
     }
 }
