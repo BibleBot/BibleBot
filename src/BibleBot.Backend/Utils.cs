@@ -114,6 +114,7 @@ namespace BibleBot.Backend
                     _cachedVersion = $"v{version[..^1]}";
                 }
 
+                _gitInfoReader.Dispose();
 
                 return _cachedVersion;
             }
@@ -146,19 +147,19 @@ namespace BibleBot.Backend
 
             container.Components.Add(new TextDisplayComponent(verse.Text));
 
-            container.Components.Add(new SeparatorComponent() { Divider = true, Spacing = 2 });
+            container.Components.Add(new SeparatorComponent { Divider = true, Spacing = 2 });
 
-            if (verse.Reference.Version.Publisher == "biblica")
+            switch (verse.Reference.Version.Publisher)
             {
-                container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)} ∙ [Biblica](https://biblica.com)"));
-            }
-            else if (verse.Reference.Version.Publisher == "lockman")
-            {
-                container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)} ∙ [The Lockman Foundation](https://www.lockman.org)"));
-            }
-            else
-            {
-                container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)}"));
+                case "biblica":
+                    container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)} ∙ [Biblica](https://biblica.com)"));
+                    break;
+                case "lockman":
+                    container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)} ∙ [The Lockman Foundation](https://www.lockman.org)"));
+                    break;
+                default:
+                    container.Components.Add(new TextDisplayComponent($"-# {emoji["logo_emoji"]} {string.Format(_localizer["GlobalFooter"], Version)}"));
+                    break;
             }
 
             return container;

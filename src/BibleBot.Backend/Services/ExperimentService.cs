@@ -89,9 +89,6 @@ namespace BibleBot.Backend.Services
 
         public async Task Helps(string experimentId, long userId, bool helped)
         {
-            using IServiceScope scope = scopeFactory.CreateScope();
-            PostgresService postgresService = scope.ServiceProvider.GetRequiredService<PostgresService>();
-
             Experiment exp = (await GetExperiments()).FirstOrDefault(experiment =>
                 string.Equals(experiment.Id, experimentId, StringComparison.OrdinalIgnoreCase));
 
@@ -106,7 +103,7 @@ namespace BibleBot.Backend.Services
                     exp.Feedback.DidNotHelp.Add(userId);
                 }
 
-                await this.Update(experimentId, UpdateDef<Experiment>.Set(experiment => experiment.Feedback, exp.Feedback));
+                await Update(experimentId, UpdateDef<Experiment>.Set(experiment => experiment.Feedback, exp.Feedback));
             }
         }
 
