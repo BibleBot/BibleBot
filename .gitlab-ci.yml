@@ -53,7 +53,6 @@ unit_tests:
     - "redis-server &"
     - "disown"
     - "until pg_isready -h postgres -p 5432 -U $POSTGRES_USER; do echo 'Waiting for Postgres...'; sleep 1; done"
-    - "dotnet ef database update --project src/BibleBot.Models --startup-project src/BibleBot.Backend --connection $POSTGRES_CONN"
   script:
     - dotnet test --collect:"XPlat Code Coverage" --verbosity q --logger "junit;MethodFormat=Class;FailureBodyFormat=Verbose" -- NUnit.Where="namespace == BibleBot.Tests.Backend"
     - reportgenerator -reports:"test/**/TestResults/**/coverage.cobertura.xml" -targetdir:"." -reporttypes:"cobertura"
