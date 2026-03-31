@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BibleBot.Models;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
@@ -99,8 +98,7 @@ namespace BibleBot.Models.Migrations
                     titles_enabled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     verse_numbers_enabled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     pagination_enabled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    display_style = table.Column<string>(type: "text", nullable: true),
-                    IsOptOut = table.Column<bool>(type: "boolean", nullable: false)
+                    display_style = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -153,6 +151,23 @@ namespace BibleBot.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "opt_out_users",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_opt_out_users", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_opt_out_users_users_id",
+                        column: x => x.id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "appended_verses",
                 columns: table => new
                 {
@@ -202,7 +217,7 @@ namespace BibleBot.Models.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     book_id = table.Column<int>(type: "integer", nullable: false),
                     number = table.Column<int>(type: "integer", nullable: false),
-                    titles = table.Column<List<Tuple<int, int, string>>>(type: "jsonb", nullable: true)
+                    titles = table.Column<List<ChapterTitle>>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -315,13 +330,16 @@ namespace BibleBot.Models.Migrations
                 name: "languages");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "opt_out_users");
 
             migrationBuilder.DropTable(
                 name: "verses");
 
             migrationBuilder.DropTable(
                 name: "verse_metrics");
+
+            migrationBuilder.DropTable(
+                name: "users");
 
             migrationBuilder.DropTable(
                 name: "chapters");
