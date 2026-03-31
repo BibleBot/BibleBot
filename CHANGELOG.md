@@ -4,6 +4,52 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [15.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v14.0.0..v15.0.0) - 2026-03-31
+
+### 🚀 Features
+
+- Add user app install count to /stats, add some missing parameter descriptions ([e553da5](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/e553da5158d1352f8bb8b13e00c5a9c3f7e1e1ef))
+- [**breaking**] Add A/B testing experiment management system, staff reloading for some DB collections ([5c45e51](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5c45e51b4406340c97dc551141535f317d73956e))
+- Add Septuagint Psalm numbering flag to versions and display daily verse warning when using them in /setserverversion ([5ca11d5](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5ca11d57d8bea72d98a084ac28826db3ad910682))
+- Add /searchresource, for searching paragraphed resources by keyword ([f91d36a](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/f91d36a2e07db65779651d32b47884c7bda0b980))
+- *(metrics)* Properly support multi-chaptered references, add unit tests ([5d18aed](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5d18aed916720ebaf4130b2082a6f6fe1bc81096))
+- [**breaking**] Migrate from mongodb to postgres ([89052d2](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/89052d2e94a31a2545cbee0d1a3455121716cd0a))
+- Finishing touches on postgres in autoserv ([fe3cfc0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/fe3cfc0dcf662cb18c39dbb7d169dfa57dce1493))
+
+### 🐛 Bug Fixes
+
+- Loose errors that aren't getting caught ([94f07c5](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/94f07c5b2fe0482feb46a0c42e0aa4eaa2a00e32))
+- Attribute nomenclature mismatches ([b29f01f](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/b29f01f5252049a2089dc10c8960c09972b8992c))
+- Set contexts for user app commands ([1058c83](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/1058c8309bec419e5b78dad5c2a56a61883a9cd3))
+- Make sort_by_language an optional param, expand result count in /listversions language pages ([f1a19d8](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/f1a19d80708de9d7364701450d481f8d6fe15e39))
+- Add ~ to user install count estimate, format stat counts otherwise ([fc4550b](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/fc4550bd0be2d55abd7f405957c454f04ce84b2b))
+- Type errors on various checks, don't show commands that aren't usable on user app ([09d02f3](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/09d02f3b916129bfa5dfebebc6f10796abedd33b))
+- Type error from trying to find error embeds in message sending failures ([00f390d](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/00f390d53a0496db2a035b27a8fcb2f9a7f3708a))
+- Check for manage server permission in frontend ([07593a4](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/07593a4a09fc33c95dbef374cd04d583179ca48f))
+- Tidy manage server perm check ([6953f47](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/6953f47aab9ef2e0dadca76fdd0e68a85c8f2837))
+- Copy error embed check to other sending wrappers, add TODOs for parameter descriptions ([ebd7f7a](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/ebd7f7a3dc3464fa55d07420ed3d8a7b0a14a45c))
+- Send verses individually if combined component length is too long ([81fd570](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/81fd5705f1bed17cf99eaeb54dbc697abf4e610a))
+- Various type errors, remove deprecated event loop policy for Windows ([43e01d4](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/43e01d4237526d1e2de96e0b29d19d14ec541abe))
+- More type errors because i am dumb person ([a1ab694](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/a1ab6942d76d38f62dd27a9987c60185bb4c76ea))
+- Type errors, allow lookback appended verses through verse metrics ([732190e](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/732190e3f29c6cbb02dc64c0b59a4c929f47c77d))
+- Increase overhead value in maximum text length calculation ([021a46c](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/021a46cb318200681cb83fb07f148a67fbc839b1))
+- Change how we check if a channel supports permissions ([7068809](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/7068809c144bbb38bc55f20021ce40322b9bd73f))
+- *(frontend)* Verse paginator not using correct user ID value ([f68532a](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/f68532a7849e2c7cfd46d67b8bb33147d211404d))
+- Don't capture handled exception in RSS parsing ([a490dd8](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/a490dd864e6cb039ed4f0c7f9797a8ef91fe8a96))
+- Add retry logic to avoid SectionNotFoundException in random verse processing ([8fb63b1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/8fb63b1c8667ab6a3075339fdc06582e309af46d))
+- *(metrics)* Set service as scoped to make sure operations are thread-safe ([9e767d0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/9e767d0662e7fecc4d4d0a4f0d3d6bda42a1ac27))
+- *(metrics)* Remove verse numbers outside the ContentProvider so GetChapterEndingVerses() doesn't fail ([70fcdeb](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/70fcdeb7b06e64f14b4352df98d616702cb38384))
+- *(frontend)* Add try/catch to fetching stats to prevent the task from being removed ([e773c19](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/e773c19ebc2e1eb1dd9af8c634b62ec56033b89c))
+
+### 🚜 Refactor
+
+- Initialize and reuse ExperimentService in TestBaseClass to avoid repeated instantiation. ([aaf9d35](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/aaf9d35166dd7bd8778a6d6b1ca57aa18acba17b))
+- Reorganize frontend utilities into core, helpers, services, and ui modules, and update backend experiment handling. ([89081de](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/89081de301c2cb5e2e5a6d8ca713ab964035c975))
+- *(commands)* Tidy logic for checking user opt-out status ([40f8e53](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/40f8e53acc9874cd47390d93479988299527954f))
+- *(frontend)* Reorganize the calls to fetch frontend experiments ([3fba522](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/3fba522a4c25c10333d328cb1b1a6586e633d576))
+- Remove some redundancy, dispose a reader ([23dc429](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/23dc429ccb0db3d1e9eb67a2e0064291c9e4b1af))
+- Assorted refactors and optimizations ([da8afb3](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/da8afb33af7ebb2b2526385394c30a9ef53ab291))
+
 ## [14.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v13.1.0..v14.0.0) - 2025-11-20
 
 ### 🚀 Features
