@@ -556,14 +556,17 @@ def migrateVersionsToPostgres(mongo_db, pg_conn):
                         content = EXCLUDED.content;
                 """, verse_params)
 
-        if total_chapters_in_mongo != (getRowCounts('chapters', pg_conn) - before_chapter_count):
-            print(f"chapters for {version.get('Abbreviation')} in mongodb: {total_chapters_in_mongo}, in postgres: {getRowCounts('chapters', pg_conn) - before_chapter_count}")
+        changed_chapter_count = getRowCounts('chapters', pg_conn) - before_chapter_count
+        if changed_chapter_count != 0 and total_chapters_in_mongo != changed_chapter_count:
+            print(f"chapters for {version.get('Abbreviation')} in mongodb: {total_chapters_in_mongo}, in postgres: {changed_chapter_count}")
 
-        if total_verses_in_mongo != (getRowCounts('verses', pg_conn) - before_verse_count):
-            print(f"verses for {version.get('Abbreviation')} in mongodb: {total_verses_in_mongo}, in postgres: {getRowCounts('verses', pg_conn) - before_verse_count}")
+        changed_verses_count = getRowCounts('verses', pg_conn) - before_verse_count
+        if changed_verses_count != 0 and total_verses_in_mongo != changed_verses_count:
+            print(f"verses for {version.get('Abbreviation')} in mongodb: {total_verses_in_mongo}, in postgres: {changed_verses_count}")
 
-        if book_count != (getRowCounts('books', pg_conn) - before_book_count):
-            print(f"books for {version.get('Abbreviation')} in mongodb: {book_count}, in postgres: {getRowCounts('books', pg_conn) - before_book_count}")
+        changed_book_count = getRowCounts('books', pg_conn) - before_book_count
+        if changed_book_count != 0 and book_count != changed_book_count:
+            print(f"books for {version.get('Abbreviation')} in mongodb: {book_count}, in postgres: {changed_book_count}")
 
     if doc_count != getRowCounts('versions', pg_conn):
         print(f"versions in mongodb: {doc_count}, versions in postgres: {getRowCounts('versions', pg_conn)}")
