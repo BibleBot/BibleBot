@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using BibleBot.Backend;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using NodaTime;
@@ -33,12 +34,7 @@ namespace BibleBot.AutomaticServices.Services
 {
     public class AutomaticDailyVerseService : IHostedService, IDisposable
     {
-        private readonly GuildService _guildService;
-        private readonly VersionService _versionService;
-        private readonly LanguageService _languageService;
-
-        private readonly SpecialVerseProcessingService _specialVerseProcessingService;
-
+        private readonly IServiceScopeFactory _serviceServiceScopeFactory;
         private readonly IStringLocalizer<AutomaticDailyVerseService> _localizer;
 
         private readonly ConcurrentDictionary<long, Guild> _previousMinuteFailedGuilds = new();
@@ -46,14 +42,10 @@ namespace BibleBot.AutomaticServices.Services
         private readonly RestClient _restClient;
         private Timer _timer;
 
-        public AutomaticDailyVerseService(GuildService guildService, VersionService versionService, LanguageService languageService,
-                                          SpecialVerseProcessingService specialVerseProcessingService,
+        public AutomaticDailyVerseService(IServiceScopeFactory serviceScopeFactory,
                                           IStringLocalizer<AutomaticDailyVerseService> localizer)
         {
-            _guildService = guildService;
-            _versionService = versionService;
-            _languageService = languageService;
-            _specialVerseProcessingService = specialVerseProcessingService;
+            _serviceServiceScopeFactory = serviceScopeFactory;
             _localizer = localizer;
 
             _restClient = new RestClient("https://discord.com/api/webhooks", configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, IncludeFields = true }));
@@ -70,6 +62,12 @@ namespace BibleBot.AutomaticServices.Services
 
         private async void RunAutomaticDailyVerses(object state)
         {
+            using IServiceScope scope = _serviceServiceScopeFactory.CreateScope();
+            GuildService _guildService = scope.ServiceProvider.GetRequiredService<GuildService>();
+            VersionService _versionService = scope.ServiceProvider.GetRequiredService<VersionService>();
+            LanguageService _languageService = scope.ServiceProvider.GetRequiredService<LanguageService>();
+            SpecialVerseProcessingService _specialVerseProcessingService = scope.ServiceProvider.GetRequiredService<SpecialVerseProcessingService>();
+
             bool isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
@@ -123,7 +121,7 @@ namespace BibleBot.AutomaticServices.Services
                 await semaphore.WaitAsync();
                 try
                 {
-                    return await ProcessGuild(guild, resultsByVersion, dateTimeInStandardTz, removedGuilds);
+                    return await ProcessGuild(guild, resultsByVersion, dateTimeInStandardTz, removedGuilds, _guildService, _versionService, _languageService, _specialVerseProcessingService);
                 }
                 catch (Exception ex)
                 {
@@ -144,7 +142,7 @@ namespace BibleBot.AutomaticServices.Services
             Log.Information($"AutomaticDailyVerseService: Sent {(idealCount > 0 ? $"{count} of {idealCount}" : "0")} (+{previousFailuresCount} / -{removedGuilds.Count}) daily verse(s) for {dateTimeInStandardTz.ToString("h:mm tt x", new CultureInfo("en-US"))} in {timeToProcess}.");
         }
 
-        public async Task<bool> ProcessGuild(Guild guild, ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion, ZonedDateTime dateTimeInStandardTz, ConcurrentBag<long> removedGuilds)
+        public async Task<bool> ProcessGuild(Guild guild, ConcurrentDictionary<string, Task<VerseResult>> resultsByVersion, ZonedDateTime dateTimeInStandardTz, ConcurrentBag<long> removedGuilds, GuildService _guildService, VersionService _versionService, LanguageService _languageService, SpecialVerseProcessingService _specialVerseProcessingService)
         {
             InternalEmbed embed;
             InternalContainer container;

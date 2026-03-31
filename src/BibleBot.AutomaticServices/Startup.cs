@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
+using Npgsql;
 using Serilog;
 
 namespace BibleBot.AutomaticServices
@@ -40,12 +41,17 @@ namespace BibleBot.AutomaticServices
                 options.Configuration = "127.0.0.1:6379";
             });
 
+            string connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONN");
+            NpgsqlDataSourceBuilder dataSourceBuilder = new(connectionString);
+            dataSourceBuilder.UseNodaTime();
+            dataSourceBuilder.EnableDynamicJson();
+            NpgsqlDataSource dataSource = dataSourceBuilder.Build();
+
             // Instantiate the various services.
+            services.AddSingleton(dataSource);
             services.AddDbContextPool<PgContext>(options =>
-                options.UseNpgsql(
-                    Environment.GetEnvironmentVariable("POSTGRES_CONN"),
-                    o => o.SetPostgresVersion(18, 0)
-                        .UseNodaTime()
+                options.UseNpgsql(dataSource,
+                    o => o.SetPostgresVersion(18, 0).UseNodaTime()
                 )
             );
 
@@ -53,8 +59,8 @@ namespace BibleBot.AutomaticServices
             services.AddScoped<PreferenceService>();
             services.AddScoped<UserService>();
             services.AddScoped<GuildService>();
-            services.AddScoped<VersionService>();
-            services.AddScoped<LanguageService>();
+            services.AddSingleton<VersionService>();
+            services.AddSingleton<LanguageService>();
             services.AddSingleton(sp => new ParsingService(true));
 
             services.AddSingleton(sp => new MetadataFetchingService(sp.GetRequiredService<VersionService>(), true));

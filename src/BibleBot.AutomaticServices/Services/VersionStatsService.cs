@@ -16,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using RestSharp;
@@ -27,18 +28,14 @@ namespace BibleBot.AutomaticServices.Services
 {
     public class VersionStatsService : IHostedService, IDisposable
     {
-        private readonly GuildService _guildService;
-        private readonly UserService _userService;
-        private readonly VersionService _versionService;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly RestClient _restClient;
         private Timer _timer;
 
-        public VersionStatsService(GuildService guildService, UserService userService, VersionService versionService)
+        public VersionStatsService(IServiceScopeFactory serviceScopeFactory)
         {
-            _guildService = guildService;
-            _userService = userService;
-            _versionService = versionService;
+            _serviceScopeFactory = serviceScopeFactory;
 
             _restClient = new RestClient("https://discord.com/api/webhooks", configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
         }
@@ -54,6 +51,11 @@ namespace BibleBot.AutomaticServices.Services
 
         private async void RunVersionStats(object state)
         {
+            using IServiceScope scope = _serviceScopeFactory.CreateScope();
+            UserService _userService = scope.ServiceProvider.GetService<UserService>();
+            GuildService _guildService = scope.ServiceProvider.GetService<GuildService>();
+            VersionService _versionService = scope.ServiceProvider.GetService<VersionService>();
+
             try
             {
                 Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
