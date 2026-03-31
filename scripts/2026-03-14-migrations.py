@@ -816,14 +816,14 @@ def migrateMongoToPostgres():
                     try:
                         cur.execute(schema)
                     except Exception as e:
-                        print(f"Failed to create '{name}' table: {err}")
+                        print(f"Failed to create '{name}' table: {e}")
 
                 for name, schema in postgresPostSchemas.items():
                     print(f"Applying post-schema: {name}")
                     try:
                         cur.execute(schema)
                     except Exception as e:
-                        print(f"Failed to apply '{name}' post-schema: {err}")
+                        print(f"Failed to apply '{name}' post-schema: {e}")
             try:
                 pg_conn.commit()
             except Exception as e:
