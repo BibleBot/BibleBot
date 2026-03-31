@@ -610,6 +610,33 @@ def migrateGuildsToPostgres(mongo_db, pg_conn, valid_languages, valid_versions):
 
         if len(params) >= BATCH_SIZE:
             with pg_conn.cursor() as cur:
+                try:
+                    cur.executemany("""
+                        INSERT INTO guilds (
+                            id, version, language, display_style, ignoring_brackets, dv_channel_id, dv_webhook, dv_time, dv_timezone, dv_last_sent, dv_role_id, dv_is_thread, dv_last_status, is_dm
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        ON CONFLICT (id) DO UPDATE SET
+                            version = EXCLUDED.version,
+                            language = EXCLUDED.language,
+                            display_style = EXCLUDED.display_style,
+                            ignoring_brackets = EXCLUDED.ignoring_brackets,
+                            dv_channel_id = EXCLUDED.dv_channel_id,
+                            dv_webhook = EXCLUDED.dv_webhook,
+                            dv_time = EXCLUDED.dv_time,
+                            dv_timezone = EXCLUDED.dv_timezone,
+                            dv_last_sent = EXCLUDED.dv_last_sent,
+                            dv_role_id = EXCLUDED.dv_role_id,
+                            dv_is_thread = EXCLUDED.dv_is_thread,
+                            dv_last_status = EXCLUDED.dv_last_status,
+                            is_dm = EXCLUDED.is_dm;
+                    """, params)
+                except Exception as e:
+                    print(f"Failed to migrate guilds: {e}")
+            params = []
+
+    if params:
+        with pg_conn.cursor() as cur:
+            try:
                 cur.executemany("""
                     INSERT INTO guilds (
                         id, version, language, display_style, ignoring_brackets, dv_channel_id, dv_webhook, dv_time, dv_timezone, dv_last_sent, dv_role_id, dv_is_thread, dv_last_status, is_dm
@@ -629,29 +656,8 @@ def migrateGuildsToPostgres(mongo_db, pg_conn, valid_languages, valid_versions):
                         dv_last_status = EXCLUDED.dv_last_status,
                         is_dm = EXCLUDED.is_dm;
                 """, params)
-            params = []
-
-    if params:
-        with pg_conn.cursor() as cur:
-            cur.executemany("""
-                INSERT INTO guilds (
-                    id, version, language, display_style, ignoring_brackets, dv_channel_id, dv_webhook, dv_time, dv_timezone, dv_last_sent, dv_role_id, dv_is_thread, dv_last_status, is_dm
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO UPDATE SET
-                    version = EXCLUDED.version,
-                    language = EXCLUDED.language,
-                    display_style = EXCLUDED.display_style,
-                    ignoring_brackets = EXCLUDED.ignoring_brackets,
-                    dv_channel_id = EXCLUDED.dv_channel_id,
-                    dv_webhook = EXCLUDED.dv_webhook,
-                    dv_time = EXCLUDED.dv_time,
-                    dv_timezone = EXCLUDED.dv_timezone,
-                    dv_last_sent = EXCLUDED.dv_last_sent,
-                    dv_role_id = EXCLUDED.dv_role_id,
-                    dv_is_thread = EXCLUDED.dv_is_thread,
-                    dv_last_status = EXCLUDED.dv_last_status,
-                    is_dm = EXCLUDED.is_dm;
-            """, params)
+            except Exception as e:
+                print(f"Failed to migrate guilds: {e}")
 
     if doc_count != getRowCounts('guilds', pg_conn):
         print(f"guilds in mongodb: {doc_count}, guilds in postgres: {getRowCounts('guilds', pg_conn)}")
@@ -687,6 +693,27 @@ def migrateUsersToPostgres(mongo_db, pg_conn, valid_languages, valid_versions):
 
         if len(params) >= BATCH_SIZE:
             with pg_conn.cursor() as cur:
+                try:
+                    cur.executemany("""
+                        INSERT INTO users (
+                            id, version, language, display_style, input_method, titles_enabled, verse_numbers_enabled, pagination_enabled
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        ON CONFLICT (id) DO UPDATE SET
+                            version = EXCLUDED.version,
+                            language = EXCLUDED.language,
+                            display_style = EXCLUDED.display_style,
+                            input_method = EXCLUDED.input_method,
+                            titles_enabled = EXCLUDED.titles_enabled,
+                            verse_numbers_enabled = EXCLUDED.verse_numbers_enabled,
+                            pagination_enabled = EXCLUDED.pagination_enabled;
+                    """, params)
+                except Exception as e:
+                    print(f"Failed to migrate users: {e}")
+            params = []
+
+    if params:
+        with pg_conn.cursor() as cur:
+            try:
                 cur.executemany("""
                     INSERT INTO users (
                         id, version, language, display_style, input_method, titles_enabled, verse_numbers_enabled, pagination_enabled
@@ -700,23 +727,8 @@ def migrateUsersToPostgres(mongo_db, pg_conn, valid_languages, valid_versions):
                         verse_numbers_enabled = EXCLUDED.verse_numbers_enabled,
                         pagination_enabled = EXCLUDED.pagination_enabled;
                 """, params)
-            params = []
-
-    if params:
-        with pg_conn.cursor() as cur:
-            cur.executemany("""
-                INSERT INTO users (
-                    id, version, language, display_style, input_method, titles_enabled, verse_numbers_enabled, pagination_enabled
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO UPDATE SET
-                    version = EXCLUDED.version,
-                    language = EXCLUDED.language,
-                    display_style = EXCLUDED.display_style,
-                    input_method = EXCLUDED.input_method,
-                    titles_enabled = EXCLUDED.titles_enabled,
-                    verse_numbers_enabled = EXCLUDED.verse_numbers_enabled,
-                    pagination_enabled = EXCLUDED.pagination_enabled;
-            """, params)
+            except Exception as e:
+                print(f"Failed to migrate users: {e}")
 
     if doc_count != getRowCounts('users', pg_conn):
         print(f"users in mongodb: {doc_count}, users in postgres: {getRowCounts('users', pg_conn)}")
@@ -801,12 +813,21 @@ def migrateMongoToPostgres():
             with pg_conn.cursor() as cur:
                 for name, schema in postgresSchemas.items():
                     print(f"Creating postgres table: {name}")
-                    cur.execute(schema)
+                    try:
+                        cur.execute(schema)
+                    except Exception as e:
+                        print(f"Failed to create '{name}' table: {err}")
 
                 for name, schema in postgresPostSchemas.items():
                     print(f"Applying post-schema: {name}")
-                    cur.execute(schema)
-            pg_conn.commit()
+                    try:
+                        cur.execute(schema)
+                    except Exception as e:
+                        print(f"Failed to apply '{name}' post-schema: {err}")
+            try:
+                pg_conn.commit()
+            except Exception as e:
+                print(f"failed to commit initial setup")
 
             setSeptuagintFlag(mongo_db)
             importExperiments(mongo_db)
