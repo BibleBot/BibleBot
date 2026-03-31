@@ -72,6 +72,11 @@ namespace BibleBot.Models
         /// </summary>
         public DbSet<Experiment> Experiments { get; set; }
 
+        /// <summary>
+        /// The opt-out users table.
+        /// </summary>
+        public DbSet<OptOutUser> OptOutUsers { get; set; }
+
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -87,6 +92,8 @@ namespace BibleBot.Models
                 entity.Property(u => u.TitlesEnabled).HasColumnName("titles_enabled").IsRequired().HasDefaultValue(true);
                 entity.Property(u => u.VerseNumbersEnabled).HasColumnName("verse_numbers_enabled").IsRequired().HasDefaultValue(true);
                 entity.Property(u => u.PaginationEnabled).HasColumnName("pagination_enabled").IsRequired().HasDefaultValue(false);
+                entity.Ignore(u => u.IsOptOut);
+                entity.HasOne(u => u.OptOutEntry).WithOne().HasForeignKey<OptOutUser>(o => o.Id);
                 entity.HasIndex(u => u.Version).HasDatabaseName("idx_users_version");
                 entity.HasIndex(u => u.Language).HasDatabaseName("idx_users_language");
             });
@@ -254,6 +261,13 @@ namespace BibleBot.Models
                 entity.Property(e => e.Variants).HasColumnName("variants").HasColumnType("jsonb");
                 entity.Property(e => e.Weights).HasColumnName("weights").HasColumnType("jsonb");
                 entity.Property(e => e.Feedback).HasColumnName("feedback").HasColumnType("jsonb");
+            });
+
+            modelBuilder.Entity<OptOutUser>(entity =>
+            {
+                entity.ToTable("opt_out_users");
+                entity.HasKey(o => o.Id);
+                entity.Property(o => o.Id).HasColumnName("id").ValueGeneratedNever();
             });
         }
 

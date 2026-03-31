@@ -6,8 +6,7 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-using System.Numerics;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BibleBot.Models
 {
@@ -57,8 +56,16 @@ namespace BibleBot.Models
         public string DisplayStyle { get; set; } = "embed";
 
         /// <summary>
-        /// Indicates whether the user is opt out of the service.
+        /// Navigation property to the opt_out_users table entry.
         /// </summary>
-        public bool IsOptOut { get; set; } = false;
+        public OptOutUser OptOutEntry { get; set; }
+
+        /// <summary>
+        /// Indicates whether the user has opted out of the service.
+        /// Computed from the existence of a row in the opt_out_users table.
+        /// </summary>
+        [NotMapped]
+        public bool IsOptOut => OptOutEntry != null;
     }
 }
+

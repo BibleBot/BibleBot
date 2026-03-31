@@ -49,6 +49,13 @@ namespace BibleBot.Backend.Services
 
         public async Task<T> Get<T>(long query) where T : class
         {
+            if (typeof(User).IsAssignableFrom(typeof(T)))
+            {
+                return await pgContext.Users.AsNoTracking()
+                    .Include(u => u.OptOutEntry)
+                    .FirstOrDefaultAsync(u => u.Id == query) as T;
+            }
+
             return await pgContext.GetDbSet<T>().AsNoTracking().FirstOrDefaultAsync(e => EF.Property<long>(e, "Id") == query);
         }
 
