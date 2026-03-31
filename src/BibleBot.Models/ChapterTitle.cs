@@ -7,7 +7,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -16,6 +15,7 @@ namespace BibleBot.Models
     /// <summary>
     /// A title heading for a chapter, indicating a section title that spans a range of verses.
     /// </summary>
+    [JsonConverter(typeof(ChapterTitleConverter))]
     public class ChapterTitle
     {
         /// <summary>
@@ -35,126 +35,92 @@ namespace BibleBot.Models
     }
 
     /// <summary>
-    /// A JSON converter for <c>List&lt;ChapterTitle&gt;</c> that can read both
-    /// the legacy tuple-array format (<c>[[1, 5, "Title"], ...]</c>) and the
-    /// new object format (<c>[{"StartVerse":1, "EndVerse":5, "Title":"Title"}, ...]</c>).
+    /// A JSON converter for <see cref="ChapterTitle"/> that can read both
+    /// the legacy tuple-array format (<c>[1, 5, "Title"]</c>) and the
+    /// new object format (<c>{"StartVerse":1, "EndVerse":5, "Title":"Title"}</c>).
     /// </summary>
-    public class ChapterTitleListConverter : JsonConverter<List<ChapterTitle>>
+    public class ChapterTitleConverter : JsonConverter<ChapterTitle>
     {
         /// <inheritdoc/>
-        public override List<ChapterTitle> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override ChapterTitle Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (reader.TokenType == JsonTokenType.Null)
+            if (reader.TokenType == JsonTokenType.StartArray)
             {
-                return null;
-            }
+                // Legacy tuple-array format: [int, int, string]
+                reader.Read();
+                int startVerse = reader.GetInt32();
+                reader.Read();
+                int endVerse = reader.GetInt32();
+                reader.Read();
+                string title = reader.GetString();
+                reader.Read(); // EndArray
 
-            if (reader.TokenType != JsonTokenType.StartArray)
-            {
-                throw new JsonException("Expected start of array for ChapterTitle list.");
-            }
-
-            List<ChapterTitle> result = [];
-
-            while (reader.Read())
-            {
-                if (reader.TokenType == JsonTokenType.EndArray)
+                if (reader.TokenType != JsonTokenType.EndArray)
                 {
-                    return result;
+                    throw new JsonException("Expected end of tuple array for ChapterTitle.");
                 }
 
-                if (reader.TokenType == JsonTokenType.StartArray)
+                return new ChapterTitle
                 {
-                    // Legacy tuple-array format: [int, int, string]
-                    reader.Read();
-                    int startVerse = reader.GetInt32();
-                    reader.Read();
-                    int endVerse = reader.GetInt32();
-                    reader.Read();
-                    string title = reader.GetString();
-                    reader.Read(); // EndArray
+                    StartVerse = startVerse,
+                    EndVerse = endVerse,
+                    Title = title
+                };
+            }
 
-                    if (reader.TokenType != JsonTokenType.EndArray)
-                    {
-                        throw new JsonException("Expected end of tuple array for ChapterTitle.");
-                    }
+            if (reader.TokenType == JsonTokenType.StartObject)
+            {
+                // Object format: {"StartVerse": int, "EndVerse": int, "Title": string}
+                // Also handles {"Item1": int, "Item2": int, "Item3": string} from
+                // System.Text.Json serialization of System.Tuple.
+                int startVerse = 0;
+                int endVerse = 0;
+                string title = null;
 
-                    result.Add(new ChapterTitle
-                    {
-                        StartVerse = startVerse,
-                        EndVerse = endVerse,
-                        Title = title
-                    });
-                }
-                else if (reader.TokenType == JsonTokenType.StartObject)
+                while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
                 {
-                    // New object format: {"StartVerse": int, "EndVerse": int, "Title": string}
-                    // Also handles {"Item1": int, "Item2": int, "Item3": string} from System.Text.Json
-                    // serialization of System.Tuple.
-                    int startVerse = 0;
-                    int endVerse = 0;
-                    string title = null;
-
-                    while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
+                    if (reader.TokenType == JsonTokenType.PropertyName)
                     {
-                        if (reader.TokenType == JsonTokenType.PropertyName)
+                        string propertyName = reader.GetString();
+                        reader.Read();
+
+                        switch (propertyName)
                         {
-                            string propertyName = reader.GetString();
-                            reader.Read();
-
-                            switch (propertyName)
-                            {
-                                case "StartVerse":
-                                case "Item1":
-                                    startVerse = reader.GetInt32();
-                                    break;
-                                case "EndVerse":
-                                case "Item2":
-                                    endVerse = reader.GetInt32();
-                                    break;
-                                case "Title":
-                                case "Item3":
-                                    title = reader.GetString();
-                                    break;
-                            }
+                            case "StartVerse":
+                            case "Item1":
+                                startVerse = reader.GetInt32();
+                                break;
+                            case "EndVerse":
+                            case "Item2":
+                                endVerse = reader.GetInt32();
+                                break;
+                            case "Title":
+                            case "Item3":
+                                title = reader.GetString();
+                                break;
                         }
                     }
+                }
 
-                    result.Add(new ChapterTitle
-                    {
-                        StartVerse = startVerse,
-                        EndVerse = endVerse,
-                        Title = title
-                    });
-                }
-                else
+                return new ChapterTitle
                 {
-                    throw new JsonException($"Unexpected token {reader.TokenType} when reading ChapterTitle list.");
-                }
+                    StartVerse = startVerse,
+                    EndVerse = endVerse,
+                    Title = title
+                };
             }
 
-            throw new JsonException("Unexpected end of JSON when reading ChapterTitle list.");
+            throw new JsonException($"Unexpected token {reader.TokenType} when reading ChapterTitle.");
         }
 
         /// <inheritdoc/>
-        public override void Write(Utf8JsonWriter writer, List<ChapterTitle> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, ChapterTitle value, JsonSerializerOptions options)
         {
-            if (value == null)
-            {
-                writer.WriteNullValue();
-                return;
-            }
-
-            writer.WriteStartArray();
-            foreach (ChapterTitle item in value)
-            {
-                writer.WriteStartObject();
-                writer.WriteNumber("StartVerse", item.StartVerse);
-                writer.WriteNumber("EndVerse", item.EndVerse);
-                writer.WriteString("Title", item.Title);
-                writer.WriteEndObject();
-            }
-            writer.WriteEndArray();
+            writer.WriteStartObject();
+            writer.WriteNumber("StartVerse", value.StartVerse);
+            writer.WriteNumber("EndVerse", value.EndVerse);
+            writer.WriteString("Title", value.Title);
+            writer.WriteEndObject();
         }
     }
 }

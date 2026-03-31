@@ -7,7 +7,6 @@
 */
 
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace BibleBot.Models
 {
@@ -158,7 +157,6 @@ namespace BibleBot.Models
         /// <summary>
         /// An array of title headings for the chapter.
         /// </summary>
-        [JsonConverter(typeof(ChapterTitleListConverter))]
         public List<ChapterTitle> Titles { get; set; } = [];
 
         /// <summary>

@@ -75,7 +75,7 @@ namespace BibleBot.Backend
         }
 
         private static readonly string _buildConfiguration = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production" ? "Release" : "Debug";
-        private static readonly string _gitInfoPath = Path.GetFullPath($"{Directory.GetCurrentDirectory()}/obj/{_buildConfiguration}/net9.0/GitInfo.cache");
+        private static readonly string _gitInfoPath = Path.GetFullPath($"{Directory.GetCurrentDirectory()}/obj/{_buildConfiguration}/net10.0/GitInfo.cache");
         private static StreamReader _gitInfoReader;
         private static string _cachedVersion;
 
@@ -113,8 +113,6 @@ namespace BibleBot.Backend
                     string version = line.Split("=")[1];
                     _cachedVersion = $"v{version[..^1]}";
                 }
-
-                _gitInfoReader.Dispose();
 
                 return _cachedVersion;
             }
