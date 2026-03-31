@@ -62,12 +62,6 @@ namespace BibleBot.AutomaticServices.Services
 
         private async void RunAutomaticDailyVerses(object state)
         {
-            using IServiceScope scope = _serviceServiceScopeFactory.CreateScope();
-            GuildService _guildService = scope.ServiceProvider.GetRequiredService<GuildService>();
-            VersionService _versionService = scope.ServiceProvider.GetRequiredService<VersionService>();
-            LanguageService _languageService = scope.ServiceProvider.GetRequiredService<LanguageService>();
-            SpecialVerseProcessingService _specialVerseProcessingService = scope.ServiceProvider.GetRequiredService<SpecialVerseProcessingService>();
-
             bool isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
             Instant currentInstant = SystemClock.Instance.GetCurrentInstant();
@@ -77,33 +71,39 @@ namespace BibleBot.AutomaticServices.Services
 
             ConcurrentBag<long> removedGuilds = [];
 
-            List<Guild> matches = [.. (await _guildService.Get()).Where((guild) =>
-                {
-                    if (isTesting && guild.Id != 769709969796628500)
+            List<Guild> matches;
+            // Use a dedicated scope just for fetching the guild list.
+            using (IServiceScope fetchScope = _serviceServiceScopeFactory.CreateScope())
+            {
+                GuildService fetchGuildService = fetchScope.ServiceProvider.GetRequiredService<GuildService>();
+                matches = [.. (await fetchGuildService.Get()).Where((guild) =>
                     {
-                        return false;
-                    }
+                        if (isTesting && guild.Id != 769709969796628500)
+                        {
+                            return false;
+                        }
 
-                    if (guild.DailyVerseTime == null || guild.DailyVerseTimeZone == null || guild.DailyVerseWebhook == null)
-                    {
-                        return false;
-                    }
+                        if (guild.DailyVerseTime == null || guild.DailyVerseTimeZone == null || guild.DailyVerseWebhook == null)
+                        {
+                            return false;
+                        }
 
-                    string[] guildTime = guild.DailyVerseTime.Split(":");
-                    DateTimeZone preferredTimeZone = DateTimeZoneProviders.Tzdb[guild.DailyVerseTimeZone];
-                    ZonedDateTime dateTimeInPreferredTz = currentInstant.InZone(preferredTimeZone);
+                        string[] guildTime = guild.DailyVerseTime.Split(":");
+                        DateTimeZone preferredTimeZone = DateTimeZoneProviders.Tzdb[guild.DailyVerseTimeZone];
+                        ZonedDateTime dateTimeInPreferredTz = currentInstant.InZone(preferredTimeZone);
 
-                    try
-                    {
-                        return dateTimeInPreferredTz.Hour == int.Parse(guildTime[0])
-                        && dateTimeInPreferredTz.Minute == int.Parse(guildTime[1])
-                        && guild.DailyVerseLastSentDate != dateTimeInStandardTz.ToString("MM/dd/yyyy", null);
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                }).Concat(_previousMinuteFailedGuilds.Values).Distinct()];
+                        try
+                        {
+                            return dateTimeInPreferredTz.Hour == int.Parse(guildTime[0])
+                            && dateTimeInPreferredTz.Minute == int.Parse(guildTime[1])
+                            && guild.DailyVerseLastSentDate != dateTimeInStandardTz.ToString("MM/dd/yyyy", null);
+                        }
+                        catch
+                        {
+                            return false;
+                        }
+                    }).Concat(_previousMinuteFailedGuilds.Values).Distinct()];
+            }
 
             int idealCount = matches.Count - _previousMinuteFailedGuilds.Count;
             int previousFailuresCount = _previousMinuteFailedGuilds.Count;
@@ -121,7 +121,16 @@ namespace BibleBot.AutomaticServices.Services
                 await semaphore.WaitAsync();
                 try
                 {
-                    return await ProcessGuild(guild, resultsByVersion, dateTimeInStandardTz, removedGuilds, _guildService, _versionService, _languageService, _specialVerseProcessingService);
+                    // Each concurrent task gets its own DI scope so that each gets a
+                    // separate PgContext / NpgsqlConnection, avoiding the
+                    // "A command is already in progress" error.
+                    using IServiceScope guildScope = _serviceServiceScopeFactory.CreateScope();
+                    GuildService guildService = guildScope.ServiceProvider.GetRequiredService<GuildService>();
+                    VersionService versionService = guildScope.ServiceProvider.GetRequiredService<VersionService>();
+                    LanguageService languageService = guildScope.ServiceProvider.GetRequiredService<LanguageService>();
+                    SpecialVerseProcessingService specialVerseProcessingService = guildScope.ServiceProvider.GetRequiredService<SpecialVerseProcessingService>();
+
+                    return await ProcessGuild(guild, resultsByVersion, dateTimeInStandardTz, removedGuilds, guildService, versionService, languageService, specialVerseProcessingService);
                 }
                 catch (Exception ex)
                 {
