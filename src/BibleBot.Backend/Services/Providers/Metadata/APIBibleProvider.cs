@@ -153,13 +153,18 @@ namespace BibleBot.Backend.Services.Providers.Metadata
                 {
                     if (int.TryParse(chapter.Number, out int parsedNumber))
                     {
-                        List<Tuple<int, int, string>> titles = [];
+                        List<ChapterTitle> titles = [];
                         titles.AddRange(from section in chapter.Sections
                                         let firstVerseIdSplit = section.FirstVerseOrgId.Split('.')
                                         let lastVerseIdSplit = section.FirstVerseOrgId.Split('.')
                                         let firstVerseNumber = int.Parse(firstVerseIdSplit.Last())
                                         let lastVerseNumber = int.Parse(lastVerseIdSplit.Last())
-                                        select new Tuple<int, int, string>(firstVerseNumber, lastVerseNumber, section.Title)
+                                        select new ChapterTitle
+                                        {
+                                            StartVerse = firstVerseNumber,
+                                            EndVerse = lastVerseNumber,
+                                            Title = section.Title
+                                        }
                         );
 
                         chapters.Add(new Chapter
