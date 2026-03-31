@@ -16,6 +16,7 @@ using BibleBot.Backend.Models;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
+using Sentry;
 using Serilog;
 using MDVersionBookList = System.Collections.Generic.Dictionary<BibleBot.Models.BookCategories, System.Collections.Generic.Dictionary<string, string>>;
 using Version = BibleBot.Models.Version;
@@ -36,7 +37,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                 new VersionSet(userService, versionService, _localizer),
                 new VersionSetServer(guildService, versionService, _localizer),
                 new VersionInfo(userService, guildService, versionService, _localizer),
-                new VersionList(versionService, _sharedLocalizer),
+                new VersionList(versionService, _localizer, _sharedLocalizer),
                 new VersionBookList(userService, guildService, versionService, metadataFetchingService, _localizer)
             ]; set => throw new NotImplementedException();
         }
@@ -289,7 +290,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
             }
         }
 
-        private class VersionList(VersionService versionService, IStringLocalizer sharedLocalizer) : Command
+        private class VersionList(VersionService versionService, IStringLocalizer localizer, IStringLocalizer sharedLocalizer) : Command
         {
             public override string Name { get => "list"; set => throw new NotImplementedException(); }
 
@@ -310,7 +311,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                     // We need to add a page here because the for loop won't hit the last one otherwise.
                     // This also prevents situations where the Ceiling() result might equal 0.
-                    int totalPages = (int)Math.Ceiling((decimal)(versions.Count / maxResultsPerPage));
+                    int totalPages = Utils.CalculateTotalPages(versions.Count, maxResultsPerPage);
 
                     for (int i = 0; i < totalPages; i++)
                     {
@@ -342,6 +343,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     SortedDictionary<string, List<string>> localesToVersionBeforeEnglish = new(StringComparer.Ordinal);
                     List<string> englishVersions = [];
                     SortedDictionary<string, List<string>> localesToVersionAfterEnglish = new(StringComparer.Ordinal);
+                    List<string> unspecifiedLocaleVersions = [];
 
                     versions.ForEach((version) =>
                     {
@@ -356,9 +358,13 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         {
                             localeDisplayName = version.Locale;
                         }
-                        catch (ArgumentNullException)
+                        catch (ArgumentNullException err)
                         {
-                            Log.Error($"[err] {version.Id} does not have a locale");
+                            string msg = $"{version.Id} does not have a locale";
+                            SentrySdk.CaptureMessage(msg);
+                            Log.Error(msg);
+
+                            unspecifiedLocaleVersions.Add(version.Name);
                             shouldSkip = true;
                         }
 
@@ -405,6 +411,8 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         }
                     });
 
+                    localesToVersionAfterEnglish.Add(localizer["VersionListByLanguageUnspecified"], unspecifiedLocaleVersions);
+
                     List<string> localeDisplayNamesProcessed = [];
                     List<InternalEmbed> pages = [];
 
@@ -414,11 +422,11 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     int beforeCount = localesToVersionBeforeEnglish.Keys.Count;
                     int afterCount = localesToVersionAfterEnglish.Keys.Count;
 
-                    int pagesForBefore = (int)Math.Ceiling(decimal.Divide(beforeCount, maxResultsPerPage));
-                    int pagesForAfter = (int)Math.Ceiling(decimal.Divide(afterCount, maxResultsPerPage));
+                    int pagesForBefore = Utils.CalculateTotalPages(beforeCount, maxResultsPerPage);
+                    int pagesForAfter = Utils.CalculateTotalPages(afterCount, maxResultsPerPage);
 
-                    // English versions are always present; reserve one dedicated page for English.
-                    int totalPages = pagesForBefore + 1 + pagesForAfter;
+                    // Reserve a page for English if it exists.
+                    int totalPages = pagesForBefore + pagesForAfter + (englishVersions.Count > 0 ? 1 : 0);
 
                     // Build pages for the "before English" locale groups first.
                     for (int i = 0; i < pagesForBefore; i++)
@@ -441,11 +449,17 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     }
 
                     // Insert a dedicated English page after the before-English pages (always its own page).
-                    englishVersions.Sort(StringComparer.Ordinal);
-                    int englishPageIndex = pagesForBefore + 1;
-                    string englishPageCounter = string.Format(sharedLocalizer["PageCounter"], [englishPageIndex, totalPages]);
-                    InternalEmbed englishEmbed = Utils.GetInstance().Embedify($"/listversions - {englishPageCounter}", $"__**English**__\n{string.Join("\n", englishVersions)}\n\n", false);
-                    pages.Add(englishEmbed);
+                    if (englishVersions.Count > 0)
+                    {
+                        englishVersions.Sort(StringComparer.Ordinal);
+                        int englishPageIndex = pagesForBefore + 1;
+                        string englishPageCounter =
+                            string.Format(sharedLocalizer["PageCounter"], [englishPageIndex, totalPages]);
+                        InternalEmbed englishEmbed = Utils.GetInstance()
+                            .Embedify($"/listversions - {englishPageCounter}",
+                                $"__**English**__\n{string.Join("\n", englishVersions)}\n\n", false);
+                        pages.Add(englishEmbed);
+                    }
 
                     // Build pages for the "after English" locale groups.
                     for (int i = 0; i < pagesForAfter; i++)
@@ -461,7 +475,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                             count++;
                         }
 
-                        int pageIndex = pagesForBefore + i + 2;
+                        int pageIndex = pagesForBefore + i + (englishVersions.Count > 0 ? 2 : 1); // remove the English page addition to the index if there's no specified English versions
                         string pageCounterAfter = string.Format(sharedLocalizer["PageCounter"], [pageIndex, totalPages]);
                         InternalEmbed embed = Utils.GetInstance().Embedify($"/listversions - {pageCounterAfter}", versionList.ToString(), false);
                         pages.Add(embed);

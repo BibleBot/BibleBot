@@ -15,6 +15,7 @@ from disnake.interactions import ApplicationCommandInteraction
 from helpers import sending
 from services import backend
 from ui import renderers as containers
+# from core import checks
 
 i18n = bb_i18n()
 
@@ -37,6 +38,18 @@ class Staff(commands.Cog):
         await inter.response.defer()
 
         localization = i18n.get_i18n_or_default(inter.locale.name)
+
+        # -- see comment for checks.user_is_bb_staff() --
+        # if not checks.user_is_bb_staff(inter):
+        #     await sending.safe_send_interaction(
+        #         inter.followup,
+        #         components=containers.create_error_container(
+        #             localization["PERMS_ERROR_LABEL"],
+        #             localization["PERMS_NOT_STAFF_DESC"],
+        #             localization,
+        #         ),
+        #     )
+        #     return
 
         channel = inter.channel
         guild = inter.guild

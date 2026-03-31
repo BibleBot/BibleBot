@@ -49,7 +49,7 @@ namespace BibleBot.Models
         {
             return new UpdateDef<T>(s =>
             {
-                foreach (var update in updates)
+                foreach (UpdateDef<T> update in updates)
                 {
                     update.Action(s);
                 }

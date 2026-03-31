@@ -27,11 +27,12 @@
     "CMD_SETSERVERDISPLAY_DESC": "Set your server's preferred display style.",
     "PERMS_ERROR_LABEL": "Permissions Error",
     "PERMS_ERROR_DESC": "You must have the `Manage Server` permission to use this command.",
+    "PERMS_NOT_STAFF_DESC": "You must be BibleBot staff to use this command.",
     "CMD_SETBRACKETS_DESC": "Set the bot's ignoring brackets for this server.",
     "CMD_BIBLEBOT_DESC": "The help command.",
     "CMD_STATS_DESC": "Statistics on the bot.",
     "CMD_INVITE_DESC": "See bot and support server invites.",
-    "CMD_PERMSCHECK_DESC": "Check bot permissions for this channel and server.",
+    "CMD_PERMSCHECK_DESC": "Check bot permissions for this channel and server. (staff only)",
     "PERMSCHECK_ERROR_LABEL": "Permissions Check",
     "PERMSCHECK_ERROR_DM": "Channel ID specified belongs to a DM channel.",
     "PERMSCHECK_ERROR_NOCHAN": "The channel either does not exist or we do not have permission for it.",
@@ -90,5 +91,8 @@
     "CMD_VERSE_FAIL": "Couldn't find any content that matches the input.",
     "LISTVERSIONS_LANGUAGE_PARAM": "Whether to sort the versions by language.",
     "VERSE_PARAM": "The verse reference to fetch.",
-    "RESOURCE_PARAM": "The resource to reference."
+    "RESOURCE_PARAM": "The resource to reference.",
+    "CMD_RELOAD_EXPERIMENTS_DESC": "Reload A/B testing experiments. (staff only)",
+    "CMD_RELOAD_VERSIONS_DESC": "Reload versions. (staff only)",
+    "CMD_RELOAD_LANGUAGES_DESC": "Reload languages. (staff only)"
 }

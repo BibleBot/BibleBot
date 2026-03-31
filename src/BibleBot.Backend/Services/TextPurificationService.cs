@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace BibleBot.Backend.Services
@@ -141,8 +142,7 @@ namespace BibleBot.Backend.Services
         /// <returns>The purified text for parsing</returns>
         public static string PurifyBody(List<string> ignoringBrackets, string str)
         {
-            // Use StringBuilder for multiple string operations
-            var sb = new System.Text.StringBuilder(str.ToLowerInvariant());
+            StringBuilder sb = new(str.ToLowerInvariant());
             sb.Replace("\r", " ").Replace("\n", " ");
 
             // Process brackets

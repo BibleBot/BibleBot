@@ -63,7 +63,7 @@ namespace BibleBot.AutomaticServices.Services
 
                 if (dateTimeInStandardTz is { Day: 11, Hour: 11 })
                 {
-                    var preferences = (await _userService.Get()).Concat<IPreference>(await _guildService.Get()).ToList();
+                    List<IPreference> preferences = (await _userService.Get()).Concat<IPreference>(await _guildService.Get()).ToList();
                     List<Version> versions = await _versionService.Get();
 
                     Dictionary<string, int> versionStats = [];
@@ -77,17 +77,17 @@ namespace BibleBot.AutomaticServices.Services
                     {
                         try
                         {
-                            versionStats[preference.Version] = versionStats[preference.Version] + 1;
+                            versionStats[preference.Version] += 1;
                         }
                         catch (KeyNotFoundException)
                         {
-                            versionStats["RSV"] = versionStats["RSV"] + 1;
+                            versionStats["RSV"] += 1;
                         }
                     }
 
                     StringBuilder fileContents = new();
 
-                    var sortedStats = versionStats.ToList();
+                    List<KeyValuePair<string, int>> sortedStats = versionStats.ToList();
                     sortedStats.Sort((p1, p2) => p2.Value.CompareTo(p1.Value));
 
                     foreach (KeyValuePair<string, int> kvp in sortedStats)

@@ -65,8 +65,9 @@ namespace BibleBot.Backend.Services
             }
 
             string[] tokens = str.Split(" ");
+
             // Use HashSet for O(1) lookup instead of O(n) linear search
-            var defaultNamesSet = new HashSet<string>(defaultNames);
+            HashSet<string> defaultNamesSet = new(defaultNames);
 
             for (int i = 0; i < tokens.Length; i++)
             {
@@ -77,7 +78,7 @@ namespace BibleBot.Backend.Services
             }
 
             // Results are already in order by index, no need to sort
-            return new System.Tuple<string, List<BookSearchResult>>(str, results);
+            return new Tuple<string, List<BookSearchResult>>(str, results);
         }
 
         [GeneratedRegex(@"[A-Z]{1,8}[\-]{0,1}[A-Z]{0,4}[0-9]{0,5}", RegexOptions.Compiled)]
@@ -87,7 +88,7 @@ namespace BibleBot.Backend.Services
         {
             string bookName = bookSearchResult.Name;
             int startingChapter = 0, startingVerse = 0, endingChapter = 0, endingVerse = 0;
-            List<System.Tuple<int, int>> appendedVerses = [];
+            List<Tuple<int, int>> appendedVerses = [];
             bool expandoVerseUsed = false;
             Version aliasingVersion = null;
 
@@ -214,7 +215,7 @@ namespace BibleBot.Backend.Services
                                 {
                                     int verseNum = int.Parse(pairValueCopy);
 
-                                    switch (System.Array.IndexOf(spanSplit, pairValue))
+                                    switch (Array.IndexOf(spanSplit, pairValue))
                                     {
                                         case 0:
                                             startingVerse = verseNum;
@@ -264,14 +265,14 @@ namespace BibleBot.Backend.Services
                                                     pairArray.Add(commaSpanPairNum);
                                                 }
 
-                                                appendedVerses.Add(new System.Tuple<int, int>(pairArray[0], pairArray[1]));
+                                                appendedVerses.Add(new Tuple<int, int>(pairArray[0], pairArray[1]));
                                             }
                                             else
                                             {
                                                 // If this is false, then we can assume that there's a comma for an unrelated purpose.
                                                 if (int.TryParse(commaValue, out int singleNum))
                                                 {
-                                                    appendedVerses.Add(new System.Tuple<int, int>(singleNum, singleNum));
+                                                    appendedVerses.Add(new Tuple<int, int>(singleNum, singleNum));
                                                 }
                                             }
                                         }
@@ -284,7 +285,7 @@ namespace BibleBot.Backend.Services
 
                                         if (appendedVerses.Count > 0)
                                         {
-                                            switch (System.Array.IndexOf(spanSplit, pairValue))
+                                            switch (Array.IndexOf(spanSplit, pairValue))
                                             {
                                                 case 0:
                                                     startingVerse = appendedVerses[0].Item1;
@@ -374,19 +375,19 @@ namespace BibleBot.Backend.Services
             if (prefVersion.AliasOfId != null)
             {
                 aliasingVersion = prefVersion;
-                prefVersion = versions.FirstOrDefault(version => string.Equals(version.Id, prefVersion.AliasOfId, System.StringComparison.OrdinalIgnoreCase));
+                prefVersion = versions.FirstOrDefault(version => string.Equals(version.Id, prefVersion.AliasOfId, StringComparison.OrdinalIgnoreCase));
             }
 
             // Use null-coalescing operator for cleaner code and avoid creating unnecessary Book object
             Book book = prefVersion.Books?.FirstOrDefault(b => b.ProperName == bookName) ?? new Book { Name = bookSearchResult.Name, ProperName = bookName };
 
             // Handle Psalm 151 special case more efficiently
-            if (string.Equals(bookName, "Psalm", System.StringComparison.Ordinal) && startingChapter == 151)
+            if (string.Equals(bookName, "Psalm", StringComparison.Ordinal) && startingChapter == 151)
             {
                 isOT = false;
                 isDEU = true;
 
-                if (string.Equals(prefVersion.Source, "bg", System.StringComparison.Ordinal))
+                if (string.Equals(prefVersion.Source, "bg", StringComparison.Ordinal))
                 {
                     // modifying the original book like before causes the DB book entry to be modified
                     // so we'll just allocate a separate one

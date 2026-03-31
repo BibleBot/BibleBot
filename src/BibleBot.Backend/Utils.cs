@@ -127,6 +127,12 @@ namespace BibleBot.Backend
 
 
         public static readonly string Version = GetVersion();
+
+        public static int CalculateTotalPages(int dividend, int divisor)
+        {
+            return (int)Math.Ceiling(decimal.Divide(dividend, divisor));
+        }
+
         public string GetLocalizedFooterString() => string.Format(_localizer["GlobalFooter"], Version);
 
         public InternalContainer VerseToContainer(VerseResult verse)
@@ -214,7 +220,7 @@ namespace BibleBot.Backend
             {
                 case ResourceStyle.FULL_TEXT when resource.Type == ResourceType.CREED:
                     {
-                        var creedResource = resource as CreedResource;
+                        CreedResource creedResource = resource as CreedResource;
                         string copyright = null;
 
                         if (_creeds.Contains(creedResource!.CommandReference))
@@ -229,7 +235,7 @@ namespace BibleBot.Backend
                     }
                 case ResourceStyle.PARAGRAPHED:
                     {
-                        var pgResource = resource as ParagraphedResource;
+                        ParagraphedResource pgResource = resource as ParagraphedResource;
                         int sectionAsIndex;
 
                         try
@@ -321,7 +327,7 @@ namespace BibleBot.Backend
                     }
                 case ResourceStyle.SECTIONED:
                     {
-                        var sResource = resource as SectionedResource;
+                        SectionedResource sResource = resource as SectionedResource;
                         int sectionAsIndex;
 
                         try

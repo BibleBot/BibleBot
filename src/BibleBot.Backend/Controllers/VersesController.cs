@@ -268,8 +268,7 @@ namespace BibleBot.Backend.Controllers
                 });
             }
 
-            // Could use StringBuilder for better performance:
-            var logBuilder = new StringBuilder();
+            StringBuilder logBuilder = new();
             foreach (VerseResult verse in results)
             {
                 if (logBuilder.Length > 0)

@@ -166,7 +166,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         };
                     }
 
-                    int totalPages = (int)Math.Ceiling(decimal.Divide(searchResults.Count, maxResultsPerPage));
+                    int totalPages = Utils.CalculateTotalPages(searchResults.Count, maxResultsPerPage);
 
                     if (totalPages > 100)
                     {
@@ -337,7 +337,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     const int maxResultsPerPage = 6; // TODO: make this an appsettings param
                     List<string> referencesUsed = [];
 
-                    int totalPages = (int)Math.Ceiling(decimal.Divide(searchResults.Count, maxResultsPerPage));
+                    int totalPages = Utils.CalculateTotalPages(searchResults.Count, maxResultsPerPage);
 
                     if (totalPages > 100)
                     {

@@ -25,7 +25,9 @@ namespace BibleBot.Backend.Services
             {
                 return await pgContext.Versions.AsNoTracking()
                     .Include(v => v.Books)
-                    .ThenInclude(b => b.Chapters).ToListAsync() as List<T>;
+                    .ThenInclude(b => b.Chapters)
+                    .AsSplitQuery()
+                    .ToListAsync() as List<T>;
             }
 
             return await pgContext.GetDbSet<T>().AsNoTracking().ToListAsync() ?? [];
@@ -38,6 +40,7 @@ namespace BibleBot.Backend.Services
                 return await pgContext.Versions.AsNoTracking()
                     .Include(v => v.Books)
                     .ThenInclude(b => b.Chapters)
+                    .AsSplitQuery()
                     .FirstOrDefaultAsync(v => v.Id.Equals(query, StringComparison.OrdinalIgnoreCase)) as T;
             }
 

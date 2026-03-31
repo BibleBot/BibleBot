@@ -253,7 +253,7 @@ namespace BibleBot.Models
         /// <returns>An API.Bible-friendly string that represents the Reference.</returns>
         public string ToAPIBibleString()
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append(_nameToId[Book.ProperName]).Append('.').Append(StartingChapter).Append('.').Append(StartingVerse);
 
             if (EndingChapter > 0 && EndingChapter != StartingChapter)

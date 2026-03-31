@@ -27,6 +27,7 @@
     "CMD_SETSERVERDISPLAY_DESC": "Ustaw preferowany styl wyświetlania twojego serwera.",
     "PERMS_ERROR_LABEL": "Błąd Uprawnień",
     "PERMS_ERROR_DESC": "Musisz mieć uprawnienie `Zarządzaj Serwerem`, aby korzystać z tej komendy.",
+    "PERMS_NOT_STAFF_DESC": "You must be BibleBot staff to use this command.",
     "CMD_SETBRACKETS_DESC": "Ustaw ignorowane nawiasy przez bota do tego serwera.",
     "CMD_BIBLEBOT_DESC": "Komenda pomocnicza.",
     "CMD_STATS_DESC": "Statystyki na tym bocie.",
@@ -87,5 +88,11 @@
     "CMD_CLEARDAILYVERSEROLE_DESC": "Clear the automatic daily verse role.",
     "CMD_VERSE_MSG_NAME": "Fetch Verse Content",
     "CMD_VERSE_DESC": "Fetch verse content, just like you would with messages. (user app only)",
-    "CMD_VERSE_FAIL": "Couldn't find any content that matches the input."
+    "CMD_VERSE_FAIL": "Couldn't find any content that matches the input.",
+    "LISTVERSIONS_LANGUAGE_PARAM": "Whether to sort the versions by language.",
+    "VERSE_PARAM": "The verse reference to fetch.",
+    "RESOURCE_PARAM": "The resource to reference.",
+    "CMD_RELOAD_EXPERIMENTS_DESC": "Reload A/B testing experiments. (staff only)",
+    "CMD_RELOAD_VERSIONS_DESC": "Reload versions. (staff only)",
+    "CMD_RELOAD_LANGUAGES_DESC": "Reload languages. (staff only)"
 }

@@ -121,8 +121,8 @@ namespace BibleBot.Tests.Backend
             _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
             _defaultAPIBibleVersion = await _versionService.Get("KJV") ?? await _versionService.Create(new MockKJV());
 
-            var bibleProviders = new List<IContentProvider> { _bgProviderMock.Object, _abProviderMock.Object, _nltProviderMock.Object };
-            var specialVerseProcessingService = new SpecialVerseProcessingService(_parsingServiceMock.Object, _metadataFetchingServiceMock.Object, _versionService, _spProviderMock.Object, bibleProviders);
+            List<IContentProvider> bibleProviders = [_bgProviderMock.Object, _abProviderMock.Object, _nltProviderMock.Object];
+            SpecialVerseProcessingService specialVerseProcessingService = new(_parsingServiceMock.Object, _metadataFetchingServiceMock.Object, _versionService, _spProviderMock.Object, bibleProviders);
 
             _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _versionService, _resourceServiceMock.Object,

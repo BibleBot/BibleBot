@@ -44,17 +44,17 @@ namespace BibleBot.Tests.Backend.Mocks
         {
             if (_bookMap == null) return;
 
-            if (version.SupportsOldTestament && _bookMap.TryGetValue("ot", out var otBooks))
+            if (version.SupportsOldTestament && _bookMap.TryGetValue("ot", out Dictionary<string, string> otBooks))
             {
                 AddBooks(version, otBooks);
             }
 
-            if (version.SupportsNewTestament && _bookMap.TryGetValue("nt", out var ntBooks))
+            if (version.SupportsNewTestament && _bookMap.TryGetValue("nt", out Dictionary<string, string> ntBooks))
             {
                 AddBooks(version, ntBooks);
             }
 
-            if (version.SupportsDeuterocanon && _bookMap.TryGetValue("deu", out var deuBooks))
+            if (version.SupportsDeuterocanon && _bookMap.TryGetValue("deu", out Dictionary<string, string> deuBooks))
             {
                 AddBooks(version, deuBooks);
             }
@@ -70,7 +70,7 @@ namespace BibleBot.Tests.Backend.Mocks
                     continue;
                 }
 
-                var book = new Book
+                Book book = new()
                 {
                     Name = kvp.Key,
                     ProperName = kvp.Value,
@@ -291,7 +291,7 @@ namespace BibleBot.Tests.Backend.Mocks
     {
         public MockNKJV()
         {
-            Name = "New King James Version";
+            Name = "New King James Version (NKJV)";
             Id = "NKJV";
             Source = "bg";
             SupportsOldTestament = true;
@@ -306,7 +306,7 @@ namespace BibleBot.Tests.Backend.Mocks
     {
         public MockERVAR()
         {
-            Name = "Arabic Bible: Easy-to-Read Version";
+            Name = "Arabic Bible: Easy-to-Read Version (ERV-AR)";
             Id = "ERV-AR";
             Source = "bg";
             SupportsOldTestament = true;
