@@ -21,7 +21,7 @@ try:
     )
 
     __assembly_info_file__ = open(
-        f"../../src/BibleBot.Backend/obj/{config}/net9.0/GitInfo.cache",
+        f"../../src/BibleBot.Backend/obj/{config}/net10.0/GitInfo.cache",
         "r",
     ).readlines()
 
