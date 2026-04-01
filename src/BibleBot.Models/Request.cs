@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Copyright (C) 2016-2026 Kerygma Digital Co.
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace BibleBot.Models
@@ -88,7 +89,14 @@ namespace BibleBot.Models
         /// <summary>
         /// The active experiments for the user.
         /// </summary>
-        [JsonPropertyName("activeExperiments")]
+        [JsonIgnore]
         public Dictionary<Experiment, string> ActiveExperiments { get; set; } = [];
+
+        /// <summary>
+        /// A string representation of the active experiments for serialization (e.g. Sentry contexts).
+        /// </summary>
+        [JsonPropertyName("activeExperiments")]
+        public Dictionary<string, string> ActiveExperimentIds =>
+            ActiveExperiments?.ToDictionary(e => e.Key.Id, e => e.Value);
     }
 }
