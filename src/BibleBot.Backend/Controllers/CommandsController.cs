@@ -58,7 +58,7 @@ namespace BibleBot.Backend.Controllers
 
             SentrySdk.ConfigureScope(scope =>
             {
-                scope.Contexts["request"] = req;
+                scope.Contexts["requestBody"] = req;
             });
 
             bool isUserOptOut = (await userService.Get(req.UserId)) is { IsOptOut: true };

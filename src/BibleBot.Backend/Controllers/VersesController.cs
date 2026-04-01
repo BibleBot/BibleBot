@@ -70,7 +70,7 @@ namespace BibleBot.Backend.Controllers
 
             SentrySdk.ConfigureScope(scope =>
             {
-                scope.Contexts["request"] = req;
+                scope.Contexts["requestBody"] = req;
             });
 
             string displayStyle = "embed";

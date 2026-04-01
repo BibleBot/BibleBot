@@ -59,10 +59,7 @@ namespace BibleBot.Backend.Services
             return await pgContext.GetDbSet<T>().AsNoTracking().FirstOrDefaultAsync(e => EF.Property<long>(e, "Id") == query);
         }
 
-        public async Task<int> GetCount<T>() where T : class
-        {
-            return await pgContext.GetDbSet<T>().CountAsync();
-        }
+        public async Task<int> GetCount<T>() where T : class => await pgContext.GetDbSet<T>().CountAsync();
 
         public async Task<T> Create<T>(T t) where T : class
         {
