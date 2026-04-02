@@ -88,7 +88,17 @@ namespace BibleBot.Tests.Backend
                 .Options;
 
             PgContext pgContext = new(pgOptions);
-            await pgContext.Database.MigrateAsync();
+            try
+            {
+                await pgContext.Database.MigrateAsync();
+            }
+            catch (PostgresException pgEx)
+            {
+                if (!pgEx.MessageText.EndsWith("already exists"))
+                {
+                    throw;
+                }
+            }
             _postgresService = new PostgresService(pgContext);
 
             _serviceProviderMock = new Mock<IServiceProvider>();

@@ -348,7 +348,7 @@ namespace BibleBot.Backend.Services
 
             // Providers are inconsistent in behavior on verses like "Genesis 1:10-3". BG will guess that the user
             // meant "Genesis 1:10-13", AB will return null. We'll return null to be safe.
-            if (startingVerse > endingVerse)
+            if (startingVerse > endingVerse && startingChapter == endingChapter && !expandoVerseUsed)
             {
                 return null;
             }
