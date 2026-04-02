@@ -386,7 +386,10 @@ namespace BibleBot.Backend.Controllers
                     if (startIdx >= 0)
                     {
                         int endIdx = nextChapterMarker != null ? text.IndexOf(nextChapterMarker, StringComparison.InvariantCulture) : text.Length;
-                        if (endIdx < 0) endIdx = text.Length;
+                        if (endIdx < 0)
+                        {
+                            endIdx = text.Length;
+                        }
 
                         string chapterText = text[startIdx..endIdx];
                         int lastVerse = GetLastVerseNumber(chapterText);

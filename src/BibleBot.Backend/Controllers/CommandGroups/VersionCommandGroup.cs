@@ -358,7 +358,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                         {
                             localeDisplayName = version.Locale;
                         }
-                        catch (ArgumentNullException err)
+                        catch (ArgumentNullException)
                         {
                             string msg = $"{version.Id} does not have a locale";
                             SentrySdk.CaptureMessage(msg);

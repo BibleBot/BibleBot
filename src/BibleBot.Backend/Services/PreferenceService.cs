@@ -30,7 +30,11 @@ namespace BibleBot.Backend.Services
 
             if (!string.IsNullOrEmpty(cachedStr))
             {
-                if (cachedStr == "null") return null;
+                if (cachedStr == "null")
+                {
+                    return null;
+                }
+
                 T cachedResult = JsonSerializer.Deserialize<T>(cachedStr, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowReadingFromString });
 
                 SentrySdk.ConfigureScope(scope =>

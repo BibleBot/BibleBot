@@ -37,7 +37,7 @@ namespace BibleBot.Backend.Services
             "SNG" // Song of Songs (conflicts with Song of the Three Holy Youths)
         ];
 
-        public System.Tuple<string, List<BookSearchResult>> GetBooksInString(MDBookNames bookNames, List<string> defaultNames, string str)
+        public Tuple<string, List<BookSearchResult>> GetBooksInString(MDBookNames bookNames, List<string> defaultNames, string str)
         {
             List<BookSearchResult> results = [];
 
@@ -67,7 +67,7 @@ namespace BibleBot.Backend.Services
             string[] tokens = str.Split(" ");
 
             // Use HashSet for O(1) lookup instead of O(n) linear search
-            HashSet<string> defaultNamesSet = new(defaultNames);
+            HashSet<string> defaultNamesSet = [.. defaultNames];
 
             for (int i = 0; i < tokens.Length; i++)
             {
@@ -137,7 +137,7 @@ namespace BibleBot.Backend.Services
                     if (versionAcronymRegexMatch.Success)
                     {
                         string versionAbbr = versionAcronymRegexMatch.Value;
-                        Version potentialVersion = versions.FirstOrDefault(version => string.Equals(version.Id, versionAbbr, System.StringComparison.OrdinalIgnoreCase));
+                        Version potentialVersion = versions.FirstOrDefault(version => string.Equals(version.Id, versionAbbr, StringComparison.OrdinalIgnoreCase));
 
                         if (potentialVersion != null)
                         {
@@ -342,6 +342,13 @@ namespace BibleBot.Backend.Services
             // Without this, the parsing thinks of any verse like "Genesis 1: 1-5" as "Genesis 1:0-".
             // We wouldn't want users trying to start verse referencing with a 0-based index anyway.
             if (startingVerse == 0)
+            {
+                return null;
+            }
+
+            // Providers are inconsistent in behavior on verses like "Genesis 1:10-3". BG will guess that the user
+            // meant "Genesis 1:10-13", AB will return null. We'll return null to be safe.
+            if (startingVerse > endingVerse)
             {
                 return null;
             }

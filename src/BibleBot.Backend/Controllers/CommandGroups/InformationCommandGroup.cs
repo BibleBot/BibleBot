@@ -17,7 +17,6 @@ using System.Xml;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.Extensions.Localization;
-using Sentry;
 using Serilog;
 
 namespace BibleBot.Backend.Controllers.CommandGroups

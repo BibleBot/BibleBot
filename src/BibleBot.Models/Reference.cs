@@ -67,7 +67,7 @@ namespace BibleBot.Models
             { "Wisdom", "WIS" },
             { "Sirach", "SIR" },
             { "Baruch", "BAR" },
-            { "Prayer of Azariah", "S3Y" },
+            { "Prayer of Azariah", "AZA" },
             { "Susanna", "SUS" },
             { "Bel and the Dragon", "BEL" },
             { "Prayer of Manasseh", "MAN" },
