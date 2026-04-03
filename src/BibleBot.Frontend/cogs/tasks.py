@@ -133,14 +133,15 @@ class Tasks(commands.Cog):
             zlib=bot.gateway_params.zlib,
         )
 
-        if old_shard_count == shard_count:
-            logger.info("no shards to update")
+        if old_shard_count >= shard_count:
+            logger.info("no shards to launch")
             return
+
+        logger.info(f"launching {shard_count - old_shard_count} shards")
 
         bot.session_start_limit = disnake.client.SessionStartLimit(session_start_limit)
 
-        if old_shard_count < shard_count:
-            bot.shard_count = shard_count
+        bot.shard_count = shard_count
 
         bot._connection.shard_count = shard_count
         bot._connection.shard_ids = range(shard_count)
