@@ -8,6 +8,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import json
 import os
+import re
 from pathlib import Path
 
 from core import checks
@@ -217,6 +218,92 @@ class VerseCommands(commands.Cog):
             await sending.safe_send_interaction(inter.followup, content=resp)
         else:
             await sending.safe_send_interaction(inter.followup, components=resp)
+
+    @commands.slash_command(description=Localized(key="CMD_COMPARE_DESC"))
+    async def compare(self,
+                      inter: ApplicationCommandInteraction,
+                      query: str = commands.Param(
+                          description=Localized(key="CMD_COMPARE_QUERY_DESC")
+                      ),
+                      versions: str = commands.Param(
+                          description=Localized(key="CMD_COMPARE_VERSIONS_DESC")
+                      )):
+        await inter.response.defer()
+
+        versions = versions.replace(r"\w", "")
+        version_split = versions.split(",")
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+
+        if len(version_split) < 2:
+            await sending.safe_send_interaction(
+                inter.followup,
+                components=containers.create_error_container(
+                    localization["CMD_COMPARE_ERROR_TITLE"],
+                    localization["CMD_COMPARE_ERROR_NOT_ENOUGH_VERSIONS"],
+                    localization,
+                ),
+                ephemeral=True
+            )
+            return
+        elif len(version_split) > 6:
+            await sending.safe_send_interaction(
+                inter.followup,
+                components=containers.create_error_container(
+                    localization["CMD_COMPARE_ERROR_TITLE"],
+                    localization["CMD_COMPARE_ERROR_TOO_MANY_VERSIONS"],
+                    localization,
+                ),
+                ephemeral=True
+            )
+            return
+
+        finalized_query = ""
+        for version in version_split:
+            finalized_query += f"{query} {version} / "
+
+        finalized_query = finalized_query[0:-3]
+
+        ctx = await channels.get_channel_context_from_interaction(inter)
+
+        if ctx is None:
+            return None
+
+        req_body = {
+            "UserId": inter.author.id,
+            "GuildId": ctx.guild_id,
+            "ChannelId": ctx.channel_id,
+            "ThreadId": ctx.thread_id,
+            "IsThread": ctx.is_thread,
+            "IsBot": inter.author.bot,
+            "IsDM": ctx.is_thread,
+            "Body": finalized_query,
+        }
+
+        endpoint = os.environ.get("ENDPOINT", "")
+
+        resp = await backend.submit_verse_raw(endpoint, req_body)
+
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+
+        if resp is None:
+            await sending.safe_send_interaction(
+                inter.followup, localization["CMD_VERSE_FAIL"], ephemeral=True
+            )
+        elif isinstance(resp, Container):
+            await sending.safe_send_interaction(inter.followup, components=resp)
+        elif isinstance(resp, ComponentPaginator):
+            await resp.send(inter)
+        elif isinstance(resp, list):
+            if len(resp) == 0:
+                await sending.safe_send_interaction(
+                    inter.followup, localization["CMD_VERSE_FAIL"], ephemeral=True
+                )
+            elif isinstance(resp[0], Container):
+                await sending.safe_send_interaction(inter.followup, components=resp)
+            elif isinstance(resp[0], str):
+                for item in resp:
+                    await sending.safe_send_interaction(inter.followup, item)
 
     @commands.slash_command(description=Localized(key="CMD_DAILYVERSE_DESC"))
     async def dailyverse(self, inter: ApplicationCommandInteraction):
