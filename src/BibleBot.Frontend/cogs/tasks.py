@@ -14,6 +14,7 @@ import disnake
 import sentry_sdk
 from disnake.ext import commands, tasks
 from logger import VyLogger
+from core import constants
 
 logger = VyLogger("default")
 
@@ -28,6 +29,7 @@ class Tasks(commands.Cog):
 
     @tasks.loop(minutes=15)
     async def run_tasks(self):
+        await constants.check_version_changes(self.bot)
         await self.send_stats(self.bot)
         await self.update_topgg(self.bot)
         await self.update_discordbotlist(self.bot)

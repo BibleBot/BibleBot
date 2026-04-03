@@ -1,11 +1,18 @@
 import os
+import disnake
+from logger import VyLogger
+
+logger = VyLogger("default")
 
 version = "undefined"
 verse_footer = "BibleBot <v> by Kerygma Digital"
 
 logo_emoji = "<:biblebot:1438705100515184762>"
 
+config = "Release"
+
 if os.environ.get("ASPNETCORE_ENVIRONMENT") == "Development":
+    config = "Debug"
     logo_emoji = "<:biblebot:1438598262234808381>"
 
 publisher_to_url = {
@@ -13,24 +20,31 @@ publisher_to_url = {
     "lockman": {"name": "The Lockman Foundation", "url": "https://www.lockman.org"},
 }
 
-try:
-    config = (
-        "Release"
-        if os.environ.get("ASPNETCORE_ENVIRONMENT") == "Production"
-        else "Debug"
-    )
+async def check_version_changes(bot: disnake.AutoShardedClient):
+    global version
+    global verse_footer
 
-    __assembly_info_file__ = open(
-        f"../../src/BibleBot.Backend/obj/{config}/net10.0/GitInfo.cache",
-        "r",
-    ).readlines()
+    try:
+        __assembly_info_file__ = open(
+            f"../../src/BibleBot.Backend/obj/{config}/net10.0/GitInfo.cache",
+            "r",
+        ).readlines()
 
-    for line in __assembly_info_file__:
-        if "GitBaseVersion=" in line:
-            split = line.split("=")
+        for line in __assembly_info_file__:
+            if "GitBaseVersion=" in line:
+                split = line.split("=")
 
-            if split:
-                version = "v" + split[1][0:-2]
-                verse_footer = verse_footer.replace("<v>", version)
-except Exception:
-    pass
+                if split:
+                    version = "v" + split[1][0:-2]
+                    verse_footer = verse_footer.replace("<v>", version)
+
+                    await bot.change_presence(
+                        status=disnake.Status.online,
+                        activity=disnake.Game(
+                            f"/biblebot {version} - shard {bot.shard_id + 1}"
+                        ),
+                        shard_id=bot.shard_id,
+                    )
+    except Exception as err:
+        logger.error(f"couldn't fetch and set latest version:", err)
+        pass

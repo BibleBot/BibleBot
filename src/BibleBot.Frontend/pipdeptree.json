@@ -90,6 +90,21 @@
     },
     {
         "package": {
+            "key": "anyio",
+            "package_name": "anyio",
+            "installed_version": "4.13.0"
+        },
+        "dependencies": [
+            {
+                "key": "idna",
+                "package_name": "idna",
+                "installed_version": "3.10",
+                "required_version": ">=2.8"
+            }
+        ]
+    },
+    {
+        "package": {
             "key": "async-timeout",
             "package_name": "async-timeout",
             "installed_version": "5.0.1"
@@ -423,6 +438,14 @@
     },
     {
         "package": {
+            "key": "psycopg",
+            "package_name": "psycopg",
+            "installed_version": "3.3.3"
+        },
+        "dependencies": []
+    },
+    {
+        "package": {
             "key": "pycares",
             "package_name": "pycares",
             "installed_version": "4.5.0"
@@ -626,6 +649,14 @@
     },
     {
         "package": {
+            "key": "tqdm",
+            "package_name": "tqdm",
+            "installed_version": "4.67.3"
+        },
+        "dependencies": []
+    },
+    {
+        "package": {
             "key": "typing-extensions",
             "package_name": "typing_extensions",
             "installed_version": "4.12.2"
@@ -639,6 +670,21 @@
             "installed_version": "2.2.3"
         },
         "dependencies": []
+    },
+    {
+        "package": {
+            "key": "watchfiles",
+            "package_name": "watchfiles",
+            "installed_version": "1.1.1"
+        },
+        "dependencies": [
+            {
+                "key": "anyio",
+                "package_name": "anyio",
+                "installed_version": "4.13.0",
+                "required_version": ">=3.0.0"
+            }
+        ]
     },
     {
         "package": {
