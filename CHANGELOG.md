@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [15.0.1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v15.0.0..v15.0.1) - 2026-04-03
+
+### 🐛 Bug Fixes
+
+- Chapter title storage ([dbba6ac](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/dbba6ac7b8c87e0d982ad11cc8f2a5edede4ec1f))
+- Git version path, chapter titles again ([5f81857](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/5f81857826155b94406ad131bf578e1742458ad8))
+- Make sure opt out users work ([4ef35c2](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/4ef35c2e424ca5c32d7321a4bf70c6a45e600140))
+- Db migrations so tests pass ([411bd32](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/411bd32cee0b6f6950e845cce38a037e5f6166c4))
+- Updating guild information with autoserv ([73fe601](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/73fe601a04a2c4adc01e01e8f68a13e83f0c24e7))
+- *(frontend)* Source version from new path ([65b423b](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/65b423b4820bbf46b13374f051e448f8783f9267))
+- *(backend)* Ensure backend request information is preserved for error reporting ([c58f04d](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c58f04d1ca020e0dc6434f2a32002c44a94e0dab))
+- *(models)* Make sure the request model can be serialized ([fbaec3e](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/fbaec3ee0d79b85c43d4773a0872990634457898))
+- *(backend)* Return null when receiving references with backwards ranges ([3e44500](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/3e4450054018033601e72b65dfcd97de00f72900))
+- *(backend)* Make sure to only ignore reverse ranges in single-chapter references ([107a268](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/107a2687892da957ed3234da2e357e51710c124f))
+
 ## [15.0.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v14.0.0..v15.0.0) - 2026-03-31
 
 ### 🚀 Features
