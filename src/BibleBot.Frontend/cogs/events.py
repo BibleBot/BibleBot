@@ -130,7 +130,7 @@ class EventListeners(commands.Cog):
         if msg.author == self.bot.user:
             return
 
-        if msg.webhook_id is not None:
+        if msg.webhook_id is not None and self.bot.is_ready():
             try:
                 if not isinstance(msg.channel, (Thread, DMChannel, GroupChannel)) and msg.channel.webhooks is not None:
                     webhooks = await msg.channel.webhooks()
@@ -140,6 +140,9 @@ class EventListeners(commands.Cog):
                                 return
             except (AttributeError, disnake.errors.Forbidden, disnake.errors.DiscordServerError):
                 pass
+        else:
+            # we don't want to bother with webhook-based messages until we're able to actually check them
+            return
 
         clean_msg = msg.content.replace("://", "")
         verse_regex = re.compile(
