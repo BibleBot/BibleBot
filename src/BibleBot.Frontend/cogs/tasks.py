@@ -30,6 +30,7 @@ class Tasks(commands.Cog):
     @tasks.loop(minutes=15)
     async def run_tasks(self):
         await constants.check_version_changes(self.bot)
+        await self.update_shards(self.bot)
         await self.send_stats(self.bot)
         await self.update_topgg(self.bot)
         await self.update_discordbotlist(self.bot)
