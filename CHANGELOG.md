@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [15.0.1](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v15.0.0..v15.0.1) - 2026-04-03
+## [15.1.0](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/compare/v15.0.0..v15.1.0) - 2026-04-03
+
+### 🚀 Features
+
+- *(frontend)* Ensure frontend version updates alongside backend when relevant ([c5e2100](https://gitlab.com/kerygmadigital/BibleBot/BibleBot/-/commit/c5e2100c0a0bd5d3a23d6d153beecb58bac62ba6))
 
 ### 🐛 Bug Fixes
 
