@@ -66,8 +66,6 @@ async def check_version_changes(bot: disnake.AutoShardedClient):
                             )
 
                         logger.info("updated shard versions")
-                    else:
-                        logger.error("bot.shard_ids is not set")
     except Exception as err:
         logger.error(f"couldn't fetch and set latest version: {err}")
         pass
