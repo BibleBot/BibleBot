@@ -138,7 +138,7 @@ class EventListeners(commands.Cog):
                         if webhook.id == msg.webhook_id:
                             if webhook.user is not None and webhook.user.id == self.bot.user.id:
                                 return
-            except (AttributeError, disnake.errors.Forbidden):
+            except (AttributeError, disnake.errors.Forbidden, disnake.errors.DiscordServerError):
                 pass
 
         clean_msg = msg.content.replace("://", "")
