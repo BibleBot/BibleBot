@@ -20,6 +20,23 @@ publisher_to_url = {
     "lockman": {"name": "The Lockman Foundation", "url": "https://www.lockman.org"},
 }
 
+try:
+    __assembly_info_file__ = open(
+        f"../../src/BibleBot.Backend/obj/{config}/net10.0/GitInfo.cache",
+        "r",
+    ).readlines()
+
+    for line in __assembly_info_file__:
+        if "GitBaseVersion=" in line:
+            split = line.split("=")
+
+            if split:
+                version = "v" + split[1][0:-2]
+                verse_footer = verse_footer.replace("<v>", version)
+except Exception as err:
+    logger.error(f"couldn't fetch and set latest version: {err}")
+    pass
+
 async def check_version_changes(bot: disnake.AutoShardedClient):
     global version
     global verse_footer
@@ -38,13 +55,19 @@ async def check_version_changes(bot: disnake.AutoShardedClient):
                     version = "v" + split[1][0:-2]
                     verse_footer = verse_footer.replace("<v>", version)
 
-                    await bot.change_presence(
-                        status=disnake.Status.online,
-                        activity=disnake.Game(
-                            f"/biblebot {version} - shard {bot.shard_id + 1}"
-                        ),
-                        shard_id=bot.shard_id,
-                    )
+                    if bot.shard_ids is not None:
+                        for shard_id in bot.shard_ids:
+                            await bot.change_presence(
+                                status=disnake.Status.online,
+                                activity=disnake.Game(
+                                    f"/biblebot {version} - shard {shard_id + 1}"
+                                ),
+                                shard_id=shard_id,
+                            )
+
+                        logger.info("updated shard versions")
+                    else:
+                        logger.error("bot.shard_ids is not set")
     except Exception as err:
-        logger.error(f"couldn't fetch and set latest version:", err)
+        logger.error(f"couldn't fetch and set latest version: {err}")
         pass
