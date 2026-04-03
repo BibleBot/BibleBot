@@ -94,5 +94,11 @@
     "RESOURCE_PARAM": "The resource to reference.",
     "CMD_RELOAD_EXPERIMENTS_DESC": "Reload A/B testing experiments. (staff only)",
     "CMD_RELOAD_VERSIONS_DESC": "Reload versions. (staff only)",
-    "CMD_RELOAD_LANGUAGES_DESC": "Reload languages. (staff only)"
+    "CMD_RELOAD_LANGUAGES_DESC": "Reload languages. (staff only)",
+    "CMD_COMPARE_DESC": "Compare a verse against a list of versions (comma-separated).",
+    "CMD_COMPARE_QUERY_DESC": "The verse reference to compare.",
+    "CMD_COMPARE_VERSIONS_DESC": "The list of versions to compare against, separated by commas.",
+    "CMD_COMPARE_ERROR_TITLE": "Comparison Error",
+    "CMD_COMPARE_ERROR_NOT_ENOUGH_VERSIONS": "You must specify at least two versions, separated by commas.",
+    "CMD_COMPARE_ERROR_TOO_MANY_VERSIONS": "You may only compare up to six versions."
 }
