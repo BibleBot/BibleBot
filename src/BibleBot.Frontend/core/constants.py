@@ -55,8 +55,8 @@ async def check_version_changes(bot: disnake.AutoShardedClient):
                     version = "v" + split[1][0:-2]
                     verse_footer = verse_footer.replace("<v>", version)
 
-                    if bot.shard_ids is not None:
-                        for shard_id in bot.shard_ids:
+                    if bot._connection.shard_ids is not None:
+                        for shard_id in bot._connection.shard_ids:
                             await bot.change_presence(
                                 status=disnake.Status.online,
                                 activity=disnake.Game(

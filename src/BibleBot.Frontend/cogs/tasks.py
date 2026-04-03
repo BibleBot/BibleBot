@@ -117,16 +117,16 @@ class Tasks(commands.Cog):
                     logger.info("submitted stats to backend")
 
     async def update_shards(self, bot: disnake.AutoShardedClient):
-        if bot.shard_count is None:
+        if bot._connection.shard_count is None:
             logger.error("couldn't get shard count to potentially update")
             return
 
-        if bot.shard_ids is None:
+        if bot._connection.shard_ids is None:
             logger.error("couldn't get shard ids to potentially update")
             return
 
-        old_shard_count = bot.shard_count
-        old_shard_ids = bot.shard_ids
+        old_shard_count = bot._connection.shard_count
+        old_shard_ids = bot._connection.shard_ids
 
         shard_count, gateway, session_start_limit = await bot.http.get_bot_gateway(
             encoding=bot.gateway_params.encoding,
@@ -145,9 +145,9 @@ class Tasks(commands.Cog):
         bot._connection.shard_count = shard_count
         bot._connection.shard_ids = range(shard_count)
 
-        if bot.session_start_limit is not None and bot.shard_count is not None:
+        if bot.session_start_limit is not None and bot._connection.shard_count is not None:
             if bot.session_start_limit.remaining < (bot.shard_count - old_shard_count):
-                raise disnake.errors.SessionStartLimitReached(bot.session_start_limit, requested=bot.shard_count)
+                raise disnake.errors.SessionStartLimitReached(bot.session_start_limit, requested=bot._connection.shard_count)
 
         for shard_id in range(old_shard_ids, bot._connection.shard_ids):
             await bot.launch_shard(gateway, shard_id, initial=False)
