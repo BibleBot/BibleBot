@@ -92,6 +92,13 @@ namespace BibleBot.Backend.Models
         public static async Task<T> GetJsonContentAs<T>(this HttpClient client, string url, JsonSerializerOptions op)
         {
             HttpResponseMessage resp = await client.GetAsync(url);
+            string respStr = await resp.Content.ReadAsStringAsync();
+
+            SentrySdk.ConfigureScope(scope =>
+            {
+                scope.Contexts["cacheCtx"] = respStr;
+            });
+
             return resp.StatusCode != System.Net.HttpStatusCode.OK ? default : JsonSerializer.Deserialize<T>(await resp.Content.ReadAsStringAsync(), op);
         }
     }
@@ -159,6 +166,13 @@ namespace BibleBot.Backend.Models
             try
             {
                 response = await base.SendAsync(request, cancellationToken); ;
+                string responseStr = await response.Content.ReadAsStringAsync(cancellationToken);
+
+                SentrySdk.ConfigureScope(scope =>
+                {
+                    scope.Contexts["cacheCtx"] = responseStr;
+                });
+
                 JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
                 response.Content = json?["data"] != null ? new StringContent(json["data"].ToJsonString()) : new StringContent("{}");
             }
