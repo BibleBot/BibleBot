@@ -273,6 +273,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     }
                 }
 
+                if (args.Count == 0)
+                {
+                    return Task.FromResult<IResponse>(new CommandResponse
+                    {
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify("/searchresource", localizer["SearchNoResults"], true)
+                        ],
+                        LogStatement = "/searchresource",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    });
+                }
+
                 IResource idealResource = _resources.FirstOrDefault(resource => resource.CommandReference == resourceParam);
 
                 if (idealResource == null)
