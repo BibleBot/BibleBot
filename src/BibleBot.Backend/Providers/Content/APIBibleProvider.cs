@@ -53,7 +53,7 @@ namespace BibleBot.Backend.Services.Providers.Content
             _htmlParser = new HtmlParser();
         }
 
-        [GeneratedRegex("[a-zA-Z]{3} ([0-9]{1,3}):([0-9]{1,3})", RegexOptions.Compiled)]
+        [GeneratedRegex("[0-9]?[a-zA-Z]{2,3} ([0-9]{1,3}):([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseIdRegex();
 
         public async Task<VerseResult> GetVerse(Reference reference, bool titlesEnabled) => await GetVerse(reference, titlesEnabled, true);
