@@ -44,7 +44,7 @@ namespace BibleBot.Backend.Controllers
         [GeneratedRegex(@"\((.*?)\)", RegexOptions.Compiled)]
         private static partial Regex VerseNumberInParenthesesRegex();
 
-        [GeneratedRegex(@"[0-9]{1,3}, ([0-9]{1,3})", RegexOptions.Compiled)]
+        [GeneratedRegex(@"[0-9]{1,3}, ?([0-9]{1,3})", RegexOptions.Compiled)]
         private static partial Regex VerseNumberWithCommaRegex();
 
         [GeneratedRegex(@"[0-9]{1,3}:([0-9]{1,3})", RegexOptions.Compiled)]
