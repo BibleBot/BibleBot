@@ -94,12 +94,9 @@ namespace BibleBot.Backend.Models
             HttpResponseMessage resp = await client.GetAsync(url);
             string respStr = await resp.Content.ReadAsStringAsync();
 
-            SentrySdk.ConfigureScope(scope =>
-            {
-                scope.Contexts["cacheCtx"] = respStr;
-            });
+            SentrySdk.AddBreadcrumb(respStr);
 
-            return resp.StatusCode != System.Net.HttpStatusCode.OK ? default : JsonSerializer.Deserialize<T>(await resp.Content.ReadAsStringAsync(), op);
+            return resp.StatusCode != System.Net.HttpStatusCode.OK ? default : JsonSerializer.Deserialize<T>(respStr, op);
         }
     }
 
@@ -168,12 +165,9 @@ namespace BibleBot.Backend.Models
                 response = await base.SendAsync(request, cancellationToken); ;
                 string responseStr = await response.Content.ReadAsStringAsync(cancellationToken);
 
-                SentrySdk.ConfigureScope(scope =>
-                {
-                    scope.Contexts["cacheCtx"] = responseStr;
-                });
+                SentrySdk.AddBreadcrumb(responseStr);
 
-                JsonNode json = JsonNode.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
+                JsonNode json = JsonNode.Parse(responseStr);
                 response.Content = json?["data"] != null ? new StringContent(json["data"].ToJsonString()) : new StringContent("{}");
             }
             catch (Exception ex)
