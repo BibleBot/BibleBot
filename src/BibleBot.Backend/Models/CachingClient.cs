@@ -94,9 +94,14 @@ namespace BibleBot.Backend.Models
             HttpResponseMessage resp = await client.GetAsync(url);
             string respStr = await resp.Content.ReadAsStringAsync();
 
-            SentrySdk.AddBreadcrumb(respStr);
+            if (resp.StatusCode == System.Net.HttpStatusCode.OK && !respStr.Contains("Bad Gateway"))
+            {
+                SentrySdk.AddBreadcrumb(respStr);
 
-            return resp.StatusCode != System.Net.HttpStatusCode.OK ? default : JsonSerializer.Deserialize<T>(respStr, op);
+                return JsonSerializer.Deserialize<T>(respStr, op);
+            }
+
+            return default;
         }
     }
 
@@ -162,13 +167,20 @@ namespace BibleBot.Backend.Models
             HttpResponseMessage response;
             try
             {
-                response = await base.SendAsync(request, cancellationToken); ;
+                response = await base.SendAsync(request, cancellationToken);
                 string responseStr = await response.Content.ReadAsStringAsync(cancellationToken);
 
-                SentrySdk.AddBreadcrumb(responseStr);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK && !responseStr.Contains("Bad Gateway"))
+                {
+                    SentrySdk.AddBreadcrumb(responseStr);
 
-                JsonNode json = JsonNode.Parse(responseStr);
-                response.Content = json?["data"] != null ? new StringContent(json["data"].ToJsonString()) : new StringContent("{}");
+                    JsonNode json = JsonNode.Parse(responseStr);
+                    response.Content = json?["data"] != null ? new StringContent(json["data"].ToJsonString()) : new StringContent("{}");
+                }
+                else
+                {
+                    response.Content = new StringContent("{}");
+                }
             }
             catch (Exception ex)
             {
