@@ -150,7 +150,9 @@ class Tasks(commands.Cog):
             if bot.session_start_limit.remaining < (bot.shard_count - old_shard_count):
                 raise disnake.errors.SessionStartLimitReached(bot.session_start_limit, requested=bot._connection.shard_count)
 
-        for shard_id in range(old_shard_ids, bot._connection.shard_ids):
+        new_shard_ids = set(bot._connection.shard_ids) - set(old_shard_ids)
+
+        for shard_id in new_shard_ids:
             await bot.launch_shard(gateway, shard_id, initial=False)
             logger.info(f"launched new shard {shard_id}")
 
