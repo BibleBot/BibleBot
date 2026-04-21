@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 
-namespace BibleBot.Backend.Services.Providers
+namespace BibleBot.Backend.Providers
 {
     public class SpecialVerseProvider : IDisposable
     {

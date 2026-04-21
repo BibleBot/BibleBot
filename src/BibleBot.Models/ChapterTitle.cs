@@ -32,6 +32,11 @@ namespace BibleBot.Models
         /// The title text itself.
         /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// An override to make sure the title text is returned when this gets converted to a string.
+        /// </summary>
+        public override string ToString() => Title;
     }
 
     /// <summary>

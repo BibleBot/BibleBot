@@ -14,6 +14,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BibleBot.Backend.Models;
+using BibleBot.Backend.Providers.Content;
 using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +30,8 @@ namespace BibleBot.Backend.Controllers
     [ApiController]
     public partial class VersesController(UserService userService, GuildService guildService, ParsingService parsingService, VerseMetricsService verseMetricsService,
                                           VersionService versionService, LanguageService languageService, MetadataFetchingService metadataFetchingService, ExperimentService experimentService,
-                                          List<IContentProvider> bibleProviders, IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
+                                          List<IContentProvider> bibleProviders, VerseStorageService verseStorageService,
+                                          IStringLocalizer<VersesController> localizer, IStringLocalizer<SharedResource> sharedLocalizer) : ControllerBase
     {
         private readonly List<IContentProvider> _bibleProviders = bibleProviders;
         private readonly IStringLocalizer _localizer = localizer;
@@ -226,11 +228,6 @@ namespace BibleBot.Backend.Controllers
 
             foreach (Reference reference in references)
             {
-                if (reference.Version?.Source == null || !providerLookup.TryGetValue(reference.Version.Source, out IContentProvider provider))
-                {
-                    throw new ProviderNotFoundException();
-                }
-
                 if (reference.Version.Books != null && !(reference.Version.Id is "ELXX" or "LXX" && reference.Book.Name == "DAN"))
                 {
                     List<Chapter> chapters = reference.Book?.Chapters;
@@ -242,7 +239,29 @@ namespace BibleBot.Backend.Controllers
                     }
                 }
 
-                VerseResult result = await provider.GetVerse(reference, titlesEnabled);
+                HouseProvider houseProvider = _bibleProviders.FirstOrDefault(p => p.Name == "usx") as HouseProvider;
+                VerseResult result = await houseProvider.GetVerse(reference, titlesEnabled);
+
+                if (result == null)
+                {
+                    if (reference.Version?.Source == null ||
+                        !providerLookup.TryGetValue(reference.Version.Source, out IContentProvider provider))
+                    {
+                        throw new ProviderNotFoundException();
+                    }
+
+                    result = await provider.GetVerse(reference, titlesEnabled);
+
+                    // Store the fetched content for future local retrieval
+                    if (result?.Text != null && reference.Version.Source != "usx")
+                    {
+                        await verseStorageService.StoreFromProvider(reference, result.Text, reference.Version.Source);
+                    }
+                }
+                else
+                {
+                    reference.Version.Source = "usx";
+                }
 
                 if (result?.Text == null)
                 {

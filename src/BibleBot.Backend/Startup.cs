@@ -12,9 +12,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using BibleBot.Backend.Middleware;
+using BibleBot.Backend.Providers;
+using BibleBot.Backend.Providers.Content;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
-using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -90,7 +90,12 @@ namespace BibleBot.Backend
             services.AddSingleton<BibleGatewayProvider>();
             services.AddSingleton<APIBibleProvider>();
             services.AddSingleton<NLTAPIProvider>();
+            services.AddSingleton<HouseProvider>();
             services.AddSingleton<SpecialVerseProvider>();
+
+            // Verse storage and import services
+            services.AddSingleton<VerseStorageService>();
+            services.AddSingleton<UsxParserService>();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
@@ -103,7 +108,8 @@ namespace BibleBot.Backend
             services.AddSingleton<List<IContentProvider>>(sp => [
                 sp.GetRequiredService<BibleGatewayProvider>(),
                 sp.GetRequiredService<APIBibleProvider>(),
-                sp.GetRequiredService<NLTAPIProvider>()
+                sp.GetRequiredService<NLTAPIProvider>(),
+                sp.GetRequiredService<HouseProvider>()
             ]);
 
             // Register the special verse processing service

@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BibleBot.Backend.Services.Providers;
+using BibleBot.Backend.Providers;
 using BibleBot.Models;
 using Version = BibleBot.Models.Version;
 

@@ -21,7 +21,7 @@ using AngleSharp.Html.Parser;
 using BibleBot.Models;
 using Version = BibleBot.Models.Version;
 
-namespace BibleBot.Backend.Services.Providers.Content
+namespace BibleBot.Backend.Providers.Content
 {
     public partial class NLTAPIProvider : IContentProvider, IDisposable
     {

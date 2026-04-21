@@ -11,9 +11,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BibleBot.Backend.Controllers;
 using BibleBot.Backend.Models;
+using BibleBot.Backend.Providers;
+using BibleBot.Backend.Providers.Content;
 using BibleBot.Backend.Services;
-using BibleBot.Backend.Services.Providers;
-using BibleBot.Backend.Services.Providers.Content;
 using BibleBot.Models;
 using BibleBot.Tests.Backend.Mocks;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +26,6 @@ using Moq;
 using Npgsql;
 using NUnit.Framework;
 using Serilog.Extensions.Logging;
-
 using Version = BibleBot.Models.Version;
 
 namespace BibleBot.Tests.Backend
@@ -57,6 +56,7 @@ namespace BibleBot.Tests.Backend
         private Mock<MetadataFetchingService> _metadataFetchingServiceMock;
 
         private Mock<SpecialVerseProvider> _spProviderMock;
+        private Mock<HouseProvider> _houseProviderMock;
         private Mock<BibleGatewayProvider> _bgProviderMock;
         private Mock<APIBibleProvider> _abProviderMock;
         private Mock<NLTAPIProvider> _nltProviderMock;
@@ -75,7 +75,7 @@ namespace BibleBot.Tests.Backend
                 Configuration = "127.0.0.1:6379"
             }));
 
-            string connectionString = System.Environment.GetEnvironmentVariable("POSTGRES_CONN");
+            string connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONN");
             NpgsqlDataSourceBuilder dataSourceBuilder = new(connectionString);
             dataSourceBuilder.UseNodaTime();
             dataSourceBuilder.EnableDynamicJson();
@@ -103,6 +103,7 @@ namespace BibleBot.Tests.Backend
 
             _serviceProviderMock = new Mock<IServiceProvider>();
             _serviceProviderMock.Setup(sp => sp.GetService(typeof(PostgresService))).Returns(_postgresService);
+            _serviceProviderMock.Setup(sp => sp.GetService(typeof(PgContext))).Returns(pgContext);
 
             _serviceScopeMock = new Mock<IServiceScope>();
             _serviceScopeMock.Setup(s => s.ServiceProvider).Returns(_serviceProviderMock.Object);
@@ -123,6 +124,7 @@ namespace BibleBot.Tests.Backend
             _metadataFetchingServiceMock = new Mock<MetadataFetchingService>(_versionService, false);
 
             _spProviderMock = new Mock<SpecialVerseProvider>();
+            _houseProviderMock = new Mock<HouseProvider>(_serviceScopeFactoryMock.Object);
             _bgProviderMock = new Mock<BibleGatewayProvider>();
             _abProviderMock = new Mock<APIBibleProvider>();
             _nltProviderMock = new Mock<NLTAPIProvider>();
@@ -131,7 +133,7 @@ namespace BibleBot.Tests.Backend
             _defaultBibleGatewayVersion = await _versionService.Get("RSV") ?? await _versionService.Create(new MockRSV());
             _defaultAPIBibleVersion = await _versionService.Get("KJV") ?? await _versionService.Create(new MockKJV());
 
-            List<IContentProvider> bibleProviders = [_bgProviderMock.Object, _abProviderMock.Object, _nltProviderMock.Object];
+            List<IContentProvider> bibleProviders = [_bgProviderMock.Object, _abProviderMock.Object, _nltProviderMock.Object, _houseProviderMock.Object];
             SpecialVerseProcessingService specialVerseProcessingService = new(_parsingServiceMock.Object, _metadataFetchingServiceMock.Object, _versionService, _spProviderMock.Object, bibleProviders);
 
             _commandsController = new CommandsController(_userServiceMock.Object, _guildServiceMock.Object,
@@ -139,9 +141,11 @@ namespace BibleBot.Tests.Backend
                                                     _frontendStatsServiceMock.Object, _languageService, _metadataFetchingServiceMock.Object,
                                                     specialVerseProcessingService, _experimentService, bibleProviders, _localizerFactory);
 
+            VerseStorageService verseStorageService = new(_serviceScopeFactoryMock.Object, new Mock<Microsoft.Extensions.Logging.ILogger<VerseStorageService>>().Object);
+
             _versesController = new VersesController(_userServiceMock.Object, _guildServiceMock.Object,
                                                     _parsingServiceMock.Object, _verseMetricsService, _versionService, _languageService,
-                                                    _metadataFetchingServiceMock.Object, _experimentService, bibleProviders, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
+                                                    _metadataFetchingServiceMock.Object, _experimentService, bibleProviders, verseStorageService, new StringLocalizer<VersesController>(_localizerFactory), new StringLocalizer<SharedResource>(_localizerFactory));
         }
     }
 }

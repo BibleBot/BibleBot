@@ -18,11 +18,12 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using BibleBot.Backend.Models;
+using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Sentry;
 using Version = BibleBot.Models.Version;
 
-namespace BibleBot.Backend.Services.Providers.Content
+namespace BibleBot.Backend.Providers.Content
 {
     public partial class BibleGatewayProvider : IContentProvider, IDisposable
     {

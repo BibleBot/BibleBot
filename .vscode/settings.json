@@ -41,6 +41,8 @@
         "editor.formatOnSave": false
     },
     "debugpy.debugJustMyCode": false,
-    "csharp.debug.justMyCode": true,
-    "python-envs.pythonProjects": []
+    "csharp.debug.justMyCode": false,
+    "python-envs.pythonProjects": [],
+    "dotnet-test-explorer.testProjectPath": "test/BibleBot.Tests.Backend/BibleBot.Tests.Backend.csproj",
+    "dotnet-test-explorer.testArguments": "--settings .runsettings"
 }

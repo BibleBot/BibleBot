@@ -13,7 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using BibleBot.Backend.Services.Providers.Metadata;
+using BibleBot.Backend.Providers.Metadata;
 using BibleBot.Models;
 using Serilog;
 // using MDABVersionData = System.Collections.Generic.List<System.Tuple<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse, System.Collections.Generic.List<BibleBot.Models.ABVersesResponse>>>;

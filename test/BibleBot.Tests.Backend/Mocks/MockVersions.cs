@@ -101,6 +101,21 @@ namespace BibleBot.Tests.Backend.Mocks
         }
     }
 
+    public class MockTEST : Version
+    {
+        public MockTEST()
+        {
+            Name = "A Test Version (TEST)";
+            Id = "TEST";
+            Source = "test";
+            SupportsOldTestament = true;
+            SupportsNewTestament = true;
+            SupportsDeuterocanon = false;
+
+            MockVersionHelper.PopulateMockBooks(this);
+        }
+    }
+
     public class MockRSV : Version
     {
         public MockRSV()
@@ -216,7 +231,7 @@ namespace BibleBot.Tests.Backend.Mocks
         {
             Name = "New International Version (NIV)";
             Id = "NIV";
-            Source = "ab";
+            Source = "usx";
             SupportsOldTestament = true;
             SupportsNewTestament = true;
             SupportsDeuterocanon = false;

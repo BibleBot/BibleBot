@@ -5,7 +5,14 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
-            "processId": "${command:pickProcess}"
+            "processId": "${command:pickProcess}",
+            "pipeTransport": {
+                "pipeProgram": "zsh",
+                "pipeArgs": [
+                    "-c"
+                ],
+                "debuggerPath": "~/netcoredbg/netcoredbg"
+            }
         },
         {
             "name": ".NET Core Attach (Remote)",

@@ -289,3 +289,4 @@ heavy_queries.json
 dump.rdb
 .netcoredbg_hist
 scripts/*migration-data/*.json
+usx/

@@ -18,12 +18,13 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using BibleBot.Backend.Models;
+using BibleBot.Backend.Services;
 using BibleBot.Models;
 using Sentry;
 using Serilog;
 using Version = BibleBot.Models.Version;
 
-namespace BibleBot.Backend.Services.Providers.Content
+namespace BibleBot.Backend.Providers.Content
 {
     public partial class APIBibleProvider : IContentProvider
     {
@@ -43,10 +44,10 @@ namespace BibleBot.Backend.Services.Providers.Content
             Name = "ab";
 
             _cachingHttpClient = CachingClient.GetTrimmedCachingClient(_baseURL, false);
-            _cachingHttpClient.DefaultRequestHeaders.Add("api-key", Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+            _cachingHttpClient.DefaultRequestHeaders.Add("api-key", (Environment.GetEnvironmentVariable("APIBIBLE_TOKEN") ?? "").Trim());
 
             _httpClient = new HttpClient { BaseAddress = new Uri(_baseURL) };
-            _httpClient.DefaultRequestHeaders.Add("api-key", Environment.GetEnvironmentVariable("APIBIBLE_TOKEN"));
+            _httpClient.DefaultRequestHeaders.Add("api-key", (Environment.GetEnvironmentVariable("APIBIBLE_TOKEN") ?? "").Trim());
 
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 

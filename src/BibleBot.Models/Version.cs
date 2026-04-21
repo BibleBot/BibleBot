@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace BibleBot.Models
@@ -192,5 +193,17 @@ namespace BibleBot.Models
         /// The content of a verse.
         /// </summary>
         public string Content { get; set; }
+
+        /// <summary>
+        /// The source this verse content was obtained from.
+        /// Values: "usx" (local USX file import), "bg" (BibleGateway), "ab" (API.Bible).
+        /// </summary>
+        public string Source { get; set; }
+
+        /// <summary>
+        /// When this verse content was imported or fetched.
+        /// Used to enforce API.Bible's 30-day refresh policy for "ab"-sourced content.
+        /// </summary>
+        public DateTime? FetchedAt { get; set; }
     }
 }

@@ -245,6 +245,8 @@ namespace BibleBot.Models
                 entity.Property(v => v.Number).HasColumnName("number");
                 entity.Property(v => v.Content).HasColumnName("content");
                 entity.Property(v => v.ChapterId).HasColumnName("chapter_id");
+                entity.Property(v => v.Source).HasColumnName("source");
+                entity.Property(v => v.FetchedAt).HasColumnName("fetched_at");
                 entity.HasOne<Chapter>()
                     .WithMany(c => c.Verses)
                     .HasForeignKey(v => v.ChapterId);

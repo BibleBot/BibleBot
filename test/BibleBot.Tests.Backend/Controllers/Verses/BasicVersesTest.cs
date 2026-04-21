@@ -629,15 +629,7 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         [Test]
         public async Task ShouldThrowProviderNotFoundException()
         {
-            Version testVersion = await _versionService.Get("TEST") ?? await _versionService.Create(new Version
-            {
-                Name = "A Test Version (TEST)",
-                Id = "TEST",
-                Source = "test",
-                SupportsOldTestament = true,
-                SupportsNewTestament = true,
-                SupportsDeuterocanon = false
-            });
+            Version testVersion = await _versionService.Get("TEST") ?? await _versionService.Create(new MockTEST());
 
             _ = _versesController
                 .Invoking(c => c.ProcessMessage(new MockRequest("Genesis 1:1 TEST")).GetAwaiter().GetResult())
