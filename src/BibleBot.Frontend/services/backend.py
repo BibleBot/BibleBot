@@ -28,7 +28,7 @@ aiohttp_headers = {"Authorization": os.environ.get("ENDPOINT_TOKEN", "")}
 async def submit_command(
     rch: disnake.abc.Messageable,
     user: disnake.abc.User,
-    body: str,
+    body: str
 ):
     """Submits a command to the backend and processes the result."""
 
@@ -44,7 +44,7 @@ async def submit_command(
         "ThreadId": ctx.thread_id,
         "IsThread": ctx.is_thread,
         "IsBot": user.bot,
-        "IsDM": ctx.is_thread,
+        "IsDM": ctx.is_dm,
         "Body": body,
     }
 
@@ -219,7 +219,7 @@ async def submit_command_raw(endpoint: str, req_body: dict):
 async def submit_verse(
     rch: disnake.abc.Messageable,
     user: disnake.abc.User,
-    body: str,
+    body: str
 ):
     """Submits a verse to the backend and processes the result."""
     ctx = await channels.get_channel_context_from_messageable(rch)
@@ -234,7 +234,7 @@ async def submit_verse(
         "ThreadId": ctx.thread_id,
         "IsThread": ctx.is_thread,
         "IsBot": user.bot,
-        "IsDM": ctx.is_thread,
+        "IsDM": ctx.is_dm,
         "Body": body,
     }
 
