@@ -147,14 +147,18 @@ class Tasks(commands.Cog):
         bot._connection.shard_ids = range(shard_count)
 
         if bot.session_start_limit is not None and bot._connection.shard_count is not None:
-            if bot.session_start_limit.remaining < (bot.shard_count - old_shard_count):
+            if bot.session_start_limit.remaining < (bot.shard_count - old_shard_count) + 1:
                 raise disnake.errors.SessionStartLimitReached(bot.session_start_limit, requested=bot._connection.shard_count)
 
-        new_shard_ids = set(bot._connection.shard_ids) - set(old_shard_ids)
+        new_shard_ids = set().add(old_shard_ids[-1]) + (set(bot._connection.shard_ids) - set(old_shard_ids))
 
         for shard_id in new_shard_ids:
-            await bot.launch_shard(gateway, shard_id, initial=False)
-            logger.info(f"launched new shard {shard_id}")
+            if shard_id == old_shard_ids[-1]:
+                await bot.shards[-1].reconnect()
+                logger.info(f"reconnected shard {shard_id} for guild re-allocation")
+            else:
+                await bot.launch_shard(gateway, shard_id, initial=False)
+                logger.info(f"launched new shard {shard_id}")
 
         bot._connection.shards_launched.set()
 
