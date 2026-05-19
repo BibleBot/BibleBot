@@ -6,6 +6,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+import asyncio
 import os
 import subprocess
 
@@ -27,13 +28,27 @@ class Tasks(commands.Cog):
     def cog_unload(self):
         self.run_tasks.cancel()
 
+    async def _run_safe(self, coro, name: str):
+        try:
+            await coro
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            logger.error(f"task '{name}' failed with {e.__class__.__name__}: {e}")
+
     @tasks.loop(minutes=15)
     async def run_tasks(self):
-        await constants.check_version_changes(self.bot)
-        await self.update_shards(self.bot)
-        await self.send_stats(self.bot)
-        await self.update_topgg(self.bot)
-        await self.update_discordbotlist(self.bot)
+        await self._run_safe(constants.check_version_changes(self.bot), "check_version_changes")
+        await self._run_safe(self.update_shards(self.bot), "update_shards")
+        await self._run_safe(self.send_stats(self.bot), "send_stats")
+        await self._run_safe(self.update_topgg(self.bot), "update_topgg")
+        await self._run_safe(self.update_discordbotlist(self.bot), "update_discordbotlist")
+
+    @run_tasks.error
+    async def run_tasks_error(self, error: BaseException):
+        sentry_sdk.capture_exception(error)
+        logger.error(f"run_tasks loop died with {error.__class__.__name__}: {error}, restarting in 60s")
+        await asyncio.sleep(60)
+        self.run_tasks.restart()
 
     @run_tasks.before_loop
     async def before_run_tasks(self):
