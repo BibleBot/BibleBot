@@ -34,7 +34,7 @@ namespace BibleBot.Backend.Services.Providers.Content
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly HtmlParser _htmlParser;
 
-        private readonly string _baseURL = "https://api.scripture.api.bible/v1/";
+        private readonly string _baseURL = "https://rest.api.bible/v1/";
         private readonly string _getURI = "bibles/{0}/search?query={1}&limit=100";
         private readonly string _searchURI = "bibles/{0}/search?query={1}&limit=100&sort=relevance";
 

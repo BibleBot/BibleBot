@@ -896,6 +896,55 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
+        public void ShouldHandleSpacelessCommaWithSpannedAppendedVerses()
+        {
+            ObjectResult spacelessResult = _versesController.ProcessMessage(new MockRequest("Luke 2:42,46-47")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse spacelessResp = spacelessResult!.Value as VerseResponse;
+
+            ObjectResult spacedResult = _versesController.ProcessMessage(new MockRequest("Luke 2:42, 46-47")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse spacedResp = spacedResult!.Value as VerseResponse;
+
+            VerseResponse expected = new()
+            {
+                OK = true,
+                LogStatement = "Luke 2:42, 46-47 RSV",
+                DisplayStyle = "embed",
+                Verses =
+                [
+                    new VerseResult
+                    {
+                        Title = "",
+                        PsalmTitle = "",
+                        Text = "<**42**> And when he was twelve years old, they went up according to custom; <**46**> After three days they found him in the temple, sitting among the teachers, listening to them and asking them questions; <**47**> and all who heard him were amazed at his understanding and his answers.",
+                        Reference = new Reference
+                        {
+                            Book = new Book {
+                                ProperName = "Luke"
+                            },
+                            StartingChapter = 2,
+                            StartingVerse = 42,
+                            EndingChapter = 2,
+                            EndingVerse = 42,
+                            AppendedVerses = [new System.Tuple<int, int>(46, 47)],
+                            Version = _defaultBibleGatewayVersion,
+                            IsOT = false,
+                            IsNT = true,
+                            IsDEU = false,
+                            AsString = "Luke 2:42, 46-47"
+                        }
+                    }
+                ],
+                Culture = "en-US",
+                CultureFooter = $"BibleBot {Utils.Version} by Kerygma Digital"
+            };
+
+            spacelessResult.StatusCode.Should().Be(200);
+            spacedResult.StatusCode.Should().Be(200);
+            spacelessResp.Should().BeEquivalentTo(expected);
+            spacedResp.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
         public void ShouldPresentSingleQuotationMarksProperlyInVerseContent()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 7:21 RSV")).GetAwaiter().GetResult().Result as ObjectResult;

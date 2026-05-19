@@ -206,7 +206,15 @@ namespace BibleBot.Backend.Services
 
                             int spanQuantity = right.Count(c => c == '-');
 
-                            string[] spanSplit = right.Split('-');
+                            // If the verse portion contains a non-trailing comma, skip the
+                            // dash-split and funnel everything through the comma handler
+                            // directly. Otherwise "42,46-47" would be split into ["42,46", "47"],
+                            // incorrectly setting endingVerse=47 and collapsing the range.
+                            // A trailing comma (e.g. "1-3,") means the next segment is in a
+                            // subsequent token and needs the standard dash-split flow.
+                            bool hasNonTrailingComma = right.Contains(',') && !right.EndsWith(',');
+                            string[] spanSplit = hasNonTrailingComma ? [right] : right.Split('-');
+
                             foreach (string pairValue in spanSplit)
                             {
                                 string pairValueCopy = TextPurificationService.RemovePunctuation(pairValue);
@@ -229,9 +237,13 @@ namespace BibleBot.Backend.Services
                                 }
                                 catch
                                 {
-                                    if (pairValueCopy.Contains(','))
+                                    // Use the raw pairValue (not pairValueCopy) for comma
+                                    // detection and splitting, because RemovePunctuation strips
+                                    // dashes. Without this, "42,46-47" would lose the dash and
+                                    // become "42,4647", breaking the range detection below.
+                                    if (pairValue.Contains(','))
                                     {
-                                        string[] commaSplit = pairValueCopy.Split(",");
+                                        string[] commaSplit = pairValue.Split(",");
 
                                         if (commaSplit[0] == "")
                                         {
