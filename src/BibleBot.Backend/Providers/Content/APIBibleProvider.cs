@@ -123,7 +123,7 @@ namespace BibleBot.Backend.Services.Providers.Content
 
                 try
                 {
-                    reference.Book = reference.Version.Books.First(book => book.ProperName == originalProperName);
+                    reference.Book = reference.Version.Books.First(book => string.Equals(book.ProperName, originalProperName, StringComparison.OrdinalIgnoreCase));
                     reference.AsString = reference.AsString.Replace(originalProperName, reference.Book.Name);
                 }
                 catch (InvalidOperationException ioEx)
