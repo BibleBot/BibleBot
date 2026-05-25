@@ -174,7 +174,7 @@ class EventListeners(commands.Cog):
                             )
                     else:
                         await sending.safe_send_channel(msg.channel, components=resp)
-        elif ("mn" in clean_msg.lower() or "magnifica humanitas" in clean_msg.lower()) and msg.guild:
+        elif ("mh" in clean_msg.lower() or "magnifica humanitas" in clean_msg.lower()) and msg.guild:
             if msg.guild.id in [
                 238001909716353025,
                 769709969796628500,
@@ -182,7 +182,7 @@ class EventListeners(commands.Cog):
                 636984073226813449,
             ]:
                 if "magnifica humanitas" in clean_msg.lower():
-                    clean_msg = clean_msg.replace("magnifica humanitas", "mn")
+                    clean_msg = clean_msg.replace("magnifica humanitas", "mh")
 
                 reference_regex = re.compile(r"mn [0-9]+(-[0-9]+)?")
                 reference_regex_match = reference_regex.search(clean_msg.lower())
