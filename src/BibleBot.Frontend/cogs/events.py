@@ -184,7 +184,7 @@ class EventListeners(commands.Cog):
                 if "magnifica humanitas" in clean_msg.lower():
                     clean_msg = clean_msg.replace("magnifica humanitas", "mh")
 
-                reference_regex = re.compile(r"mn [0-9]+(-[0-9]+)?")
+                reference_regex = re.compile(r"mh [0-9]+(-[0-9]+)?")
                 reference_regex_match = reference_regex.search(clean_msg.lower())
                 if reference_regex_match:
                     resp = await backend.submit_command(
