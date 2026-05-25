@@ -43,7 +43,7 @@ namespace BibleBot.Backend.Services
 
             _encyclicalData = new Dictionary<string, Tuple<ResourceStyle, string>>
             {
-                { "mn", new Tuple<ResourceStyle, string>(ResourceStyle.PARAGRAPHED, "magnifica_humanitas") }
+                { "mh", new Tuple<ResourceStyle, string>(ResourceStyle.PARAGRAPHED, "magnifica_humanitas") }
             };
 
             _creeds =
