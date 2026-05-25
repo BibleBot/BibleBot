@@ -129,6 +129,10 @@
     <value>教会法</value>
     <comment>Header above various canon laws.</comment>
   </data>
+  <data name="Encyclicals" xml:space="preserve">
+    <value>Papal Encyclicals</value>
+    <comment>Header above various papal encyclicals.</comment>
+  </data>
   <data name="ResourceUsageExample" xml:space="preserve">
     <value>请使用 `/resource resource:&lt;name&gt;`去用资源。\n比如 `/resource resource:nicene` 或 `/resource resource:ccc range:1`。</value>
     <comment>Explanation for how to use /resource.</comment>

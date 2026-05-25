@@ -36,6 +36,9 @@ class Resources(commands.Cog):
             description=Localized(key="RESOURCE_PARAM"),
             choices=[
                 OptionChoice(
+                    Localized("RESOURCE_MN_TITLE", key="RESOURCE_MN_TITLE"), "mn"
+                ),
+                OptionChoice(
                     Localized("RESOURCE_CIC_TITLE", key="RESOURCE_CIC_TITLE"), "cic"
                 ),
                 OptionChoice(
@@ -95,6 +98,9 @@ class Resources(commands.Cog):
         resource: str = commands.Param(
             description=Localized(key="RESOURCE_PARAM"),
             choices=[
+                OptionChoice(
+                    Localized("RESOURCE_MN_TITLE", key="RESOURCE_MN_TITLE"), "mn"
+                ),
                 OptionChoice(
                     Localized("RESOURCE_CIC_TITLE", key="RESOURCE_CIC_TITLE"), "cic"
                 ),

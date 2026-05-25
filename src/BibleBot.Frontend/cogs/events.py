@@ -174,3 +174,32 @@ class EventListeners(commands.Cog):
                             )
                     else:
                         await sending.safe_send_channel(msg.channel, components=resp)
+        elif ("mn" in clean_msg.lower() or "magnifica humanitas" in clean_msg.lower()) and msg.guild:
+            if msg.guild.id in [
+                238001909716353025,
+                769709969796628500,
+                362503610006765568,
+                636984073226813449,
+            ]:
+                if "magnifica humanitas" in clean_msg.lower():
+                    clean_msg = clean_msg.replace("magnifica humanitas", "mn")
+
+                reference_regex = re.compile(r"mn [0-9]+(-[0-9]+)?")
+                reference_regex_match = reference_regex.search(clean_msg.lower())
+                if reference_regex_match:
+                    resp = await backend.submit_command(
+                        msg.channel,
+                        msg.author,
+                        f"+resource {reference_regex_match[0]}",
+                    )
+
+                    if isinstance(resp, list):
+                        if len(resp) > 3:
+                            paginator = ComponentPaginator(resp, msg.author.id)
+                            await paginator.send(msg.channel)
+                        else:
+                            await sending.safe_send_channel(
+                                msg.channel, components=resp
+                            )
+                    else:
+                        await sending.safe_send_channel(msg.channel, components=resp)

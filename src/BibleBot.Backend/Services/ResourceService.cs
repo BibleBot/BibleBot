@@ -20,6 +20,7 @@ namespace BibleBot.Backend.Services
     {
         private readonly Dictionary<string, Tuple<ResourceStyle, string>> _canonData;
         private readonly Dictionary<string, Tuple<ResourceStyle, string>> _catechismData;
+        private readonly Dictionary<string, Tuple<ResourceStyle, string>> _encyclicalData;
         private readonly List<string> _creeds;
 
         private readonly List<IResource> _resources;
@@ -38,6 +39,11 @@ namespace BibleBot.Backend.Services
             {
                 { "ccc", new Tuple<ResourceStyle, string>(ResourceStyle.PARAGRAPHED, "catechism_of_the_catholic_church") },
                 { "lsc" , new Tuple<ResourceStyle, string>(ResourceStyle.SECTIONED,  "luthers_small_catechism") }
+            };
+
+            _encyclicalData = new Dictionary<string, Tuple<ResourceStyle, string>>
+            {
+                { "mn", new Tuple<ResourceStyle, string>(ResourceStyle.PARAGRAPHED, "magnifica_humanitas") }
             };
 
             _creeds =
@@ -64,6 +70,11 @@ namespace BibleBot.Backend.Services
             foreach (KeyValuePair<string, Tuple<ResourceStyle, string>> catechismData in _catechismData)
             {
                 _resources.Add(GetResource(ResourceType.CATECHISM, catechismData.Key));
+            }
+
+            foreach (KeyValuePair<string, Tuple<ResourceStyle, string>> encyclicalData in _encyclicalData)
+            {
+                _resources.Add(GetResource(ResourceType.ENCYCLICAL, encyclicalData.Key));
             }
 
             foreach (string creed in _creeds)
@@ -151,6 +162,37 @@ namespace BibleBot.Backend.Services
                                         SectionedResource resource = JsonSerializer.Deserialize<SectionedResource>(canonsFile, _jsonSerializerOptions);
                                         resource.CommandReference = name;
                                         resource.Type = ResourceType.CANONS;
+                                        resource.Style = ResourceStyle.SECTIONED;
+                                        return resource;
+                                    }
+                                case ResourceStyle.FULL_TEXT:
+                                default:
+                                    throw new NotImplementedException();
+                            }
+                        }
+                        break;
+                    }
+                case ResourceType.ENCYCLICAL:
+                    {
+                        if (_encyclicalData.TryGetValue(name, out Tuple<ResourceStyle, string> idealEncyclical))
+                        {
+                            string encyclicalFile = File.ReadAllText($"./Data/Encyclicals/{idealEncyclical.Item2}.json");
+
+                            switch (idealEncyclical.Item1)
+                            {
+                                case ResourceStyle.PARAGRAPHED:
+                                    {
+                                        ParagraphedResource resource = JsonSerializer.Deserialize<ParagraphedResource>(encyclicalFile, _jsonSerializerOptions);
+                                        resource.CommandReference = name;
+                                        resource.Type = ResourceType.ENCYCLICAL;
+                                        resource.Style = ResourceStyle.PARAGRAPHED;
+                                        return resource;
+                                    }
+                                case ResourceStyle.SECTIONED:
+                                    {
+                                        SectionedResource resource = JsonSerializer.Deserialize<SectionedResource>(encyclicalFile, _jsonSerializerOptions);
+                                        resource.CommandReference = name;
+                                        resource.Type = ResourceType.ENCYCLICAL;
                                         resource.Style = ResourceStyle.SECTIONED;
                                         return resource;
                                     }

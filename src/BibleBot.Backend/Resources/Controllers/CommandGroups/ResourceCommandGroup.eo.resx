@@ -129,6 +129,10 @@
     <value>Kanonaj Juroj</value>
     <comment>Header above various canon laws.</comment>
   </data>
+  <data name="Encyclicals" xml:space="preserve">
+    <value>Papaj Enciklikoj</value>
+    <comment>Header above various papal encyclicals.</comment>
+  </data>
   <data name="ResourceUsageExample" xml:space="preserve">
     <value>Uzi risurcon, faru `/resource resource:&lt;name&gt;`.\nEkzemple, `/resource resource:nicene` aŭ `/resource resource:ccc range:1`.</value>
     <comment>Explanation for how to use /resource.</comment>

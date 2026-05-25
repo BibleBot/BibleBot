@@ -203,7 +203,9 @@ namespace BibleBot.Models
         /// <inheritdoc/>
         CATECHISM = 1,
         /// <inheritdoc/>
-        CANONS = 2
+        CANONS = 2,
+        /// <inheritdoc/>
+        ENCYCLICAL = 3,
     }
 
     /// <summary>

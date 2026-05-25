@@ -81,10 +81,19 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     canonsList.Append($"**{canon.CommandReference}** - {canon.Title}\n");
                 }
 
+                IEnumerable<IResource> encyclicals = resources.Where(res => res.Type == ResourceType.ENCYCLICAL);
+                StringBuilder encyclicalList = new();
+
+                foreach (IResource encyclical in encyclicals)
+                {
+                    encyclicalList.Append($"**{encyclical.CommandReference}** - {encyclical.Title}\n");
+                }
+
 
                 string resp = $"**__{localizer["Creeds"]}__**\n" + creedsList.ToString().Substring(0, creedsList.Length - 1) +
                 $"\n\n**__{localizer["Catechisms"]}__**\n" + catechismsList.ToString().Substring(0, catechismsList.Length - 1) +
-                $"\n\n**__{localizer["CanonLaws"]}__**\n" + canonsList.ToString().Substring(0, catechismsList.Length - 1) +
+                $"\n\n**__{localizer["CanonLaws"]}__**\n" + canonsList.ToString().Substring(0, canonsList.Length - 1) +
+                $"\n\n**__{localizer["Encyclicals"]}__**\n" + encyclicalList.ToString().Substring(0, encyclicalList.Length - 1) +
                 $"\n\n{localizer["ResourceUsageExample"]}";
 
 
