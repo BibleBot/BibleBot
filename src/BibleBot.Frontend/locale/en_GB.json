@@ -101,5 +101,6 @@
     "CMD_COMPARE_VERSIONS_DESC": "The list of versions to compare against, separated by commas.",
     "CMD_COMPARE_ERROR_TITLE": "Comparison Error",
     "CMD_COMPARE_ERROR_NOT_ENOUGH_VERSIONS": "You must specify at least two versions, separated by commas.",
-    "CMD_COMPARE_ERROR_TOO_MANY_VERSIONS": "You may only compare up to six versions."
+    "CMD_COMPARE_ERROR_TOO_MANY_VERSIONS": "You may only compare up to six versions.",
+    "CMD_RELOAD_BOT_DESC": "Hot-reload the frontend bot. (staff only)"
 }

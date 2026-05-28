@@ -26,9 +26,7 @@ aiohttp_headers = {"Authorization": os.environ.get("ENDPOINT_TOKEN", "")}
 
 
 async def submit_command(
-    rch: disnake.abc.Messageable,
-    user: disnake.abc.User,
-    body: str
+    rch: disnake.abc.Messageable, user: disnake.abc.User, body: str
 ):
     """Submits a command to the backend and processes the result."""
 
@@ -216,11 +214,7 @@ async def submit_command_raw(endpoint: str, req_body: dict):
                 return {"ok": False, "logStatement": "couldn't parse response"}
 
 
-async def submit_verse(
-    rch: disnake.abc.Messageable,
-    user: disnake.abc.User,
-    body: str
-):
+async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, body: str):
     """Submits a verse to the backend and processes the result."""
     ctx = await channels.get_channel_context_from_messageable(rch)
 
@@ -375,3 +369,26 @@ async def submit_verse_raw(
             )
 
     return processed_verses
+
+
+async def check_if_staff(user_id: int):
+    endpoint = os.environ.get("ENDPOINT", "")
+
+    req_body = {
+        "UserId": user_id,
+        "GuildId": 0,
+        "ChannelId": 0,
+        "ThreadId": 0,
+        "IsThread": False,
+        "IsBot": False,
+        "IsDM": True,
+        "Body": "",
+    }
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            f"{endpoint}/commands/staff_check",
+            json=req_body,
+            headers=aiohttp_headers,
+        ) as resp:
+            return resp

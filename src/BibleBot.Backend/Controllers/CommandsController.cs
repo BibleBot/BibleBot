@@ -41,6 +41,11 @@ namespace BibleBot.Backend.Controllers
 
         private readonly IStringLocalizer _localizer = localizerFactory.Create(typeof(CommandsController));
 
+        private readonly long[] _staffIds = [
+            186046294286925824, 270590533880119297, 304602975446499329, // directors
+            394261640335327234, 1029302033993433130, 842427954263752724 // support specialists
+        ];
+
         /// <summary>
         /// Processes a message to locate verse references, outputting
         /// the corresponding text.
@@ -89,12 +94,9 @@ namespace BibleBot.Backend.Controllers
 
             CommandGroup grp = _commandGroups.FirstOrDefault(grp => grp.Name == potentialCommand, _commandGroups.First(grp => grp.Name == "info"));
 
-            long[] staffIds = [
-                186046294286925824, 270590533880119297, 304602975446499329, // directors
-                394261640335327234, 1029302033993433130, 842427954263752724 // support specialists
-            ];
 
-            if (grp.IsStaffOnly && !staffIds.Contains(req.UserId))
+
+            if (grp.IsStaffOnly && !_staffIds.Contains(req.UserId))
             {
                 return BadRequest(new CommandResponse
                 {
@@ -138,6 +140,34 @@ namespace BibleBot.Backend.Controllers
             response = await grp.DefaultCommand.ProcessCommand(req, []);
             return response.OK ? Ok(response) : BadRequest(response);
 
+        }
+
+        /// <summary>
+        /// Checks if the user is staff.
+        /// </summary>
+        /// <param name="req">A <see cref="Request" /> object</param>
+        /// <response code="200">If the user is staff</response>
+        /// <response code="400">If the user is not staff</response>
+        [Route("staff_check")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult StaffCheck([FromBody] Request req)
+        {
+            if (!_staffIds.Contains(req.UserId))
+            {
+                return BadRequest(new CommandResponse
+                {
+                    OK = false,
+                    Pages = [
+                        Utils.GetInstance().Embedify(_localizer["PermissionsErrorTitle"], _localizer["StaffOnlyCommandError"], true)
+                    ],
+                    LogStatement = "Insufficient permissions on staff check.",
+                    Culture = CultureInfo.CurrentUICulture.Name
+                });
+            }
+
+            return Ok();
         }
     }
 }

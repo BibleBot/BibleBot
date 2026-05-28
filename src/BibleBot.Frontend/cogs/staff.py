@@ -6,6 +6,9 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+import importlib
+import sys
+
 import disnake
 from core.i18n import bb_i18n
 from disnake import Localized
@@ -15,6 +18,7 @@ from disnake.interactions import ApplicationCommandInteraction
 from helpers import sending
 from services import backend
 from ui import renderers as containers
+
 # from core import checks
 
 i18n = bb_i18n()
@@ -30,7 +34,7 @@ class Staff(commands.Cog):
     async def permscheck(
         self,
         inter: ApplicationCommandInteraction,
-        channel_id: int = commands.Param(
+        channel_id: str = commands.Param(
             default=None,
             description="The ID of the channel (optional)",
         ),
@@ -176,3 +180,89 @@ class Staff(commands.Cog):
         )
 
         await sending.safe_send_interaction(inter.followup, components=resp)
+
+    @commands.slash_command(description=Localized(key="CMD_RELOAD_BOT_DESC"))
+    async def reload_bot(self, inter: ApplicationCommandInteraction):
+        await inter.response.defer()
+
+        if not await self._check_if_staff(inter):
+            return
+
+        modules_to_reload = [
+            "logger",
+            "core.constants",
+            "core.i18n",
+            "core.checks",
+            "helpers.channels",
+            "helpers.sending",
+            "services.webhooks",
+            "services.experiments",
+            "ui.renderers",
+            "ui.paginator",
+            "ui.views",
+            "ui.components",
+            "ui.confirmation_prompt",
+            "ui.helpfulness_prompt",
+            "services.backend",
+        ]
+
+        reloaded_modules = []
+        for mod_name in modules_to_reload:
+            if mod_name in sys.modules:
+                try:
+                    importlib.reload(sys.modules[mod_name])
+                    reloaded_modules.append(mod_name)
+                except Exception as e:
+                    await sending.safe_send_interaction(
+                        inter.followup,
+                        components=containers.create_error_container(
+                            "Hot-reload Unsuccessful",
+                            f"Failed to reload `{mod_name}`: {e}\n\nModules successfully reloaded: [{', '.join(f'`{x}`' for x in reloaded_modules)}]",
+                            i18n.get_i18n_or_default(inter.locale.name),
+                        ),
+                    )
+                    return
+
+        try:
+            self.bot.reload_extension("cogs")
+        except Exception as e:
+            await sending.safe_send_interaction(
+                inter.followup,
+                components=containers.create_error_container(
+                    "Hot-reload Unsuccessful",
+                    f"Failed to reload cogs: {e}\n\nModules successfully reloaded: [{', '.join(f'`{x}`' for x in reloaded_modules)}]",
+                    i18n.get_i18n_or_default(inter.locale.name),
+                ),
+            )
+            return
+
+        await sending.safe_send_interaction(
+            inter.followup,
+            components=containers.create_success_container(
+                "Hot-reload Successful",
+                f"Successfully hot-reloaded {len(reloaded_modules)} modules and all cogs.",
+                i18n.get_i18n_or_default(inter.locale.name),
+            ),
+        )
+
+    async def _check_if_staff(self, inter: ApplicationCommandInteraction):
+        staff_check_resp = await backend.check_if_staff(inter.author.id)
+
+        if staff_check_resp.status == 400:
+            staff_check_resp_body = await staff_check_resp.json()
+            await sending.safe_send_interaction(
+                inter.followup,
+                components=containers.convert_embed_to_container(
+                    staff_check_resp_body["pages"][0]
+                ),
+            )
+        elif staff_check_resp.status == 200:
+            return True
+        else:
+            localization = i18n.get_i18n_or_default(inter.locale.name)
+            container = containers.create_error_container(
+                localization["PERMS_ERROR_LABEL"],
+                "An unknown error occured while checking staff permissions.",
+                localization,
+            )
+            await sending.safe_send_interaction(inter.followup, components=container)
