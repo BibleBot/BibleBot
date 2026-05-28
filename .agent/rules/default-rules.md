@@ -1,7 +1,5 @@
 ---
 trigger: always_on
-glob:
-description:
 ---
 
 - Only modify code directly relevant to the specific request. Avoid changing unrelated functionality.
@@ -68,6 +66,4 @@ description:
 
 For commit messages, Conventional Commits is used.
 
-Always use context7 when I need code generation, setup or configuration steps, or
-library/API documentation. This means you should automatically use the Context7 MCP
-tools to resolve library id and get library docs without me having to explicitly ask.
+Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
