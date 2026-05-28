@@ -34,6 +34,16 @@ class Information(commands.Cog):
         await inter.response.defer(ephemeral=checks.inter_is_user(inter))
         resp = await backend.submit_command(inter.channel, inter.author, "+biblebot")
         await sending.safe_send_interaction(inter.followup, components=resp)
+        # localization = i18n.get_i18n_or_default(inter.locale.name)
+
+        # await sending.safe_send_interaction(
+        #     inter.followup,
+        #     components=containers.create_error_container(
+        #         "I'm a banana!",
+        #         ":banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana: :banana:",
+        #         localization,
+        #     ),
+        # )
 
     @commands.slash_command(description=Localized(key="CMD_STATS_DESC"))
     async def stats(self, inter: ApplicationCommandInteraction):

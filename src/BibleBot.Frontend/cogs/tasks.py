@@ -13,9 +13,9 @@ import subprocess
 import aiohttp
 import disnake
 import sentry_sdk
+from core import constants
 from disnake.ext import commands, tasks
 from logger import VyLogger
-from core import constants
 
 logger = VyLogger("default")
 
@@ -37,16 +37,22 @@ class Tasks(commands.Cog):
 
     @tasks.loop(minutes=15)
     async def run_tasks(self):
-        await self._run_safe(constants.check_version_changes(self.bot), "check_version_changes")
+        await self._run_safe(
+            constants.check_version_changes(self.bot), "check_version_changes"
+        )
         await self._run_safe(self.update_shards(self.bot), "update_shards")
         await self._run_safe(self.send_stats(self.bot), "send_stats")
         await self._run_safe(self.update_topgg(self.bot), "update_topgg")
-        await self._run_safe(self.update_discordbotlist(self.bot), "update_discordbotlist")
+        await self._run_safe(
+            self.update_discordbotlist(self.bot), "update_discordbotlist"
+        )
 
     @run_tasks.error
     async def run_tasks_error(self, error: BaseException):
         sentry_sdk.capture_exception(error)
-        logger.error(f"run_tasks loop died with {error.__class__.__name__}: {error}, restarting in 60s")
+        logger.error(
+            f"run_tasks loop died with {error.__class__.__name__}: {error}, restarting in 60s"
+        )
         await asyncio.sleep(60)
         self.run_tasks.restart()
 
@@ -109,7 +115,9 @@ class Tasks(commands.Cog):
             ).approximate_user_install_count
         except Exception as e:
             sentry_sdk.capture_exception(e)
-            logger.error(f"couldn't get stats, caused by {e.__class__.__name__}, bailing out")
+            logger.error(
+                f"couldn't get stats, caused by {e.__class__.__name__}, bailing out"
+            )
             return
 
         repo_sha = (
@@ -136,12 +144,12 @@ class Tasks(commands.Cog):
             logger.error("couldn't get shard count to potentially update")
             return
 
-        if bot._connection.shard_ids is None:
-            logger.error("couldn't get shard ids to potentially update")
-            return
-
         old_shard_count = bot._connection.shard_count
-        old_shard_ids = bot._connection.shard_ids
+        old_shard_ids = (
+            set(bot._connection.shard_ids)
+            if bot._connection.shard_ids is not None
+            else set()
+        )
 
         shard_count, gateway, session_start_limit = await bot.http.get_bot_gateway(
             encoding=bot.gateway_params.encoding,
@@ -152,28 +160,62 @@ class Tasks(commands.Cog):
             logger.info("no shards to launch")
             return
 
-        logger.info(f"launching {shard_count - old_shard_count} shards")
-
         bot.session_start_limit = disnake.client.SessionStartLimit(session_start_limit)
 
-        bot.shard_count = shard_count
+        # All existing shards must re-IDENTIFY with the new shard_count,
+        # plus we need to IDENTIFY new shards.
+        total_identifies_needed = shard_count
+        if bot.session_start_limit.remaining < total_identifies_needed:
+            logger.error(
+                f"insufficient session starts for resharding: "
+                f"need {total_identifies_needed}, have {bot.session_start_limit.remaining}, "
+                f"resets at {bot.session_start_limit.reset_time}"
+            )
+            return
 
+        logger.warning(
+            f"shard count changed from {old_shard_count} to {shard_count}, "
+            f"beginning rolling reconnect of all shards"
+        )
+
+        # Update shard_count BEFORE reconnecting so that
+        # DiscordWebSocket.from_client() reads the new count for IDENTIFY payloads.
+        bot.shard_count = shard_count
         bot._connection.shard_count = shard_count
         bot._connection.shard_ids = range(shard_count)
 
-        if bot.session_start_limit is not None and bot._connection.shard_count is not None:
-            if bot.session_start_limit.remaining < (bot.shard_count - old_shard_count) + 1:
-                raise disnake.errors.SessionStartLimitReached(bot.session_start_limit, requested=bot._connection.shard_count)
+        # Reconnect all existing shards sequentially.
+        # Each reconnect calls from_client() → identify() → before_identify_hook(),
+        # which sleeps 5s between non-initial IDENTIFYs automatically.
+        for shard_id in sorted(old_shard_ids):
+            shard_info = bot.get_shard(shard_id)
+            if shard_info is None:
+                logger.warning(
+                    f"shard {shard_id + 1} not found during resharding, skipping"
+                )
+                continue
 
-        new_shard_ids = set().add(old_shard_ids[-1]) + (set(bot._connection.shard_ids) - set(old_shard_ids))
+            try:
+                await shard_info.reconnect()
+                logger.info(
+                    f"reconnected shard {shard_id + 1} with new count {shard_count}"
+                )
+            except Exception as e:
+                sentry_sdk.capture_exception(e)
+                logger.error(f"failed to reconnect shard {shard_id + 1}: {e}")
 
+        # Launch brand-new shards.
+        new_shard_ids = sorted(set(range(shard_count)) - old_shard_ids)
         for shard_id in new_shard_ids:
-            if shard_id == old_shard_ids[-1]:
-                await bot.shards[-1].reconnect()
-                logger.info(f"reconnected shard {shard_id} for guild re-allocation")
-            else:
+            try:
                 await bot.launch_shard(gateway, shard_id, initial=False)
-                logger.info(f"launched new shard {shard_id}")
+                logger.info(f"launched new shard {shard_id + 1}")
+            except Exception as e:
+                sentry_sdk.capture_exception(e)
+                logger.error(f"failed to launch new shard {shard_id + 1}: {e}")
 
         bot._connection.shards_launched.set()
-
+        logger.warning(
+            f"rolling reconnect complete: {len(old_shard_ids)} reconnected, "
+            f"{len(new_shard_ids)} new shards launched"
+        )
