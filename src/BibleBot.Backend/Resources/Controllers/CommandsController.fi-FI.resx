@@ -117,40 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SearchSubsetVersionIneligible" xml:space="preserve">
-    <value>Ĉi tiu traduko ankoraŭ ne estas elektebla por subaroj. Certigu vin uzas tradukon kun fonto `bg` (vidu `/versioninfo`).</value>
-    <comment>The error message sent when trying to use a search subset with an unsupported Bible version.</comment>
+  <data name="PermissionsErrorTitle" xml:space="preserve">
+    <value>Käyttöoikeusvirhe</value>
+    <comment>Title for responses with permission errors.</comment>
   </data>
-  <data name="SearchNoResultsVersionMissingSubset" xml:space="preserve">
-    <value>Via serĉdemandado produktis neniujn rezultojn. Ĉu via traduko subtenas la subaron, kiun vi serĉas? (`/versioninfo`)</value>
-    <comment>The error message sent when no search results are found within a subset, suggesting the version may not have that subset.</comment>
-  </data>
-  <data name="SearchSubsetOldTestament" xml:space="preserve">
-    <value>en la Malnova Testamento</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
-  </data>
-  <data name="SearchSubsetNewTestament" xml:space="preserve">
-    <value>en la Nova Testamento</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
-  </data>
-  <data name="SearchSubsetDeuterocanon" xml:space="preserve">
-    <value>en la Apokrifo/Duakanono</value>
-    <comment>Used in building the search result title, see screenshot for examples.</comment>
-  </data>
-  <data name="SearchResultsTitle" xml:space="preserve">
-    <value>Serĉrezultoj por</value>
-    <comment>See screenshot for examples.</comment>
-  </data>
-  <data name="SearchNoResults" xml:space="preserve">
-    <value>Via serĉdemandado produktis neniujn rezultojn.</value>
-    <comment>Error message sent when no search results are found (no subset used).</comment>
-  </data>
-  <data name="SearchResourceInvalidResource" xml:space="preserve">
-    <value>Neniu valida rimedo estis provizita.</value>
-    <comment>Error message sent when using /searchresource with a resource that doesn't exist.</comment>
-  </data>
-  <data name="SearchResourceNotParagraphed" xml:space="preserve">
-    <value>Ĉi tiu rimedo ne estas dividita en alineo. Ĝi ne estas uzanta kun ĉi tiu komando.</value>
-    <comment>Error message sent when using /searchresource with a resource that isn't divided into paragraphs.</comment>
+  <data name="StaffOnlyCommandError" xml:space="preserve">
+    <value>Tämän komennon voi suorittaa vain BibleBotin ylläpitäjät.</value>
+    <comment>Response when a user tries to use a staff-only command.</comment>
   </data>
 </root>
