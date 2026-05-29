@@ -34,6 +34,30 @@ def inter_is_not_dm(inter: ApplicationCommandInteraction) -> bool:
     """Returns whether an interaction is triggered in a guild app context."""
     return not isinstance(inter.channel, disnake.DMChannel)
 
+async def user_is_bb_staff(inter: ApplicationCommandInteraction) -> bool:
+    staff_check_resp = await backend.check_if_staff(inter.author.id)
+
+    if staff_check_resp.status == 400:
+        staff_check_resp_body = await staff_check_resp.json()
+        await sending.safe_send_interaction(
+            inter.followup,
+            components=containers.convert_embed_to_container(
+                staff_check_resp_body["pages"][0]
+            ),
+        )
+    elif staff_check_resp.status == 200:
+        return True
+    else:
+        localization = i18n.get_i18n_or_default(inter.locale.name)
+        container = containers.create_error_container(
+            localization["PERMS_ERROR_LABEL"],
+            "An unknown error occured while checking staff permissions.",
+            localization,
+        )
+        await sending.safe_send_interaction(inter.followup, components=container)
+        
+    return False
+
 
 # This code is functional, but because we don't have/use
 # the Guild Members verified intent, we have no way of using it.

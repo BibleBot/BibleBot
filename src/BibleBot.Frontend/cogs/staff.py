@@ -19,7 +19,7 @@ from helpers import sending
 from services import backend
 from ui import renderers as containers
 
-# from core import checks
+from core import checks
 
 i18n = bb_i18n()
 
@@ -54,6 +54,9 @@ class Staff(commands.Cog):
         #         ),
         #     )
         #     return
+
+        if not await checks.user_is_bb_staff(inter):
+            return
 
         channel = inter.channel
         guild = inter.guild
@@ -185,7 +188,7 @@ class Staff(commands.Cog):
     async def reload_bot(self, inter: ApplicationCommandInteraction):
         await inter.response.defer()
 
-        if not await self._check_if_staff(inter):
+        if not await checks.user_is_bb_staff(inter):
             return
 
         modules_to_reload = [
@@ -244,25 +247,3 @@ class Staff(commands.Cog):
                 i18n.get_i18n_or_default(inter.locale.name),
             ),
         )
-
-    async def _check_if_staff(self, inter: ApplicationCommandInteraction):
-        staff_check_resp = await backend.check_if_staff(inter.author.id)
-
-        if staff_check_resp.status == 400:
-            staff_check_resp_body = await staff_check_resp.json()
-            await sending.safe_send_interaction(
-                inter.followup,
-                components=containers.convert_embed_to_container(
-                    staff_check_resp_body["pages"][0]
-                ),
-            )
-        elif staff_check_resp.status == 200:
-            return True
-        else:
-            localization = i18n.get_i18n_or_default(inter.locale.name)
-            container = containers.create_error_container(
-                localization["PERMS_ERROR_LABEL"],
-                "An unknown error occured while checking staff permissions.",
-                localization,
-            )
-            await sending.safe_send_interaction(inter.followup, components=container)

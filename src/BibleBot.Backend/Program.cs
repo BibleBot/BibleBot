@@ -53,7 +53,7 @@ namespace BibleBot.Backend
                     {
                         options.Release = version;
                     }
-                    options.Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    options.Environment = Environment.GetEnvironmentVariable("SENTRY_ENVIRONMENT");
                 }).UseStartup<Startup>();
             });
         }
