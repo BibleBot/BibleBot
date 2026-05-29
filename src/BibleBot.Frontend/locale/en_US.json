@@ -32,7 +32,7 @@
     "CMD_BIBLEBOT_DESC": "The help command.",
     "CMD_STATS_DESC": "Statistics on the bot.",
     "CMD_INVITE_DESC": "See bot and support server invites.",
-    "CMD_PERMSCHECK_DESC": "Check bot permissions for this channel and server.",
+    "CMD_PERMSCHECK_DESC": "Check bot permissions for this channel and server. (staff only)",
     "PERMSCHECK_ERROR_LABEL": "Permissions Check",
     "PERMSCHECK_ERROR_DM": "Channel ID specified belongs to a DM channel.",
     "PERMSCHECK_ERROR_NOCHAN": "The channel either does not exist or we do not have permission for it.",

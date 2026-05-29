@@ -162,7 +162,7 @@
     <comment>Appended message for successful usage of /setserverversion if version does not have both testaments.</comment>
   </data>
   <data name="SetServerVersionSuccessSeptuagintPsalmsNumberingWarning" xml:space="preserve">
-    <value>Ĉi tiu traduko kalkulas Psalmojn per Septuaginto-stilaj numeroj, kiu povas krei problemojn kun aŭtomataj ĉiutagaj versoj kiuj uzas librojn de Psalmoj. Se tio koncernas vin, uzu `/versioninfo` por helpi identigi tradukojn kiuj ne uzas Septuaginto-stilaj numerojn por Psalmoj.</value>
+    <value>Ĉi tiu versio uzas numerojn de psalmoj de la stilo de Septuaginta, kiun povas kaŭzi problemojn kun kelkaj aŭtomataj ĉiutagaj versoj de la libro de psalmoj. Se ĉi tiu koncernas vin, uzo `/versioninfo` helpi identigi versiojn ke ne uzas numerojn de psalmoj de la stilo de Septuaginta.</value>
     <comment>Appended message for successful usage of /setserverversion if version uses Septuagint-style psalm numbering.</comment>
   </data>
   <data name="SetServerVersionFailure" xml:space="preserve">
@@ -238,7 +238,7 @@
     <comment>To indicate a version that is an alias.</comment>
   </data>
   <data name="VersionListByLanguageUnspecified" xml:space="preserve">
-    <value>Nekonata</value>
+    <value>Nesciigita</value>
     <comment>If a version does not have language information, they get sorted into an "Unspecified" category when running `/listversions sort_by_language:True`. "Unknown" or "Unsorted" can be used here too.</comment>
   </data>
 </root>
