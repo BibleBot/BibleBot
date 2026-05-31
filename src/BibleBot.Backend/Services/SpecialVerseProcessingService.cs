@@ -6,6 +6,7 @@
 * You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace BibleBot.Backend.Services
     public class SpecialVerseProcessingService(ParsingService parsingService, MetadataFetchingService metadataFetchingService,
         VersionService versionService, SpecialVerseProvider specialVerseProvider, List<IContentProvider> bibleProviders)
     {
+        private string _lastKnownDailyVerseReference;
 
         /// <summary>
         /// Gets a daily verse using the proper parsing pipeline, similar to VersesController
@@ -29,7 +31,28 @@ namespace BibleBot.Backend.Services
         /// <returns>A VerseResult with the daily verse, or null if processing failed</returns>
         public async Task<VerseResult> GetDailyVerse(Version version, bool titlesEnabled, bool verseNumbersEnabled)
         {
-            string votdRef = await specialVerseProvider.GetDailyVerse();
+            string votdRef;
+            try
+            {
+                votdRef = await specialVerseProvider.GetDailyVerse();
+                _lastKnownDailyVerseReference = votdRef;
+            }
+            catch (NullReferenceException ex)
+            {
+                if (_lastKnownDailyVerseReference == null)
+                {
+                    throw new Exception("Cannot get daily verse: no known reference");
+                }
+
+                SentrySdk.CaptureException(ex, (scope) =>
+                {
+                    scope.Contexts["lastKnownDailyVerseReference"] = _lastKnownDailyVerseReference;
+                    scope.Contexts["version"] = version.Id;
+                });
+
+                votdRef = _lastKnownDailyVerseReference;
+            }
+
             VerseResult result = await ProcessSpecialVerseReference(votdRef, version, titlesEnabled, verseNumbersEnabled);
 
             // Fallback to string-based approach if proper parsing fails
