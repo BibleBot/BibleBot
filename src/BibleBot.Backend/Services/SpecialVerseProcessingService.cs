@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sentry;
 using BibleBot.Backend.Services.Providers;
 using BibleBot.Models;
 using Version = BibleBot.Models.Version;
@@ -190,6 +191,11 @@ namespace BibleBot.Backend.Services
             {
                 reference.Book.ProperName = reference.Book.PreferredName;
             }
+
+            SentrySdk.ConfigureScope(scope =>
+            {
+                scope.Contexts["verseReference"] = reference;
+            });
 
             // Find the appropriate provider
             IContentProvider provider = bibleProviders.FirstOrDefault(p => p.Name == reference.Version.Source);
