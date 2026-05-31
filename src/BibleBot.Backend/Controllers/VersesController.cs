@@ -323,25 +323,25 @@ namespace BibleBot.Backend.Controllers
             if (target.Contains('-'))
             {
                 MatchCollection correctedVerseNumbers = VerseNumberWithHyphenRegex().Matches(target);
-                return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+                target = correctedVerseNumbers[0].Groups[1].Value;
             }
             else if (target.Contains('('))
             {
                 MatchCollection correctedVerseNumbers = VerseNumberInParenthesesRegex().Matches(target);
-                return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+                target = correctedVerseNumbers[0].Groups[1].Value;
             }
             else if (target.Contains(','))
             {
                 MatchCollection correctedVerseNumbers = VerseNumberWithCommaRegex().Matches(target);
-                return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+                target = correctedVerseNumbers[0].Groups[1].Value;
             }
             else if (target.Contains(':'))
             {
                 MatchCollection correctedVerseNumbers = VerseNumberWithChapterRegex().Matches(target);
-                return int.Parse(correctedVerseNumbers[0].Groups[1].Value);
+                target = correctedVerseNumbers[0].Groups[1].Value;
             }
 
-            return int.Parse(verseNumbers[^1].Groups[1].Value);
+            return int.Parse(target);
         }
 
         /// <summary>
@@ -351,8 +351,8 @@ namespace BibleBot.Backend.Controllers
         {
             Dictionary<int, int> result = [];
 
-            int startingChapter = reference.StartingChapter;
-            int endingChapter = reference.EndingChapter > 0 ? reference.EndingChapter : startingChapter;
+            int startingChapter = reference.Book.ProperName == "Psalm 151" ? 151 : reference.StartingChapter;
+            int endingChapter = reference.Book.ProperName == "Psalm 151" ? 151 : (reference.EndingChapter > 0 ? reference.EndingChapter : startingChapter);
 
             if (startingChapter == endingChapter)
             {
