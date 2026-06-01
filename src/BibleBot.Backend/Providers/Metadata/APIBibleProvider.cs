@@ -28,7 +28,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
         private readonly MDBookMap _bookMap = bookMap;
         private readonly List<string> _defaultNames = defaultNames;
 
-        private readonly RestClient _restClient = new("https://api.scripture.api.bible/v1");
+        private readonly RestClient _restClient = new("https://rest.api.bible/v1");
 
         private readonly List<string> _latterKings = ["3 Kings", "4 Kings"];
 
