@@ -10,6 +10,7 @@ import os
 
 import disnake
 import sentry_sdk
+from aiohttp import web
 from disnake.ext import commands
 from logger import VyLogger
 from sentry_sdk.integrations.argv import ArgvIntegration
@@ -50,6 +51,36 @@ bot = commands.AutoShardedInteractionBot(
     default_install_types=disnake.ApplicationInstallTypes.all(),
     default_contexts=disnake.InteractionContextTypes.all(),
 )
+
+
+async def health_check(request):
+    return web.Response(
+        text="<html><body><h1>BibleBot Frontend is Healthy</h1></body></html>",
+        content_type="text/html",
+    )
+
+
+async def start_health_server():
+    app = web.Application()
+    app.router.add_get("/health", health_check)
+    app.router.add_get("/", health_check)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", 5054)
+    await site.start()
+    logger.info("Health check server started on port 5054")
+
+
+health_server_started = False
+
+
+@bot.listen()
+async def on_ready():
+    global health_server_started
+    if not health_server_started:
+        await start_health_server()
+        health_server_started = True
+
 
 bot.load_extension("cogs")
 bot.i18n.load("locale/")
