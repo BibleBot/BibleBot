@@ -178,7 +178,6 @@ namespace BibleBot.Backend.Services.Providers.Content
                 IHtmlDocument document = await _htmlParser.ParseDocumentAsync(passage.Content);
 
                 IHtmlCollection<IElement> otherData = document.QuerySelectorAll(".d");
-
                 foreach (IElement el in otherData)
                 {
                     IElement verseEl = el.QuerySelector("span.v");
@@ -206,8 +205,13 @@ namespace BibleBot.Backend.Services.Providers.Content
                     if (shouldRemoveElements) { el.Remove(); }
                 }
 
-                IHtmlCollection<IElement> numbers = document.QuerySelectorAll(".v");
+                IHtmlCollection<IElement> randomSupClass = document.QuerySelectorAll(".sup");
+                foreach (IElement el in randomSupClass)
+                {
+                    el.Remove();
+                }
 
+                IHtmlCollection<IElement> numbers = document.QuerySelectorAll(".v");
                 foreach (IElement el in numbers)
                 {
                     if (verseNumbersEnabled)
