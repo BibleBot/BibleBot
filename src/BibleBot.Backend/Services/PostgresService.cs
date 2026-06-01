@@ -85,10 +85,10 @@ namespace BibleBot.Backend.Services
 
         public async Task Update(string abbreviation, UpdateDef<Version> updateDef)
         {
-            await pgContext.Versions.Where(v => v.Id.Equals(abbreviation, StringComparison.OrdinalIgnoreCase)).ExecuteUpdateAsync(updateDef);
+            await pgContext.Versions.Where(v => v.Id.Equals(abbreviation)).ExecuteUpdateAsync(updateDef);
 
             EntityEntry<Version> entry = pgContext.ChangeTracker.Entries<Version>()
-                .FirstOrDefault(e => e.Entity.Id.Equals(abbreviation, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(e => e.Entity.Id.Equals(abbreviation));
             if (entry != null) await entry.ReloadAsync();
         }
 
