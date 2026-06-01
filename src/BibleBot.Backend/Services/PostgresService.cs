@@ -92,6 +92,24 @@ namespace BibleBot.Backend.Services
             if (entry != null) await entry.ReloadAsync();
         }
 
+        public async Task UpdateMetadata(string abbreviation, string internalId, List<Book> books)
+        {
+            Version version = await pgContext.Versions
+                .Include(v => v.Books)
+                .FirstOrDefaultAsync(v => v.Id.Equals(abbreviation));
+
+            if (version != null)
+            {
+                if (internalId != null)
+                {
+                    version.InternalId = internalId;
+                }
+
+                version.Books.AddRange(books);
+                await pgContext.SaveChangesAsync();
+            }
+        }
+
         public async Task Update(FrontendStats frontendStats, UpdateDef<FrontendStats> updateDef)
         {
             await pgContext.FrontendStats.Where(f => f.Id == frontendStats.Id).ExecuteUpdateAsync(updateDef);

@@ -115,7 +115,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
             return versionData;
         }
 
-        public async Task<UpdateDef<Version>> GenerateMetadataUpdate(Version version, HttpResponseMessage resp)
+        public async Task<(string InternalId, List<Book> Books)> GenerateMetadataUpdate(Version version, HttpResponseMessage resp)
         {
             List<Book> versionBookData = [];
 
@@ -278,10 +278,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
             }
 
             string versionInternalId = version.InternalId ?? resp.RequestMessage.RequestUri.AbsoluteUri.Replace("https://www.biblegateway.com/versions/", "").Replace("/#booklist", "");
-            return new List<UpdateDef<Version>> {
-                UpdateDef<Version>.Set(versionToUpdate => versionToUpdate.Books, [.. versionBookData]),
-                UpdateDef<Version>.Set(versionToUpdate => versionToUpdate.InternalId, versionInternalId)
-            }.Combine();
+            return (versionInternalId, versionBookData);
         }
 
         private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");

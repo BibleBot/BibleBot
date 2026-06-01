@@ -177,14 +177,14 @@ namespace BibleBot.Backend.Services
         {
             foreach ((Version version, T resp) in versionData)
             {
-                UpdateDef<Version> update = typeof(T).Name switch
+                (string InternalId, List<Book> Books) update = typeof(T).Name switch
                 {
                     nameof(HttpResponseMessage) => await _bibleGatewayProvider.GenerateMetadataUpdate(version, resp as HttpResponseMessage),
                     nameof(ABBooksResponse) => _apiBibleProvider.GenerateMetadataUpdate(version, resp as ABBooksResponse),
                     _ => throw new NotSupportedException("Attempted to save metadata with an unknown response type."),
                 };
 
-                await _versionService.Update(version.Id, update);
+                await _versionService.UpdateMetadata(version.Id, update.InternalId, update.Books);
             }
         }
 

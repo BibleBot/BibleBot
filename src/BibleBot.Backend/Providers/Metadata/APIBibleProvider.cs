@@ -73,7 +73,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
             return versionData;
         }
 
-        public UpdateDef<Version> GenerateMetadataUpdate(Version version, ABBooksResponse resp)
+        public (string InternalId, List<Book> Books) GenerateMetadataUpdate(Version version, ABBooksResponse resp)
         {
             List<Book> versionBookData = [];
 
@@ -189,7 +189,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
                 });
             }
 
-            return UpdateDef<Version>.Set(versionToUpdate => versionToUpdate.Books, [.. versionBookData]);
+            return (version.InternalId, versionBookData);
         }
 
         private bool IsNuisance(string word) => _nuisances.Contains(word.ToLowerInvariant()) || _nuisances.Contains($"{word.ToLowerInvariant()}.");

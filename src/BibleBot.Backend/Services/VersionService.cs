@@ -125,6 +125,28 @@ namespace BibleBot.Backend.Services
             }
         }
 
+        public async Task UpdateMetadata(string abbreviation, string internalId, List<Book> books)
+        {
+            using IServiceScope scope = scopeFactory.CreateScope();
+            PostgresService postgresService = scope.ServiceProvider.GetRequiredService<PostgresService>();
+
+            Version beforeVersion = await Get(abbreviation);
+            await postgresService.UpdateMetadata(abbreviation, internalId, books);
+
+            Version afterVersion = await postgresService.Get<Version>(abbreviation);
+
+            await _semaphore.WaitAsync();
+            try
+            {
+                _versions.Remove(beforeVersion);
+                _versions.Add(afterVersion);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
         public async Task Remove(Version idealVersion)
         {
             using IServiceScope scope = scopeFactory.CreateScope();
