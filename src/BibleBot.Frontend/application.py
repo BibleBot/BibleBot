@@ -33,6 +33,7 @@ sentry_sdk.init(
         ModulesIntegration(),
         ThreadingIntegration(),
     ],
+    environment=os.environ.get("SENTRY_ENVIRONMENT"),
 )
 
 logger = VyLogger("default")
