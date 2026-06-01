@@ -41,7 +41,7 @@ namespace BibleBot.Backend.Services
                     .Include(v => v.Books)
                     .ThenInclude(b => b.Chapters)
                     .AsSplitQuery()
-                    .FirstOrDefaultAsync(v => v.Id.Equals(query, StringComparison.OrdinalIgnoreCase)) as T;
+                    .FirstOrDefaultAsync(v => v.Id.ToLower() == query.ToLower()) as T;
             }
 
             return await pgContext.GetDbSet<T>().AsNoTracking().FirstOrDefaultAsync(e => EF.Property<string>(e, "Id") == query);
@@ -120,7 +120,7 @@ namespace BibleBot.Backend.Services
 
         public async Task Update(string experimentId, UpdateDef<Experiment> updateDef)
         {
-            await pgContext.Experiments.Where(e => e.Id.Equals(experimentId, StringComparison.OrdinalIgnoreCase)).ExecuteUpdateAsync(updateDef);
+            await pgContext.Experiments.Where(e => e.Id.Equals(experimentId)).ExecuteUpdateAsync(updateDef);
 
             EntityEntry<Experiment> entry = pgContext.ChangeTracker.Entries<Experiment>().FirstOrDefault(e => e.Entity.Id == experimentId);
             if (entry != null) await entry.ReloadAsync();
