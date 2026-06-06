@@ -31,6 +31,7 @@ namespace BibleBot.Backend.Services
             { "||" , "" },
             { "`", "'" },
             { "\\*(Selah)\\*", "*(Selah)*"},
+            { "#— #", "— "},
             { " ", " " }
         };
 
