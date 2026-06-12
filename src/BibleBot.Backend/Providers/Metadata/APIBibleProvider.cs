@@ -147,6 +147,12 @@ namespace BibleBot.Backend.Services.Providers.Metadata
                     continue;
                 }
 
+                // Thank you, NLTCE.
+                if (internalId == "ESG" && book.Name == "Esther")
+                {
+                    book.Name = _bookMap["deu"][internalId];
+                }
+
                 List<Chapter> chapters = [];
 
                 foreach (ABChapter chapter in book.Chapters)
