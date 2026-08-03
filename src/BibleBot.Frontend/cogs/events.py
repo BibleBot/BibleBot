@@ -9,7 +9,6 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 import os
 import re
 
-import aiohttp
 import disnake
 from disnake import Thread, DMChannel, GroupChannel
 
@@ -17,7 +16,7 @@ from core import constants
 from disnake.ext import commands
 from helpers import sending
 from logger import VyLogger
-from services import backend
+from services import backend, http
 from ui.confirmation_prompt import ConfirmationPrompt
 from ui.helpfulness_prompt import HelpfulnessPrompt
 from ui.paginator import ComponentPaginator
@@ -101,16 +100,17 @@ class EventListeners(commands.Cog):
 
             endpoint = os.environ.get("ENDPOINT")
 
-            async with aiohttp.ClientSession() as session:
-                async with session.post(
-                    f"{endpoint}/webhooks/process",
-                    json=req_body,
-                    headers={"Authorization": os.environ.get("ENDPOINT_TOKEN", "")},
-                ) as resp:
-                    if resp.status == 200:
-                        logger.info(
-                            f"<global@{guild.id}#global> we've left this server, deleting webhook..."
-                        )
+            session = await http.get_session()
+
+            async with session.post(
+                f"{endpoint}/webhooks/process",
+                json=req_body,
+                headers={"Authorization": os.environ.get("ENDPOINT_TOKEN", "")},
+            ) as resp:
+                if resp.status == 200:
+                    logger.info(
+                        f"<global@{guild.id}#global> we've left this server, deleting webhook..."
+                    )
 
     @commands.Cog.listener()
     async def on_button_click(self, inter: disnake.MessageInteraction):

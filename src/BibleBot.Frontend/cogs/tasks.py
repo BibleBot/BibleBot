@@ -10,12 +10,12 @@ import asyncio
 import os
 import subprocess
 
-import aiohttp
 import disnake
 import sentry_sdk
 from core import constants
 from disnake.ext import commands, tasks
 from logger import VyLogger
+from services import http
 
 logger = VyLogger("default")
 
@@ -65,19 +65,20 @@ class Tasks(commands.Cog):
 
         if topgg_auth:
             body = {"server_count": len(bot.guilds)}
-            async with aiohttp.ClientSession() as session:
-                async with session.post(
-                    f"https://top.gg/api/bots/{bot.user.id}/stats",
-                    json=body,
-                    headers={"Authorization": topgg_auth},
-                ) as resp:
-                    if resp.status != 200:
-                        if resp.status != 429:
-                            logger.warning(
-                                "couldn't submit stats to top.gg, it may be offline"
-                            )
-                    else:
-                        logger.info("submitted stats to top.gg")
+            session = await http.get_session()
+
+            async with session.post(
+                f"https://top.gg/api/bots/{bot.user.id}/stats",
+                json=body,
+                headers={"Authorization": topgg_auth},
+            ) as resp:
+                if resp.status != 200:
+                    if resp.status != 429:
+                        logger.warning(
+                            "couldn't submit stats to top.gg, it may be offline"
+                        )
+                else:
+                    logger.info("submitted stats to top.gg")
 
     async def update_discordbotlist(self, bot: disnake.AutoShardedClient):
         discordbotlist_auth = os.environ.get("DISCORDBOTLIST_TOKEN")
@@ -87,19 +88,20 @@ class Tasks(commands.Cog):
                 "users": sum([x.member_count for x in bot.guilds]),
                 "guilds": len(bot.guilds),
             }
-            async with aiohttp.ClientSession() as session:
-                async with session.post(
-                    f"https://discordbotlist.com/api/v1/bots/{bot.user.id}/stats",
-                    json=body,
-                    headers={"Authorization": discordbotlist_auth},
-                ) as resp:
-                    if resp.status != 200:
-                        if resp.status != 429:
-                            logger.warning(
-                                "couldn't submit stats to discordbotlist.com, it may be offline"
-                            )
-                    else:
-                        logger.info("submitted stats to discordbotlist.com")
+            session = await http.get_session()
+
+            async with session.post(
+                f"https://discordbotlist.com/api/v1/bots/{bot.user.id}/stats",
+                json=body,
+                headers={"Authorization": discordbotlist_auth},
+            ) as resp:
+                if resp.status != 200:
+                    if resp.status != 429:
+                        logger.warning(
+                            "couldn't submit stats to discordbotlist.com, it may be offline"
+                        )
+                else:
+                    logger.info("submitted stats to discordbotlist.com")
 
     async def send_stats(self, bot: disnake.AutoShardedClient):
         endpoint = os.environ.get("ENDPOINT")
@@ -126,18 +128,19 @@ class Tasks(commands.Cog):
             .strip()
         )
 
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"{endpoint}/stats/process",
-                json={
-                    "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}||{user_install_count}||{repo_sha}",
-                },
-                headers={"Authorization": token},
-            ) as resp:
-                if resp.status != 200:
-                    logger.error("couldn't submit stats to backend")
-                elif resp.status == 200:
-                    logger.info("submitted stats to backend")
+        session = await http.get_session()
+
+        async with session.post(
+            f"{endpoint}/stats/process",
+            json={
+                "Body": f"{shard_count}||{guild_count}||{user_count}||{channel_count}||{user_install_count}||{repo_sha}",
+            },
+            headers={"Authorization": token},
+        ) as resp:
+            if resp.status != 200:
+                logger.error("couldn't submit stats to backend")
+            elif resp.status == 200:
+                logger.info("submitted stats to backend")
 
     async def update_shards(self, bot: disnake.AutoShardedClient):
         if bot._connection.shard_count is None:

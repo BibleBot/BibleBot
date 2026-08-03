@@ -7,9 +7,15 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import disnake
+from core.i18n import bb_i18n
 from disnake.interactions import ApplicationCommandInteraction
+from helpers import sending
+from services import backend
+from ui import renderers as containers
 # from os import environ
 # import sentry_sdk
+
+i18n = bb_i18n()
 
 def inter_is_user(inter: ApplicationCommandInteraction) -> bool:
     """Returns whether an interaction is triggered in a user app context."""
@@ -35,17 +41,14 @@ def inter_is_not_dm(inter: ApplicationCommandInteraction) -> bool:
     return not isinstance(inter.channel, disnake.DMChannel)
 
 async def user_is_bb_staff(inter: ApplicationCommandInteraction) -> bool:
-    staff_check_resp = await backend.check_if_staff(inter.author.id)
+    status, body = await backend.check_if_staff(inter.author.id)
 
-    if staff_check_resp.status == 400:
-        staff_check_resp_body = await staff_check_resp.json()
+    if status == 400 and body is not None:
         await sending.safe_send_interaction(
             inter.followup,
-            components=containers.convert_embed_to_container(
-                staff_check_resp_body["pages"][0]
-            ),
+            components=containers.convert_embed_to_container(body["pages"][0]),
         )
-    elif staff_check_resp.status == 200:
+    elif status == 200:
         return True
     else:
         localization = i18n.get_i18n_or_default(inter.locale.name)

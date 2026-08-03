@@ -6,6 +6,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this file,
 You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
+import asyncio
 import json
 import os
 from typing import Optional, Union
@@ -16,7 +17,7 @@ from core import constants
 from core.i18n import bb_i18n
 from helpers import channels, sending
 from logger import VyLogger
-from services import webhooks
+from services import http, webhooks
 from ui import renderers as containers
 from ui.paginator import ComponentPaginator
 
@@ -49,6 +50,16 @@ async def submit_command(
     endpoint = os.environ.get("ENDPOINT", "")
 
     resp_body = await submit_command_raw(endpoint, req_body)
+
+    if resp_body.get("transportFailure"):
+        logger.error(
+            f"<{user.id}@{ctx.guild_id}#{ctx.channel_id}> " + resp_body["logStatement"]
+        )
+        return containers.create_error_container(
+            "Backend Error",
+            "BibleBot couldn't reach its backend in time, please try again in a moment.",
+            i18n.get_i18n_or_default("en_US"),
+        )
 
     if resp_body["culture"] is not None:
         localization = i18n.get_i18n_or_default(resp_body["culture"].replace("-", "_"))
@@ -86,18 +97,18 @@ async def submit_command(
 
                     # Send a request to the webhook controller, which will update the DB.
                     req_body["Body"] = webhook_service_body
-                    async with aiohttp.ClientSession() as subsession:
-                        async with subsession.post(
-                            f"{endpoint}/webhooks/process",
-                            json=req_body,
-                            headers=aiohttp_headers,
-                        ) as subresp:
-                            if subresp.status != 200:
-                                logger.error("couldn't submit webhook")
-                            else:
-                                return containers.convert_embed_to_container(
-                                    resp_body["pages"][0]
-                                )
+                    subsession = await http.get_session()
+                    async with subsession.post(
+                        f"{endpoint}/webhooks/process",
+                        json=req_body,
+                        headers=aiohttp_headers,
+                    ) as subresp:
+                        if subresp.status != 200:
+                            logger.error("couldn't submit webhook")
+                        else:
+                            return containers.convert_embed_to_container(
+                                resp_body["pages"][0]
+                            )
                 except disnake.errors.Forbidden:
                     try:
                         await sending.safe_send_channel(
@@ -194,10 +205,24 @@ async def submit_command(
     return None
 
 
+def _transport_failure(log_statement: str) -> dict:
+    """A minimally-shaped response so callers don't KeyError on the failure path."""
+
+    return {
+        "ok": False,
+        "culture": None,
+        "type": None,
+        "logStatement": log_statement,
+        "transportFailure": True,
+    }
+
+
 async def submit_command_raw(endpoint: str, req_body: dict):
     """Submits a command to the backend and returns the result."""
 
-    async with aiohttp.ClientSession() as session:
+    session = await http.get_session()
+
+    try:
         async with session.post(
             f"{endpoint}/commands/process",
             json=req_body,
@@ -205,13 +230,17 @@ async def submit_command_raw(endpoint: str, req_body: dict):
         ) as resp:
             resp_text = await resp.text()
             resp_text = resp_text.replace("\\\\n", "\\n")
+    except (asyncio.TimeoutError, aiohttp.ClientError) as err:
+        logger.error(
+            f"couldn't reach backend at /commands/process: {err.__class__.__name__}: {err}"
+        )
+        return _transport_failure("backend unreachable")
 
-            try:
-                resp_body = json.loads(resp_text)
-                return resp_body
-            except json.JSONDecodeError:
-                logger.error(f"couldn't parse response from backend: {resp_text}")
-                return {"ok": False, "logStatement": "couldn't parse response"}
+    try:
+        return json.loads(resp_text)
+    except json.JSONDecodeError:
+        logger.error(f"couldn't parse response from backend: {resp_text}")
+        return _transport_failure("couldn't parse response")
 
 
 async def submit_verse(rch: disnake.abc.Messageable, user: disnake.abc.User, body: str):
@@ -267,13 +296,23 @@ async def submit_verse_raw(
 
     resp_body = None
 
-    async with aiohttp.ClientSession() as session:
+    session = await http.get_session()
+
+    try:
         async with session.post(
             f"{endpoint}/verses/process",
             json=req_body,
             headers=aiohttp_headers,
         ) as resp:
             resp_body = await resp.json()
+    except (asyncio.TimeoutError, aiohttp.ClientError, json.JSONDecodeError) as err:
+        logger.error(
+            f"<{req_body['UserId']}@{req_body['GuildId']}#{req_body['ChannelId']}> "
+            f"couldn't reach backend at /verses/process: {err.__class__.__name__}: {err}"
+        )
+        # /verse renders None as CMD_VERSE_FAIL, and the on_message path stays
+        # quiet - which is what we want when the backend is having a bad day.
+        return None
 
     if resp_body["culture"] is not None:
         localization = i18n.get_i18n_or_default(resp_body["culture"].replace("-", "_"))
@@ -371,7 +410,14 @@ async def submit_verse_raw(
     return processed_verses
 
 
-async def check_if_staff(user_id: int):
+async def check_if_staff(user_id: int) -> tuple[int, Optional[dict]]:
+    """Returns the backend's staff-check status, and its body if it sent one.
+
+    The body has to be read inside the response context - the connection is
+    released on exit, so handing the response object back to the caller left
+    them with something they couldn't read.
+    """
+
     endpoint = os.environ.get("ENDPOINT", "")
 
     req_body = {
@@ -385,10 +431,22 @@ async def check_if_staff(user_id: int):
         "Body": "",
     }
 
-    async with aiohttp.ClientSession() as session:
+    session = await http.get_session()
+
+    try:
         async with session.post(
             f"{endpoint}/commands/staff_check",
             json=req_body,
             headers=aiohttp_headers,
         ) as resp:
-            return resp
+            try:
+                body = await resp.json()
+            except (aiohttp.ClientError, json.JSONDecodeError):
+                body = None
+
+            return resp.status, body
+    except (asyncio.TimeoutError, aiohttp.ClientError) as err:
+        logger.error(
+            f"couldn't reach backend at /commands/staff_check: {err.__class__.__name__}: {err}"
+        )
+        return 0, None
