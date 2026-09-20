@@ -55,7 +55,13 @@ namespace BibleBot.Backend.Services.Providers
             IHtmlDocument document = await _htmlParser.ParseDocumentAsync(resp);
             _cancellationToken.Token.ThrowIfCancellationRequested();
 
-            return document.GetElementsByClassName("rp-passage-display").FirstOrDefault()!.TextContent;
+            List<string> references = [.. document.GetElementsByClassName("rp-passage-display").Select(element => element.TextContent)];
+            string firstReference = references.FirstOrDefault()!;
+            string referencePrefix = firstReference[..(firstReference.LastIndexOf(':') + 1)];
+
+            return references.Skip(1).All(reference => reference.StartsWith(referencePrefix, StringComparison.Ordinal))
+                ? referencePrefix + string.Join(",", references.Select(reference => reference[(reference.LastIndexOf(':') + 1)..]))
+                : string.Join("; ", references);
         }
 
         public async Task<string> GetRandomVerse()
