@@ -945,6 +945,20 @@ namespace BibleBot.Tests.Backend.Controllers.Verses
         }
 
         [Test]
+        public void ShouldHandleSpacelessCommaWithInitialSpannedVerses()
+        {
+            ObjectResult result = _versesController.ProcessMessage(new MockRequest("John 1:1-2,14")).GetAwaiter().GetResult().Result as ObjectResult;
+            VerseResponse resp = result!.Value as VerseResponse;
+            Reference reference = resp!.Verses[0].Reference;
+
+            result.StatusCode.Should().Be(200);
+            reference.StartingVerse.Should().Be(1);
+            reference.EndingVerse.Should().Be(2);
+            reference.AppendedVerses.Should().Equal(new System.Tuple<int, int>(14, 14));
+            reference.AsString.Should().Be("John 1:1-2, 14");
+        }
+
+        [Test]
         public void ShouldPresentSingleQuotationMarksProperlyInVerseContent()
         {
             ObjectResult result = _versesController.ProcessMessage(new MockRequest("Matthew 7:21 RSV")).GetAwaiter().GetResult().Result as ObjectResult;

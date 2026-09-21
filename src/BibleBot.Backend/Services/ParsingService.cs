@@ -301,6 +301,7 @@ namespace BibleBot.Backend.Services
                                             {
                                                 case 0:
                                                     startingVerse = appendedVerses[0].Item1;
+                                                    endingVerse = appendedVerses[0].Item2;
                                                     appendedVerses = [.. appendedVerses.TakeLast(appendedVerses.Count - 1)];
                                                     break;
                                                 case 1:
