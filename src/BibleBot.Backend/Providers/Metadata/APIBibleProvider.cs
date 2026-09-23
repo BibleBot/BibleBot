@@ -20,7 +20,7 @@ using MDABVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Ve
 using MDBookMap = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>;
 using Version = BibleBot.Models.Version;
 
-namespace BibleBot.Backend.Services.Providers.Metadata
+namespace BibleBot.Backend.Providers.Metadata
 {
     public class APIBibleProvider(List<string> nuisances, MDBookMap bookMap, List<string> defaultNames)
     {
@@ -139,7 +139,7 @@ namespace BibleBot.Backend.Services.Providers.Metadata
 
                 book.Name = (IsNuisance(book.Name) || book.Name.EndsWith('.')) ? properName : book.Name.Trim();
 
-                if ((internalId == "1sam" && book.Name == "1 Kings") || (internalId == "2sam" && book.Name == "2 Kings") || _latterKings.Contains(book.Abbreviation))
+                if ((internalId == "1SA" && book.Name == "1 Kings") || (internalId == "2SA" && book.Name == "2 Kings") || _latterKings.Contains(book.Abbreviation))
                 {
                     // TODO(srp): So, the first two conditions ultimately avoid parsing
                     // a default name, but I don't know why the third one exists or

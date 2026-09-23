@@ -22,7 +22,7 @@ using MDBGVersionData = System.Collections.Generic.Dictionary<BibleBot.Models.Ve
 using MDBookMap = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>;
 using Version = BibleBot.Models.Version;
 
-namespace BibleBot.Backend.Services.Providers.Metadata
+namespace BibleBot.Backend.Providers.Metadata
 {
     public class BibleGatewayProvider
     {

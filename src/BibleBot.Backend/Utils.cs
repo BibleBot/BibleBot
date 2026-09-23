@@ -645,7 +645,7 @@ namespace BibleBot.Backend
 
                 if (combinedLength > MAX_TEXT_LENGTH && result.Text != null)
                 {
-                    result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(Math.Max(0, remainingTextLength - 70), result.Text.Length)), "..."); // 70 as a buffer for formatting
+                    result.Text = string.Concat(result.Text.AsSpan(0, Math.Min(Math.Max(0, remainingTextLength - 150), result.Text.Length)), "..."); // 150 as a buffer for formatting
                     result.Text = TruncatedTextRegex().Replace(result.Text, "...");
                 }
             }

@@ -273,7 +273,7 @@ namespace BibleBot.Backend.Controllers.CommandGroups
                     }
                 }
 
-                if (args.Count == 0)
+                if (args.Count == 0 || (args.Count == 1 && args[0] == ""))
                 {
                     return Task.FromResult<IResponse>(new CommandResponse
                     {
@@ -320,6 +320,20 @@ namespace BibleBot.Backend.Controllers.CommandGroups
 
                 string query = string.Join(" ", args);
                 int contextWindow = 7;
+
+                if (query == "")
+                {
+                    return Task.FromResult<IResponse>(new CommandResponse
+                    {
+                        OK = false,
+                        Pages =
+                        [
+                            Utils.GetInstance().Embedify("/searchresource", localizer["SearchNoResults"], true)
+                        ],
+                        LogStatement = "/searchresource",
+                        Culture = CultureInfo.CurrentUICulture.Name
+                    });
+                }
 
                 ParagraphedResource paragraphedResource = idealResource as ParagraphedResource;
                 List<SearchResult> searchResults = [.. paragraphedResource.Paragraphs

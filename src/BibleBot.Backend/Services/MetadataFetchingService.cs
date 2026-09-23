@@ -13,7 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using BibleBot.Backend.Services.Providers.Metadata;
+using BibleBot.Backend.Providers.Metadata;
 using BibleBot.Models;
 using Serilog;
 // using MDABVersionData = System.Collections.Generic.List<System.Tuple<BibleBot.Models.Version, BibleBot.Models.ABBooksResponse, System.Collections.Generic.List<BibleBot.Models.ABVersesResponse>>>;
@@ -177,14 +177,14 @@ namespace BibleBot.Backend.Services
         {
             foreach ((Version version, T resp) in versionData)
             {
-                (string InternalId, List<Book> Books) update = typeof(T).Name switch
+                (string internalId, List<Book> books) = typeof(T).Name switch
                 {
                     nameof(HttpResponseMessage) => await _bibleGatewayProvider.GenerateMetadataUpdate(version, resp as HttpResponseMessage),
                     nameof(ABBooksResponse) => _apiBibleProvider.GenerateMetadataUpdate(version, resp as ABBooksResponse),
                     _ => throw new NotSupportedException("Attempted to save metadata with an unknown response type."),
                 };
 
-                await _versionService.UpdateMetadata(version.Id, update.InternalId, update.Books);
+                await _versionService.UpdateMetadata(version.Id, internalId, books);
             }
         }
 
